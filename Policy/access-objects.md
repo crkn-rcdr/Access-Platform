@@ -42,9 +42,9 @@ We have three first-order objects to consider, for which we will use the IIIF no
 
 ### Files
 
-Canvases must have an image file (more accurately, a pointer to an image service) associated with it. Changing this file will likely trigger the creation of a new canvas, and the nature of the change may determine whether canvas metadata is copied over.  Canvases may also have an OCR-generated PDF and/or ALTO XML file associated with them.
+Canvases must have an image file (more accurately, a pointer to an image service) associated with it. Changing this file will likely trigger the creation of a new canvas, and the nature of the change may determine whether canvas metadata is copied over. Canvases may also have an OCR-generated PDF and/or ALTO XML file associated with them.
 
-Manifests may have PDFs associated with them. This process is derivative and should not violate immutability constraints.
+Manifests may have PDFs associated with them. For manifests of scanned content, this process is derivative and should not violate immutability constraints. For born-digital content, these PDFs come directly from the source. We may want to distinguish between the two kinds of PDFs with a naming convention.
 
 Collections have no files associated with them.
 
