@@ -28,6 +28,7 @@ Notes in [manifest.md](manifest.md) apply to those documents filled in from METS
   * status - boolean for success/failure
   * messsage - die/warn messages
   * date - date when Press run, used in comparing other dates to know when to next run
+* slug - string representing slug
 * updated - date of last update
 * updatereq - date when a press update was requested (used as part of press handling of re-processing parent records)
 
