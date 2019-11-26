@@ -1,4 +1,4 @@
-# manifest data
+# manifest documents
 
 Database fields are similar to what was previoiusly in 'internalmeta', including data that was in hammer.json array index 0
 
