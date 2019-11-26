@@ -33,6 +33,7 @@ Database fields are similar to what was previoiusly in 'internalmeta', including
   * status - boolean for success/failure
   * messsage - die/warn messages
   * date - date when Press run, used in comparing other dates to know when to next run
+* slug - string representing slug
 * updated - date of last update
 * updatereq - date when a press update was requested (used as part of press handling of re-processing parent records, so this might be moved to 'collection' database.
 
