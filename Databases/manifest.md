@@ -26,7 +26,7 @@ Database fields are similar to what was previoiusly in 'internalmeta', including
   * dmddate - date of processed descriptive metadata
   * status - boolean for success/failure of Hammer (Did it "die")
   * date when hammer ran
-* label - label from METS, most often extracted from descriptive metadata
+* label - label from METS, most often extracted from descriptive metadata when METS record created
 * approved - date when manifest (and its canvases) were made public (unset means staff only)?
 * parent? - reference to parent for issues. Should point to noid of collection, determined by Smelter?
 * press - hash of fields used by Press to know when to run, and report on success/failure
