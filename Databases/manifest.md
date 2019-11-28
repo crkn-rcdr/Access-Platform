@@ -19,6 +19,9 @@ Database fields are similar to what was previoiusly in 'internalmeta', including
 * canonicalDownloadMime - MIME-type of download
 * canonicalDownloadSize - size (bytes) of download
 * collectionDate - date when the list of collections was modified (used by Press)
+* canvases - array of hashes
+  * canvasID - noid of canvas
+  * label - string representing the label
 * collections - array of collections
 * created - date document was created
 * hammer - hash of fields used by Hammer to know when to run, and to report on success/failure
