@@ -11,6 +11,10 @@
       "description": "Human-readable identifier",
       "type": "string"
     },
+    "label": {
+      "description": "Collection display label",
+      "type": "string"
+    },
     "members": {
       "description": "List of collection/manifest NOIDs. For series records that have yet to be fully loaded, members can be null",
       "type": "array",
@@ -39,6 +43,7 @@
     "_id",
     "_rev",
     "slug",
+    "label",
     "members",
     "approved",
     "ordered",

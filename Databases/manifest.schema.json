@@ -11,10 +11,24 @@
       "description": "Human-readable identifier",
       "type": "string"
     },
+    "label": {
+      "description": "Manifest display label",
+      "type": "string"
+    },
     "canvases": {
       "description": "List of canvas NOIDs, corresponding to the members of this manifest",
       "type": "array",
-      "items": { "$ref": "./util.schema.json#/definitions/canvasNoid" }
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "$ref": "./util.schema.json#/definitions/canvasNoid" },
+          "label": {
+            "description": "Manifest-specific label for this canvas",
+            "type": "string"
+          }
+        },
+        "required": ["id", "label"]
+      }
     },
     "approved": {
       "description": "Manifest is approved for public display",
