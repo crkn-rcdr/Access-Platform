@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "https://github.com/crkn-rcdr/Access-Platform/blob/master/Databases/manifest.schema.json",
+  "title": "Manifest Document Schema",
+  "description": "",
+  "type": "object",
+  "properties": {
+    "_id": { "$ref": "./util.schema.json#/definitions/manifestNoid" },
+    "_rev": { "$ref": "./_util.schema.json#/definitions/_rev" },
+    "slug": {
+      "description": "Human-readable identifier",
+      "type": "string"
+    },
+    "canvases": {
+      "description": "List of canvas NOIDs, corresponding to the members of this manifest",
+      "type": "array",
+      "items": { "$ref": "./util.schema.json#/definitions/canvasNoid" }
+    },
+    "approved": {
+      "description": "Manifest is approved for public display",
+      "type": "boolean",
+      "default": false
+    },
+    "collections": { "$ref": "./_util.schema.json#/definitions/collections" }
+  },
+  "required": ["_id", "_rev", "slug", "canvases", "approved", "collections"]
+}

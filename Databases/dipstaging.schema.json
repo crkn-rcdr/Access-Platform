@@ -1,0 +1,94 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "https://github.com/crkn-rcdr/Access-Platform/blob/master/Databases/dipstaging.schema.json",
+  "title": "dipstaging Document Schema",
+  "description": "dipstaging documents are generated for every AIP in the legacy preservation platform. They imply the availability of an AIP for import into the access platform.",
+  "type": "object",
+  "properties": {
+    "_id": {
+      "description": "Legacy preservation platform AIP ID",
+      "type": "string"
+    },
+    "_rev": { "$ref": "./util.schema.json#/definitions/_rev" },
+    "deposits": {
+      "description": "empty array created when document first created",
+      "type": "array"
+    },
+    "repos": {
+      "description": "array of repositories which has this AIP",
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "reposManifestDate": {
+      "allOf": [
+        {
+          "$ref": "./_util.schema.json#/definitions/iso8601datetime"
+        },
+        {
+          "description": "date on the AIP manifest. Used to detect when the AIP has been updated, so this date should be stored with any processing."
+        }
+      ]
+    },
+    "reposDate": {
+      "allOf": [
+        {
+          "$ref": "./_util.schema.json#/definitions/iso8601datetime"
+        },
+        {
+          "description": "date when the above two fields were filled in."
+        }
+      ]
+    },
+    "METS": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": { "type": "string" },
+          "md5": { "type": "string", "pattern": "^[0-9a-f]{32}$" }
+        }
+      }
+    },
+    "METSManifestDate": {
+      "allOf": [
+        {
+          "$ref": "./_util.schema.json#/definitions/iso8601datetime"
+        },
+        {
+          "description": "date on the AIP manifest when this field was filled in"
+        }
+      ]
+    },
+    "METSDate": {
+      "allOf": [
+        {
+          "$ref": "./_util.schema.json#/definitions/iso8601datetime"
+        },
+        {
+          "description": "date when the above two fields were filled in."
+        }
+      ]
+    },
+    "updated": {
+      "allOf": [
+        {
+          "$ref": "./_util.schema.json#/definitions/iso8601datetime"
+        },
+        {
+          "description": "date of when this document was last updated"
+        }
+      ]
+    }
+  },
+  "required": [
+    "repos",
+    "reposManifestDate",
+    "reposDate",
+    "METS",
+    "METSManifestDate",
+    "METSDate",
+    "deposits",
+    "updated"
+  ]
+}

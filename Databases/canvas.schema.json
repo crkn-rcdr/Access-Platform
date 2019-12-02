@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "https://github.com/crkn-rcdr/Access-Platform/blob/master/Databases/canvas.schema.json",
+  "title": "Canvas Document Schema",
+  "description": "",
+  "type": "object",
+  "properties": {
+    "_id": { "$ref": "./util.schema.json#/definitions/canvasNoid" },
+    "_rev": { "$ref": "./_util.schema.json#/definitions/_rev" },
+    "slugs": {
+      "description": "List of human-readable identifiers (in the form '$manifestSlug/$seq'",
+      "type": "array",
+      "items": { "type": "string", "pattern": "^.+/[0-9].+" }
+    }
+  },
+  "required": ["_id", "_rev", "slug", "canvases", "approved", "collections"]
+}
