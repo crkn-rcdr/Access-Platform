@@ -5,7 +5,7 @@
   "description": "",
   "type": "object",
   "properties": {
-    "_id": { "$ref": "./util.schema.json#/definitions/collectionNoid" },
+    "_id": { "$ref": "./_util.schema.json#/definitions/collectionNoid" },
     "_rev": { "$ref": "./_util.schema.json#/definitions/_rev" },
     "slug": {
       "description": "Human-readable identifier",
@@ -20,8 +20,8 @@
       "type": "array",
       "items": {
         "oneOf": [
-          { "$ref": "./util.schema.json#/definitions/collectionNoid" },
-          { "$ref": "./util.schema.json#/definitions/manifestNoid" },
+          { "$ref": "./_util.schema.json#/definitions/collectionNoid" },
+          { "$ref": "./_util.schema.json#/definitions/manifestNoid" },
           { "type": "null" }
         ]
       }

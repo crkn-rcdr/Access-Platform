@@ -5,13 +5,35 @@
   "description": "",
   "type": "object",
   "properties": {
-    "_id": { "$ref": "./util.schema.json#/definitions/canvasNoid" },
+    "_id": { "$ref": "./_util.schema.json#/definitions/canvasNoid" },
     "_rev": { "$ref": "./_util.schema.json#/definitions/_rev" },
     "slugs": {
       "description": "List of human-readable identifiers (in the form '$manifestSlug/$seq'",
       "type": "array",
       "items": { "type": "string", "pattern": "^.+/[0-9].+" }
+    },
+    "master": {
+      "description": "Path to and information about this canvas's master image",
+      "type": "object",
+      "properties": {
+        "url": { "$ref": "./_util.schema.json#/definitions/legacyRepoURL" },
+        "mime": { "$ref": "./_util.schema.json#/definitions/mime" },
+        "size": { "type": "number" },
+        "width": { "type": "number" },
+        "height": { "type": "number" }
+      },
+      "required": ["url", "mime", "size", "width", "height"]
+    },
+    "download": {
+      "description": "Path to and information about a downloadable file for this object (usually a PDF)",
+      "type": "object",
+      "properties": {
+        "url": { "$ref": "./_util.schema.json#/definitions/legacyRepoURL" },
+        "mime": { "$ref": "./_util.schema.json#/definitions/mime" },
+        "size": { "type": "number" }
+      },
+      "required": ["url", "mime", "size"]
     }
   },
-  "required": ["_id", "_rev", "slug", "canvases", "approved", "collections"]
+  "required": ["_id", "_rev", "master"]
 }

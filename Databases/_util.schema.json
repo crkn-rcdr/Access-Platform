@@ -14,6 +14,16 @@
       "type": "string",
       "pattern": "^[0-9]{4}-(?:1[0-2]|0[1-9])-(?:3[01]|[12][0-9]|0[1-9])T(?:2[0-3]|[01][0-9]-(?:[0-5][0-9]):(?:60|[0-5][0-9])Z$"
     },
+    "mime": {
+      "description": "A MIME type",
+      "type": "string",
+      "pattern": "^w+/w+$"
+    },
+    "legacyRepoURL": {
+      "description": "Swift URL of a file in the legacy preservation repository",
+      "type": "string",
+      "pattern": "^https://swift.canadiana.ca/v1/AUTH_crkn/repository/.+/.+"
+    },
     "collections": {
       "description": "Collection ancestry for this collection",
       "type": "array",

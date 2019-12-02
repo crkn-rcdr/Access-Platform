@@ -9,7 +9,7 @@
       "description": "Legacy preservation platform AIP ID",
       "type": "string"
     },
-    "_rev": { "$ref": "./util.schema.json#/definitions/_rev" },
+    "_rev": { "$ref": "./_util.schema.json#/definitions/_rev" },
     "deposits": {
       "description": "empty array created when document first created",
       "type": "array"
