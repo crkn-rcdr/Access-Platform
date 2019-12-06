@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema",
   "$id": "https://github.com/crkn-rcdr/Access-Platform/blob/master/Databases/collection.schema.json",
   "title": "Collection Document Schema",
-  "description": "",
+  "description": "To add:\n* reference to dmd file, if necessary\n* flags for updates",
   "type": "object",
   "properties": {
     "_id": { "$ref": "./_util.schema.json#/definitions/collectionNoid" },
@@ -42,7 +42,6 @@
   "required": [
     "_id",
     "_rev",
-    "slug",
     "label",
     "members",
     "approved",

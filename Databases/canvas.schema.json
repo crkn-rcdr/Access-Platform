@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema",
   "$id": "https://github.com/crkn-rcdr/Access-Platform/blob/master/Databases/canvas.schema.json",
   "title": "Canvas Document Schema",
-  "description": "",
+  "description": "To add:\n* reference to ocr file, if necessary\n* flags for updates",
   "type": "object",
   "properties": {
     "_id": { "$ref": "./_util.schema.json#/definitions/canvasNoid" },
@@ -11,6 +11,10 @@
       "description": "List of human-readable identifiers (in the form '$manifestSlug/$seq'",
       "type": "array",
       "items": { "type": "string", "pattern": "^.+/[0-9].+" }
+    },
+    "supersededBy": {
+      "description": "Canvas which supersedes this one",
+      "$ref": "./_util.schema.json#/definitions/canvasNoid"
     },
     "master": {
       "description": "Path to and information about this canvas's master image",

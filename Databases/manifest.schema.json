@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema",
   "$id": "https://github.com/crkn-rcdr/Access-Platform/blob/master/Databases/manifest.schema.json",
   "title": "Manifest Document Schema",
-  "description": "",
+  "description": "To add:\n* reference to dmd file, if necessary\n* flags for updates",
   "type": "object",
   "properties": {
     "_id": { "$ref": "./_util.schema.json#/definitions/manifestNoid" },
@@ -35,6 +35,10 @@
       "type": "boolean",
       "default": false
     },
+    "supersededBy": {
+      "description": "Manifest which supersedes this one",
+      "$ref": "./_util.schema.json#/definitions/manifestNoid"
+    }
     "collections": { "$ref": "./_util.schema.json#/definitions/collections" },
     "download": {
       "description": "Path to and information about a downloadable file for this object (usually a PDF)",
@@ -47,5 +51,5 @@
       "required": ["url", "mime", "size"]
     }
   },
-  "required": ["_id", "_rev", "slug", "canvases", "approved", "collections"]
+  "required": ["_id", "_rev", "canvases", "approved", "collections"]
 }
