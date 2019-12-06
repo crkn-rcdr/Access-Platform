@@ -38,7 +38,7 @@
     "supersededBy": {
       "description": "Manifest which supersedes this one",
       "$ref": "./_util.schema.json#/definitions/manifestNoid"
-    }
+    },
     "collections": { "$ref": "./_util.schema.json#/definitions/collections" },
     "download": {
       "description": "Path to and information about a downloadable file for this object (usually a PDF)",
