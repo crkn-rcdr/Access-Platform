@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "https://github.com/crkn-rcdr/Access-Platform/blob/master/Databases/collection.schema.json",
+  "title": "Collection Document Schema",
+  "description": "To add:\n* reference to dmd file, if necessary\n* flags for updates",
+  "type": "object",
+  "properties": {
+    "_id": { "$ref": "./_util.schema.json#/definitions/collectionNoid" },
+    "_rev": { "$ref": "./_util.schema.json#/definitions/_rev" },
+    "slug": {
+      "description": "Human-readable identifier",
+      "type": "string"
+    },
+    "label": {
+      "description": "Collection display label",
+      "type": "string"
+    },
+    "members": {
+      "description": "List of collection/manifest NOIDs. For series records that have yet to be fully loaded, members can be null",
+      "type": "array",
+      "items": {
+        "oneOf": [
+          { "$ref": "./_util.schema.json#/definitions/collectionNoid" },
+          { "$ref": "./_util.schema.json#/definitions/manifestNoid" },
+          { "type": "null" }
+        ]
+      }
+    },
+    "approved": {
+      "description": "Collection is approved for public display",
+      "type": "boolean",
+      "default": false
+    },
+    "ordered": {
+      "$comment": "We could perhaps create some kind of collection subclass for series, instead of doing this",
+      "description": "Determines whether the order of the collection's members is important",
+      "type": "boolean",
+      "default": false
+    },
+    "collections": { "$ref": "./_util.schema.json#/definitions/collections" }
+  },
+  "required": [
+    "_id",
+    "_rev",
+    "label",
+    "members",
+    "approved",
+    "ordered",
+    "collections"
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "https://github.com/crkn-rcdr/Access-Platform/blob/master/Databases/manifest.schema.json",
+  "title": "Manifest Document Schema",
+  "description": "To add:\n* reference to dmd file, if necessary\n* flags for updates",
+  "type": "object",
+  "properties": {
+    "_id": { "$ref": "./_util.schema.json#/definitions/manifestNoid" },
+    "_rev": { "$ref": "./_util.schema.json#/definitions/_rev" },
+    "slug": {
+      "description": "Human-readable identifier",
+      "type": "string"
+    },
+    "label": {
+      "description": "Manifest display label",
+      "type": "string"
+    },
+    "canvases": {
+      "description": "List of canvas NOIDs, corresponding to the members of this manifest",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "$ref": "./_util.schema.json#/definitions/canvasNoid" },
+          "label": {
+            "description": "Manifest-specific label for this canvas",
+            "type": "string"
+          }
+        },
+        "required": ["id", "label"]
+      }
+    },
+    "approved": {
+      "description": "Manifest is approved for public display",
+      "type": "boolean",
+      "default": false
+    },
+    "supersededBy": {
+      "description": "Manifest which supersedes this one",
+      "$ref": "./_util.schema.json#/definitions/manifestNoid"
+    }
+    "collections": { "$ref": "./_util.schema.json#/definitions/collections" },
+    "download": {
+      "description": "Path to and information about a downloadable file for this object (usually a PDF)",
+      "type": "object",
+      "properties": {
+        "url": { "$ref": "./_util.schema.json#/definitions/legacyRepoURL" },
+        "mime": { "$ref": "./_util.schema.json#/definitions/mime" },
+        "size": { "type": "number" }
+      },
+      "required": ["url", "mime", "size"]
+    }
+  },
+  "required": ["_id", "_rev", "canvases", "approved", "collections"]
+}
