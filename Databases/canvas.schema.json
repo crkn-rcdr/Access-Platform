@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema",
   "$id": "https://github.com/crkn-rcdr/Access-Platform/blob/master/Databases/canvas.schema.json",
   "title": "Canvas Document Schema",
-  "description": "To add:\n* reference to ocr file, if necessary\n* flags for updates",
+  "description": "",
   "type": "object",
   "properties": {
     "_id": { "$ref": "./_util.schema.json#/definitions/canvasNoid" },
@@ -11,10 +11,6 @@
       "description": "List of human-readable identifiers (in the form '$manifestSlug/$seq'",
       "type": "array",
       "items": { "type": "string", "pattern": "^.+/[0-9].+" }
-    },
-    "supersededBy": {
-      "description": "Canvas which supersedes this one",
-      "$ref": "./_util.schema.json#/definitions/canvasNoid"
     },
     "master": {
       "description": "Path to and information about this canvas's master image",
@@ -37,7 +33,45 @@
         "size": { "type": "number" }
       },
       "required": ["url", "mime", "size"]
+    },
+    "ocrType": {
+      "description": "The type of the OCR XML data associated with this canvas",
+      "type": "string",
+      "enum": ["alto", "txtmap"]
+    },
+    "source": {
+      "description": "Information about this canvas's preservation origin",
+      "type": "object",
+      "properties": {
+        "from": {
+          "description": "Source type. cihm: legacy Canadiana preservation. am: CRKN Archivematica installation",
+          "type": "string",
+          "enum": ["cihm", "am"]
+        },
+        "path": {
+          "description": "cihm Swift path to source image",
+          "type": "string"
+        },
+        "aipId": { "description": "Archivematica AIP ID", "type": "string" },
+        "objId": { "description": "Archivematica Object ID", "type": "string" }
+      },
+      "required": ["from"]
+    },
+    "updateInternalmeta": {
+      "description": "Trigger for updating the manifests that own this canvas in the internalmeta database, or result of an attempted update",
+      "type": "object",
+      "properties": {
+        "requestDate": {
+          "$ref": "./_util.schema.json#/definitions/iso8601datetime"
+        },
+        "processDate": {
+          "$ref": "./_util.schema.json#/definitions/iso8601datetime"
+        },
+        "succeeded": { "type": "boolean" },
+        "message": { "type": "string" }
+      },
+      "required": ["requestDate"]
     }
   },
-  "required": ["_id", "_rev", "master"]
+  "required": ["_id", "_rev", "master", "source"]
 }

@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema",
   "$id": "https://github.com/crkn-rcdr/Access-Platform/blob/master/Databases/collection.schema.json",
   "title": "Collection Document Schema",
-  "description": "To add:\n* reference to dmd file, if necessary\n* flags for updates",
+  "description": "",
   "type": "object",
   "properties": {
     "_id": { "$ref": "./_util.schema.json#/definitions/collectionNoid" },
@@ -26,10 +26,13 @@
         ]
       }
     },
-    "approved": {
-      "description": "Collection is approved for public display",
-      "type": "boolean",
-      "default": false
+    "public": {
+      "allOf": [
+        {
+          "description": "Date on which collection was made public. Remove to take down"
+        },
+        { "$ref": "./_util.schema.json#/definitions/iso8601datetime" }
+      ]
     },
     "ordered": {
       "$comment": "We could perhaps create some kind of collection subclass for series, instead of doing this",
@@ -37,15 +40,36 @@
       "type": "boolean",
       "default": false
     },
-    "collections": { "$ref": "./_util.schema.json#/definitions/collections" }
+    "dmdType": {
+      "description": "The type of the descriptive metadata record associated with this collection",
+      "type": "string",
+      "enum": ["marc", "dc", "issueinfo"]
+    },
+    "collections": { "$ref": "./_util.schema.json#/definitions/collections" },
+    "updateInternalmeta": {
+      "description": "Trigger for updating the internal metadata database with this collection, or result of an attempted update",
+      "type": "object",
+      "properties": {
+        "requestDate": {
+          "$ref": "./_util.schema.json#/definitions/iso8601datetime"
+        },
+        "processDate": {
+          "$ref": "./_util.schema.json#/definitions/iso8601datetime"
+        },
+        "succeeded": { "type": "boolean" },
+        "message": { "type": "string" }
+      },
+      "required": ["requestDate"]
+    }
   },
   "required": [
     "_id",
     "_rev",
+    "slug",
     "label",
     "members",
-    "approved",
     "ordered",
+    "dmdType",
     "collections"
   ]
 }

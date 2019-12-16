@@ -10,9 +10,9 @@
       "type": "string"
     },
     "_rev": { "$ref": "./_util.schema.json#/definitions/_rev" },
-    "deposits": {
-      "description": "empty array created when document first created",
-      "type": "array"
+    "slug": {
+      "description": "Access slug chosen when DIP is smelted",
+      "type": "string"
     },
     "repos": {
       "description": "array of repositories which has this AIP",
@@ -76,7 +76,7 @@
           "$ref": "./_util.schema.json#/definitions/iso8601datetime"
         },
         {
-          "description": "date of when this document was last updated"
+          "description": "date when this document was last updated"
         }
       ]
     }
@@ -88,7 +88,6 @@
     "METS",
     "METSManifestDate",
     "METSDate",
-    "deposits",
     "updated"
   ]
 }

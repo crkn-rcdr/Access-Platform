@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema",
   "$id": "https://github.com/crkn-rcdr/Access-Platform/blob/master/Databases/manifest.schema.json",
   "title": "Manifest Document Schema",
-  "description": "To add:\n* reference to dmd file, if necessary\n* flags for updates",
+  "description": "",
   "type": "object",
   "properties": {
     "_id": { "$ref": "./_util.schema.json#/definitions/manifestNoid" },
@@ -30,14 +30,21 @@
         "required": ["id", "label"]
       }
     },
-    "approved": {
-      "description": "Manifest is approved for public display",
-      "type": "boolean",
-      "default": false
+    "public": {
+      "allOf": [
+        {
+          "description": "Date on which manifest was made public. Remove to take down"
+        },
+        { "$ref": "./_util.schema.json#/definitions/iso8601datetime" }
+      ]
     },
-    "supersededBy": {
-      "description": "Manifest which supersedes this one",
-      "$ref": "./_util.schema.json#/definitions/manifestNoid"
+    "frozen": {
+      "allOf": [
+        {
+          "description": "Date on which manifest was frozen by staff"
+        },
+        { "$ref": "./_util.schema.json#/definitions/iso8601datetime" }
+      ]
     },
     "collections": { "$ref": "./_util.schema.json#/definitions/collections" },
     "download": {
@@ -49,7 +56,35 @@
         "size": { "type": "number" }
       },
       "required": ["url", "mime", "size"]
+    },
+    "dmdType": {
+      "description": "The type of the descriptive metadata record associated with this manifest",
+      "type": "string",
+      "enum": ["marc", "dc", "issueinfo"]
+    },
+    "updateInternalmeta": {
+      "description": "Trigger for updating the internal metadata database with this manifest, or result of an attempted update",
+      "type": "object",
+      "properties": {
+        "requestDate": {
+          "$ref": "./_util.schema.json#/definitions/iso8601datetime"
+        },
+        "processDate": {
+          "$ref": "./_util.schema.json#/definitions/iso8601datetime"
+        },
+        "succeeded": { "type": "boolean" },
+        "message": { "type": "string" }
+      },
+      "required": ["requestDate"]
     }
   },
-  "required": ["_id", "_rev", "canvases", "approved", "collections"]
+  "required": [
+    "_id",
+    "_rev",
+    "slug",
+    "label",
+    "canvases",
+    "dmdType",
+    "collections"
+  ]
 }
