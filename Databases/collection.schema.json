@@ -43,23 +43,16 @@
     "dmdType": {
       "description": "The type of the descriptive metadata record associated with this collection",
       "type": "string",
-      "enum": ["marc", "dc", "issueinfo"]
+      "enum": ["marc", "dc"]
     },
     "collections": { "$ref": "./_util.schema.json#/definitions/collections" },
     "updateInternalmeta": {
-      "description": "Trigger for updating the internal metadata database with this collection, or result of an attempted update",
-      "type": "object",
-      "properties": {
-        "requestDate": {
-          "$ref": "./_util.schema.json#/definitions/iso8601datetime"
+      "allOf": [
+        {
+          "description": "Trigger for updating the internalmeta database with this collection, or result of an attempted update"
         },
-        "processDate": {
-          "$ref": "./_util.schema.json#/definitions/iso8601datetime"
-        },
-        "succeeded": { "type": "boolean" },
-        "message": { "type": "string" }
-      },
-      "required": ["requestDate"]
+        { "$ref": "./_util.schema.json/#definitions/update" }
+      ]
     }
   },
   "required": [

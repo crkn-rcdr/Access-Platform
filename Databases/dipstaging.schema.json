@@ -79,6 +79,14 @@
           "description": "date when this document was last updated"
         }
       ]
+    },
+    "smelt": {
+      "allOf": [
+        {
+          "description": "Trigger for and result of running Smelter on this AIP"
+        },
+        { "$ref": "./_util.schema.json/#definitions/update" }
+      ]
     }
   },
   "required": [

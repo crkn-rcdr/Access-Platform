@@ -48,6 +48,20 @@
       "type": "string",
       "pattern": "^c[0-9]+[0-9bcdfghjkmnpqrstvwxz]{2}[0-9][0-9bcdfghjkmnpqrstvwxz]{2][0-9][0-9bcdfghjkmnpqrstvwxz]{2}[0-9][0-9bcdfghjkmnpqrstvwxz]$"
     },
+    "update": {
+      "type": "object",
+      "properties": {
+        "requestDate": {
+          "$ref": "./_util.schema.json#/definitions/iso8601datetime"
+        },
+        "processDate": {
+          "$ref": "./_util.schema.json#/definitions/iso8601datetime"
+        },
+        "succeeded": { "type": "boolean" },
+        "message": { "type": "string" }
+      },
+      "required": ["requestDate"]
+    },
     "cmr": {
       "description": "A descriptive metadata record",
       "type": "object",
