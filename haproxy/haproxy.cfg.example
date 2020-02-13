@@ -53,7 +53,7 @@ frontend public
   acl is_couch hdr_dom(host) -i -m beg couch. couch-
   acl is_auth hdr_dom(host) -i -m beg auth. auth-
   acl is_admin hdr_dom(host) -i -m beg admin. admin-
-  acl is_https hdr_dom(host) -i -m beg image. image- couch. couch- auth. auth- image. image-
+  acl is_https hdr_dom(host) -i -m beg image. image- couch. couch- auth. auth- admin. admin-
 
   # HTTP Request rewrites
   redirect scheme https code 301 if !{ ssl_fc } is_https
