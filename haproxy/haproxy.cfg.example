@@ -16,11 +16,18 @@ global
 
   tune.ssl.default-dh-param 4096
 
+  # debug logging
+  log stdout format raw local0 info
+
 defaults
   mode http
   timeout connect 5000ms
   timeout client 50000ms
   timeout server 50000ms
+
+  # debug logging
+  log global
+  option httplog
 
 frontend public
   bind :80
@@ -61,19 +68,19 @@ frontend public
   use_backend sapindale if is_admin
 
 backend apache
-  server local_apache 172.30.0.4:80
+  server local 172.30.0.4:80
 
 backend cap
-  server local_cap 172.30.0.3:3011
+  server local 172.30.0.3:3011
 
 backend cantaloupe
-  server local_cantaloupe 172.30.0.5:8182
+  server local 172.30.0.5:8182
 
 backend upholstery
-  server local_couch 172.30.0.6:80
+  server local 172.30.0.6:80
 
 backend amsa
-  server local_auth 172.30.0.7:80
+  server local 172.30.0.7:80
 
 backend sapindale
-  server local_admin 172.30.0.8:80
+  server local 172.30.0.8:80
