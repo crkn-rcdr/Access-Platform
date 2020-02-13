@@ -53,8 +53,10 @@ frontend public
   acl is_couch hdr_dom(host) -i -m beg couch. couch-
   acl is_auth hdr_dom(host) -i -m beg auth. auth-
   acl is_admin hdr_dom(host) -i -m beg admin. admin-
+  acl is_https hdr_dom(host) -i -m beg image. image- couch. couch- auth. auth- image. image-
 
   # HTTP Request rewrites
+  redirect scheme https code 301 if !{ ssl_fc } is_https
   http-request redirect code 301 location http://www.canadiana.ca/%[capture.req.uri] if is_unused_dom
   http-request redirect code 301 location http://gac.canadiana.ca/%[capture.req.uri] if is_gac
   http-request deny if is_image is_image_api
@@ -80,7 +82,7 @@ backend upholstery
   server local 172.30.0.6:80
 
 backend amsa
-  server local 172.30.0.7:80
+  server local 172.30.0.7:8080
 
 backend sapindale
   server local 172.30.0.8:80
