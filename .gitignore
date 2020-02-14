@@ -2,3 +2,4 @@ haproxy/*.crt
 haproxy/*.key
 haproxy/*.pem
 haproxy/haproxy.cfg
+haproxy/error/node_modules

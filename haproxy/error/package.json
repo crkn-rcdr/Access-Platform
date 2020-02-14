@@ -1,0 +1,11 @@
+{
+  "name": "haproxy-error-generator",
+  "version": "1.0.0",
+  "description": "HAProxy error page generator",
+  "main": "generate.js",
+  "author": "Sascha Adler <sadler@crkn.ca>",
+  "license": "MIT",
+  "dependencies": {
+    "html-minifier": "^4.0.0"
+  }
+}
