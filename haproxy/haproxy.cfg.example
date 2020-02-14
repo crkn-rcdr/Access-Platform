@@ -50,16 +50,16 @@ frontend public
   acl is_static path_beg -i /cihm-error/ /schema /standards/
   acl is_image hdr_dom(host) -i -m beg image. image-
   acl is_image_api path_beg -i /status /configuration /tasks
-  acl is_couch hdr_dom(host) -i -m beg couch. couch-
+  acl is_couch hdr_dom(host) -i -m beg upholstery. upholstery-
   acl is_auth hdr_dom(host) -i -m beg auth. auth-
   acl is_admin hdr_dom(host) -i -m beg admin. admin-
-  acl is_https hdr_dom(host) -i -m beg image. image- couch. couch- auth. auth- admin. admin-
+  acl is_https hdr_dom(host) -i -m beg image. image- upholstery. upholstery- auth. auth- admin. admin-
 
   # HTTP Request rewrites
-  redirect scheme https code 301 if !{ ssl_fc } is_https
   http-request redirect code 301 location http://www.canadiana.ca/%[capture.req.uri] if is_unused_dom
   http-request redirect code 301 location http://gac.canadiana.ca/%[capture.req.uri] if is_gac
   http-request deny if is_image is_image_api
+  redirect scheme https code 301 if !{ ssl_fc } is_https
 
   # backend selection
   default_backend cap
@@ -79,10 +79,10 @@ backend cantaloupe
   server local 172.30.0.5:8182
 
 backend upholstery
-  server local 172.30.0.6:80
+  server local 172.30.0.6:8080
 
 backend amsa
   server local 172.30.0.7:8080
 
 backend sapindale
-  server local 172.30.0.8:80
+  server local 172.30.0.8:8080
