@@ -42,6 +42,10 @@ frontend public
   http-request set-header X-Forwarded-Proto https if { ssl_fc }
   http-request set-header X-Forwarded-Proto http if !{ ssl_fc }
 
+  # Used to log the protocol and host
+  http-request capture req.hdr(X-Forwarded-Proto) len 6
+  http-request capture req.hdr(Host) len 30
+  
   # ACLs
   acl is_unused_dom hdr_dom(host) -i online.canadiana.ca eco.canadiana.ca enligne.canadiana.ca canadianaonline.ca www.canadianaonline.ca canadianaenligne.ca www.canadianaenligne.ca whf.canadiana.ca 1812.canadiana.ca
   acl is_gac hdr_dom(host) -i dfait-aeci.canadiana.ca
@@ -56,8 +60,8 @@ frontend public
   acl is_https hdr_dom(host) -i -m beg image. image- upholstery. upholstery- auth. auth- admin. admin-
 
   # HTTP Request rewrites
-  http-request redirect code 301 location http://www.canadiana.ca/%[capture.req.uri] if is_unused_dom
-  http-request redirect code 301 location http://gac.canadiana.ca/%[capture.req.uri] if is_gac
+  http-request redirect code 301 location http://www.canadiana.ca%[capture.req.uri] if is_unused_dom
+  http-request redirect code 301 location http://gac.canadiana.ca%[capture.req.uri] if is_gac
   http-request deny if is_image is_image_api
   redirect scheme https code 301 if !{ ssl_fc } is_https
 
