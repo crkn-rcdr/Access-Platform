@@ -17,9 +17,11 @@ const headerForm = `HTTP/1.0 $CODE\r\nCache-Control: no-cache\r\nConnection: clo
 
 const errors = {
   400: "Bad Request",
-  401: "Unauthorized",
   403: "Forbidden",
+  405: "Method Not Allowed",
   408: "Request Timeout",
+  425: "Too Early",
+  429: "Too Many Requests",
   500: "Internal Server Error",
   502: "Bad Gateway",
   503: "Service Unavailable",

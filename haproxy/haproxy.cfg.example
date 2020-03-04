@@ -30,9 +30,11 @@ defaults
   option httplog
 
   errorfile 400 /usr/local/etc/haproxy/error/400.http
-  errorfile 401 /usr/local/etc/haproxy/error/401.http
   errorfile 403 /usr/local/etc/haproxy/error/403.http
+  errorfile 405 /usr/local/etc/haproxy/error/405.http
   errorfile 408 /usr/local/etc/haproxy/error/408.http
+  errorfile 425 /usr/local/etc/haproxy/error/425.http
+  errorfile 429 /usr/local/etc/haproxy/error/429.http
   errorfile 500 /usr/local/etc/haproxy/error/500.http
   errorfile 502 /usr/local/etc/haproxy/error/502.http
   errorfile 503 /usr/local/etc/haproxy/error/503.http
@@ -49,7 +51,6 @@ frontend public
   option forwardfor
   http-request set-header X-Forwarded-Host %[req.hdr(Host)]
   http-request set-header X-Forwarded-Proto https if { ssl_fc }
-  http-request set-header X-Forwarded-Proto http if !{ ssl_fc }
 
   # Used to log the protocol and host
   http-request capture req.hdr(X-Forwarded-Proto) len 6
@@ -66,13 +67,12 @@ frontend public
   acl is_couch hdr_dom(host) -i -m beg upholstery. upholstery-
   acl is_auth hdr_dom(host) -i -m beg auth. auth-
   acl is_admin hdr_dom(host) -i -m beg admin. admin-
-  acl is_https hdr_dom(host) -i -m beg image. image- upholstery. upholstery- auth. auth- admin. admin-
 
   # HTTP Request rewrites
   http-request redirect code 301 location http://www.canadiana.ca%[capture.req.uri] if is_unused_dom
   http-request redirect code 301 location http://gac.canadiana.ca%[capture.req.uri] if is_gac
   http-request deny if is_image is_image_api
-  redirect scheme https code 301 if !{ ssl_fc } is_https
+  redirect scheme https code 301 if !{ ssl_fc }
 
   # backend selection
   default_backend cap
