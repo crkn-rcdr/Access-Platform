@@ -86,5 +86,5 @@
       ]
     }
   },
-  "required": ["_id", "_rev", "label", "dmdType", "collections"]
+  "required": ["_id", "_rev", "label", "slug", "dmdType"]
 }

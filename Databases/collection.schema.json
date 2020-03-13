@@ -54,14 +54,5 @@
       ]
     }
   },
-  "required": [
-    "_id",
-    "_rev",
-    "slug",
-    "label",
-    "members",
-    "ordered",
-    "dmdType",
-    "collections"
-  ]
+  "required": ["_id", "_rev", "slug", "label", "members", "ordered", "dmdType"]
 }
