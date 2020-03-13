@@ -45,7 +45,6 @@
       "type": "string",
       "enum": ["marc", "dc"]
     },
-    "collections": { "$ref": "./_util.schema.json#/definitions/collections" },
     "updateInternalmeta": {
       "allOf": [
         {
