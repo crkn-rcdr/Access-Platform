@@ -12,8 +12,16 @@
       "type": "string"
     },
     "label": {
-      "description": "Collection display label",
-      "type": "string"
+      "allOf": [
+        { "description": "Collection display label" },
+        { "$ref": "schemas/_util.json#/definitions/iiifTextValue" }
+      ]
+    },
+    "summary": {
+      "allOf": [
+        { "description": "Short summary about the collection" },
+        { "$ref": "schemas/_util.json#/definitions/iiifTextValue" }
+      ]
     },
     "members": {
       "description": "List of collection/manifest NOIDs. For series records that have yet to be fully loaded, members can be null",

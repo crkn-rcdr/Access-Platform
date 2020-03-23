@@ -62,6 +62,15 @@
       },
       "required": ["requestDate"]
     },
+    "iiifTextValue": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
     "cmr": {
       "description": "A descriptive metadata record",
       "type": "object",

@@ -15,8 +15,10 @@
       "description": "Human-readable identifier that used to identify this manifest, but now identifies a newer manifest"
     },
     "label": {
-      "description": "Manifest display label",
-      "type": "string"
+      "allOf": [
+        { "description": "Manifest display label" },
+        { "$ref": "schemas/_util.json#/definitions/iiifTextValue" }
+      ]
     },
     "canvases": {
       "description": "List of canvas NOIDs, corresponding to the members of this manifest",
@@ -26,8 +28,10 @@
         "properties": {
           "id": { "$ref": "schemas/_util.json#/definitions/canvasNoid" },
           "label": {
-            "description": "Manifest-specific label for this canvas",
-            "type": "string"
+            "allOf": [
+              { "description": "Manifest-specific label for this canvas" },
+              { "$ref": "schemas/_util.json#/definitions/iiifTextValue" }
+            ]
           }
         },
         "required": ["id", "label"]
