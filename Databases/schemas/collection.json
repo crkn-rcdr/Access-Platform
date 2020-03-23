@@ -23,7 +23,7 @@
         { "$ref": "schemas/_util.json#/definitions/iiifTextValue" }
       ]
     },
-    "members": {
+    "items": {
       "description": "List of collection/manifest NOIDs. For series records that have yet to be fully loaded, members can be null",
       "type": "array",
       "items": {
@@ -62,5 +62,5 @@
       ]
     }
   },
-  "required": ["_id", "_rev", "slug", "label", "members", "ordered", "dmdType"]
+  "required": ["_id", "_rev", "slug", "label", "items", "ordered", "dmdType"]
 }
