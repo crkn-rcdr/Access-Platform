@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "https://github.com/crkn-rcdr/Access-Platform/blob/master/Databases/schemas/slug.json",
+  "title": "Slug Document Schema",
+  "description": "Slug resolver database. Once I figure out how to make properties mutually exclusive in JSON Schema, I'll do so with noid and slug.",
+  "type": "object",
+  "properties": {
+    "_id": { "type": "string" },
+    "_rev": { "$ref": "schemas/_util.json#/definitions/_rev" },
+    "type": {
+      "description": "Type of NOID this slug points to",
+      "type": "string",
+      "enum": ["manifest", "collection"]
+    },
+    "noid": {
+      "allOf": [
+        { "description": "NOID that the slug points to" },
+        {
+          "oneOf": [
+            { "$ref": "schemas/_util.json#/definitions/collectionNoid" },
+            { "$ref": "schemas/_util.json#/definitions/manifestNoid" }
+          ]
+        }
+      ]
+    },
+    "slug": {
+      "description": "Some slugs will have been replaced by other slugs, which we'll want to keep track of",
+      "type": "string"
+    }
+  },
+  "required": ["_id", "_rev", "type"]
+}

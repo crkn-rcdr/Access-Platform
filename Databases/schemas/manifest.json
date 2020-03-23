@@ -7,12 +7,13 @@
   "properties": {
     "_id": { "$ref": "schemas/_util.json#/definitions/manifestNoid" },
     "_rev": { "$ref": "schemas/_util.json#/definitions/_rev" },
-    "slug": {
-      "description": "Human-readable identifier",
-      "type": "string"
-    },
-    "formerSlug": {
-      "description": "Human-readable identifier that used to identify this manifest, but now identifies a newer manifest"
+    "supersededBy": {
+      "allOf": [
+        {
+          "description": "The manifest that supersedes this one, when applicable"
+        },
+        { "$ref": "schemas/_util.json#/definitions/manifestNoid" }
+      ]
     },
     "label": {
       "allOf": [
@@ -90,5 +91,5 @@
       ]
     }
   },
-  "required": ["_id", "_rev", "label", "slug", "dmdType"]
+  "required": ["_id", "_rev", "label", "dmdType", "canvases"]
 }

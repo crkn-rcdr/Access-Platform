@@ -7,10 +7,6 @@
   "properties": {
     "_id": { "$ref": "schemas/_util.json#/definitions/collectionNoid" },
     "_rev": { "$ref": "schemas/_util.json#/definitions/_rev" },
-    "slug": {
-      "description": "Human-readable identifier",
-      "type": "string"
-    },
     "label": {
       "allOf": [
         { "description": "Collection display label" },
@@ -62,5 +58,5 @@
       ]
     }
   },
-  "required": ["_id", "_rev", "slug", "label", "items", "ordered", "dmdType"]
+  "required": ["_id", "_rev", "label", "items", "ordered", "dmdType"]
 }
