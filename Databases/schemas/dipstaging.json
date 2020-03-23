@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema",
-  "$id": "https://github.com/crkn-rcdr/Access-Platform/blob/master/Databases/dipstaging.schema.json",
+  "$id": "https://github.com/crkn-rcdr/Access-Platform/blob/master/Databases/schemas/dipstaging.json",
   "title": "dipstaging Document Schema",
   "description": "dipstaging documents are generated for every AIP in the legacy preservation platform. They imply the availability of an AIP for import into the access platform.",
   "type": "object",
@@ -9,7 +9,7 @@
       "description": "Legacy preservation platform AIP ID",
       "type": "string"
     },
-    "_rev": { "$ref": "./_util.schema.json#/definitions/_rev" },
+    "_rev": { "$ref": "schemas/_util.json#/definitions/_rev" },
     "slug": {
       "description": "Access slug chosen when DIP is smelted",
       "type": "string"
@@ -23,7 +23,7 @@
     "reposManifestDate": {
       "allOf": [
         {
-          "$ref": "./_util.schema.json#/definitions/iso8601datetime"
+          "$ref": "schemas/_util.json#/definitions/iso8601datetime"
         },
         {
           "description": "date on the AIP manifest. Used to detect when the AIP has been updated, so this date should be stored with any processing."
@@ -33,7 +33,7 @@
     "reposDate": {
       "allOf": [
         {
-          "$ref": "./_util.schema.json#/definitions/iso8601datetime"
+          "$ref": "schemas/_util.json#/definitions/iso8601datetime"
         },
         {
           "description": "date when the above two fields were filled in."
@@ -53,7 +53,7 @@
     "METSManifestDate": {
       "allOf": [
         {
-          "$ref": "./_util.schema.json#/definitions/iso8601datetime"
+          "$ref": "schemas/_util.json#/definitions/iso8601datetime"
         },
         {
           "description": "date on the AIP manifest when this field was filled in"
@@ -63,7 +63,7 @@
     "METSDate": {
       "allOf": [
         {
-          "$ref": "./_util.schema.json#/definitions/iso8601datetime"
+          "$ref": "schemas/_util.json#/definitions/iso8601datetime"
         },
         {
           "description": "date when the above two fields were filled in."
@@ -73,7 +73,7 @@
     "updated": {
       "allOf": [
         {
-          "$ref": "./_util.schema.json#/definitions/iso8601datetime"
+          "$ref": "schemas/_util.json#/definitions/iso8601datetime"
         },
         {
           "description": "date when this document was last updated"
@@ -85,7 +85,7 @@
         {
           "description": "Trigger for and result of running Smelter on this AIP"
         },
-        { "$ref": "./_util.schema.json/#definitions/update" }
+        { "$ref": "schemas/_util.json#/definitions/update" }
       ]
     }
   },

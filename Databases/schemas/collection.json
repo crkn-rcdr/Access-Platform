@@ -1,12 +1,12 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema",
-  "$id": "https://github.com/crkn-rcdr/Access-Platform/blob/master/Databases/collection.schema.json",
+  "$id": "https://github.com/crkn-rcdr/Access-Platform/blob/master/Databases/schemas/collection.json",
   "title": "Collection Document Schema",
   "description": "",
   "type": "object",
   "properties": {
-    "_id": { "$ref": "./_util.schema.json#/definitions/collectionNoid" },
-    "_rev": { "$ref": "./_util.schema.json#/definitions/_rev" },
+    "_id": { "$ref": "schemas/_util.json#/definitions/collectionNoid" },
+    "_rev": { "$ref": "schemas/_util.json#/definitions/_rev" },
     "slug": {
       "description": "Human-readable identifier",
       "type": "string"
@@ -20,8 +20,8 @@
       "type": "array",
       "items": {
         "oneOf": [
-          { "$ref": "./_util.schema.json#/definitions/collectionNoid" },
-          { "$ref": "./_util.schema.json#/definitions/manifestNoid" },
+          { "$ref": "schemas/_util.json#/definitions/collectionNoid" },
+          { "$ref": "schemas/_util.json#/definitions/manifestNoid" },
           { "type": "null" }
         ]
       }
@@ -31,7 +31,7 @@
         {
           "description": "Date on which collection was made public. Remove to take down"
         },
-        { "$ref": "./_util.schema.json#/definitions/iso8601datetime" }
+        { "$ref": "schemas/_util.json#/definitions/iso8601datetime" }
       ]
     },
     "ordered": {
@@ -50,7 +50,7 @@
         {
           "description": "Trigger for updating the internalmeta database with this collection, or result of an attempted update"
         },
-        { "$ref": "./_util.schema.json/#definitions/update" }
+        { "$ref": "schemas/_util.json#/definitions/update" }
       ]
     }
   },
