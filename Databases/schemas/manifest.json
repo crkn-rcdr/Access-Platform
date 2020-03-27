@@ -91,5 +91,5 @@
       ]
     }
   },
-  "required": ["_id", "_rev", "label", "dmdType", "canvases"]
+  "required": ["_id", "_rev", "label", "canvases"]
 }

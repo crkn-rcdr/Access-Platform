@@ -58,5 +58,5 @@
       ]
     }
   },
-  "required": ["_id", "_rev", "label", "items", "ordered", "dmdType"]
+  "required": ["_id", "_rev", "label", "items", "ordered"]
 }
