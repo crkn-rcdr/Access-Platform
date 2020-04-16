@@ -49,7 +49,7 @@
     "masterPages": {
       "description": "List of page labels for a born-digital object",
       "type": "array",
-      "items": { "type": "string" }
+      "items": { "$ref": "schemas/_util.json#/definitions/iiifTextValue" }
     },
     "public": {
       "allOf": [
