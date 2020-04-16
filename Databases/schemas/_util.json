@@ -15,10 +15,9 @@
       "type": "string",
       "pattern": "^w+/w+$"
     },
-    "legacyRepoURL": {
-      "description": "Swift URL of a file in the legacy preservation repository",
-      "type": "string",
-      "pattern": "^https://swift.canadiana.ca/v1/AUTH_crkn/repository/.+/.+"
+    "legacyRepoPath": {
+      "description": "Path to a file in the legacy preservation repository. Will need to be prepended with a Swift account URL",
+      "type": "string"
     },
     "collections": {
       "description": "Collection ancestry for this collection",
