@@ -6,7 +6,6 @@
   "type": "object",
   "properties": {
     "_id": { "$ref": "schemas/_util.json#/definitions/canvasNoid" },
-    "_rev": { "$ref": "schemas/_util.json#/definitions/_rev" },
     "master": {
       "description": "Path to and information about this canvas's master image",
       "type": "object",
@@ -68,5 +67,5 @@
       ]
     }
   },
-  "required": ["_id", "_rev", "master", "source"]
+  "required": ["_id", "master", "source"]
 }

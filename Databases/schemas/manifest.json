@@ -6,7 +6,6 @@
   "type": "object",
   "properties": {
     "_id": { "$ref": "schemas/_util.json#/definitions/manifestNoid" },
-    "_rev": { "$ref": "schemas/_util.json#/definitions/_rev" },
     "supersededBy": {
       "allOf": [
         {
@@ -91,5 +90,5 @@
       ]
     }
   },
-  "required": ["_id", "_rev", "label", "canvases"]
+  "required": ["_id", "label", "canvases"]
 }

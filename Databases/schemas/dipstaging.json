@@ -9,7 +9,6 @@
       "description": "Legacy preservation platform AIP ID",
       "type": "string"
     },
-    "_rev": { "$ref": "schemas/_util.json#/definitions/_rev" },
     "slug": {
       "description": "Access slug chosen when DIP is smelted",
       "type": "string"

@@ -5,10 +5,6 @@
   "description": "",
   "type": "object",
   "definitions": {
-    "_rev": {
-      "description": "CouchDB revision number",
-      "type": "string"
-    },
     "iso8601datetime": {
       "description": "ISO 8601 datetime, in UTC",
       "type": "string",

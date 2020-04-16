@@ -6,7 +6,6 @@
   "type": "object",
   "properties": {
     "_id": { "type": "string" },
-    "_rev": { "$ref": "schemas/_util.json#/definitions/_rev" },
     "type": {
       "description": "Type of NOID this slug points to",
       "type": "string",
@@ -28,5 +27,5 @@
       "type": "string"
     }
   },
-  "required": ["_id", "_rev", "type"]
+  "required": ["_id", "type"]
 }
