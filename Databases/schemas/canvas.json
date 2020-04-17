@@ -33,12 +33,9 @@
       "enum": ["alto", "txtmap"]
     },
     "public": {
-      "allOf": [
-        {
-          "description": "Date on which canvas was made public. Remove to take down"
-        },
-        { "$ref": "schemas/_util.json#/definitions/iso8601datetime" }
-      ]
+      "description": "Date on which canvas was made public. Remove to take down",
+      "type": "string",
+      "format": "date-time"
     },
     "source": {
       "description": "Information about this canvas's preservation origin",

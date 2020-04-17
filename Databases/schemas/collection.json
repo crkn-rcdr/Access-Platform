@@ -30,12 +30,9 @@
       }
     },
     "public": {
-      "allOf": [
-        {
-          "description": "Date on which collection was made public. Remove to take down"
-        },
-        { "$ref": "schemas/_util.json#/definitions/iso8601datetime" }
-      ]
+      "description": "Date on which collection was made public. Remove to take down",
+      "type": "string",
+      "format": "date-time"
     },
     "ordered": {
       "$comment": "We could perhaps create some kind of collection subclass for series, instead of doing this",

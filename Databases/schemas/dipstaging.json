@@ -20,24 +20,14 @@
       "minItems": 1
     },
     "reposManifestDate": {
-      "allOf": [
-        {
-          "$ref": "schemas/_util.json#/definitions/iso8601datetime"
-        },
-        {
-          "description": "date on the AIP manifest. Used to detect when the AIP has been updated, so this date should be stored with any processing."
-        }
-      ]
+      "description": "date on the AIP manifest. Used to detect when the AIP has been updated, so this date should be stored with any processing.",
+      "type": "string",
+      "format": "date-time"
     },
     "reposDate": {
-      "allOf": [
-        {
-          "$ref": "schemas/_util.json#/definitions/iso8601datetime"
-        },
-        {
-          "description": "date when the above two fields were filled in."
-        }
-      ]
+      "description": "date when the above two fields were filled in.",
+      "type": "string",
+      "format": "date-time"
     },
     "METS": {
       "type": "array",
@@ -50,34 +40,19 @@
       }
     },
     "METSManifestDate": {
-      "allOf": [
-        {
-          "$ref": "schemas/_util.json#/definitions/iso8601datetime"
-        },
-        {
-          "description": "date on the AIP manifest when this field was filled in"
-        }
-      ]
+      "description": "date on the AIP manifest when this field was filled in",
+      "type": "string",
+      "format": "date-time"
     },
     "METSDate": {
-      "allOf": [
-        {
-          "$ref": "schemas/_util.json#/definitions/iso8601datetime"
-        },
-        {
-          "description": "date when the above two fields were filled in."
-        }
-      ]
+      "description": "date when the above two fields were filled in.",
+      "type": "string",
+      "format": "date-time"
     },
     "updated": {
-      "allOf": [
-        {
-          "$ref": "schemas/_util.json#/definitions/iso8601datetime"
-        },
-        {
-          "description": "date when this document was last updated"
-        }
-      ]
+      "description": "date when this document was last updated",
+      "type": "string",
+      "format": "date-time"
     },
     "smelt": {
       "allOf": [
