@@ -62,33 +62,6 @@
           "type": "string"
         }
       }
-    },
-    "cmr": {
-      "description": "A descriptive metadata record",
-      "type": "object",
-      "properties": {
-        "depositor": {},
-        "pubmin": {},
-        "pubmax": {},
-        "lang": {},
-        "identifier": {},
-        "ti": {},
-        "au": {},
-        "pu": {},
-        "su": {},
-        "no": {},
-        "no_rights": {},
-        "no_source": {},
-        "ab": {},
-        "parlLabel": {},
-        "parlChamber": {},
-        "parlSession": {},
-        "parlType": {},
-        "parlNode": {},
-        "parlReportTitle": {},
-        "parlCallNumber": {},
-        "parlPrimeMinisters": {}
-      }
     }
   }
 }
