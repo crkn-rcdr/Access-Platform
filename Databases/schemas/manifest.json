@@ -88,6 +88,14 @@
                 "size": { "type": "number" }
               },
               "required": ["size"]
+            },
+            "updatePdf": {
+              "allOf": [
+                {
+                  "description": "Trigger for updating the manifest's single or full-page PDFs, or result of an attempted update"
+                },
+                { "$ref": "schemas/_util.json#/definitions/update" }
+              ]
             }
           },
           "required": ["type", "canvases"]
