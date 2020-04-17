@@ -6,11 +6,6 @@
   "type": "object",
   "properties": {
     "_id": { "$ref": "schemas/_util.json#/definitions/canvasNoid" },
-    "public": {
-      "description": "Date on which canvas was made public. Remove to take down",
-      "type": "string",
-      "format": "date-time"
-    },
     "source": {
       "description": "Information about this canvas's preservation origin",
       "type": "object",
