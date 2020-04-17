@@ -9,20 +9,38 @@
     "source": {
       "description": "Information about this canvas's preservation origin",
       "type": "object",
-      "properties": {
-        "from": {
-          "description": "Source type. cihm: legacy Canadiana preservation. am: CRKN Archivematica installation",
-          "type": "string",
-          "enum": ["cihm", "am"]
+      "oneOf": [
+        {
+          "properties": {
+            "from": {
+              "description": "Sourced from legacy Canadiana preservation",
+              "const": "cihm"
+            },
+            "path": {
+              "description": "cihm Swift path to source image",
+              "type": "string"
+            }
+          },
+          "required": ["from", "path"]
         },
-        "path": {
-          "description": "cihm Swift path to source image",
-          "type": "string"
-        },
-        "aipId": { "description": "Archivematica AIP ID", "type": "string" },
-        "objId": { "description": "Archivematica Object ID", "type": "string" }
-      },
-      "required": ["from"]
+        {
+          "properties": {
+            "from": {
+              "description": "Sourced from CRKN Archivematica installation",
+              "const": "am"
+            },
+            "aipId": {
+              "description": "Archivematica AIP ID",
+              "type": "string"
+            },
+            "objId": {
+              "description": "Archivematica Object ID",
+              "type": "string"
+            }
+          },
+          "required": ["from", "aipId", "objId"]
+        }
+      ]
     },
     "orphan": {
       "description": "As time goes on or errors take place, some canvases may no longer be referenced by manifest. These canvases may be marked as orphans by setting this flag.",
