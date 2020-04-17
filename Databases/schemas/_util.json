@@ -8,7 +8,7 @@
     "mime": {
       "description": "A MIME type",
       "type": "string",
-      "pattern": "^w+/w+$"
+      "pattern": "^\\w+/\\w+$"
     },
     "legacyRepoPath": {
       "description": "Path to a file in the legacy preservation repository. Will need to be prepended with a Swift account URL",
