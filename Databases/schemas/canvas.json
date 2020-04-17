@@ -71,6 +71,11 @@
       },
       "required": ["from"]
     },
+    "orphan": {
+      "description": "As time goes on or errors take place, some canvases may no longer be referenced by manifest. These canvases may be marked as orphans by setting this flag.",
+      "type": "boolean",
+      "default": false
+    },
     "updateInternalmeta": {
       "allOf": [
         {
