@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema",
   "$id": "https://github.com/crkn-rcdr/Access-Platform/blob/master/Databases/schemas/slug.json",
   "title": "Slug Document Schema",
-  "description": "Slug resolver database. Once I figure out how to make properties mutually exclusive in JSON Schema, I'll do so with noid and slug.",
+  "description": "Slug resolver database. Intentionally simple; all logic about when and how to handle pointing slugs to different NOIDs should be found elsewhere.",
   "type": "object",
   "properties": {
     "_id": { "type": "string" },
@@ -22,9 +22,10 @@
         }
       ]
     },
-    "slug": {
-      "description": "Some slugs will have been replaced by other slugs, which we'll want to keep track of",
-      "type": "string"
+    "aliases": {
+      "description": "If a slug needs to be changed (e.g. for a typo), the old slug can redirect to the new one if it's found here",
+      "type": "array",
+      "items": { "type": "string" }
     }
   },
   "required": ["_id", "type"]
