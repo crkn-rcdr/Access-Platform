@@ -32,11 +32,6 @@
           "type": "string",
           "format": "date-time"
         },
-        "frozen": {
-          "description": "Date on which manifest was frozen by staff",
-          "type": "string",
-          "format": "date-time"
-        },
         "updateInternalmeta": {
           "allOf": [
             {
@@ -47,6 +42,35 @@
         }
       },
       "required": ["_id", "label"]
+    },
+    {
+      "oneOf": [
+        {
+          "properties": {
+            "frozen": {
+              "description": "Date on which manifest was frozen by staff",
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          "required": ["frozen"]
+        },
+        {
+          "properties": {
+            "freezeParameters": {
+              "description": "Parameters that determine what happens with this 'still-fresh' manifest is frozen. This may be extended as needs require. Note that this object is required for fresh manifests, but it can be empty",
+              "type": "object",
+              "properties": {
+                "slug": {
+                  "description": "Slug that will point to this manifest when it is frozen. If the slug points to a different manifest, it will be assumed that this manifest supersedes that one.",
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": ["freezeParameters"]
+        }
+      ]
     },
     {
       "oneOf": [
