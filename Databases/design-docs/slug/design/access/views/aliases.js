@@ -6,6 +6,6 @@ module.exports = {
         emit(thisalias, null);
       });
     };
-    emit(doc['_id'],null);
+    emit(doc._id,null);
   }
 };
