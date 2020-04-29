@@ -1,0 +1,102 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Canadiana Access Platform",
+    "version": "1.0"
+  },
+  "servers": [{ "url": "https://upholstery.canadiana.ca/1" }],
+  "security": [{ "bearerAuth": [] }],
+  "paths": {
+    "/slug/{id}": {
+      "get": {
+        "summary": "Resolves a slug",
+        "description": "Slugs are non-opaque identifiers we use to catalogue and refer to logical concepts in the access platform; namely, manifests and collections. Resolving a slug provides access to the underlying data corresponding to the access object.\n\nSlug records can contain aliases, which allow slugs to be updated in case of typographical errors or other needs. This operation will indicate in its response whether or not the slug is an alias.",
+        "operationId": "resolveSlug",
+        "responses": {
+          "200": {
+            "description": "The slug exists",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Slug" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/schema/Unauthorized" },
+          "404": { "$ref": "#/components/schema/NotFound" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "tokenAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "responses": {
+      "NotFound": {
+        "description": "The specified resource was not found.",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Error" }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "Your credentials for accessing this operation are either missing or invalid.",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Error" }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "Slug": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The slug itself",
+            "type": "string"
+          },
+          "noid": {
+            "description": "The NOID that the slug resolves to",
+            "type": "string"
+          },
+          "type": {
+            "description": "The type of object that the slug resolves to",
+            "type": "string",
+            "enum": ["collection", "manifest"]
+          },
+          "aliasOf": {
+            "description": "The slug that this slug is aliased to",
+            "type": "string"
+          },
+          "aliases": {
+            "description": "Aliases that will redirect to this slug",
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        },
+        "required": ["id", "noid", "type"]
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "description": "HTTP status code corresponding to the error",
+            "type": "string",
+            "pattern": "^4d{2}$"
+          },
+          "message": {
+            "description": "Specific response message for the error",
+            "type": "string"
+          }
+        },
+        "required": ["code", "message"]
+      }
+    }
+  }
+}
