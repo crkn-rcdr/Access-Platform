@@ -5,7 +5,7 @@ DIR=`dirname "$0"`
 openssl req -x509 \
   -newkey rsa:4096 \
   -sha256 \
-  -days 3650 \
+  -days 365 \
   -nodes \
   -keyout $DIR/localhost.key \
   -out $DIR/localhost.crt \
