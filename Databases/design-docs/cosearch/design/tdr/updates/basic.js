@@ -1,4 +1,4 @@
-module.exports = function(doc, req) {
+module.exports = function (doc, req) {
   if ("form" in req) {
     var updatedoc = req.form;
     if (!doc) {

@@ -1,5 +1,5 @@
 module.exports = {
-  map: function(doc) {
+  map: function (doc) {
     if (
       "type" in doc &&
       doc["type"] === "document" &&
@@ -8,7 +8,7 @@ module.exports = {
     ) {
       var pages = doc.order.length;
       if ("collection" in doc && Array.isArray(doc.collection)) {
-        doc.collection.forEach(function(thiscol) {
+        doc.collection.forEach(function (thiscol) {
           emit(thiscol, pages);
         });
       } else {
@@ -16,5 +16,5 @@ module.exports = {
       }
     }
   },
-  reduce: "_sum"
+  reduce: "_sum",
 };

@@ -1,5 +1,5 @@
 module.exports = {
-  map: function(doc) {
+  map: function (doc) {
     if (
       "METSManifestDate" in doc &&
       "METS" in doc &&
@@ -14,9 +14,9 @@ module.exports = {
       }
       emit(doc["METSDate"], {
         manifestdate: doc.METSManifestDate,
-        path: doc.METS[doc.METS.length - 1].path
+        path: doc.METS[doc.METS.length - 1].path,
       });
     }
   },
-  reduce: "_count"
+  reduce: "_count",
 };

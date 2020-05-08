@@ -1,4 +1,4 @@
-module.exports = function(doc, req) {
+module.exports = function (doc, req) {
   if (!doc) {
     // Parents must already exist
     return [null, '{"return": "not found"}\n'];
@@ -12,13 +12,13 @@ module.exports = function(doc, req) {
 
   var resp = {
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     },
     body: toJSON({
       label: doc["label"],
       collection: doc["collections"],
-      return: "updated"
-    })
+      return: "updated",
+    }),
   };
   return [doc, resp];
 };

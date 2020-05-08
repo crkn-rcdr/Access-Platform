@@ -1,5 +1,5 @@
 module.exports = {
-  map: function(doc) {
+  map: function (doc) {
     // For now looking for item_repository documents which need to be replicated
     if (!("label" in doc)) {
       emit(false, null);
@@ -10,5 +10,5 @@ module.exports = {
       emit(true, doc.label);
     }
   },
-  reduce: "_count"
+  reduce: "_count",
 };

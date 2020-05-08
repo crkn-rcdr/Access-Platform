@@ -1,8 +1,8 @@
 module.exports = {
-  map: function(doc) {
+  map: function (doc) {
     if (!("METS" in doc)) {
       emit(null, null);
     }
   },
-  reduce: "_count"
+  reduce: "_count",
 };

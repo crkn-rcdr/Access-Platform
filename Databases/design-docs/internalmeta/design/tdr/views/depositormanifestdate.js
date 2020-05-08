@@ -1,5 +1,5 @@
 module.exports = {
-  map: function(doc) {
+  map: function (doc) {
     if ("reposManifestDate" in doc) {
       // Seems that Date.parse doesn't support this RFC 3339 date format, so using regexp
       var mandateParse = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})Z$/;
@@ -11,5 +11,5 @@ module.exports = {
       }
     }
   },
-  reduce: "_count"
+  reduce: "_count",
 };

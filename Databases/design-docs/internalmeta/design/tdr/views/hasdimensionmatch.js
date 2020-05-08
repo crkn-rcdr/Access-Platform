@@ -1,5 +1,5 @@
 module.exports = {
-  map: function(doc) {
+  map: function (doc) {
     if (
       "pageinfo" in doc &&
       "dimensions" in doc.pageinfo &&
@@ -7,5 +7,5 @@ module.exports = {
     ) {
       emit(null, null);
     }
-  }
+  },
 };
