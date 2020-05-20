@@ -1,11 +1,11 @@
 module.exports = {
-  map: function(doc) {
+  map: function (doc) {
     if ("hammer" in doc) {
       emit(
         [doc.hammer.status, doc.hammer.message !== "", doc.hammer.date],
-        null
+        doc.hammer.message
       );
     }
   },
-  reduce: "_count"
+  reduce: "_count",
 };

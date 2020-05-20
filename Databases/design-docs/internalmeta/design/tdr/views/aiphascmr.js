@@ -1,5 +1,5 @@
 module.exports = {
-  map: function(doc) {
+  map: function (doc) {
     if (
       doc.type &&
       doc.type === "aip" &&
@@ -17,5 +17,5 @@ module.exports = {
       emit([present, doc._id], null);
     }
   },
-  reduce: "_count"
+  reduce: "_count",
 };

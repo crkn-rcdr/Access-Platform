@@ -1,4 +1,4 @@
-module.exports = function(doc, req) {
+module.exports = function (doc, req) {
   var nowdate = new Date();
   // Javascript toISOString() includes parts of a second, which we strip.
   var nowdates = nowdate.toISOString().replace(/\..*Z/, "Z");

@@ -1,5 +1,5 @@
 module.exports = {
-  map: function(doc) {
+  map: function (doc) {
     if (
       "sub-type" in doc &&
       doc["sub-type"] === "document" &&
@@ -10,5 +10,5 @@ module.exports = {
     ) {
       emit(null, null);
     }
-  }
+  },
 };

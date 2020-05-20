@@ -3,5 +3,5 @@ module.exports = {
     if ("noid" in doc) {
       emit(doc.noid, null);
     }
-  }
+  },
 };

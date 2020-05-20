@@ -1,5 +1,5 @@
 module.exports = {
-  map: function(doc) {
+  map: function (doc) {
     // Only processing issues of series
     if (!("parent" in doc)) {
       return;
@@ -14,8 +14,8 @@ module.exports = {
     emit([doc.parent, seq], {
       label: doc["label"],
       pubmin: doc["pubmin"],
-      approved: "approved" in doc
+      approved: "approved" in doc,
     });
   },
-  reduce: "_count"
+  reduce: "_count",
 };

@@ -1,8 +1,8 @@
 module.exports = {
-  map: function(doc) {
+  map: function (doc) {
     if ("METS" in doc && Array.isArray(doc.METS)) {
       var md5 = {};
-      doc.METS.forEach(function(mets) {
+      doc.METS.forEach(function (mets) {
         if (mets.md5 in md5) {
           md5[mets.md5]++;
         } else {
@@ -10,7 +10,7 @@ module.exports = {
         }
       });
       var dups = 0;
-      Object.keys(md5).forEach(function(key) {
+      Object.keys(md5).forEach(function (key) {
         if (md5[key] > 1) {
           dups++;
         }
@@ -20,5 +20,5 @@ module.exports = {
       }
     }
   },
-  reduce: "_count"
+  reduce: "_count",
 };

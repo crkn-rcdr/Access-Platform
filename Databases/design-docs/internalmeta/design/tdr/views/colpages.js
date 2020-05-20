@@ -1,8 +1,8 @@
 module.exports = {
-  map: function(doc) {
+  map: function (doc) {
     if ("pageinfo" in doc && "count" in doc.pageinfo) {
       if ("collections" in doc && Array.isArray(doc.collections)) {
-        doc.collections.forEach(function(thiscol) {
+        doc.collections.forEach(function (thiscol) {
           emit(thiscol, doc.pageinfo.count);
         });
       } else {
@@ -10,5 +10,5 @@ module.exports = {
       }
     }
   },
-  reduce: "_sum"
+  reduce: "_sum",
 };

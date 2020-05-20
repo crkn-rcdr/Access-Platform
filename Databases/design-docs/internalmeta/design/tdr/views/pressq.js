@@ -1,5 +1,5 @@
 module.exports = {
-  map: function(doc) {
+  map: function (doc) {
     // Flag to set if Press should output or delete documents
     var pressme = true;
 
@@ -29,7 +29,7 @@ module.exports = {
     if ("attachInfo" in doc) {
       if ("hammer.json" in doc.attachInfo) {
         // If any of the attachment dates are newer
-        Object.keys(doc.attachInfo).forEach(function(file) {
+        Object.keys(doc.attachInfo).forEach(function (file) {
           if ("uploadDate" in doc.attachInfo[file]) {
             uqd(doc.attachInfo[file].uploadDate);
           }
@@ -75,5 +75,5 @@ module.exports = {
     // time Press ran
     if (queuedate != undefined) emit(queuedate, pressme);
   },
-  reduce: "_count"
+  reduce: "_count",
 };
