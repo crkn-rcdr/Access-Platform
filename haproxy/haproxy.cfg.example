@@ -67,6 +67,7 @@ frontend public
   acl is_couch hdr_dom(host) -i -m beg upholstery. upholstery-
   acl is_auth hdr_dom(host) -i -m beg auth. auth-
   acl is_admin hdr_dom(host) -i -m beg admin. admin-
+  acl is_api hdr_dom(host) -i -m beg api. api-
 
   # HTTP Request rewrites
   http-request redirect code 301 location http://www.canadiana.ca%[capture.req.uri] if is_unused_dom
@@ -81,6 +82,7 @@ frontend public
   use_backend upholstery if is_couch
   use_backend amsa if is_auth
   use_backend sapindale if is_admin
+  use_backend lapin if is_api
 
 backend apache
   server local 172.30.0.4:80
@@ -99,3 +101,6 @@ backend amsa
 
 backend sapindale
   server local 172.30.0.8:8080
+
+backend lapin
+  server local 172.30.0.9:8081
