@@ -18,7 +18,6 @@ module.exports = function (doc, req) {
       ];
     }
   }
-log(updatedoc);
 
   if (!doc) {
     if ("id" in req && req["id"]) {
@@ -85,9 +84,7 @@ log(updatedoc);
     updated = true;
   }
   if ("approved" in updatedoc) {
-    log ("approved");
-    log (updatedoc.approved);
-    if ((updatedoc["approved"] === "false") || (updatedoc["approved"] === false)) {
+    if (updatedoc["approved"] === "false" || updatedoc["approved"] === false) {
       if ("approved" in doc) {
         delete doc["approved"];
         doc["unapproved"] = nowdates;
