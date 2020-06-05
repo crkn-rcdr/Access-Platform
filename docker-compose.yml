@@ -7,8 +7,11 @@ services:
     ports:
       - "80:80"
       - "443:443"
+      - "10000:10000"
     volumes:
-      - ./haproxy:/usr/local/etc/haproxy:ro
+      - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+      - ./haproxy/certs:/usr/local/etc/haproxy/certs:ro
+      - ./haproxy/error:/usr/local/etc/haproxy/error:ro
     networks:
       access-platform:
         ipv4_address: 172.30.0.2

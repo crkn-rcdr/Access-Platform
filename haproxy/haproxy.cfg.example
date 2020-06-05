@@ -42,7 +42,7 @@ defaults
 
 frontend public
   bind :80
-  bind :443 ssl crt /usr/local/etc/haproxy/localhost.pem alpn h2,http/1.1
+  bind :443 ssl crt /usr/local/etc/haproxy/certs/canadiana.pem alpn h2,http/1.1
 
   # we'll uncomment this when we're ready for HTTPS always
   # http-response set-header Strict-Transport-Security max-age=63072000
@@ -105,3 +105,10 @@ backend sapindale
 
 backend lapin
   server local 172.30.0.9:8081
+
+frontend admin_dev
+  bind :10000 ssl crt /usr/local/etc/haproxy/certs/canadiana.pem alpn h2,http/1.1
+  default_backend sapindale_dev
+
+backend sapindale_dev
+  server local 172.30.0.8:10000
