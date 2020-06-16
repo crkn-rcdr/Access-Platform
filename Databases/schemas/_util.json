@@ -5,6 +5,17 @@
   "description": "",
   "type": "object",
   "definitions": {
+    "slug": {
+      "description": "User-friendly string for identifying objects. A slug is required for collections, but optional for manifests (superseded manifests won't have them).",
+      "type": "string"
+    },
+    "aliasedSlugs": {
+      "description": "Slugs aliased to this object's slug. These slugs will resolve to this object, and a view URL for these slugs will redirect to the 'canonical' one.",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/slug"
+      }
+    },
     "mime": {
       "description": "A MIME type",
       "type": "string",

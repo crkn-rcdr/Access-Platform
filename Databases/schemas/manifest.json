@@ -8,6 +8,10 @@
     {
       "properties": {
         "_id": { "$ref": "schemas/_util.json#/definitions/manifestNoid" },
+        "slug": { "$ref": "schemas/_util.json#/definitions/slug" },
+        "aliasedSlugs": {
+          "$ref": "schemas/_util.json#/definitions/aliasedSlugs"
+        },
         "supersededBy": {
           "allOf": [
             {

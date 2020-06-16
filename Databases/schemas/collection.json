@@ -6,6 +6,8 @@
   "type": "object",
   "properties": {
     "_id": { "$ref": "schemas/_util.json#/definitions/collectionNoid" },
+    "slug": { "$ref": "schemas/_util.json#/definitions/slug" },
+    "aliasedSlugs": { "$ref": "schemas/_util.json#/definitions/aliasedSlugs" },
     "label": {
       "allOf": [
         { "description": "Collection display label" },
@@ -54,5 +56,5 @@
       ]
     }
   },
-  "required": ["_id", "label", "items", "ordered"]
+  "required": ["_id", "slug", "label", "items", "ordered"]
 }
