@@ -3,6 +3,7 @@ module.exports = {
   // when doing large lookups
   map: function (doc) {
     emit(doc._id, {
+      slug: doc.slug,
       label: doc.label,
       public: doc.public,
       type: doc.type,
