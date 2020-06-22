@@ -129,7 +129,11 @@
             "type": "string"
           },
           "label": {
-            "description": "Language-mapped strings for labelling the collection",
+            "description": "The canonical display name of the collection (language-mapped)",
+            "$ref": "#/components/schemas/LanguageMap"
+          },
+          "summary": {
+            "description": "An optional extended summary describing the collection (language-mapped)",
             "$ref": "#/components/schemas/LanguageMap"
           },
           "ordered": {
