@@ -35,9 +35,9 @@
         "x-eov-operation-handler": "collection"
       }
     },
-    "/slug/{id}": {
+    "/collection/slug/{id}": {
       "get": {
-        "summary": "Looks up a slug",
+        "summary": "Looks up a collection slug",
         "description": "Slugs are non-opaque identifiers we use to catalogue and refer to logical concepts in the access platform; namely, manifests and collections. Resolving a slug provides access to the underlying data corresponding to the access object.\n\nSlug records can contain aliases, which allow slugs to be updated in case of typographical errors or other needs. This operation will indicate in its response whether or not the slug is an alias.",
         "parameters": [
           {
@@ -53,18 +53,18 @@
             "description": "The slug exists, either as an alias to another slug or not.",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/Slug" }
+                "schema": { "$ref": "#/components/schemas/CollectionSlug" }
               }
             }
           },
           "401": { "$ref": "#/components/responses/Unauthorized" },
           "404": { "$ref": "#/components/responses/NotFound" }
         },
-        "x-eov-operation-id": "resolve",
-        "x-eov-operation-handler": "slug"
+        "x-eov-operation-id": "resolveSlug",
+        "x-eov-operation-handler": "collection"
       }
     },
-    "/slug/search/{prefix}": {
+    "/collection/slug/search/{prefix}": {
       "post": {
         "summary": "Searches for slugs that start with the provided prefix.",
         "description": "There is a limit of ten results.",
@@ -88,8 +88,8 @@
           },
           "401": { "$ref": "#/components/responses/Unauthorized" }
         },
-        "x-eov-operation-id": "search",
-        "x-eov-operation-handler": "slug"
+        "x-eov-operation-id": "searchSlug",
+        "x-eov-operation-handler": "collection"
       }
     }
   },
@@ -180,6 +180,18 @@
         "type": "string",
         "pattern": "^69429\\/s[0-9]+[0-9bcdfghjkmnpqrstvwxz]{2}[0-9][0-9bcdfghjkmnpqrstvwxz]{2}[0-9][0-9bcdfghjkmnpqrstvwxz]{2}[0-9][0-9bcdfghjkmnpqrstvwxz]$"
       },
+      "CollectionSlug": {
+        "description": "Information about the slug of a collection. Includes whether or not the slug is an alias.",
+        "allOf": [
+          { "$ref": "#/components/schemas/Slug" },
+          {
+            "properties": {
+              "noid": { "$ref": "#/components/schemas/CollectionNOID" }
+            },
+            "required": ["noid"]
+          }
+        ]
+      },
       "Error": {
         "description": "Information about the error response",
         "type": "object",
@@ -201,6 +213,18 @@
         "type": "string",
         "pattern": "^69429\\/m[0-9]+[0-9bcdfghjkmnpqrstvwxz]{2}[0-9][0-9bcdfghjkmnpqrstvwxz]{2}[0-9][0-9bcdfghjkmnpqrstvwxz]{2}[0-9][0-9bcdfghjkmnpqrstvwxz]$"
       },
+      "ManifestSlug": {
+        "description": "Information about the slug of a manifest. Includes whether or not the slug is an alias.",
+        "allOf": [
+          { "$ref": "#/components/schemas/Slug" },
+          {
+            "properties": {
+              "noid": { "$ref": "#/components/schemas/ManifestNOID" }
+            },
+            "required": ["noid"]
+          }
+        ]
+      },
       "Slug": {
         "type": "object",
         "properties": {
@@ -208,28 +232,20 @@
             "description": "The canonical value of this slug. If the string being resolved is an alias, this will be the string the alias resolves to.",
             "type": "string"
           },
-          "noid": {
-            "description": "The NOID that the slug resolves to",
-            "oneOf": [
-              { "$ref": "#/components/schemas/CollectionNOID" },
-              { "$ref": "#/components/schemas/ManifestNOID" }
-            ]
-          },
-          "type": {
-            "description": "The type of object that the slug resolves to",
-            "type": "string",
-            "enum": ["collection", "manifest"]
+          "label": {
+            "description": "The canonical display label of the object this slug resolves to",
+            "$ref": "#/components/schemas/LanguageMap"
           },
           "isAlias": {
-            "description": "True if the string being resolved is an alias to another slug, false otherwise."
+            "description": "True if the string being resolved is an alias to another slug, false otherwise.",
+            "type": "boolean"
           },
-          "aliases": {
-            "description": "Aliases that will redirect to this slug",
-            "type": "array",
-            "items": { "type": "string" }
+          "aliasOf": {
+            "description": "If this slug is an alias, this is the slug that it is an alias of",
+            "type": "string"
           }
         },
-        "required": ["id", "noid", "type"]
+        "required": ["id", "isAlias"]
       }
     }
   }
