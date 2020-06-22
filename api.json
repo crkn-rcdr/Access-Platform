@@ -91,6 +91,63 @@
         "x-eov-operation-id": "searchSlug",
         "x-eov-operation-handler": "collection"
       }
+    },
+    "/manifest/slug/{id}": {
+      "get": {
+        "summary": "Looks up a manifest slug",
+        "description": "Slugs are non-opaque identifiers we use to catalogue and refer to logical concepts in the access platform; namely, manifests and collections. Resolving a slug provides access to the underlying data corresponding to the access object.\n\nSlug records can contain aliases, which allow slugs to be updated in case of typographical errors or other needs. This operation will indicate in its response whether or not the slug is an alias.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "The string to be looked up",
+            "schema": { "type": "string" },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The slug exists, either as an alias to another slug or not.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CollectionSlug" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        },
+        "x-eov-operation-id": "resolveSlug",
+        "x-eov-operation-handler": "manifest"
+      }
+    },
+    "/manifest/slug/search/{prefix}": {
+      "post": {
+        "summary": "Searches for slugs that start with the provided prefix.",
+        "description": "There is a limit of ten results.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "prefix",
+            "description": "All results will start with this string",
+            "schema": { "type": "string", "minLength": 1 },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Results have been returned.",
+            "content": {
+              "application/json": {
+                "schema": { "type": "array", "items": { "type": "string" } }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        },
+        "x-eov-operation-id": "searchSlug",
+        "x-eov-operation-handler": "manifest"
+      }
     }
   },
   "components": {
