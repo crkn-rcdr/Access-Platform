@@ -21,14 +21,28 @@
       ]
     },
     "items": {
-      "description": "List of collection/manifest NOIDs. For series records that have yet to be fully loaded, members can be null",
+      "description": "List of collection/manifest NOIDs. For series records that have yet to be fully loaded, member ids can be null",
       "type": "array",
       "items": {
-        "oneOf": [
-          { "$ref": "schemas/_util.json#/definitions/collectionNoid" },
-          { "$ref": "schemas/_util.json#/definitions/manifestNoid" },
-          { "type": "null" }
-        ]
+        "type": "object",
+        "properties": {
+          "id": {
+            "oneOf": [
+              { "$ref": "schemas/_util.json#/definitions/collectionNoid" },
+              { "$ref": "schemas/_util.json#/definitions/manifestNoid" },
+              { "type": "null" }
+            ]
+          },
+          "itemLabel": {
+            "allOf": [
+              {
+                "description": "Not yet implemented. A label for identifying this item in the collection item list context."
+              },
+              { "$ref": "schemas/_util.json#/definitions/iiifTextValue" }
+            ]
+          }
+        },
+        "required": ["id"]
       }
     },
     "public": {
