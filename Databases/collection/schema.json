@@ -70,5 +70,53 @@
       ]
     }
   },
-  "required": ["_id", "slug", "label", "items", "ordered"]
+  "required": ["_id", "slug", "label", "items", "ordered"],
+  "definitions": {
+    "slug": {
+      "description": "User-friendly string for identifying objects. A slug is required for collections, but optional for manifests (superseded manifests won't have them).",
+      "type": "string"
+    },
+    "aliasedSlugs": {
+      "description": "Slugs aliased to this object's slug. These slugs will resolve to this object, and a view URL for these slugs will redirect to the 'canonical' one.",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/slug"
+      }
+    },
+    "collectionNoid": {
+      "description": "Collection NOID",
+      "type": "string",
+      "pattern": "^69429\\/s[0-9]+[0-9bcdfghjkmnpqrstvwxz]{2}[0-9][0-9bcdfghjkmnpqrstvwxz]{2}[0-9][0-9bcdfghjkmnpqrstvwxz]{2}[0-9][0-9bcdfghjkmnpqrstvwxz]$"
+    },
+    "manifestNoid": {
+      "description": "Manifest NOID",
+      "type": "string",
+      "pattern": "^69429\\/m[0-9]+[0-9bcdfghjkmnpqrstvwxz]{2}[0-9][0-9bcdfghjkmnpqrstvwxz]{2}[0-9][0-9bcdfghjkmnpqrstvwxz]{2}[0-9][0-9bcdfghjkmnpqrstvwxz]$"
+    },
+    "update": {
+      "type": "object",
+      "properties": {
+        "requestDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "processDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "succeeded": { "type": "boolean" },
+        "message": { "type": "string" }
+      },
+      "required": ["requestDate"]
+    },
+    "iiifTextValue": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    }
+  }
 }

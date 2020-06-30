@@ -71,5 +71,23 @@
     "METSManifestDate",
     "METSDate",
     "updated"
-  ]
+  ],
+  "definitions": {
+    "update": {
+      "type": "object",
+      "properties": {
+        "requestDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "processDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "succeeded": { "type": "boolean" },
+        "message": { "type": "string" }
+      },
+      "required": ["requestDate"]
+    }
+  }
 }
