@@ -59,7 +59,7 @@
         {
           "description": "Trigger for and result of running Smelter on this AIP"
         },
-        { "$ref": "schemas/_util.json#/definitions/update" }
+        { "$ref": "#/definitions/update" }
       ]
     }
   },

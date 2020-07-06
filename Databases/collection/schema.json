@@ -5,19 +5,19 @@
   "description": "",
   "type": "object",
   "properties": {
-    "_id": { "$ref": "schemas/_util.json#/definitions/collectionNoid" },
-    "slug": { "$ref": "schemas/_util.json#/definitions/slug" },
-    "aliasedSlugs": { "$ref": "schemas/_util.json#/definitions/aliasedSlugs" },
+    "_id": { "$ref": "#/definitions/collectionNoid" },
+    "slug": { "$ref": "#/definitions/slug" },
+    "aliasedSlugs": { "$ref": "#/definitions/aliasedSlugs" },
     "label": {
       "allOf": [
         { "description": "Collection display label" },
-        { "$ref": "schemas/_util.json#/definitions/iiifTextValue" }
+        { "$ref": "#/definitions/iiifTextValue" }
       ]
     },
     "summary": {
       "allOf": [
         { "description": "Short summary about the collection" },
-        { "$ref": "schemas/_util.json#/definitions/iiifTextValue" }
+        { "$ref": "#/definitions/iiifTextValue" }
       ]
     },
     "items": {
@@ -28,8 +28,8 @@
         "properties": {
           "id": {
             "oneOf": [
-              { "$ref": "schemas/_util.json#/definitions/collectionNoid" },
-              { "$ref": "schemas/_util.json#/definitions/manifestNoid" },
+              { "$ref": "#/definitions/collectionNoid" },
+              { "$ref": "#/definitions/manifestNoid" },
               { "type": "null" }
             ]
           },
@@ -38,7 +38,7 @@
               {
                 "description": "Not yet implemented. A label for identifying this item in the collection item list context."
               },
-              { "$ref": "schemas/_util.json#/definitions/iiifTextValue" }
+              { "$ref": "#/definitions/iiifTextValue" }
             ]
           }
         },
@@ -66,7 +66,7 @@
         {
           "description": "Trigger for updating the internalmeta database with this collection, or result of an attempted update"
         },
-        { "$ref": "schemas/_util.json#/definitions/update" }
+        { "$ref": "#/definitions/update" }
       ]
     }
   },

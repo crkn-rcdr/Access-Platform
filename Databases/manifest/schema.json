@@ -7,23 +7,23 @@
   "allOf": [
     {
       "properties": {
-        "_id": { "$ref": "schemas/_util.json#/definitions/manifestNoid" },
-        "slug": { "$ref": "schemas/_util.json#/definitions/slug" },
+        "_id": { "$ref": "#/definitions/manifestNoid" },
+        "slug": { "$ref": "#/definitions/slug" },
         "aliasedSlugs": {
-          "$ref": "schemas/_util.json#/definitions/aliasedSlugs"
+          "$ref": "#/definitions/aliasedSlugs"
         },
         "supersededBy": {
           "allOf": [
             {
               "description": "The manifest that supersedes this one, when applicable"
             },
-            { "$ref": "schemas/_util.json#/definitions/manifestNoid" }
+            { "$ref": "#/definitions/manifestNoid" }
           ]
         },
         "label": {
           "allOf": [
             { "description": "Manifest display label" },
-            { "$ref": "schemas/_util.json#/definitions/iiifTextValue" }
+            { "$ref": "#/definitions/iiifTextValue" }
           ]
         },
         "dmdType": {
@@ -41,7 +41,7 @@
             {
               "description": "Trigger for updating the internalmeta database with this manifest, or result of an attempted update"
             },
-            { "$ref": "schemas/_util.json#/definitions/update" }
+            { "$ref": "#/definitions/update" }
           ]
         }
       },
@@ -90,7 +90,7 @@
                 "type": "object",
                 "properties": {
                   "id": {
-                    "$ref": "schemas/_util.json#/definitions/canvasNoid"
+                    "$ref": "#/definitions/canvasNoid"
                   },
                   "label": {
                     "allOf": [
@@ -98,7 +98,7 @@
                         "description": "Manifest-specific label for this canvas"
                       },
                       {
-                        "$ref": "schemas/_util.json#/definitions/iiifTextValue"
+                        "$ref": "#/definitions/iiifTextValue"
                       }
                     ]
                   }
@@ -111,7 +111,7 @@
               "type": "object",
               "properties": {
                 "path": {
-                  "$ref": "schemas/_util.json#/definitions/legacyRepoPath"
+                  "$ref": "#/definitions/legacyRepoPath"
                 },
                 "size": { "type": "number" }
               },
@@ -122,7 +122,7 @@
                 {
                   "description": "Trigger for updating the manifest's single or full-page PDFs, or result of an attempted update"
                 },
-                { "$ref": "schemas/_util.json#/definitions/update" }
+                { "$ref": "#/definitions/update" }
               ]
             }
           },
@@ -138,7 +138,7 @@
               "type": "object",
               "properties": {
                 "path": {
-                  "$ref": "schemas/_util.json#/definitions/legacyRepoPath"
+                  "$ref": "#/definitions/legacyRepoPath"
                 },
                 "size": { "type": "number" }
               },
@@ -148,7 +148,7 @@
               "description": "List of page labels for a born-digital object",
               "type": "array",
               "items": {
-                "$ref": "schemas/_util.json#/definitions/iiifTextValue"
+                "$ref": "#/definitions/iiifTextValue"
               }
             }
           },
