@@ -1,6 +1,6 @@
-# Database schemas
+# Database definitions
 
-Schemas for access platform databases can be found here.
+Schemas, design documents, and test fixtures for databases can be found here.
 
 Ideally, databases should be defined using [JSON Schema](https://json-schema.org/). Discussion about schemas can take place in issues/PRs.
 
@@ -14,6 +14,12 @@ The `date-time` string format validates any ISO 8601 date-time. While in the lon
 $ npm install
 OR
 $ yarn install
+```
 
-$ node test.js -s <path_to_schema> -f <path_to_json_file>
+Run the "inspect" script to look at a test Couch installation featuring all of the databases.
+
+Run the "validate" script to validate a JSON document against a schema (or a directory that contains a schema). Use it as follows:
+
+```
+$ yarn run validate -- path/to/doc dir/with/schema
 ```
