@@ -67,9 +67,17 @@
             "mime": { "$ref": "#/definitions/mime" },
             "size": { "type": "number" },
             "width": { "type": "number" },
-            "height": { "type": "number" }
+            "height": { "type": "number" },
+            "update": {
+              "allOf": [
+                {
+                  "description": "Update for the service that checks Cantaloupe for dimension information"
+                },
+                { "#ref": "#/definitions/update" }
+              ]
+            }
           },
-          "required": ["mime", "size", "width", "height"],
+          "required": ["mime", "size"],
           "oneOf": [
             {
               "properties": {
