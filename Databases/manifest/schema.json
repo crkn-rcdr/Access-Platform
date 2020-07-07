@@ -7,23 +7,23 @@
   "allOf": [
     {
       "properties": {
-        "_id": { "$ref": "schemas/_util.json#/definitions/manifestNoid" },
-        "slug": { "$ref": "schemas/_util.json#/definitions/slug" },
+        "_id": { "$ref": "#/definitions/manifestNoid" },
+        "slug": { "$ref": "#/definitions/slug" },
         "aliasedSlugs": {
-          "$ref": "schemas/_util.json#/definitions/aliasedSlugs"
+          "$ref": "#/definitions/aliasedSlugs"
         },
         "supersededBy": {
           "allOf": [
             {
               "description": "The manifest that supersedes this one, when applicable"
             },
-            { "$ref": "schemas/_util.json#/definitions/manifestNoid" }
+            { "$ref": "#/definitions/manifestNoid" }
           ]
         },
         "label": {
           "allOf": [
             { "description": "Manifest display label" },
-            { "$ref": "schemas/_util.json#/definitions/iiifTextValue" }
+            { "$ref": "#/definitions/iiifTextValue" }
           ]
         },
         "dmdType": {
@@ -41,7 +41,7 @@
             {
               "description": "Trigger for updating the internalmeta database with this manifest, or result of an attempted update"
             },
-            { "$ref": "schemas/_util.json#/definitions/update" }
+            { "$ref": "#/definitions/update" }
           ]
         }
       },
@@ -90,7 +90,7 @@
                 "type": "object",
                 "properties": {
                   "id": {
-                    "$ref": "schemas/_util.json#/definitions/canvasNoid"
+                    "$ref": "#/definitions/canvasNoid"
                   },
                   "label": {
                     "allOf": [
@@ -98,7 +98,7 @@
                         "description": "Manifest-specific label for this canvas"
                       },
                       {
-                        "$ref": "schemas/_util.json#/definitions/iiifTextValue"
+                        "$ref": "#/definitions/iiifTextValue"
                       }
                     ]
                   }
@@ -111,7 +111,7 @@
               "type": "object",
               "properties": {
                 "path": {
-                  "$ref": "schemas/_util.json#/definitions/legacyRepoPath"
+                  "$ref": "#/definitions/legacyRepoPath"
                 },
                 "size": { "type": "number" }
               },
@@ -122,7 +122,7 @@
                 {
                   "description": "Trigger for updating the manifest's single or full-page PDFs, or result of an attempted update"
                 },
-                { "$ref": "schemas/_util.json#/definitions/update" }
+                { "$ref": "#/definitions/update" }
               ]
             }
           },
@@ -138,7 +138,7 @@
               "type": "object",
               "properties": {
                 "path": {
-                  "$ref": "schemas/_util.json#/definitions/legacyRepoPath"
+                  "$ref": "#/definitions/legacyRepoPath"
                 },
                 "size": { "type": "number" }
               },
@@ -148,7 +148,7 @@
               "description": "List of page labels for a born-digital object",
               "type": "array",
               "items": {
-                "$ref": "schemas/_util.json#/definitions/iiifTextValue"
+                "$ref": "#/definitions/iiifTextValue"
               }
             }
           },
@@ -156,5 +156,57 @@
         }
       ]
     }
-  ]
+  ],
+  "definitions": {
+    "slug": {
+      "description": "User-friendly string for identifying objects. A slug is required for collections, but optional for manifests (superseded manifests won't have them).",
+      "type": "string"
+    },
+    "aliasedSlugs": {
+      "description": "Slugs aliased to this object's slug. These slugs will resolve to this object, and a view URL for these slugs will redirect to the 'canonical' one.",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/slug"
+      }
+    },
+    "legacyRepoPath": {
+      "description": "Path to a file in the legacy preservation repository. Will need to be prepended with a Swift account URL",
+      "type": "string"
+    },
+    "manifestNoid": {
+      "description": "Manifest NOID",
+      "type": "string",
+      "pattern": "^69429\\/m[0-9]+[0-9bcdfghjkmnpqrstvwxz]{2}[0-9][0-9bcdfghjkmnpqrstvwxz]{2}[0-9][0-9bcdfghjkmnpqrstvwxz]{2}[0-9][0-9bcdfghjkmnpqrstvwxz]$"
+    },
+    "canvasNoid": {
+      "description": "Canvas NOID",
+      "type": "string",
+      "pattern": "^69429\\/c[0-9]+[0-9bcdfghjkmnpqrstvwxz]{2}[0-9][0-9bcdfghjkmnpqrstvwxz]{2}[0-9][0-9bcdfghjkmnpqrstvwxz]{2}[0-9][0-9bcdfghjkmnpqrstvwxz]$"
+    },
+    "update": {
+      "type": "object",
+      "properties": {
+        "requestDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "processDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "succeeded": { "type": "boolean" },
+        "message": { "type": "string" }
+      },
+      "required": ["requestDate"]
+    },
+    "iiifTextValue": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    }
+  }
 }
