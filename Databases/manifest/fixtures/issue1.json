@@ -1,0 +1,21 @@
+{
+  "_id": "69429/m00000000035",
+  "slug": "issue1",
+  "label": { "en": ["First issue"] },
+  "freezeParameters": {},
+  "type": "multicanvas",
+  "canvases": [
+    {
+      "id": "69429/c0v11vd6pm9c",
+      "label": {
+        "none": ["p. 1"]
+      }
+    },
+    {
+      "id": "69429/c0q814m91v8f",
+      "label": {
+        "none": ["p. 2"]
+      }
+    }
+  ]
+}
