@@ -3,12 +3,12 @@
   "version": "1.0.0",
   "description": "Access Platform database schemas. This file is helpful for installing ajv-cli for schema testing.",
   "scripts": {
-    "inspect": "kivik inspect --db canvas --db collection --db copresentation --db cosearch --db dipstaging --db externalmeta --db internalmeta --db manifest",
+    "inspect": "kivik inspect Databases",
     "validate": "kivik validate"
   },
   "author": "Sascha Adler <sadler@crkn.ca>",
   "license": "MIT",
   "dependencies": {
-    "kivik": "^1.2.1"
+    "kivik": "^1.3.0"
   }
 }
