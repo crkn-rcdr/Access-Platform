@@ -32,7 +32,14 @@ module.exports = function (doc, req) {
   if ("updateInternalmeta" in data) {
     var updateInternalmeta = JSON.parse(data["updateInternalmeta"]);
     if (!("requestDate" in updateInternalmeta)) {
-      updateInternalmeta.requestDate = doc.updateInternalmeta.requestDate;
+      if (
+        "updateInternalmeta" in doc &&
+        "requestDate" in doc.updateInternalmeta
+      ) {
+        updateInternalmeta.requestDate = doc.updateInternalmeta.requestDate;
+      } else {
+        updateInternalmeta.requestDate = nowdates;
+      }
     }
     if (!("processDate" in updateInternalmeta)) {
       updateInternalmeta.processDate = nowdates;
