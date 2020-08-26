@@ -1,0 +1,15 @@
+{
+  "_id": "69429/c0v11vd6pm9c",
+  "ocrType": "txtmap",
+  "master": {
+    "height": 3350,
+    "path": "ooe.sas_19720816EP/data/sip/data/files/ooe.19720816EP0001.jpg",
+    "mime": "image/jpeg",
+    "width": 2575,
+    "size": 433137
+  },
+  "source": {
+    "path": "ooe.sas_19720816EP/data/sip/data/files/ooe.19720816EP0001.jpg",
+    "from": "cihm"
+  }
+}

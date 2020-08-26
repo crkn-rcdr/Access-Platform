@@ -71,6 +71,7 @@ module.exports = function (doc, req) {
     }
     doc["smelt"]["requestDate"] = nowdates;
     delete doc["smelt"]["processDate"];
+    updated = true;
   }
   if ("smelt" in data) {
     var smelt = JSON.parse(data["smelt"]);
