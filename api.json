@@ -35,6 +35,42 @@
         "x-eov-operation-handler": "collection"
       }
     },
+    "/manifest/{id}": {
+      "get": {
+        "summary": "Returns a Manifest",
+        "description": "This operation fetches everything needed to edit basic and structural metadata for a manifest, including its slug, its label its type MultiCanvas and PDF.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "$ref": "#/components/schemas/ManifestNOID"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The Manifest exists and its record can be returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Manifest"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "x-eov-operation-id": "fetch",
+        "x-eov-operation-handler": "manifest"
+      }
+    },
     "/collection/slug/{id}": {
       "get": {
         "summary": "Looks up a collection slug",
@@ -264,6 +300,69 @@
         "description": "A mapping of languages to strings localized to said languages",
         "type": "object",
         "additionalProperties": { "type": "string" }
+      },
+      "Manifest": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ManifestNOID"
+          },
+          "slug": {
+            "description": "The slug that resolves to this Manifest",
+            "type": "string"
+          },
+          "label": {
+            "description": "The canonical display name of the Manifest (language-mapped)",
+            "$ref": "#/components/schemas/LanguageMap"
+          },
+          "summary": {
+            "description": "An optional extended summary describing the Manifest (language-mapped)",
+            "$ref": "#/components/schemas/LanguageMap"
+          },
+          "freezeParameters": {
+            "description": "Parameters that determine what happens with this 'still-fresh' manifest is frozen. This may be extended as needs require. Note that this object is required for fresh manifests, but it can be empty",
+            "type": "object",
+            "properties": {
+              "slug": {
+                "description": "Slug that will point to this manifest when it is frozen. If the slug points to a different manifest, it will be assumed that this manifest supersedes that one.",
+                "type": "string"
+              }
+            },
+            "required": ["freezeParameters"]
+          },
+          "parents": {
+            "description": "The list of this manifest's parents, i.e. Records with this manifest as a constituent item.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "$ref": "#/components/schemas/ManifestNOID"
+                },
+                "slug": {
+                  "type": "string"
+                },
+                "label": {
+                  "$ref": "#/components/schemas/LanguageMap"
+                }
+              },
+              "required": ["id", "slug", "label", "type"]
+            }
+          },
+          "canvases": {
+            "description": "The list of canvases in the manifest",
+            "type": "object",
+            "properties": {
+              "id": {
+                "$ref": "#/components/schemas/ManifestNOID"
+              },
+              "label": {
+                "$ref": "#/components/schemas/LanguageMap"
+              }
+            }
+          }
+        },
+        "required": ["id", "slug", "label",""]
       },
       "ManifestNOID": {
         "description": "A NOID for a manifest (hence the 'm' prefix)",
