@@ -362,7 +362,7 @@
             }
           }
         },
-        "required": ["id", "slug", "label",""]
+        "required": ["id", "slug", "label"]
       },
       "ManifestNOID": {
         "description": "A NOID for a manifest (hence the 'm' prefix)",
