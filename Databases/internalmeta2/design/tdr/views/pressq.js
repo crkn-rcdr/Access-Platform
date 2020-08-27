@@ -3,11 +3,6 @@ module.exports = {
     // Flag to set if Press should output or delete documents
     var pressme = true;
 
-    // Delete if AIP has been copied to less than 4 repositories
-    if (!("repos" in doc) || doc.repos.length < 4) {
-      pressme = false;
-    }
-
     // Grab the date Press last ran (if at all)
     var pressdate = "";
     if ("press" in doc && "date" in doc.press) {
@@ -47,10 +42,7 @@ module.exports = {
     if ("collectionDate" in doc) {
       uqd(doc.collectionDate);
     }
-    // Repositories updated
-    if ("reposDate" in doc) {
-      uqd(doc.reposDate);
-    }
+
     // Approved updated
     if ("approved" in doc) {
       uqd(doc.approved);
