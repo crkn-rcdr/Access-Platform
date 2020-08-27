@@ -20,6 +20,25 @@ module.exports = function (doc, req) {
     return [null, '{"error": "ID Not found"}\n'];
   }
 
+  if ("makepublic" in data) {
+    if (!("updateInternalmeta" in doc)) {
+      doc["updateInternalmeta"] = {};
+    }
+    doc["public"] = nowdates;
+    doc["updateInternalmeta"]["requestDate"] = nowdates;
+    delete doc["updateInternalmeta"]["processDate"];
+    updated = true;
+  }
+  if ("makenotpublic" in data) {
+    if (!("updateInternalmeta" in doc)) {
+      doc["updateInternalmeta"] = {};
+    }
+    delete doc["public"];
+    doc["updateInternalmeta"]["requestDate"] = nowdates;
+    delete doc["updateInternalmeta"]["processDate"];
+    updated = true;
+  }
+
   if ("doupdateInternalmeta" in data) {
     if (!("updateInternalmeta" in doc)) {
       doc["updateInternalmeta"] = {};

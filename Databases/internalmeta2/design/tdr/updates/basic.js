@@ -115,6 +115,11 @@ module.exports = function (doc, req) {
     doc["attachInfo"] = attachinfo;
     updated = true;
   }
+  if ("collectionseq" in updatedoc) {
+    doc["collections"] = updatedoc["collectionseq"].split(",");
+    doc["collectionDate"] = nowdates;
+    updated = true;
+  }
   if ("collectionsadd" in updatedoc) {
     var col = [];
     if ("collections" in doc) {
