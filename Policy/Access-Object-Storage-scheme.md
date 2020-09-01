@@ -11,11 +11,9 @@ CIHM::Smelter will accept access deposit requests from a queue, retrieve the rel
   * /dmdMARC.xml
   * /dmdDC.xml
   * /dmdISSUEINFO.xml
-  * /dmdPARL.json
 * /v1/AUTH_crkn/access_metadata/$canvas
   * /ocrALTO.xml
   * /ocrTXTMAP.xml
-  * /dmdHERITAGE.json
 * /v1/AUTH_crkn/access_files/$file.$ext
 
 Couch databases for collections, manifests, and canvases will be populated with the required information to link these objects together.
