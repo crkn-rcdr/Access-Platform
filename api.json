@@ -35,42 +35,6 @@
         "x-eov-operation-handler": "collection"
       }
     },
-    "/manifest/{id}": {
-      "get": {
-        "summary": "Returns a Manifest",
-        "description": "This operation fetches everything needed to edit basic and structural metadata for a manifest, including its slug, its label its type MultiCanvas and PDF.",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "id",
-            "schema": {
-              "$ref": "#/components/schemas/ManifestNOID"
-            },
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The Manifest exists and its record can be returned",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Manifest"
-                }
-              }
-            }
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          }
-        },
-        "x-eov-operation-id": "fetch",
-        "x-eov-operation-handler": "manifest"
-      }
-    },
     "/collection/slug/{id}": {
       "get": {
         "summary": "Looks up a collection slug",
@@ -128,6 +92,42 @@
         "x-eov-operation-handler": "collection"
       }
     },
+    "/manifest/{id}": {
+      "get": {
+        "summary": "Returns a manifest",
+        "description": "This operation fetches everything needed to edit basic and structural metadata for a manifest, including its slug, its label, its type (multi-canvas or born-digital PDF), and for multi-canvas manifests, its canvases.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "$ref": "#/components/schemas/ManifestNOID"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The manifest exists and its record can be returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Manifest"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "x-eov-operation-id": "fetch",
+        "x-eov-operation-handler": "manifest"
+      }
+    },
     "/manifest/slug/{id}": {
       "get": {
         "summary": "Looks up a manifest slug",
@@ -146,7 +146,7 @@
             "description": "The slug exists, either as an alias to another slug or not.",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/CollectionSlug" }
+                "schema": { "$ref": "#/components/schemas/ManifestSlug" }
               }
             }
           },
@@ -252,19 +252,7 @@
               "required": ["id", "slug", "label", "type"]
             }
           },
-          "parents": {
-            "description": "The list of this collection's parents, i.e. collections with this collection as a constituent item.",
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "id": { "$ref": "#/components/schemas/CollectionNOID" },
-                "slug": { "type": "string" },
-                "label": { "$ref": "#/components/schemas/LanguageMap" }
-              },
-              "required": ["id", "slug", "label"]
-            }
-          }
+          "parents": { "$ref": "#/components/schemas/ParentList" }
         },
         "required": ["id", "slug", "label", "items"]
       },
@@ -308,47 +296,18 @@
             "$ref": "#/components/schemas/ManifestNOID"
           },
           "slug": {
-            "description": "The slug that resolves to this Manifest",
+            "description": "The slug that resolves to this manifest",
             "type": "string"
           },
           "label": {
-            "description": "The canonical display name of the Manifest (language-mapped)",
+            "description": "The canonical display name of the manifest (language-mapped)",
             "$ref": "#/components/schemas/LanguageMap"
           },
-          "summary": {
-            "description": "An optional extended summary describing the Manifest (language-mapped)",
-            "$ref": "#/components/schemas/LanguageMap"
+          "type": {
+            "description": "The type of manifest this is. Can either be 'multicanvas' or 'pdf'",
+            "type": "string"
           },
-          "freezeParameters": {
-            "description": "Parameters that determine what happens with this 'still-fresh' manifest is frozen. This may be extended as needs require. Note that this object is required for fresh manifests, but it can be empty",
-            "type": "object",
-            "properties": {
-              "slug": {
-                "description": "Slug that will point to this manifest when it is frozen. If the slug points to a different manifest, it will be assumed that this manifest supersedes that one.",
-                "type": "string"
-              }
-            },
-            "required": ["freezeParameters"]
-          },
-          "parents": {
-            "description": "The list of this manifest's parents, i.e. Records with this manifest as a constituent item.",
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "$ref": "#/components/schemas/ManifestNOID"
-                },
-                "slug": {
-                  "type": "string"
-                },
-                "label": {
-                  "$ref": "#/components/schemas/LanguageMap"
-                }
-              },
-              "required": ["id", "slug", "label", "type"]
-            }
-          },
+          "parents": { "$ref": "#/components/schemas/ParentList" },
           "canvases": {
             "description": "The list of canvases in the manifest",
             "type": "object",
@@ -362,7 +321,7 @@
             }
           }
         },
-        "required": ["id", "slug", "label"]
+        "required": ["id", "label", "type", "parents"]
       },
       "ManifestNOID": {
         "description": "A NOID for a manifest (hence the 'm' prefix)",
@@ -380,6 +339,19 @@
             "required": ["noid"]
           }
         ]
+      },
+      "ParentList": {
+        "description": "The list of this objects's parents, i.e. collections with this object as a constituent item. Can apply to both manifests and collections.",
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": { "$ref": "#/components/schemas/CollectionNOID" },
+            "slug": { "type": "string" },
+            "label": { "$ref": "#/components/schemas/LanguageMap" }
+          },
+          "required": ["id", "slug", "label"]
+        }
       },
       "Slug": {
         "type": "object",
@@ -401,7 +373,7 @@
             "type": "string"
           }
         },
-        "required": ["id", "isAlias"]
+        "required": ["id", "label", "isAlias"]
       }
     }
   }
