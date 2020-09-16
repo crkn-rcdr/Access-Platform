@@ -9,6 +9,6 @@
   "author": "Sascha Adler <sadler@crkn.ca>",
   "license": "MIT",
   "dependencies": {
-    "kivik": "^1.3.0"
+    "kivik": "crkn-rcdr/kivik"
   }
 }
