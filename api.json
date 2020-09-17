@@ -112,7 +112,10 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Manifest"
+                  "oneOf": [
+                    { "$ref": "#/components/schemas/MulticanvasManifest" },
+                    { "$ref": "#/components/schemas/PdfManifest" }
+                  ]
                 }
               }
             }
@@ -213,6 +216,11 @@
       }
     },
     "schemas": {
+      "CanvasNOID": {
+        "description": "A NOID for a canvas (hence the 'c' prefix)",
+        "type": "string",
+        "pattern": "^69429\\/c[0-9]+[0-9bcdfghjkmnpqrstvwxz]{2}[0-9][0-9bcdfghjkmnpqrstvwxz]{2}[0-9][0-9bcdfghjkmnpqrstvwxz]{2}[0-9][0-9bcdfghjkmnpqrstvwxz]$"
+      },
       "Collection": {
         "type": "object",
         "properties": {
@@ -234,7 +242,7 @@
             "type": "boolean"
           },
           "items": {
-            "description": "The list of member items of this collection. Items can be either manifests or other collections.",
+            "description": "The list of member items of this collection. Items can be either manifests or other collections. This will only be part of the response for ordered collections.",
             "type": "array",
             "items": {
               "type": "object",
@@ -252,9 +260,14 @@
               "required": ["id", "slug", "label", "type"]
             }
           },
+          "itemCount": {
+            "description": "Number of items in this collection",
+            "type": "integer",
+            "minimum": 0
+          },
           "parents": { "$ref": "#/components/schemas/ParentList" }
         },
-        "required": ["id", "slug", "label", "items"]
+        "required": ["id", "label", "itemCount", "parents"]
       },
       "CollectionNOID": {
         "description": "A NOID for a collection (hence the 's' prefix)",
@@ -303,10 +316,6 @@
             "description": "The canonical display name of the manifest (language-mapped)",
             "$ref": "#/components/schemas/LanguageMap"
           },
-          "type": {
-            "description": "The type of manifest this is. Can either be 'multicanvas' or 'pdf'",
-            "type": "string"
-          },
           "parents": { "$ref": "#/components/schemas/ParentList" },
           "canvases": {
             "description": "The list of canvases in the manifest",
@@ -318,10 +327,11 @@
               "label": {
                 "$ref": "#/components/schemas/LanguageMap"
               }
-            }
+            },
+            "required": ["id", "label"]
           }
         },
-        "required": ["id", "label", "type", "parents"]
+        "required": ["id", "label", "parents"]
       },
       "ManifestNOID": {
         "description": "A NOID for a manifest (hence the 'm' prefix)",
@@ -340,6 +350,31 @@
           }
         ]
       },
+      "MulticanvasManifest": {
+        "allOf": [
+          { "$ref": "#/components/schemas/Manifest" },
+          {
+            "description": "A manifest representing a sequence of scanned images",
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "pattern": "^multicanvas$"
+              },
+              "canvases": {
+                "description": "The list of canvases in the manifest",
+                "type": "object",
+                "properties": {
+                  "id": { "$ref": "#/components/schemas/CanvasNOID" },
+                  "label": { "$ref": "#/components/schemas/LanguageMap" }
+                },
+                "required": ["id", "label"]
+              }
+            },
+            "required": ["type", "canvases"]
+          }
+        ]
+      },
       "ParentList": {
         "description": "The list of this objects's parents, i.e. collections with this object as a constituent item. Can apply to both manifests and collections.",
         "type": "array",
@@ -352,6 +387,31 @@
           },
           "required": ["id", "slug", "label"]
         }
+      },
+      "PdfManifest": {
+        "allOf": [
+          { "$ref": "#/components/schemas/Manifest" },
+          {
+            "description": "A manifest representing a born-digital PDF",
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "pattern": "^pdf$"
+              },
+              "master": {
+                "description": "Information about the master PDF of this manifest. If path is unspecified, it can be found in the canonical access object repository location.",
+                "type": "object",
+                "properties": {
+                  "path": { "type": "string" },
+                  "size": { "type": "number" }
+                },
+                "required": ["size"]
+              }
+            },
+            "required": ["type", "master"]
+          }
+        ]
       },
       "Slug": {
         "type": "object",
