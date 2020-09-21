@@ -116,7 +116,11 @@ module.exports = function (doc, req) {
     updated = true;
   }
   if ("collectionseq" in updatedoc) {
-    doc["collections"] = updatedoc["collectionseq"].split(",");
+    if (updatedoc["collectionseq"] === "") {
+      doc["collections"] = [];
+    } else {
+      doc["collections"] = updatedoc["collectionseq"].split(",");
+    }
     doc["collectionDate"] = nowdates;
     updated = true;
   }
