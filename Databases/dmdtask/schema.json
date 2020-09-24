@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "https://github.com/crkn-rcdr/Access-Platform/blob/master/Databases/dmdtask/schema.json",
+  "title": "dipstaging Document Schema",
+  "description": "dmdtask documents are generated for each task to manage the processing of a Descriptive Metadata file.",
+  "type": "object",
+  "properties": {
+    "_id": {
+      "description": "Unique ID assigned by database for each task, and will be part of the API for communicating with this database",
+      "type": "string"
+    },
+    "depositor": {
+      "description": "String to prepend to ID's extracted from metadata files in order to find potentially matching manifests or collections.",
+      "type": "string"
+    },
+    "type": {
+      "description": "Type of metadata file uploaded. Supported is text/csv and Marc binary files, interpreted in a few different ways.",
+      "type": "string",
+      "enum": ["csvissueinfo", "csvdc", "marc490", "marcoocihm", "marcooe"]
+    },
+    "process": {
+      "allOf": [
+        {
+          "description": "Trigger for and result of running backend processing for this task. The requestDate field should be updated any time another field is changed that requires reprocessing."
+        },
+        { "$ref": "#/definitions/update" }
+      ]
+    }
+  },
+  "required": ["_id"],
+  "definitions": {
+    "update": {
+      "type": "object",
+      "properties": {
+        "requestDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "processDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "succeeded": { "type": "boolean" },
+        "message": { "type": "string" }
+      },
+      "required": ["requestDate"]
+    }
+  }
+}
