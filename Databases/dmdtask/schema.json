@@ -85,9 +85,14 @@
           }
         }
       }
+    },
+    "updated": {
+      "description": "Date when this document was last updated.  Used to determine when task documents are stale and should be automatically purged.",
+      "type": "string",
+      "format": "date-time"
     }
   },
-  "required": ["_id"],
+  "required": ["_id","updated"],
   "definitions": {
     "update": {
       "type": "object",
