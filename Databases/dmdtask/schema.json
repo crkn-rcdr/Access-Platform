@@ -9,22 +9,82 @@
       "description": "Unique ID assigned by database for each task, and will be part of the API for communicating with this database",
       "type": "string"
     },
+    "_attachments": {
+      "description": "Attachments field managed by CouchDB.  Attachments will include ${mdname} and multiple ${mdname}/${arrayindex}.xml"
+    },
     "depositor": {
       "description": "String to prepend to ID's extracted from metadata files in order to find potentially matching manifests or collections.",
       "type": "string"
     },
-    "type": {
+    "mdtype": {
       "description": "Type of metadata file uploaded. Supported is text/csv and Marc binary files, interpreted in a few different ways.",
       "type": "string",
       "enum": ["csvissueinfo", "csvdc", "marc490", "marcoocihm", "marcooe"]
     },
-    "process": {
+    "mdname": {
+      "description": "Name of the attachment uploaded. Actual file contents are attached as a CouchDb attachment.",
+      "type": "string",
+      "enum": ["csvissueinfo", "csvdc", "marc490", "marcoocihm", "marcooe"]
+    },
+    "split": {
       "allOf": [
         {
-          "description": "Trigger for and result of running backend processing for this task. The requestDate field should be updated any time another field is changed that requires reprocessing."
+          "description": "Trigger for and result of running backend processing for this task to split metadata upload. The requestDate field should be updated any time another field is changed that requires reprocessing."
         },
         { "$ref": "#/definitions/update" }
       ]
+    },
+    "store": {
+      "allOf": [
+        {
+          "description": "Trigger for and result of running backend processing for this task to store previously split metadata records. The requestDate field should be updated only once to indicate a final process of the items."
+        },
+        { "$ref": "#/definitions/update" }
+      ]
+    },
+    "items": {
+      "description": "List of individual metadata records extracted from the multi-record file uploaded. Field only exists if there was some success parsing file.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "Identifier found within record",
+            "type": "string"
+          },
+          "accessidfound": {
+            "description": "Identifier found within manifest or collection databases, possibly after prepending depositor.",
+            "type": "string"
+          },
+          "preservationidfound": {
+            "description": "Identifier found within the preservation platform database, possibly after prepending depositor.",
+            "type": "string"
+          },
+          "validated": {
+            "description": "Boolean indicating whether record validated against schema.",
+            "type": "boolean"
+          },
+          "message": {
+            "description": "Output from record specific processing, including validation process.",
+            "type": "string"
+          },
+          "pubmin": {
+            "description": "Pubmin field extracted from metadata record.",
+            "type": "string",
+            "format": "date-time"
+          },
+          "pubmax": {
+            "description": "Pubmax field extracted from metadata record.",
+            "type": "string",
+            "format": "date-time"
+          },
+          "copyto": {
+            "description": "Boolean indicating this validated record should be copied to the preservation or access platform, based on the *idfound fields.",
+            "type": "string",
+            "enum": ["access", "preservation"]
+          }
+        }
+      }
     }
   },
   "required": ["_id"],
