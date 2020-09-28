@@ -1,0 +1,23 @@
+{
+  "_id": "69429/m08c9r20vk83",
+  "slug": "numeris.RD_2000_FA00_001",
+  "label": {
+    "none": [
+      "Québec C.M.A./R.M.R. - Radio Market Report/Rapport de marché - Fall/Automne 2000"
+    ]
+  },
+  "freezeParameters": {},
+  "type": "pdf",
+  "masterPages": [
+    {
+      "label": {
+        "none": ["Image 1"]
+      }
+    },
+    {
+      "label": {
+        "none": ["Image 2"]
+      }
+    }
+  ]
+}
