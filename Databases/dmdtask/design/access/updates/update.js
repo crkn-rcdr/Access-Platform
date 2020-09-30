@@ -31,22 +31,35 @@ module.exports = function (doc, req) {
     }
   }
 
-  if ("depositor" in data) {
+  if ("depositor" in data && doc.depositor !== data.depositor) {
     doc["depositor"] = data["depositor"];
     updated = true;
   }
-  if ("mdtype" in data) {
+  if ("mdtype" in data && doc.mdtype !== data.mdtype) {
     doc["mdtype"] = data["mdtype"];
     updated = true;
   }
-  if ("mdname" in data) {
+  if ("mdname" in data && doc.mdname !== data.mdname) {
     doc["mdname"] = data["mdname"];
+    updated = true;
+  }
+  if ("split" in data) {
+    delete doc.items;
+    doc.split = {};
+    doc.split.requestDate = nowdates;
+    updated = true;
+  }
+  if ("store" in data) {
+    // value of 'store' will be array of values to copy into 'copyto' field of items.
+    // Values of array will be "access","preservation" or undefined (meaning no store)
+    doc.store = {};
+    doc.store.requestDate = nowdates;
     updated = true;
   }
   if (updated) {
     doc["updated"] = nowdates;
-    return [doc, JSON.stringify({return: "update"}) + "\n"];
+    return [doc, JSON.stringify({ return: "update" }) + "\n"];
   } else {
-    return [null, JSON.stringify({return: "no update"}) + "\n"];
+    return [null, JSON.stringify({ return: "no update" }) + "\n"];
   }
 };
