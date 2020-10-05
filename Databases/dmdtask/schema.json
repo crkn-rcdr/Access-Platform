@@ -78,10 +78,13 @@
             "type": "string",
             "format": "date-time"
           },
-          "copyto": {
-            "description": "Boolean indicating this validated record should be copied to the preservation or access platform, based on the *idfound fields.",
-            "type": "string",
-            "enum": ["access", "preservation"]
+          "copytoaccess": {
+            "description": "Boolean indicating this validated record should be copied to the access platform, based on the accessidfound fields.",
+            "type": "boolean"
+          },
+          "copytopreservation": {
+            "description": "Boolean indicating this validated record should be copied to the preservation platform, based on the preservationidfound fields.",
+            "type": "boolean"
           }
         }
       }
