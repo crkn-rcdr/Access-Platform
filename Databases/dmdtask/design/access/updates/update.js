@@ -77,9 +77,47 @@ module.exports = function (doc, req) {
     updated = true;
   }
 
+  // Must be an array of items.
+  if ("items" in data) {
+    doc.items = JSON.parse(data["items"]);
+    if (!Array.isArray(doc.items)) {
+      return [
+        null,
+        JSON.stringify({ error: "value of 'items' must be an array" }) + "\n",
+      ];
+    }
+    updated = true;
+  }
+
   // Initiate a store task
   if ("store" in data) {
     // value of 'store' will be array of objects to copy fields into 'copyto*' fields of items.
+    var items = JSON.parse(data["store"]);
+    if (!Array.isArray(items)) {
+      return [
+        null,
+        JSON.stringify({ error: "value of 'store' must be an array" }) + "\n",
+      ];
+    }
+    if (items.length !== doc.items.length) {
+      return [
+        null,
+        JSON.stringify({
+          error: "Length of 'store' must be same length as items",
+        }) + "\n",
+      ];
+    }
+
+    // Copy in values
+    for (var i = 0; i < items.length; i++) {
+      if ("copytoaccess" in items[i]) {
+        doc.items[i]["copytoaccess"] = items[i]["copytoaccess"];
+      }
+      if ("copytopreservation" in items[i]) {
+        doc.items[i]["copytopreservation"] = items[i]["copytopreservation"];
+      }
+    }
+
     doc.store = {};
     doc.store.requestDate = nowdates;
     updated = true;
