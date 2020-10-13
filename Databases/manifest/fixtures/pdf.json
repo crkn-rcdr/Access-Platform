@@ -120,7 +120,7 @@
     { "none": ["Image 103"] }
   ],
   "updateInternalmeta": {
-    "succeeded": 1,
+    "succeeded": true,
     "message": "",
     "requestDate": "2020-09-10T14:18:49Z",
     "processDate": "2020-09-10T14:18:52Z"
