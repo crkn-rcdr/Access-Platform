@@ -50,7 +50,7 @@ Describes: [Collection](#Collection), [Manifest](#Manifest)
 
 The human-readable name or title of the Collection, Manifest, or Canvas. Labels are used in the primary heading for their corresponding object, in search results and while viewing the object. Canvases do not have inherent labels, but each Canvas of a Manifest has a label in that Manifest's context; for example, "Image 225" of a reel might also be "p. 3" of a letter.
 
-Labels can be specified in multiple languages, and tools for creating and editing them can allow, for example, bilingual French and English labels. When imported, labels have a language of `none` by default. Label languages are referenced by their [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/). See also the [IIIF Presentation API discussion on language property values]; note that while their specification allows for multiple values for a given language, ours only allows for one.
+Labels can be specified in multiple languages, and tools for creating and editing them can allow, for example, bilingual French and English labels. When imported, labels have a language of `none` by default. Label languages are referenced by their [IETF BCP 47 language tag](https://www.w3.org/International/articles/language-tags/). See also the [IIIF Presentation API discussion on language property values](https://iiif.io/api/presentation/3.0/#44-language-of-property-values); note that while their specification allows for multiple values for a given language, ours only allows for one.
 
 Describes: [Collection](#Collection), [Manifest](#Manifest), [members of a Collection](#Membership) (eventually), [canvases of a Manifest](#canvases)
 
