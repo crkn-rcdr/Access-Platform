@@ -3,8 +3,8 @@ module.exports = {
     // Flag to set if Press should output or delete documents
     var pressme = true;
 
-    // Delete if AIP has been copied to less than 4 repositories
-    if (!("repos" in doc) || doc.repos.length < 4) {
+    // Delete if AIP has been copied to less than 2 (swift + 1 backup) repositories
+    if (!("repos" in doc) || doc.repos.length < 2) {
       pressme = false;
     }
 
