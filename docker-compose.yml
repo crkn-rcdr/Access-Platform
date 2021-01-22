@@ -1,0 +1,22 @@
+version: "3"
+
+services:
+  access:
+    build:
+      context: .
+      args:
+        node_env: test
+    image: access:test
+    container_name: access
+    command: yarn run test:watch
+    volumes:
+      - ./Databases:/access/Databases
+      - ./test:/access/test
+    environment:
+      - SHELL=/bin/sh
+    tty: true
+  couch:
+    image: couchdb:1.7
+    container_name: access_test_couch
+    logging:
+      driver: none
