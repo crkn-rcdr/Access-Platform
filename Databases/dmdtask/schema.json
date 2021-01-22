@@ -95,7 +95,7 @@
       "format": "date-time"
     }
   },
-  "required": ["_id","updated"],
+  "required": ["_id", "updated"],
   "definitions": {
     "update": {
       "type": "object",
