@@ -44,3 +44,12 @@ coffeescript = /opt/couchdb/bin/couchjs -S 1073741824 /opt/couchdb/share/server/
 ```
 
 Some views may take more memory to build. `couchjs` has a default of  64MiB. This sets up to allow 1G.  The [Query Servers Documentation](https://docs.couchdb.org/en/latest/config/query-servers.html) provides additional details.
+
+
+```
+[couch_httpd_auth]
+timeout = 86400
+```
+
+The [default timeout is 10 minutes](https://docs.couchdb.org/en/latest/config/auth.html#couch_httpd_auth/timeout), and having to log in again so frequently is annoying.
+
