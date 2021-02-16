@@ -5,7 +5,7 @@ module.exports = {
     if ("items" in doc && Array.isArray(doc.items)) {
       doc.items.forEach(function (item) {
         if ("id" in item && item.id) {
-          emit(item.id, { slug: doc.slug, label: doc.label, ordered: doc.ordered });
+          emit(item.id, null);
         }
       });
     }
