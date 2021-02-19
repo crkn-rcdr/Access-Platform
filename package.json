@@ -1,0 +1,22 @@
+{
+  "name": "@crkn-rcdr/couchdb",
+  "version": "1.0.0-next",
+  "description": "CouchDB configuration for the Canadiana Access Platform's suite of services",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha **/*.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/crkn-rcdr/couchdb.git"
+  },
+  "author": "",
+  "license": "CC0-1.0",
+  "bugs": {
+    "url": "https://github.com/crkn-rcdr/couchdb/issues"
+  },
+  "homepage": "https://github.com/crkn-rcdr/couchdb#readme",
+  "dependencies": {
+    "kivik": "^2.0.0-alpha.0"
+  }
+}
