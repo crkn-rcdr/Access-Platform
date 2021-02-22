@@ -1,14 +1,17 @@
-# Notes for the combined collection/manifest schema
+# Notes for the access/canvas schemas
 
 ## AccessObject
 
 - \_id: a noid, which should satisfy `/^69429\\/[acms][0-9]+[0-9bcdfghjkmnpqrstvwxz]{2}[0-9][0-9bcdfghjkmnpqrstvwxz]{2}[0-9][0-9bcdfghjkmnpqrstvwxz]{2}[0-9][0-9bcdfghjkmnpqrstvwxz]$/`
-- slug: see slug definition in glossary
-- type: collection | manifest | alias
 - updateInternalmeta: update object
+
+## SluggedObject extends AccessObject
+
+- type: collection | manifest | alias
+- slug: see slug definition in glossary
 - public: if it exists, it's a date (TODO: consider this some more)
 
-## SpecObject extends AccessObject
+## SpecObject extends SluggedObject
 
 - label: text field
 - summary: text field
@@ -47,10 +50,18 @@
   - size
 - pageLabels
 
-## Alias extends AccessObject
+## Alias extends SluggedObject
 
 - type: alias
 - to: id
+
+## Canvas extends AccessObject
+
+- source
+- file (TODO: change from current "master")
+- orphan
+- ocrPdf (TODO: combine with "ocrText" into ocr.pdf, ocr.text?)
+- ocrText
 
 ## A note on IIIF text values
 
