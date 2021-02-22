@@ -17,6 +17,6 @@
   },
   "homepage": "https://github.com/crkn-rcdr/couchdb#readme",
   "dependencies": {
-    "kivik": "^2.0.0-alpha.0"
+    "kivik": "^2.0.0-alpha.2"
   }
 }
