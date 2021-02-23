@@ -1,0 +1,34 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "/file.json",
+  "title": "File",
+  "description": "Reference to a stored file. The location of the file will either be determined by the `path` property, the `extension` property, or the field's key",
+  "type": "object",
+  "properties": {
+    "path": { "$ref": "file/legacyRepoPath.json" },
+    "extension": {
+      "description": "Extension of a file in the access object store",
+      "type": "string",
+      "minLength": 1
+    },
+    "size": {
+      "description": "Size of the file, in bytes",
+      "type": "number",
+      "minimum": 0
+    },
+    "mime": {
+      "description": "RFC 2046 Media Type (formerly MIME)",
+      "type": "string",
+      "pattern": "^\\w+/\\w+$"
+    },
+    "md5": {
+      "description": "MD5 checksum",
+      "type": "string",
+      "pattern": "^[0-9a-f]{32}$"
+    }
+  },
+  "required": ["size"],
+  "not": {
+    "required": ["path", "extension"]
+  }
+}

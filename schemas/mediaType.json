@@ -1,8 +1,0 @@
-{
-  "$schema": "http://json-schema.org/draft-07/schema",
-  "$id": "/mediaType.json",
-  "title": "Media Type",
-  "description": "RFC 2046 Media Type (formerly MIME)",
-  "type": "string",
-  "pattern": "^\\w+/\\w+$"
-}

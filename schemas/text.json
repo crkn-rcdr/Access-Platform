@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "/text.json",
+  "title": "Text field",
+  "description": "Per-language text values",
+  "type": "object",
+  "patternProperties": {
+    "^[\\w\\-]+$": { "type": "string" }
+  },
+  "minProperties": 1
+}

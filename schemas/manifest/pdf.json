@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "/manifest/pdf.json",
+  "title": "PDF Manifest",
+  "description": "A manifest comprising a (born-digital) PDF",
+  "type": "object",
+  "allOf": [
+    { "$ref": "../manifest.json" },
+    {
+      "properties": {
+        "from": {
+          "type": "string",
+          "const": "pdf"
+        },
+        "file": {
+          "$ref": "../file.json"
+        },
+        "pageLabels": {
+          "description": "Labels assigned to each page in the page viewer",
+          "type": "array",
+          "items": { "$ref": "../text.json" }
+        }
+      },
+      "required": ["from", "file", "pageLabels"]
+    }
+  ]
+}

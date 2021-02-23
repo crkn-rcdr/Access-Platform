@@ -1,23 +1,23 @@
 # Notes for the access/canvas schemas
 
-## AccessObject
+## Access
 
 - \_id: a noid, which should satisfy `/^69429\\/[acms][0-9]+[0-9bcdfghjkmnpqrstvwxz]{2}[0-9][0-9bcdfghjkmnpqrstvwxz]{2}[0-9][0-9bcdfghjkmnpqrstvwxz]{2}[0-9][0-9bcdfghjkmnpqrstvwxz]$/`
+- type: collection | manifest | alias | canvas (note: type does not get applied to canvas documents, since they are found in a separate database)
+- public: if it exists, it's a date (TODO: consider this some more)
 - updateInternalmeta: update object
 
-## SluggedObject extends AccessObject
+## Slugged extends Access
 
-- type: collection | manifest | alias
-- slug: see slug definition in glossary
-- public: if it exists, it's a date (TODO: consider this some more)
+- slug: A human-readable identifier
 
-## SpecObject extends SluggedObject
+## Canonical extends Slugged
 
 - label: text field
 - summary: text field
 - dmdType: dc | issueinfo | marc
 
-## Collection extends SpecObject
+## Collection extends Canonical
 
 - type: collection
 - behavior: unordered | individuals | multi-part (unordered for our unordered collections, multi-part for our ordered collections, to start)
@@ -25,7 +25,7 @@
   - id
   - label: text field, optional
 
-## Manifest extends SpecObject
+## Manifest extends Canonical
 
 - type: manifest
 - of: canvases | pdf
@@ -50,12 +50,12 @@
   - size
 - pageLabels
 
-## Alias extends SluggedObject
+## Alias extends Slugged
 
 - type: alias
 - to: id
 
-## Canvas extends AccessObject
+## Canvas extends Access
 
 - source
 - file (TODO: change from current "master")

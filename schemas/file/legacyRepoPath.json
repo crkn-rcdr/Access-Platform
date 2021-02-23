@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema",
-  "$id": "/legacyRepoPath.json",
+  "$id": "/file/legacyRepoPath.json",
   "title": "Legacy repo path",
   "description": "Relative path to a file in the legacy preservation repository.",
   "$comment": "The absolute URL will point to Swift",

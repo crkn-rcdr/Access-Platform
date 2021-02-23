@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "/alias.json",
+  "title": "Slug Alias",
+  "description": "A slugged object that points to a different slugged object",
+  "type": "object",
+  "allOf": [
+    { "$ref": "slugged.json" },
+    {
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "alias"
+        },
+        "to": {
+          "description": "The ID of the object this alias points to",
+          "$ref": "noid.json"
+        }
+      },
+      "required": ["type", "to"]
+    }
+  ]
+}
