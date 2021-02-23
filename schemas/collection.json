@@ -4,6 +4,23 @@
   "title": "Collection",
   "description": "A grouping of other collections and/or manifests",
   "type": "object",
+  "propertyNames": {
+    "type": "string",
+    "enum": [
+      "id",
+      "_id",
+      "rev",
+      "type",
+      "public",
+      "updateInternalmeta",
+      "slug",
+      "label",
+      "summary",
+      "dmdType",
+      "behavior",
+      "members"
+    ]
+  },
   "allOf": [
     { "$ref": "canonical.json" },
     {

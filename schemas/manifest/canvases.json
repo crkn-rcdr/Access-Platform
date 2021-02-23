@@ -4,6 +4,26 @@
   "title": "Canvas Manifest",
   "description": "A manifest comprising a series of canvases",
   "type": "object",
+  "propertyNames": {
+    "type": "string",
+    "enum": [
+      "id",
+      "_id",
+      "rev",
+      "type",
+      "public",
+      "updateInternalmeta",
+      "slug",
+      "label",
+      "summary",
+      "dmdType",
+      "from",
+      "behavior",
+      "viewingDirection",
+      "canvases",
+      "ocrPdf"
+    ]
+  },
   "allOf": [
     { "$ref": "../manifest.json" },
     {

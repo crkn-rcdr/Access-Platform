@@ -4,6 +4,19 @@
   "title": "Slug Alias",
   "description": "A slugged object that points to a different slugged object",
   "type": "object",
+  "propertyNames": {
+    "type": "string",
+    "enum": [
+      "id",
+      "_id",
+      "rev",
+      "type",
+      "public",
+      "updateInternalmeta",
+      "slug",
+      "to"
+    ]
+  },
   "allOf": [
     { "$ref": "slugged.json" },
     {
