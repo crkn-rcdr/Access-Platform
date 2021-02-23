@@ -3,10 +3,11 @@
   "$id": "/access.json",
   "title": "Access object",
   "description": "Any object identifiable by a NOID",
+  "$comment": "The file name adds `.logical` due to a temporary limitation in Kivik",
   "type": "object",
   "properties": {
-    "_id": { "$ref": "noid.json" },
-    "id": { "$ref": "noid.json" },
+    "_id": { "$ref": "/util/noid.json" },
+    "id": { "$ref": "/util/noid.json" },
     "type": {
       "$comment": "Canvases are access objects, but they are stored in their own database",
       "description": "Type of access object",
@@ -20,7 +21,7 @@
     },
     "updateInternalmeta": {
       "description": "Trigger for updating the internalmeta database with changes to this access object",
-      "$ref": "update.json"
+      "$ref": "/util/update.json"
     }
   },
   "anyOf": [{ "properties": { "id": true } }, { "properties": { "_id": true } }]

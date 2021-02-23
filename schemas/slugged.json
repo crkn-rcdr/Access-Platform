@@ -5,7 +5,7 @@
   "description": "Access object identifiable by a slug",
   "type": "object",
   "allOf": [
-    { "$ref": "access.json" },
+    { "$ref": "/access.json" },
     {
       "properties": {
         "slug": {
@@ -14,7 +14,7 @@
           "pattern": "^[\\p{L}\\p{Nl}\\p{Nd}\\-_\\.]$"
         }
       },
-      "required": ["slug"]
+      "required": ["type", "slug"]
     }
   ]
 }

@@ -5,16 +5,16 @@
   "description": "Any slugged object representing a real thing, as opposed to an alias",
   "type": "object",
   "allOf": [
-    { "$ref": "slugged.json" },
+    { "$ref": "/slugged.json" },
     {
       "properties": {
         "label": {
           "description": "Human-readable name or title",
-          "$ref": "text.json"
+          "$ref": "/util/text.json"
         },
         "summary": {
           "description": "A short textual summary",
-          "$ref": "text.json"
+          "$ref": "/util/text.json"
         },
         "dmdType": {
           "description": "The type of descriptive metadata record associated with this resource",

@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema",
-  "$id": "/update.json",
+  "$id": "/util/update.json",
   "title": "Access Platform update specification",
   "description": "An object that describes a request for and the output of an automated process that is applied to the parent object",
   "type": "object",

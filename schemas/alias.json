@@ -18,7 +18,7 @@
     ]
   },
   "allOf": [
-    { "$ref": "slugged.json" },
+    { "$ref": "/util/slugged.json" },
     {
       "properties": {
         "type": {
@@ -27,7 +27,7 @@
         },
         "to": {
           "description": "The ID of the object this alias points to",
-          "$ref": "noid.json"
+          "$ref": "/util/noid.json"
         }
       },
       "required": ["type", "to"]

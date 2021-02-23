@@ -1,11 +1,11 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema",
-  "$id": "/file.json",
+  "$id": "/util/file.json",
   "title": "File",
   "description": "Reference to a stored file. The location of the file will either be determined by the `path` property, the `extension` property, or the field's key",
   "type": "object",
   "properties": {
-    "path": { "$ref": "file/legacyRepoPath.json" },
+    "path": { "$ref": "/util/file/legacyRepoPath.json" },
     "extension": {
       "description": "Extension of a file in the access object store",
       "type": "string",
