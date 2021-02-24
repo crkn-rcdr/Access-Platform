@@ -10,7 +10,7 @@
     "enum": [
       "id",
       "_id",
-      "rev",
+      "_rev",
       "type",
       "public",
       "updateInternalmeta",

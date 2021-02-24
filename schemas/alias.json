@@ -18,7 +18,7 @@
     ]
   },
   "allOf": [
-    { "$ref": "/util/slugged.json" },
+    { "$ref": "/slugged.json" },
     {
       "properties": {
         "type": {

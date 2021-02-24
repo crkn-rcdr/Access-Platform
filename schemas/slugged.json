@@ -11,7 +11,7 @@
         "slug": {
           "description": "Human-readable identifier",
           "type": "string",
-          "pattern": "^[\\p{L}\\p{Nl}\\p{Nd}\\-_\\.]$"
+          "pattern": "^[\\p{L}\\p{Nl}\\p{Nd}\\-_\\.]+$"
         }
       },
       "required": ["type", "slug"]
