@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "/access.json",
+  "title": "Access object",
+  "description": "Any object identifiable by a NOID",
+  "$comment": "The file name adds `.logical` due to a temporary limitation in Kivik",
+  "type": "object",
+  "properties": {
+    "_id": { "$ref": "/util/noid.json" },
+    "id": { "$ref": "/util/noid.json" },
+    "type": {
+      "$comment": "Canvases are access objects, but they are stored in their own database",
+      "description": "Type of access object",
+      "type": "string",
+      "enum": ["collection", "manifest", "alias", "canvas"]
+    },
+    "public": {
+      "description": "When present, denotes that the access object was published on the given date",
+      "type": "string",
+      "format": "date-time"
+    },
+    "updateInternalmeta": {
+      "description": "Trigger for updating the internalmeta database with changes to this access object",
+      "$ref": "/util/update.json"
+    }
+  },
+  "anyOf": [{ "properties": { "id": true } }, { "properties": { "_id": true } }]
+}

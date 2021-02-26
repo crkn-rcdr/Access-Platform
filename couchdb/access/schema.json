@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "/couchdb/access.json",
+  "title": "Access CouchDB document",
+  "type": "object",
+  "allOf": [
+    { "$ref": "doc.json" },
+    {
+      "oneOf": [
+        { "$ref": "../collection.json" },
+        { "$ref": "../manifest/canvases.json" },
+        { "$ref": "../manifest/pdf.json" },
+        { "$ref": "../alias.json" }
+      ]
+    }
+  ]
+}

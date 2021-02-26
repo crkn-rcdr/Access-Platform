@@ -1,0 +1,54 @@
+{
+  "_id": "69429/m0696zw19t6s",
+  "_rev": "13-88326b888609b3b55ef4531a9cf8f4b8",
+  "type": "manifest",
+  "public": "2020-08-30T00:52:39Z",
+  "updateInternalmeta": {
+    "succeeded": true,
+    "message": "",
+    "requestDate": "2021-01-13T20:00:34Z",
+    "processDate": "2021-01-17T06:42:37Z"
+  },
+  "slug": "oocihm.8_06941_1",
+  "label": {
+    "none": "The Pacific Harbor Light: Vol. I, No. 1 (October 17, 1891)"
+  },
+  "dmdType": "issueinfo",
+  "from": "canvases",
+  "behavior": "paged",
+  "viewingDirection": "left-to-right",
+  "canvases": [
+    {
+      "id": "69429/c09s1kj9h004",
+      "label": { "none": "1" }
+    },
+    {
+      "id": "69429/c0610vs1v70v",
+      "label": { "none": "2" }
+    },
+    {
+      "id": "69429/c02805046f82",
+      "label": { "none": "3" }
+    },
+    {
+      "label": { "none": "4" },
+      "id": "69429/c0xg9f66k47d"
+    },
+    {
+      "id": "69429/c0sq8qd8xc3v",
+      "label": { "none": "5" }
+    },
+    {
+      "label": { "none": "6" },
+      "id": "69429/c0nz80n18k93"
+    },
+    {
+      "label": { "none": "7" },
+      "id": "69429/c0j678v3mt8m"
+    },
+    {
+      "label": { "none": "8" },
+      "id": "69429/c0dj58f8t71q"
+    }
+  ]
+}

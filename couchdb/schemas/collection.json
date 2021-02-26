@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "/collection.json",
+  "title": "Collection",
+  "description": "A grouping of other collections and/or manifests",
+  "type": "object",
+  "propertyNames": {
+    "type": "string",
+    "enum": [
+      "id",
+      "_id",
+      "_rev",
+      "type",
+      "public",
+      "updateInternalmeta",
+      "slug",
+      "label",
+      "summary",
+      "dmdType",
+      "behavior",
+      "members"
+    ]
+  },
+  "allOf": [
+    { "$ref": "/canonical.json" },
+    {
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "collection"
+        },
+        "behavior": {
+          "description": "Semantics about the nature of the collection's members list. `unordered` members have no connection to each other, `individuals` are in a meaningful order but the end of one does not link into the beginning of the other, and `multi-part` members are parts of one cohesive whole. If that was too vague, use `unordered` for thematic or project collections, and `multi-part` for serials.",
+          "type": "string",
+          "enum": ["unordered", "individuals", "multi-part"]
+        },
+        "members": {
+          "description": "References to the collections and manifests that are members of this collection",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id"],
+            "properties": {
+              "id": { "$ref": "/util/noid.json" },
+              "label": {
+                "description": "The short label for this member in the collection's context",
+                "$ref": "/util/text.json"
+              }
+            }
+          }
+        }
+      },
+      "required": ["type", "behavior", "members"]
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "/couchdb/doc.json",
+  "type": "object",
+  "properties": {
+    "_id": {
+      "description": "Unique identifier",
+      "type": "string"
+    },
+    "_rev": {
+      "description": "Revision number",
+      "type": "string",
+      "pattern": "^[0-9]+-[0-9a-f]{32}$"
+    }
+  },
+  "required": ["_id"]
+}

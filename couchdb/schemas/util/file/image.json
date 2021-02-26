@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "/util/file/image.json",
+  "title": "Image File",
+  "description": "Reference to a stored image",
+  "type": "object",
+  "allOf": [
+    { "$ref": "/util/file.json" },
+    {
+      "properties": {
+        "extension": {
+          "type": "string",
+          "enum": ["jpg", "jp2", "jpeg", "tif", "tiff"]
+        },
+        "height": { "type": "integer", "minimum": 0 },
+        "width": { "type": "integer", "minimum": 0 },
+        "update": {
+          "description": "Update for the service that supplies dimension information",
+          "$ref": "/util/update.json"
+        }
+      },
+      "required": ["mime"],
+      "dependencies": { "height": ["width"], "width": ["height"] },
+      "oneOf": [{ "required": ["path"] }, { "required": ["extension"] }]
+    }
+  ]
+}
