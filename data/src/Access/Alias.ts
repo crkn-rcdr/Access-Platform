@@ -1,8 +1,9 @@
 import { JSONSchemaType } from "ajv";
 import { Slugged, schema as sluggedSchema } from "./Slugged";
 import { Noid, schema as noidSchema } from "../Format/Noid";
+import { inherit } from "../validator";
 
-interface Local {
+type AliasSpec = {
   /**
    * All aliases have type `alias`.
    */
@@ -11,23 +12,26 @@ interface Local {
    * The Noid of the object this alias points to.
    */
   to: Noid;
-}
+};
 
 /**
  * A slug that points to an object primarily identified by another slug.
  */
-export interface Alias extends Slugged, Local {}
+export type Alias = Slugged & AliasSpec;
 
-export const schema = sluggedSchema.mergeInto<Alias>(
-  {
-    $id: "/access/alias.json",
-    title: "Slug Alias",
-    type: "object",
-    properties: {
-      type: { type: "string", const: "alias" },
-      to: noidSchema.inline,
-    },
-    required: ["type", "to"],
-  } as JSONSchemaType<Local>,
-  true
+const specSchema = {
+  $id: "/access/alias",
+  title: "Slug Alias",
+  type: "object",
+  properties: {
+    type: { type: "string", const: "alias" },
+    to: noidSchema,
+  },
+  required: ["type", "to"],
+} as JSONSchemaType<AliasSpec>;
+
+export const { schema, validate } = inherit<Alias, Slugged, AliasSpec>(
+  sluggedSchema,
+  specSchema,
+  false
 );

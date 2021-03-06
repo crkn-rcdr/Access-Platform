@@ -1,10 +1,11 @@
 import { JSONSchemaType } from "ajv";
+import { inherit } from "../validator";
 import { Slugged, schema as sluggedSchema } from "./Slugged";
 import { Text, schema as textSchema } from "../Util/Text";
 
 const DMD = ["dc", "marc", "issueinfo"];
 
-interface Local {
+type CanonicalSpec = {
   /**
    * Human-readable name or title.
    */
@@ -16,21 +17,27 @@ interface Local {
   /**
    * The type of descriptive metadata record associated with this resource. */
   dmdType: typeof DMD[number];
-}
+};
 
 /**
  * A slugged object representing a real thing, as opposed to an alias.
  */
-export interface Canonical extends Slugged, Local {}
+export type Canonical = Slugged & CanonicalSpec;
 
-export const schema = sluggedSchema.mergeInto<Canonical>({
-  $id: "/access/canonical.json",
+const specSchema = {
+  $id: "/access/canonical",
   title: "Canonical object",
   type: "object",
   properties: {
-    label: textSchema.inline,
-    summary: { ...textSchema.inline, nullable: true },
+    label: textSchema,
+    summary: { ...textSchema, nullable: true },
     dmdType: { type: "string", enum: DMD },
   },
   required: ["label"],
-} as JSONSchemaType<Local>);
+} as JSONSchemaType<CanonicalSpec>;
+
+export const { schema, validate } = inherit<Canonical, Slugged, CanonicalSpec>(
+  sluggedSchema,
+  specSchema,
+  true
+);

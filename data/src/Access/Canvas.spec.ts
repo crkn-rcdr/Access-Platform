@@ -1,9 +1,6 @@
 import test from "ava";
-import { Validator } from "../Validator";
 
-import { Canvas, schema } from "./Canvas";
-
-const validate = new Validator().compile(schema);
+import { Canvas, validate } from "./Canvas";
 
 const canvas = {
   id: "69429/c00000000220",

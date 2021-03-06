@@ -1,9 +1,6 @@
 import test from "ava";
-import { Validator } from "../Validator";
 
-import { FileRef, schema } from "./FileRef";
-
-const validate = new Validator().compile(schema);
+import { FileRef, validate } from "./FileRef";
 
 test("FileRef schema validates a legacy repo file", (t) => {
   t.is(

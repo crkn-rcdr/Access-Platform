@@ -1,4 +1,5 @@
 import { JSONSchemaType } from "ajv";
+import { inherit } from "../validator";
 import { Canonical, schema as canonicalSchema } from "./Canonical";
 
 const BEHAVIORS = ["unordered", "individuals", "contiuous", "paged"];
@@ -9,7 +10,7 @@ const DIRECTIONS = [
   "bottom-to-top",
 ];
 
-interface Local {
+type ManifestSpec = {
   /**
    * All manifests have type `manifest`.
    */
@@ -19,15 +20,15 @@ interface Local {
    */
   behavior?: typeof BEHAVIORS[number];
   viewingDirection?: typeof DIRECTIONS[number];
-}
+};
 
 /**
  * Any work primarily consisting of a sequence of images.
  */
-export interface Manifest extends Canonical, Local {}
+export type Manifest = Canonical & ManifestSpec;
 
-export const schema = canonicalSchema.mergeInto<Manifest>({
-  $id: "/access/manifest.json",
+const specSchema = {
+  $id: "/access/manifest",
   title: "Manifest",
   type: "object",
   properties: {
@@ -46,4 +47,10 @@ export const schema = canonicalSchema.mergeInto<Manifest>({
     },
   },
   required: ["type"],
-} as JSONSchemaType<Local>);
+} as JSONSchemaType<ManifestSpec>;
+
+export const { schema, validate } = inherit<Manifest, Canonical, ManifestSpec>(
+  canonicalSchema,
+  specSchema,
+  true
+);

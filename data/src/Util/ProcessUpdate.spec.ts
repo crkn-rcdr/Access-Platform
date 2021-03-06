@@ -1,9 +1,5 @@
 import test from "ava";
-import { Validator } from "../Validator";
-
-import { ProcessUpdate, schema } from "./ProcessUpdate";
-
-const validate = new Validator().compile(schema);
+import { ProcessUpdate, validate } from "./ProcessUpdate";
 
 const minimal: ProcessUpdate = {
   requestDate: "2020-02-02T02:02:02Z",

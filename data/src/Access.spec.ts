@@ -1,18 +1,15 @@
 import test from "ava";
-import { Validator } from "./Validator";
 
-import { schema } from "./Access";
-import * as Couch from "./Couch";
+import { fromCouch } from "./Couch";
 
 import { Canvas } from "./Access/Canvas";
 import { CanvasManifest } from "./Access/Manifest/Canvases";
 import { PdfManifest } from "./Access/Manifest/Pdf";
 import { Collection } from "./Access/Collection";
 import { Alias } from "./Access/Alias";
+import { validate } from "./Access";
 
-const validate = new Validator().compile(schema);
-
-export const testCanvas: Canvas = Couch.fromCouch({
+export const testCanvas: Canvas = fromCouch({
   _id: "69429/c00000000220",
   _rev: "1-f9810f31b9628858ac049a872e52230c",
   ocrType: "alto",
@@ -39,7 +36,7 @@ test("Access schema validates a Canvas", (t) => {
   if (!valid) console.log(validate.errors);
 });
 
-export const testCanvasManifest: CanvasManifest = Couch.fromCouch({
+export const testCanvasManifest: CanvasManifest = fromCouch({
   _id: "69429/m02n4zg6h671",
   _rev: "14-12f0cda072e2f32e6efb4315220b7a88",
   type: "manifest",
@@ -99,7 +96,7 @@ test("Access schema validates a CanvasManifest", (t) => {
   if (!valid) console.log(validate.errors);
 });
 
-export const testPdfManifest: PdfManifest = Couch.fromCouch({
+export const testPdfManifest: PdfManifest = fromCouch({
   _id: "69429/m0v40js9ht3k",
   _rev: "13-4fce0a4d3af3bd8f35d3fe180b6ebe69",
   type: "manifest",
@@ -137,7 +134,7 @@ test("Access schema validates a PdfManifest", (t) => {
   if (!valid) console.log(validate.errors);
 });
 
-export const testCollection: Collection = Couch.fromCouch({
+export const testCollection: Collection = fromCouch({
   _id: "69429/s0vq2s46j98h",
   _rev: "71-0181037663f0d8cb27a328d6d9aa6da7",
   type: "collection",
@@ -172,7 +169,7 @@ test("Access schema validates a Collection", (t) => {
   if (!valid) console.log(validate.errors);
 });
 
-export const testAlias: Alias = Couch.fromCouch({
+export const testAlias: Alias = fromCouch({
   _id: "69429/m02n4zg6h671",
   type: "alias",
   slug: "typoOfSorts",

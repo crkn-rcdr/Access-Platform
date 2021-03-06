@@ -1,6 +1,6 @@
 import { JSONSchemaType } from "ajv";
-import Schema from "../Schema";
-import { Identified, identifiedSchema } from "../Couch";
+import { inherit } from "../validator";
+import { Identified, schema as identifiedSchema } from "../Couch/Identified";
 import { Noid, schema as noidSchema } from "../Format/Noid";
 import { Timestamp, schema as timestampSchema } from "../Format/Timestamp";
 import {
@@ -8,10 +8,7 @@ import {
   schema as processUpdateSchema,
 } from "../Util/ProcessUpdate";
 
-/**
- * The building blocks of the Canadiana Access Platform.
- */
-export interface Root extends Identified {
+type RootSpec = {
   /**
    * Unique identifier for this resource.
    */
@@ -30,18 +27,25 @@ export interface Root extends Identified {
    * made because of changes to this object.
    */
   updateInternalmeta?: ProcessUpdate;
-}
+};
 
-export const schema = new Schema({
-  $id: "/access/object.json",
+export type Root = Identified & RootSpec;
+
+const specSchema = {
+  $id: "/access/object",
   title: "Access Object",
   type: "object",
   properties: {
-    ...identifiedSchema.full.properties,
-    id: noidSchema.inline,
-    public: { ...timestampSchema.inline, nullable: true },
-    updated: { ...timestampSchema.inline, nullable: true },
-    updateInternalmeta: { ...processUpdateSchema.inline, nullable: true },
+    id: noidSchema,
+    public: { ...timestampSchema, nullable: true },
+    updated: { ...timestampSchema, nullable: true },
+    updateInternalmeta: { ...processUpdateSchema, nullable: true },
   },
   required: ["id"],
-} as JSONSchemaType<Root>);
+} as JSONSchemaType<RootSpec>;
+
+export const { schema, validate } = inherit<Root, Identified, RootSpec>(
+  identifiedSchema,
+  specSchema,
+  true
+);

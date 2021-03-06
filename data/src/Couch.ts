@@ -1,23 +1,6 @@
 import { JSONSchemaType } from "ajv";
-import Schema from "./Schema";
-
-/**
- * Any object identified by an `id` string.
- */
-export interface Identified {
-  id: string;
-  _rev?: string;
-}
-
-export const identifiedSchema = new Schema<Identified>({
-  $id: "/root.json",
-  type: "object",
-  properties: {
-    id: { type: "string" },
-    _rev: { type: "string", nullable: true },
-  },
-  required: ["id"],
-});
+import { Identified } from "./Couch/Identified";
+export type { Identified } from "./Couch/Identified";
 
 /**
  * A CouchDB document representing an object with an `id` string.
@@ -25,7 +8,8 @@ export const identifiedSchema = new Schema<Identified>({
 export type Document<T extends Identified> = { _id: string } & Omit<T, "id">;
 
 /**
- * Translate a CouchDB document into an interoperable one.
+ * Renders Couch-specific features of a document interoperable.
+ * For now, changes `_id` to `id`.
  * @param doc The CouchDB document.
  */
 export const fromCouch = <T extends Identified>(doc: Document<T>): T => {
@@ -37,9 +21,8 @@ export const fromCouch = <T extends Identified>(doc: Document<T>): T => {
 };
 
 /**
- * Translate an interoperable object into something that can be inserted
- * into CouchDB.
- * @param obj An interoperable object.
+ * Converts the `id` property of an object into `_id` for CouchDB insertion.
+ * @param obj Any object with an `id`.
  */
 export const toCouch = <T extends Identified>(obj: T): Document<T> => {
   const { id, ...rest } = obj;

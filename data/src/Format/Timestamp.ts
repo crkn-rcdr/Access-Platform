@@ -1,4 +1,4 @@
-import generate from "./generate";
+import { generateFormat } from "../validator";
 
 /**
  * This is `date-time`, according to the JSON Schema spec.
@@ -12,5 +12,4 @@ const regex = /^\d\d\d\d-[0-1]\d-[0-3]\d[t\s](?:[0-2]\d:[0-5]\d:[0-5]\d|23:59:60
  */
 export type Timestamp = string;
 
-const format = generate<Timestamp>(name, regex);
-export const schema = format.schema;
+export const { schema, validate } = generateFormat<Timestamp>(name, regex);

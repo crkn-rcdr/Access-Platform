@@ -1,15 +1,28 @@
 import { JSONSchemaType } from "ajv";
-import { FileRef, schema as fileRefSchema } from "./FileRef";
 import { ProcessUpdate, schema as processUpdateSchema } from "./ProcessUpdate";
+import { UriReference, schema as uriSchema } from "../Format/UriReference";
+import { generateSchema } from "../validator";
 
 const EXTENSIONS = ["jpg", "jp2", "jpeg", "tif", "tiff"];
 const MEDIA_TYPES = ["image/jpeg", "image/jp2", "image/tiff"];
 
-export interface Local {
+/**
+ * Reference to a stored image, which can be found in either the legacy preservation
+ * repository or the access platform file store.
+ */
+export type ImageRef = {
+  /**
+   * Path to the file in the legacy preservation repository.
+   */
+  path?: UriReference;
   /**
    * Image file extension. Supported: "jpeg", "jpg", "jp2", "tif", "tiff"
    */
   extension?: typeof EXTENSIONS[number];
+  /**
+   * Size of the file, in bytes.
+   */
+  size: number;
   /**
    * RFC 2046 Media Type (formerly MIME). Supported: "image/jpeg", "image/jp2", "image/tiff"
    */
@@ -26,25 +39,22 @@ export interface Local {
    * Update for the service that supplies dimension information.
    */
   update?: ProcessUpdate;
-}
+};
 
-/**
- * Reference to a stored image.
- */
-export interface ImageRef extends Omit<FileRef, "extension" | "mime">, Local {}
-
-export const schema = fileRefSchema.mergeInto({
-  $id: "/util/image.json",
+export const { schema, validate } = generateSchema<ImageRef>({
+  $id: "/util/image",
   title: "Image file reference",
   type: "object",
   properties: {
+    path: { ...uriSchema, nullable: true },
     extension: { type: "string", enum: EXTENSIONS, nullable: true },
+    size: { type: "number", minimum: 0 },
     mime: { type: "string", enum: MEDIA_TYPES },
     height: { type: "integer", minimum: 0, nullable: true },
     width: { type: "integer", minimum: 0, nullable: true },
-    update: { ...processUpdateSchema.inline, nullable: true },
+    update: { ...processUpdateSchema, nullable: true },
   },
   required: ["mime"],
   dependencies: { height: ["width"], width: ["height"] },
   oneOf: [{ required: ["path"] }, { required: ["extension"] }],
-} as JSONSchemaType<Local>);
+} as JSONSchemaType<ImageRef>);

@@ -1,13 +1,13 @@
 import { JSONSchemaType } from "ajv";
-import Schema from "../Schema";
+import { generateSchema } from "../validator";
 
 /**
  * Per-language text values.
  */
 export type Text = Record<string, string>;
 
-export const schema = new Schema({
-  $id: "/util/text.json",
+export const { schema, validate } = generateSchema<Text>({
+  $id: "/util/text",
   title: "Text field",
   type: "object",
   patternProperties: {

@@ -1,24 +1,24 @@
 import { JSONSchemaType } from "ajv";
-import Schema from "../Schema";
+import { generateSchema } from "../validator";
 import { Timestamp, schema as timestampSchema } from "../Format/Timestamp";
 
 /**
  * An object that describes a request for and the output of an automated process that is applied to the parent access object.
  */
-export interface ProcessUpdate {
+export type ProcessUpdate = {
   requestDate: Timestamp;
   processDate?: Timestamp;
   succeeded?: boolean;
   message?: string;
-}
+};
 
-export const schema = new Schema({
-  $id: "/util/processUpdate.json",
+export const { schema, validate } = generateSchema({
+  $id: "/util/processUpdate",
   title: "Process update",
   type: "object",
   properties: {
-    requestDate: timestampSchema.inline,
-    processDate: { ...timestampSchema.inline, nullable: true },
+    requestDate: timestampSchema,
+    processDate: { ...timestampSchema, nullable: true },
     succeeded: { type: "boolean", nullable: true },
     message: { type: "string", nullable: true },
   },

@@ -2,8 +2,9 @@ import { JSONSchemaType } from "ajv";
 import { Manifest, schema as manifestSchema } from "../Manifest";
 import { Text, schema as textSchema } from "../../Util/Text";
 import { FileRef, schema as fileSchema } from "../../Util/FileRef";
+import { inherit } from "../../validator";
 
-interface Local {
+type PdfSpec = {
   from: "pdf";
   /**
    * Reference to the PDF file this manifest was generated from.
@@ -13,27 +14,30 @@ interface Local {
    * Labels for this PDF's pages.
    */
   pageLabels: Text[];
-}
+};
 
 /**
  * A manifest for a born-digital PDF.
  */
-export interface PdfManifest extends Manifest, Local {}
+export type PdfManifest = Manifest & PdfSpec;
 
-export const schema = manifestSchema.mergeInto<PdfManifest>(
-  {
-    $id: "/access/manifest/pdf.json",
-    title: "PDF Manifest",
-    type: "object",
-    properties: {
-      from: { type: "string", const: "pdf" },
-      file: fileSchema.inline,
-      pageLabels: {
-        type: "array",
-        items: textSchema.inline,
-      },
+const specSchema = {
+  $id: "/access/manifest/pdf",
+  title: "PDF Manifest",
+  type: "object",
+  properties: {
+    from: { type: "string", const: "pdf" },
+    file: fileSchema,
+    pageLabels: {
+      type: "array",
+      items: textSchema,
     },
-    required: ["from", "file", "pageLabels"],
-  } as JSONSchemaType<Local>,
-  true
+  },
+  required: ["from", "file", "pageLabels"],
+} as JSONSchemaType<PdfSpec>;
+
+export const { schema, validate } = inherit<PdfManifest, Manifest, PdfSpec>(
+  manifestSchema,
+  specSchema,
+  false
 );

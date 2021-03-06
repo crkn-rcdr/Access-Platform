@@ -1,11 +1,12 @@
 import { JSONSchemaType } from "ajv";
+import { inherit } from "../validator";
 import { Noid, schema as noidSchema } from "../Format/Noid";
 import { Text, schema as textSchema } from "../Util/Text";
 import { Canonical, schema as canonicalSchema } from "./Canonical";
 
 const BEHAVIORS = ["unordered", "individuals", "multi-part"];
 
-export interface Member {
+export type Member = {
   /**
    * The member's Noid.
    */
@@ -15,9 +16,9 @@ export interface Member {
    * Uses the member's full label by default.
    */
   label?: Text;
-}
+};
 
-interface Local {
+type CollectionSpec = {
   /**
    * Collections always have the `collection` type.
    */
@@ -35,34 +36,37 @@ interface Local {
    * The list of members of this collection.
    */
   members: Member[];
-}
+};
 
 /**
  * A grouping of other collections and/or manifests.
  */
-export interface Collection extends Canonical, Local {}
+export type Collection = Canonical & CollectionSpec;
 
-export const schema = canonicalSchema.mergeInto<Collection>(
-  {
-    $id: "/access/collection.json",
-    title: "Collection",
-    type: "object",
-    properties: {
-      type: { type: "string", const: "collection" },
-      behavior: { type: "string", enum: BEHAVIORS },
-      members: {
-        type: "array",
-        items: {
-          type: "object",
-          properties: {
-            id: noidSchema.inline,
-            label: { ...textSchema.inline, nullable: true },
-          },
-          required: ["id"],
+const specSchema = {
+  $id: "/access/collection",
+  title: "Collection",
+  type: "object",
+  properties: {
+    type: { type: "string", const: "collection" },
+    behavior: { type: "string", enum: BEHAVIORS },
+    members: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          id: noidSchema,
+          label: { ...textSchema, nullable: true },
         },
+        required: ["id"],
       },
     },
-    required: ["type", "behavior", "members"],
-  } as JSONSchemaType<Local>,
-  true
-);
+  },
+  required: ["type", "behavior", "members"],
+} as JSONSchemaType<CollectionSpec>;
+
+export const { schema, validate } = inherit<
+  Collection,
+  Canonical,
+  CollectionSpec
+>(canonicalSchema, specSchema, false);

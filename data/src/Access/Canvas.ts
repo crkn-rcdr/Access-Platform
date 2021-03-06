@@ -3,6 +3,7 @@ import { Root, schema as rootSchema } from "./Root";
 import { FileRef, schema as fileRefSchema } from "../Util/FileRef";
 import { ImageRef, schema as imageRefSchema } from "../Util/ImageRef";
 import { UriReference, schema as uriSchema } from "../Format/UriReference";
+import { inherit } from "../validator";
 
 const TAKEDOWNS = ["copyright", "privacy"];
 const OCR_TYPES = ["alto", "txtmap"];
@@ -10,22 +11,22 @@ const OCR_TYPES = ["alto", "txtmap"];
 /**
  * Source information for an image in the legacy preservation repository.
  */
-interface CIHMSource {
+type CIHMSource = {
   from: "cihm";
   /** Legacy repository path. */
   path: UriReference;
-}
+};
 
 /**
  * Source information for an image in Archivematica.
  */
-interface AMSource {
+type AMSource = {
   from: "am";
   aipId: string;
   objId: string;
-}
+};
 
-interface Local {
+type CanvasSpec = {
   /**
    * Information about the preservation source of this base image of this canvas.
    */
@@ -52,49 +53,52 @@ interface Local {
    * this flag.
    */
   orphan?: boolean;
-}
+};
 
 /**
  * The virtual representation of the space taken up by a page of a Manifest.
  */
-export interface Canvas extends Root, Local {}
+export type Canvas = Root & CanvasSpec;
 
-export const schema = rootSchema.mergeInto<Canvas>(
-  {
-    $id: "/canvas.json",
-    title: "Canvas",
-    type: "object",
-    properties: {
-      source: {
-        type: "object",
-        oneOf: [
-          {
-            properties: {
-              from: { type: "string", const: "cihm" },
-              path: uriSchema.inline,
-            },
-            required: ["from", "path"],
-            additionalProperties: false,
+const specSchema = {
+  $id: "/canvas",
+  title: "Canvas",
+  type: "object",
+  properties: {
+    source: {
+      type: "object",
+      oneOf: [
+        {
+          properties: {
+            from: { type: "string", const: "cihm" },
+            path: uriSchema,
           },
-          {
-            properties: {
-              from: { type: "string", const: "cihm" },
-              aipId: { type: "string" },
-              objId: { type: "string" },
-            },
-            required: ["from", "aipId", "objId"],
-            additionalProperties: false,
+          required: ["from", "path"],
+          additionalProperties: false,
+        },
+        {
+          properties: {
+            from: { type: "string", const: "cihm" },
+            aipId: { type: "string" },
+            objId: { type: "string" },
           },
-        ],
-        required: ["from"],
-      },
-      master: imageRefSchema.inline,
-      takedown: { type: "string", enum: TAKEDOWNS, nullable: true },
-      ocrPdf: { ...fileRefSchema.inline, nullable: true },
-      ocrType: { type: "string", enum: OCR_TYPES, nullable: true },
-      orphan: { type: "boolean", default: false, nullable: true },
+          required: ["from", "aipId", "objId"],
+          additionalProperties: false,
+        },
+      ],
+      required: ["from"],
     },
-    required: ["master", "source"],
-  } as JSONSchemaType<Local>,
-  true
+    master: imageRefSchema,
+    takedown: { type: "string", enum: TAKEDOWNS, nullable: true },
+    ocrPdf: { ...fileRefSchema, nullable: true },
+    ocrType: { type: "string", enum: OCR_TYPES, nullable: true },
+    orphan: { type: "boolean", default: false, nullable: true },
+  },
+  required: ["master", "source"],
+} as JSONSchemaType<CanvasSpec>;
+
+export const { schema, validate } = inherit<Canvas, Root, CanvasSpec>(
+  rootSchema,
+  specSchema,
+  false
 );

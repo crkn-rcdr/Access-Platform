@@ -1,5 +1,6 @@
 import { JSONSchemaType } from "ajv";
-import Schema from "./Schema";
+import { generateSchema } from "./validator";
+
 import { Canvas, schema as canvasSchema } from "./Access/Canvas";
 import { Collection, schema as collectionSchema } from "./Access/Collection";
 import {
@@ -24,25 +25,17 @@ export type AccessObject =
 
 export type { Canvas, Collection, CanvasManifest, PdfManifest, Alias };
 
-export const schema = new Schema<AccessObject>({
-  $id: "/access.json",
+export const { schema, validate } = generateSchema({
+  $id: "/access",
   title: "Access Object",
   description: "Any object in the Canadiana Access Platform",
   type: "object",
   oneOf: [
-    canvasSchema.inline,
-    collectionSchema.inline,
-    canvasManifestSchema.inline,
-    pdfManifestSchema.inline,
-    aliasSchema.inline,
+    canvasSchema,
+    collectionSchema,
+    canvasManifestSchema,
+    pdfManifestSchema,
+    aliasSchema,
   ],
   required: ["id"],
 } as JSONSchemaType<AccessObject>);
-
-export const schemas = {
-  canvas: canvasSchema,
-  collection: collectionSchema,
-  canvasManifest: canvasManifestSchema,
-  pdfManifest: pdfManifestSchema,
-  alias: aliasSchema,
-};

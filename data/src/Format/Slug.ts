@@ -1,4 +1,4 @@
-import generate from "./generate";
+import { generateFormat } from "../validator";
 
 const name = "slug";
 const regex = /^[\p{L}\p{Nl}\p{Nd}\-_\.]+$/u;
@@ -9,5 +9,4 @@ const regex = /^[\p{L}\p{Nl}\p{Nd}\-_\.]+$/u;
  */
 export type Slug = string;
 
-const format = generate<Slug>(name, regex);
-export const schema = format.schema;
+export const { schema, validate } = generateFormat<Slug>(name, regex);

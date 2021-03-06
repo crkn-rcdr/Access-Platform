@@ -1,9 +1,6 @@
 import test from "ava";
-import { Validator } from "../Validator";
 
-import { Collection, schema } from "./Collection";
-
-const validate = new Validator().compile(schema);
+import { Collection, validate } from "./Collection";
 
 const collection: Collection = {
   id: "69429/s0vq2s46j98h",

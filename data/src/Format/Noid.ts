@@ -1,4 +1,4 @@
-import generate from "./generate";
+import { generateFormat } from "../validator";
 
 /**
  * The Noid alphanumeric character class.
@@ -16,5 +16,4 @@ const regex = new RegExp(
  */
 export type Noid = string;
 
-const format = generate<Noid>(name, regex);
-export const schema = format.schema;
+export const { schema, validate } = generateFormat<Noid>(name, regex);

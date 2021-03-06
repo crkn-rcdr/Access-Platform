@@ -1,9 +1,6 @@
 import test from "ava";
-import { Validator } from "../Validator";
 
-import { Alias, schema } from "./Alias";
-
-const validate = new Validator().compile(schema);
+import { Alias, validate } from "./Alias";
 
 const alias: Alias = {
   id: "69429/m02n4zg6h671",

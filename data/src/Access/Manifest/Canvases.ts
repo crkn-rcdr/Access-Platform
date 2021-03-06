@@ -3,16 +3,17 @@ import { Manifest, schema as manifestSchema } from "../Manifest";
 import { Noid, schema as noidSchema } from "../../Format/Noid";
 import { Text, schema as textSchema } from "../../Util/Text";
 import { FileRef, schema as fileSchema } from "../../Util/FileRef";
+import { inherit } from "../../validator";
 
-export interface Canvas {
+export type Canvas = {
   id: Noid;
   /**
    * The canvas's label in the context of this manifest.
    */
   label: Text;
-}
+};
 
-interface Local {
+type CanvasesSpec = {
   from: "canvases";
   /**
    * The manifest's canvas list.
@@ -24,31 +25,34 @@ interface Local {
    * access object store at $id.pdf
    */
   ocrPdf?: FileRef;
-}
+};
 
-export interface CanvasManifest extends Manifest, Local {}
+export type CanvasManifest = Manifest & CanvasesSpec;
 
-export const schema = manifestSchema.mergeInto<CanvasManifest>(
-  {
-    $id: "/access/manifest/canvases.json",
-    title: "Canvas Manifest",
-    type: "object",
-    properties: {
-      from: { type: "string", const: "canvases" },
-      canvases: {
-        type: "array",
-        items: {
-          type: "object",
-          properties: {
-            id: noidSchema.inline,
-            label: textSchema.inline,
-          },
-          required: ["id", "label"],
+const specSchema = {
+  $id: "/access/manifest/canvases",
+  title: "Canvas Manifest",
+  type: "object",
+  properties: {
+    from: { type: "string", const: "canvases" },
+    canvases: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          id: noidSchema,
+          label: textSchema,
         },
+        required: ["id", "label"],
       },
-      ocrPdf: { ...fileSchema.inline, nullable: true },
     },
-    required: ["from", "canvases"],
-  } as JSONSchemaType<Local>,
-  true
-);
+    ocrPdf: { ...fileSchema, nullable: true },
+  },
+  required: ["from", "canvases"],
+} as JSONSchemaType<CanvasesSpec>;
+
+export const { schema, validate } = inherit<
+  CanvasManifest,
+  Manifest,
+  CanvasesSpec
+>(manifestSchema, specSchema, false);

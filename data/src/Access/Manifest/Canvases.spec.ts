@@ -1,9 +1,6 @@
 import test from "ava";
-import { Validator } from "../../Validator";
 
-import { CanvasManifest, schema } from "./Canvases";
-
-const validate = new Validator().compile(schema);
+import { CanvasManifest, validate } from "./Canvases";
 
 const manifest: CanvasManifest = {
   id: "69429/m02n4zg6h671",

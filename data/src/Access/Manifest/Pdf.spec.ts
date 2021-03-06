@@ -1,9 +1,6 @@
 import test from "ava";
-import { Validator } from "../../Validator";
 
-import { PdfManifest, schema } from "./Pdf";
-
-const validate = new Validator().compile(schema);
+import { PdfManifest, validate } from "./Pdf";
 
 const manifest: PdfManifest = {
   id: "69429/m0v40js9ht3k",

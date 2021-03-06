@@ -1,27 +1,34 @@
+import { JSONSchemaType } from "ajv";
+import { inherit } from "../validator";
 import { Root, schema as rootSchema } from "./Root";
 import { Slug, schema as slugSchema } from "../Format/Slug";
-import { JSONSchemaType } from "ajv";
 
-interface Local {
+type SluggedSpec = {
   /**
    * Human-readable identifier used to retrieve this object. Any such object
    * without a slug will not be retrievable without access to the object's
    * Noid.
    */
   slug?: Slug;
-}
+};
 
 /**
  * Any access object that can have a slug assigned to it.
  */
-export interface Slugged extends Root, Local {}
+export type Slugged = Root & SluggedSpec;
 
-export const schema = rootSchema.mergeInto<Slugged>({
-  $id: "/access/slugged.json",
+const specSchema = {
+  $id: "/access/slugged",
   title: "Slugged Object",
   type: "object",
   properties: {
-    slug: { ...slugSchema.inline, nullable: true },
+    slug: { ...slugSchema, nullable: true },
   },
   required: [],
-} as JSONSchemaType<Local>);
+} as JSONSchemaType<SluggedSpec>;
+
+export const { schema, validate } = inherit<Slugged, Root, SluggedSpec>(
+  rootSchema,
+  specSchema,
+  true
+);

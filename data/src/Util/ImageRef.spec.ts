@@ -1,9 +1,6 @@
 import test from "ava";
-import { Validator } from "../Validator";
 
-import { ImageRef, schema } from "./ImageRef";
-
-const validate = new Validator().compile(schema);
+import { ImageRef, validate } from "./ImageRef";
 
 test("ImageRef schema validates an image specified by path", (t) => {
   t.is(
