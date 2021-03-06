@@ -1,8 +1,8 @@
 import { JSONSchemaType } from "ajv";
 import Schema from "../Schema";
 import { Identified, identifiedSchema } from "../Couch";
-import { DateTime, schema as dateTimeSchema } from "../Format/DateTime";
 import { Noid, schema as noidSchema } from "../Format/Noid";
+import { Timestamp, schema as timestampSchema } from "../Format/Timestamp";
 import {
   ProcessUpdate,
   schema as processUpdateSchema,
@@ -20,11 +20,11 @@ export interface Root extends Identified {
    * If set, the object was made available to the public at this time.
    * If unset, it is not available to the public.
    */
-  public?: DateTime;
+  public?: Timestamp;
   /**
    * Timestamp for when this object was last updated.
    */
-  updated?: DateTime;
+  updated?: Timestamp;
   /**
    * Information about the most recent update to the internalmeta database
    * made because of changes to this object.
@@ -39,8 +39,8 @@ export const schema = new Schema({
   properties: {
     ...identifiedSchema.full.properties,
     id: noidSchema.inline,
-    public: { ...dateTimeSchema.inline, nullable: true },
-    updated: { ...dateTimeSchema.inline, nullable: true },
+    public: { ...timestampSchema.inline, nullable: true },
+    updated: { ...timestampSchema.inline, nullable: true },
     updateInternalmeta: { ...processUpdateSchema.inline, nullable: true },
   },
   required: ["id"],
