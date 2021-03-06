@@ -12,6 +12,9 @@ import {
 } from "./Access/Manifest/Pdf";
 import { Alias, schema as aliasSchema } from "./Access/Alias";
 
+/**
+ * Any object in the Canadiana Access Platform.
+ */
 export type AccessObject =
   | Canvas
   | Collection
