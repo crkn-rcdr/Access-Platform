@@ -2,7 +2,7 @@ import { Root, schema as rootSchema } from "./Root";
 import { Slug, schema as slugSchema } from "../Format/Slug";
 import { JSONSchemaType } from "ajv";
 
-export interface Local {
+interface Local {
   /**
    * Human-readable identifier used to retrieve this object. Any such object
    * without a slug will not be retrievable without access to the object's

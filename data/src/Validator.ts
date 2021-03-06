@@ -8,7 +8,7 @@ export const registerFormat = (format: Format<string>) => {
   FORMATS.push(format);
 };
 
-export default class Validator {
+export class Validator {
   private readonly ajv: Ajv;
 
   constructor() {

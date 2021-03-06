@@ -2,7 +2,7 @@ import { JSONSchemaType } from "ajv";
 import Schema from "./Schema";
 
 /**
- * An object that can interface with CouchDB
+ * Any object identified by an `id` string.
  */
 export interface Identified {
   id: string;
@@ -19,8 +19,15 @@ export const identifiedSchema = new Schema<Identified>({
   required: ["id"],
 });
 
+/**
+ * A CouchDB document representing an object with an `id` string.
+ */
 export type Document<T extends Identified> = { _id: string } & Omit<T, "id">;
 
+/**
+ * Translate a CouchDB document into an interoperable one.
+ * @param doc The CouchDB document.
+ */
 export const fromCouch = <T extends Identified>(doc: Document<T>): T => {
   const { _id, ...rest } = doc;
   return ({
@@ -29,6 +36,11 @@ export const fromCouch = <T extends Identified>(doc: Document<T>): T => {
   } as unknown) as T;
 };
 
+/**
+ * Translate an interoperable object into something that can be inserted
+ * into CouchDB.
+ * @param obj An interoperable object.
+ */
 export const toCouch = <T extends Identified>(obj: T): Document<T> => {
   const { id, ...rest } = obj;
   return ({
@@ -37,6 +49,11 @@ export const toCouch = <T extends Identified>(obj: T): Document<T> => {
   } as unknown) as Document<T>;
 };
 
+/**
+ * Translate a JSON schema for any object with an `id` string into a JSON
+ * schema for the CouchDB document representing it.
+ * @param schema The JSON schema.
+ */
 export const toCouchSchema = <T extends Identified>(
   schema: JSONSchemaType<T>
 ): JSONSchemaType<Document<T>> => {

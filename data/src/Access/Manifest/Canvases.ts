@@ -12,7 +12,7 @@ export interface Canvas {
   label: Text;
 }
 
-export interface Local {
+interface Local {
   from: "canvases";
   /**
    * The manifest's canvas list.
@@ -28,7 +28,7 @@ export interface Local {
 
 export interface CanvasManifest extends Manifest, Local {}
 
-export const schema = manifestSchema.mergeInto(
+export const schema = manifestSchema.mergeInto<CanvasManifest>(
   {
     $id: "/access/manifest/canvases.json",
     title: "Canvas Manifest",

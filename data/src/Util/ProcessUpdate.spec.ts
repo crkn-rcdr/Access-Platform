@@ -1,5 +1,5 @@
 import test from "ava";
-import Validator from "../Validator";
+import { Validator } from "../Validator";
 
 import { ProcessUpdate, schema } from "./ProcessUpdate";
 

@@ -4,7 +4,7 @@ import { Text, schema as textSchema } from "../Util/Text";
 
 const DMD = ["dc", "marc", "issueinfo"];
 
-export interface Local {
+interface Local {
   /**
    * Human-readable name or title.
    */

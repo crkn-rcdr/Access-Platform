@@ -20,7 +20,7 @@ interface Local {
  */
 export interface PdfManifest extends Manifest, Local {}
 
-export const schema = manifestSchema.mergeInto(
+export const schema = manifestSchema.mergeInto<PdfManifest>(
   {
     $id: "/access/manifest/pdf.json",
     title: "PDF Manifest",

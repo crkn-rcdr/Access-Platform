@@ -2,10 +2,7 @@ import { JSONSchemaType } from "ajv";
 import { Slugged, schema as sluggedSchema } from "./Slugged";
 import { Noid, schema as noidSchema } from "../Format/Noid";
 
-/**
- * A slug that points to an object primarily identified by another slug.
- */
-export interface Local {
+interface Local {
   /**
    * All aliases have type `alias`.
    */
@@ -16,6 +13,9 @@ export interface Local {
   to: Noid;
 }
 
+/**
+ * A slug that points to an object primarily identified by another slug.
+ */
 export interface Alias extends Slugged, Local {}
 
 export const schema = sluggedSchema.mergeInto<Alias>(

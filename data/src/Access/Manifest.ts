@@ -9,7 +9,7 @@ const DIRECTIONS = [
   "bottom-to-top",
 ];
 
-export interface Local {
+interface Local {
   /**
    * All manifests have type `manifest`.
    */

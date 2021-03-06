@@ -10,7 +10,7 @@ const OCR_TYPES = ["alto", "txtmap"];
 /**
  * Source information for an image in the legacy preservation repository.
  */
-export interface CIHMSource {
+interface CIHMSource {
   from: "cihm";
   /** Legacy repository path. */
   path: UriReference;
@@ -19,13 +19,13 @@ export interface CIHMSource {
 /**
  * Source information for an image in Archivematica.
  */
-export interface AMSource {
+interface AMSource {
   from: "am";
   aipId: string;
   objId: string;
 }
 
-export interface Local {
+interface Local {
   /**
    * Information about the preservation source of this base image of this canvas.
    */

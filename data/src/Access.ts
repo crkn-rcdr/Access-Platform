@@ -22,6 +22,8 @@ export type AccessObject =
   | PdfManifest
   | Alias;
 
+export type { Canvas, Collection, CanvasManifest, PdfManifest, Alias };
+
 export const schema = new Schema<AccessObject>({
   $id: "/access.json",
   title: "Access Object",
@@ -36,3 +38,11 @@ export const schema = new Schema<AccessObject>({
   ],
   required: ["id"],
 } as JSONSchemaType<AccessObject>);
+
+export const schemas = {
+  canvas: canvasSchema,
+  collection: collectionSchema,
+  canvasManifest: canvasManifestSchema,
+  pdfManifest: pdfManifestSchema,
+  alias: aliasSchema,
+};

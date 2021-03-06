@@ -17,7 +17,7 @@ export interface Member {
   label?: Text;
 }
 
-export interface Local {
+interface Local {
   /**
    * Collections always have the `collection` type.
    */
