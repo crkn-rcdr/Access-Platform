@@ -1,4 +1,4 @@
-import { generate as generateFormat } from "../Format";
+import generate from "./generate";
 
 /**
  * The Noid alphanumeric character class.
@@ -14,7 +14,7 @@ const regex = new RegExp(
  * Fully specified ark/noid combination for use as a permanent identifier
  * for an access object.
  */
-type Noid = string;
-export default Noid;
+export type Noid = string;
 
-export const format = generateFormat<Noid>(name, regex);
+const format = generate<Noid>(name, regex);
+export const schema = format.schema;

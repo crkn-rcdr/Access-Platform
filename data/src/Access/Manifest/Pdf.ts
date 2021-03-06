@@ -1,7 +1,7 @@
 import { JSONSchemaType } from "ajv";
-import Text, { schema as textSchema } from "../../Util/Text";
-import FileRef, { schema as fileSchema } from "../../Util/FileRef";
-import Manifest, { schema as manifestSchema } from "../Manifest";
+import { Manifest, schema as manifestSchema } from "../Manifest";
+import { Text, schema as textSchema } from "../../Util/Text";
+import { FileRef, schema as fileSchema } from "../../Util/FileRef";
 
 interface Local {
   from: "pdf";
@@ -18,7 +18,7 @@ interface Local {
 /**
  * A manifest for a born-digital PDF.
  */
-export default interface PdfManifest extends Manifest, Local {}
+export interface PdfManifest extends Manifest, Local {}
 
 export const schema = manifestSchema.mergeInto(
   {

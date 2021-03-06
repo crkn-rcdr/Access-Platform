@@ -1,15 +1,13 @@
 import { JSONSchemaType } from "ajv";
 import Schema from "../Schema";
-import UriReference, {
-  format as uriReferenceFormat,
-} from "../Format/UriReference";
+import { UriReference, schema as uriSchema } from "../Format/UriReference";
 
 /**
  * Reference to a stored file. The location of the file will either be
  * determined by the `path` property, the `extension` property, or the
  * field's key.
  */
-export default interface FileRef {
+export interface FileRef {
   /**
    * Path to the file in the legacy preservation repository.
    */
@@ -37,7 +35,7 @@ export const schema = new Schema<FileRef>({
   title: "File Reference",
   type: "object",
   properties: {
-    path: { ...uriReferenceFormat.schema.inline, nullable: true },
+    path: { ...uriSchema.inline, nullable: true },
     extension: { type: "string", minLength: 1, nullable: true },
     size: { type: "number", minimum: 0 },
     mime: { type: "string", pattern: "^\\w+/\\w+$", nullable: true },

@@ -4,8 +4,7 @@ import Schema from "../Schema";
 /**
  * Per-language text values.
  */
-type Text = Record<string, string>;
-export default Text;
+export type Text = Record<string, string>;
 
 export const schema = new Schema({
   $id: "/util/text.json",

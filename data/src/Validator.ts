@@ -1,6 +1,6 @@
 import Ajv, { ValidateFunction } from "ajv";
 import Schema from "./Schema";
-import Format from "./Format";
+import { Format } from "./Format";
 
 const FORMATS: Format<string>[] = [];
 

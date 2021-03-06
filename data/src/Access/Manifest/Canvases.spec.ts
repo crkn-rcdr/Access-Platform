@@ -1,7 +1,7 @@
 import test from "ava";
 import Validator from "../../Validator";
 
-import CanvasManifest, { schema } from "./Canvases";
+import { CanvasManifest, schema } from "./Canvases";
 
 const validate = new Validator().compile(schema);
 

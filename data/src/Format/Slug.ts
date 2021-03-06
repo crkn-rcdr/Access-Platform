@@ -1,4 +1,4 @@
-import { generate as generateFormat } from "../Format";
+import generate from "./generate";
 
 const name = "slug";
 const regex = /^[\p{L}\p{Nl}\p{Nd}\-_\.]+$/u;
@@ -7,7 +7,7 @@ const regex = /^[\p{L}\p{Nl}\p{Nd}\-_\.]+$/u;
  * Human-readable identifier for access objects that can be retrieved directly
  * by users.
  */
-type Slug = string;
-export default Slug;
+export type Slug = string;
 
-export const format = generateFormat<Slug>(name, regex);
+const format = generate<Slug>(name, regex);
+export const schema = format.schema;

@@ -1,10 +1,8 @@
 import { JSONSchemaType } from "ajv";
-import AccessObject, { schema as accessObjectSchema } from "./Object";
-import FileRef, { schema as fileRefSchema } from "../Util/FileRef";
-import ImageRef, { schema as imageRefSchema } from "../Util/ImageRef";
-import UriReference, {
-  format as uriReferenceFormat,
-} from "../Format/UriReference";
+import { Root, schema as rootSchema } from "./Root";
+import { FileRef, schema as fileRefSchema } from "../Util/FileRef";
+import { ImageRef, schema as imageRefSchema } from "../Util/ImageRef";
+import { UriReference, schema as uriSchema } from "../Format/UriReference";
 
 const TAKEDOWNS = ["copyright", "privacy"];
 const OCR_TYPES = ["alto", "txtmap"];
@@ -12,7 +10,7 @@ const OCR_TYPES = ["alto", "txtmap"];
 /**
  * Source information for an image in the legacy preservation repository.
  */
-interface CIHMSource {
+export interface CIHMSource {
   from: "cihm";
   /** Legacy repository path. */
   path: UriReference;
@@ -21,13 +19,13 @@ interface CIHMSource {
 /**
  * Source information for an image in Archivematica.
  */
-interface AMSource {
+export interface AMSource {
   from: "am";
   aipId: string;
   objId: string;
 }
 
-interface Local {
+export interface Local {
   /**
    * Information about the preservation source of this base image of this canvas.
    */
@@ -59,9 +57,9 @@ interface Local {
 /**
  * The virtual representation of the space taken up by a page of a Manifest.
  */
-export default interface Canvas extends AccessObject, Local {}
+export interface Canvas extends Root, Local {}
 
-export const schema = accessObjectSchema.mergeInto<Canvas>(
+export const schema = rootSchema.mergeInto<Canvas>(
   {
     $id: "/canvas.json",
     title: "Canvas",
@@ -73,7 +71,7 @@ export const schema = accessObjectSchema.mergeInto<Canvas>(
           {
             properties: {
               from: { type: "string", const: "cihm" },
-              path: uriReferenceFormat.schema.inline,
+              path: uriSchema.inline,
             },
             required: ["from", "path"],
             additionalProperties: false,

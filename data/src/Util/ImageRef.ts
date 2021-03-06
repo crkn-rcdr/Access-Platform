@@ -1,11 +1,11 @@
 import { JSONSchemaType } from "ajv";
-import FileRef, { schema as fileRefSchema } from "./FileRef";
-import ProcessUpdate, { schema as processUpdateSchema } from "./ProcessUpdate";
+import { FileRef, schema as fileRefSchema } from "./FileRef";
+import { ProcessUpdate, schema as processUpdateSchema } from "./ProcessUpdate";
 
 const EXTENSIONS = ["jpg", "jp2", "jpeg", "tif", "tiff"];
 const MEDIA_TYPES = ["image/jpeg", "image/jp2", "image/tiff"];
 
-interface Local {
+export interface Local {
   /**
    * Image file extension. Supported: "jpeg", "jpg", "jp2", "tif", "tiff"
    */
@@ -31,9 +31,7 @@ interface Local {
 /**
  * Reference to a stored image.
  */
-export default interface ImageRef
-  extends Omit<FileRef, "extension" | "mime">,
-    Local {}
+export interface ImageRef extends Omit<FileRef, "extension" | "mime">, Local {}
 
 export const schema = fileRefSchema.mergeInto({
   $id: "/util/image.json",

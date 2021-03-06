@@ -1,7 +1,7 @@
 import test from "ava";
 import Validator from "../Validator";
 
-import ProcessUpdate, { schema } from "./ProcessUpdate";
+import { ProcessUpdate, schema } from "./ProcessUpdate";
 
 const validate = new Validator().compile(schema);
 

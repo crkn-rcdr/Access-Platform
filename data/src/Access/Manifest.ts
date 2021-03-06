@@ -1,5 +1,5 @@
 import { JSONSchemaType } from "ajv";
-import CanonicalObject, { schema as canonicalSchema } from "./Canonical";
+import { Canonical, schema as canonicalSchema } from "./Canonical";
 
 const BEHAVIORS = ["unordered", "individuals", "contiuous", "paged"];
 const DIRECTIONS = [
@@ -9,7 +9,7 @@ const DIRECTIONS = [
   "bottom-to-top",
 ];
 
-interface Local {
+export interface Local {
   /**
    * All manifests have type `manifest`.
    */
@@ -24,7 +24,7 @@ interface Local {
 /**
  * Any work primarily consisting of a sequence of images.
  */
-export default interface Manifest extends CanonicalObject, Local {}
+export interface Manifest extends Canonical, Local {}
 
 export const schema = canonicalSchema.mergeInto<Manifest>({
   $id: "/access/manifest.json",

@@ -1,7 +1,7 @@
 import test from "ava";
 import Validator from "../../Validator";
 
-import PdfManifest, { schema } from "./Pdf";
+import { PdfManifest, schema } from "./Pdf";
 
 const validate = new Validator().compile(schema);
 
@@ -24,8 +24,7 @@ const manifest: PdfManifest = {
     path: "numeris.RD_2009_SP00_042/data/sip/data/files/document.pdf",
   },
   label: {
-    none:
-      "British Columbia - Radio Market Report/Rapport de marché - S2 Spring/Printemps 2009",
+    none: "Just a label.",
   },
   slug: "numeris.RD_2009_SP00_042",
   updateInternalmeta: {

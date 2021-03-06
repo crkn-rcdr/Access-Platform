@@ -1,7 +1,7 @@
 import { JSONSchemaType } from "ajv";
-import Noid, { format as noidFormat } from "../Format/Noid";
-import Text, { schema as textSchema } from "../Util/Text";
-import CanonicalObject, { schema as canonicalSchema } from "./Canonical";
+import { Noid, schema as noidSchema } from "../Format/Noid";
+import { Text, schema as textSchema } from "../Util/Text";
+import { Canonical, schema as canonicalSchema } from "./Canonical";
 
 const BEHAVIORS = ["unordered", "individuals", "multi-part"];
 
@@ -17,7 +17,7 @@ export interface Member {
   label?: Text;
 }
 
-interface Local {
+export interface Local {
   /**
    * Collections always have the `collection` type.
    */
@@ -40,7 +40,7 @@ interface Local {
 /**
  * A grouping of other collections and/or manifests.
  */
-export default interface Collection extends CanonicalObject, Local {}
+export interface Collection extends Canonical, Local {}
 
 export const schema = canonicalSchema.mergeInto<Collection>(
   {
@@ -55,7 +55,7 @@ export const schema = canonicalSchema.mergeInto<Collection>(
         items: {
           type: "object",
           properties: {
-            id: noidFormat.schema.inline,
+            id: noidSchema.inline,
             label: { ...textSchema.inline, nullable: true },
           },
           required: ["id"],

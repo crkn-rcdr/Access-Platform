@@ -1,7 +1,7 @@
 import test from "ava";
 import Validator from "../Validator";
 
-import Collection, { schema } from "./Collection";
+import { Collection, schema } from "./Collection";
 
 const validate = new Validator().compile(schema);
 

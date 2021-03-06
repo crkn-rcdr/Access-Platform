@@ -1,10 +1,10 @@
 import { JSONSchemaType } from "ajv";
-import Noid, { format as noidFormat } from "../../Format/Noid";
-import Text, { schema as textSchema } from "../../Util/Text";
-import FileRef, { schema as fileSchema } from "../../Util/FileRef";
-import Manifest, { schema as manifestSchema } from "../Manifest";
+import { Manifest, schema as manifestSchema } from "../Manifest";
+import { Noid, schema as noidSchema } from "../../Format/Noid";
+import { Text, schema as textSchema } from "../../Util/Text";
+import { FileRef, schema as fileSchema } from "../../Util/FileRef";
 
-interface Canvas {
+export interface Canvas {
   id: Noid;
   /**
    * The canvas's label in the context of this manifest.
@@ -12,7 +12,7 @@ interface Canvas {
   label: Text;
 }
 
-interface Local {
+export interface Local {
   from: "canvases";
   /**
    * The manifest's canvas list.
@@ -26,7 +26,7 @@ interface Local {
   ocrPdf?: FileRef;
 }
 
-export default interface CanvasManifest extends Manifest, Local {}
+export interface CanvasManifest extends Manifest, Local {}
 
 export const schema = manifestSchema.mergeInto(
   {
@@ -40,7 +40,7 @@ export const schema = manifestSchema.mergeInto(
         items: {
           type: "object",
           properties: {
-            id: noidFormat.schema.inline,
+            id: noidSchema.inline,
             label: textSchema.inline,
           },
           required: ["id", "label"],

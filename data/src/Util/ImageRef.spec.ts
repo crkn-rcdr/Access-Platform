@@ -1,7 +1,7 @@
 import test from "ava";
 import Validator from "../Validator";
 
-import ImageRef, { schema } from "./ImageRef";
+import { ImageRef, schema } from "./ImageRef";
 
 const validate = new Validator().compile(schema);
 

@@ -1,10 +1,10 @@
-import SluggedObject, { schema as sluggedObjectSchema } from "./Slugged";
-import Text, { schema as textSchema } from "../Util/Text";
 import { JSONSchemaType } from "ajv";
+import { Slugged, schema as sluggedSchema } from "./Slugged";
+import { Text, schema as textSchema } from "../Util/Text";
 
 const DMD = ["dc", "marc", "issueinfo"];
 
-interface Local {
+export interface Local {
   /**
    * Human-readable name or title.
    */
@@ -21,9 +21,9 @@ interface Local {
 /**
  * A slugged object representing a real thing, as opposed to an alias.
  */
-export default interface CanonicalObject extends SluggedObject, Local {}
+export interface Canonical extends Slugged, Local {}
 
-export const schema = sluggedObjectSchema.mergeInto<CanonicalObject>({
+export const schema = sluggedSchema.mergeInto<Canonical>({
   $id: "/access/canonical.json",
   title: "Canonical object",
   type: "object",

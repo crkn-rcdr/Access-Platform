@@ -1,4 +1,4 @@
-import { generate as generateFormat } from "../Format";
+import generate from "./generate";
 
 const name = "uri-reference";
 // See https://github.com/ajv-validator/ajv-formats/blob/master/src/formats.ts
@@ -7,7 +7,7 @@ const regex = /^(?:(?:[a-z][a-z0-9+\-.]*:)?\/?\/)?(?:[^\\\s#][^\s#]*)?(?:#[^\\\s
 /**
  * A URI reference.
  */
-type UriReference = string;
-export default UriReference;
+export type UriReference = string;
 
-export const format = generateFormat<UriReference>(name, regex);
+const format = generate<UriReference>(name, regex);
+export const schema = format.schema;

@@ -1,11 +1,11 @@
 import { JSONSchemaType } from "ajv";
 import Schema from "../Schema";
-import DateTime, { format as dateTimeFormat } from "../Format/DateTime";
+import { DateTime, schema as dateTimeSchema } from "../Format/DateTime";
 
 /**
  * An object that describes a request for and the output of an automated process that is applied to the parent access object.
  */
-export default interface ProcessUpdate {
+export interface ProcessUpdate {
   requestDate: DateTime;
   processDate?: DateTime;
   succeeded?: boolean;
@@ -17,8 +17,8 @@ export const schema = new Schema({
   title: "Process update",
   type: "object",
   properties: {
-    requestDate: dateTimeFormat.schema.inline,
-    processDate: { ...dateTimeFormat.schema.inline, nullable: true },
+    requestDate: dateTimeSchema.inline,
+    processDate: { ...dateTimeSchema.inline, nullable: true },
     succeeded: { type: "boolean", nullable: true },
     message: { type: "string", nullable: true },
   },
