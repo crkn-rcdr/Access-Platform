@@ -1,6 +1,6 @@
 import { JSONSchemaType } from "ajv";
 import { Slugged, schema as sluggedSchema } from "./Slugged";
-import { Noid, schema as noidSchema } from "../Format/Noid";
+import { Noid, inline as noidSchema } from "../Format/Noid";
 import { inherit } from "../validator";
 
 type AliasSpec = {
@@ -30,7 +30,7 @@ const specSchema = {
   required: ["type", "to"],
 } as JSONSchemaType<AliasSpec>;
 
-export const { schema, validate } = inherit<Alias, Slugged, AliasSpec>(
+export const { inline, schema, validate } = inherit<Alias, Slugged, AliasSpec>(
   sluggedSchema,
   specSchema,
   false

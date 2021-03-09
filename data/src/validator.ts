@@ -5,6 +5,10 @@ export type SchemaHelper<T> = {
    * A schema object that can be safely inlined into the definition of another
    * schema.
    */
+  inline: JSONSchemaType<T>;
+  /**
+   * A fully described schema object.
+   */
   schema: JSONSchemaType<T>;
   /**
    * The schema's validate function.
@@ -25,7 +29,8 @@ export const generateSchema = <T>(
   Object.freeze(_remainder);
 
   return {
-    schema: _remainder as JSONSchemaType<T>,
+    inline: _remainder as JSONSchemaType<T>,
+    schema: full,
     validate: validator.compile<T>(full),
   };
 };

@@ -9,4 +9,7 @@ const regex = /^(?:(?:[a-z][a-z0-9+\-.]*:)?\/?\/)?(?:[^\\\s#][^\s#]*)?(?:#[^\\\s
  */
 export type UriReference = string;
 
-export const { schema, validate } = generateFormat<UriReference>(name, regex);
+export const { inline, schema, validate } = generateFormat<UriReference>(
+  name,
+  regex
+);

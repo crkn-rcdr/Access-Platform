@@ -1,6 +1,6 @@
 import { JSONSchemaType } from "ajv";
-import { ProcessUpdate, schema as processUpdateSchema } from "./ProcessUpdate";
-import { UriReference, schema as uriSchema } from "../Format/UriReference";
+import { ProcessUpdate, inline as processUpdateSchema } from "./ProcessUpdate";
+import { UriReference, inline as uriSchema } from "../Format/UriReference";
 import { generateSchema } from "../validator";
 
 const EXTENSIONS = ["jpg", "jp2", "jpeg", "tif", "tiff"];
@@ -41,7 +41,7 @@ export type ImageRef = {
   update?: ProcessUpdate;
 };
 
-export const { schema, validate } = generateSchema<ImageRef>({
+export const { inline, schema, validate } = generateSchema<ImageRef>({
   $id: "/util/image",
   title: "Image file reference",
   type: "object",

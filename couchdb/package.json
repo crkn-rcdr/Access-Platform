@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/crkn-rcdr/Access-Platform/tree/main/couchdb",
   "dependencies": {
-    "kivik": "^2.0.0-alpha.2"
+    "@crkn-rcdr/access-data": "workspace:*",
+    "kivik": "github:crkn-rcdr/kivik#any-validate"
   }
 }

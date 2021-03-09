@@ -16,4 +16,4 @@ const regex = new RegExp(
  */
 export type Noid = string;
 
-export const { schema, validate } = generateFormat<Noid>(name, regex);
+export const { inline, schema, validate } = generateFormat<Noid>(name, regex);

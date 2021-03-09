@@ -1,11 +1,11 @@
 import { JSONSchemaType } from "ajv";
 import { inherit } from "../validator";
 import { Identified, schema as identifiedSchema } from "../Couch/Identified";
-import { Noid, schema as noidSchema } from "../Format/Noid";
-import { Timestamp, schema as timestampSchema } from "../Format/Timestamp";
+import { Noid, inline as noidSchema } from "../Format/Noid";
+import { Timestamp, inline as timestampSchema } from "../Format/Timestamp";
 import {
   ProcessUpdate,
-  schema as processUpdateSchema,
+  inline as processUpdateSchema,
 } from "../Util/ProcessUpdate";
 
 type RootSpec = {
@@ -44,7 +44,7 @@ const specSchema = {
   required: ["id"],
 } as JSONSchemaType<RootSpec>;
 
-export const { schema, validate } = inherit<Root, Identified, RootSpec>(
+export const { inline, schema, validate } = inherit<Root, Identified, RootSpec>(
   identifiedSchema,
   specSchema,
   true

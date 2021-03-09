@@ -12,4 +12,7 @@ const regex = /^\d\d\d\d-[0-1]\d-[0-3]\d[t\s](?:[0-2]\d:[0-5]\d:[0-5]\d|23:59:60
  */
 export type Timestamp = string;
 
-export const { schema, validate } = generateFormat<Timestamp>(name, regex);
+export const { inline, schema, validate } = generateFormat<Timestamp>(
+  name,
+  regex
+);

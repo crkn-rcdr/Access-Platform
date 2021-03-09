@@ -43,8 +43,10 @@ export const toCouchSchema = <T extends Identified>(
   if (!schema.properties)
     throw new Error("Schema does not have `properties` property.");
   if (!schema.$id) throw new Error("Schema does not have `$id` property.");
+
   const { id, ...properties } = schema.properties;
-  const required = ["_id", ...schema.required.filter((key) => key === "id")];
+  const required = ["_id", ...schema.required.filter((key) => key !== "id")];
+
   return ({
     ...schema,
     $id: `/couch${schema.$id}`,

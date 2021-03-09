@@ -1,21 +1,22 @@
 {
   "compilerOptions": {
-    "declaration": true,
-    "isolatedModules": true,
+    "target": "es2020",
     "module": "commonjs",
     "moduleResolution": "node",
-    "target": "es2020",
-
+    "resolveJsonModule": true,
+    "declaration": true,
+    "newLine": "lf",
+    "stripInternal": true,
     "strict": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-
-    "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
-    "noUncheckedIndexedAccess": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-
-    "allowUnreachableCode": false
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noEmitOnError": true,
+    "useDefineForClassFields": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true
   }
 }

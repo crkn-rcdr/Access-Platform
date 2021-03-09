@@ -1,7 +1,6 @@
 import { JSONSchemaType } from "ajv";
 import { generateSchema } from "./validator";
 
-import { Canvas, schema as canvasSchema } from "./Access/Canvas";
 import { Collection, schema as collectionSchema } from "./Access/Collection";
 import {
   CanvasManifest,
@@ -14,24 +13,16 @@ import {
 import { Alias, schema as aliasSchema } from "./Access/Alias";
 
 /**
- * Any object in the Canadiana Access Platform.
+ * Any kind of access object, canvases excluded.
  */
-export type AccessObject =
-  | Canvas
-  | Collection
-  | CanvasManifest
-  | PdfManifest
-  | Alias;
+export type AccessObject = Collection | CanvasManifest | PdfManifest | Alias;
 
-export type { Canvas, Collection, CanvasManifest, PdfManifest, Alias };
-
-export const { schema, validate } = generateSchema({
+export const { inline, schema, validate } = generateSchema({
   $id: "/access",
   title: "Access Object",
   description: "Any object in the Canadiana Access Platform",
   type: "object",
   oneOf: [
-    canvasSchema,
     collectionSchema,
     canvasManifestSchema,
     pdfManifestSchema,

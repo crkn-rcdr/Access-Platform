@@ -1,8 +1,8 @@
 import { JSONSchemaType } from "ajv";
 import { Root, schema as rootSchema } from "./Root";
-import { FileRef, schema as fileRefSchema } from "../Util/FileRef";
-import { ImageRef, schema as imageRefSchema } from "../Util/ImageRef";
-import { UriReference, schema as uriSchema } from "../Format/UriReference";
+import { FileRef, inline as fileRefSchema } from "../Util/FileRef";
+import { ImageRef, inline as imageRefSchema } from "../Util/ImageRef";
+import { UriReference, inline as uriSchema } from "../Format/UriReference";
 import { inherit } from "../validator";
 
 const TAKEDOWNS = ["copyright", "privacy"];
@@ -97,7 +97,7 @@ const specSchema = {
   required: ["master", "source"],
 } as JSONSchemaType<CanvasSpec>;
 
-export const { schema, validate } = inherit<Canvas, Root, CanvasSpec>(
+export const { inline, schema, validate } = inherit<Canvas, Root, CanvasSpec>(
   rootSchema,
   specSchema,
   false

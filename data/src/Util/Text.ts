@@ -6,7 +6,7 @@ import { generateSchema } from "../validator";
  */
 export type Text = Record<string, string>;
 
-export const { schema, validate } = generateSchema<Text>({
+export const { inline, schema, validate } = generateSchema<Text>({
   $id: "/util/text",
   title: "Text field",
   type: "object",

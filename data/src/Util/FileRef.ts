@@ -1,5 +1,5 @@
 import { JSONSchemaType } from "ajv";
-import { UriReference, schema as uriSchema } from "../Format/UriReference";
+import { UriReference, inline as uriSchema } from "../Format/UriReference";
 import { generateSchema } from "../validator";
 
 /**
@@ -30,7 +30,7 @@ export type FileRef = {
   md5?: string;
 };
 
-export const { schema, validate } = generateSchema<FileRef>({
+export const { inline, schema, validate } = generateSchema<FileRef>({
   $id: "/util/fileRef",
   title: "File Reference",
   type: "object",

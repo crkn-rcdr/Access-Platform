@@ -1,8 +1,8 @@
 import { JSONSchemaType } from "ajv";
 import { Manifest, schema as manifestSchema } from "../Manifest";
-import { Noid, schema as noidSchema } from "../../Format/Noid";
-import { Text, schema as textSchema } from "../../Util/Text";
-import { FileRef, schema as fileSchema } from "../../Util/FileRef";
+import { Noid, inline as noidSchema } from "../../Format/Noid";
+import { Text, inline as textSchema } from "../../Util/Text";
+import { FileRef, inline as fileSchema } from "../../Util/FileRef";
 import { inherit } from "../../validator";
 
 export type Canvas = {
@@ -51,7 +51,7 @@ const specSchema = {
   required: ["from", "canvases"],
 } as JSONSchemaType<CanvasesSpec>;
 
-export const { schema, validate } = inherit<
+export const { inline, schema, validate } = inherit<
   CanvasManifest,
   Manifest,
   CanvasesSpec

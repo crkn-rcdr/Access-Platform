@@ -9,7 +9,7 @@ export type Identified = {
   _rev?: string;
 };
 
-export const { schema, validate } = generateSchema<Identified>({
+export const { inline, schema, validate } = generateSchema<Identified>({
   $id: "/couch/identified",
   type: "object",
   properties: {

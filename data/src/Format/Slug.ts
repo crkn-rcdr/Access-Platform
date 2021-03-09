@@ -9,4 +9,4 @@ const regex = /^[\p{L}\p{Nl}\p{Nd}\-_\.]+$/u;
  */
 export type Slug = string;
 
-export const { schema, validate } = generateFormat<Slug>(name, regex);
+export const { inline, schema, validate } = generateFormat<Slug>(name, regex);

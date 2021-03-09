@@ -6,7 +6,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/crkn-rcdr/Access-Platform.git",
-    "directory": "packages/data"
+    "directory": "data"
   },
   "contributors": [
     {
@@ -24,7 +24,7 @@
     "test": "pnpm build && ava"
   },
   "dependencies": {
-    "ajv": "^7.1.1"
+    "ajv": "^7.2.1"
   },
   "ava": {
     "typescript": {

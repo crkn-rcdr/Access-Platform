@@ -2,39 +2,11 @@ import test from "ava";
 
 import { fromCouch } from "./Couch";
 
-import { Canvas } from "./Access/Canvas";
 import { CanvasManifest } from "./Access/Manifest/Canvases";
 import { PdfManifest } from "./Access/Manifest/Pdf";
 import { Collection } from "./Access/Collection";
 import { Alias } from "./Access/Alias";
 import { validate } from "./Access";
-
-export const testCanvas: Canvas = fromCouch({
-  _id: "69429/c00000000220",
-  _rev: "1-f9810f31b9628858ac049a872e52230c",
-  ocrType: "alto",
-  ocrPdf: {
-    path: "oocihm.8_00006_5/data/sip/data/files/7753.pdf",
-    size: 420687,
-  },
-  master: {
-    size: 776737,
-    width: 1536,
-    path: "oocihm.8_00006_5/data/sip/data/files/7753.jpg",
-    mime: "image/jpeg",
-    height: 2288,
-  },
-  source: {
-    from: "cihm",
-    path: "oocihm.8_00006_5/data/sip/data/files/7753.jpg",
-  },
-});
-
-test("Access schema validates a Canvas", (t) => {
-  const valid = validate(testCanvas);
-  t.is(valid, true);
-  if (!valid) console.log(validate.errors);
-});
 
 export const testCanvasManifest: CanvasManifest = fromCouch({
   _id: "69429/m02n4zg6h671",

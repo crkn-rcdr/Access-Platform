@@ -1,7 +1,7 @@
 import { JSONSchemaType } from "ajv";
 import { inherit } from "../validator";
 import { Root, schema as rootSchema } from "./Root";
-import { Slug, schema as slugSchema } from "../Format/Slug";
+import { Slug, inline as slugSchema } from "../Format/Slug";
 
 type SluggedSpec = {
   /**
@@ -27,7 +27,7 @@ const specSchema = {
   required: [],
 } as JSONSchemaType<SluggedSpec>;
 
-export const { schema, validate } = inherit<Slugged, Root, SluggedSpec>(
+export const { inline, schema, validate } = inherit<Slugged, Root, SluggedSpec>(
   rootSchema,
   specSchema,
   true

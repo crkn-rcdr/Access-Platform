@@ -49,8 +49,8 @@ const specSchema = {
   required: ["type"],
 } as JSONSchemaType<ManifestSpec>;
 
-export const { schema, validate } = inherit<Manifest, Canonical, ManifestSpec>(
-  canonicalSchema,
-  specSchema,
-  true
-);
+export const { inline, schema, validate } = inherit<
+  Manifest,
+  Canonical,
+  ManifestSpec
+>(canonicalSchema, specSchema, true);

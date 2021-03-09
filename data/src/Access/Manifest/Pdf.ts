@@ -1,7 +1,7 @@
 import { JSONSchemaType } from "ajv";
 import { Manifest, schema as manifestSchema } from "../Manifest";
-import { Text, schema as textSchema } from "../../Util/Text";
-import { FileRef, schema as fileSchema } from "../../Util/FileRef";
+import { Text, inline as textSchema } from "../../Util/Text";
+import { FileRef, inline as fileSchema } from "../../Util/FileRef";
 import { inherit } from "../../validator";
 
 type PdfSpec = {
@@ -36,8 +36,8 @@ const specSchema = {
   required: ["from", "file", "pageLabels"],
 } as JSONSchemaType<PdfSpec>;
 
-export const { schema, validate } = inherit<PdfManifest, Manifest, PdfSpec>(
-  manifestSchema,
-  specSchema,
-  false
-);
+export const { inline, schema, validate } = inherit<
+  PdfManifest,
+  Manifest,
+  PdfSpec
+>(manifestSchema, specSchema, false);

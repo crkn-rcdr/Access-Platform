@@ -1,8 +1,8 @@
 import { JSONSchemaType } from "ajv";
 import { inherit } from "../validator";
-import { Noid, schema as noidSchema } from "../Format/Noid";
-import { Text, schema as textSchema } from "../Util/Text";
 import { Canonical, schema as canonicalSchema } from "./Canonical";
+import { Noid, inline as noidSchema } from "../Format/Noid";
+import { Text, inline as textSchema } from "../Util/Text";
 
 const BEHAVIORS = ["unordered", "individuals", "multi-part"];
 
@@ -65,7 +65,7 @@ const specSchema = {
   required: ["type", "behavior", "members"],
 } as JSONSchemaType<CollectionSpec>;
 
-export const { schema, validate } = inherit<
+export const { inline, schema, validate } = inherit<
   Collection,
   Canonical,
   CollectionSpec

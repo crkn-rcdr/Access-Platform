@@ -1,7 +1,7 @@
 import { JSONSchemaType } from "ajv";
 import { inherit } from "../validator";
-import { Slugged, schema as sluggedSchema } from "./Slugged";
-import { Text, schema as textSchema } from "../Util/Text";
+import { Slugged, inline as sluggedSchema } from "./Slugged";
+import { Text, inline as textSchema } from "../Util/Text";
 
 const DMD = ["dc", "marc", "issueinfo"];
 
@@ -36,8 +36,8 @@ const specSchema = {
   required: ["label"],
 } as JSONSchemaType<CanonicalSpec>;
 
-export const { schema, validate } = inherit<Canonical, Slugged, CanonicalSpec>(
-  sluggedSchema,
-  specSchema,
-  true
-);
+export const { inline, schema, validate } = inherit<
+  Canonical,
+  Slugged,
+  CanonicalSpec
+>(sluggedSchema, specSchema, true);
