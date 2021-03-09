@@ -20,8 +20,9 @@
   },
   "homepage": "https://github.com/crkn-rcdr/Access-Platform",
   "scripts": {
+    "ava": "ava",
     "build": "rm -rf dist && tsc",
-    "test": "pnpm build && ava"
+    "test": "run-s build ava"
   },
   "dependencies": {
     "ajv": "^7.2.1"
