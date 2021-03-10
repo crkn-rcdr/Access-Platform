@@ -7,7 +7,7 @@ const nc = "[0-9bcdfghjkmnpqrstvwxz]";
 
 const name = "noid";
 const regex = new RegExp(
-  `^69429\\/[acms]\\d+${nc}{2}\\d${nc}{2}\\d${nc}{2}\\d${nc}$`
+  `^69429\\/[gcms]\\d+${nc}{2}\\d${nc}{2}\\d${nc}{2}\\d${nc}$`
 );
 
 /**
