@@ -1,0 +1,4 @@
+packages:
+  - "accessor"
+  - "couchdb"
+  - "data"

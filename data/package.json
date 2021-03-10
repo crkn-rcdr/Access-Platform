@@ -1,0 +1,37 @@
+{
+  "name": "@crkn-rcdr/access-data",
+  "version": "0.0.0",
+  "description": "Specifications and utilities for Access Platform data",
+  "main": "dist/mod.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/crkn-rcdr/Access-Platform.git",
+    "directory": "data"
+  },
+  "contributors": [
+    {
+      "name": "Sascha Adler",
+      "email": "sadler@crkn.ca"
+    }
+  ],
+  "license": "CC0-1.0",
+  "bugs": {
+    "url": "https://github.com/crkn-rcdr/Access-Platform/issues"
+  },
+  "homepage": "https://github.com/crkn-rcdr/Access-Platform",
+  "scripts": {
+    "ava": "ava",
+    "build": "rm -rf dist && tsc",
+    "test": "run-s build ava"
+  },
+  "dependencies": {
+    "ajv": "^7.2.1"
+  },
+  "ava": {
+    "typescript": {
+      "rewritePaths": {
+        "src/": "dist/"
+      }
+    }
+  }
+}

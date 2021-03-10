@@ -1,22 +1,29 @@
 {
   "name": "@crkn-rcdr/accessor",
-  "version": "1.0.0-alpha.0",
+  "version": "0.0.0",
   "description": "Canadiana Access Platform object manipulation library",
-  "type": "module",
-  "scripts": {
-    "test": "mocha"
-  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/crkn-rcdr/accessor.git"
+    "url": "git+https://github.com/crkn-rcdr/Access-Platform.git",
+    "directory": "accessor"
   },
-  "author": "",
+  "contributors": [
+    {
+      "name": "Sascha Adler",
+      "email": "sadler@crkn.ca"
+    }
+  ],
   "license": "CC0-1.0",
   "bugs": {
     "url": "https://github.com/crkn-rcdr/accessor/issues"
   },
   "homepage": "https://github.com/crkn-rcdr/accessor#readme",
   "dependencies": {
-    "kivik": "^2.0.0-alpha.1"
+    "@crkn-rcdr/access-data": "workspace:*",
+    "@crkn-rcdr/nano": "^2.0.0"
+  },
+  "devDependencies": {
+    "nano": "^9.0.3",
+    "type-fest": "^0.21.2"
   }
 }
