@@ -2,7 +2,7 @@ import { JSONSchemaType } from "ajv";
 import { Root, schema as rootSchema } from "./Root";
 import { FileRef, inline as fileRefSchema } from "../Util/FileRef";
 import { ImageRef, inline as imageRefSchema } from "../Util/ImageRef";
-import { UriReference, inline as uriSchema } from "../Format/UriReference";
+import { UnixFilePath, inline as pathSchema } from "../Format/UnixFilePath";
 import { inherit } from "../validator";
 
 const TAKEDOWNS = ["copyright", "privacy"];
@@ -14,7 +14,7 @@ const OCR_TYPES = ["alto", "txtmap"];
 type CIHMSource = {
   from: "cihm";
   /** Legacy repository path. */
-  path: UriReference;
+  path: UnixFilePath;
 };
 
 /**
@@ -71,7 +71,7 @@ const specSchema = {
         {
           properties: {
             from: { type: "string", const: "cihm" },
-            path: uriSchema,
+            path: pathSchema,
           },
           required: ["from", "path"],
           additionalProperties: false,

@@ -1,5 +1,5 @@
 import { JSONSchemaType } from "ajv";
-import { UriReference, inline as uriSchema } from "../Format/UriReference";
+import { UnixFilePath, inline as pathSchema } from "../Format/UnixFilePath";
 import { generateSchema } from "../validator";
 
 /**
@@ -11,7 +11,7 @@ export type FileRef = {
   /**
    * Path to the file in the legacy preservation repository.
    */
-  path?: UriReference;
+  path?: UnixFilePath;
   /**
    * File extension for something referenced in the access object store.
    */
@@ -35,7 +35,7 @@ export const { inline, schema, validate } = generateSchema<FileRef>({
   title: "File Reference",
   type: "object",
   properties: {
-    path: { ...uriSchema, nullable: true },
+    path: { ...pathSchema, nullable: true },
     extension: { type: "string", minLength: 1, nullable: true },
     size: { type: "number", minimum: 0 },
     mime: { type: "string", pattern: "^\\w+/\\w+$", nullable: true },

@@ -1,6 +1,6 @@
 import { JSONSchemaType } from "ajv";
 import { ProcessUpdate, inline as processUpdateSchema } from "./ProcessUpdate";
-import { UriReference, inline as uriSchema } from "../Format/UriReference";
+import { UnixFilePath, inline as pathSchema } from "../Format/UnixFilePath";
 import { generateSchema } from "../validator";
 
 const EXTENSIONS = ["jpg", "jp2", "jpeg", "tif", "tiff"];
@@ -14,7 +14,7 @@ export type ImageRef = {
   /**
    * Path to the file in the legacy preservation repository.
    */
-  path?: UriReference;
+  path?: UnixFilePath;
   /**
    * Image file extension. Supported: "jpeg", "jpg", "jp2", "tif", "tiff"
    */
@@ -46,7 +46,7 @@ export const { inline, schema, validate } = generateSchema<ImageRef>({
   title: "Image file reference",
   type: "object",
   properties: {
-    path: { ...uriSchema, nullable: true },
+    path: { ...pathSchema, nullable: true },
     extension: { type: "string", enum: EXTENSIONS, nullable: true },
     size: { type: "number", minimum: 0 },
     mime: { type: "string", enum: MEDIA_TYPES },
