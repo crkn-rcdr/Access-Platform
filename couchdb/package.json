@@ -28,6 +28,6 @@
   "homepage": "https://github.com/crkn-rcdr/Access-Platform/tree/main/couchdb",
   "dependencies": {
     "@crkn-rcdr/access-data": "workspace:*",
-    "kivik": "github:crkn-rcdr/kivik#any-validate"
+    "kivik": "^2.0.0-alpha.4"
   }
 }
