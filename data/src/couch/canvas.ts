@@ -8,6 +8,6 @@ import { generateSchema } from "../validator";
 export type Document = CouchDocument<Canvas>;
 
 export const { inline, schema, validate } = generateSchema<Document>({
-  $id: "/couch/canvas",
   ...toCouchSchema(canvasSchema),
+  $id: "/couch/canvas",
 });

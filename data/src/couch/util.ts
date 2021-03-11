@@ -14,7 +14,7 @@ export type Identified = {
 };
 
 export const { inline, schema, validate } = generateSchema<Identified>({
-  $id: "/couch/identified",
+  $id: "/identified",
   type: "object",
   properties: {
     id: { type: "string" },
@@ -61,16 +61,16 @@ export const toCouch = <T extends Identified>(obj: T): Document<T> => {
 export const toCouchSchema = <T extends Identified>(
   schema: JSONSchemaType<T>
 ): JSONSchemaType<Document<T>> => {
+  if (schema.type !== "object")
+    throw new Error("Can only generate a Couch schema for an object type.");
   if (!schema.properties)
     throw new Error("Schema does not have `properties` property.");
-  if (!schema.$id) throw new Error("Schema does not have `$id` property.");
 
   const { id, ...properties } = schema.properties;
   const required = ["_id", ...schema.required.filter((key) => key !== "id")];
 
   return ({
     ...schema,
-    $id: `/couch${schema.$id}`,
     properties: {
       _id: id,
       ...properties,
