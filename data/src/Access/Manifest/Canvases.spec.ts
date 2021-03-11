@@ -2,7 +2,7 @@ import test from "ava";
 
 import { CanvasManifest, validate } from "./Canvases";
 
-const manifest: CanvasManifest = {
+export const testCanvasManifest: CanvasManifest = {
   id: "69429/m02n4zg6h671",
   _rev: "14-12f0cda072e2f32e6efb4315220b7a88",
   type: "manifest",
@@ -57,7 +57,7 @@ const manifest: CanvasManifest = {
 };
 
 test("CanvasManifest schema validates a CanvasManifest", (t) => {
-  const valid = validate(manifest);
+  const valid = validate(testCanvasManifest);
   t.is(valid, true);
   if (!valid) console.log(validate.errors);
 });

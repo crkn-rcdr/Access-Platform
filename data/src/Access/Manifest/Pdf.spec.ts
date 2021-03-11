@@ -2,7 +2,7 @@ import test from "ava";
 
 import { PdfManifest, validate } from "./Pdf";
 
-const manifest: PdfManifest = {
+export const testPdfManifest: PdfManifest = {
   id: "69429/m0v40js9ht3k",
   _rev: "13-4fce0a4d3af3bd8f35d3fe180b6ebe69",
   type: "manifest",
@@ -35,7 +35,7 @@ const manifest: PdfManifest = {
 };
 
 test("PdfManifest schema validates a PdfManifest", (t) => {
-  const valid = validate(manifest);
+  const valid = validate(testPdfManifest);
   t.is(valid, true);
   if (!valid) console.log(validate.errors);
 });

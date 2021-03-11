@@ -2,7 +2,7 @@ import test from "ava";
 
 import { Canvas, validate } from "./Canvas";
 
-const canvas = {
+export const testCanvas = {
   id: "69429/c00000000220",
   _rev: "1-f9810f31b9628858ac049a872e52230c",
   ocrType: "alto",
@@ -24,7 +24,7 @@ const canvas = {
 } as Canvas;
 
 test("Canvas schema validates a Canvas", (t) => {
-  const valid = validate(canvas);
+  const valid = validate(testCanvas);
   t.is(valid, true);
   if (!valid) console.log(validate.errors);
 });

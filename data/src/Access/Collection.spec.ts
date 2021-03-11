@@ -2,7 +2,7 @@ import test from "ava";
 
 import { Collection, validate } from "./Collection";
 
-const collection: Collection = {
+export const testCollection: Collection = {
   id: "69429/s0vq2s46j98h",
   _rev: "71-0181037663f0d8cb27a328d6d9aa6da7",
   type: "collection",
@@ -32,7 +32,7 @@ const collection: Collection = {
 };
 
 test("Collection schema validates a Collection", (t) => {
-  const valid = validate(collection);
+  const valid = validate(testCollection);
   t.is(valid, true);
   if (!valid) console.log(validate.errors);
 });

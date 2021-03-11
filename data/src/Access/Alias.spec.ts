@@ -2,7 +2,7 @@ import test from "ava";
 
 import { Alias, validate } from "./Alias";
 
-const alias: Alias = {
+export const testAlias: Alias = {
   id: "69429/m02n4zg6h671",
   type: "alias",
   slug: "typoOfSorts",
@@ -10,7 +10,7 @@ const alias: Alias = {
 };
 
 test("Alias schema validates an Alias", (t) => {
-  const valid = validate(alias);
+  const valid = validate(testAlias);
   t.is(valid, true);
   if (!valid) console.log(validate.errors);
 });
