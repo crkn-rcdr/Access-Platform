@@ -3,6 +3,9 @@
   "version": "0.0.0",
   "description": "Specifications and utilities for Access Platform data",
   "main": "dist/mod.js",
+  "files": [
+    "dist"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/crkn-rcdr/Access-Platform.git",
