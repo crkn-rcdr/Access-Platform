@@ -1,6 +1,6 @@
 import test from "ava";
 
-import { CanvasManifest, validate } from "./Canvases";
+import { CanvasManifest, validate } from "./CanvasManifest";
 
 export const testCanvasManifest: CanvasManifest = {
   id: "69429/m02n4zg6h671",

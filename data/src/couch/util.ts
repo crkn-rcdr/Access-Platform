@@ -1,6 +1,27 @@
 import { JSONSchemaType } from "ajv";
-import { Identified } from "./Couch/Identified";
-export type { Identified } from "./Couch/Identified";
+import { generateSchema } from "../validator";
+
+/**
+ * Any object identified by an `id` string.
+ */
+export type Identified = {
+  id: string;
+  /**
+   * The CouchDB revision string for this document. If it doesn't have one, it
+   * has yet to be inserted into CouchDB.
+   */
+  _rev?: string;
+};
+
+export const { inline, schema, validate } = generateSchema<Identified>({
+  $id: "/couch/identified",
+  type: "object",
+  properties: {
+    id: { type: "string" },
+    _rev: { type: "string", nullable: true },
+  },
+  required: ["id"],
+} as JSONSchemaType<Identified>);
 
 /**
  * A CouchDB document representing an object with an `id` string.

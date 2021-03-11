@@ -1,6 +1,6 @@
 import { JSONSchemaType } from "ajv";
 import { Slugged, schema as sluggedSchema } from "./Slugged";
-import { Noid, inline as noidSchema } from "../Format/Noid";
+import { Noid, inline as noidSchema } from "../format/Noid";
 import { inherit } from "../validator";
 
 type AliasSpec = {

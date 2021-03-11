@@ -1,7 +1,7 @@
 import { JSONSchemaType } from "ajv";
 import { inherit } from "../validator";
 import { Slugged, inline as sluggedSchema } from "./Slugged";
-import { Text, inline as textSchema } from "../Util/Text";
+import { Text, inline as textSchema } from "../util/Text";
 
 const DMD = ["dc", "marc", "issueinfo"];
 

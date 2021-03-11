@@ -1,8 +1,8 @@
 import { JSONSchemaType } from "ajv";
 import { Root, schema as rootSchema } from "./Root";
-import { FileRef, inline as fileRefSchema } from "../Util/FileRef";
-import { ImageRef, inline as imageRefSchema } from "../Util/ImageRef";
-import { UnixFilePath, inline as pathSchema } from "../Format/UnixFilePath";
+import { FileRef, inline as fileRefSchema } from "../util/FileRef";
+import { ImageRef, inline as imageRefSchema } from "../util/ImageRef";
+import { UnixFilePath, inline as pathSchema } from "../format/UnixFilePath";
 import { inherit } from "../validator";
 
 const TAKEDOWNS = ["copyright", "privacy"];

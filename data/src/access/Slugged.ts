@@ -1,7 +1,7 @@
 import { JSONSchemaType } from "ajv";
 import { inherit } from "../validator";
 import { Root, schema as rootSchema } from "./Root";
-import { Slug, inline as slugSchema } from "../Format/Slug";
+import { Slug, inline as slugSchema } from "../format/Slug";
 
 type SluggedSpec = {
   /**

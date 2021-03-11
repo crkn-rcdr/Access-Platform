@@ -1,8 +1,8 @@
 import { JSONSchemaType } from "ajv";
 import { inherit } from "../validator";
 import { Canonical, schema as canonicalSchema } from "./Canonical";
-import { Noid, inline as noidSchema } from "../Format/Noid";
-import { Text, inline as textSchema } from "../Util/Text";
+import { Noid, inline as noidSchema } from "../format/Noid";
+import { Text, inline as textSchema } from "../util/Text";
 
 const BEHAVIORS = ["unordered", "individuals", "multi-part"];
 

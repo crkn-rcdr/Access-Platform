@@ -1,12 +1,12 @@
 import test from "ava";
 
-import { toCouch } from "../Couch";
-import { validate } from "./Access";
+import { toCouch } from "./util";
+import { validate } from "./access";
 
-import { testCanvasManifest } from "../Access/Manifest/Canvases.spec";
-import { testPdfManifest } from "../Access/Manifest/Pdf.spec";
-import { testCollection } from "../Access/Collection.spec";
-import { testAlias } from "../Access/Alias.spec";
+import { testCanvasManifest } from "../access/CanvasManifest.spec";
+import { testPdfManifest } from "../access/PdfManifest.spec";
+import { testCollection } from "../access/Collection.spec";
+import { testAlias } from "../access/Alias.spec";
 
 test("Access couch schema validates a CanvasManifest document", (t) => {
   const valid = validate(toCouch(testCanvasManifest));

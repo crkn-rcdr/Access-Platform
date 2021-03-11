@@ -1,5 +1,5 @@
 import { JSONSchemaType } from "ajv";
-import { UnixFilePath, inline as pathSchema } from "../Format/UnixFilePath";
+import { UnixFilePath, inline as pathSchema } from "../format/UnixFilePath";
 import { generateSchema } from "../validator";
 
 /**

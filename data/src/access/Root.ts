@@ -1,12 +1,12 @@
 import { JSONSchemaType } from "ajv";
 import { inherit } from "../validator";
-import { Identified, schema as identifiedSchema } from "../Couch/Identified";
-import { Noid, inline as noidSchema } from "../Format/Noid";
-import { Timestamp, inline as timestampSchema } from "../Format/Timestamp";
+import { Identified, schema as identifiedSchema } from "../couch/util";
+import { Noid, inline as noidSchema } from "../format/Noid";
+import { Timestamp, inline as timestampSchema } from "../format/Timestamp";
 import {
   ProcessUpdate,
   inline as processUpdateSchema,
-} from "../Util/ProcessUpdate";
+} from "../util/ProcessUpdate";
 
 type RootSpec = {
   /**

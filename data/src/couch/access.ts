@@ -1,23 +1,23 @@
 import { generateSchema } from "../validator";
-import { Document, toCouchSchema } from "../Couch";
+import { Document as CouchDocument, toCouchSchema } from "./util";
 
-import { Collection, schema as collectionSchema } from "../Access/Collection";
+import { Collection, schema as collectionSchema } from "../access/Collection";
 import {
   CanvasManifest,
   schema as canvasManifestSchema,
-} from "../Access/Manifest/Canvases";
+} from "../access/CanvasManifest";
 import {
   PdfManifest,
   schema as pdfManifestSchema,
-} from "../Access/Manifest/Pdf";
-import { Alias, schema as aliasSchema } from "../Access/Alias";
+} from "../access/PdfManifest";
+import { Alias, schema as aliasSchema } from "../access/Alias";
 
 /**
  * A document in the `access` Couch database.
  */
-// export type AccessDocument = Document<AccessObject>;
-type AccessObject = Collection | CanvasManifest | PdfManifest | Alias;
-type AccessDocument = Document<AccessObject>;
+export type Document = CouchDocument<
+  Collection | CanvasManifest | PdfManifest | Alias
+>;
 
 const couchCollection = {
   properties: toCouchSchema(collectionSchema).properties,
@@ -30,7 +30,7 @@ const couchPdfManifest = {
 };
 const couchAlias = { properties: toCouchSchema(aliasSchema).properties };
 
-export const { inline, schema, validate } = generateSchema<AccessDocument>({
+export const { inline, schema, validate } = generateSchema<Document>({
   $id: "/couch/access",
   type: "object",
   oneOf: [couchCollection, couchCanvasManifest, couchPdfManifest, couchAlias],

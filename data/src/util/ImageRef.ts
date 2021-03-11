@@ -1,6 +1,6 @@
 import { JSONSchemaType } from "ajv";
 import { ProcessUpdate, inline as processUpdateSchema } from "./ProcessUpdate";
-import { UnixFilePath, inline as pathSchema } from "../Format/UnixFilePath";
+import { UnixFilePath, inline as pathSchema } from "../format/UnixFilePath";
 import { generateSchema } from "../validator";
 
 const EXTENSIONS = ["jpg", "jp2", "jpeg", "tif", "tiff"];

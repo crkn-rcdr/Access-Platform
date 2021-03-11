@@ -1,9 +1,9 @@
 import { JSONSchemaType } from "ajv";
-import { Manifest, schema as manifestSchema } from "../Manifest";
-import { Noid, inline as noidSchema } from "../../Format/Noid";
-import { Text, inline as textSchema } from "../../Util/Text";
-import { FileRef, inline as fileSchema } from "../../Util/FileRef";
-import { inherit } from "../../validator";
+import { Manifest, schema as manifestSchema } from "./Manifest";
+import { Noid, inline as noidSchema } from "../format/Noid";
+import { Text, inline as textSchema } from "../util/Text";
+import { FileRef, inline as fileSchema } from "../util/FileRef";
+import { inherit } from "../validator";
 
 export type Canvas = {
   id: Noid;

@@ -1,6 +1,6 @@
 import test from "ava";
 
-import { PdfManifest, validate } from "./Pdf";
+import { PdfManifest, validate } from "./PdfManifest";
 
 export const testPdfManifest: PdfManifest = {
   id: "69429/m0v40js9ht3k",
