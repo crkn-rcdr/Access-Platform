@@ -2,9 +2,11 @@
   "name": "@crkn-rcdr/access-data",
   "version": "0.0.0",
   "description": "Specifications and utilities for Access Platform data",
-  "main": "dist/mod.js",
+  "main": "dist/index.js",
   "files": [
-    "dist"
+    "dist",
+    "!*.spec.*",
+    "!writeSchemas*"
   ],
   "repository": {
     "type": "git",
