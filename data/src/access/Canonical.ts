@@ -25,7 +25,7 @@ type CanonicalSpec = {
 export type Canonical = Slugged & CanonicalSpec;
 
 const specSchema = {
-  $id: "/access/canonical",
+  $id: "/access/Canonical",
   title: "Canonical object",
   type: "object",
   properties: {

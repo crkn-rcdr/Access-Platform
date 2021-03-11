@@ -28,7 +28,7 @@ type ManifestSpec = {
 export type Manifest = Canonical & ManifestSpec;
 
 const specSchema = {
-  $id: "/access/manifest",
+  $id: "/access/Manifest",
   title: "Manifest",
   type: "object",
   properties: {

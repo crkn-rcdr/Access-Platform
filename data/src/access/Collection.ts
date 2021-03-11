@@ -1,7 +1,7 @@
 import { JSONSchemaType } from "ajv";
 import { inherit } from "../validator";
 import { Canonical, schema as canonicalSchema } from "./Canonical";
-import { Noid, inline as noidSchema } from "../format/Noid";
+import { Noid, inline as noidSchema } from "../format/noid";
 import { Text, inline as textSchema } from "../util/Text";
 
 const BEHAVIORS = ["unordered", "individuals", "multi-part"];
@@ -44,7 +44,7 @@ type CollectionSpec = {
 export type Collection = Canonical & CollectionSpec;
 
 const specSchema = {
-  $id: "/access/collection",
+  $id: "/access/Collection",
   title: "Collection",
   type: "object",
   properties: {

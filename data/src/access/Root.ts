@@ -1,8 +1,8 @@
 import { JSONSchemaType } from "ajv";
 import { inherit } from "../validator";
 import { Identified, schema as identifiedSchema } from "../couch/util";
-import { Noid, inline as noidSchema } from "../format/Noid";
-import { Timestamp, inline as timestampSchema } from "../format/Timestamp";
+import { Noid, inline as noidSchema } from "../format/noid";
+import { Timestamp, inline as timestampSchema } from "../format/timestamp";
 import {
   ProcessUpdate,
   inline as processUpdateSchema,
@@ -32,7 +32,7 @@ type RootSpec = {
 export type Root = Identified & RootSpec;
 
 const specSchema = {
-  $id: "/access/object",
+  $id: "/access/Root",
   title: "Access Object",
   type: "object",
   properties: {

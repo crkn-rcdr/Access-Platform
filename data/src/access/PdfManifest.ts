@@ -22,7 +22,7 @@ type PdfSpec = {
 export type PdfManifest = Manifest & PdfSpec;
 
 const specSchema = {
-  $id: "/access/manifest/pdf",
+  $id: "/access/PdfManifest",
   title: "PDF Manifest",
   type: "object",
   properties: {

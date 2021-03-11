@@ -1,6 +1,6 @@
 import { JSONSchemaType } from "ajv";
 import { Slugged, schema as sluggedSchema } from "./Slugged";
-import { Noid, inline as noidSchema } from "../format/Noid";
+import { Noid, inline as noidSchema } from "../format/noid";
 import { inherit } from "../validator";
 
 type AliasSpec = {
@@ -20,7 +20,7 @@ type AliasSpec = {
 export type Alias = Slugged & AliasSpec;
 
 const specSchema = {
-  $id: "/access/alias",
+  $id: "/access/Alias",
   title: "Slug Alias",
   type: "object",
   properties: {

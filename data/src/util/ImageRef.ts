@@ -1,6 +1,6 @@
 import { JSONSchemaType } from "ajv";
 import { ProcessUpdate, inline as processUpdateSchema } from "./ProcessUpdate";
-import { UnixFilePath, inline as pathSchema } from "../format/UnixFilePath";
+import { UnixFilePath, inline as pathSchema } from "../format/unixFilePath";
 import { generateSchema } from "../validator";
 
 const EXTENSIONS = ["jpg", "jp2", "jpeg", "tif", "tiff"];
@@ -42,7 +42,7 @@ export type ImageRef = {
 };
 
 export const { inline, schema, validate } = generateSchema<ImageRef>({
-  $id: "/util/image",
+  $id: "/util/ImageRef",
   title: "Image file reference",
   type: "object",
   properties: {

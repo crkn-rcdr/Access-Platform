@@ -1,6 +1,6 @@
 import { JSONSchemaType } from "ajv";
 import { Manifest, schema as manifestSchema } from "./Manifest";
-import { Noid, inline as noidSchema } from "../format/Noid";
+import { Noid, inline as noidSchema } from "../format/noid";
 import { Text, inline as textSchema } from "../util/Text";
 import { FileRef, inline as fileSchema } from "../util/FileRef";
 import { inherit } from "../validator";
@@ -30,7 +30,7 @@ type CanvasesSpec = {
 export type CanvasManifest = Manifest & CanvasesSpec;
 
 const specSchema = {
-  $id: "/access/manifest/canvases",
+  $id: "/access/CanvasManifest",
   title: "Canvas Manifest",
   type: "object",
   properties: {

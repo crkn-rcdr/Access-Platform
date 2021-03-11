@@ -1,6 +1,6 @@
 import test from "ava";
 
-import { validate } from "./Noid";
+import { validate } from "./noid";
 
 test("Noid schema validates an ARKful Noid", (t) => {
   t.is(validate("69429/g02n4zg6h671"), true);

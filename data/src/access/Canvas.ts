@@ -2,7 +2,7 @@ import { JSONSchemaType } from "ajv";
 import { Root, schema as rootSchema } from "./Root";
 import { FileRef, inline as fileRefSchema } from "../util/FileRef";
 import { ImageRef, inline as imageRefSchema } from "../util/ImageRef";
-import { UnixFilePath, inline as pathSchema } from "../format/UnixFilePath";
+import { UnixFilePath, inline as pathSchema } from "../format/unixFilePath";
 import { inherit } from "../validator";
 
 const TAKEDOWNS = ["copyright", "privacy"];
@@ -61,7 +61,7 @@ type CanvasSpec = {
 export type Canvas = Root & CanvasSpec;
 
 const specSchema = {
-  $id: "/canvas",
+  $id: "/access/Canvas",
   title: "Canvas",
   type: "object",
   properties: {

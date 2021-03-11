@@ -1,6 +1,6 @@
 import { generateFormat } from "../validator";
 
-const name = "unix-file-path";
+const name = "unixFilePath";
 const regex = /^[^\x00]+$/;
 
 /**

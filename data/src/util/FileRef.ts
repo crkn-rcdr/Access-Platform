@@ -1,5 +1,5 @@
 import { JSONSchemaType } from "ajv";
-import { UnixFilePath, inline as pathSchema } from "../format/UnixFilePath";
+import { UnixFilePath, inline as pathSchema } from "../format/unixFilePath";
 import { generateSchema } from "../validator";
 
 /**
@@ -31,7 +31,7 @@ export type FileRef = {
 };
 
 export const { inline, schema, validate } = generateSchema<FileRef>({
-  $id: "/util/fileRef",
+  $id: "/util/FileRef",
   title: "File Reference",
   type: "object",
   properties: {

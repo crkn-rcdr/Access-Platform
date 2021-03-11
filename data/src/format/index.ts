@@ -1,4 +1,4 @@
-export * as Noid from "./Noid";
-export * as Slug from "./Slug";
-export * as Timestamp from "./Timestamp";
-export * as UnixFilePath from "./UnixFilePath";
+export * as Noid from "./noid";
+export * as Slug from "./slug";
+export * as Timestamp from "./timestamp";
+export * as UnixFilePath from "./unixFilePath";
