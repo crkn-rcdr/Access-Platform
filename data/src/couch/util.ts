@@ -15,10 +15,16 @@ export type Identified = {
 
 export const { inline, schema, validate } = generateSchema<Identified>({
   $id: "/identified",
+  description: "Any object identified by an `id` string.",
   type: "object",
   properties: {
     id: { type: "string" },
-    _rev: { type: "string", nullable: true },
+    _rev: {
+      description:
+        "The CouchDB revision string for this document. If it doesn't have one, it has yet to be inserted into CouchDB.",
+      type: "string",
+      nullable: true,
+    },
   },
   required: ["id"],
 } as JSONSchemaType<Identified>);

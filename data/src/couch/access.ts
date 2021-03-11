@@ -32,6 +32,7 @@ const couchAlias = { properties: toCouchSchema(aliasSchema).properties };
 
 export const { inline, schema, validate } = generateSchema<Document>({
   $id: "/couch/access",
+  description: "A document in the `access` Couch database.",
   type: "object",
   oneOf: [couchCollection, couchCanvasManifest, couchPdfManifest, couchAlias],
   required: ["_id", "type"],

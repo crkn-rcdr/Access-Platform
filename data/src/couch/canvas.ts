@@ -10,4 +10,5 @@ export type Document = CouchDocument<Canvas>;
 export const { inline, schema, validate } = generateSchema<Document>({
   ...toCouchSchema(canvasSchema),
   $id: "/couch/canvas",
+  description: "A document in the `canvas` Couch database.",
 });

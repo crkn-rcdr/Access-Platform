@@ -6,10 +6,12 @@ import { inherit } from "../validator";
 
 type PdfSpec = {
   from: "pdf";
+
   /**
    * Reference to the PDF file this manifest was generated from.
    */
   file: FileRef;
+
   /**
    * Labels for this PDF's pages.
    */
@@ -17,18 +19,24 @@ type PdfSpec = {
 };
 
 /**
- * A manifest for a born-digital PDF.
+ * A Manifest for a born-digital PDF.
  */
 export type PdfManifest = Manifest & PdfSpec;
 
 const specSchema = {
   $id: "/access/PdfManifest",
   title: "PDF Manifest",
+  description: "A Manifest for a born-digital PDF.",
   type: "object",
   properties: {
     from: { type: "string", const: "pdf" },
-    file: fileSchema,
+    file: {
+      ...fileSchema,
+      description:
+        "Reference to the PDF file this manifest was generated from.",
+    },
     pageLabels: {
+      description: "Labels for this PDF's pages.",
       type: "array",
       items: textSchema,
     },

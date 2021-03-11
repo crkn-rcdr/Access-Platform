@@ -10,7 +10,7 @@ import {
 
 type RootSpec = {
   /**
-   * Unique identifier for this resource.
+   * This resource's Noid. It's a unique, opaque identifier.
    */
   id: Noid;
   /**
@@ -36,10 +36,27 @@ const specSchema = {
   title: "Access Object",
   type: "object",
   properties: {
-    id: noidSchema,
-    public: { ...timestampSchema, nullable: true },
-    updated: { ...timestampSchema, nullable: true },
-    updateInternalmeta: { ...processUpdateSchema, nullable: true },
+    id: {
+      ...noidSchema,
+      description: "This resource's Noid. It's a unique, opaque identifier.",
+    },
+    public: {
+      ...timestampSchema,
+      nullable: true,
+      description:
+        "If set, the object was made available to the public at this time. If unset, it is not available to the public.",
+    },
+    updated: {
+      ...timestampSchema,
+      nullable: true,
+      description: "Timestamp for when this object was last updated.",
+    },
+    updateInternalmeta: {
+      ...processUpdateSchema,
+      nullable: true,
+      description:
+        "Information about the most recent update to the internalmeta database made because of changes to this object.",
+    },
   },
   required: ["id"],
 } as JSONSchemaType<RootSpec>;

@@ -11,6 +11,7 @@ export type Member = {
    * The member's Noid.
    */
   id: Noid;
+
   /**
    * The short label for this member in this collection's context.
    * Uses the member's full label by default.
@@ -19,10 +20,8 @@ export type Member = {
 };
 
 type CollectionSpec = {
-  /**
-   * Collections always have the `collection` type.
-   */
   type: "collection";
+
   /**
    * Semantics about the nature of the collection's members list.
    * `unordered` members have no connection to each other,
@@ -32,6 +31,7 @@ type CollectionSpec = {
    * thematic or project collections, and `multi-part` for serials.
    */
   behavior: typeof BEHAVIORS[number];
+
   /**
    * The list of members of this collection.
    */
@@ -46,17 +46,29 @@ export type Collection = Canonical & CollectionSpec;
 const specSchema = {
   $id: "/access/Collection",
   title: "Collection",
+  description: "A grouping of other collections and/or manifests.",
   type: "object",
   properties: {
     type: { type: "string", const: "collection" },
-    behavior: { type: "string", enum: BEHAVIORS },
+    behavior: {
+      description:
+        "Semantics about the nature of the collection's members list. `unordered` members have no connection to each other, `individuals` are in a meaningful order but the end of one does not link into the beginning of the other, and `multi-part` members are parts of one cohesive whole. If that was too vague, use `unordered` for thematic or project collections, and `multi-part` for serials",
+      type: "string",
+      enum: BEHAVIORS,
+    },
     members: {
+      description: "The list of members of this collection.",
       type: "array",
       items: {
         type: "object",
         properties: {
-          id: noidSchema,
-          label: { ...textSchema, nullable: true },
+          id: { ...noidSchema, description: "The member's Noid." },
+          label: {
+            ...textSchema,
+            nullable: true,
+            description:
+              "The short label for this member in this collection's context. Uses the member's full label by default.",
+          },
         },
         required: ["id"],
       },

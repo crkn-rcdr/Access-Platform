@@ -4,9 +4,6 @@ import { Noid, inline as noidSchema } from "../format/noid";
 import { inherit } from "../validator";
 
 type AliasSpec = {
-  /**
-   * All aliases have type `alias`.
-   */
   type: "alias";
   /**
    * The Noid of the object this alias points to.
@@ -22,10 +19,15 @@ export type Alias = Slugged & AliasSpec;
 const specSchema = {
   $id: "/access/Alias",
   title: "Slug Alias",
+  description:
+    "A slug that points to an object primarily identified by another slug.",
   type: "object",
   properties: {
     type: { type: "string", const: "alias" },
-    to: noidSchema,
+    to: {
+      ...noidSchema,
+      description: "The Noid of the object this alias points to.",
+    },
   },
   required: ["type", "to"],
 } as JSONSchemaType<AliasSpec>;
