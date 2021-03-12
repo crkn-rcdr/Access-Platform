@@ -1,0 +1,207 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "/access/PdfManifest",
+  "title": "PDF Manifest",
+  "description": "A Manifest for a born-digital PDF.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "noid",
+      "description": "This resource's Noid. It's a unique, opaque identifier."
+    },
+    "_rev": {
+      "description": "The CouchDB revision string for this document. If it doesn't have one, it has yet to be inserted into CouchDB.",
+      "type": "string",
+      "nullable": true
+    },
+    "public": {
+      "type": "string",
+      "format": "timestamp",
+      "nullable": true,
+      "description": "If set, the object was made available to the public at this time. If unset, it is not available to the public."
+    },
+    "updated": {
+      "type": "string",
+      "format": "timestamp",
+      "nullable": true,
+      "description": "Timestamp for when this object was last updated."
+    },
+    "updateInternalmeta": {
+      "title": "Process update",
+      "description": "Information about the most recent update to the internalmeta database made because of changes to this object.",
+      "type": "object",
+      "properties": {
+        "requestDate": {
+          "type": "string",
+          "format": "timestamp",
+          "description": "Most recent request time for the automated process to run."
+        },
+        "processDate": {
+          "type": "string",
+          "format": "timestamp",
+          "nullable": true,
+          "description": "Most recent time the process update took place."
+        },
+        "succeeded": {
+          "type": "boolean",
+          "nullable": true,
+          "description": "Whether the last process was run successfully on this object."
+        },
+        "message": {
+          "type": "string",
+          "nullable": true,
+          "description": "Error message supplied by the process."
+        }
+      },
+      "required": [
+        "requestDate"
+      ],
+      "additionalProperties": false,
+      "nullable": true
+    },
+    "slug": {
+      "type": "string",
+      "format": "slug",
+      "nullable": true,
+      "description": "Human-readable identifier used to retrieve this object. Any such object without a slug will not be retrievable without access to the object's Noid."
+    },
+    "label": {
+      "title": "Text field",
+      "description": "Human-readable name or title.",
+      "type": "object",
+      "patternProperties": {
+        "^[\\w\\-]+$": {
+          "type": "string"
+        }
+      },
+      "minProperties": 1,
+      "required": []
+    },
+    "summary": {
+      "title": "Text field",
+      "description": "A short textual summary.",
+      "type": "object",
+      "patternProperties": {
+        "^[\\w\\-]+$": {
+          "type": "string"
+        }
+      },
+      "minProperties": 1,
+      "required": [],
+      "nullable": true
+    },
+    "dmdType": {
+      "description": "The type of descriptive metadata record associated with this resource.",
+      "type": "string",
+      "enum": [
+        "dc",
+        "marc",
+        "issueinfo"
+      ],
+      "nullable": true
+    },
+    "type": {
+      "type": "string",
+      "const": "manifest"
+    },
+    "behavior": {
+      "description": "Semantics about what the order of the series of images means.",
+      "type": "string",
+      "enum": [
+        "unordered",
+        "individuals",
+        "contiuous",
+        "paged"
+      ],
+      "default": "continuous",
+      "nullable": true
+    },
+    "viewingDirection": {
+      "description": "Direction the manifest's images are meant to be viewed in.",
+      "type": "string",
+      "enum": [
+        "left-to-right",
+        "right-to-left",
+        "top-to-bottom",
+        "bottom-to-top"
+      ],
+      "default": "left-to-right",
+      "nullable": true
+    },
+    "from": {
+      "type": "string",
+      "const": "pdf"
+    },
+    "file": {
+      "$comment": "Reference to a stored file. The location of the file will either be determined by the `path` property, the `extension` property, or the field's key.",
+      "title": "File Reference",
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "format": "unixFilePath",
+          "nullable": true,
+          "description": "Path to the file in the legacy preservation repository."
+        },
+        "extension": {
+          "type": "string",
+          "minLength": 1,
+          "nullable": true,
+          "description": "File extension for something referenced in the access object store."
+        },
+        "size": {
+          "type": "number",
+          "minimum": 0
+        },
+        "mime": {
+          "type": "string",
+          "pattern": "^\\w+/\\w+$",
+          "nullable": true,
+          "description": "Size of the file, in bytes."
+        },
+        "md5": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{32}$",
+          "nullable": true,
+          "description": "MD5 checksum."
+        }
+      },
+      "required": [
+        "size"
+      ],
+      "not": {
+        "required": [
+          "path",
+          "extension"
+        ]
+      },
+      "description": "Reference to the PDF file this manifest was generated from."
+    },
+    "pageLabels": {
+      "description": "Labels for this PDF's pages.",
+      "type": "array",
+      "items": {
+        "title": "Text field",
+        "description": "Per-language text values.",
+        "type": "object",
+        "patternProperties": {
+          "^[\\w\\-]+$": {
+            "type": "string"
+          }
+        },
+        "minProperties": 1,
+        "required": []
+      }
+    }
+  },
+  "required": [
+    "id",
+    "label",
+    "type",
+    "from",
+    "file",
+    "pageLabels"
+  ],
+  "additionalProperties": false
+}

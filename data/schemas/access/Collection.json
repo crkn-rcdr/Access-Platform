@@ -1,0 +1,156 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "/access/Collection",
+  "title": "Collection",
+  "description": "A grouping of other collections and/or manifests.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "noid",
+      "description": "This resource's Noid. It's a unique, opaque identifier."
+    },
+    "_rev": {
+      "description": "The CouchDB revision string for this document. If it doesn't have one, it has yet to be inserted into CouchDB.",
+      "type": "string",
+      "nullable": true
+    },
+    "public": {
+      "type": "string",
+      "format": "timestamp",
+      "nullable": true,
+      "description": "If set, the object was made available to the public at this time. If unset, it is not available to the public."
+    },
+    "updated": {
+      "type": "string",
+      "format": "timestamp",
+      "nullable": true,
+      "description": "Timestamp for when this object was last updated."
+    },
+    "updateInternalmeta": {
+      "title": "Process update",
+      "description": "Information about the most recent update to the internalmeta database made because of changes to this object.",
+      "type": "object",
+      "properties": {
+        "requestDate": {
+          "type": "string",
+          "format": "timestamp",
+          "description": "Most recent request time for the automated process to run."
+        },
+        "processDate": {
+          "type": "string",
+          "format": "timestamp",
+          "nullable": true,
+          "description": "Most recent time the process update took place."
+        },
+        "succeeded": {
+          "type": "boolean",
+          "nullable": true,
+          "description": "Whether the last process was run successfully on this object."
+        },
+        "message": {
+          "type": "string",
+          "nullable": true,
+          "description": "Error message supplied by the process."
+        }
+      },
+      "required": [
+        "requestDate"
+      ],
+      "additionalProperties": false,
+      "nullable": true
+    },
+    "slug": {
+      "type": "string",
+      "format": "slug",
+      "nullable": true,
+      "description": "Human-readable identifier used to retrieve this object. Any such object without a slug will not be retrievable without access to the object's Noid."
+    },
+    "label": {
+      "title": "Text field",
+      "description": "Human-readable name or title.",
+      "type": "object",
+      "patternProperties": {
+        "^[\\w\\-]+$": {
+          "type": "string"
+        }
+      },
+      "minProperties": 1,
+      "required": []
+    },
+    "summary": {
+      "title": "Text field",
+      "description": "A short textual summary.",
+      "type": "object",
+      "patternProperties": {
+        "^[\\w\\-]+$": {
+          "type": "string"
+        }
+      },
+      "minProperties": 1,
+      "required": [],
+      "nullable": true
+    },
+    "dmdType": {
+      "description": "The type of descriptive metadata record associated with this resource.",
+      "type": "string",
+      "enum": [
+        "dc",
+        "marc",
+        "issueinfo"
+      ],
+      "nullable": true
+    },
+    "type": {
+      "type": "string",
+      "const": "collection"
+    },
+    "behavior": {
+      "description": "Semantics about the nature of the collection's members list. `unordered` members have no connection to each other, `individuals` are in a meaningful order but the end of one does not link into the beginning of the other, and `multi-part` members are parts of one cohesive whole. If that was too vague, use `unordered` for thematic or project collections, and `multi-part` for serials",
+      "type": "string",
+      "enum": [
+        "unordered",
+        "individuals",
+        "multi-part"
+      ]
+    },
+    "members": {
+      "description": "The list of members of this collection.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "noid",
+            "description": "The member's Noid."
+          },
+          "label": {
+            "title": "Text field",
+            "description": "The short label for this member in this collection's context. Uses the member's full label by default.",
+            "type": "object",
+            "patternProperties": {
+              "^[\\w\\-]+$": {
+                "type": "string"
+              }
+            },
+            "minProperties": 1,
+            "required": [],
+            "nullable": true
+          }
+        },
+        "required": [
+          "id"
+        ]
+      }
+    }
+  },
+  "required": [
+    "id",
+    "label",
+    "type",
+    "behavior",
+    "members"
+  ],
+  "additionalProperties": false
+}

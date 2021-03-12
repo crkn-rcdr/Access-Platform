@@ -1,0 +1,301 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "/couch/canvas",
+  "title": "Canvas",
+  "type": "object",
+  "description": "A document in the `canvas` Couch database.",
+  "properties": {
+    "_id": {
+      "type": "string",
+      "format": "noid",
+      "description": "This resource's Noid. It's a unique, opaque identifier."
+    },
+    "_rev": {
+      "description": "The CouchDB revision string for this document. If it doesn't have one, it has yet to be inserted into CouchDB.",
+      "type": "string",
+      "nullable": true
+    },
+    "public": {
+      "type": "string",
+      "format": "timestamp",
+      "nullable": true,
+      "description": "If set, the object was made available to the public at this time. If unset, it is not available to the public."
+    },
+    "updated": {
+      "type": "string",
+      "format": "timestamp",
+      "nullable": true,
+      "description": "Timestamp for when this object was last updated."
+    },
+    "updateInternalmeta": {
+      "title": "Process update",
+      "description": "Information about the most recent update to the internalmeta database made because of changes to this object.",
+      "type": "object",
+      "properties": {
+        "requestDate": {
+          "type": "string",
+          "format": "timestamp",
+          "description": "Most recent request time for the automated process to run."
+        },
+        "processDate": {
+          "type": "string",
+          "format": "timestamp",
+          "nullable": true,
+          "description": "Most recent time the process update took place."
+        },
+        "succeeded": {
+          "type": "boolean",
+          "nullable": true,
+          "description": "Whether the last process was run successfully on this object."
+        },
+        "message": {
+          "type": "string",
+          "nullable": true,
+          "description": "Error message supplied by the process."
+        }
+      },
+      "required": [
+        "requestDate"
+      ],
+      "additionalProperties": false,
+      "nullable": true
+    },
+    "source": {
+      "description": "Information about the preservation source of this base image of this canvas.",
+      "type": "object",
+      "oneOf": [
+        {
+          "description": "Source information for an image in the legacy preservation repository.",
+          "properties": {
+            "from": {
+              "type": "string",
+              "const": "cihm"
+            },
+            "path": {
+              "type": "string",
+              "format": "unixFilePath",
+              "description": "Legacy repository path."
+            }
+          },
+          "required": [
+            "from",
+            "path"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "description": "Source information for an image in Archivematica.",
+          "properties": {
+            "from": {
+              "type": "string",
+              "const": "cihm"
+            },
+            "aipId": {
+              "type": "string"
+            },
+            "objId": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "from",
+            "aipId",
+            "objId"
+          ],
+          "additionalProperties": false
+        }
+      ],
+      "required": [
+        "from"
+      ]
+    },
+    "master": {
+      "$comment": "Reference to a stored image, which can be found in either the legacy preservation repository or the access platform file store.",
+      "title": "Image file reference",
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "format": "unixFilePath",
+          "nullable": true,
+          "description": "Path to the file in the legacy preservation repository.",
+          "$comment": "Cannot be defined along with `extension`."
+        },
+        "extension": {
+          "type": "string",
+          "enum": [
+            "jpg",
+            "jp2",
+            "jpeg",
+            "tif",
+            "tiff"
+          ],
+          "nullable": true,
+          "description": "Image file extension.",
+          "$comment": "Cannot be defined along with `path`."
+        },
+        "size": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Size of the file, in bytes."
+        },
+        "mime": {
+          "type": "string",
+          "enum": [
+            "image/jpeg",
+            "image/jp2",
+            "image/tiff"
+          ],
+          "description": "RFC 2046 Media Type (formerly MIME)."
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 0,
+          "nullable": true,
+          "description": "Image height, in pixels.",
+          "$comment": "Implies that `width` is defined."
+        },
+        "width": {
+          "type": "integer",
+          "minimum": 0,
+          "nullable": true,
+          "description": "Image width, in pixels.",
+          "$comment": "Implies that `height` is defined."
+        },
+        "update": {
+          "title": "Process update",
+          "description": "Update for the service that supplies dimension information.",
+          "type": "object",
+          "properties": {
+            "requestDate": {
+              "type": "string",
+              "format": "timestamp",
+              "description": "Most recent request time for the automated process to run."
+            },
+            "processDate": {
+              "type": "string",
+              "format": "timestamp",
+              "nullable": true,
+              "description": "Most recent time the process update took place."
+            },
+            "succeeded": {
+              "type": "boolean",
+              "nullable": true,
+              "description": "Whether the last process was run successfully on this object."
+            },
+            "message": {
+              "type": "string",
+              "nullable": true,
+              "description": "Error message supplied by the process."
+            }
+          },
+          "required": [
+            "requestDate"
+          ],
+          "additionalProperties": false,
+          "nullable": true
+        }
+      },
+      "required": [
+        "mime"
+      ],
+      "dependencies": {
+        "height": [
+          "width"
+        ],
+        "width": [
+          "height"
+        ]
+      },
+      "oneOf": [
+        {
+          "required": [
+            "path"
+          ]
+        },
+        {
+          "required": [
+            "extension"
+          ]
+        }
+      ],
+      "description": "Reference to the base image file."
+    },
+    "takedown": {
+      "description": "If the canvas has been taken down from public view, this is the reason why.",
+      "type": "string",
+      "enum": [
+        "copyright",
+        "privacy"
+      ],
+      "nullable": true
+    },
+    "ocrPdf": {
+      "$comment": "Reference to a stored file. The location of the file will either be determined by the `path` property, the `extension` property, or the field's key.",
+      "title": "File Reference",
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "format": "unixFilePath",
+          "nullable": true,
+          "description": "Path to the file in the legacy preservation repository."
+        },
+        "extension": {
+          "type": "string",
+          "minLength": 1,
+          "nullable": true,
+          "description": "File extension for something referenced in the access object store."
+        },
+        "size": {
+          "type": "number",
+          "minimum": 0
+        },
+        "mime": {
+          "type": "string",
+          "pattern": "^\\w+/\\w+$",
+          "nullable": true,
+          "description": "Size of the file, in bytes."
+        },
+        "md5": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{32}$",
+          "nullable": true,
+          "description": "MD5 checksum."
+        }
+      },
+      "required": [
+        "size"
+      ],
+      "not": {
+        "required": [
+          "path",
+          "extension"
+        ]
+      },
+      "nullable": true,
+      "description": "Reference to the PDF file generated by OCR."
+    },
+    "ocrType": {
+      "description": "OCR XML type.",
+      "type": "string",
+      "enum": [
+        "alto",
+        "txtmap"
+      ],
+      "nullable": true
+    },
+    "orphan": {
+      "description": "As time goes on or errors take place, some canvases may no longer be referenced by a manifest. These canvases may be marked as orphans by setting this flag.",
+      "type": "boolean",
+      "default": false,
+      "nullable": true
+    }
+  },
+  "required": [
+    "_id",
+    "master",
+    "source"
+  ],
+  "additionalProperties": false
+}

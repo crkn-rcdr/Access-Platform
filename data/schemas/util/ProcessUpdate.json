@@ -1,0 +1,34 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "/util/ProcessUpdate",
+  "title": "Process update",
+  "description": "An object that describes a request for and the output of an automated process that is applied to the parent object.",
+  "type": "object",
+  "properties": {
+    "requestDate": {
+      "type": "string",
+      "format": "timestamp",
+      "description": "Most recent request time for the automated process to run."
+    },
+    "processDate": {
+      "type": "string",
+      "format": "timestamp",
+      "nullable": true,
+      "description": "Most recent time the process update took place."
+    },
+    "succeeded": {
+      "type": "boolean",
+      "nullable": true,
+      "description": "Whether the last process was run successfully on this object."
+    },
+    "message": {
+      "type": "string",
+      "nullable": true,
+      "description": "Error message supplied by the process."
+    }
+  },
+  "required": [
+    "requestDate"
+  ],
+  "additionalProperties": false
+}
