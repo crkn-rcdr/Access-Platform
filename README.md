@@ -44,10 +44,10 @@ By default, `pnpm install` will run across all of the "workspaces" listed in [pn
 
 ### Validating Couch documents with `kivik validate`
 
-First, run the `build` script recursively over all packages. This will transpile the TypeScript code in `data` to JavaScript, so that it can be used by `couchdb`.
+First, run the `test` script recursively over all packages. While it runs tests, it also transpiles the TypeScript code in `data` to JavaScript, so that it can be used by `couchdb`.
 
 ```
-Access-Platform $ pnpm -r build
+Access-Platform $ pnpm -t build
 ```
 
 Then, from the `couchdb` directory, you can use `pnpx` to run Kivik on the command line.
