@@ -26,8 +26,14 @@
     "url": "https://github.com/crkn-rcdr/Access-Platform/issues"
   },
   "homepage": "https://github.com/crkn-rcdr/Access-Platform/tree/main/couchdb",
+  "scripts": {
+    "test": "ava"
+  },
   "dependencies": {
     "@crkn-rcdr/access-data": "workspace:*",
     "kivik": "^2.0.0-alpha.4"
+  },
+  "devDependencies": {
+    "ava": "^3.15.0"
   }
 }
