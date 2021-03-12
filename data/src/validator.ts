@@ -26,7 +26,7 @@ export const generateSchema = <T>(
     ...schema,
   };
   if (!full.$id) throw new Error("Cannot generate schema without $id");
-  const { $schema, $id, title, ..._remainder } = schema;
+  const { $schema, $id, ..._remainder } = schema;
   Object.freeze(_remainder);
 
   validator.addSchema(full);
