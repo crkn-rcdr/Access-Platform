@@ -5,6 +5,7 @@ import { inherit } from "../validator";
 
 type AliasSpec = {
   type: "alias";
+
   /**
    * The Noid of the object this alias points to.
    */
