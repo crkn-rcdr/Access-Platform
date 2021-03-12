@@ -1,19 +1,18 @@
 import test from "ava";
+import { tester } from "../common.spec";
 
 import { validate } from "./noid";
 
-test("Noid schema validates an ARKful Noid", (t) => {
-  t.is(validate("69429/g02n4zg6h671"), true);
-});
+const { isValid, isInvalid } = tester(validate);
 
-test("Noid schema invalidates an ARKless Noid", (t) => {
-  t.is(validate("m02n4zg6h671"), false);
-});
+test("Noid schema validates an ARKful Noid", isValid, "69429/g02n4zg6h671");
 
-test("Noid schema invalidates some random junk", (t) => {
-  t.is(validate("oocihm.something"), false);
-});
+test("Noid schema invalidates an ARKless Noid", isInvalid, "m02n4zg6h671");
 
-test("Noid schema invalidates a noid with a weird first letter", (t) => {
-  t.is(validate("69429/a02n4zg6h671"), false);
-});
+test("Noid schema invalidates some random junk", isInvalid, "oocihm.something");
+
+test(
+  "Noid schema invalidates a noid with a weird first letter",
+  isInvalid,
+  "69429/a02n4zg6h671"
+);

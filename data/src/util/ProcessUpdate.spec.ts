@@ -1,5 +1,9 @@
 import test from "ava";
+import { tester } from "../common.spec";
+
 import { ProcessUpdate, validate } from "./ProcessUpdate";
+
+const { isValid } = tester(validate);
 
 const minimal: ProcessUpdate = {
   requestDate: "2020-02-02T02:02:02Z",
@@ -12,10 +16,14 @@ const maximal: ProcessUpdate = {
   message: "Something went wrong.",
 };
 
-test("ProcessUpdate schema validates a minimal ProcessUpdate", (t) => {
-  t.is(validate(minimal), true);
-});
+test(
+  "ProcessUpdate schema validates a minimal ProcessUpdate",
+  isValid,
+  minimal
+);
 
-test("ProcessUpdate schema validates a maximal ProcessUpdate", (t) => {
-  t.is(validate(maximal), true);
-});
+test(
+  "ProcessUpdate schema validates a maximal ProcessUpdate",
+  isValid,
+  maximal
+);

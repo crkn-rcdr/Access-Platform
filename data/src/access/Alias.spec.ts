@@ -1,16 +1,9 @@
 import test from "ava";
+import { tester } from "../common.spec";
 
-import { Alias, validate } from "./Alias";
+import { validate } from "./Alias";
+import { testAlias } from "./common.spec";
 
-export const testAlias: Alias = {
-  id: "69429/m02n4zg6h671",
-  type: "alias",
-  slug: "typoOfSorts",
-  to: "69429/m0696zw19t6s",
-};
+const { isValid } = tester(validate);
 
-test("Alias schema validates an Alias", (t) => {
-  const valid = validate(testAlias);
-  t.is(valid, true);
-  if (!valid) console.log(validate.errors);
-});
+test("Alias schema validates an Alias", isValid, testAlias);

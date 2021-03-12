@@ -1,7 +1,8 @@
 import test from "ava";
+import { tester } from "../common.spec";
 
 import { validate } from "./slug";
 
-test("Slug schema validates a slug", (t) => {
-  t.is(validate("oocihm.00001"), true);
-});
+const { isValid } = tester(validate);
+
+test("Slug schema validates a slug", isValid, "oocihm.00001");

@@ -6,6 +6,7 @@
   "files": [
     "dist",
     "!*.spec.*",
+    "!validatorTesting*",
     "!writeSchemas*"
   ],
   "repository": {
@@ -38,7 +39,11 @@
       "rewritePaths": {
         "src/": "dist/"
       }
-    }
+    },
+    "files": [
+      "**/*.spec.*",
+      "!**/common.spec.*"
+    ]
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.8",
