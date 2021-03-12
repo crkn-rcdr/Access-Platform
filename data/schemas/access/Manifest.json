@@ -111,7 +111,7 @@
       "enum": [
         "unordered",
         "individuals",
-        "contiuous",
+        "continuous",
         "paged"
       ],
       "default": "continuous",
