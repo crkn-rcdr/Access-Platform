@@ -29,7 +29,8 @@
     "ava": "ava",
     "build:schemas": "rm -rf schemas && node dist/writeSchemas.js",
     "build:ts": "rm -rf dist && tsc",
-    "test": "run-s build:ts build:schemas ava"
+    "build": "run-s build:ts build:schemas",
+    "test": "run-s build ava"
   },
   "dependencies": {
     "ajv": "^7.2.1"
