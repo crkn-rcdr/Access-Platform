@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "/identified",
+  "description": "Any object identified by an `id` string.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "_rev": {
+      "description": "The CouchDB revision string for this document. If it doesn't have one, it has yet to be inserted into CouchDB.",
+      "type": "string",
+      "nullable": true
+    }
+  },
+  "required": [
+    "id"
+  ]
+}

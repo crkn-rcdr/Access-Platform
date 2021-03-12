@@ -25,13 +25,19 @@ export const generateSchema = <T>(
     $schema: "http://json-schema.org/draft-07/schema",
     ...schema,
   };
-  const { $schema, $id, title, ..._remainder } = schema;
+  if (!full.$id) throw new Error("Cannot generate schema without $id");
+  const { $schema, $id, ..._remainder } = schema;
   Object.freeze(_remainder);
+
+  validator.addSchema(full);
+  const validate: ValidateFunction<T> = validator.getSchema<T>(
+    full.$id
+  ) as ValidateFunction<T>;
 
   return {
     inline: _remainder as JSONSchemaType<T>,
     schema: full,
-    validate: validator.compile<T>(full),
+    validate,
   };
 };
 

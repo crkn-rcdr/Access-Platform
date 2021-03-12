@@ -55,3 +55,12 @@ Then, from the `couchdb` directory, you can use `pnpx` to run Kivik on the comma
 ```
 Access-Platform/couchdb $ pnpx kivik validate access path/to/file.json
 ```
+
+### Generating schema files from `data` code
+
+```
+Access-Platform $ cd data
+Access-Platform/data $ pnpm schemas
+Access-Platform/data $ ls schemas/couch
+access.json  canvas.json
+```
