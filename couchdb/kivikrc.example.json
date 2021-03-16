@@ -1,0 +1,9 @@
+{
+  "user": "admin",
+  "password": "REPLACE_WITH_PASSWORD",
+  "configs": {
+    "iris": {
+      "url": "http://iris.tor.c7a.ca:5984"
+    }
+  }
+}
