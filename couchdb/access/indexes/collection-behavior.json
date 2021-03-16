@@ -1,0 +1,10 @@
+{
+  "index": {
+    "partial_filter_selector": {
+      "type": {
+        "$eq": "collection"
+      }
+    },
+    "fields": ["behavior"]
+  }
+}
