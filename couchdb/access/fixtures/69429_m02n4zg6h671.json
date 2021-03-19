@@ -1,54 +1,68 @@
 {
   "_id": "69429/m02n4zg6h671",
-  "_rev": "14-12f0cda072e2f32e6efb4315220b7a88",
+  "_rev": "1-c9b5a97d3efb055f84d1cca0ac86b203",
   "type": "manifest",
-  "public": "2020-08-29T23:26:06Z",
-  "updateInternalmeta": {
-    "succeeded": true,
-    "message": "",
-    "requestDate": "2021-01-13T18:44:55Z",
-    "processDate": "2021-01-17T18:43:18Z"
-  },
-  "slug": "oocihm.8_06941_2",
-  "label": {
-    "none": "The Pacific Harbor Light: Vol. I, No. 2 (October 24, 1891)"
-  },
-  "dmdType": "issueinfo",
-  "from": "canvases",
-  "behavior": "paged",
-  "viewingDirection": "left-to-right",
   "canvases": [
     {
-      "label": { "none": "1" },
+      "label": {
+        "none": "Image 1"
+      },
       "id": "69429/c08s4jp15g01"
     },
     {
-      "label": { "none": "2" },
+      "label": {
+        "none": "Image 2"
+      },
       "id": "69429/c0513tw3hp7p"
     },
     {
-      "label": { "none": "3" },
+      "label": {
+        "none": "Image 3"
+      },
       "id": "69429/c0183435vx78"
     },
     {
-      "label": { "none": "4" },
+      "label": {
+        "none": "Image 4"
+      },
       "id": "69429/c0wh2d987m77"
     },
     {
       "id": "69429/c0rr1pj0kv4w",
-      "label": { "none": "5" }
+      "label": {
+        "none": "Image 5"
+      }
     },
     {
-      "label": { "none": "6" },
-      "id": "69429/c0n00zr2z33x"
+      "id": "69429/c0n00zr2z33x",
+      "label": {
+        "none": "Image 6"
+      }
     },
     {
-      "id": "69429/c0h98zb84g4k",
-      "label": { "none": "7" }
+      "label": {
+        "none": "Image 7"
+      },
+      "id": "69429/c0h98zb84g4k"
     },
     {
-      "id": "69429/c0cj87k0gq3s",
-      "label": { "none": "8" }
+      "label": {
+        "none": "Image 8"
+      },
+      "id": "69429/c0cj87k0gq3s"
     }
-  ]
+  ],
+  "updateInternalmeta": {
+    "processDate": "2021-01-17T18:43:18Z",
+    "succeeded": true,
+    "requestDate": "2021-01-13T18:44:55Z",
+    "message": ""
+  },
+  "dmdType": "issueinfo",
+  "from": "canvases",
+  "label": {
+    "none": "Vol. I, No. 2 (October 24, 1891)"
+  },
+  "public": "2020-08-29T23:26:06Z",
+  "slug": "oocihm.8_06941_2"
 }
