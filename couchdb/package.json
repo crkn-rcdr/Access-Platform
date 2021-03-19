@@ -27,13 +27,16 @@
   },
   "homepage": "https://github.com/crkn-rcdr/Access-Platform/tree/main/couchdb",
   "scripts": {
+    "pull": "find . -wholename '*/fixtures/*.json' -delete && node ./pullFixtures.js",
     "test": "ava"
   },
   "dependencies": {
     "@crkn-rcdr/access-data": "workspace:*",
-    "kivik": "^2.0.0-alpha.4"
+    "kivik": "github:crkn-rcdr/kivik#main"
   },
   "devDependencies": {
-    "ava": "^3.15.0"
+    "ava": "^3.15.0",
+    "@crkn-rcdr/nano": "^2.0.0",
+    "fs-extra": "^9.1.0"
   }
 }
