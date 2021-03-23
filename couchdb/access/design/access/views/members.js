@@ -7,7 +7,7 @@ module.exports = {
            * Setting _id in the value changes the doc included by
            * include_docs=true to that of the member! Really cool.
            */
-          emit(member.id, { _id: member.id });
+          emit(member.id, null);
         }
       }
     }
