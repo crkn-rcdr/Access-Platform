@@ -29,7 +29,7 @@ module.exports = function (doc, req) {
     delete doc["updateInternalmeta"]["processDate"];
     updated = true;
   }
-  if ("makeprivate" in data && ("public" in doc)) {
+  if ("makeprivate" in data && "public" in doc) {
     if (!("updateInternalmeta" in doc)) {
       doc["updateInternalmeta"] = {};
     }
@@ -49,6 +49,8 @@ module.exports = function (doc, req) {
   }
 
   if ("updateInternalmeta" in data) {
+    // this works?!? what happens if you're updating this with a JSON request body?
+    // update: I checked the code. this never gets updated with a JSON request body.
     var updateInternalmeta = JSON.parse(data["updateInternalmeta"]);
     if (!("requestDate" in updateInternalmeta)) {
       if (
