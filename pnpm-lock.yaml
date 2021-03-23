@@ -28,13 +28,17 @@ importers:
   couchdb:
     dependencies:
       '@crkn-rcdr/access-data': link:../data
-      kivik: 2.0.0-alpha.4
+      kivik: github.com/crkn-rcdr/kivik/e0cde94500a5828b275fa552c96a79f6b7d983d3
     devDependencies:
+      '@crkn-rcdr/nano': 2.0.0
       ava: 3.15.0
+      fs-extra: 9.1.0
     specifiers:
       '@crkn-rcdr/access-data': workspace:*
+      '@crkn-rcdr/nano': ^2.0.0
       ava: ^3.15.0
-      kivik: ^2.0.0-alpha.4
+      fs-extra: ^9.1.0
+      kivik: github:crkn-rcdr/kivik#main
   data:
     dependencies:
       ajv: 7.2.1
@@ -96,7 +100,6 @@ packages:
   /@crkn-rcdr/nano/2.0.0:
     dependencies:
       nano: 9.0.3
-    dev: false
     engines:
       node: '>= 10.0.0'
     resolution:
@@ -1519,25 +1522,6 @@ packages:
     dev: true
     resolution:
       integrity: sha512-9ykJ/46SN/9KPM/sichzQ7OvXyGDYKGTaDlKMGCAlg2UK8KRy4jb0d8sFc+0Tt0YYnThq8X2RZgCg74RPxgcVA==
-  /kivik/2.0.0-alpha.4:
-    dependencies:
-      '@crkn-rcdr/nano': 1.0.1
-      crypto-random-string: 3.3.1
-      dockerode: 3.2.1
-      find-up: 5.0.0
-      fs-extra: 9.1.0
-      get-port: 5.1.1
-      globby: 11.0.2
-      node-fetch: 2.6.1
-      winston: 3.3.3
-      yaml: 1.10.2
-      yargs: 16.2.0
-    dev: false
-    engines:
-      node: '>=10.0.0'
-    hasBin: true
-    resolution:
-      integrity: sha512-qYbldSvvSjjlZUhiJCTOdBv204vFm22StEHj0YzdLObixvT/zlWkBNcFWcyeII4N7wmjavmW2MKAYqXrDcvXJQ==
   /kuler/2.0.0:
     dev: false
     resolution:
@@ -2869,3 +2853,24 @@ packages:
       node: '>=10'
     resolution:
       integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==
+  github.com/crkn-rcdr/kivik/e0cde94500a5828b275fa552c96a79f6b7d983d3:
+    dependencies:
+      '@crkn-rcdr/nano': 1.0.1
+      crypto-random-string: 3.3.1
+      dockerode: 3.2.1
+      find-up: 5.0.0
+      fs-extra: 9.1.0
+      get-port: 5.1.1
+      globby: 11.0.2
+      node-fetch: 2.6.1
+      winston: 3.3.3
+      yaml: 1.10.2
+      yargs: 16.2.0
+    dev: false
+    engines:
+      node: '>=10.0.0'
+    hasBin: true
+    name: kivik
+    resolution:
+      tarball: https://codeload.github.com/crkn-rcdr/kivik/tar.gz/e0cde94500a5828b275fa552c96a79f6b7d983d3
+    version: 2.0.0-alpha.4

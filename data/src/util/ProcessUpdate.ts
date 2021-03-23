@@ -1,6 +1,6 @@
 import { JSONSchemaType } from "ajv";
 import { generateSchema } from "../validator";
-import { Timestamp, inline as timestampSchema } from "../format/timestamp";
+import { Timestamp, inline as timestampSchema } from "../util/Timestamp";
 
 /**
  * An object that describes a request for and the output of an automated
@@ -41,7 +41,6 @@ export const { inline, schema, validate } = generateSchema({
     },
     processDate: {
       ...timestampSchema,
-      nullable: true,
       description: "Most recent time the process update took place.",
     },
     succeeded: {

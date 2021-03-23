@@ -1,7 +1,7 @@
 import test from "ava";
 import { tester } from "../common.spec";
 
-import { validate } from "./timestamp";
+import { validate } from "./Timestamp";
 
 const { isValid, isInvalid } = tester(validate);
 
@@ -22,3 +22,5 @@ test(
   isInvalid,
   "2020-09-17T06:01:50-3:30"
 );
+
+test("Timestamp validates a number of seconds", isValid, 1616188726.633);
