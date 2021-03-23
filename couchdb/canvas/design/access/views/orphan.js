@@ -1,6 +1,6 @@
 module.exports = {
   map: function (doc) {
-    if ("orphan" in doc && doc.orphan) {
+    if (doc.orphan) {
       emit(null, null);
     }
   },
