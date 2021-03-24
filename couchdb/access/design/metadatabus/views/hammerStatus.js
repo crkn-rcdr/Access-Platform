@@ -22,8 +22,8 @@ module.exports = {
     if (update) {
       const requestDate = getDate(update.requestDate);
       const processDate = getDate(update.processDate);
-      if (!update.succeeded && processDate >= requestDate) {
-        emit(dateAsArray(processDate), update.message);
+      if (!!update.message && processDate >= requestDate) {
+        emit([update.succeeded, ...dateAsArray(processDate)], update.message);
       }
     }
   },
