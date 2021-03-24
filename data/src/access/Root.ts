@@ -2,7 +2,7 @@ import { JSONSchemaType } from "ajv";
 import { inherit } from "../validator";
 import { Identified, schema as identifiedSchema } from "../couch/util";
 import { Noid, inline as noidSchema } from "../format/noid";
-import { Timestamp, inline as timestampSchema } from "../format/timestamp";
+import { Timestamp, inline as timestampSchema } from "../util/Timestamp";
 import {
   ProcessUpdate,
   inline as processUpdateSchema,
@@ -42,13 +42,11 @@ const specSchema = {
     },
     public: {
       ...timestampSchema,
-      nullable: true,
       description:
         "If set, the object was made available to the public at this time. If unset, it is not available to the public.",
     },
     updated: {
       ...timestampSchema,
-      nullable: true,
       description: "Timestamp for when this object was last updated.",
     },
     updateInternalmeta: {

@@ -1,8 +1,6 @@
 module.exports = {
   map: function (doc) {
-    if (doc.orphan) {
-      emit(null, null);
-    }
+    emit(doc.dmdType, null);
   },
   reduce: "_count",
 };
