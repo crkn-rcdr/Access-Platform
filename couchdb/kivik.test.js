@@ -1,16 +1,12 @@
 const test = require("ava");
-const Kivik = require("kivik").Kivik;
+const Kivik = require("kivik");
 
 test("Kivik can load things", async (t) => {
-  await t.notThrowsAsync(Kivik.fromDirectory(__dirname));
+  await t.notThrowsAsync(Kivik.createKivik(__dirname));
 });
 
 test("Fixtures validate", async (t) => {
-  const results = await Kivik.testFixtures(__dirname);
-  // TODO: rewrite when https://github.com/crkn-rcdr/kivik/issues/51 is done
-  const total = Object.values(results).reduce(
-    (num, invalid) => num + Object.keys(invalid).length,
-    0
-  );
-  t.is(total, 0);
+  const kivik = await Kivik.createKivik(__dirname, "fixtures");
+  const results = kivik.validateFixtures();
+  t.is(results.size, 0);
 });
