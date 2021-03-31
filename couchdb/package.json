@@ -32,11 +32,11 @@
   },
   "dependencies": {
     "@crkn-rcdr/access-data": "workspace:*",
-    "kivik": "github:crkn-rcdr/kivik#main"
+    "kivik": "^2.0.0-alpha.5"
   },
   "devDependencies": {
-    "ava": "^3.15.0",
     "@crkn-rcdr/nano": "^2.0.0",
+    "ava": "^3.15.0",
     "fs-extra": "^9.1.0"
   }
 }

@@ -1,9 +1,11 @@
 {
-  "user": "admin",
-  "password": "REPLACE_WITH_PASSWORD",
-  "configs": {
+  "deployments": {
     "iris": {
-      "url": "http://iris.tor.c7a.ca:5984"
+      "url": "http://iris.tor.c7a.ca:5984",
+      "auth": {
+        "user": "admin",
+        "password": "REPLACE_WITH_PASSWORD"
+      }
     }
   }
 }
