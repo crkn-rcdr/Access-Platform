@@ -1,25 +1,27 @@
 const test = require("ava");
-const kivik = require("kivik");
+const testInstance = require("../../../../testInstance");
+
+const NOID = "69429/m02n4zg6h671";
 
 test.before(async (t) => {
-  t.context.instance = await kivik.getInstance(".");
+  t.context.instance = await testInstance();
 });
 
 test.beforeEach(async (t) => {
-  const handlers = await t.context.instance.deploy("unpublish");
-  t.context.access = handlers.get("access");
+  t.context.access = await t.context.instance.deployDb("access", "unpublish");
 });
 
 test("An access document can be unpublished", async (t) => {
+  const start = Date.now() / 1000;
   const response = await t.context.access.updateWithHandler(
     "access",
     "unpublish",
-    "69429/m02n4zg6h671",
-    {}
+    NOID
   );
-  t.true(response.message.endsWith("unpublished"));
+  t.is(response.message, "oocihm.8_06941_2 unpublished");
 
-  const doc = await t.context.access.get("69429/m02n4zg6h671");
+  const doc = await t.context.access.get(NOID);
   t.false("public" in doc);
+  t.true(doc.updateInternalmeta.requestDate > start);
   t.false("processDate" in doc.updateInternalmeta);
 });
