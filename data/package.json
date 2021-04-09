@@ -26,30 +26,34 @@
   },
   "homepage": "https://github.com/crkn-rcdr/Access-Platform",
   "scripts": {
-    "ava": "ava",
     "build:schemas": "rm -rf schemas && node dist/writeSchemas.js",
     "build:ts": "rm -rf dist && tsc",
-    "build": "run-s build:ts build:schemas",
-    "test": "run-s build ava"
+    "build": "run-s test build:ts build:schemas",
+    "test": "ava -v"
   },
   "dependencies": {
     "ajv": "^7.2.1"
   },
   "ava": {
-    "typescript": {
-      "rewritePaths": {
-        "src/": "dist/"
-      }
-    },
+    "extensions": [
+      "ts"
+    ],
+    "require": [
+      "ts-node/register"
+    ],
     "files": [
-      "**/*.spec.*",
-      "!**/common.spec.*"
+      "src/**/*.spec.*",
+      "!src/**/common.spec.*"
     ]
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.8",
     "@types/mkdirp": "^1.0.1",
+    "ava": "^3.15.0",
     "fs-extra": "^9.1.0",
-    "mkdirp": "^1.0.4"
+    "mkdirp": "^1.0.4",
+    "npm-run-all": "^4.1.5",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.2.3"
   }
 }
