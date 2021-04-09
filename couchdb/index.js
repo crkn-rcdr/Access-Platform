@@ -1,22 +1,39 @@
-#!/usr/bin/env node
+const { getInstance } = require("kivik");
+const { writeJson } = require("fs-extra");
+const { join: pathJoin } = require("path");
+const { get: getNano } = require("@crkn-rcdr/nano");
 
-const fs = require("fs-extra");
-const path = require("path");
+module.exports.validator = (validate) => (data) => {
+  const valid = validate(data);
+  if (valid) {
+    return valid;
+  } else {
+    return { valid, errors: validate.errors };
+  }
+};
 
-const {
-  user,
-  password,
-  configs: {
-    iris: { url },
-  },
-} = require("./kivikrc.json");
+let instance;
+module.exports.getInstance = async () => {
+  if (!instance) {
+    instance = await getInstance(__dirname);
+  }
+  return instance;
+};
 
-const nano = require("@crkn-rcdr/nano");
-const client = nano.get(url, { user, password });
+module.exports.pullFixtures = async () => {
+  const {
+    deployments: {
+      iris: {
+        url,
+        auth: { user, password },
+      },
+    },
+  } = require("./kivikrc.json");
 
-const queue = ["oocihm.8_06941"];
+  const client = getNano(url, { user, password });
 
-(async () => {
+  const queue = ["oocihm.8_06941"];
+
   while (queue.length > 0) {
     const item = queue.shift();
     let db = "access";
@@ -41,8 +58,8 @@ const queue = ["oocihm.8_06941"];
     for await (const row of rows) {
       const { id, doc } = row;
 
-      await fs.writeJSON(
-        path.join(__dirname, db, "fixtures", id.replace("/", "_") + ".json"),
+      await writeJson(
+        pathJoin(__dirname, db, "fixtures", id.replace("/", "_") + ".json"),
         doc,
         { spaces: 2 }
       );
@@ -54,4 +71,4 @@ const queue = ["oocihm.8_06941"];
       }
     }
   }
-})();
+};

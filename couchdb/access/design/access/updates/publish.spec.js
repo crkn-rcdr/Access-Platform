@@ -1,10 +1,10 @@
 const test = require("ava");
-const testInstance = require("../../../../testInstance");
+const { getInstance } = require("../../../..");
 
 const NOID = "69429/m02n4zg6h671";
 
 test.before(async (t) => {
-  t.context.instance = await testInstance();
+  t.context.instance = await getInstance();
 });
 
 test.beforeEach(async (t) => {
