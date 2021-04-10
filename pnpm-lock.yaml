@@ -12,13 +12,19 @@ importers:
     specifiers:
       '@crkn-rcdr/access-data': workspace:*
       '@crkn-rcdr/nano': ^2.0.0
+      ava: ^3.15.0
+      kivik: ^2.0.0-alpha.8
       nano: ^9.0.3
+      npm-run-all: ^4.1.5
       type-fest: ^0.21.2
     dependencies:
       '@crkn-rcdr/access-data': link:../data
       '@crkn-rcdr/nano': 2.0.0
     devDependencies:
+      ava: 3.15.0
+      kivik: 2.0.0-alpha.8
       nano: 9.0.3
+      npm-run-all: 4.1.5
       type-fest: 0.21.2
 
   couchdb:
@@ -874,7 +880,7 @@ packages:
       object.assign: 4.1.2
       string.prototype.trimend: 1.0.4
       string.prototype.trimstart: 1.0.4
-      unbox-primitive: 1.0.0
+      unbox-primitive: 1.0.1
     dev: true
 
   /es-to-primitive/1.2.1:
@@ -938,7 +944,7 @@ packages:
       '@nodelib/fs.walk': 1.2.6
       glob-parent: 5.1.2
       merge2: 1.4.1
-      micromatch: 4.0.2
+      micromatch: 4.0.3
       picomatch: 2.2.2
     dev: true
 
@@ -1623,9 +1629,9 @@ packages:
     engines: {node: '>= 8'}
     dev: true
 
-  /micromatch/4.0.2:
-    resolution: {integrity: sha512-y7FpHSbMUMoyPbYUSzO6PaZ6FyRnQOpHuKwbo1G+Knck95XVU4QAiKdGEnj5wwoS7PlOgthX/09u5iFJ+aYf5Q==}
-    engines: {node: '>=8'}
+  /micromatch/4.0.3:
+    resolution: {integrity: sha512-ueuSaP4i67F/FAUac9zzZ0Dz/5KeKDkITYIS/k4fps+9qeh1SkeH6gbljcqz97mNBOsaWZ+iv2UobMKK/yD+aw==}
+    engines: {node: '>=8.6'}
     dependencies:
       braces: 3.0.2
       picomatch: 2.2.2
@@ -2548,8 +2554,8 @@ packages:
     hasBin: true
     dev: true
 
-  /unbox-primitive/1.0.0:
-    resolution: {integrity: sha512-P/51NX+JXyxK/aigg1/ZgyccdAxm5K1+n8+tvqSntjOivPt19gvm1VC49RWYetsiub8WViUchdxl/KWHHB0kzA==}
+  /unbox-primitive/1.0.1:
+    resolution: {integrity: sha512-tZU/3NqK3dA5gpE1KtyiJUrEB0lxnGkMFHptJ7q6ewdZ8s12QrODwNbhIJStmJkd1QDXa1NRA8aF2A1zk/Ypyw==}
     dependencies:
       function-bind: 1.1.1
       has-bigints: 1.0.1
