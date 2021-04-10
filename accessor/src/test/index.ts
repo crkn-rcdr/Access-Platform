@@ -1,10 +1,10 @@
 import anyTest, { TestInterface } from "ava";
 import { join as pathJoin } from "path";
-import { getInstance, Instance, DatabaseHandler } from "kivik";
+import { getInstance, Instance } from "kivik";
+import { DatabaseHandlers } from "../databases";
 
-export type TestContext = {
+export type TestContext = DatabaseHandlers & {
   instance: Instance;
-  handler: DatabaseHandler;
 };
 
 export const test = anyTest as TestInterface<TestContext>;
