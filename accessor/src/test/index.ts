@@ -1,16 +1,26 @@
 import anyTest, { TestInterface } from "ava";
 import { join as pathJoin } from "path";
-import { getInstance, Instance } from "kivik";
-import { DatabaseHandlers } from "../databases";
+import { DatabaseHandler, getInstance } from "kivik";
+import { DatabaseName } from "../databases";
+import { DocumentTypes } from "@crkn-rcdr/access-data/dist/couch";
 
-export type TestContext = DatabaseHandlers & {
-  instance: Instance;
-};
+export { TestInterface } from "ava";
+
+export interface TestContext {
+  deployDb<T extends DatabaseName>(
+    db: T,
+    suffix: string
+  ): Promise<DatabaseHandler<DocumentTypes[T]>>;
+}
 
 export const test = anyTest as TestInterface<TestContext>;
 
 test.before(async (t) => {
-  t.context.instance = await getInstance(
+  const instance = await getInstance(
     pathJoin(__dirname, "..", "..", "..", "couchdb")
   );
+
+  t.context.deployDb = async (db, suffix) => {
+    return await instance.deployDb(db, suffix);
+  };
 });
