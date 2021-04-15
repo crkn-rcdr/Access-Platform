@@ -4,8 +4,8 @@ export * as util from "./util";
 
 export const DATABASES = ["access", "canvas"] as const;
 
-import { Document as AccessDocument } from "./access";
-import { Document as CanvasDocument } from "./canvas";
+import { AccessDocument } from "./access";
+import { CanvasDocument } from "./canvas";
 
 export type DocumentTypes = {
   access: AccessDocument;

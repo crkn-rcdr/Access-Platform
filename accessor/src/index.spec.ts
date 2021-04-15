@@ -1,10 +1,11 @@
 import { test } from "./test";
+import { Accessor } from ".";
 
-test.beforeEach(async (t) => {
-  t.context.access = await t.context.instance.deployDb("access", "index");
+const accessor = new Accessor("http://localhost:5984", {
+  user: "kivik",
+  password: "kivik",
 });
 
-test("Can deploy", async (t) => {
-  const list = await t.context.access.list();
-  t.truthy(list.rows.find((row) => row.id === "69429/m02n4zg6h671"));
+test("Has slug interface", async (t) => {
+  t.is(typeof accessor.slug, "object");
 });

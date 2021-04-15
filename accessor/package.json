@@ -23,7 +23,8 @@
     "kivik:start": "cd ../couchdb && pnpx kivik start",
     "kivik:stop": "cd ../couchdb && pnpx kivik stop",
     "test": "run-s kivik:start ava; pnpm run kivik:stop",
-    "test:all": "ava"
+    "test:all": "ava",
+    "watch": "ava -v -w"
   },
   "dependencies": {
     "@crkn-rcdr/access-data": "workspace:*",

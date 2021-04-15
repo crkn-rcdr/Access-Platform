@@ -5,9 +5,9 @@ import { generateSchema } from "../validator";
 /**
  * A document in the `canvas` Couch database.
  */
-export type Document = CouchDocument<Canvas>;
+export type CanvasDocument = CouchDocument<Canvas>;
 
-export const { inline, schema, validate } = generateSchema<Document>({
+export const { inline, schema, validate } = generateSchema<CanvasDocument>({
   ...toCouchSchema(canvasSchema),
   $id: "/couch/canvas",
   description: "A document in the `canvas` Couch database.",

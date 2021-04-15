@@ -15,13 +15,13 @@ import { Alias, inline as aliasSchema } from "../access/Alias";
 /**
  * A document in the `access` Couch database.
  */
-export type Document =
+export type AccessDocument =
   | CouchDocument<Collection>
   | CouchDocument<CanvasManifest>
   | CouchDocument<PdfManifest>
   | CouchDocument<Alias>;
 
-export const { inline, schema, validate } = generateSchema<Document>({
+export const { inline, schema, validate } = generateSchema<AccessDocument>({
   $id: "/couch/access",
   description: "A document in the `access` Couch database.",
   type: "object",
