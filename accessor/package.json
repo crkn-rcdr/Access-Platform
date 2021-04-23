@@ -18,8 +18,10 @@
     "url": "https://github.com/crkn-rcdr/accessor/issues"
   },
   "homepage": "https://github.com/crkn-rcdr/accessor#readme",
+  "main": "dist/index.js",
   "scripts": {
     "ava": "ava -v",
+    "build": "tsc",
     "kivik:start": "cd ../couchdb && pnpx kivik start",
     "kivik:stop": "cd ../couchdb && pnpx kivik stop",
     "test": "run-s kivik:start ava; pnpm run kivik:stop",

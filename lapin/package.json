@@ -1,0 +1,24 @@
+{
+  "name": "@crkn-rcdr/lapin",
+  "version": "0.0.0",
+  "description": "Access Platform API server",
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only run.ts"
+  },
+  "author": "",
+  "license": "Unlicense",
+  "dependencies": {
+    "@crkn-rcdr/access-data": "workspace:^0.0.0",
+    "@crkn-rcdr/accessor": "workspace:^0.0.0",
+    "@polka/parse": "^1.0.0-next.12",
+    "@polka/send": "^1.0.0-next.12",
+    "morgan": "^1.10.0",
+    "polka": "^1.0.0-next.14"
+  },
+  "devDependencies": {
+    "@types/morgan": "^1.9.2",
+    "@types/node": "^14.14.41",
+    "ts-node-dev": "^1.1.6",
+    "typescript": "^4.2.4"
+  }
+}
