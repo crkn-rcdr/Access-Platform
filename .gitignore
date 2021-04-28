@@ -1,6 +1,7 @@
 **/node_modules
 **/dist
 **/build
-pnpm-debug*
+.pnpm-debug*
 .svelte
 *.local
+.env
