@@ -5,14 +5,17 @@
   "description": "Access platform admin tools",
   "scripts": {
     "dev": "svelte-kit dev --port 3060",
-    "build": "svelte-kit build",
+    "docker:build": "svelte-kit build && docker image build --tag access-admin:production .",
+    "docker:run": "docker run --env-file ./.env -p 3060:3060 --name access-admin --rm access-admin:production",
+    "docker": "run-s docker:build docker:run",
     "preview": "svelte-kit preview --port 3060"
   },
   "devDependencies": {
+    "@sveltejs/kit": "1.0.0-next.92",
     "@sveltejs/adapter-node": "^1.0.0-next.17",
-    "@sveltejs/kit": "next",
     "@types/cookie": "^0.4.0",
     "@types/jsonwebtoken": "^8.5.1",
+    "npm-run-all": "^4.1.5",
     "svelte": "^3.37.0",
     "svelte-preprocess": "^4.7.2",
     "tslib": "^2.2.0",
