@@ -16,3 +16,6 @@ module.exports = {
     target: "#svelte",
   },
 };
+
+const dotenv = require("dotenv");
+dotenv.config();

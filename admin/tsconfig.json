@@ -21,6 +21,15 @@
     "forceConsistentCasingInFileNames": true,
     "allowJs": true,
     "checkJs": true,
+    // begin strict block
+    "strict": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noPropertyAccessFromIndexSignature": true,
+    // end strict block
     "baseUrl": ".",
     "paths": {
       "$lib/*": ["src/lib/*"]

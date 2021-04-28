@@ -4,9 +4,9 @@
   "version": "0.0.0",
   "description": "Access platform admin tools",
   "scripts": {
-    "dev": "svelte-kit dev",
+    "dev": "svelte-kit dev --port 3060",
     "build": "svelte-kit build",
-    "preview": "svelte-kit preview"
+    "preview": "svelte-kit preview --port 3060"
   },
   "devDependencies": {
     "@sveltejs/adapter-node": "^1.0.0-next.17",
