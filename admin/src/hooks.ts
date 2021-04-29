@@ -46,6 +46,7 @@ export const getContext: GetContext<Context> = (request) => {
         if (isValidPayload(payload)) {
           context.user = { name: payload.name, email: payload.email };
         } else {
+          context.user = null;
           throw new Error("Invalid payload");
         }
       } catch (e) {
