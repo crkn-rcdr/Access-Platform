@@ -7,7 +7,13 @@ const throwEnvError = (name: string) => {
 };
 
 export const dev = process.env["NODE_ENV"] !== "production";
-export const port = parseInt(process.env["PORT"], 10) || 3060;
+export const port = process.env["PORT"]
+  ? parseInt(process.env["PORT"], 10)
+  : 3060;
+export const host = dev
+  ? `http://localhost:${port}`
+  : process.env["HOST"] || "";
+if (!host.length) throw new Error("HOST environment variable required");
 
 export const devUser: User | null = dev
   ? {
@@ -16,14 +22,11 @@ export const devUser: User | null = dev
     }
   : null;
 
-export const host = dev ? `http://localhost:${port}` : process.env["HOST"];
-if (!host.length) throw new Error("HOST environment variable required");
-
 export const auth = dev
   ? null
   : {
-      endpoint: process.env["AUTH_ENDPOINT"],
-      secret: process.env["AUTH_SECRET"],
+      endpoint: process.env["AUTH_ENDPOINT"] || "",
+      secret: process.env["AUTH_SECRET"] || "",
     };
 
 if (auth && !auth.endpoint.length) throwEnvError("AUTH_ENDPOINT");

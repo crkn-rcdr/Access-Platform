@@ -23,17 +23,25 @@ export type Session = Context;
 
 type JwtPayload = User;
 
-const isValidPayload = (payload: string | object): payload is JwtPayload => {
-  return typeof payload === "object" && payload["name"] && payload["email"];
+const isValidPayload = (
+  payload: Record<string, string>
+): payload is JwtPayload => {
+  return (
+    typeof payload === "object" &&
+    payload.hasOwnProperty("name") &&
+    payload.hasOwnProperty("email")
+  );
 };
 
 export const getContext: GetContext<Context> = (request) => {
-  const cookies = cookie.parse(request.headers.cookie || "");
+  const cookies = cookie.parse(request.headers["cookie"] || "");
   const token = cookies["auth_token"];
 
   if (dev) {
     return { host, user: devUser };
   } else {
+    if (auth === null) throw new Error("Auth is null, somehow.");
+
     const context: Context = {
       host,
       auth: { endpoint: auth.endpoint },
@@ -42,7 +50,10 @@ export const getContext: GetContext<Context> = (request) => {
 
     if (token) {
       try {
-        const payload = jwt.verify(token, auth.secret);
+        const payload = jwt.verify(token, auth.secret) as Record<
+          string,
+          string
+        >;
         if (isValidPayload(payload)) {
           context.user = { name: payload.name, email: payload.email };
         } else {
@@ -50,7 +61,7 @@ export const getContext: GetContext<Context> = (request) => {
           throw new Error("Invalid payload");
         }
       } catch (e) {
-        context.auth.error = e.message;
+        context.auth = { endpoint: auth.endpoint, error: e.message };
       }
     }
 
