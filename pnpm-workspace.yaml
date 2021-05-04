@@ -1,6 +1,3 @@
 packages:
-  - "accessor"
-  - "admin"
-  - "couchdb"
-  - "data"
-  - "lapin"
+  - "packages/*"
+  - "services/*"
