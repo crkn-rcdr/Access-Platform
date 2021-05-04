@@ -2,13 +2,16 @@
   "name": "@crkn-rcdr/access-data",
   "version": "0.0.0",
   "description": "Specifications and utilities for Access Platform data",
-  "main": "dist/index.js",
-  "files": [
-    "dist",
-    "!*.spec.*",
-    "!validatorTesting*",
-    "!writeSchemas*"
-  ],
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/esm/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/cjs/index.js",
+      "import": "./dist/esm/index.js",
+      "types": "./dist/esm/index.d.ts"
+    }
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/crkn-rcdr/Access-Platform.git",
@@ -26,8 +29,8 @@
   },
   "homepage": "https://github.com/crkn-rcdr/Access-Platform",
   "scripts": {
-    "build:schemas": "rm -rf schemas && node dist/writeSchemas.js",
-    "build:ts": "rm -rf dist && tsc",
+    "build:schemas": "rm -rf schemas && ts-node writeSchemas.ts",
+    "build:ts": "rm -rf dist && tsc && tsc -p ./tsconfig-esm.json",
     "build": "run-s test build:ts build:schemas",
     "test": "ava -v",
     "test:all": "ava -v"
@@ -40,7 +43,7 @@
       "ts"
     ],
     "require": [
-      "ts-node/register"
+      "ts-node/register/transpile-only"
     ],
     "files": [
       "src/**/*.spec.*",

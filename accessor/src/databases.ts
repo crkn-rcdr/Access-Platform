@@ -1,6 +1,7 @@
 import { get as getNano, Auth } from "@crkn-rcdr/nano";
 import { DatabaseHandler } from "kivik";
-import { DATABASES, DocumentTypes } from "@crkn-rcdr/access-data/dist/couch";
+
+import { DATABASES, DocumentTypes } from "@crkn-rcdr/access-data";
 
 export type DatabaseName = typeof DATABASES[number];
 

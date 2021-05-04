@@ -1,33 +1,41 @@
 import dotenv from "dotenv";
 import type { User } from "./hooks";
+
 dotenv.config();
 
-const throwEnvError = (name: string) => {
-  throw new Error(`${name} environment variable required`);
+const getFromEnv = (name: string, defaultValue?: string): string => {
+  const value = process.env[name];
+  if (value) {
+    return value;
+  } else if (defaultValue) {
+    return defaultValue;
+  } else {
+    throw new Error(`${name} environment variable required`);
+  }
 };
 
 export const dev = process.env["NODE_ENV"] !== "production";
-export const port = process.env["PORT"]
-  ? parseInt(process.env["PORT"], 10)
-  : 3060;
-export const host = dev
-  ? `http://localhost:${port}`
-  : process.env["HOST"] || "";
-if (!host.length) throw new Error("HOST environment variable required");
+export const port = parseInt(getFromEnv("PORT", "3060"), 10);
+export const host = dev ? `http://localhost:${port}` : getFromEnv("HOST");
 
 export const devUser: User | null = dev
   ? {
-      name: process.env["DEV_USER_NAME"] || "Dev User",
-      email: process.env["DEV_USER_EMAIL"] || "platform@crkn.ca",
+      name: getFromEnv("DEV_USER_NAME", "Dev User"),
+      email: getFromEnv("DEV_USER_EMAIL", "dev@crkn.ca"),
     }
   : null;
 
 export const auth = dev
   ? null
   : {
-      endpoint: process.env["AUTH_ENDPOINT"] || "",
-      secret: process.env["AUTH_SECRET"] || "",
+      endpoint: getFromEnv("AUTH_ENDPOINT"),
+      secret: getFromEnv("AUTH_SECRET"),
     };
 
-if (auth && !auth.endpoint.length) throwEnvError("AUTH_ENDPOINT");
-if (auth && !auth.secret.length) throwEnvError("AUTH_SECRET");
+export const accessorArgs: [string, { user: string; password: string }] = [
+  getFromEnv("COUCH_ENDPOINT"),
+  {
+    user: getFromEnv("COUCH_USER"),
+    password: getFromEnv("COUCH_PASSWORD"),
+  },
+];

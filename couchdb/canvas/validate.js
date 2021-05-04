@@ -1,4 +1,4 @@
 const { validator } = require("..");
-const { validate } = require("@crkn-rcdr/access-data").couch.canvas;
+const { validateCanvasDocument } = require("@crkn-rcdr/access-data");
 
-module.exports = validator(validate);
+module.exports = validator(validateCanvasDocument);

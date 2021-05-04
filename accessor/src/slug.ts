@@ -1,5 +1,4 @@
-import { Slug } from "@crkn-rcdr/access-data/dist/format/slug";
-import { Noid } from "@crkn-rcdr/access-data/dist/format/noid";
+import { Slug, Noid } from "@crkn-rcdr/access-data";
 import { DatabaseHandlers } from "./databases";
 
 export type ResolvedSlug = Noid | null;

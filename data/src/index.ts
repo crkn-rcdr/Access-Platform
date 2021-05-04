@@ -1,6 +1,19 @@
-export * as access from "./access";
-export * as couch from "./couch";
-export * as format from "./format";
-export * as util from "./util";
+export {
+  Alias,
+  Canvas,
+  CanvasManifest,
+  Collection,
+  PdfManifest,
+} from "./access";
+export {
+  DATABASES,
+  DocumentTypes,
+  fromCouch,
+  toCouch,
+  validateAccessDocument,
+  validateCanvasDocument,
+} from "./couch";
+export { Noid, Slug, UnixFilePath } from "./format";
+export { FileRef, ImageRef, ProcessUpdate, Text, Timestamp } from "./util";
 
 export { validator } from "./validator";
