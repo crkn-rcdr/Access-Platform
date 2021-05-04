@@ -1,3 +1,3 @@
-export * as Noid from "./noid";
-export * as Slug from "./slug";
-export * as UnixFilePath from "./unixFilePath";
+export { Noid } from "./noid";
+export { Slug } from "./slug";
+export { UnixFilePath } from "./unixFilePath";

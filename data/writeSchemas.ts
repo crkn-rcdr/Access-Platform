@@ -1,10 +1,10 @@
-import * as data from ".";
+import * as data from "./src";
 
 import { join as pathJoin, dirname } from "path";
 import { writeJsonSync as writeJson } from "fs-extra";
 import { sync as mkdirp } from "mkdirp";
 
-const schemaDir = pathJoin(__dirname, "..", "schemas");
+const schemaDir = pathJoin(__dirname, "schemas");
 
 Object.entries(data.validator.schemas)
   .filter(([id, _]) => id.startsWith("/"))

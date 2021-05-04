@@ -1,6 +1,6 @@
 packages:
   - "accessor"
+  - "admin"
   - "couchdb"
   - "data"
-  - "interface"
   - "lapin"

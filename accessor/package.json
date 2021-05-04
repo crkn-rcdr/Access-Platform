@@ -18,13 +18,20 @@
     "url": "https://github.com/crkn-rcdr/accessor/issues"
   },
   "homepage": "https://github.com/crkn-rcdr/accessor#readme",
-  "main": "dist/index.js",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "exports": {
+    ".": {
+      "require": "./dist/cjs/index.js",
+      "import": "./dist/esm/index.js"
+    }
+  },
   "scripts": {
     "ava": "ava -v",
-    "build": "tsc",
+    "build": "rm -rf dist && tsc && tsc -p ./tsconfig-esm.json",
     "kivik:start": "cd ../couchdb && pnpx kivik start",
     "kivik:stop": "cd ../couchdb && pnpx kivik stop",
-    "test": "run-s kivik:start ava; pnpm run kivik:stop",
+    "test": "run-s -c kivik:start ava kivik:stop",
     "test:all": "ava",
     "watch": "ava -v -w"
   },
@@ -44,11 +51,10 @@
       "ts"
     ],
     "require": [
-      "ts-node/register"
+      "ts-node/register/transpile-only"
     ],
     "files": [
-      "src/**/*.spec.*",
-      "!src/**/common.spec.*"
+      "src/**/*.spec.*"
     ]
   }
 }
