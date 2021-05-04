@@ -8,25 +8,39 @@ This repository contains documentation, specifications, and APIs for the Canadia
 
 A glossary of the terms we're using to describe access objects.
 
-### [Policy](Policy)
+### Packages
 
-Other policy documents. May not be up-to-date (or our code may not be up-to-date with it).
-
-### [data](data)
+#### [data](packages/data)
 
 A JavaScript library that validates Access Platform data.
 
-### [couchdb](couchdb)
-
-Access Platform metadata is stored in CouchDB. This directory contains our CouchDB database configuration. We use [Kivik](https://github.com/crkn-rcdr/kivik) to update and test this configuration.
-
-The [Databases](Databases) directory contains older configuration and is being phased out.
-
-### [accessor](accessor)
+#### [accessor](packages/accessor)
 
 A JavaScript library for interacting with access objects.
 
+### Services
+
+#### [couchdb](services/couchdb)
+
+Access Platform metadata is stored in CouchDB. This directory contains our CouchDB database configuration. We use [Kivik](https://github.com/crkn-rcdr/kivik) to update and test this configuration.
+
+#### [lapin](services/lapin)
+
+An HTTP service that exposes accessor functionality for interoperability with tools written in other languages.
+
+#### [admin](services/admin)
+
+Access Platform admin tools.
+
 ## Technical instructions
+
+### Prerequisites
+
+- Docker (with the `couchdb:3.1` image pulled)
+- Node >= 14. On Ubuntu, you can use the NodeSource binaries for this. [Here are the instructions.](https://github.com/nodesource/distributions#debinstall)
+- pnpm (see below)
+
+### pnpm
 
 This repository uses [pnpm](https://pnpm.js.org) to manage its JavaScript dependencies. With it, we can share dependencies and configuration across packages, and also ensure that they are properly linked against each other. On the command line, pnpm works very similarly to npm. You just need to remember the `p`. To use pnpm, install it globally:
 
@@ -42,25 +56,18 @@ Access-Platform $ pnpm install
 
 By default, `pnpm install` will run across all of the "workspaces" listed in [pnpm-workspace.yaml](pnpm-workspace.yaml). For other tasks you want to run across each package, use the `-r` flag.
 
-### Validating Couch documents with `kivik validate`
+### Testing
 
-First, run the `test` script recursively over all packages. While it runs tests, it also transpiles the TypeScript code in `data` to JavaScript, so that it can be used by `couchdb`.
+Any package or service with a `test:all` script defined can have that script run together with everything else by running `pnpm test` in the repo's root directory.
 
-```
-Access-Platform $ pnpm -t build
-```
+### Development environment
 
-Then, from the `couchdb` directory, you can use `pnpx` to run Kivik on the command line.
+There's a lot of improvement to be made here. To work on the admin tools, for now, you should run two terminals. In the first:
 
-```
-Access-Platform/couchdb $ pnpx kivik validate access path/to/file.json
-```
+    $ cd services/couchdb
+    $ pnpx kivik dev
 
-### Generating schema files from `data` code
+In the second:
 
-```
-Access-Platform $ cd data
-Access-Platform/data $ pnpm schemas
-Access-Platform/data $ ls schemas/couch
-access.json  canvas.json
-```
+    $ cd services/admin
+    $ pnpm run dev
