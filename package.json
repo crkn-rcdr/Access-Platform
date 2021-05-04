@@ -20,8 +20,8 @@
   "homepage": "https://github.com/crkn-rcdr/Access-Platform#readme",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
-    "kivik:start": "cd couchdb && pnpx kivik start",
-    "kivik:stop": "cd couchdb && pnpx kivik stop",
+    "kivik:start": "cd services/couchdb && pnpx kivik start",
+    "kivik:stop": "cd services/couchdb && pnpx kivik stop",
     "test": "pnpm run kivik:start && pnpm -r test:all; pnpm run kivik:stop"
   },
   "optionalDependencies": {
