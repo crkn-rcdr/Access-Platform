@@ -1,14 +1,20 @@
 export {
+  AccessObject,
   Alias,
   Canvas,
   CanvasManifest,
   Collection,
   PdfManifest,
+  isAlias,
+  isCanvasManifest,
+  isCollection,
+  isPdfManifest,
 } from "./access";
 export {
   DATABASES,
   DocumentTypes,
   fromCouch,
+  toAccessObject,
   toCouch,
   validateAccessDocument,
   validateCanvasDocument,

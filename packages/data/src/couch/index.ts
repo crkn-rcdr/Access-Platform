@@ -8,6 +8,6 @@ export type DocumentTypes = {
 
 export const DATABASES = ["access", "canvas"] as const;
 
-export { validate as validateAccessDocument } from "./access";
+export { validate as validateAccessDocument, toAccessObject } from "./access";
 export { validate as validateCanvasDocument } from "./canvas";
 export { fromCouch, toCouch } from "./util";

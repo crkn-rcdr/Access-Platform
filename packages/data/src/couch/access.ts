@@ -1,5 +1,7 @@
 import { generateSchema } from "../validator";
-import { Document as CouchDocument, toCouchSchema } from "./util";
+import { Document as CouchDocument, toCouchSchema, fromCouch } from "./util";
+
+import { AccessObject } from "../access";
 
 import { Collection, inline as collectionSchema } from "../access/Collection";
 import {
@@ -33,3 +35,7 @@ export const { inline, schema, validate } = generateSchema<AccessDocument>({
   ],
   required: ["_id", "type"],
 });
+
+export const toAccessObject = (doc: AccessDocument) => {
+  return fromCouch<AccessObject>(doc);
+};
