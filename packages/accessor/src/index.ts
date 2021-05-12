@@ -1,3 +1,4 @@
+import { getRetriever } from "./accessors/object";
 import {
   AccessorEndpoints,
   AccessorOptions,
@@ -16,8 +17,15 @@ export class Accessor {
    */
   readonly slug: SlugInterface;
 
+  /**
+   * Retrieve an access object.
+   * @param noid The object's noid.
+   */
+  readonly retrieve;
+
   constructor(options: AccessorOptions) {
     this.endpoints = initializeEndpoints(options);
     this.slug = slugInterface(this.endpoints.couch.access);
+    this.retrieve = getRetriever(this.endpoints.couch);
   }
 }
