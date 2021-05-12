@@ -1,5 +1,5 @@
 import { Slug, Noid } from "@crkn-rcdr/access-data";
-import { DatabaseHandlers } from "./databases";
+import { CouchDBEndpoint } from "./endpoints/CouchDB";
 
 export type ResolvedSlug = Noid | null;
 
@@ -32,7 +32,7 @@ export interface SlugInterface {
 }
 
 export const slugInterface = (
-  access: DatabaseHandlers["access"]
+  access: CouchDBEndpoint["access"]
 ): SlugInterface => {
   return {
     resolve: async function resolve(slug) {

@@ -1,3 +1,5 @@
+import { ExecutionContext } from "ava";
+import { AccessObject } from ".";
 import { Alias } from "./Alias";
 import { Canvas } from "./Canvas";
 import { CanvasManifest } from "./CanvasManifest";
@@ -145,4 +147,25 @@ export const testPdfManifest: PdfManifest = {
   },
   updated: "2021-01-14T16:30:02Z",
   public: "2020-08-29T23:42:13Z",
+};
+
+const fixtures = {
+  alias: testAlias,
+  canvasManifest: testCanvasManifest,
+  collection: testCollection,
+  pdfManifest: testPdfManifest,
+};
+
+export const testGuard = (
+  t: ExecutionContext,
+  guard: (obj: AccessObject) => boolean,
+  fixtureType: keyof typeof fixtures
+) => {
+  for (const f of Object.keys(fixtures)) {
+    if (f === fixtureType) {
+      t.true(guard(fixtures[f]));
+    } else {
+      t.false(guard(fixtures[f]));
+    }
+  }
 };

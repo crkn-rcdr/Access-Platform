@@ -1,3 +1,4 @@
+import type { AccessorOptions } from "@crkn-rcdr/accessor/dist/cjs/endpoints";
 import dotenv from "dotenv";
 import type { User } from "./hooks";
 
@@ -32,10 +33,12 @@ export const auth = dev
       secret: getFromEnv("AUTH_SECRET"),
     };
 
-export const accessorArgs: [string, { user: string; password: string }] = [
-  getFromEnv("COUCH_ENDPOINT"),
-  {
-    user: getFromEnv("COUCH_USER"),
-    password: getFromEnv("COUCH_PASSWORD"),
+export const accessorArgs: AccessorOptions = {
+  couch: {
+    url: getFromEnv("COUCH_ENDPOINT"),
+    auth: {
+      user: getFromEnv("COUCH_USER"),
+      password: getFromEnv("COUCH_PASSWORD"),
+    },
   },
-];
+};

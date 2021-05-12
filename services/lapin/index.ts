@@ -14,7 +14,7 @@ export interface LapinRequest extends Request {
   getQueryParam: (key: string) => string | undefined;
 }
 
-const accessor = new Accessor(couch.url, couch.auth);
+const accessor = new Accessor({ couch });
 
 export const send = (
   res: ServerResponse,

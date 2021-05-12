@@ -1,7 +1,7 @@
 import anyTest, { TestInterface } from "ava";
 import { join as pathJoin } from "path";
 import { DatabaseHandler, getInstance } from "kivik";
-import { DatabaseName } from "../databases";
+import { DatabaseName } from "../endpoints/CouchDB";
 import { DocumentTypes } from "@crkn-rcdr/access-data";
 
 export { TestInterface } from "ava";
