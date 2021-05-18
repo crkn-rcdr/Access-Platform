@@ -2,9 +2,11 @@ import type { RequestHandler } from "@sveltejs/kit";
 import accessor from "$lib/accessor";
 
 export const get: RequestHandler = async ({ params }) => {
-  const slug = params["slug"] as string;
+  const slugs = [params["slugs"]] as string[];
 
-  const response = await accessor.slug.resolve(slug);
+  const prefix = params["prefix"] as string;
+
+  const response = await accessor.slug.resolveMany(slugs, prefix);
   return {
     status: 200,
     body: { noid: response },
