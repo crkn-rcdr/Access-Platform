@@ -11,6 +11,7 @@ import {
 } from "../util/ProcessUpdate";
 
 type DipstagingSpec = {
+  // does this need to be called id? Should I not extend identified and just put id string?
   _id: string;
 
   slug: Slug;
@@ -45,13 +46,12 @@ const specSchema = {
     "dipstaging documents are generated for every AIP in the legacy preservation platform. They imply the availability of an AIP for import into the access platform.",
   type: "object",
   properties: {
-    // Do we need this still?
+    // does this need to be called id? Should I not extend identified and just put id string?
     _id: {
       description: "Legacy preservation platform AIP ID",
       type: "string",
     },
 
-    // Should i use slugged even tho i think slugged extends something this does need?
     slug: {
       ...slugSchema,
       nullable: true,
