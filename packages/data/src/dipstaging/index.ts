@@ -1,6 +1,9 @@
 import { JSONSchemaType } from "ajv";
 import { inherit } from "../validator";
-import { Identified, schema as identifiedSchema } from "../couch/util";
+
+//import { Identified, schema as identifiedSchema } from "../couch/util";
+import { Root, schema as rootSchema } from "../access/Root";
+
 import { Slug, inline as slugSchema } from "../format/slug";
 import { StaffUpdate, inline as staffUpdateSchema } from "../util/StaffUpdate";
 import { Mets, inline as metsSchema } from "../util/Mets";
@@ -10,11 +13,12 @@ import {
   inline as processUpdateSchema,
 } from "../util/ProcessUpdate";
 
+
 type DipstagingSpec = {
   // does this need to be called id? Should I not extend identified and just put id string?
   id: string;
 
-  slug: Slug;
+  slug?: Slug;
 
   repos: string[];
 
@@ -28,16 +32,18 @@ type DipstagingSpec = {
 
   METSDate: Timestamp;
 
-  update: ProcessUpdate;
+  updated: Timestamp;
 
-  smelt: StaffUpdate;
+  smelt?: ProcessUpdate;
+
+  staff?: StaffUpdate;
 };
 
 /**
  * dipstaging documents are generated for every AIP in the legacy preservation platform.
  * They imply the availability of an AIP for import into the access platform.
  */
-export type Dipstaging = DipstagingSpec;
+export type Dipstaging = Root & DipstagingSpec;
 
 const specSchema = {
   $id: "/dipstaging/Dipstaging",
@@ -92,12 +98,16 @@ const specSchema = {
       description: "date when the above two fields were filled in.",
     },
 
-    updated: {
-      ...processUpdateSchema,
+    updated : {
+      ...timestampSchema,
       description: "date when this document was last updated",
     },
 
     smelt: {
+      ...processUpdateSchema,
+    },
+
+    staff: {
       ...staffUpdateSchema,
       description: "Reference to the base image file.",
     },
@@ -113,8 +123,10 @@ const specSchema = {
   ],
 } as JSONSchemaType<DipstagingSpec>;
 
-export const { inline, schema, validate } = inherit<
-  Dipstaging,
-  Identified,
-  DipstagingSpec
->(identifiedSchema, specSchema, false);
+//export const { inline, schema, validate } = specSchema;
+
+export const { inline, schema, validate } = inherit<Dipstaging, Root, DipstagingSpec>(
+  rootSchema,
+  specSchema,
+  false
+);

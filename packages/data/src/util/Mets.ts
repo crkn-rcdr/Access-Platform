@@ -9,7 +9,7 @@ export type Mets = {
   md5: string;
 };
 
-export const { inline, schema, validate } = generateSchema<>({
+export const { inline, schema, validate } = generateSchema<Mets>({
   $id: "/util/Mets",
   $comment: "",
   title: "",
