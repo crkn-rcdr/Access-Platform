@@ -12,7 +12,7 @@ import {
 
 type DipstagingSpec = {
   // does this need to be called id? Should I not extend identified and just put id string?
-  _id: string;
+  id: string;
 
   slug: Slug;
 
@@ -22,7 +22,7 @@ type DipstagingSpec = {
 
   reposDate: Timestamp;
 
-  Mets: Mets[];
+  METS: Mets[];
 
   METSManifestDate: Timestamp;
 
@@ -37,7 +37,7 @@ type DipstagingSpec = {
  * dipstaging documents are generated for every AIP in the legacy preservation platform.
  * They imply the availability of an AIP for import into the access platform.
  */
-export type Dipstaging = Identified & DipstagingSpec;
+export type Dipstaging = DipstagingSpec;
 
 const specSchema = {
   $id: "/dipstaging/Dipstaging",
@@ -47,7 +47,7 @@ const specSchema = {
   type: "object",
   properties: {
     // does this need to be called id? Should I not extend identified and just put id string?
-    _id: {
+    id: {
       description: "Legacy preservation platform AIP ID",
       type: "string",
     },
