@@ -19,6 +19,7 @@ export const { inline, schema, validate } = generateSchema<User>({
       type: "string",
       description: "",
       $comment: "",
+      pattern: "^.+$",
     },
     email: {
       type: "string",

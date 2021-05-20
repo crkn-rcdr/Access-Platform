@@ -1,11 +1,12 @@
 import { JSONSchemaType } from "ajv";
 import { generateSchema } from "../validator";
+import { UnixFilePath, inline as pathSchema } from "../format/unixFilePath";
 
 /**
  *
  */
 export type Mets = {
-  path: string;
+  path: UnixFilePath;
   md5: string;
 };
 
@@ -16,7 +17,7 @@ export const { inline, schema, validate } = generateSchema<Mets>({
   type: "object",
   properties: {
     path: {
-      type: "string",
+      ...pathSchema,
       description: "",
       $comment: "",
     },
