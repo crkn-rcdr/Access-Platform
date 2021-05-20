@@ -1,25 +1,23 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema",
   "$id": "/util/StaffUpdate",
-  "$comment": "",
-  "title": "",
+  "$comment": "Represents data for when a staff member 9user) updates an object, and when they had done so.",
+  "title": "StaffUpdate",
   "type": "object",
   "properties": {
     "by": {
-      "$comment": "",
-      "title": "",
+      "$comment": "Represents a person who uses the platform.",
+      "title": "User",
       "type": "object",
       "properties": {
         "name": {
           "type": "string",
-          "description": "",
-          "$comment": "",
+          "description": "A non-empty string holding the user's name.",
           "pattern": "^.+$"
         },
         "email": {
           "type": "string",
-          "description": "",
-          "$comment": "",
+          "description": "A non-empty string with an '@' symbol, holding the user's email.",
           "pattern": "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$"
         }
       },
@@ -27,7 +25,7 @@
         "name",
         "email"
       ],
-      "description": ""
+      "description": "The user who has performed the update."
     },
     "date": {
       "oneOf": [
@@ -41,7 +39,7 @@
           "pattern": "^\\d{4}-(?:0\\d|1[0-2])-(?:[0-2]\\d|3[0-1])T[0-2]\\d:[0-5]\\d:(?:[0-5]\\d|60)Z$"
         }
       ],
-      "description": ""
+      "description": "A timestamp showing when the user performed the update."
     }
   },
   "required": [

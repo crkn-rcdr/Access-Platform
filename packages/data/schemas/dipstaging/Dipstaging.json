@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema",
   "$id": "/dipstaging/Dipstaging",
   "title": "Dipstaging",
-  "description": "dipstaging documents are generated for every AIP in the legacy preservation platform. They imply the availability of an AIP for import into the access platform.",
+  "description": "Dipstaging documents are generated for every AIP in the legacy preservation platform. They imply the availability of an AIP for import into the access platform.",
   "type": "object",
   "properties": {
     "id": {
@@ -20,7 +20,7 @@
       "description": "Human-readable identifier used to retrieve this object. Any such object without a slug will not be retrievable without access to the object's Noid."
     },
     "repos": {
-      "description": "array of repositories which has this AIP",
+      "description": "Array of repositories which has this AIP",
       "type": "array",
       "items": {
         "type": "string"
@@ -39,7 +39,7 @@
           "pattern": "^\\d{4}-(?:0\\d|1[0-2])-(?:[0-2]\\d|3[0-1])T[0-2]\\d:[0-5]\\d:(?:[0-5]\\d|60)Z$"
         }
       ],
-      "description": "date on the AIP manifest. Used to detect when the AIP has been updated, so this date should be stored with any processing."
+      "description": "Date on the AIP manifest. Used to detect when the AIP has been updated, so this date should be stored with any processing."
     },
     "reposDate": {
       "oneOf": [
@@ -53,29 +53,28 @@
           "pattern": "^\\d{4}-(?:0\\d|1[0-2])-(?:[0-2]\\d|3[0-1])T[0-2]\\d:[0-5]\\d:(?:[0-5]\\d|60)Z$"
         }
       ],
-      "description": "date when the above two fields were filled in."
+      "description": "Date when the above two fields were filled in."
     },
     "METS": {
       "type": "array",
       "items": {
-        "$comment": "",
-        "title": "",
+        "$comment": "METS is the Metadata Encoding and Transmission Standard, which is applied to encoding metadata via a standardized XML schema. METS handles all types of metadata that is relevant to preservation: descriptive, administrative, and technical/structural metadata are all included in the schema, and a METS document will serve as the container for all of this information about a digital object.",
+        "title": "Mets",
         "type": "object",
         "properties": {
           "path": {
             "type": "string",
             "format": "unixFilePath",
-            "description": "",
-            "$comment": ""
+            "description": "Path to the file in the legacy preservation repository."
           },
           "md5": {
             "type": "string",
-            "description": "",
-            "$comment": "",
+            "description": "MD5 checksum.",
             "pattern": "^[0-9a-f]{32}$"
           }
         }
-      }
+      },
+      "description": "An array of METS data for the document."
     },
     "METSManifestDate": {
       "oneOf": [
@@ -89,7 +88,7 @@
           "pattern": "^\\d{4}-(?:0\\d|1[0-2])-(?:[0-2]\\d|3[0-1])T[0-2]\\d:[0-5]\\d:(?:[0-5]\\d|60)Z$"
         }
       ],
-      "description": "date on the AIP manifest when this field was filled in"
+      "description": "Date on the AIP manifest when this field was filled in"
     },
     "METSDate": {
       "oneOf": [
@@ -103,7 +102,7 @@
           "pattern": "^\\d{4}-(?:0\\d|1[0-2])-(?:[0-2]\\d|3[0-1])T[0-2]\\d:[0-5]\\d:(?:[0-5]\\d|60)Z$"
         }
       ],
-      "description": "date when the above two fields were filled in."
+      "description": "Date when the above two fields were filled in."
     },
     "updated": {
       "oneOf": [
@@ -117,11 +116,11 @@
           "pattern": "^\\d{4}-(?:0\\d|1[0-2])-(?:[0-2]\\d|3[0-1])T[0-2]\\d:[0-5]\\d:(?:[0-5]\\d|60)Z$"
         }
       ],
-      "description": "date when this document was last updated"
+      "description": "Date when this document was last updated"
     },
     "smelt": {
       "title": "Process update",
-      "description": "An object that describes a request for and the output of an automated process that is applied to the parent object.",
+      "description": "Trigger for and result of running Smelter on this AIP.",
       "type": "object",
       "properties": {
         "requestDate": {
@@ -169,25 +168,23 @@
       "additionalProperties": false
     },
     "staff": {
-      "$comment": "",
-      "title": "",
+      "$comment": "Represents data for when a staff member 9user) updates an object, and when they had done so.",
+      "title": "StaffUpdate",
       "type": "object",
       "properties": {
         "by": {
-          "$comment": "",
-          "title": "",
+          "$comment": "Represents a person who uses the platform.",
+          "title": "User",
           "type": "object",
           "properties": {
             "name": {
               "type": "string",
-              "description": "",
-              "$comment": "",
+              "description": "A non-empty string holding the user's name.",
               "pattern": "^.+$"
             },
             "email": {
               "type": "string",
-              "description": "",
-              "$comment": "",
+              "description": "A non-empty string with an '@' symbol, holding the user's email.",
               "pattern": "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$"
             }
           },
@@ -195,7 +192,7 @@
             "name",
             "email"
           ],
-          "description": ""
+          "description": "The user who has performed the update."
         },
         "date": {
           "oneOf": [
@@ -209,14 +206,14 @@
               "pattern": "^\\d{4}-(?:0\\d|1[0-2])-(?:[0-2]\\d|3[0-1])T[0-2]\\d:[0-5]\\d:(?:[0-5]\\d|60)Z$"
             }
           ],
-          "description": ""
+          "description": "A timestamp showing when the user performed the update."
         }
       },
       "required": [
         "by",
         "date"
       ],
-      "description": "Reference to the base image file."
+      "description": "A record indicating who last updated the document and when."
     }
   },
   "required": [

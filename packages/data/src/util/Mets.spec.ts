@@ -29,11 +29,10 @@ test(
 
 
 test(
-    "Mets validates acorrect path and correct md5",
+    "Mets validates a correct path and correct md5",
     isValid,
     {
         path: VALID_PATH,
         md5: VALID_MD5
     }
 );
-

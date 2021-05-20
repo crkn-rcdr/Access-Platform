@@ -13,29 +13,59 @@ import {
 
 
 type DipstagingSpec = {
+  /** 
+   * Access slug chosen when DIP is smelted.
+  */
   slug?: Slug;
 
+  /** 
+   * Array of repositories which has this AIP.
+  */
   repos: string[];
 
+  /** 
+   * Date on the AIP manifest. Used to detect when the AIP has been updated, so this date should be stored with any processing.
+  */
   reposManifestDate: Timestamp;
 
+  /** 
+   * Date when the above two fields were filled in.
+  */
   reposDate: Timestamp;
 
+  /** 
+   * An array of METS data for the document.
+  */
   METS: Mets[];
 
+  /** 
+   * Date on the AIP manifest when this field was filled in
+  */
   METSManifestDate: Timestamp;
 
+  /** 
+   * Date when the METS AND METSManifestDate fields were filled in.
+  */
   METSDate: Timestamp;
 
+  /** 
+   * Date when this document was last updated.
+  */
   updated: Timestamp;
 
+  /** 
+   * Trigger for and result of running Smelter on this AIP.
+  */
   smelt?: ProcessUpdate;
 
+  /** 
+   * A record indicating who last updated the document and when. 
+  */
   staff?: StaffUpdate;
 };
 
 /**
- * dipstaging documents are generated for every AIP in the legacy preservation platform.
+ * Dipstaging documents are generated for every AIP in the legacy preservation platform.
  * They imply the availability of an AIP for import into the access platform.
  */
 export type Dipstaging = Identified & DipstagingSpec;
@@ -44,7 +74,7 @@ const specSchema = {
   $id: "/dipstaging/Dipstaging",
   title: "Dipstaging",
   description:
-    "dipstaging documents are generated for every AIP in the legacy preservation platform. They imply the availability of an AIP for import into the access platform.",
+    "Dipstaging documents are generated for every AIP in the legacy preservation platform. They imply the availability of an AIP for import into the access platform.",
   type: "object",
   properties: {
 
@@ -56,7 +86,7 @@ const specSchema = {
     },
 
     repos: {
-      description: "array of repositories which has this AIP",
+      description: "Array of repositories which has this AIP",
       type: "array",
       items: { type: "string" },
       minItems: 1,
@@ -65,41 +95,43 @@ const specSchema = {
     reposManifestDate: {
       ...timestampSchema,
       description:
-        "date on the AIP manifest. Used to detect when the AIP has been updated, so this date should be stored with any processing.",
+        "Date on the AIP manifest. Used to detect when the AIP has been updated, so this date should be stored with any processing.",
     },
 
     reposDate: {
       ...timestampSchema,
-      description: "date when the above two fields were filled in.",
+      description: "Date when the above two fields were filled in.",
     },
 
     METS: {
       type: "array",
       items: metsSchema,
+      description: "An array of METS data for the document.",
     },
 
     METSManifestDate: {
       ...timestampSchema,
-      description: "date on the AIP manifest when this field was filled in",
+      description: "Date on the AIP manifest when this field was filled in",
     },
 
     METSDate: {
       ...timestampSchema,
-      description: "date when the above two fields were filled in.",
+      description: "Date when the above two fields were filled in.",
     },
 
     updated : {
       ...timestampSchema,
-      description: "date when this document was last updated",
+      description: "Date when this document was last updated",
     },
 
     smelt: {
       ...processUpdateSchema,
+      description: "Trigger for and result of running Smelter on this AIP.",
     },
 
     staff: {
       ...staffUpdateSchema,
-      description: "Reference to the base image file.",
+      description: "A record indicating who last updated the document and when.",
     },
   },
   required: [
