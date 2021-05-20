@@ -7,6 +7,7 @@ import { generateSchema } from "../validator";
  */
 export type DipstagingDocument = CouchDocument<Dipstaging>;
 
+
 export const { inline, schema, validate } = generateSchema<DipstagingDocument>({
   ...toCouchSchema(dipstagingSchema),
   $id: "/couch/dipstaging",

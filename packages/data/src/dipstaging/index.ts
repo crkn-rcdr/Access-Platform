@@ -3,7 +3,6 @@ import { inherit } from "../validator";
 
 import { Identified, schema as identifiedSchema } from "../couch/util";
 //import { Root, schema as rootSchema } from "../access/Root";
-
 import { Slug, inline as slugSchema } from "../format/slug";
 import { StaffUpdate, inline as staffUpdateSchema } from "../util/StaffUpdate";
 import { Mets, inline as metsSchema } from "../util/Mets";
@@ -16,7 +15,7 @@ import {
 
 type DipstagingSpec = {
   // does this need to be called id? Should I not extend identified and just put id string?
-  id: string;
+  //id: string;
 
   slug?: Slug;
 
@@ -47,16 +46,16 @@ export type Dipstaging = Identified & DipstagingSpec;
 
 const specSchema = {
   $id: "/dipstaging/Dipstaging",
-  title: "dipstaging Document Schema",
+  title: "Dipstaging",
   description:
     "dipstaging documents are generated for every AIP in the legacy preservation platform. They imply the availability of an AIP for import into the access platform.",
   type: "object",
   properties: {
-    // does this need to be called id? Should I not extend identified and just put id string?
-    id: {
+    // does this need to be called _id? Should I not extend identified and just put id string?
+    /*id: {
       description: "Legacy preservation platform AIP ID",
       type: "string",
-    },
+    },*/
 
     slug: {
       ...slugSchema,
