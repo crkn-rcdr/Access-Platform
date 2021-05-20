@@ -1,8 +1,8 @@
 import { JSONSchemaType } from "ajv";
 import { inherit } from "../validator";
 
-//import { Identified, schema as identifiedSchema } from "../couch/util";
-import { Root, schema as rootSchema } from "../access/Root";
+import { Identified, schema as identifiedSchema } from "../couch/util";
+//import { Root, schema as rootSchema } from "../access/Root";
 
 import { Slug, inline as slugSchema } from "../format/slug";
 import { StaffUpdate, inline as staffUpdateSchema } from "../util/StaffUpdate";
@@ -43,7 +43,7 @@ type DipstagingSpec = {
  * dipstaging documents are generated for every AIP in the legacy preservation platform.
  * They imply the availability of an AIP for import into the access platform.
  */
-export type Dipstaging = Root & DipstagingSpec;
+export type Dipstaging = Identified & DipstagingSpec;
 
 const specSchema = {
   $id: "/dipstaging/Dipstaging",
@@ -125,8 +125,8 @@ const specSchema = {
 
 //export const { inline, schema, validate } = specSchema;
 
-export const { inline, schema, validate } = inherit<Dipstaging, Root, DipstagingSpec>(
-  rootSchema,
+export const { inline, schema, validate } = inherit<Dipstaging, Identified, DipstagingSpec>(
+  identifiedSchema,
   specSchema,
   false
 );
