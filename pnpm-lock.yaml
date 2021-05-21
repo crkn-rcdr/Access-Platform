@@ -52,6 +52,7 @@ importers:
 
   services/admin:
     specifiers:
+      '@crkn-rcdr/access-data': workspace:^0.0.0
       '@crkn-rcdr/accessor': workspace:^0.0.0
       '@sveltejs/adapter-node': ^1.0.0-next.22
       '@sveltejs/kit': ^1.0.0-next.109
@@ -66,6 +67,7 @@ importers:
       tslib: ^2.2.0
       typescript: ^4.2.4
     dependencies:
+      '@crkn-rcdr/access-data': link:../../packages/data
       '@crkn-rcdr/accessor': link:../../packages/accessor
       cookie: 0.4.1
       dotenv: 8.2.0

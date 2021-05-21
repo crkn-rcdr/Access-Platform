@@ -9,13 +9,13 @@
     const json = await response.json();
 
     if (response.ok) {
-      const object = json.object;
+      const object = json.object as AccessObject;
       let type = "other";
-      // if (isCollection(object)) {
-      //   type = "collection";
-      // } else if (isCanvasManifest(object)) {
-      //   type = "canvasManifest";
-      // }
+      if (isCollection(object)) {
+        type = "collection";
+      } else if (isCanvasManifest(object)) {
+        type = "canvasManifest";
+      }
       return { props: { object, type } };
     } else {
       return { status: response.status, error: new Error(json.error) };
@@ -24,12 +24,12 @@
 </script>
 
 <script lang="ts">
-  // import type {
-  //   AccessObject,
-  //   isCanvasManifest,
-  //   isCollection,
-  // } from "@crkn-rcdr/access-data";
-  export let object: any;
+  // TODO: figure out why putting import statements down here works. it happens by default when you use vscode to find your import
+  import { isCanvasManifest, isCollection } from "@crkn-rcdr/access-data";
+  // if we kept AccessObject in the import above, the code fails on the client. always use `import type` with types
+  import type { AccessObject } from "@crkn-rcdr/access-data";
+
+  export let object: AccessObject;
   export let type: "collection" | "canvasManifest" | "other";
 </script>
 

@@ -1,17 +1,21 @@
+import type { Locals } from "$lib/types";
 import type { RequestHandler } from "@sveltejs/kit";
-import accessor from "$lib/accessor";
+import type { JSONValue } from "@sveltejs/kit/types/endpoint";
 
-export const get: RequestHandler = async ({ params }) => {
+export const get: RequestHandler<Locals> = async ({ params, locals }) => {
   const id = [params["prefix"] as string, params["noid"] as string].join("/");
 
-  const response = await accessor.retrieve(id);
+  const response = await locals.accessor.retrieve(id);
 
   if (response) {
     return {
       status: 200,
-      body: { object: response.data },
+      body: { object: response.data } as JSONValue,
     };
   } else {
-    return { status: 404, body: { error: `No object with id ${id}` } };
+    return {
+      status: 404,
+      body: { error: `No object with id ${id}` } as JSONValue,
+    };
   }
 };
