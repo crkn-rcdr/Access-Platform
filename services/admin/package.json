@@ -23,6 +23,7 @@
   },
   "type": "module",
   "dependencies": {
+    "@crkn-rcdr/access-data": "workspace:^0.0.0",
     "@crkn-rcdr/accessor": "workspace:^0.0.0",
     "cookie": "^0.4.1",
     "dotenv": "^8.2.0",
