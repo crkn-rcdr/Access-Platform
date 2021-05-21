@@ -1,6 +1,7 @@
+// TODO: export AccessorOptions in accessor
 import type { AccessorOptions } from "@crkn-rcdr/accessor/dist/cjs/endpoints";
 import dotenv from "dotenv";
-import type { User } from "./hooks";
+import type { User } from "./lib/types";
 
 dotenv.config();
 

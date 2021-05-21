@@ -1,6 +1,5 @@
 <script context="module" lang="ts">
   import type { Load } from "@sveltejs/kit";
-  import type { Session } from "../hooks";
   type Props = { user: User; logoutUrl?: string };
 
   export const load: Load = ({ page, session: _session }) => {
@@ -43,7 +42,8 @@
 </script>
 
 <script lang="ts">
-  import type { User } from "../hooks";
+  import type { Session, User } from "$lib/types";
+
   export let user: User | undefined = undefined,
     logoutUrl: string = "";
 </script>
