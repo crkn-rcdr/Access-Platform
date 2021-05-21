@@ -1,48 +1,39 @@
 import cookie from "cookie";
 import jwt from "jsonwebtoken";
-import type { GetContext, GetSession, Handle } from "@sveltejs/kit";
+import type { GetSession, Handle } from "@sveltejs/kit";
 
-import { dev, host, devUser, auth } from "./env";
+import { dev, host, devUser, auth, accessorArgs } from "./env";
+import type { User, Session, Locals } from "./lib/types";
+import { Accessor } from "@crkn-rcdr/accessor";
 
-export type User = {
-  name: string;
-  email: string;
-};
-
-export type Context = {
-  host: string;
-  user?: User | null;
-  auth?: {
-    endpoint: string;
-    error?: string;
-  };
-};
-
-// no reason for these not to diverge eventually
-export type Session = Context;
-
-type JwtPayload = User;
-
-const isValidPayload = (
-  payload: Record<string, string>
-): payload is JwtPayload => {
-  return (
+const verifyToken = (token: string, secret: string): User => {
+  const payload = jwt.verify(token, secret) as Record<string, string>;
+  if (
     typeof payload === "object" &&
-    payload.hasOwnProperty("name") &&
-    payload.hasOwnProperty("email")
-  );
+    typeof payload["name"] === "string" &&
+    typeof payload["email"] === "string"
+  ) {
+    return {
+      name: payload["name"],
+      email: payload["email"],
+    };
+  } else {
+    throw new Error("Invalid payload");
+  }
 };
 
-export const getContext: GetContext<Context> = (request) => {
+export const handle: Handle<Locals> = async ({ request, render }) => {
   const cookies = cookie.parse(request.headers["cookie"] || "");
   const token = cookies["auth_token"];
 
+  request.locals.accessor = new Accessor(accessorArgs);
+
   if (dev) {
-    return { host, user: devUser };
+    request.locals.session = { host, user: devUser };
   } else {
     if (auth === null) throw new Error("Auth is null, somehow.");
 
-    const context: Context = {
+    request.locals.session = {
       host,
       auth: { endpoint: auth.endpoint },
       user: undefined,
@@ -50,32 +41,20 @@ export const getContext: GetContext<Context> = (request) => {
 
     if (token) {
       try {
-        const payload = jwt.verify(token, auth.secret) as Record<
-          string,
-          string
-        >;
-        if (isValidPayload(payload)) {
-          context.user = { name: payload.name, email: payload.email };
-        } else {
-          context.user = null;
-          throw new Error("Invalid payload");
-        }
+        request.locals.session.user = verifyToken(token, auth.secret);
       } catch (e) {
-        context.auth = { endpoint: auth.endpoint, error: e.message };
+        request.locals.session.user = null;
+        request.locals.session.auth = {
+          endpoint: auth.endpoint,
+          error: e.message,
+        };
       }
     }
-
-    return context;
   }
+
+  return await render(request);
 };
 
-export const getSession: GetSession<Context, Session> = ({ context }) => {
-  return context;
-};
-
-export const handle: Handle = async ({ request, render }) => {
-  const response = await render({ ...request });
-  // const { is_new, userid } = request.context;
-
-  return response;
+export const getSession: GetSession<Locals, Session> = (request) => {
+  return request.locals.session;
 };
