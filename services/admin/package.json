@@ -27,6 +27,7 @@
     "@crkn-rcdr/accessor": "workspace:^0.0.0",
     "cookie": "^0.4.1",
     "dotenv": "^8.2.0",
-    "jsonwebtoken": "^8.5.1"
+    "jsonwebtoken": "^8.5.1",
+    "openseadragon": "^2.4.2"
   }
 }
