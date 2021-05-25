@@ -1,5 +1,4 @@
 <script>
-    import Align from "./Align.svelte";
 </script>
 
 <div class="list">
