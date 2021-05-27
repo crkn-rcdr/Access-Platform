@@ -20,22 +20,21 @@
     function getIndexToMoveChildTo(destinationX, destinationY) {
         let destinationItemIndex = originalItemIndex;
         for (let i = 0; i < container.children.length; i++) {
-            //if (i === originalItemIndex) continue;
-
             var rect = container.children[i].getBoundingClientRect();
 
             if (direction === "y") {
                 let y = rect.top;
-                console.log(y < destinationY, y, destinationY);
                 if (y <= destinationY) {
                     destinationItemIndex = i;
                 }
             } else if (direction === "x") {
+                //TODO: test
                 let x = rect.left;
                 if (x <= destinationX) {
                     destinationItemIndex = i;
                 }
             } else {
+                //TODO: test
                 let y = rect.top;
                 let x = rect.left;
                 if (y <= destinationY && x <= destinationX) {
@@ -85,12 +84,9 @@
             container.children[i].classList.add("draggable");
             container.children[i].setAttribute("draggable", true);
             container.children[i].addEventListener("dragstart", (event) => {
-                console.log("Dragged child", i);
                 originalItemIndex = i;
             });
             container.children[i].addEventListener("dragover", (event) => {
-                console.log("Dragged child", i);
-
                 destinationItemIndex = getIndexToMoveChildTo(
                     event.clientX,
                     event.clientY
