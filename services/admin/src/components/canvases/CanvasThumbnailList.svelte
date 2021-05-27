@@ -1,5 +1,6 @@
 <script>
     import Align from "../shared/Align.svelte";
+    import AutomaticResizeInput from "../shared/AutomaticResizeInput.svelte";
     import DynamicDragAndDropList from "../shared/DynamicDragAndDropList.svelte";
 
     let canvases = [
@@ -29,11 +30,10 @@
                     <div class="actions-wrap">
                         <Align vertical="flex-start" direction="column">
                             <div class="action">
-                                <input
-                                    class="position-input"
+                                <AutomaticResizeInput
                                     type="number"
-                                    value={i + 1}
                                     name="position"
+                                    value={i + 1}
                                 />
                             </div>
                             <div class="action">copy</div>
@@ -88,9 +88,5 @@
     .actions-wrap,
     .image-wrap {
         margin-top: 24px;
-    }
-
-    .position-input {
-        width: 24px;
     }
 </style>
