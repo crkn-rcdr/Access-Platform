@@ -7,7 +7,7 @@
     <ul>
         {#each pages as pageInfo}
             <a href={pageInfo["link"]}>
-                <li class:active={$page.path.includes(pageInfo["link"])}>
+                <li class="clickable" class:active={$page.path.includes(pageInfo["link"])}>
                     {pageInfo["title"]}
                 </li>
             </a>
@@ -17,9 +17,11 @@
 
 <style>
     .sidemenu {
-        background: rgb(202, 202, 202);
+        background: var(--grey); /*#303232;*/ /*var(--teal);*/
+        color:white;
         height: 100%;
         display: inline-block;
+        width: 250px;
     }
     .sidemenu ul {
         list-style-type: none;
@@ -28,16 +30,14 @@
     }
     .sidemenu a {
         text-decoration: none;
-        color: black !important;
+        color: rgb(223, 223, 223) !important;
     }
     .sidemenu li {
-        background: rgb(228, 228, 228);
+        background: rgba(255, 255, 255, 0.253);
         padding: 24px 72px 24px 72px;
     }
     .sidemenu li.active {
-        background: rgb(241, 241, 241);
-    }
-    .sidemenu li:hover {
-        background: rgb(245, 245, 245) !important;
+        background: rgba(255, 255, 255, 0.353);
+        color: white !important;
     }
 </style>

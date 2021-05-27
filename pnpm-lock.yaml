@@ -54,6 +54,7 @@ importers:
     specifiers:
       '@crkn-rcdr/access-data': workspace:^0.0.0
       '@crkn-rcdr/accessor': workspace:^0.0.0
+      '@shopify/draggable': ^1.0.0-beta.8
       '@sveltejs/adapter-node': ^1.0.0-next.22
       '@sveltejs/kit': ^1.0.0-next.109
       '@types/cookie': ^0.4.0
@@ -70,6 +71,7 @@ importers:
     dependencies:
       '@crkn-rcdr/access-data': link:../../packages/data
       '@crkn-rcdr/accessor': link:../../packages/accessor
+      '@shopify/draggable': 1.0.0-beta.8
       cookie: 0.4.1
       dotenv: 8.2.0
       jsonwebtoken: 8.5.1
@@ -210,6 +212,10 @@ packages:
       estree-walker: 2.0.2
       picomatch: 2.2.3
     dev: true
+
+  /@shopify/draggable/1.0.0-beta.8:
+    resolution: {integrity: sha512-9IeBPQM93Ad4qFKUopwuTClzoST/1OId4MaSd/8FB5ScCL2tl25UaOGNR8E2hjiL7xK4LN5+I1Ews6amS7YAiA==}
+    dev: false
 
   /@sindresorhus/is/0.14.0:
     resolution: {integrity: sha512-9NET910DNaIPngYnLLPeg+Ogzqsi9uM4mSboU5y6p8S5DzMTVEsJZrawi+BoDNUVBa2DhJqQYUFvMDfgU062LQ==}

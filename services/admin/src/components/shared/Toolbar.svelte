@@ -1,26 +1,26 @@
 <script>
+    import Align from "../shared/Align.svelte";
     export let title = "";
 </script>
 
-<div class="toolbar">
-    <h4>{title}</h4>
-    <div class="end-content">
-        <slot />
-    </div>
+<div class="toolbar shadow">
+    <Align vertical="center">
+        <h4>{title}</h4>
+        <div class="end-content">
+            <slot />
+        </div>
+    </Align>
 </div>
 
 <style>
     .toolbar {
         background-color: rgb(240, 240, 240);
-        padding: 32px;
+        border-bottom: 1px solid var(--border-color);
+        padding: 16px 32px;
     }
     h4 {
-        margin: 0;
-        width: 500px;
+        margin: 0 !important;
         display: inline;
-    }
-    .end-content {
-        float: right;
-        margin-top: -8px;
+        flex: 9;
     }
 </style>

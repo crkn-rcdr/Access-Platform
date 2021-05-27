@@ -33,4 +33,6 @@
     });
 </script>
 
-<div id="openseadragon1" style="width: 544px; height: 720px;" />
+<div id="openseadragon1" style="
+width: 554px;
+height: 100%;" />
