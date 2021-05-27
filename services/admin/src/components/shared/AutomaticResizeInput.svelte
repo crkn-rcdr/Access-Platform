@@ -14,6 +14,7 @@
     onMount(() => {
         resizeInput();
         input.addEventListener("keyup", resizeInput);
+        input.addEventListener("change", resizeInput);
     });
 </script>
 
