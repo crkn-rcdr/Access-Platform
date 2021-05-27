@@ -82,6 +82,7 @@
     onMount(() => {
         console.log("items:", container.children);
         for (let i = 0; i < container.children.length; i++) {
+            container.children[i].classList.add("draggable");
             container.children[i].setAttribute("draggable", true);
             container.children[i].addEventListener("dragstart", (event) => {
                 console.log("Dragged child", i);
@@ -120,5 +121,9 @@
         width: 100%;
         margin: 0;
         transform: translateY(-1.5rem);
+    }
+    :global(.draggable:hover) {
+        filter: brightness(1.1);
+        cursor: grab;
     }
 </style>
