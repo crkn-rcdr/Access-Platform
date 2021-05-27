@@ -3,19 +3,19 @@
 
     let canvases = [
         {
-            id: "hi",
+            id: "1",
         },
         {
-            id: "how",
+            id: "2",
         },
         {
-            id: "are",
+            id: "3",
         },
         {
-            id: "you",
+            id: "4",
         },
         {
-            id: "doing",
+            id: "5",
         },
     ];
 </script>
@@ -23,7 +23,7 @@
 <div class="list">
     <DynamicDragAndDropList bind:dragList={canvases}>
         {#each canvases as canvas}
-            <div>some content would be nice</div>
+            <div>some content would be nice {canvas["id"]}</div>
         {/each}
     </DynamicDragAndDropList>
 </div>
