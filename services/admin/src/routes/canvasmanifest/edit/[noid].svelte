@@ -1,6 +1,6 @@
 <script lang="ts">
   // TODO: Is this the best way to implement global styling?
-  import "../../app.css";
+  import "../../../app.css";
 
   // fastest object operators
   import equal from "fast-deep-equal";
@@ -10,15 +10,15 @@
 
   import { page } from "$app/stores";
 
-  import Align from "../../components/shared/Align.svelte";
-  import Toolbar from "../../components/shared/Toolbar.svelte";
-  import SideMenuContainer from "../../components/shared/SideMenuContainer.svelte";
-  import ContentEditor from "../../components/canvasmanifests/ContentEditor.svelte";
-  import InfoEditor from "../../components/shared/InfoEditor.svelte";
-  import SideMenuBody from "../../components/shared/SideMenuBody.svelte";
-  import SideMenuPageListButton from "../../components/shared/SideMenuPageListButton.svelte";
-  import SideMenuPage from "../../components/shared/SideMenuPage.svelte";
-  import SideMenuPageList from "../../components/shared/SideMenuPageList.svelte";
+  import Align from "../../../components/shared/Align.svelte";
+  import Toolbar from "../../../components/shared/Toolbar.svelte";
+  import SideMenuContainer from "../../../components/shared/SideMenuContainer.svelte";
+  import ContentEditor from "../../../components/canvasmanifests/ContentEditor.svelte";
+  import InfoEditor from "../../../components/shared/InfoEditor.svelte";
+  import SideMenuBody from "../../../components/shared/SideMenuBody.svelte";
+  import SideMenuPageListButton from "../../../components/shared/SideMenuPageListButton.svelte";
+  import SideMenuPage from "../../../components/shared/SideMenuPage.svelte";
+  import SideMenuPageList from "../../../components/shared/SideMenuPageList.svelte";
 
   const { noid } = $page.params;
 
