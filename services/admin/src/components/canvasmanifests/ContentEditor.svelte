@@ -13,6 +13,12 @@
 
   let activeCanvas: Canvas;
 
+  function setActiveCanvas(index) {
+    if (manifest && index < manifest.canvases.length)
+      activeCanvas = manifest.canvases[index];
+    console.log("set", activeCanvas);
+  }
+
   function triggerUpdate() {
     console.log("triggered");
     manifest.canvases = manifest.canvases;
@@ -27,7 +33,12 @@
 {#if manifest}
   <Align>
     <div>
-      <CanvasThumbnailList bind:canvases={manifest["canvases"]} />
+      <CanvasThumbnailList
+        bind:canvases={manifest["canvases"]}
+        on:thumbnailClicked={(e) => {
+          setActiveCanvas(e.detail.index);
+        }}
+      />
     </div>
     <div>
       <CanvasViewer />

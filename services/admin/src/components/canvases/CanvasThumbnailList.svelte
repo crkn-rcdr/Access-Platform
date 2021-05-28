@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { createEventDispatcher } from "svelte";
   import Align from "../shared/Align.svelte";
   import AutomaticResizeInput from "../shared/AutomaticResizeInput.svelte";
   import DynamicDragAndDropList from "../shared/DynamicDragAndDropList.svelte";
@@ -6,12 +7,18 @@
   export let canvases = [];
 
   let activeCanvas = "1";
+
+  const dispatch = createEventDispatcher();
+
+  function thumbnailClicked(index) {
+    dispatch("thumbnailClicked", { index });
+  }
 </script>
 
 <div class="list">
   <DynamicDragAndDropList bind:dragList={canvases}>
     {#each canvases as canvas, i}
-      <div class="thumbnail">
+      <div class="thumbnail" on:click={(e) => thumbnailClicked(i)}>
         <Align vertical="flex-start">
           <div class="actions-wrap">
             <Align vertical="flex-start" direction="column">
