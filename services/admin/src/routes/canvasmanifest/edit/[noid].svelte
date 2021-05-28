@@ -14,7 +14,7 @@
   import Toolbar from "../../../components/shared/Toolbar.svelte";
   import SideMenuContainer from "../../../components/shared/SideMenuContainer.svelte";
   import ContentEditor from "../../../components/canvasmanifests/ContentEditor.svelte";
-  import InfoEditor from "../../../components/shared/InfoEditor.svelte";
+  import InfoEditor from "../../../components/canvasmanifests/InfoEditor.svelte";
   import SideMenuBody from "../../../components/shared/SideMenuBody.svelte";
   import SideMenuPageListButton from "../../../components/shared/SideMenuPageListButton.svelte";
   import SideMenuPage from "../../../components/shared/SideMenuPage.svelte";
@@ -93,13 +93,11 @@
 
   function save() {
     test = cloneDeep(testModel);
-    console.log("saved");
     checkModelChanged(testModel);
   }
 
   function checkModelChanged(model) {
     saveEnabled = !equal(test, model);
-    console.log("Save", saveEnabled);
   }
 
   $: {

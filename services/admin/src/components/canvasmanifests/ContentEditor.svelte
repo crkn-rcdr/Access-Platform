@@ -16,11 +16,9 @@
   function setActiveCanvas(index) {
     if (manifest && index < manifest.canvases.length)
       activeCanvas = manifest.canvases[index];
-    console.log("set", activeCanvas);
   }
 
   function triggerUpdate() {
-    console.log("triggered");
     manifest.canvases = manifest.canvases;
   }
 

@@ -67,6 +67,7 @@ importers:
       npm-run-all: ^4.1.5
       openseadragon: ^2.4.2
       svelte: ^3.38.2
+      svelte-icons: ^2.1.0
       svelte-preprocess: ^4.7.3
       tslib: ^2.2.0
       typescript: ^4.2.4
@@ -76,6 +77,7 @@ importers:
       cookie: 0.4.1
       dotenv: 8.2.0
       jsonwebtoken: 8.5.1
+      svelte-icons: 2.1.0
     devDependencies:
       '@sveltejs/adapter-node': 1.0.0-next.22_@sveltejs+kit@1.0.0-next.109
       '@sveltejs/kit': 1.0.0-next.109_svelte@3.38.2
@@ -3064,6 +3066,10 @@ packages:
     dependencies:
       svelte: 3.38.2
     dev: true
+
+  /svelte-icons/2.1.0:
+    resolution: {integrity: sha512-rHPQjweEc9fGSnvM0/4gA3pDHwyZyYsC5KhttCZRhSMJfLttJST5Uq0B16Czhw+HQ+HbSOk8kLigMlPs7gZtfg==}
+    dev: false
 
   /svelte-preprocess/4.7.3_svelte@3.38.2+typescript@4.2.4:
     resolution: {integrity: sha512-Zx1/xLeGOIBlZMGPRCaXtlMe4ZA0faato5Dc3CosEqwu75MIEPuOstdkH6cy+RYTUYynoxzNaDxkPX4DbrPwRA==}

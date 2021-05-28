@@ -1,4 +1,5 @@
 <script lang="ts">
+  import IoMdOpen from "svelte-icons/io/IoMdOpen.svelte";
   import type { Canvas } from "@crkn-rcdr/access-data/src/access/CanvasManifest";
   import { createEventDispatcher } from "svelte";
   import Align from "../shared/Align.svelte";
@@ -24,7 +25,14 @@
           on:keyup={changed}
         />
       </div>
-      <a id="takedown"> Take this canvas off of the platform ico </a>
+      <a class="takedown">
+        <Align>
+          <div class="message">Take this canvas off of the platform</div>
+          <div class="icon">
+            <IoMdOpen />
+          </div>
+        </Align>
+      </a>
     </Align>
   </div>
 {/if}
@@ -46,9 +54,18 @@
   textarea {
     width: 93%;
   }
-  #takedown {
+  .takedown {
     padding: 24px;
-    font-size: 16px;
+  }
+
+  .message {
+    font-size: 16px !important;
     font-style: italic;
+  }
+
+  .icon {
+    width: 20px;
+    height: 20px;
+    margin-left: 2px;
   }
 </style>

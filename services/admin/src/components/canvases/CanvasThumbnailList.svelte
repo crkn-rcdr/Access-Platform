@@ -1,4 +1,9 @@
 <script lang="ts">
+  import IoMdCopy from "svelte-icons/io/IoMdCopy.svelte";
+  import TiTabsOutline from "svelte-icons/ti/TiTabsOutline.svelte";
+  import GoDiffAdded from "svelte-icons/go/GoDiffAdded.svelte";
+  import TiDocumentAdd from "svelte-icons/ti/TiDocumentAdd.svelte";
+  import TiTrash from "svelte-icons/ti/TiTrash.svelte";
   import { createEventDispatcher } from "svelte";
   import Align from "../shared/Align.svelte";
   import AutomaticResizeInput from "../shared/AutomaticResizeInput.svelte";
@@ -29,13 +34,16 @@
                   value={i + 1}
                 />
               </div>
-              <div class="action">copy</div>
-              <div class="action">add after</div>
-              <div class="action">trash</div>
+              <div class="action icon"><TiTabsOutline /></div>
+              <div class="action icon"><TiDocumentAdd /></div>
+              <div class="action icon"><TiTrash /></div>
             </Align>
           </div>
           <div class="image-wrap" class:active={activeCanvas === canvas["id"]}>
-            some content would be nice {canvas["id"]}
+            <!--some content would be nice {canvas["id"]}-->
+            <img
+              src="https://i.pinimg.com/originals/9e/7b/d3/9e7bd39f635900028cd26596cbda365a.jpg"
+            />
           </div>
         </Align>
       </div>
@@ -68,8 +76,12 @@
     margin-left: 24px;
   }
 
-  .actions-wrap .action {
-    margin-bottom: 0.5em;
+  .actions-wrap .action.icon {
+    margin-top: 0.5em;
+    width: 28px;
+    height: 28px;
+    opacity: 0.6;
+    cursor: pointer;
   }
 
   .image-wrap {
@@ -88,5 +100,9 @@
         border-image-slice: 1;
         border-width: 2px;
         border-image-source: var(--gradient);*/
+  }
+
+  .image-wrap img {
+    height: 200px;
   }
 </style>
