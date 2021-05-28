@@ -8,7 +8,7 @@
     let input;
 
     function resizeInput() {
-        input.style.width = `${input.value.length}.5em`;
+        input.style.width = `${input.value.length}.9em`;
     }
 
     onMount(() => {
