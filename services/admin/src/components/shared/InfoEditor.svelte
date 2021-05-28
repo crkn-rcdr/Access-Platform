@@ -16,10 +16,15 @@
       ]
       -->
   <label for="slug">Slug</label><br />
-  <input type="text" id="slug" name="slug" /><br /><br />
+  <input type="text" id="slug" name="slug" bind:value={manifest["slug"]} /><br
+  /><br />
 
   <label for="label">Label</label><br />
-  <textarea id="label" name="label" /><br /><br />
+  <textarea
+    id="label"
+    name="label"
+    bind:value={manifest["label"]["value"]}
+  /><br /><br />
 
   <span>
     <label for="behaviour">Behaviour</label>

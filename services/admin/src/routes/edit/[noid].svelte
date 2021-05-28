@@ -2,6 +2,10 @@
   // TODO: Is this the best way to implement global styling?
   import "../../app.css";
 
+  // fastest object operators
+  import equal from "fast-deep-equal";
+  import { cloneDeep } from "lodash";
+
   import type { CanvasManifest } from "@crkn-rcdr/access-data/src/access/CanvasManifest";
 
   import { page } from "$app/stores";
@@ -82,6 +86,25 @@
       size: 123,
     },
   };
+
+  let testModel: CanvasManifest = cloneDeep(test);
+
+  let saveEnabled = false;
+
+  function save() {
+    test = cloneDeep(testModel);
+    console.log("saved");
+    checkModelChanged(testModel);
+  }
+
+  function checkModelChanged(model) {
+    saveEnabled = !equal(test, model);
+    console.log("Save", saveEnabled);
+  }
+
+  $: {
+    checkModelChanged(testModel);
+  }
 </script>
 
 <svelte:head>
@@ -89,14 +112,16 @@
 </svelte:head>
 
 <div class="editor">
-  <Toolbar title="oocihm.8_06842_6">
-    <Align direction="column">
+  <Toolbar title={test["slug"]}>
+    <Align direction="column" vertical="flex-end">
       <span class="status">
         <label>Status: </label>
         <span>unpublished</span>
       </span>
       <span>
-        <button class="save">Save</button>
+        {#if saveEnabled}
+          <button class="save" on:click={save}>Save</button>
+        {/if}
         <button class="secondary">Publish</button>
       </span>
     </Align>
@@ -110,10 +135,10 @@
 
     <SideMenuBody>
       <SideMenuPage>
-        <InfoEditor bind:manifest={test} />
+        <InfoEditor bind:manifest={testModel} />
       </SideMenuPage>
       <SideMenuPage>
-        <ContentEditor bind:manifest={test} />
+        <ContentEditor bind:manifest={testModel} />
       </SideMenuPage>
     </SideMenuBody>
   </SideMenuContainer>
