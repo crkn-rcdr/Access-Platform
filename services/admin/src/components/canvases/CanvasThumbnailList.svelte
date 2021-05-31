@@ -30,10 +30,6 @@
     dispatch("thumbnailClicked", { index });
   }
 
-  function addCanvasAfterIndex(event, index) {
-    event.stopPropagation();
-  }
-
   function moveCanvas(event, originalItemIndex) {
     let destinationItemIndex = parseInt(event.detail.value) - 1;
     moveArrayElement(canvases, originalItemIndex, destinationItemIndex);
@@ -48,6 +44,19 @@
     let canvasThumbnails = listComponent.querySelectorAll(".thumbnail");
     if (index >= 0 && index < canvasThumbnails.length)
       canvasThumbnails[index].scrollIntoView();
+  }
+
+  // TODO
+  function copyCanvasByIndex(event, index) {
+    event.stopPropagation();
+  }
+
+  function deleteCanvasByIndex(event, index) {
+    event.stopPropagation();
+  }
+
+  function addCanvasAfterIndex(event, index) {
+    event.stopPropagation();
   }
 
   onMount(() => {
@@ -90,7 +99,12 @@
                       bind:value={indexModel[i]}
                     />
                   </div>
-                  <div class="action icon"><TiTabsOutline /></div>
+                  <div
+                    class="action icon"
+                    on:click={(e) => copyCanvasByIndex(e, i)}
+                  >
+                    <TiTabsOutline />
+                  </div>
 
                   <div
                     class="action icon add-button"
@@ -98,7 +112,12 @@
                   >
                     <TiDocumentAdd />
                   </div>
-                  <div class="action icon"><TiTrash /></div>
+                  <div
+                    class="action icon"
+                    on:click={(e) => deleteCanvasByIndex(e, i)}
+                  >
+                    <TiTrash />
+                  </div>
                 </Align>
               </div>
               <div class="image-wrap">
