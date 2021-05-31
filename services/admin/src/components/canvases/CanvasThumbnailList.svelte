@@ -82,8 +82,11 @@
             <Align vertical="flex-start">
               <div class="actions-wrap">
                 <Align vertical="flex-start" direction="column">
+                  <div class="action pos">
+                    {indexModel[i]}
+                  </div>
                   <div
-                    class="action"
+                    class="action pos-input"
                     on:click={(e) => {
                       e.stopPropagation();
                     }}
@@ -191,7 +194,17 @@
     margin: auto;
   }
 
+  .pos {
+    font-weight: 400;
+    margin-top: 13px;
+    margin-left: 9px;
+    font-size: 16px;
+  }
+
   .action.icon {
+    display: none;
+  }
+  .pos-input {
     display: none;
   }
 
@@ -210,6 +223,12 @@
     border-image-width: 100%;*/
     opacity: 0.8;
     top: 248px;
+  }
+  .thumbnail:hover .pos {
+    display: none;
+  }
+  .thumbnail:hover .pos-input {
+    display: inherit;
   }
 
   /*.add-button {
