@@ -26,6 +26,7 @@
   });
 </script>
 
+<!--TODO: own component b/c up down arrows are opposite of expec tedc-->
 <input
   bind:this={input}
   type="number"

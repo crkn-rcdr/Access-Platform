@@ -191,6 +191,27 @@
     margin: auto;
   }
 
+  .action.icon {
+    display: none;
+  }
+
+  .thumbnail:hover .action.icon {
+    display: inherit;
+  }
+  .add-button:hover:after {
+    content: "";
+    position: absolute;
+    width: 99%;
+    left: 0;
+    height: 1px;
+    border-bottom: 2px solid grey;
+    margin-top: 12px;
+    /*border-image: var(--gradient);
+    border-image-width: 100%;*/
+    opacity: 0.8;
+    top: 248px;
+  }
+
   /*.add-button {
     margin-top: 52px !important;
     margin-top: 58px !important;
