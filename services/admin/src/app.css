@@ -126,6 +126,11 @@ select {
   cursor: pointer;
 }
 
+.icon:hover {
+  background-color: rgb(201, 201, 201);
+  border-radius: 4px;
+}
+
 .icon {
   width: 28px;
   height: 28px;
