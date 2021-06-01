@@ -13,13 +13,29 @@
   export let max;
 
   let input;
+  let prevVal;
 
   function resizeInput() {
     input.style.width = `${input.value.length}em`;
   }
 
+  function validateNumberInput() {
+    let valueInt = parseInt(value);
+    if (isNaN(valueInt)) {
+      value = prevVal;
+    }
+    console.log(prevVal, valueInt, typeof valueInt === "undefined");
+  }
+
   function changed(e) {
-    dispatch("changed", { changeEvent: e, value: parseInt(value) });
+    let valueInt = parseInt(value);
+    console.log("valueInt", valueInt);
+    if (valueInt <= max && valueInt >= min) {
+      dispatch("changed", { changeEvent: e, value: valueInt });
+      prevVal = value;
+    } else {
+      value = prevVal;
+    }
   }
 
   function upArrowPressed(e) {
@@ -40,21 +56,22 @@
 
   onMount(() => {
     resizeInput();
-    input.addEventListener("keyup", resizeInput);
-    input.addEventListener("change", resizeInput);
+    input.addEventListener("keyup", () => {
+      value = value.replace(/\D/g, "");
+      resizeInput();
+      //validateNumberInput();
+    });
+    input.addEventListener("change", () => {
+      value = value.replace(/\D/g, "");
+      resizeInput();
+      validateNumberInput();
+    });
+    prevVal = value;
   });
 </script>
 
 <Align horizontal="center">
-  <input
-    bind:this={input}
-    type="text"
-    {min}
-    {max}
-    {name}
-    bind:value
-    on:change={changed}
-  />
+  <input bind:this={input} type="text" {name} bind:value on:change={changed} />
 
   <Align direction="column" horizontal="center" vertical="center">
     <div class="action icon" on:click={upArrowPressed}>
