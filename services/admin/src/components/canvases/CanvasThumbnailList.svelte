@@ -1,6 +1,4 @@
 <script lang="ts">
-  import TiTabsOutline from "svelte-icons/ti/TiTabsOutline.svelte";
-  import TiDocumentAdd from "svelte-icons/ti/TiDocumentAdd.svelte";
   import TiTrash from "svelte-icons/ti/TiTrash.svelte";
   import { createEventDispatcher } from "svelte";
   import Align from "../shared/Align.svelte";
@@ -129,19 +127,6 @@ Down: 40
                       bind:value={indexModel[i]}
                     />
                   </div>
-                  <!--div
-                    class="action icon"
-                    on:click={(e) => copyCanvasByIndex(e, i)}
-                  >
-                    <TiTabsOutline />
-                  </div-->
-
-                  <!--div
-                    class="action icon add-button"
-                    on:click={(e) => addCanvasAfterIndex(e, i)}
-                  >
-                    <TiDocumentAdd />
-                  </div-->
                   <div
                     class="action icon"
                     on:click={(e) => deleteCanvasByIndex(e, i)}
@@ -151,15 +136,10 @@ Down: 40
                 </Align>
               </div>
               <div class="image-wrap">
-                <!--some content would be nice {canvas["id"]}-->
                 <img
                   class="thumbnail-img"
                   src={`https://image-uvic.canadiana.ca/iiif/2/${canvas["id"]}/full/!110,146/0/default.jpg`}
                 />
-                <!--div
-                  class="thumbnail-img"
-                  style={`background:${canvas["colour"]}`}
-                /-->
               </div>
             </Align>
           </div>
@@ -252,59 +232,19 @@ Down: 40
   .thumbnail:hover .pos-input {
     display: inherit;
   }
-
-  /*.add-button {
-    margin-top: 52px !important;
-    margin-top: 58px !important;
-  }*/
-
-  /*.add-button {
-    visibility: hidden;
-    margin-top: 52px !important;
-    margin-top: 108px !important;
-  }
-  .add-button::after {
-    content: "";
-    position: absolute;
-    width: 248px;
-    height: 1px;
-    border-bottom: 1px solid rgb(180, 180, 180);
-    margin-left: 32px;
-    margin-top: 12px;
-    border-image: var(--gradient);
-    border-image-width: 100%;
-    opacity: 0.8;
-  }
-  .thumbnail:hover .add-button {
-    visibility: visible;
-  }*/
-
-  /*:global(.add-button svg) {
-    fill: url(#shape-gradient) var(--green) !important;
-  }
-  
-  
-  Finding them is complicated - tag side menu
-
-  Add link related to the canvas list but not inside it
-
+  /*
+  1) change to our own images X
+  2) Drag and drop on ff opening image
+  3) clean everything up
+  4) add canvas form other manifest:
   Add canvas as button on top of list - Sticky as you scroll
+  opren where selected canvas is: Add canvas -> enter slug, find canvas then add it
+
+  other ideas:
 
   Jump to page
 
   Swapping pages 2-4 and 4-2
 
-  20 pages and maps
-
-  Getting object is finished - translate canvas noid into image api urls
-
-
-  Get the data in and then also save it
-
-
-  1) change to our own images
-  2) clean everything up
-  3) add canvas form other manifest:
-  Add canvas -> enter slug, find canvas then add it
   */
 </style>
