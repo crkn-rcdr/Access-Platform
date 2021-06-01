@@ -191,7 +191,7 @@
 
   .pos {
     font-weight: 400;
-    margin-top: 13px;
+    margin-top: 9px;
     margin-left: 9px;
     font-size: 16px;
   }

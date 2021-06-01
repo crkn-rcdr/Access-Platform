@@ -45,7 +45,6 @@
   });
 </script>
 
-<!--TODO: own component b/c up down arrows are opposite of expec tedc-->
 <Align horizontal="center">
   <input
     bind:this={input}
@@ -75,8 +74,5 @@
     opacity: 0.6;
     width: 18px;
     height: 18px;
-  }
-  .icon:hover {
-    background-color: rgb(200, 200, 200);
   }
 </style>
