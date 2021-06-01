@@ -91,7 +91,7 @@
 
 <style>
   :global(.drag-target) {
-    opacity: 0.1;
+    opacity: 0.3;
     filter: brightness(0.5);
   }
   :global(.drag-target::before) {
@@ -100,7 +100,7 @@
     border-top: 2px solid black;
     width: 100%;
     margin: 0;
-    transform: translateY(-1.5rem);
+    transform: translateY(-1rem);
   }
   :global(.draggable:hover) {
     filter: brightness(1.03);

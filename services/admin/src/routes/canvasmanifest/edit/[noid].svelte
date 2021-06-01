@@ -144,8 +144,9 @@
 
 <style>
   .editor {
-    height: 734px;
+    height: 784px;
     width: 1483px;
+    margin-bottom: 200px;
   }
   .status {
     margin-bottom: 4px;

@@ -144,7 +144,7 @@
 
 <style>
   .list {
-    width: 361px;
+    width: 319px;
     background-color: rgb(235, 235, 235);
     height: 100%;
     overflow-y: auto;
@@ -153,8 +153,6 @@
   .thumbnail {
     height: 250px;
     width: 100%;
-    margin: auto;
-    margin-bottom: 24px;
   }
 
   .thumbnail:nth-child(1) {
@@ -214,7 +212,7 @@
   .add-button:hover:after {
     content: "";
     position: absolute;
-    width: 99%;
+    width: 100%;
     left: 0;
     height: 1px;
     border-bottom: 2px solid grey;
@@ -222,7 +220,7 @@
     /*border-image: var(--gradient);
     border-image-width: 100%;*/
     opacity: 0.8;
-    top: 248px;
+    top: 236px;
   }
   .thumbnail:hover .pos {
     display: none;
