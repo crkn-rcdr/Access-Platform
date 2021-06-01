@@ -13,7 +13,7 @@
   export let canvases = [];
 
   let indexModel = [];
-  let activeCanvas;
+  let activeCanvasIndex;
   let listComponent;
 
   const dispatch = createEventDispatcher();
@@ -25,8 +25,8 @@
     }
   }
 
-  function thumbnailClicked(event, index, canvas) {
-    activeCanvas = canvas;
+  function thumbnailClicked(index) {
+    activeCanvasIndex = index;
     dispatch("thumbnailClicked", { index });
   }
 
@@ -34,33 +34,63 @@
     let destinationItemIndex = parseInt(event.detail.value) - 1;
     moveArrayElement(canvases, originalItemIndex, destinationItemIndex);
     canvases = canvases;
-    activeCanvas = canvases[destinationItemIndex];
+    let prevIndex = activeCanvasIndex;
+    activeCanvasIndex = destinationItemIndex;
     trackIndexes();
-    jumpTo(destinationItemIndex);
-    dispatch("thumbnailClicked", { index: destinationItemIndex });
+    if (Math.abs(prevIndex - activeCanvasIndex) >= 2)
+      jumpTo(destinationItemIndex);
+    thumbnailClicked(activeCanvasIndex);
   }
 
   function jumpTo(index) {
     let canvasThumbnails = listComponent.querySelectorAll(".thumbnail");
-    if (index >= 0 && index < canvasThumbnails.length)
-      canvasThumbnails[index].scrollIntoView();
+    canvasThumbnails[index].scrollIntoView();
   }
 
   // TODO
-  function copyCanvasByIndex(event, index) {
+  /*function copyCanvasByIndex(event, index) {
     event.stopPropagation();
-  }
+  }*/
 
   function deleteCanvasByIndex(event, index) {
     event.stopPropagation();
   }
 
-  function addCanvasAfterIndex(event, index) {
-    event.stopPropagation();
+  /*
+  Left: 37
+Up: 38
+Right: 39
+Down: 40
+  */
+
+  function selectPrevious() {
+    if (activeCanvasIndex > 0) {
+      activeCanvasIndex--;
+      thumbnailClicked(activeCanvasIndex);
+      jumpTo(activeCanvasIndex);
+    }
+  }
+
+  function selectNext() {
+    if (activeCanvasIndex < canvases.length - 1) {
+      activeCanvasIndex++;
+      thumbnailClicked(activeCanvasIndex);
+      jumpTo(activeCanvasIndex);
+    }
+  }
+
+  function handleKeydown(event) {
+    if (event.keyCode === 37 || event.keyCode === 38) {
+      //go back
+      selectPrevious();
+    } else if (event.keyCode === 39 || event.keyCode === 40) {
+      //go forward
+      selectNext();
+    }
   }
 
   onMount(() => {
-    if (canvases.length) activeCanvas = canvases[0];
+    if (canvases.length) activeCanvasIndex = 0;
     trackIndexes();
 
     for (let i = 0; i < canvases.length; i++) {
@@ -69,15 +99,17 @@
   });
 </script>
 
+<svelte:window on:keydown={handleKeydown} />
+
 <div bind:this={listComponent} class="list">
-  {#if activeCanvas}
+  {#if canvases[activeCanvasIndex]}
     <DynamicDragAndDropList bind:dragList={canvases}>
       {#each canvases as canvas, i}
         {#if i < indexModel.length}
           <div
             class="thumbnail"
-            class:active={activeCanvas["id"] === canvas["id"]}
-            on:click={(e) => thumbnailClicked(e, i, canvas)}
+            class:active={canvases[activeCanvasIndex]["id"] === canvas["id"]}
+            on:click={(e) => thumbnailClicked(i)}
           >
             <Align vertical="flex-start">
               <div class="actions-wrap">
@@ -125,14 +157,14 @@
               </div>
               <div class="image-wrap">
                 <!--some content would be nice {canvas["id"]}-->
-                <!--img
+                <img
                   class="thumbnail-img"
-                  src="https://i.pinimg.com/originals/9e/7b/d3/9e7bd39f635900028cd26596cbda365a.jpg"
-                /-->
-                <div
+                  src={`https://image-uvic.canadiana.ca/iiif/2/${canvas["id"]}/full/!110,146/0/default.jpg`}
+                />
+                <!--div
                   class="thumbnail-img"
                   style={`background:${canvas["colour"]}`}
-                />
+                /-->
               </div>
             </Align>
           </div>

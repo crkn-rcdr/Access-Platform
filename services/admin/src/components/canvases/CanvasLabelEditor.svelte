@@ -43,7 +43,7 @@
     height: 100%;
     /*background-color: rgb(240 240 240);*/
     color: white;
-    background-color: #242525;
+    background-color: var(--dark-grey);
   }
   #label {
     flex: 9;

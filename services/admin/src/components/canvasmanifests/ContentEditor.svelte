@@ -39,7 +39,7 @@
       />
     </div>
     <div>
-      <CanvasViewer />
+      <CanvasViewer canvas={activeCanvas} />
     </div>
     <div>
       <CanvasLabelEditor
