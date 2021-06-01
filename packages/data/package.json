@@ -32,8 +32,12 @@
     "build:schemas": "rm -rf schemas && ts-node writeSchemas.ts",
     "build:ts": "rm -rf dist && tsc && tsc -p ./tsconfig-esm.json",
     "build": "run-s test build:ts build:schemas",
+    "dev": "run-p watch:*",
     "test": "ava -v",
-    "test:all": "ava -v"
+    "test:all": "ava -v",
+    "test:watch": "ava -v -w",
+    "watch:cjs": "tsc --watch",
+    "watch:esm": "tsc --watch -p ./tsconfig-esm.json"
   },
   "dependencies": {
     "ajv": "^7.2.4"

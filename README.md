@@ -62,12 +62,6 @@ Any package or service with a `test:all` script defined can have that script run
 
 ### Development environment
 
-There's a lot of improvement to be made here. To work on the admin tools, for now, you should run two terminals. In the first:
+**New!** Improvement: run `pnpm run dev; pnpm run cleanup` from the root directory to watch all packages and services. Your mileage may vary with how the output is produced. `pnpm run dev` runs the `dev` script for each package or service; try individual `dev` scripts instead for finer control of things.
 
-    $ cd services/couchdb
-    $ pnpx kivik dev
-
-In the second:
-
-    $ cd services/admin
-    $ pnpm run dev
+Note that the root `dev` script does not run any tests; execute `pnpm test` to do that.
