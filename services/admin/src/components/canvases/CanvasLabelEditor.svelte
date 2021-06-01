@@ -67,5 +67,6 @@
     width: 20px;
     height: 20px;
     margin-left: 2px;
+    margin-top: 0;
   }
 </style>

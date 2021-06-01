@@ -21,7 +21,7 @@
   function trackIndexes() {
     indexModel = [];
     for (let i = 0; i < canvases.length; i++) {
-      indexModel.push(i + 1);
+      indexModel.push(`${i + 1}`);
     }
   }
 
@@ -169,9 +169,6 @@
   }
 
   .action.icon {
-    margin-top: 0.5em;
-    width: 28px;
-    height: 28px;
     opacity: 0.6;
     cursor: pointer;
   }
@@ -201,6 +198,7 @@
 
   .action.icon {
     display: none;
+    margin-top: 0.5em;
   }
   .pos-input {
     display: none;
