@@ -201,8 +201,7 @@ Down: 40
   }
 
   .image-wrap {
-    flex: 9;
-    text-align: center;
+    flex: 4;
   }
 
   .actions-wrap,
@@ -213,7 +212,7 @@ Down: 40
   .image-wrap .thumbnail-img {
     height: 200px;
     width: 150px;
-    margin: auto;
+    margin: 0 20px;
   }
 
   .pos {
