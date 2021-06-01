@@ -9,7 +9,6 @@
   import { moveArrayElement } from "../../lib/arrayUtil";
   import { onMount } from "svelte";
 
-  let testColours = ["#586BA4", "#F5DD90", "#F68E5F", "#F76C5E", "#CBE896"];
   export let canvases = [];
 
   let indexModel = [];
@@ -92,10 +91,6 @@ Down: 40
   onMount(() => {
     if (canvases.length) activeCanvasIndex = 0;
     trackIndexes();
-
-    for (let i = 0; i < canvases.length; i++) {
-      canvases[i]["colour"] = testColours[i];
-    }
   });
 </script>
 
