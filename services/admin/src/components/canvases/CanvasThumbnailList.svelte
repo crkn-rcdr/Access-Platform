@@ -102,19 +102,19 @@
                       bind:value={indexModel[i]}
                     />
                   </div>
-                  <div
+                  <!--div
                     class="action icon"
                     on:click={(e) => copyCanvasByIndex(e, i)}
                   >
                     <TiTabsOutline />
-                  </div>
+                  </div-->
 
-                  <div
+                  <!--div
                     class="action icon add-button"
                     on:click={(e) => addCanvasAfterIndex(e, i)}
                   >
                     <TiDocumentAdd />
-                  </div>
+                  </div-->
                   <div
                     class="action icon"
                     on:click={(e) => deleteCanvasByIndex(e, i)}
@@ -255,5 +255,30 @@
 
   /*:global(.add-button svg) {
     fill: url(#shape-gradient) var(--green) !important;
-  }*/
+  }
+  
+  
+  Finding them is complicated - tag side menu
+
+  Add link related to the canvas list but not inside it
+
+  Add canvas as button on top of list - Sticky as you scroll
+
+  Jump to page
+
+  Swapping pages 2-4 and 4-2
+
+  20 pages and maps
+
+  Getting object is finished - translate canvas noid into image api urls
+
+
+  Get the data in and then also save it
+
+
+  1) change to our own images
+  2) clean everything up
+  3) add canvas form other manifest:
+  Add canvas -> enter slug, find canvas then add it
+  */
 </style>
