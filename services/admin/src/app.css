@@ -127,7 +127,7 @@ select {
 }
 
 .icon:hover {
-  background-color: rgb(201, 201, 201);
+  background-color: rgba(0, 0, 0, 0.15);
   border-radius: 4px;
 }
 
