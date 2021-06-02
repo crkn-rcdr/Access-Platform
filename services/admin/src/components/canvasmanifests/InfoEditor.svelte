@@ -5,6 +5,7 @@
 </script>
 
 <form>
+  <!--TODO: replace with slug resolver component-->
   <label for="slug">Slug</label><br />
   <input type="text" id="slug" name="slug" bind:value={manifest["slug"]} /><br
   /><br />
@@ -15,6 +16,7 @@
     name="label"
     bind:value={manifest["label"]["value"]}
   /><br /><br />
+
   <span>
     <label for="behavior">Behavior</label>
     <select id="behavior" name="behavior" bind:value={manifest["behavior"]}>

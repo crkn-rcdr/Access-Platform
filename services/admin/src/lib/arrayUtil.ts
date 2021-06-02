@@ -1,4 +1,8 @@
-function moveArrayElement(arr, currentIndex, destinationIndex) {
+function moveArrayElement(
+  arr: any[],
+  currentIndex: number,
+  destinationIndex: number
+): any[] {
   while (currentIndex < 0) {
     currentIndex += arr.length;
   }

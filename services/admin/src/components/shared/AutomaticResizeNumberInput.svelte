@@ -1,76 +1,72 @@
-<script>
+<script lang="ts">
+  import { createEventDispatcher, onMount } from "svelte";
   import TiArrowSortedUp from "svelte-icons/ti/TiArrowSortedUp.svelte";
   import TiArrowSortedDown from "svelte-icons/ti/TiArrowSortedDown.svelte";
-  import { onMount } from "svelte";
-  import { createEventDispatcher } from "svelte";
   import Align from "./Align.svelte";
+
+  export let name: string;
+  export let value: number | undefined;
+  export let max: number;
 
   const dispatch = createEventDispatcher();
 
-  export let name;
-  export let value;
-  export let min;
-  export let max;
+  let input: HTMLInputElement;
+  let prevValue: number | undefined;
 
-  let input;
-  let prevVal;
+  function sanitizeInput() {
+    let valueInt = parseInt(`${value}`.replace(/\D/g, ""));
+    if (!isNaN(valueInt)) {
+      value = valueInt <= max && valueInt >= 0 ? valueInt : prevValue;
+    }
+  }
+
+  function upArrowPressed() {
+    if (typeof value === "number") {
+      value--;
+      handleChange();
+    }
+  }
+
+  function downArrowPressed() {
+    if (typeof value === "number") {
+      value++;
+      handleChange();
+    }
+  }
 
   function resizeInput() {
     input.style.width = `${input.value.length}em`;
   }
 
-  function validateNumberInput() {
-    let valueInt = parseInt(value);
-    if (isNaN(valueInt)) {
-      value = prevVal;
-    }
-    console.log(prevVal, valueInt, typeof valueInt === "undefined");
+  function sendChangeEvent() {
+    dispatch("changed", { value });
   }
 
-  function changed(e) {
-    let valueInt = parseInt(value);
-    console.log("valueInt", valueInt);
-    if (valueInt <= max && valueInt >= min) {
-      dispatch("changed", { changeEvent: e, value: valueInt });
-      prevVal = value;
-    } else {
-      value = prevVal;
-    }
+  function handleChange() {
+    sanitizeInput();
+    resizeInput();
+    sendChangeEvent();
   }
 
-  function upArrowPressed(e) {
-    let newValueAsNumber = parseInt(value) - 1;
-    if (newValueAsNumber >= min) {
-      value = newValueAsNumber;
-      changed(e);
-    }
-  }
-
-  function downArrowPressed(e) {
-    let newValueAsNumber = parseInt(value) + 1;
-    if (newValueAsNumber <= max) {
-      value = newValueAsNumber;
-      changed(e);
-    }
+  function handleKeyup() {
+    sanitizeInput();
+    resizeInput();
   }
 
   onMount(() => {
+    prevValue = value;
     resizeInput();
-    input.addEventListener("keyup", () => {
-      value = value.replace(/\D/g, "");
-      resizeInput();
-    });
-    input.addEventListener("change", () => {
-      value = value.replace(/\D/g, "");
-      resizeInput();
-      validateNumberInput();
-    });
-    prevVal = value;
   });
 </script>
 
 <Align horizontal="center">
-  <input bind:this={input} type="text" {name} bind:value on:change={changed} />
+  <input
+    bind:this={input}
+    bind:value
+    {name}
+    on:change={handleChange}
+    on:keyup={handleKeyup}
+  />
 
   <Align direction="column" horizontal="center" vertical="center">
     <div class="action icon" on:click={upArrowPressed}>

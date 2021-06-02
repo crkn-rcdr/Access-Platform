@@ -1,142 +1,158 @@
 <script lang="ts">
+  import { createEventDispatcher, onMount } from "svelte";
   import TiTrash from "svelte-icons/ti/TiTrash.svelte";
-  import { createEventDispatcher } from "svelte";
+  import type { Canvas } from "@crkn-rcdr/access-data/src/access/CanvasManifest";
   import Align from "../shared/Align.svelte";
   import AutomaticResizeNumberInput from "../shared/AutomaticResizeNumberInput.svelte";
   import DynamicDragAndDropList from "../shared/DynamicDragAndDropList.svelte";
   import { moveArrayElement } from "../../lib/arrayUtil";
-  import { onMount } from "svelte";
 
-  export let canvases = [];
+  export let canvases: Canvas[] = [];
 
-  let indexModel = [];
-  let activeCanvasIndex;
-  let listComponent;
+  let indexModel: number[] = [];
+  let activeCanvasIndex: number = 0;
+  let container: HTMLDivElement;
+
+  const LEFT_ARROW_CODE: number = 37;
+  const UP_ARROW_CODE: number = 38;
+  const RIGHT_ARROW_CODE: number = 39;
+  const DOWN_ARROW_CODE: number = 40;
 
   const dispatch = createEventDispatcher();
 
-  function trackIndexes() {
+  function setIndexModel() {
     indexModel = [];
     for (let i = 0; i < canvases.length; i++) {
-      indexModel.push(`${i + 1}`);
+      indexModel.push(i + 1);
     }
   }
 
-  function thumbnailClicked(index) {
+  function setActiveIndex(index: number) {
     activeCanvasIndex = index;
     dispatch("thumbnailClicked", { index });
   }
 
-  function moveCanvas(event, originalItemIndex) {
+  function jumpTo(index: number) {
+    let canvasThumbnails = container.querySelectorAll(".thumbnail");
+    canvasThumbnails?.[index]?.scrollIntoView();
+  }
+
+  function deleteCanvasByIndex(event: any, index: number) {
+    event.stopPropagation();
+    if (index >= 0 && index < canvases.length) {
+      canvases.splice(index, 1);
+      canvases = canvases;
+      setActiveIndex(activeCanvasIndex);
+    }
+  }
+
+  function moveCanvas(event: any, originalItemIndex: number) {
+    // Move the canvas and trigger saving
     let destinationItemIndex = parseInt(event.detail.value) - 1;
     moveArrayElement(canvases, originalItemIndex, destinationItemIndex);
     canvases = canvases;
-    let prevIndex = activeCanvasIndex;
+
+    // Update the position inputs
+    setIndexModel();
+
+    // Highlight and move to new position
     activeCanvasIndex = destinationItemIndex;
-    trackIndexes();
-    if (Math.abs(prevIndex - activeCanvasIndex) >= 2)
-      jumpTo(destinationItemIndex);
-    thumbnailClicked(activeCanvasIndex);
-  }
-
-  function jumpTo(index) {
-    let canvasThumbnails = listComponent.querySelectorAll(".thumbnail");
-    canvasThumbnails[index].scrollIntoView();
-  }
-
-  // TODO
-  function deleteCanvasByIndex(event, index) {
-    event.stopPropagation();
+    jumpTo(activeCanvasIndex);
+    setActiveIndex(activeCanvasIndex);
   }
 
   function selectPrevious() {
     if (activeCanvasIndex > 0) {
       activeCanvasIndex--;
-      thumbnailClicked(activeCanvasIndex);
       jumpTo(activeCanvasIndex);
+      setActiveIndex(activeCanvasIndex);
     }
   }
 
   function selectNext() {
     if (activeCanvasIndex < canvases.length - 1) {
       activeCanvasIndex++;
-      thumbnailClicked(activeCanvasIndex);
       jumpTo(activeCanvasIndex);
+      setActiveIndex(activeCanvasIndex);
     }
   }
 
-  function handleKeydown(event) {
-    if (event.keyCode === 37 || event.keyCode === 38) {
-      //go back
+  function handleKeydown(event: any) {
+    if (event.keyCode === LEFT_ARROW_CODE || event.keyCode === UP_ARROW_CODE) {
       selectPrevious();
-    } else if (event.keyCode === 39 || event.keyCode === 40) {
-      //go forward
+    } else if (
+      event.keyCode === RIGHT_ARROW_CODE ||
+      event.keyCode === DOWN_ARROW_CODE
+    ) {
       selectNext();
     }
   }
 
+  function isActive(canvas: Canvas): boolean {
+    if (canvas) {
+      return canvases?.[activeCanvasIndex]?.["id"] === canvas["id"];
+    }
+    return false;
+  }
+
   onMount(() => {
     if (canvases.length) activeCanvasIndex = 0;
-    trackIndexes();
+    setIndexModel();
   });
 </script>
 
 <svelte:window on:keydown={handleKeydown} />
 
-<div bind:this={listComponent} class="list">
-  {#if canvases[activeCanvasIndex]}
+{#if indexModel.length}
+  <div bind:this={container} class="list">
     <DynamicDragAndDropList bind:dragList={canvases}>
       {#each canvases as canvas, i}
-        {#if i < indexModel.length}
-          <div
-            class="thumbnail"
-            class:active={canvases[activeCanvasIndex]["id"] === canvas["id"]}
-            on:click={(e) => thumbnailClicked(i)}
-          >
-            <Align vertical="flex-start">
-              <div class="actions-wrap">
-                <Align vertical="flex-start" direction="column">
-                  <div class="action pos">
-                    {indexModel[i]}
-                  </div>
-                  <div
-                    class="action pos-input"
-                    on:click={(e) => {
-                      e.stopPropagation();
-                    }}
-                  >
-                    <AutomaticResizeNumberInput
-                      type="number"
-                      name="position"
-                      min="1"
-                      max={canvases.length}
-                      on:changed={(e) => {
-                        moveCanvas(e, i);
-                      }}
-                      bind:value={indexModel[i]}
-                    />
-                  </div>
-                  <div
-                    class="action icon"
-                    on:click={(e) => deleteCanvasByIndex(e, i)}
-                  >
-                    <TiTrash />
-                  </div>
-                </Align>
-              </div>
-              <div class="image-wrap">
+        <div
+          class="thumbnail"
+          class:active={isActive(canvas)}
+          on:click={() => setActiveIndex(i)}
+        >
+          <Align vertical="flex-start">
+            <div class="actions-wrap">
+              <Align vertical="flex-start" direction="column">
+                <div class="action pos">
+                  {indexModel[i]}
+                </div>
                 <div
-                  class="thumbnail-img"
-                  style={`background-image: url(https://image-uvic.canadiana.ca/iiif/2/${canvas["id"]}/full/!110,146/0/default.jpg);`}
-                />
-              </div>
-            </Align>
-          </div>
-        {/if}
+                  class="action pos-input"
+                  on:click={(e) => {
+                    e.stopPropagation();
+                  }}
+                >
+                  <AutomaticResizeNumberInput
+                    name="position"
+                    max={canvases.length}
+                    on:changed={(e) => {
+                      moveCanvas(e, i);
+                    }}
+                    bind:value={indexModel[i]}
+                  />
+                </div>
+                <div
+                  class="action icon"
+                  on:click={(e) => deleteCanvasByIndex(e, i)}
+                >
+                  <TiTrash />
+                </div>
+              </Align>
+            </div>
+            <div class="image-wrap">
+              <div
+                class="thumbnail-img"
+                style={`background-image: url(https://image-uvic.canadiana.ca/iiif/2/${canvas["id"]}/full/!110,146/0/default.jpg);`}
+              />
+            </div>
+          </Align>
+        </div>
       {/each}
     </DynamicDragAndDropList>
-  {/if}
-</div>
+  </div>
+{/if}
 
 <style>
   .list {

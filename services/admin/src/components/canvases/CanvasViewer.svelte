@@ -1,32 +1,27 @@
-<script>
+<script lang="ts">
   import { onMount, afterUpdate } from "svelte";
+  import type { Canvas } from "@crkn-rcdr/access-data/src/access/CanvasManifest";
 
-  export let canvas;
-  let OpenSeadragon;
-  let viewer;
-  let container;
+  export let canvas: Canvas | null;
+  let OpenSeadragon: any;
+  let container: HTMLDivElement;
+
+  function clearViewer() {
+    if (container) {
+      container.innerHTML = "";
+    }
+  }
 
   async function drawImage() {
-    if (canvas) {
-      console.log("called");
-      if (OpenSeadragon) {
-        if (container) {
-          container.innerHTML = "";
-        }
-        console.log("called 2");
-        viewer = OpenSeadragon.default({
-          id: "openseadragon-wrap",
-          prefixUrl: "/openseadragon/images/",
-          preserveViewport: true,
-          visibilityRatio: 1,
-          minZoomLevel: 1,
-          defaultZoomLevel: 1,
-          sequenceMode: false,
-          tileSources: [
-            `https://image-uvic.canadiana.ca/iiif/2/${canvas["id"]}/info.json`,
-          ],
-        });
-      }
+    clearViewer();
+    if (canvas && OpenSeadragon) {
+      OpenSeadragon.default({
+        id: "openseadragon-wrap",
+        prefixUrl: "/openseadragon/images/", // for the icons the viewer uses
+        tileSources: [
+          `https://image-uvic.canadiana.ca/iiif/2/${canvas["id"]}/info.json`,
+        ],
+      });
     }
   }
 

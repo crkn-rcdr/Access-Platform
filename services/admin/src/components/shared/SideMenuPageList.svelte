@@ -1,7 +1,3 @@
-<script>
-  import { page } from "$app/stores";
-</script>
-
 <nav class="sidemenu">
   <ul>
     <slot />

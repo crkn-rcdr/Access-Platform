@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from "svelte";
   import type {
     CanvasManifest,
     Canvas,
@@ -7,15 +8,14 @@
   import CanvasLabelEditor from "../canvases/CanvasLabelEditor.svelte";
   import CanvasViewer from "../canvases/CanvasViewer.svelte";
   import CanvasThumbnailList from "../canvases/CanvasThumbnailList.svelte";
-  import { onMount } from "svelte";
 
   export let manifest: CanvasManifest;
 
-  let activeCanvas: Canvas;
+  let activeCanvas: Canvas | null;
 
-  function setActiveCanvas(index) {
-    if (manifest && index < manifest.canvases.length)
-      activeCanvas = manifest.canvases[index];
+  function setActiveCanvas(index: number) {
+    activeCanvas = manifest?.canvases?.[index] || null;
+    triggerUpdate();
   }
 
   function triggerUpdate() {
@@ -23,8 +23,7 @@
   }
 
   onMount(() => {
-    if (manifest && manifest.canvases.length)
-      activeCanvas = manifest.canvases[0];
+    activeCanvas = manifest?.canvases?.[0] || null;
   });
 </script>
 

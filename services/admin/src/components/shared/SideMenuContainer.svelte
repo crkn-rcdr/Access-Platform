@@ -1,26 +1,26 @@
-<script>
+<script lang="ts">
   import { onMount } from "svelte";
 
   import Align from "../../components/shared/Align.svelte";
 
-  let container;
+  let container: HTMLDivElement;
 
-  let pageButtons = [];
-  let pageBodies = [];
+  let pageButtons: NodeListOf<Element>;
+  let pageBodies: NodeListOf<Element>;
 
   let activeIndex = 0;
 
   function setActivePageButtonClass() {
     for (let i = 0; i < pageButtons.length; i++) {
-      if (i === activeIndex) pageButtons[i].classList.add("active");
-      else pageButtons[i].classList.remove("active");
+      if (i === activeIndex) pageButtons?.[i]?.classList?.add("active");
+      else pageButtons?.[i]?.classList?.remove("active");
     }
   }
 
   function setActivePageBody() {
     for (let i = 0; i < pageBodies.length; i++) {
-      if (i === activeIndex) pageBodies[i].style.display = "block";
-      else pageBodies[i].style.display = "none";
+      if (i === activeIndex) pageBodies?.[i]?.classList?.remove("hidden");
+      else pageBodies?.[i]?.classList?.add("hidden");
     }
   }
 
@@ -29,17 +29,19 @@
     setActivePageBody();
   }
 
-  onMount(() => {
-    pageButtons = container.querySelectorAll(".side-menu-page-list-button");
-
+  function enablePaging() {
     for (let i = 0; i < pageButtons.length; i++) {
-      pageButtons[i].addEventListener("click", (event) => {
+      pageButtons?.[i]?.addEventListener("click", () => {
         activeIndex = i;
         setPage();
       });
     }
+  }
 
+  onMount(() => {
+    pageButtons = container.querySelectorAll(".side-menu-page-list-button");
     pageBodies = container.querySelectorAll(".side-menu-page");
+    enablePaging();
     setPage();
   });
 </script>
