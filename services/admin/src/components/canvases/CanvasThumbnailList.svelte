@@ -136,9 +136,9 @@ Down: 40
                 </Align>
               </div>
               <div class="image-wrap">
-                <img
+                <div
                   class="thumbnail-img"
-                  src={`https://image-uvic.canadiana.ca/iiif/2/${canvas["id"]}/full/!110,146/0/default.jpg`}
+                  style={`background-image: url(https://image-uvic.canadiana.ca/iiif/2/${canvas["id"]}/full/!110,146/0/default.jpg);`}
                 />
               </div>
             </Align>
@@ -193,6 +193,7 @@ Down: 40
     height: 200px;
     width: 150px;
     margin: 0 20px;
+    background-size: 100% 100%;
   }
 
   .pos {

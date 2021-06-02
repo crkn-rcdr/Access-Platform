@@ -144,7 +144,7 @@
 
 <style>
   .editor {
-    height: 784px;
+    height: 900px;
     width: 1483px;
     margin-bottom: 200px;
   }
