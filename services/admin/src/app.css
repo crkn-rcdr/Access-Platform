@@ -6,6 +6,9 @@
   --grey: #686868;
   --dark-grey: #323232;
   --border-color: #bfbfbf;
+  --structural-div-bg: rgb(240, 240, 240);
+  --light-font: white;
+  --dark-font: black;
   --gradient: linear-gradient(81.79deg, #4abe00 -106.9%, #1f8591 93.69%);
 }
 

@@ -59,7 +59,6 @@
     input.addEventListener("keyup", () => {
       value = value.replace(/\D/g, "");
       resizeInput();
-      //validateNumberInput();
     });
     input.addEventListener("change", () => {
       value = value.replace(/\D/g, "");

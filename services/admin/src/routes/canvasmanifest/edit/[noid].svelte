@@ -2,7 +2,7 @@
   // TODO: Is this the best way to implement global styling?
   import "../../../app.css";
 
-  // fastest object operators
+  // fastest object operators?
   import equal from "fast-deep-equal";
   import { cloneDeep } from "lodash";
 

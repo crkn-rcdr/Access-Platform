@@ -10,8 +10,8 @@
 
 <style>
   .sidemenu {
-    background: var(--grey); /*#303232;*/ /*var(--teal);*/
-    color: white;
+    background: var(--grey);
+    color: var(--light-font);
     height: 100%;
     display: inline-block;
     width: 250px;

@@ -42,7 +42,7 @@
     width: 319px;
     height: 100%;
     /*background-color: rgb(240 240 240);*/
-    color: white;
+    color: var(--light-font);
     background-color: var(--dark-grey);
   }
   #label {

@@ -40,16 +40,12 @@
   });
 </script>
 
-<div
-  bind:this={container}
-  id="openseadragon-wrap"
-  style="
-width: 595px;
-height: 100%;"
-/>
+<div bind:this={container} id="openseadragon-wrap" />
 
 <style>
   #openseadragon-wrap {
     background-color: var(--dark-grey);
+    width: 595px;
+    height: 100%;
   }
 </style>

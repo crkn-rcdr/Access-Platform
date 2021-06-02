@@ -97,10 +97,10 @@
   :global(.drag-target::before) {
     display: inline-block;
     content: "";
-    border-top: 2px solid black;
+    border-top: 2px solid var(--grey);
     width: 100%;
     margin: 0;
-    transform: translateY(-1rem);
+    transform: translateY(-0.9rem);
   }
   :global(.draggable:hover) {
     filter: brightness(1.03);
