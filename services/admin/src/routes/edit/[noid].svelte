@@ -1,26 +1,20 @@
 <script lang="ts">
-  // TODO: Is this the best way to implement global styling?
-  import "../../../app.css";
-
-  // fastest object operators?
-  import equal from "fast-deep-equal";
+  import "../../app.css"; // TODO: Is this the best way to implement global styling?
   import { cloneDeep } from "lodash";
-
   import type { CanvasManifest } from "@crkn-rcdr/access-data/src/access/CanvasManifest";
-
-  import { page } from "$app/stores";
-
-  import Align from "../../../components/shared/Align.svelte";
-  import Toolbar from "../../../components/shared/Toolbar.svelte";
-  import SideMenuContainer from "../../../components/shared/SideMenuContainer.svelte";
-  import ContentEditor from "../../../components/canvasmanifests/ContentEditor.svelte";
-  import InfoEditor from "../../../components/canvasmanifests/InfoEditor.svelte";
-  import SideMenuBody from "../../../components/shared/SideMenuBody.svelte";
-  import SideMenuPageListButton from "../../../components/shared/SideMenuPageListButton.svelte";
-  import SideMenuPage from "../../../components/shared/SideMenuPage.svelte";
-  import SideMenuPageList from "../../../components/shared/SideMenuPageList.svelte";
-
-  const { noid } = $page.params;
+  import Align from "../../components/shared/Align.svelte";
+  import Toolbar from "../../components/shared/Toolbar.svelte";
+  import SideMenuContainer from "../../components/shared/SideMenuContainer.svelte";
+  import ContentEditor from "../../components/canvasmanifests/ContentEditor.svelte";
+  import InfoEditor from "../../components/canvasmanifests/InfoEditor.svelte";
+  import SideMenuBody from "../../components/shared/SideMenuBody.svelte";
+  import SideMenuPageListButton from "../../components/shared/SideMenuPageListButton.svelte";
+  import SideMenuPage from "../../components/shared/SideMenuPage.svelte";
+  import SideMenuPageList from "../../components/shared/SideMenuPageList.svelte";
+  import StatusIndicator from "../../components/canvasmanifests/StatusIndicator.svelte";
+  import EditorActions from "../../components/canvasmanifests/EditorActions.svelte";
+  //import { page } from "$app/stores";
+  //const { noid } = $page.params;
 
   let test: CanvasManifest = {
     id: "123428",
@@ -88,21 +82,6 @@
   };
 
   let testModel: CanvasManifest = cloneDeep(test);
-
-  let saveEnabled = false;
-
-  function save() {
-    test = cloneDeep(testModel);
-    checkModelChanged(testModel);
-  }
-
-  function checkModelChanged(model) {
-    saveEnabled = !equal(test, model);
-  }
-
-  $: {
-    checkModelChanged(testModel);
-  }
 </script>
 
 <svelte:head>
@@ -112,16 +91,10 @@
 <div class="editor">
   <Toolbar title={test["slug"]}>
     <Align direction="column" vertical="flex-end">
-      <span class="status">
-        <label>Status: </label>
-        <span>unpublished</span>
-      </span>
-      <span>
-        {#if saveEnabled}
-          <button class="save" on:click={save}>Save</button>
-        {/if}
-        <button class="secondary">Publish</button>
-      </span>
+      <!--TODO: check object type & add if-->
+      <StatusIndicator bind:manifest={testModel} />
+      <!--TODO: check object type & add if-->
+      <EditorActions bind:manifest={test} bind:manifestModel={testModel} />
     </Align>
   </Toolbar>
 
@@ -133,9 +106,11 @@
 
     <SideMenuBody>
       <SideMenuPage>
+        <!--TODO: check object type & add if-->
         <InfoEditor bind:manifest={testModel} />
       </SideMenuPage>
       <SideMenuPage>
+        <!--TODO: check object type & add if-->
         <ContentEditor bind:manifest={testModel} />
       </SideMenuPage>
     </SideMenuBody>
@@ -147,13 +122,5 @@
     height: 900px;
     width: 1483px;
     margin-bottom: 200px;
-  }
-  .status {
-    margin-bottom: 4px;
-    color: var(--grey);
-  }
-  .status label,
-  .status span {
-    font-size: 16px !important;
   }
 </style>
