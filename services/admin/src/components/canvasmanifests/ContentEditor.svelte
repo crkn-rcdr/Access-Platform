@@ -9,12 +9,14 @@
   import CanvasViewer from "../canvases/CanvasViewer.svelte";
   import CanvasThumbnailList from "../canvases/CanvasThumbnailList.svelte";
   import CanvasSelector from "./CanvasSelector.svelte";
+  import Switch from "../shared/Switch.svelte";
+  import SwitchCase from "../shared/SwitchCase.svelte";
 
   export let manifest: CanvasManifest;
 
   let activeCanvas: Canvas | null;
 
-  let state = "view-content";
+  let state = "view";
 
   function setActiveCanvas(index: number) {
     activeCanvas = manifest?.canvases?.[index] || null;
@@ -33,12 +35,15 @@
 {#if manifest}
   <Align>
     <div class="list-wrapper">
-      <button
-        class="primary"
-        on:click={(e) => {
-          state = "add";
-        }}>add</button
-      >
+      {#if state !== "add"}
+        <button
+          class="primary"
+          on:click={(e) => {
+            state = "add";
+          }}>Add Canvas</button
+        >
+      {/if}
+
       <CanvasThumbnailList
         bind:canvases={manifest["canvases"]}
         on:thumbnailClicked={(e) => {
@@ -46,19 +51,23 @@
         }}
       />
     </div>
-    {#if state === "add"}
-      <CanvasSelector />
-    {:else}
-      <div>
-        <CanvasViewer canvas={activeCanvas} />
-      </div>
-      <div>
-        <CanvasLabelEditor
-          bind:canvas={activeCanvas}
-          on:changed={triggerUpdate}
-        />
-      </div>
-    {/if}
+
+    <div class="state-wrap">
+      <Switch bind:checkVal={state}>
+        <SwitchCase caseVal="add">
+          <CanvasSelector />
+        </SwitchCase>
+        <SwitchCase caseVal="view">
+          <Align>
+            <CanvasViewer canvas={activeCanvas} />
+            <CanvasLabelEditor
+              bind:canvas={activeCanvas}
+              on:changed={triggerUpdate}
+            />
+          </Align>
+        </SwitchCase>
+      </Switch>
+    </div>
   </Align>
 {/if}
 
@@ -68,5 +77,13 @@
   }
   .list-wrapper {
     background-color: var(--structural-div-bg);
+    overflow-y: hidden;
+    width: 319px;
+  }
+  .list-wrapper button.primary {
+    width: 100%;
+  }
+  .state-wrap {
+    flex: 9;
   }
 </style>

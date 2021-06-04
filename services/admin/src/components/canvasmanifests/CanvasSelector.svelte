@@ -1,19 +1,23 @@
 <script lang="ts">
-  import Align from "../shared/Align.svelte";
 </script>
 
 <div class="canvas-selector-wrap">
-  <Align direction="column" vertical="center">
-    <input placeholder="search" />
-    <div>list/select</div>
-  </Align>
+  <div class="action-buttons">
+    <button class="primary">Add Canvas(es)</button>
+    <button class="secondary">Cancel</button>
+  </div>
+  <input placeholder="Search for a manifest to add canvases from..." />
+  <div>list/select</div>
 </div>
 
 <style>
   .canvas-selector-wrap {
-    width: 100%;
+    padding: 1em;
   }
   input {
-    width: 95%;
+    width: 98%;
+  }
+  .action-buttons {
+    text-align: right;
   }
 </style>
