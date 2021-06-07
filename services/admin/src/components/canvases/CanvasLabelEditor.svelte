@@ -44,7 +44,7 @@
   }
 
   #label {
-    width: 273px;
+    width: 300px;
     margin: auto;
     padding: 24px 0;
   }
@@ -54,7 +54,7 @@
   }
 
   .takedown {
-    width: 273px;
+    width: 300px;
     margin: auto;
     display: block;
   }

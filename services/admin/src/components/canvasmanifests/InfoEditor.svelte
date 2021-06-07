@@ -40,57 +40,6 @@
       <option>bottom-to-top</option>
     </select>
   </span><br />
-
-  <br /><br />Testing Scroll:<br />
-
-  <label for="label">Label</label><br />
-  <textarea
-    id="label"
-    name="label"
-    bind:value={manifest["label"]["value"]}
-  /><br /><br />
-
-  <label for="label">Label</label><br />
-  <textarea
-    id="label"
-    name="label"
-    bind:value={manifest["label"]["value"]}
-  /><br /><br />
-
-  <label for="label">Label</label><br />
-  <textarea
-    id="label"
-    name="label"
-    bind:value={manifest["label"]["value"]}
-  /><br /><br />
-
-  <label for="label">Label</label><br />
-  <textarea
-    id="label"
-    name="label"
-    bind:value={manifest["label"]["value"]}
-  /><br /><br />
-
-  <label for="label">Label</label><br />
-  <textarea
-    id="label"
-    name="label"
-    bind:value={manifest["label"]["value"]}
-  /><br /><br />
-
-  <label for="label">Label</label><br />
-  <textarea
-    id="label"
-    name="label"
-    bind:value={manifest["label"]["value"]}
-  /><br /><br />
-
-  <label for="label">Label</label><br />
-  <textarea
-    id="label"
-    name="label"
-    bind:value={manifest["label"]["value"]}
-  /><br /><br />
 </form>
 
 <style>
