@@ -144,10 +144,9 @@
             </div>
             <div class="image-wrap">
               <img
-                on:drag={(e) => e.preventDefault()}
                 alt={canvas["label"]["value"]}
                 class="thumbnail-img"
-                src={`background-image: url(https://image-uvic.canadiana.ca/iiif/2/${canvas["id"]}/full/!110,146/0/default.jpg);`}
+                src={`https://image-uvic.canadiana.ca/iiif/2/${canvas["id"]}/full/!110,146/0/default.jpg`}
               />
             </div>
           </Align>
@@ -204,6 +203,7 @@
     width: 150px;
     margin: 0 20px;
     background-size: 100% 100%;
+    pointer-events: none;
   }
 
   .pos {
