@@ -138,7 +138,7 @@
     /* Gets rid of the page scrolling */
     position: fixed;
     top: 50px;
-    bottom: 100px;
+    bottom: 123px;
     right: 0;
     left: 0;
   }
