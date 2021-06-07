@@ -15,49 +15,48 @@
 
 <div class="backdrop">
   {#if canvas}
-    <Align direction="column">
-      <div id="label">
-        <label for="canvasLabel">Canvas Label</label>
-        <textarea
-          rows="9"
-          name="canvasLabel"
-          bind:value={canvas["label"]["value"]}
-          on:keyup={changed}
-        />
-      </div>
-      <a class="takedown" href="/takedown" target="_blank">
-        <Align>
-          <div class="message">Take this canvas off of the platform</div>
-          <div class="icon">
-            <IoMdOpen />
-          </div>
-        </Align>
-      </a>
-    </Align>
+    <div id="label">
+      <label for="canvasLabel">Canvas Label</label>
+      <textarea
+        rows="1"
+        name="canvasLabel"
+        bind:value={canvas["label"]["value"]}
+        on:keyup={changed}
+      />
+    </div>
+    <a class="takedown" href="/takedown" target="_blank">
+      <Align vertical="center">
+        <div class="message">Take this canvas off of the platform</div>
+        <div class="icon">
+          <IoMdOpen />
+        </div>
+      </Align>
+    </a>
   {/if}
 </div>
 
 <style>
   .backdrop {
-    width: 319px;
+    width: 100%;
     height: 100%;
     color: var(--light-font);
     background-color: var(--dark-grey);
   }
 
   #label {
-    flex: 9;
     width: 273px;
     margin: auto;
-    padding-top: 24px;
+    padding: 24px 0;
   }
 
   textarea {
-    width: 93%;
+    width: 100%;
   }
 
   .takedown {
-    padding: 24px;
+    width: 273px;
+    margin: auto;
+    display: block;
   }
 
   .message {
@@ -65,14 +64,10 @@
     font-style: italic;
   }
 
-  a {
-    color: var(--light-font) !important;
-  }
-
   .icon {
     width: 20px;
     height: 20px;
-    margin-left: 2px;
+    margin-left: 4px;
     margin-top: 0;
   }
 </style>

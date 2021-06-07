@@ -25,6 +25,7 @@
     for (let i = 0; i < canvases.length; i++) {
       indexModel.push(i + 1);
     }
+    console.log(indexModel);
   }
 
   function setActiveIndex(index: number) {
@@ -104,7 +105,7 @@
 <svelte:window on:keydown={handleKeydown} />
 
 {#if indexModel.length}
-  <div bind:this={container} class="list">
+  <div bind:this={container} tabindex="0" class="list">
     <DynamicDragAndDropList bind:dragList={canvases}>
       {#each canvases as canvas, i}
         <div
@@ -142,9 +143,10 @@
               </Align>
             </div>
             <div class="image-wrap">
-              <div
+              <img
+                alt={canvas["label"]["value"]}
                 class="thumbnail-img"
-                style={`background-image: url(https://image-uvic.canadiana.ca/iiif/2/${canvas["id"]}/full/!110,146/0/default.jpg);`}
+                src={`background-image: url(https://image-uvic.canadiana.ca/iiif/2/${canvas["id"]}/full/!110,146/0/default.jpg);`}
               />
             </div>
           </Align>
@@ -156,7 +158,7 @@
 
 <style>
   .list {
-    width: 319px;
+    width: 100%;
     background-color: var(--structural-div-bg);
     height: 100%;
     overflow-y: auto;
@@ -166,6 +168,7 @@
     height: 250px;
     width: 100%;
     background-color: var(--structural-div-bg);
+    overflow: hidden;
   }
 
   .thumbnail:nth-child(1) {

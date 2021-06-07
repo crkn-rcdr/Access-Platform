@@ -1,12 +1,12 @@
 <script lang="ts">
+  import { onMount } from "svelte";
   import type { CanvasManifest } from "@crkn-rcdr/access-data/src/access/CanvasManifest";
-  // fastest object operators?
   import equal from "fast-deep-equal";
-  import { cloneDeep } from "lodash";
 
   export let manifest: CanvasManifest;
   export let manifestModel: CanvasManifest;
 
+  let clone: any;
   let saveEnabled = false;
 
   function checkModelChanged(manifestModel: CanvasManifest) {
@@ -18,9 +18,13 @@
   }
 
   function save() {
-    manifest = cloneDeep(manifestModel);
+    manifest = clone(manifestModel);
     checkModelChanged(manifestModel);
   }
+
+  onMount(async () => {
+    clone = (await import("rfdc")).default();
+  });
 </script>
 
 <span>

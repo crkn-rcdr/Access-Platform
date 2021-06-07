@@ -1,6 +1,5 @@
 <script lang="ts">
-  import "../../app.css"; // TODO: Is this the best way to implement global styling?
-  import { cloneDeep } from "lodash";
+  import { onMount } from "svelte";
   import type { CanvasManifest } from "@crkn-rcdr/access-data/src/access/CanvasManifest";
   import Align from "../../components/shared/Align.svelte";
   import Toolbar from "../../components/shared/Toolbar.svelte";
@@ -15,6 +14,8 @@
   import EditorActions from "../../components/canvasmanifests/EditorActions.svelte";
   //import { page } from "$app/stores";
   //const { noid } = $page.params;
+
+  let clone: any;
 
   let test: CanvasManifest = {
     id: "123428",
@@ -81,46 +82,69 @@
     },
   };
 
-  let testModel: CanvasManifest = cloneDeep(test);
+  let testModel: CanvasManifest;
+
+  function setDataModel() {
+    //TODO: get object from the backend
+    testModel = clone(test);
+  }
+
+  onMount(async () => {
+    clone = (await import("rfdc")).default();
+    setDataModel();
+  });
 </script>
 
 <svelte:head>
   <title>Editor</title>
 </svelte:head>
 
-<div class="editor">
-  <Toolbar title={test["slug"]}>
-    <Align direction="column" vertical="flex-end">
-      <!--TODO: check object type & add if-->
-      <StatusIndicator bind:manifest={testModel} />
-      <!--TODO: check object type & add if-->
-      <EditorActions bind:manifest={test} bind:manifestModel={testModel} />
-    </Align>
-  </Toolbar>
-
-  <SideMenuContainer>
-    <SideMenuPageList>
-      <SideMenuPageListButton>General Info</SideMenuPageListButton>
-      <SideMenuPageListButton>Content</SideMenuPageListButton>
-    </SideMenuPageList>
-
-    <SideMenuBody>
-      <SideMenuPage>
+{#if test && testModel}
+  <div class="editor">
+    <Toolbar title={test["slug"]}>
+      <Align direction="column" vertical="flex-end">
         <!--TODO: check object type & add if-->
-        <InfoEditor bind:manifest={testModel} />
-      </SideMenuPage>
-      <SideMenuPage>
+        <StatusIndicator bind:manifest={testModel} />
         <!--TODO: check object type & add if-->
-        <ContentEditor bind:manifest={testModel} />
-      </SideMenuPage>
-    </SideMenuBody>
-  </SideMenuContainer>
-</div>
+        <EditorActions bind:manifest={test} bind:manifestModel={testModel} />
+      </Align>
+    </Toolbar>
+
+    <SideMenuContainer>
+      <SideMenuPageList>
+        <SideMenuPageListButton>General Info</SideMenuPageListButton>
+        <SideMenuPageListButton>Content</SideMenuPageListButton>
+      </SideMenuPageList>
+
+      <SideMenuBody>
+        <SideMenuPage>
+          <!--TODO: check object type & add if-->
+          <InfoEditor bind:manifest={testModel} />
+        </SideMenuPage>
+        <SideMenuPage>
+          <!--TODO: check object type & add if-->
+          <ContentEditor bind:manifest={testModel} />
+        </SideMenuPage>
+      </SideMenuBody>
+    </SideMenuContainer>
+  </div>
+{/if}
 
 <style>
   .editor {
-    height: 900px;
-    width: 1483px;
+    /*height: 800px;
+    width: 100%;*/
+
+    /* Gets rid of the page scrolling */
+    position: absolute;
     margin-bottom: 200px;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+  }
+
+  html {
+    overflow-y: hidden;
   }
 </style>

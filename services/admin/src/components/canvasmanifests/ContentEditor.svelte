@@ -8,13 +8,10 @@
   import CanvasLabelEditor from "../canvases/CanvasLabelEditor.svelte";
   import CanvasViewer from "../canvases/CanvasViewer.svelte";
   import CanvasThumbnailList from "../canvases/CanvasThumbnailList.svelte";
-  import CanvasSelector from "./CanvasSelector.svelte";
 
   export let manifest: CanvasManifest;
 
   let activeCanvas: Canvas | null;
-
-  let state = "view-content";
 
   function setActiveCanvas(index: number) {
     activeCanvas = manifest?.canvases?.[index] || null;
@@ -33,12 +30,6 @@
 {#if manifest}
   <Align>
     <div class="list-wrapper">
-      <button
-        class="primary"
-        on:click={(e) => {
-          state = "add";
-        }}>add</button
-      >
       <CanvasThumbnailList
         bind:canvases={manifest["canvases"]}
         on:thumbnailClicked={(e) => {
@@ -46,19 +37,15 @@
         }}
       />
     </div>
-    {#if state === "add"}
-      <CanvasSelector />
-    {:else}
-      <div>
-        <CanvasViewer canvas={activeCanvas} />
-      </div>
-      <div>
-        <CanvasLabelEditor
-          bind:canvas={activeCanvas}
-          on:changed={triggerUpdate}
-        />
-      </div>
-    {/if}
+    <div class="view-wrap">
+      <CanvasViewer canvas={activeCanvas} />
+    </div>
+    <div class="label-wrap">
+      <CanvasLabelEditor
+        bind:canvas={activeCanvas}
+        on:changed={triggerUpdate}
+      />
+    </div>
   </Align>
 {/if}
 
@@ -66,7 +53,17 @@
   div {
     height: 100%;
   }
+
   .list-wrapper {
     background-color: var(--structural-div-bg);
+    flex: 2.5;
+  }
+
+  .view-wrap {
+    flex: 4.8;
+  }
+
+  .label-wrap {
+    flex: 2.7;
   }
 </style>

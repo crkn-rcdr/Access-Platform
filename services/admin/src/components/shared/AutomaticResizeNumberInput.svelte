@@ -35,7 +35,7 @@
   }
 
   function resizeInput() {
-    input.style.width = `${input.value.length}em`;
+    input.style.width = `${input.value.length}.9em`;
   }
 
   function sendChangeEvent() {
@@ -57,6 +57,10 @@
     prevValue = value;
     resizeInput();
   });
+
+  $: {
+    console.log("v", value);
+  }
 </script>
 
 <Align horizontal="center">
