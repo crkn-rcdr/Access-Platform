@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { onMount } from "svelte";
 
   /**
@@ -10,12 +10,12 @@
    * if it doesn't. If this is provided, the resolver will trust that it's
    * correct.
    */
-  export let noid = undefined;
+  export let noid: string = undefined;
   const initial = { slug, noid };
 
   /** @type {"READY" | "LOADING" | "MALFORMED" | "ERROR"} */
-  let status = initial.noid === undefined ? "LOADING" : "READY";
-  let timer = null;
+  let status: string = initial.noid === undefined ? "LOADING" : "READY";
+  let timer: number;
   async function resolve() {
     clearTimeout(timer);
     timer = setTimeout(async () => {

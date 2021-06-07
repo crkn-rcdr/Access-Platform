@@ -1,35 +1,34 @@
-<script>
+<script lang="ts">
   import { createEventDispatcher } from "svelte";
 
   const dispatch = createEventDispatcher();
 
   export let label = "Please provide a label for this component.";
 
-  let prefix = "";
-  let lookupList = [];
+  let query = "";
+  let lookupList: string[];
   let error = "";
 
   async function lookupSlug() {
-    if (prefix) {
-      let response = await fetch(`/slug/search/${prefix}.json`, {
+    if (query) {
+      let response = await fetch(`/slug/search/${query}.json`, {
         method: "POST",
         credentials: "same-origin",
       });
-      console.log("lookup response", response);
-      let json = await response.json();
+
+      let jsonResponse = await response.json();
       if (response.status === 200) {
-        lookupList = json;
-        console.log("what in lookup", lookupList);
+        lookupList = jsonResponse.noid;
       } else {
-        error = json.error;
+        error = jsonResponse.error;
       }
     }
   }
 
-  async function selectItem(event) {
-    console.log("***lookuplist***", lookupList);
-    if (lookupList && lookupList.includes(prefix)) {
-      let response = await fetch(`/slug/${prefix}.json`, {
+  async function selectItem() {
+    if (lookupList && Object.keys(lookupList).includes(query)) {
+      console.log("Print true");
+      let response = await fetch(`/slug/${query}.json`, {
         credentials: "same-origin",
       });
       let slug = await response.json();
@@ -47,14 +46,14 @@
   type="text"
   id="slugInput"
   list="slugList"
-  bind:value={prefix}
+  bind:value={query}
   on:input={lookupSlug}
   on:change={selectItem}
 />
 
 <datalist id="slugList">
   {#if lookupList}
-    {#each lookupList as item}
+    {#each Object.keys(lookupList) as item}
       <option>{item}</option>
     {/each}
   {/if}
