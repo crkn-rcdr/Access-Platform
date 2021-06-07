@@ -125,7 +125,7 @@
     border-top: 2px solid var(--grey);
     width: 100%;
     margin: 0;
-    transform: translateY(-0.9rem);
+    transform: translateY(-1rem);
   }
   :global(.draggable:hover) {
     filter: brightness(1.03);
