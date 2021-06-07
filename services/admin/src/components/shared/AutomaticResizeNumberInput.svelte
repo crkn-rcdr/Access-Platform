@@ -57,10 +57,6 @@
     prevValue = value;
     resizeInput();
   });
-
-  $: {
-    console.log("v", value);
-  }
 </script>
 
 <Align horizontal="center">

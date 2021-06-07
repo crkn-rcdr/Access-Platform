@@ -25,7 +25,6 @@
     for (let i = 0; i < canvases.length; i++) {
       indexModel.push(i + 1);
     }
-    console.log(indexModel);
   }
 
   function setActiveIndex(index: number) {
