@@ -110,11 +110,14 @@
   });
 </script>
 
-<div bind:this={container} on:drop={handleDrop}>
+<div class="drag-and-drop-wrap" bind:this={container} on:drop={handleDrop}>
   <slot />
 </div>
 
 <style>
+  .drag-and-drop-wrap {
+    width: 100%;
+  }
   :global(.drag-target) {
     opacity: 0.3;
     filter: brightness(0.5);

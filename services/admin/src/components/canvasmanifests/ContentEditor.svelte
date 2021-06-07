@@ -8,10 +8,14 @@
   import CanvasLabelEditor from "../canvases/CanvasLabelEditor.svelte";
   import CanvasViewer from "../canvases/CanvasViewer.svelte";
   import CanvasThumbnailList from "../canvases/CanvasThumbnailList.svelte";
+  import Switch from "../shared/Switch.svelte";
+  import SwitchCase from "../shared/SwitchCase.svelte";
 
   export let manifest: CanvasManifest;
 
   let activeCanvas: Canvas | null;
+
+  let state = "view";
 
   function setActiveCanvas(index: number) {
     activeCanvas = manifest?.canvases?.[index] || null;
@@ -37,14 +41,22 @@
         }}
       />
     </div>
-    <div class="view-wrap">
-      <CanvasViewer canvas={activeCanvas} />
-    </div>
-    <div class="label-wrap">
-      <CanvasLabelEditor
-        bind:canvas={activeCanvas}
-        on:changed={triggerUpdate}
-      />
+    <div class="state-wrap">
+      <Switch bind:checkVal={state}>
+        <SwitchCase caseVal="view">
+          <Align>
+            <div class="view-wrap">
+              <CanvasViewer canvas={activeCanvas} />
+            </div>
+            <div class="label-wrap">
+              <CanvasLabelEditor
+                bind:canvas={activeCanvas}
+                on:changed={triggerUpdate}
+              />
+            </div>
+          </Align>
+        </SwitchCase>
+      </Switch>
     </div>
   </Align>
 {/if}
@@ -60,10 +72,16 @@
   }
 
   .view-wrap {
-    flex: 4.8;
+    flex: 2;
   }
 
   .label-wrap {
-    flex: 2.7;
+    flex: 1;
+    overflow-y: hidden;
+    width: 319px;
+  }
+
+  .state-wrap {
+    flex: 9;
   }
 </style>

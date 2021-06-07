@@ -105,6 +105,7 @@
 <svelte:window on:keydown={handleKeydown} />
 
 {#if indexModel.length}
+  <button class="primary" on:click={(e) => {}}>Add Canvas</button>
   <div bind:this={container} tabindex="0" class="list">
     <DynamicDragAndDropList bind:dragList={canvases}>
       {#each canvases as canvas, i}
@@ -158,10 +159,13 @@
 
 <style>
   .list {
+    height: 92%;
     width: 100%;
-    background-color: var(--structural-div-bg);
-    height: 100%;
     overflow-y: auto;
+  }
+
+  button.primary {
+    width: 100%;
   }
 
   .thumbnail {
@@ -172,7 +176,7 @@
   }
 
   .thumbnail:nth-child(1) {
-    margin-top: 24px;
+    margin-top: 0px;
   }
 
   .thumbnail.active {
@@ -224,20 +228,11 @@
   .thumbnail:hover .action.icon {
     display: inherit;
   }
-  .add-button:hover:after {
-    content: "";
-    position: absolute;
-    width: 100%;
-    left: 0;
-    height: 1px;
-    border-bottom: 2px solid var(--grey);
-    margin-top: 12px;
-    opacity: 0.8;
-    top: 236px;
-  }
+
   .thumbnail:hover .pos {
     display: none;
   }
+
   .thumbnail:hover .pos-input {
     display: inherit;
   }
