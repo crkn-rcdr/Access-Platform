@@ -49,12 +49,23 @@
 </script>
 
 {#if user}
-  <p>
-    Logged in as: <b>{user.name}</b> ({user.email}).
-    <a href={logoutUrl}>Log out</a>
-  </p>
-
+  <nav class="site-nav">
+    <p>
+      Logged in as: <b>{user.name}</b> ({user.email}).
+      <a href={logoutUrl}>Log out</a>
+    </p>
+  </nav>
   <slot />
 {:else}
-  <p>Weird.</p>
+  <nav class="site-nav">
+    <p>Weird.</p>
+  </nav>
 {/if}
+
+<style>
+  .site-nav {
+    padding: 24px 16px;
+    background: var(--gradient);
+    color: var(--light-font);
+  }
+</style>

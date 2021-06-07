@@ -16,7 +16,7 @@
   .toolbar {
     background-color: var(--structural-div-bg);
     border-bottom: 1px solid var(--border-color);
-    padding: 16px 32px;
+    padding: 12px 32px;
   }
   h4 {
     margin: 0 !important;
