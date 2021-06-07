@@ -136,10 +136,9 @@
     width: 100%;*/
 
     /* Gets rid of the page scrolling */
-    position: absolute;
-    margin-bottom: 200px;
-    top: 0;
-    bottom: 0;
+    position: fixed;
+    top: 50px;
+    bottom: 100px;
     right: 0;
     left: 0;
   }
