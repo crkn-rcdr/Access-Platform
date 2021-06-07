@@ -104,61 +104,63 @@
 <svelte:window on:keydown={handleKeydown} />
 
 {#if indexModel.length}
-  <button class="primary" on:click={(e) => {}}>Add Canvas</button>
-  <div bind:this={container} tabindex="0" class="list">
-    <DynamicDragAndDropList bind:dragList={canvases}>
-      {#each canvases as canvas, i}
-        <div
-          class="thumbnail"
-          class:active={isActive(canvas)}
-          on:click={() => setActiveIndex(i)}
-        >
-          <Align vertical="flex-start">
-            <div class="actions-wrap">
-              <Align vertical="flex-start" direction="column">
-                <div class="action pos">
-                  {indexModel[i]}
-                </div>
-                <div
-                  class="action pos-input"
-                  on:click={(e) => {
-                    e.stopPropagation();
-                  }}
-                >
-                  <AutomaticResizeNumberInput
-                    name="position"
-                    max={canvases.length}
-                    on:changed={(e) => {
-                      moveCanvas(e, i);
+  <Align vertical="flex-start" direction="column">
+    <button class="primary" on:click={(e) => {}}>Add Canvas</button>
+    <div bind:this={container} tabindex="0" class="list">
+      <DynamicDragAndDropList bind:dragList={canvases}>
+        {#each canvases as canvas, i}
+          <div
+            class="thumbnail"
+            class:active={isActive(canvas)}
+            on:click={() => setActiveIndex(i)}
+          >
+            <Align vertical="flex-start">
+              <div class="actions-wrap">
+                <Align vertical="flex-start" direction="column">
+                  <div class="action pos">
+                    {indexModel[i]}
+                  </div>
+                  <div
+                    class="action pos-input"
+                    on:click={(e) => {
+                      e.stopPropagation();
                     }}
-                    bind:value={indexModel[i]}
-                  />
-                </div>
-                <div
-                  class="action icon"
-                  on:click={(e) => deleteCanvasByIndex(e, i)}
-                >
-                  <TiTrash />
-                </div>
-              </Align>
-            </div>
-            <div class="image-wrap">
-              <img
-                alt={canvas["label"]["value"]}
-                class="thumbnail-img"
-                src={`https://image-uvic.canadiana.ca/iiif/2/${canvas["id"]}/full/!110,146/0/default.jpg`}
-              />
-            </div>
-          </Align>
-        </div>
-      {/each}
-    </DynamicDragAndDropList>
-  </div>
+                  >
+                    <AutomaticResizeNumberInput
+                      name="position"
+                      max={canvases.length}
+                      on:changed={(e) => {
+                        moveCanvas(e, i);
+                      }}
+                      bind:value={indexModel[i]}
+                    />
+                  </div>
+                  <div
+                    class="action icon"
+                    on:click={(e) => deleteCanvasByIndex(e, i)}
+                  >
+                    <TiTrash />
+                  </div>
+                </Align>
+              </div>
+              <div class="image-wrap">
+                <img
+                  alt={canvas["label"]["value"]}
+                  class="thumbnail-img"
+                  src={`https://image-uvic.canadiana.ca/iiif/2/${canvas["id"]}/full/!110,146/0/default.jpg`}
+                />
+              </div>
+            </Align>
+          </div>
+        {/each}
+      </DynamicDragAndDropList>
+    </div>
+  </Align>
 {/if}
 
 <style>
   .list {
-    height: 92%;
+    flex: 9;
     width: 100%;
     overflow-y: auto;
   }
