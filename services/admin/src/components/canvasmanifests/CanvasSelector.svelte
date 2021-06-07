@@ -6,6 +6,7 @@
     <button class="primary">Add Canvas(es)</button>
     <button class="secondary">Cancel</button>
   </div>
+  <br />
   <input placeholder="Search for a manifest to add canvases from..." />
   <div>list/select</div>
 </div>
