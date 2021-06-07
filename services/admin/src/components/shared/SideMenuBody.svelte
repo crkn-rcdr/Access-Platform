@@ -4,6 +4,6 @@
 
 <style>
   .side-menu-body {
-    flex: 8;
+    flex: 8.5;
   }
 </style>

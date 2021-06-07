@@ -10,7 +10,7 @@
     color: var(--light-font);
     height: 100%;
     display: inline-block;
-    flex: 2;
+    flex: 1.5;
   }
   .sidemenu ul {
     list-style-type: none;
