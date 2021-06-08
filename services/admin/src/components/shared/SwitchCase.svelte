@@ -2,9 +2,7 @@
   import { getContext } from "svelte";
   export let caseVal: any;
   let checkStore: SvelteStore<any> = getContext("checkStore");
-  checkStore.subscribe((val) => {
-    console.log("val", val);
-  });
+  /*checkStore.subscribe((val: any) => {});*/
 </script>
 
 {#if $checkStore === caseVal}

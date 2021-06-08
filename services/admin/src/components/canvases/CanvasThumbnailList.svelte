@@ -147,7 +147,7 @@
                 <img
                   alt={canvas["label"]["value"]}
                   class="thumbnail-img"
-                  src={`https://image-uvic.canadiana.ca/iiif/2/${canvas["id"]}/full/!110,146/0/default.jpg`}
+                  src={`https://image-uvic.canadiana.ca/iiif/2/${canvas["id"]}/full/!220,292/0/default.jpg`}
                 />
               </div>
             </Align>
@@ -170,7 +170,7 @@
   }
 
   .thumbnail {
-    height: 250px;
+    height: max(22vh, 250px);
     width: 100%;
     background-color: var(--structural-div-bg);
     overflow: hidden;
@@ -204,10 +204,9 @@
   }
 
   .image-wrap .thumbnail-img {
-    height: 200px;
-    width: 150px;
+    height: max(18vh, 200px);
+    width: max(13vh, 150px);
     margin: 0 20px;
-    background-size: 100% 100%;
     pointer-events: none;
   }
 
@@ -215,7 +214,7 @@
     font-weight: 400;
     margin-top: 9px;
     margin-left: 9px;
-    font-size: 16px;
+    font-size: var(--smaller-font-size);
   }
 
   .action.icon {

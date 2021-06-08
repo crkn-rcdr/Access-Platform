@@ -46,11 +46,11 @@
   import Switch from "../../../components/shared/Switch.svelte";
   import SwitchCase from "../../../components/shared/SwitchCase.svelte";
 
-  export let object: AccessObject;
-  export let type: "collection" | "canvasManifest" | "other";
+  //export let object: AccessObject;
+  //export let type: "collection" | "canvasManifest" | "other";
 
   //TODO: grab real data
-  type = "canvasManifest";
+  let type = "canvasManifest";
 
   let clone: any;
 
@@ -142,7 +142,7 @@
       </Align>
     </Toolbar>
 
-    <Switch bind:checkVal={type}>
+    <Switch checkVal={type}>
       <SwitchCase caseVal="canvasManifest">
         <!--TODO: Wrap each types in an editor component -->
         <SideMenuContainer>
@@ -150,16 +150,8 @@
             <SideMenuPageListButton>General Info</SideMenuPageListButton>
             <SideMenuPageListButton>Content</SideMenuPageListButton>
           </SideMenuPageList>
-
           <SideMenuBody>
             <SideMenuPage>
-              {#if object}
-                <h1>{object["id"]}</h1>
-
-                <h2>This is a {type}</h2>
-
-                <pre>{JSON.stringify(object, null, 2)}</pre>
-              {/if}
               <InfoEditor bind:manifest={testModel} />
             </SideMenuPage>
             <SideMenuPage>
@@ -171,6 +163,8 @@
     </Switch>
   </div>
 {/if}
+
+<slot />
 
 <style>
   .editor {

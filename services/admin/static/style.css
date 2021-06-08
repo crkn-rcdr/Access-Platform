@@ -14,12 +14,14 @@
   --dark-font: black;
   --red: red;
   --gradient: linear-gradient(40.79deg, #3fa200 -106.9%, #1f8591 93.69%);
+  --default-font-size: max(1vw, 18px);
+  --smaller-font-size: max(0.9vw, 16px);
 }
 
 body {
   font-family: "Roboto", sans-serif !important;
   font-weight: 300;
-  font-size: 18px;
+  font-size: var(--default-font-size);
 }
 
 /* Box sizing rules, see: https://piccalil.li/blog/a-modern-css-reset */
@@ -69,7 +71,6 @@ a:not([class]) {
 /* Make images easier to work with */
 img,
 picture {
-  max-width: 100%;
   display: block;
 }
 
@@ -119,27 +120,27 @@ h6 {
 }
 
 h1 {
-  font-size: 48px;
+  font-size: max(4vw, 48px);
 }
 
 h2 {
-  font-size: 42px;
+  font-size: max(3.4vw, 42px);
 }
 
 h3 {
-  font-size: 36px;
+  font-size: max(2.8vw, 36px);
 }
 
 h4 {
-  font-size: 30px;
+  font-size: max(2.2vw, 30px);
 }
 
 h5 {
-  font-size: 24px;
+  font-size: max(1.6vw, 24px);
 }
 
 h6 {
-  font-size: 20px;
+  font-size: max(1.2vw, 20px);
 }
 
 button,
@@ -194,7 +195,7 @@ select {
   outline: none;
   padding: 8px;
   border-radius: 4px;
-  font-size: 16px;
+  font-size: var(--smaller-font-size);
 }
 
 a {

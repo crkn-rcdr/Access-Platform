@@ -31,7 +31,7 @@
   });
 </script>
 
-{#if manifest}
+{#if manifest && activeCanvas}
   <Align>
     <div class="list-wrapper">
       <CanvasThumbnailList

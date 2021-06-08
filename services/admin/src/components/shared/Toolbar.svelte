@@ -5,7 +5,7 @@
 
 <div class="toolbar shadow">
   <Align vertical="center">
-    <h4>{title}</h4>
+    <h5>{title}</h5>
     <div class="end-content">
       <slot />
     </div>
@@ -18,7 +18,7 @@
     border-bottom: 1px solid var(--border-color);
     padding: 12px 32px;
   }
-  h4 {
+  h5 {
     margin: 0 !important;
     display: inline;
     flex: 9;

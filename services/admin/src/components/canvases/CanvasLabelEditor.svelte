@@ -41,10 +41,11 @@
     height: 100%;
     color: var(--light-font);
     background-color: var(--dark-grey);
+    overflow: hidden;
   }
 
   #label {
-    width: 300px;
+    width: max(80%, 250px);
     margin: auto;
     padding: 24px 0;
   }
@@ -54,19 +55,20 @@
   }
 
   .takedown {
-    width: 300px;
+    width: max(80%, 250px);
     margin: auto;
     display: block;
   }
 
   .message {
-    font-size: 16px !important;
+    font-size: var(--smaller-font-size) !important;
     font-style: italic;
   }
 
   .icon {
-    width: 20px;
-    height: 20px;
+    display: block;
+    width: max(1.2vw, 20px);
+    height: max(1.2vw, 20px);
     margin-left: 4px;
     margin-top: 0;
   }
