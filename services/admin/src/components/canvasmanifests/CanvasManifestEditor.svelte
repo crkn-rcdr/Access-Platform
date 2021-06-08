@@ -33,10 +33,10 @@
   </SideMenuPageList>
   <SideMenuBody>
     <SideMenuPage>
-      <!--{JSON.stringify(object)}-->
       <InfoEditor bind:manifest={model} />
     </SideMenuPage>
-    <SideMenuPage>
+    <SideMenuPage overflowY="hidden">
+      <!--FF has an issue with the scrollbar for this page - but it's designed to stretch with the width and height of the browser-->
       <ContentEditor bind:manifest={model} />
     </SideMenuPage>
   </SideMenuBody>

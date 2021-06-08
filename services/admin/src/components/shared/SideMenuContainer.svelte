@@ -47,7 +47,7 @@
 </script>
 
 <div bind:this={container} class="side-menu-container">
-  <Align vertical="stretch">
+  <Align display="flex" vertical="stretch">
     <slot />
   </Align>
 </div>
