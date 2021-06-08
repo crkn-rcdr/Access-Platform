@@ -40,7 +40,7 @@
     width: 100%;
     height: 100%;
     color: var(--light-font);
-    background-color: var(--dark-grey);
+    background-color: black;
     overflow: hidden;
   }
 

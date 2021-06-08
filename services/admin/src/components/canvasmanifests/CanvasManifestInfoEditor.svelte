@@ -14,7 +14,8 @@
   <textarea id="label" name="label" bind:value={manifest["label"]["none"]} /><br
   /><br />
 
-  <span>
+  <!--Fixtures don't have this yet, causes save to be enabled on load-->
+  <!--span>
     <label for="behavior">Behavior</label>
     <select id="behavior" name="behavior" bind:value={manifest["behavior"]}>
       <option>unordered</option>
@@ -36,7 +37,7 @@
       <option>top-to-bottom</option>
       <option>bottom-to-top</option>
     </select>
-  </span><br />
+  </span><br /-->
 </form>
 
 <style>

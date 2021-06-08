@@ -33,6 +33,7 @@
   </SideMenuPageList>
   <SideMenuBody>
     <SideMenuPage>
+      <!--{JSON.stringify(object)}-->
       <InfoEditor bind:manifest={model} />
     </SideMenuPage>
     <SideMenuPage overflowY="hidden">

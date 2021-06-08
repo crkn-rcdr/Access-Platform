@@ -4,6 +4,7 @@
   import type { CanvasManifest } from "@crkn-rcdr/access-data/src/access/CanvasManifest";
   import { onMount } from "svelte";
   import equal from "fast-deep-equal";
+  //import { detailedDiff } from "deep-object-diff";
 
   export let manifest: AccessObject;
   export let manifestModel: CanvasManifest;
@@ -29,6 +30,7 @@
   });
 </script>
 
+<!--{JSON.stringify(detailedDiff(manifest, manifestModel))}-->
 <span>
   {#if saveEnabled}
     <button class="save" on:click={save}>Save</button>
