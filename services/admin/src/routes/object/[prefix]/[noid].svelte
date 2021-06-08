@@ -142,19 +142,16 @@
       </Align>
     </Toolbar>
 
-    <SideMenuContainer>
-      <SideMenuPageList>
-        <Switch bind:checkVal={type}>
-          <SwitchCase caseVal="canvasManifest">
+    <Switch bind:checkVal={type}>
+      <SwitchCase caseVal="canvasManifest">
+        <!--TODO: Wrap each types in an editor component -->
+        <SideMenuContainer>
+          <SideMenuPageList>
             <SideMenuPageListButton>General Info</SideMenuPageListButton>
             <SideMenuPageListButton>Content</SideMenuPageListButton>
-          </SwitchCase>
-        </Switch>
-      </SideMenuPageList>
+          </SideMenuPageList>
 
-      <SideMenuBody>
-        <Switch bind:checkVal={type}>
-          <SwitchCase caseVal="canvasManifest">
+          <SideMenuBody>
             <SideMenuPage>
               {#if object}
                 <h1>{object["id"]}</h1>
@@ -168,10 +165,10 @@
             <SideMenuPage>
               <ContentEditor bind:manifest={testModel} />
             </SideMenuPage>
-          </SwitchCase>
-        </Switch>
-      </SideMenuBody>
-    </SideMenuContainer>
+          </SideMenuBody>
+        </SideMenuContainer>
+      </SwitchCase>
+    </Switch>
   </div>
 {/if}
 
