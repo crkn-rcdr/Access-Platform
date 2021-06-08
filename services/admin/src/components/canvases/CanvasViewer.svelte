@@ -19,7 +19,9 @@
         id: "openseadragon-wrap",
         prefixUrl: "/openseadragon/images/", // for the icons the viewer uses
         tileSources: [
-          `https://image-uvic.canadiana.ca/iiif/2/${canvas["id"]}/info.json`,
+          `https://image-uvic.canadiana.ca/iiif/2/${encodeURIComponent(
+            canvas["id"]
+          )}/info.json`,
         ],
       });
     }

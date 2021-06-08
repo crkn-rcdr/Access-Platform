@@ -147,7 +147,9 @@
                 <img
                   alt={canvas["label"]["value"]}
                   class="thumbnail-img"
-                  src={`https://image-uvic.canadiana.ca/iiif/2/${canvas["id"]}/full/!220,292/0/default.jpg`}
+                  src={`https://image-uvic.canadiana.ca/iiif/2/${encodeURIComponent(
+                    canvas["id"]
+                  )}/full/!220,292/0/default.jpg`}
                 />
               </div>
             </Align>

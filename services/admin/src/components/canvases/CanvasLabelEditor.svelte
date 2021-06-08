@@ -20,7 +20,7 @@
       <textarea
         rows="1"
         name="canvasLabel"
-        bind:value={canvas["label"]["value"]}
+        bind:value={canvas["label"]["none"]}
         on:keyup={changed}
       />
     </div>

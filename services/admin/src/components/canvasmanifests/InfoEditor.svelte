@@ -11,11 +11,8 @@
   /><br />
 
   <label for="label">Label</label><br />
-  <textarea
-    id="label"
-    name="label"
-    bind:value={manifest["label"]["value"]}
-  /><br /><br />
+  <textarea id="label" name="label" bind:value={manifest["label"]["none"]} /><br
+  /><br />
 
   <span>
     <label for="behavior">Behavior</label>

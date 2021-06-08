@@ -1,5 +1,5 @@
 <script context="module" lang="ts">
-  /*import type { Load } from "@sveltejs/kit";
+  import type { Load } from "@sveltejs/kit";
   export const load: Load = async ({ page, fetch }) => {
     const id = [
       page.params["prefix"] as string,
@@ -20,148 +20,46 @@
     } else {
       return { status: response.status, error: new Error(json.error) };
     }
-  };*/
+  };
 </script>
 
 <script lang="ts">
-  import { onMount } from "svelte";
-
   // TODO: figure out why putting import statements down here works. it happens by default when you use vscode to find your import
   import { isCanvasManifest, isCollection } from "@crkn-rcdr/access-data";
   // if we kept AccessObject in the import above, the code fails on the client. always use `import type` with types
   import type { AccessObject } from "@crkn-rcdr/access-data";
-
   import type { CanvasManifest } from "@crkn-rcdr/access-data/src/access/CanvasManifest";
-  import Align from "../../../components/shared/Align.svelte";
-  import Toolbar from "../../../components/shared/Toolbar.svelte";
-  import SideMenuContainer from "../../../components/shared/SideMenuContainer.svelte";
-  import ContentEditor from "../../../components/canvasmanifests/ContentEditor.svelte";
-  import InfoEditor from "../../../components/canvasmanifests/InfoEditor.svelte";
-  import SideMenuBody from "../../../components/shared/SideMenuBody.svelte";
-  import SideMenuPageListButton from "../../../components/shared/SideMenuPageListButton.svelte";
-  import SideMenuPage from "../../../components/shared/SideMenuPage.svelte";
-  import SideMenuPageList from "../../../components/shared/SideMenuPageList.svelte";
-  import StatusIndicator from "../../../components/canvasmanifests/StatusIndicator.svelte";
-  import EditorActions from "../../../components/canvasmanifests/EditorActions.svelte";
+
   import Switch from "../../../components/shared/Switch.svelte";
   import SwitchCase from "../../../components/shared/SwitchCase.svelte";
+  import Editor from "../../../components/canvasmanifests/Editor.svelte";
 
-  //export let object: AccessObject;
-  //export let type: "collection" | "canvasManifest" | "other";
-
-  //TODO: grab real data
-  let type = "canvasManifest";
+  export let object: AccessObject;
+  export let type: "collection" | "canvasManifest" | "other";
+  type = "canvasManifest"; //TODO: implement type check
 
   let clone: any;
+  let model: CanvasManifest; // | Canvas etc...
 
-  let test: CanvasManifest = {
-    id: "123428",
-    _rev: "123",
-    public: 1622213541,
-    updated: 1622213541,
-    updateInternalmeta: {
-      requestDate: 1622213541,
-    },
-    slug: "oocihm.8_06842_6",
-    label: {
-      value: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    },
-    summary: {
-      value:
-        "Vivamus sit amet suscipit risus. Mauris commodo felis ut tortor luctus, id lobortis nibh lobortis.",
-    },
-    dmdType: "marc",
-    type: "manifest",
-    behavior: "paged",
-    viewingDirection: "left-to-right",
-    from: "canvases",
-    canvases: [
-      {
-        id: "69429%2Fc0b56d40px5r",
-        label: {
-          value:
-            "Ut mattis congue elit, a posuere est facilisis vitae. Duis consectetur sit amet augue eu rhoncus. Aenean euismod, mi a blandit ullamcorper, ipsum nisi pharetra tellus, eget placerat libero dolor in nibh. Nulla eget imperdiet sem. Pellentesque pellentesque elit eu elit commodo hendrerit.",
-        },
-      },
-      {
-        id: "69429%2Fc06d5pb3254z",
-        label: {
-          value:
-            "Est facilisis vitae. Duis consectetur sit amet augue eu rhoncus. Aenean euismod, mi a blandit ullamcorper, ipsum nisi pharetra tellus, eget placerat libero dolor in nibh. Nulla eget imperdiet sem. Pellentesque pellentesque elit eu elit commodo hendrerit.",
-        },
-      },
-      {
-        id: "69429%2Fc02n4zj5dd10",
-        label: {
-          value:
-            "Duis consectetur sit amet augue eu rhoncus. Aenean euismod, mi a blandit ullamcorper, ipsum nisi pharetra tellus, eget placerat libero dolor in nibh. Nulla eget imperdiet sem. Pellentesque pellentesque elit eu elit commodo hendrerit.",
-        },
-      },
-      {
-        id: "69429%2Fc0xw47r7s308",
-        label: {
-          value:
-            "Aenean euismod, mi a blandit ullamcorper, ipsum nisi pharetra tellus, eget placerat libero dolor in nibh. Nulla eget imperdiet sem. Pellentesque pellentesque elit eu elit commodo hendrerit.",
-        },
-      },
-      {
-        id: "69429%2Fc0t43j004981",
-        label: {
-          value:
-            "Ipsum nisi pharetra tellus, eget placerat libero dolor in nibh. Nulla eget imperdiet sem. Pellentesque pellentesque elit eu elit commodo hendrerit.",
-        },
-      },
-    ],
-    ocrPdf: {
-      path: "/a/path",
-      extension: "pdf",
-      size: 123,
-    },
-  };
-
-  let testModel: CanvasManifest;
-
-  function setDataModel() {
-    //TODO: get object from the backend
-    testModel = clone(test);
+  async function setDataModel(object: AccessObject) {
+    clone = (await import("rfdc")).default();
+    model = clone(object);
   }
 
-  onMount(async () => {
-    clone = (await import("rfdc")).default();
-    setDataModel();
+  $: setDataModel(object).then(() => {
+    console.log("Done");
   });
 </script>
 
 <!--TODO: remove test code-->
-{#if test && testModel}
-  <div class="editor">
-    <Toolbar title={test["slug"]}>
-      <Align direction="column" vertical="flex-end">
-        <StatusIndicator bind:manifest={testModel} />
-        <EditorActions bind:manifest={test} bind:manifestModel={testModel} />
-      </Align>
-    </Toolbar>
-
-    <Switch checkVal={type}>
-      <SwitchCase caseVal="canvasManifest">
-        <!--TODO: Wrap each types in an editor component -->
-        <SideMenuContainer>
-          <SideMenuPageList>
-            <SideMenuPageListButton>General Info</SideMenuPageListButton>
-            <SideMenuPageListButton>Content</SideMenuPageListButton>
-          </SideMenuPageList>
-          <SideMenuBody>
-            <SideMenuPage>
-              <InfoEditor bind:manifest={testModel} />
-            </SideMenuPage>
-            <SideMenuPage>
-              <ContentEditor bind:manifest={testModel} />
-            </SideMenuPage>
-          </SideMenuBody>
-        </SideMenuContainer>
-      </SwitchCase>
-    </Switch>
-  </div>
+{#if object && model}
+  <Switch checkVal={type}>
+    <SwitchCase caseVal="canvasManifest">
+      <div class="editor">
+        <Editor {object} {model} />
+      </div>
+    </SwitchCase>
+  </Switch>
 {/if}
 
 <slot />
