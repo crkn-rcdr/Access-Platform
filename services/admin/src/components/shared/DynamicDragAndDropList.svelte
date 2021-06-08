@@ -1,9 +1,11 @@
 <script lang="ts">
+  import { createEventDispatcher, onMount } from "svelte";
   import { moveArrayElement } from "../../lib/arrayUtil";
-  import { onMount } from "svelte";
 
   export let dragList: any[] = [];
   export let direction = "y"; // y | x | both
+
+  const dispatch = createEventDispatcher();
 
   let container: HTMLDivElement;
   let originalItemIndex: number;
@@ -16,6 +18,8 @@
       originalItemIndex,
       destinationItemIndex
     );
+
+    dispatch("itemDropped", { originalItemIndex, destinationItemIndex });
   }
 
   function checkVerticalList(rect: DOMRect, destinationY: number): boolean {

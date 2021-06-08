@@ -8,13 +8,15 @@
   import SideMenuPageListButton from "../shared/SideMenuPageListButton.svelte";
   import SideMenuPage from "../shared/SideMenuPage.svelte";
   import SideMenuPageList from "../shared/SideMenuPageList.svelte";
-  import ContentEditor from "./ContentEditor.svelte";
-  import InfoEditor from "./InfoEditor.svelte";
-  import StatusIndicator from "./StatusIndicator.svelte";
-  import EditorActions from "./EditorActions.svelte";
+  import ContentEditor from "./CanvasManifestContentEditor.svelte";
+  import InfoEditor from "./CanvasManifestInfoEditor.svelte";
+  import StatusIndicator from "./CanvasManifestStatusIndicator.svelte";
+  import EditorActions from "./CanvasManifestEditorActions.svelte";
 
   export let object: AccessObject;
   export let model: CanvasManifest;
+
+  // test url: http://localhost:3060/object/69429/m02n4zg6h671
 </script>
 
 <Toolbar title={object["slug"]}>
@@ -24,7 +26,6 @@
   </Align>
 </Toolbar>
 
-<!--TODO: Wrap each types in an editor component -->
 <SideMenuContainer>
   <SideMenuPageList>
     <SideMenuPageListButton>General Info</SideMenuPageListButton>

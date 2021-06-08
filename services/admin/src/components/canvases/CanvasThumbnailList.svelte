@@ -107,7 +107,12 @@
   <Align vertical="flex-start" direction="column">
     <button class="primary" on:click={(e) => {}}>Add Canvas</button>
     <div bind:this={container} tabindex="0" class="list">
-      <DynamicDragAndDropList bind:dragList={canvases}>
+      <DynamicDragAndDropList
+        bind:dragList={canvases}
+        on:itemDropped={(e) => {
+          setActiveIndex(e.detail.destinationItemIndex);
+        }}
+      >
         {#each canvases as canvas, i}
           <div
             class="thumbnail"

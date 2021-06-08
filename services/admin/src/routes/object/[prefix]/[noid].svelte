@@ -29,13 +29,13 @@
   // if we kept AccessObject in the import above, the code fails on the client. always use `import type` with types
   import type { AccessObject } from "@crkn-rcdr/access-data";
   import type { CanvasManifest } from "@crkn-rcdr/access-data/src/access/CanvasManifest";
-
   import Switch from "../../../components/shared/Switch.svelte";
   import SwitchCase from "../../../components/shared/SwitchCase.svelte";
-  import Editor from "../../../components/canvasmanifests/Editor.svelte";
+  import CanvasManifestEditor from "../../../components/canvasmanifests/CanvasManifestEditor.svelte";
 
   export let object: AccessObject;
   export let type: "collection" | "canvasManifest" | "other";
+
   type = "canvasManifest"; //TODO: implement type check
 
   let clone: any;
@@ -51,33 +51,24 @@
   });
 </script>
 
-<!--TODO: remove test code-->
-{#if object && model}
-  <Switch checkVal={type}>
-    <SwitchCase caseVal="canvasManifest">
-      <div class="editor">
-        <Editor {object} {model} />
-      </div>
-    </SwitchCase>
-  </Switch>
+{#if object && model && type}
+  <div class="editor">
+    <Switch checkVal={type}>
+      <SwitchCase caseVal="canvasManifest">
+        <CanvasManifestEditor {object} {model} />
+      </SwitchCase>
+    </Switch>
+  </div>
 {/if}
 
 <slot />
 
 <style>
   .editor {
-    /*height: 800px;
-    width: 100%;*/
-
-    /* Gets rid of the page scrolling */
     position: fixed;
     top: 74px;
     bottom: 115px;
     right: 0;
     left: 0;
-  }
-
-  html {
-    overflow-y: hidden;
   }
 </style>
