@@ -8,6 +8,7 @@
   import { moveArrayElement } from "../../lib/arrayUtil";
 
   export let canvases: Canvas[] = [];
+  export let showAddButton = true;
 
   let indexModel: number[] = [];
   let activeCanvasIndex: number = 0;
@@ -95,6 +96,10 @@
     return false;
   }
 
+  function addClicked() {
+    dispatch("addClicked");
+  }
+
   onMount(() => {
     if (canvases.length) activeCanvasIndex = 0;
     setIndexModel();
@@ -105,8 +110,15 @@
 
 {#if indexModel.length}
   <Align vertical="flex-start" direction="column">
-    <button class="primary" on:click={(e) => {}}>Add Canvas</button>
-    <div bind:this={container} tabindex="0" class="list">
+    {#if showAddButton}
+      <button class="primary" on:click={addClicked}>Add Canvas</button>
+    {/if}
+    <div
+      bind:this={container}
+      tabindex="0"
+      class="list"
+      class:disabled={!showAddButton}
+    >
       <DynamicDragAndDropList
         bind:dragList={canvases}
         on:itemDropped={(e) => {
@@ -167,9 +179,23 @@
 
 <style>
   .list {
+    position: relative;
     flex: 9;
     width: 100%;
     overflow-y: auto;
+  }
+  .list.disabled {
+    overflow-y: hidden;
+  }
+  .list.disabled::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.8;
+    background: black;
   }
 
   button.primary {

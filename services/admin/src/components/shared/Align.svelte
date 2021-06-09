@@ -3,6 +3,7 @@
   export let horizontal = "flex-start";
   export let vertical = "flex-start";
   export let direction = "row";
+  export let wrap = "no-wrap";
 </script>
 
 <div
@@ -11,7 +12,8 @@
         display: {display};
         justify-content: {horizontal}; 
         align-items: {vertical};
-        flex-direction: {direction};"
+        flex-direction: {direction};
+        flex-wrap: {wrap}"
 >
   <slot />
 </div>

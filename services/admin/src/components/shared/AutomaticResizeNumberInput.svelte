@@ -81,6 +81,7 @@
 <style>
   input {
     margin-top: 0;
+    padding: 8px !important;
   }
   .icon {
     opacity: 0.6;

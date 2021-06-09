@@ -8,7 +8,7 @@
   --green: #368d00;
   --grey: #686868;
   --dark-grey: #323232;
-  --border-color: #bfbfbf;
+  --border-color: #c3c3c3;
   --structural-div-bg: rgb(240, 240, 240);
   --light-font: white;
   --dark-font: black;
@@ -16,6 +16,7 @@
   --gradient: linear-gradient(40.79deg, #3fa200 -106.9%, #1f8591 93.69%);
   --default-font-size: max(1vw, 18px);
   --smaller-font-size: max(0.9vw, 16px);
+  --shadow: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.25));
 }
 
 body {
@@ -145,7 +146,7 @@ h6 {
 
 button,
 .shadow {
-  filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.25));
+  filter: var(--shadow);
 }
 
 button {
@@ -193,9 +194,10 @@ select {
   border: 1px solid var(--border-color);
   margin-top: 4px;
   outline: none;
-  padding: 8px;
+  padding: 16px;
   border-radius: 4px;
   font-size: var(--smaller-font-size);
+  /*filter: var(--shadow);*/
 }
 
 a {
@@ -218,4 +220,32 @@ a {
 
 .hidden {
   display: none;
+}
+
+table {
+  width: 100%;
+  text-align: left;
+  border-collapse: collapse;
+  border-spacing: 0;
+  background: white;
+  filter: var(--shadow);
+  border-radius: 4px;
+}
+
+thead tr {
+  border-bottom: 1px solid var(--border-color);
+}
+
+thead th {
+  padding: 16px;
+}
+
+td {
+  padding: 16px;
+}
+
+.clamp {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }

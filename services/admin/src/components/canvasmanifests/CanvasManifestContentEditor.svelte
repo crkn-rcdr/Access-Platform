@@ -10,6 +10,7 @@
   import CanvasThumbnailList from "../canvases/CanvasThumbnailList.svelte";
   import Switch from "../shared/Switch.svelte";
   import SwitchCase from "../shared/SwitchCase.svelte";
+  import CanvasManifestCanvasSelector from "./CanvasManifestCanvasSelector.svelte";
 
   export let manifest: CanvasManifest;
 
@@ -26,6 +27,10 @@
     manifest.canvases = manifest.canvases;
   }
 
+  function changeView(newState: string) {
+    state = newState;
+  }
+
   onMount(() => {
     activeCanvas = manifest?.canvases?.[0] || null;
   });
@@ -35,9 +40,13 @@
   <Align>
     <div class="list-wrapper">
       <CanvasThumbnailList
+        showAddButton={state != "add"}
         bind:canvases={manifest["canvases"]}
         on:thumbnailClicked={(e) => {
           setActiveCanvas(e.detail.index);
+        }}
+        on:addClicked={() => {
+          changeView("add");
         }}
       />
     </div>
@@ -55,6 +64,9 @@
               />
             </div>
           </Align>
+        </SwitchCase>
+        <SwitchCase caseVal="add">
+          <CanvasManifestCanvasSelector />
         </SwitchCase>
       </Switch>
     </div>
