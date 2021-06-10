@@ -123,7 +123,6 @@
       {#each results as manifest}
         <tr on:click={() => setManifest(manifest)}>
           <td>{manifest["slug"]}: {manifest["label"]["none"]}}</td>
-          <!--td><div class="icon"><TiArrowRight /></div></td-->
         </tr>
       {/each}
     </tbody>
@@ -139,11 +138,14 @@
           <h5>
             {selectedManifest["slug"]}: {selectedManifest["label"]["none"]}
           </h5>
-          {#if selectedCanvases.length}
-            <button class="primary"
-              >Add Canvas{selectedCanvases.length > 1 ? "es" : ""}</button
-            >
-          {/if}
+
+          <div class="action-buttons">
+            {#if selectedCanvases.length}
+              <button class="primary"
+                >Add Canvas{selectedCanvases.length > 1 ? "es" : ""}</button
+              >
+            {/if}
+          </div>
         </Align>
       </div>
 
@@ -206,12 +208,6 @@
     background-color: rgb(241, 241, 241);
   }
 
-  .icon {
-    width: 2em;
-    height: 2em;
-    float: right;
-    color: var(--grey);
-  }
   /* Can be moved to sub component */
 
   .results {
