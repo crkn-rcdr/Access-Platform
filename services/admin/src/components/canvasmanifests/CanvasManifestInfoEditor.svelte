@@ -1,6 +1,5 @@
 <script lang="ts">
   import type { CanvasManifest } from "@crkn-rcdr/access-data/src/access/CanvasManifest";
-
   export let manifest: CanvasManifest;
 </script>
 

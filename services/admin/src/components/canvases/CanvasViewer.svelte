@@ -41,7 +41,7 @@
 
 <style>
   #openseadragon-wrap {
-    background-color: #1b1b1b;
+    background-color: black; /*#1b1b1b;*/
     width: 100%;
     height: 100%;
   }

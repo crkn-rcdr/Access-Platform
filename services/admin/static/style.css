@@ -228,12 +228,8 @@ table {
   border-collapse: collapse;
   border-spacing: 0;
   background: white;
-  filter: var(--shadow);
+  /*filter: var(--shadow);*/
   border-radius: 4px;
-}
-
-thead tr {
-  border-bottom: 1px solid var(--border-color);
 }
 
 thead th {
@@ -248,4 +244,12 @@ td {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+}
+
+input[type="checkbox"] {
+  cursor: pointer;
+}
+
+input[type="checkbox"]:checked {
+  filter: sepia() hue-rotate(140deg) brightness(1.1);
 }
