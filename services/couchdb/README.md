@@ -8,9 +8,13 @@ This repo contains an example CouchDB config for setting up a Canadiana platform
 
 To deploy with Kivik, copy [`./kivikrc.example.json`](kivikrc.example.json) to `kivikrc.json`, and replace the placeholder password with our production CouchDB password. You can then run:
 
-    kivik deploy --config iris
+    kivik deploy iris
 
 to deploy design docs and indexes to our Couch endpoint on `iris.tor.c7a.ca`.
+
+## Design documents
+
+[`./prelude.js`](prelude.js) contains functions that design document functions can import and use, using CouchDB's [CommonJS module system](https://docs.couchdb.org/en/3.1.1/query-server/javascript.html#commonjs-modules). Ensure that the relevant design directory has a symlink to the root directory's prelude file in `lib/prelude.js`.
 
 ## Setup
 
