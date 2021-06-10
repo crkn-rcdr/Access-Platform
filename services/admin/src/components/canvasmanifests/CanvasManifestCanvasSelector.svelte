@@ -289,7 +289,7 @@
     color: var(--light-font);
     background-color: var(--grey);
     border-radius: 4px;
-    margin: 3px 3px 3px 4px;
+    margin: 4px 3px;
   }
 
   .canvas-preview-button:hover {
@@ -315,8 +315,8 @@
   }
 
   input[type="checkbox"] {
-    width: 36px;
-    height: 36px;
+    width: 2.25em;
+    height: 2.25em;
   }
 
   input[type="checkbox"]:checked {
