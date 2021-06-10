@@ -3,7 +3,6 @@
   import type { Canvas } from "@crkn-rcdr/access-data/src/access/CanvasManifest";
   import TiArrowBack from "svelte-icons/ti/TiArrowBack.svelte";
   import TiEye from "svelte-icons/ti/TiEye.svelte";
-  import TiEyeOutline from "svelte-icons/ti/TiEyeOutline.svelte";
   import Align from "../shared/Align.svelte";
 
   let selectedManifest: CanvasManifest | null;
@@ -108,7 +107,7 @@
       />
 
       <div class="action-buttons">
-        <button class="primary">Add Canvas(es)</button>
+        <button class="primary">Search</button>
         <button class="secondary">Cancel</button>
       </div>
     </Align>
@@ -117,13 +116,14 @@
   <table>
     <thead>
       <tr>
-        <th>Manifests</th>
+        <th>Search Results</th>
       </tr>
     </thead>
     <tbody>
       {#each results as manifest}
         <tr on:click={() => setManifest(manifest)}>
-          <td>Name</td>
+          <td>{manifest["slug"]}: {manifest["label"]["none"]}}</td>
+          <!--td><div class="icon"><TiArrowRight /></div></td-->
         </tr>
       {/each}
     </tbody>
@@ -131,14 +131,21 @@
 
   {#if selectedManifest}
     <div class="results">
-      <h5>
+      <div class="manifest-title">
         <Align vertical="center">
           <div class="back-button" on:click={() => (selectedManifest = null)}>
             <TiArrowBack />
           </div>
-          oocihm.8_06941_2: Vol. I, No. 1 (October 17, 1891)
+          <h5>
+            {selectedManifest["slug"]}: {selectedManifest["label"]["none"]}
+          </h5>
+          {#if selectedCanvases.length}
+            <button class="primary"
+              >Add Canvas{selectedCanvases.length > 1 ? "es" : ""}</button
+            >
+          {/if}
         </Align>
-      </h5>
+      </div>
 
       <div class="canvas-tiles">
         {#each selectedManifest["canvases"] as canvas}
@@ -147,14 +154,6 @@
             class:selected={selectedCanvases.includes(canvas)}
             on:click={() => setSelectedCanvases(canvas)}
           >
-            <!--div class="canvas-tile-label">
-              <Align vertical="center">
-                <input type="checkbox" />
-                <div class="canvas-tile-label-text clamp">
-                  {canvas["label"]["none"]}
-                </div>
-              </Align>
-            </div-->
             <img
               alt={canvas["label"]["none"]}
               src={`https://image-uvic.canadiana.ca/iiif/2/${encodeURIComponent(
@@ -195,11 +194,6 @@
     margin-top: 0;
   }
 
-  h5 {
-    color: var(--light-font);
-    padding: 1em !important;
-  }
-
   table {
     margin-top: 1em;
   }
@@ -211,6 +205,13 @@
   tbody tr:hover {
     background-color: rgb(241, 241, 241);
   }
+
+  .icon {
+    width: 2em;
+    height: 2em;
+    float: right;
+    color: var(--grey);
+  }
   /* Can be moved to sub component */
 
   .results {
@@ -220,6 +221,17 @@
     bottom: 0;
     left: 0;
     right: 0;
+    padding: 2em 3em;
+  }
+
+  h5 {
+    margin-bottom: 0 !important;
+    flex: 9;
+  }
+
+  .manifest-title {
+    color: var(--light-font);
+    padding: 1em !important;
   }
 
   .canvas-tiles {
@@ -234,8 +246,8 @@
   }
 
   .back-button {
-    width: 1.2em;
-    height: 1.2em;
+    width: 2em;
+    height: 2em;
     margin-right: 1em;
     cursor: pointer;
     border-radius: 4px;
@@ -277,9 +289,6 @@
     top: 0;
     left: 0;
     right: 0;
-    /*
-    background: black;
-    border-radius: 0 0 4px 0;*/
   }
 
   .canvas-preview-button {
@@ -322,21 +331,4 @@
   input[type="checkbox"]:checked {
     filter: sepia() hue-rotate(140deg) brightness(1.1) var(--shadow);
   }
-  /*
-  .canvas-tile img {
-    position: absolute;
-    top: 50px;
-  }
-  .canvas-tile-label {
-    font-size: var(--smaller-font-size);
-  }
-  .canvas-tile-label-text {
-    margin-left: 8px;
-    width: 75%;
-  }
-  @supports (-moz-appearance: none) {
-    .canvas-tile-label {
-      font-weight: 600 !important;
-    }
-  }*/
 </style>
