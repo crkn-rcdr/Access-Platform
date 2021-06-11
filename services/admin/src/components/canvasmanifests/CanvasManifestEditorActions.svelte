@@ -4,7 +4,7 @@
   import type { CanvasManifest } from "@crkn-rcdr/access-data/src/access/CanvasManifest";
   import { onMount } from "svelte";
   import equal from "fast-deep-equal";
-  //import { detailedDiff } from "deep-object-diff";
+  import { detailedDiff } from "deep-object-diff";
 
   export let manifest: AccessObject;
   export let manifestModel: CanvasManifest;
@@ -21,6 +21,8 @@
   }
 
   function save() {
+    let diff: any = detailedDiff(manifest, manifestModel); //TODO: We can send this to the backend
+    console.log("changes:", diff);
     manifest = clone(manifestModel);
     checkModelChanged(manifestModel);
   }
