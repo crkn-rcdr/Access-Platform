@@ -71,6 +71,7 @@
             bind:destinationManifest={manifest}
             on:done={() => {
               state = "view";
+              setActiveCanvas(0);
             }}
           />
         </SwitchCase>

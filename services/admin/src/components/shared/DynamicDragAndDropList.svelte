@@ -90,7 +90,10 @@
     }
   }
 
-  function enableDragging(element: Element | undefined, elementIndex: number) {
+  function enableDraggingOnChild(
+    element: Element | undefined,
+    elementIndex: number
+  ) {
     if (typeof element === "undefined") return;
     element.classList?.add("draggable");
     element.setAttribute("draggable", "true");
@@ -107,11 +110,22 @@
     });
   }
 
-  onMount(() => {
-    for (let i = 0; i < container.children.length; i++) {
-      enableDragging(container?.children?.[i], i);
+  function enableDraggingOnChildren() {
+    if (container) {
+      for (let i = 0; i < container.children.length; i++) {
+        enableDraggingOnChild(container?.children?.[i], i);
+      }
     }
+  }
+
+  onMount(() => {
+    enableDraggingOnChildren();
   });
+
+  $: {
+    dragList;
+    enableDraggingOnChildren();
+  }
 </script>
 
 <div class="drag-and-drop-wrap" bind:this={container} on:drop={handleDrop}>

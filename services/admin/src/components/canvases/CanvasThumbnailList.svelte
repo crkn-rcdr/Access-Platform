@@ -104,6 +104,11 @@
     if (canvases.length) activeCanvasIndex = 0;
     setIndexModel();
   });
+
+  $: {
+    canvases;
+    setIndexModel();
+  }
 </script>
 
 <svelte:window on:keydown={handleKeydown} />
@@ -129,7 +134,7 @@
           <div
             class="thumbnail"
             class:active={isActive(canvas)}
-            on:click={() => setActiveIndex(i)}
+            on:mousedown={() => setActiveIndex(i)}
           >
             <Align vertical="flex-start">
               <div class="actions-wrap">
