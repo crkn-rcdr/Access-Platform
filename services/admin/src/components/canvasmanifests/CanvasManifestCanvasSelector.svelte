@@ -258,7 +258,7 @@
     height: 564px;
     width: 425px;
     position: relative;
-    margin: 2vh 2vw;
+    margin: 1.5em;
     color: white;
     cursor: pointer;
   }
