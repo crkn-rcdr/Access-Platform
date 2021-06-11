@@ -4,7 +4,7 @@
   import type { Canvas } from "@crkn-rcdr/access-data/src/access/CanvasManifest";
   import Align from "../shared/Align.svelte";
 
-  export let canvas: Canvas | null;
+  export let canvas: Canvas;
 
   const dispatch = createEventDispatcher();
 

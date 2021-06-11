@@ -10,7 +10,7 @@
   import CanvasThumbnailList from "../canvases/CanvasThumbnailList.svelte";
   import Switch from "../shared/Switch.svelte";
   import SwitchCase from "../shared/SwitchCase.svelte";
-  import CanvasManifestCanvasSelector from "./CanvasManifestCanvasSelector.svelte";
+  import CanvasManifestAddCanvasMenu from "./CanvasManifestAddCanvasMenu.svelte";
 
   export let manifest: CanvasManifest;
 
@@ -66,7 +66,13 @@
           </Align>
         </SwitchCase>
         <SwitchCase caseVal="add">
-          <CanvasManifestCanvasSelector />
+          <!--TODO: Should we add the canvases after the selected canvas or just at the begining or end of the manifest?-->
+          <CanvasManifestAddCanvasMenu
+            bind:destinationManifest={manifest}
+            on:done={() => {
+              state = "view";
+            }}
+          />
         </SwitchCase>
       </Switch>
     </div>

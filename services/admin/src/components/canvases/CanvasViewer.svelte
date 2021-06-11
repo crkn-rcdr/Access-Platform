@@ -2,7 +2,7 @@
   import { onMount, afterUpdate } from "svelte";
   import type { Canvas } from "@crkn-rcdr/access-data/src/access/CanvasManifest";
 
-  export let canvas: Canvas | null;
+  export let canvas: Canvas;
   let OpenSeadragon: any;
   let container: HTMLDivElement;
 
