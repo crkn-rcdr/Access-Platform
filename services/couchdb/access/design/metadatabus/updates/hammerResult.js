@@ -1,28 +1,15 @@
 module.exports = function (doc, req) {
-  const successReturn = (doc, message) => {
-    return [doc, JSON.stringify({ message }) + "\n"];
-  };
-
-  const errorReturn = (message) => {
-    return [null, JSON.stringify({ error: message }) + "\n"];
-  };
-
-  const extractData = (req) => {
-    try {
-      // seems like "" and "undefined" are valid strings for an empty req.body
-      return ["", "undefined"].includes(req.body)
-        ? undefined
-        : JSON.parse(req.body);
-    } catch (ignore) {
-      return null;
-    }
-  };
+  const {
+    successReturn,
+    errorReturn,
+    extractJSONFromBody,
+  } = require("views/lib/prelude");
 
   if (!doc) {
     return errorReturn(`No document found with id ${doc.id}`);
   }
 
-  const data = extractData(req);
+  const data = extractJSONFromBody(req);
   if (!data) {
     return errorReturn(`Could not parse request body as JSON: ${req.body}`);
   }
@@ -37,10 +24,9 @@ module.exports = function (doc, req) {
     message: data.message,
   };
 
+  const id = doc.slug || doc._id;
   return successReturn(
     doc,
-    `Updated ${
-      doc.slug ? doc.slug : doc.id
-    } with the results of a Hammer operation`
+    `Updated ${id} with the results of a Hammer operation`
   );
 };
