@@ -1,13 +1,13 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
   import type { CanvasManifest } from "@crkn-rcdr/access-data/src/access/CanvasManifest";
-  import CanvasManifestCanvasSelectorGrid from "./CanvasManifestCanvasSelectorGrid.svelte";
+  import ManifestCanvasSelectorGrid from "./ManifestCanvasSelectorGrid.svelte";
   import Align from "../shared/Align.svelte";
-  import CanvasManifestSearch from "./CanvasManifestSearch.svelte";
-  import CanvasManifestTable from "./CanvasManifestTable.svelte";
   import Switch from "../shared/Switch.svelte";
   import SwitchCase from "../shared/SwitchCase.svelte";
   import SwitchDefault from "../shared/SwitchDefault.svelte";
+  import ManifestSearch from "./ManifestSearch.svelte";
+  import ManifestTable from "./ManifestTable.svelte";
 
   export let destinationManifest: CanvasManifest;
   export let destinationIndex: number = 0;
@@ -41,8 +41,9 @@
 
 <div class="canvas-selector-wrap">
   <div>
+    <!-- TODO: replace with slug resolver component-->
     <Align>
-      <CanvasManifestSearch bind:results={manifestSearchResults} />
+      <ManifestSearch bind:results={manifestSearchResults} />
       <button class="secondary cancel-button" on:click={handleCancelPressed}
         >Cancel</button
       >
@@ -56,7 +57,7 @@
         <p>No results.</p>
       </SwitchCase>
       <SwitchDefault>
-        <CanvasManifestTable
+        <ManifestTable
           title="Search Results"
           bind:manifests={manifestSearchResults}
           on:rowClicked={handleManifestTableClick}
@@ -66,7 +67,7 @@
   {/if}
 
   {#if showManifest}
-    <CanvasManifestCanvasSelectorGrid
+    <ManifestCanvasSelectorGrid
       bind:manifest={selectedManifest}
       on:backPressed={() => {
         showManifest = false;

@@ -22,7 +22,7 @@
 
   function save() {
     let diff: any = detailedDiff(manifest, manifestModel); //TODO: We can send this to the backend
-    console.log("changes:", diff);
+    //console.log("changes:", diff);
     manifest = clone(manifestModel);
     checkModelChanged(manifestModel);
   }
@@ -32,7 +32,6 @@
   });
 </script>
 
-<!--{JSON.stringify(detailedDiff(manifest, manifestModel))}-->
 <span>
   {#if saveEnabled}
     <button class="save" on:click={save}>Save</button>

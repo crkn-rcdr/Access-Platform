@@ -3,7 +3,6 @@
 
   export let results: CanvasManifest[] = [];
 
-  // TODO: backend code for searching
   function handleSearch() {
     results = [
       {

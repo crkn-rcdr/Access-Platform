@@ -8,21 +8,21 @@
   import SideMenuPageListButton from "../shared/SideMenuPageListButton.svelte";
   import SideMenuPage from "../shared/SideMenuPage.svelte";
   import SideMenuPageList from "../shared/SideMenuPageList.svelte";
-  import ContentEditor from "./CanvasManifestContentEditor.svelte";
-  import InfoEditor from "./CanvasManifestInfoEditor.svelte";
-  import StatusIndicator from "./CanvasManifestStatusIndicator.svelte";
-  import EditorActions from "./CanvasManifestEditorActions.svelte";
+  import ManifestContentEditor from "./ManifestContentEditor.svelte";
+  import ManifestInfoEditor from "./ManifestInfoEditor.svelte";
+  import StatusIndicator from "./ManifestStatusIndicator.svelte";
+  import ManifestEditorActions from "./ManifestEditorActions.svelte";
 
   export let object: AccessObject;
   export let model: CanvasManifest;
 
-  // test url: http://localhost:3060/object/69429/m02n4zg6h671
+  // Test url: http://localhost:3060/object/69429/m02n4zg6h671
 </script>
 
 <Toolbar title={object["slug"]}>
   <Align direction="column" vertical="flex-end">
     <StatusIndicator bind:manifest={model} />
-    <EditorActions bind:manifest={object} bind:manifestModel={model} />
+    <ManifestEditorActions bind:manifest={object} bind:manifestModel={model} />
   </Align>
 </Toolbar>
 
@@ -33,12 +33,10 @@
   </SideMenuPageList>
   <SideMenuBody>
     <SideMenuPage>
-      <!--{JSON.stringify(object)}-->
-      <InfoEditor bind:manifest={model} />
+      <ManifestInfoEditor bind:manifest={model} />
     </SideMenuPage>
     <SideMenuPage overflowY="hidden">
-      <!--FF has an issue with the scrollbar for this page - but it's designed to stretch with the width and height of the browser-->
-      <ContentEditor bind:manifest={model} />
+      <ManifestContentEditor bind:manifest={model} />
     </SideMenuPage>
   </SideMenuBody>
 </SideMenuContainer>
