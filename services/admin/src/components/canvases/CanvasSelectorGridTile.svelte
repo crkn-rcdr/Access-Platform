@@ -3,7 +3,6 @@
   import type { Canvas } from "@crkn-rcdr/access-data/src/access/CanvasManifest";
   import Align from "../shared/Align.svelte";
   import TiEye from "svelte-icons/ti/TiEye.svelte";
-  import CanvasViewer from "./CanvasViewer.svelte";
 
   export let canvas: Canvas;
   export let selected: boolean = false;
@@ -17,6 +16,7 @@
 
   function previewCanvas(event: any) {
     event.stopPropagation();
+    dispatch("tilePreviewClicked", { canvas });
   }
 </script>
 
@@ -38,10 +38,6 @@
       </div>
     </Align>
   </div>
-</div>
-
-<div>
-  <CanvasViewer {canvas} />
 </div>
 
 <style>

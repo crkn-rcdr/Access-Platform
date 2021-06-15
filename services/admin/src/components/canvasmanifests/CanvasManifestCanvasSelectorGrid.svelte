@@ -5,9 +5,11 @@
   import TiArrowBack from "svelte-icons/ti/TiArrowBack.svelte";
   import CanvasSelectorGridTile from "../canvases/CanvasSelectorGridTile.svelte";
   import Align from "../shared/Align.svelte";
+  import CanvasViewer from "../canvases/CanvasViewer.svelte";
 
   export let manifest: CanvasManifest;
   let selectedCanvases: Canvas[] = [];
+  let previewCanvas: Canvas | null;
 
   const dispatch = createEventDispatcher();
 
@@ -19,6 +21,10 @@
       selectedCanvases.push(canvas);
       selectedCanvases = selectedCanvases;
     }
+  }
+
+  function handlePreview(event: any) {
+    previewCanvas = event.detail.canvas;
   }
 
   function handleBackButtonPressed() {
@@ -40,7 +46,6 @@
   }
 </script>
 
-{selectedCanvases.length}
 {#if manifest}
   <div class="results">
     <div class="manifest-title">
@@ -64,14 +69,42 @@
 
     <div class="canvas-tiles">
       {#each manifest["canvases"] as canvas}
-        <CanvasSelectorGridTile {canvas} on:tileClicked={handleSelection} />
+        <CanvasSelectorGridTile
+          {canvas}
+          on:tileClicked={handleSelection}
+          on:tilePreviewClicked={handlePreview}
+        />
       {/each}
     </div>
   </div>
 {/if}
 
+{#if previewCanvas}
+  <div class="preview-wrap">
+    <div class="canvas-title">
+      <Align vertical="center">
+        <div
+          class="back-button"
+          on:click={() => {
+            previewCanvas = null;
+          }}
+        >
+          <TiArrowBack />
+        </div>
+        <h5>
+          {previewCanvas["label"]["none"]}
+        </h5>
+      </Align>
+    </div>
+    <div class="preview-canvas-wrap">
+      <CanvasViewer canvas={previewCanvas} />
+    </div>
+  </div>
+{/if}
+
 <style>
-  .results {
+  .results,
+  .preview-wrap {
     background: black;
     position: absolute;
     top: 0;
@@ -81,12 +114,18 @@
     padding: 2em 3em;
   }
 
+  .preview-canvas-wrap {
+    padding: 0 1em;
+    height: 90%;
+  }
+
   h5 {
     margin-bottom: 0 !important;
     flex: 9;
   }
 
-  .manifest-title {
+  .manifest-title,
+  .canvas-title {
     color: var(--light-font);
     padding: 1em !important;
   }

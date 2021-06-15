@@ -21,7 +21,7 @@
   <tbody>
     {#each manifests as manifest}
       <tr on:click={() => handleClick(manifest)}>
-        <td>{manifest["slug"]}: {manifest["label"]["none"]}}</td>
+        <td>{manifest["slug"]}: {manifest["label"]["none"]}</td>
       </tr>
     {/each}
   </tbody>
