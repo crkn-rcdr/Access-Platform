@@ -31,7 +31,7 @@
   import type { CanvasManifest } from "@crkn-rcdr/access-data/src/access/CanvasManifest";
   import Switch from "../../../components/shared/Switch.svelte";
   import SwitchCase from "../../../components/shared/SwitchCase.svelte";
-  import CanvasManifestEditor from "../../../components/canvasmanifests/CanvasManifestEditor.svelte";
+  import ManifestEditor from "../../../components/manifests/ManifestEditor.svelte";
 
   export let object: AccessObject;
   export let type: "collection" | "canvasManifest" | "other";
@@ -55,7 +55,7 @@
   <div class="editor">
     <Switch checkVal={type}>
       <SwitchCase caseVal="canvasManifest">
-        <CanvasManifestEditor {object} {model} />
+        <ManifestEditor {object} {model} />
       </SwitchCase>
     </Switch>
   </div>
