@@ -6,8 +6,8 @@
   import Switch from "../shared/Switch.svelte";
   import SwitchCase from "../shared/SwitchCase.svelte";
   import SwitchDefault from "../shared/SwitchDefault.svelte";
-  import ManifestSearch from "./ManifestSearch.svelte";
-  import ManifestTable from "./ManifestTable.svelte";
+  import ManifestSearch from "../temporary/ManifestSearch.svelte";
+  import ManifestTable from "../temporary/ManifestTable.svelte";
 
   export let destinationManifest: CanvasManifest;
   export let destinationIndex: number = 0;
