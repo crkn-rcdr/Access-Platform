@@ -92,7 +92,9 @@
           <TiArrowBack />
         </div>
         <h5>
-          {previewCanvas["label"]["none"]}
+          {manifest["slug"]}: {manifest["label"]["none"]} / {previewCanvas[
+            "label"
+          ]["none"]}
         </h5>
       </Align>
     </div>
