@@ -16,7 +16,7 @@
     clearViewer();
     if (canvas && OpenSeadragon) {
       OpenSeadragon.default({
-        id: "openseadragon-wrap",
+        element: container,
         prefixUrl: "/openseadragon/images/", // for the icons the viewer uses
         tileSources: [
           `https://image-uvic.canadiana.ca/iiif/2/${encodeURIComponent(
@@ -37,10 +37,10 @@
   });
 </script>
 
-<div bind:this={container} id="openseadragon-wrap" />
+<div bind:this={container} />
 
 <style>
-  #openseadragon-wrap {
+  div {
     background-color: black; /*#1b1b1b;*/
     width: 100%;
     height: 100%;
