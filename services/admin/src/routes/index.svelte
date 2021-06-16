@@ -10,6 +10,7 @@
   Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation
 </p>
 
+<h6>Drag and drop grid</h6>
 <DynamicDragAndDropList direction="both" bind:dragList={dragListGrid}>
   {#each dragListGrid as item}
     <div class="item blue">{item}</div>
@@ -19,6 +20,7 @@
 <br />
 <br />
 
+<h6>Drag and drop horizontal</h6>
 <DynamicDragAndDropList direction="x" bind:dragList={dragListVert}>
   {#each dragListVert as item}
     <div class="item red">{item}</div>
@@ -28,6 +30,7 @@
 <br />
 <br />
 
+<h6>Drag and drop vertical</h6>
 <DynamicDragAndDropList direction="y" bind:dragList={dragListHoriz}>
   {#each dragListHoriz as item}
     <div class="item green">{item}</div>
