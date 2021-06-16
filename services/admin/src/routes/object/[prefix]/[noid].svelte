@@ -35,8 +35,8 @@
   import SideMenuPageListButton from "../../../components/shared/SideMenuPageListButton.svelte";
   import SideMenuPage from "../../../components/shared/SideMenuPage.svelte";
   import SideMenuPageList from "../../../components/shared/SideMenuPageList.svelte";
-  import AccessObjectInfoEditor from "../../../components/access-object/AccessObjectInfoEditor.svelte";
-  import EditorActions from "../../../components/access-object/EditorActions.svelte";
+  import AccessObjectInfoEditor from "../../../components/access-objects/AccessObjectInfoEditor.svelte";
+  import EditorActions from "../../../components/access-objects/EditorActions.svelte";
   import ManifestStatusIndicator from "../../../components/manifests/ManifestStatusIndicator.svelte";
   import ManifestContentEditor from "../../../components/manifests/ManifestContentEditor.svelte";
 
@@ -93,7 +93,7 @@
 <style>
   .editor {
     position: fixed;
-    top: 74px;
+    top: 74px; /* todo: not perfect on big screens */
     bottom: 115px;
     right: 0;
     left: 0;
