@@ -28,17 +28,17 @@
   import { isCanvasManifest, isCollection } from "@crkn-rcdr/access-data";
   // if we kept AccessObject in the import above, the code fails on the client. always use `import type` with types
   import type { AccessObject } from "@crkn-rcdr/access-data";
-  import Align from "../../../components/shared/Align.svelte";
-  import Toolbar from "../../../components/shared/Toolbar.svelte";
-  import SideMenuContainer from "../../../components/shared/SideMenuContainer.svelte";
-  import SideMenuBody from "../../../components/shared/SideMenuBody.svelte";
-  import SideMenuPageListButton from "../../../components/shared/SideMenuPageListButton.svelte";
-  import SideMenuPage from "../../../components/shared/SideMenuPage.svelte";
-  import SideMenuPageList from "../../../components/shared/SideMenuPageList.svelte";
-  import AccessObjectInfoEditor from "../../../components/access-objects/AccessObjectInfoEditor.svelte";
-  import EditorActions from "../../../components/access-objects/EditorActions.svelte";
-  import ManifestStatusIndicator from "../../../components/manifests/ManifestStatusIndicator.svelte";
-  import ManifestContentEditor from "../../../components/manifests/ManifestContentEditor.svelte";
+  import Align from "$lib/components/shared/Align.svelte";
+  import Toolbar from "$lib/components/shared/Toolbar.svelte";
+  import SideMenuContainer from "$lib/components/shared/SideMenuContainer.svelte";
+  import SideMenuBody from "$lib/components/shared/SideMenuBody.svelte";
+  import SideMenuPageListButton from "$lib/components/shared/SideMenuPageListButton.svelte";
+  import SideMenuPage from "$lib/components/shared/SideMenuPage.svelte";
+  import SideMenuPageList from "$lib/components/shared/SideMenuPageList.svelte";
+  import AccessObjectInfoEditor from "$lib/components/access-objects/AccessObjectInfoEditor.svelte";
+  import EditorActions from "$lib/components/access-objects/EditorActions.svelte";
+  import ManifestStatusIndicator from "$lib/components/manifests/ManifestStatusIndicator.svelte";
+  import ManifestContentEditor from "$lib/components/manifests/ManifestContentEditor.svelte";
 
   export let object: AccessObject;
   export let type: "collection" | "canvasManifest" | "other";

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher, onMount } from "svelte";
-  import { moveArrayElement } from "../../lib/arrayUtil";
+  import { moveArrayElement } from "$lib/arrayUtil";
 
   export let dragList: any[] = [];
   export let direction = "y"; // y | x | both

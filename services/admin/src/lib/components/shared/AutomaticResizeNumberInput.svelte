@@ -2,7 +2,7 @@
   import { createEventDispatcher, onMount } from "svelte";
   import TiArrowSortedUp from "svelte-icons/ti/TiArrowSortedUp.svelte";
   import TiArrowSortedDown from "svelte-icons/ti/TiArrowSortedDown.svelte";
-  import Align from "./Align.svelte";
+  import Align from "$lib/components/shared/Align.svelte";
 
   export let name: string;
   export let value: number | undefined;
