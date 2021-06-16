@@ -2,17 +2,13 @@ export {
   AccessObject,
   Alias,
   Canvas,
-  CanvasManifest,
   Collection,
-  PdfManifest,
+  Manifest,
   isAlias,
-  isCanvasManifest,
   isCollection,
-  isPdfManifest,
+  isManifest,
 } from "./access";
-export {
-  Dipstaging
-} from "./dipstaging";
+export { Dipstaging } from "./dipstaging";
 export {
   DATABASES,
   DocumentTypes,
@@ -21,7 +17,6 @@ export {
   toCouch,
   validateAccessDocument,
   validateCanvasDocument,
-
 } from "./couch";
 export { Noid, Slug, UnixFilePath } from "./format";
 export { FileRef, ImageRef, ProcessUpdate, Text, Timestamp } from "./util";

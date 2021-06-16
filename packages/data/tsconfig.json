@@ -3,6 +3,7 @@
   "include": ["src/**/*.ts"],
   "exclude": ["src/**/*.spec.ts"],
   "compilerOptions": {
-    "outDir": "./dist/cjs"
+    "outDir": "./dist/cjs",
+    "preserveSymlinks": true
   }
 }
