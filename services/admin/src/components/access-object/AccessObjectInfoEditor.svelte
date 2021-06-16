@@ -1,26 +1,32 @@
 <script lang="ts">
-  import type { CanvasManifest } from "@crkn-rcdr/access-data/src/access/CanvasManifest";
-  export let manifest: CanvasManifest;
+  import { isCanvasManifest, isCollection } from "@crkn-rcdr/access-data";
+  import type { AccessObject } from "@crkn-rcdr/access-data";
+
+  export let model: AccessObject;
 </script>
 
 <form>
   <!--TODO: replace with slug resolver component-->
-  <label for="slug">Slug</label><br />
-  <input type="text" id="slug" name="slug" bind:value={manifest["slug"]} /><br
-  /><br />
+  {#if isCanvasManifest(model) || isCollection(model)}
+    <label for="slug">Slug</label><br />
+    <input type="text" id="slug" name="slug" bind:value={model["slug"]} /><br
+    /><br />
+  {/if}
 
-  <label for="label">Label</label><br />
-  <textarea id="label" name="label" bind:value={manifest["label"]["none"]} /><br
-  /><br />
+  {#if isCanvasManifest(model)}
+    <label for="label">Label</label><br />
+    <textarea id="label" name="label" bind:value={model["label"]["none"]} /><br
+    /><br />
 
-  <!--Fixtures don't have this yet, causes save to be enabled on load-->
-  <!--span>
+    <!--Fixtures don't have this yet, causes save to be enabled on load-->
+
+    <!--span>
     <label for="behavior">Behavior</label>
     <select id="behavior" name="behavior" bind:value={manifest["behavior"]}>
-      <option>unordered</option>
-      <option>individuals</option>
       <option>continuous</option>
+      <option>individuals</option>
       <option>paged</option>
+      <option>unordered</option>
     </select>
   </span>
 
@@ -37,6 +43,7 @@
       <option>bottom-to-top</option>
     </select>
   </span><br /-->
+  {/if}
 </form>
 
 <style>

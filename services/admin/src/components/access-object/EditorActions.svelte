@@ -1,30 +1,29 @@
 <script lang="ts">
   // if we kept AccessObject in the import above, the code fails on the client. always use `import type` with types
   import type { AccessObject } from "@crkn-rcdr/access-data";
-  import type { CanvasManifest } from "@crkn-rcdr/access-data/src/access/CanvasManifest";
   import { onMount } from "svelte";
   import equal from "fast-deep-equal";
   import { detailedDiff } from "deep-object-diff";
 
-  export let manifest: AccessObject;
-  export let manifestModel: CanvasManifest;
+  export let object: AccessObject;
+  export let model: AccessObject;
 
   let clone: any;
   let saveEnabled = false;
 
-  function checkModelChanged(manifestModel: CanvasManifest) {
-    saveEnabled = !equal(manifest, manifestModel);
+  function checkModelChanged(model: AccessObject) {
+    saveEnabled = !equal(object, model);
   }
 
   $: {
-    checkModelChanged(manifestModel);
+    checkModelChanged(model);
   }
 
   function save() {
-    let diff: any = detailedDiff(manifest, manifestModel); //TODO: We can send this to the backend
+    let diff: any = detailedDiff(object, model); //TODO: We can send this to the backend
     //console.log("changes:", diff);
-    manifest = clone(manifestModel);
-    checkModelChanged(manifestModel);
+    object = clone(model);
+    checkModelChanged(model);
   }
 
   onMount(async () => {
@@ -36,7 +35,6 @@
   {#if saveEnabled}
     <button class="save" on:click={save}>Save</button>
   {/if}
-  <button class="secondary"
-    >{manifest["public"] ? "Unpublish" : "Publish"}</button
+  <button class="secondary">{object["public"] ? "Unpublish" : "Publish"}</button
   >
 </span>
