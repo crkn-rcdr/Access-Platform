@@ -1,5 +1,5 @@
 <script lang="ts">
-  import DynamicDragAndDropList from "../components/shared/DynamicDragAndDropList.svelte";
+  import DynamicDragAndDropList from "$lib/components/shared/DynamicDragAndDropList.svelte";
   let dragListGrid = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
   let dragListVert = [1, 2, 3, 4, 5, 6];
   let dragListHoriz = [1, 2, 3, 4, 5];
