@@ -6,54 +6,77 @@
    */
   export let slug = "";
   /**
-   * @type {string | null | undefined} Noid that the slug resolves to, or null
+   * Noid that the slug resolves to, or null
    * if it doesn't. If this is provided, the resolver will trust that it's
    * correct.
    */
-  export let noid: string = undefined;
+  export let noid: string | null | undefined = undefined;
+  /**
+   * Whether to hide the display when the current slug is the
+   * same as the initial slug provided.
+   */
+  export let hideInitial = false;
+  // https://github.com/crkn-rcdr/Access-Platform/blob/main/data/src/format/slug.ts
+  const regex = /^[\p{L}\p{Nl}\p{Nd}\-_\.]+$/u;
   const initial = { slug, noid };
+  $: shouldQuery =
+    !!slug && (slug !== initial.slug || initial.noid === undefined);
 
   /** @type {"READY" | "LOADING" | "MALFORMED" | "ERROR"} */
-  let status: string = initial.noid === undefined ? "LOADING" : "READY";
-  let timer: number;
+  let status: "READY" | "LOADING" | "MALFORMED" | "ERROR" =
+    initial.noid === undefined ? "LOADING" : "READY";
+  let timer: NodeJS.Timeout | null = null;
+
   async function resolve() {
-    clearTimeout(timer);
+    if (timer) clearTimeout(timer);
     timer = setTimeout(async () => {
       status = "LOADING";
-      if (slug) {
-        const response = await fetch(`/slug/resolve/${slug}.json`, {
-          method: "GET",
-          credentials: "same-origin",
-        });
-
-        if (response.status === 200) {
-          noid = await response.json();
-          status = "READY";
-        } else if (slug === initial.slug) {
-          status = "READY";
-          noid = initial.noid;
+      if (shouldQuery) {
+        noid = undefined;
+        if (regex.test(slug)) {
+          const response = await fetch(`/slug/resolve/${slug}.json`, {
+            method: "GET",
+            credentials: "same-origin",
+          });
+          if (response.status === 200) {
+            noid = (await response.json()).noid as string;
+            status = "READY";
+          } else {
+            noid = null;
+            status = "ERROR";
+          }
         } else {
           noid = null;
-          status = "ERROR";
+          status = "MALFORMED";
         }
+      } else if (slug === initial.slug) {
+        status = "READY";
+        noid = initial.noid;
       }
     }, 50);
   }
-
   onMount(async () => {
     await resolve();
-    status = "READY";
     initial.noid = noid;
   });
 </script>
 
-<div>
+<div class="children-inline">
   <label for="slug"><slot name="input">Slug:</slot></label>
   <input type="text" bind:value={slug} on:input={resolve} />
-  {#if !!slug && !(slug === initial.slug)}
-    {#if Object.values(noid)[0] !== null}
+
+  {#if !!slug && !(hideInitial && slug === initial.slug)}
+    {#if status === "LOADING"}
+      Loading
+    {:else if status === "ERROR"}
+      <span class="danger">Slug resolver unavailable.</span>
+    {:else if status === "MALFORMED"}
+      Slugs can only contain letters, numbers, and the following symbols: <code
+        >_ - .</code
+      >
+    {:else if noid}
       <slot name="in-use">
-        <a href="/access/{noid}">⚠️ Slug in use</a>
+        <a href="/object/{noid}">⚠️ Slug in use</a>
       </slot>
     {:else}
       <slot name="available">✅ Slug available</slot>
