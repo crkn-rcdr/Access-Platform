@@ -1,7 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
 
-  const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher<{ selected: string }>();
 
   export let label = "Please provide a label for this component.";
 
@@ -27,13 +27,12 @@
 
   async function selectItem() {
     if (lookupList && Object.keys(lookupList).includes(query)) {
-      console.log("Print true");
-      let response = await fetch(`/slug/${query}.json`, {
+      let response = await fetch(`/slug/resolve/${query}.json`, {
         credentials: "same-origin",
       });
       let slug = await response.json();
       if (response.status === 200) {
-        dispatch("selected", slug);
+        dispatch("selected", slug.noid as string);
       } else {
         error = slug.error;
       }

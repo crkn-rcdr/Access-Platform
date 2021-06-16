@@ -1,6 +1,12 @@
-<script>
+<script lang="ts">
+  import { goto } from "$app/navigation";
   import Resolver from "$lib/components/Resolver.svelte";
   import TypeAhead from "$lib/components/TypeAhead.svelte";
+
+  function slugSelected(event: CustomEvent<string>) {
+    const noid = event.detail;
+    goto(`/object/${noid}`);
+  }
 </script>
 
 <h1>Welcome to SvelteKit</h1>
@@ -8,5 +14,5 @@
   Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation
 </p>
 
-<Resolver slug="oocihm.00001" noid="69429/m0w950g3k03r" />
-<TypeAhead label="Type Slug List:" />
+<Resolver slug="oocihm.8_06941" />
+<TypeAhead label="Edit object:" on:selected={slugSelected} />
