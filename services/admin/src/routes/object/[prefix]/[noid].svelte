@@ -28,36 +28,63 @@
   import { isCanvasManifest, isCollection } from "@crkn-rcdr/access-data";
   // if we kept AccessObject in the import above, the code fails on the client. always use `import type` with types
   import type { AccessObject } from "@crkn-rcdr/access-data";
-  import type { CanvasManifest } from "@crkn-rcdr/access-data/src/access/CanvasManifest";
-  import Switch from "../../../components/shared/Switch.svelte";
-  import SwitchCase from "../../../components/shared/SwitchCase.svelte";
-  import ManifestEditor from "../../../components/manifests/ManifestEditor.svelte";
+  import Align from "../../../components/shared/Align.svelte";
+  import Toolbar from "../../../components/shared/Toolbar.svelte";
+  import SideMenuContainer from "../../../components/shared/SideMenuContainer.svelte";
+  import SideMenuBody from "../../../components/shared/SideMenuBody.svelte";
+  import SideMenuPageListButton from "../../../components/shared/SideMenuPageListButton.svelte";
+  import SideMenuPage from "../../../components/shared/SideMenuPage.svelte";
+  import SideMenuPageList from "../../../components/shared/SideMenuPageList.svelte";
+  import AccessObjectInfoEditor from "../../../components/access-object/AccessObjectInfoEditor.svelte";
+  import EditorActions from "../../../components/access-object/EditorActions.svelte";
+  import ManifestStatusIndicator from "../../../components/manifests/ManifestStatusIndicator.svelte";
+  import ManifestContentEditor from "../../../components/manifests/ManifestContentEditor.svelte";
 
   export let object: AccessObject;
   export let type: "collection" | "canvasManifest" | "other";
 
-  type = "canvasManifest"; //TODO: implement type check
-
-  let clone: any;
-  let model: CanvasManifest; // | Canvas etc...
+  let rfdc: any; // Deep copies an object
+  let model: AccessObject; // | Canvas etc...
 
   async function setDataModel(object: AccessObject) {
-    clone = (await import("rfdc")).default();
-    model = clone(object);
+    rfdc = (await import("rfdc")).default();
+    model = rfdc(object) as AccessObject;
   }
 
-  $: setDataModel(object).then(() => {
-    console.log("Done");
-  });
+  $: setDataModel(object);
 </script>
 
 {#if object && model && type}
   <div class="editor">
-    <Switch checkVal={type}>
-      <SwitchCase caseVal="canvasManifest">
-        <ManifestEditor {object} {model} />
-      </SwitchCase>
-    </Switch>
+    <Toolbar title={model["slug"]}>
+      <Align direction="column" vertical="flex-end">
+        {#if isCanvasManifest(model)}
+          <ManifestStatusIndicator bind:manifest={model} />
+        {/if}
+        <EditorActions {object} {model} />
+      </Align>
+    </Toolbar>
+
+    <SideMenuContainer>
+      <SideMenuPageList>
+        <SideMenuPageListButton>General Info</SideMenuPageListButton>
+        <SideMenuPageListButton>Content</SideMenuPageListButton>
+      </SideMenuPageList>
+      <SideMenuBody>
+        <SideMenuPage>
+          <AccessObjectInfoEditor bind:model />
+        </SideMenuPage>
+        <SideMenuPage overflowY="hidden">
+          {#if isCanvasManifest(model)}
+            <ManifestContentEditor bind:manifest={model} />
+          {:else if isCollection(model)}
+            {JSON.stringify(object)}
+          {:else}
+            Other! {JSON.stringify(object)}
+          {/if}
+        </SideMenuPage>
+      </SideMenuBody>
+    </SideMenuContainer>
   </div>
 {/if}
 
