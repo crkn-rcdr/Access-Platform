@@ -18,7 +18,6 @@
       originalItemIndex,
       destinationItemIndex
     );
-
     dispatch("itemDropped", { originalItemIndex, destinationItemIndex });
   }
 
@@ -114,13 +113,20 @@
   });
 </script>
 
-<div class="drag-and-drop-wrap" bind:this={container} on:drop={handleDrop}>
+<div
+  class="drag-and-drop-wrap {direction}"
+  bind:this={container}
+  on:drop={handleDrop}
+>
   <slot />
 </div>
 
 <style>
   .drag-and-drop-wrap {
     width: 100%;
+  }
+  :global(.x .draggable, .both .draggable) {
+    display: inline-block;
   }
   :global(.drag-target) {
     opacity: 0.3;
