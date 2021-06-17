@@ -4,7 +4,6 @@
   import ManifestContentEditor from "$lib/components/manifests/ManifestContentEditor.svelte";
   import SideMenuPageListButton from "$lib/components/shared/SideMenuPageListButton.svelte";
   import SideMenuPage from "$lib/components/shared/SideMenuPage.svelte";
-  import AccessObjectInfoEditor from "$lib/components/access-objects/AccessObjectInfoEditor.svelte";
   import EditorLayout from "$lib/components/access-objects/EditorLayout.svelte";
   import { getContext } from "svelte";
 
@@ -36,20 +35,15 @@
     <div slot="editor-menu">
       <!-- Not sure if this is any more performant than the isManifest check -->
       {#if type === "canvasManifest"}
-        <SideMenuPageListButton>General Info</SideMenuPageListButton>
         <SideMenuPageListButton>Content</SideMenuPageListButton>
       {:else if type === "collection"}
-        <SideMenuPageListButton>General Info</SideMenuPageListButton>
+        <!-- Extra menus for collection-->
       {:else}
-        <SideMenuPageListButton>General Info</SideMenuPageListButton>
+        <!--Extra menus for other-->
       {/if}
     </div>
 
     <div slot="editor-content">
-      <SideMenuPage>
-        <!-- Designed to be generic? Or can check inside for props? -->
-        <AccessObjectInfoEditor bind:model />
-      </SideMenuPage>
       <SideMenuPage overflowY="hidden">
         <!-- I have to use the typecheck here otherwise we get a type error-->
         {#if isCanvasManifest(model)}

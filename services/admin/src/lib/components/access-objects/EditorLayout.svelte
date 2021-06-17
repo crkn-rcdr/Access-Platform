@@ -5,8 +5,11 @@
   import SideMenuContainer from "$lib/components/shared/SideMenuContainer.svelte";
   import SideMenuBody from "$lib/components/shared/SideMenuBody.svelte";
   import SideMenuPageList from "$lib/components/shared/SideMenuPageList.svelte";
+  import SideMenuPageListButton from "$lib/components/shared/SideMenuPageListButton.svelte";
+  import SideMenuPage from "$lib/components/shared/SideMenuPage.svelte";
   import EditorActions from "$lib/components/access-objects/EditorActions.svelte";
   import StatusIndicator from "$lib/components/access-objects/StatusIndicator.svelte";
+  import AccessObjectInfoEditor from "$lib/components/access-objects/AccessObjectInfoEditor.svelte";
 
   export let object: AccessObject;
   export let model: AccessObject;
@@ -21,9 +24,14 @@
   </Toolbar>
   <SideMenuContainer>
     <SideMenuPageList>
+      <SideMenuPageListButton>General Info</SideMenuPageListButton>
       <slot name="editor-menu" />
     </SideMenuPageList>
     <SideMenuBody>
+      <SideMenuPage>
+        <!-- Designed to be generic? -->
+        <AccessObjectInfoEditor bind:model />
+      </SideMenuPage>
       <slot name="editor-content" />
     </SideMenuBody>
   </SideMenuContainer>
