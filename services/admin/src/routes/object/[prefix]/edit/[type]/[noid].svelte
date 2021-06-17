@@ -48,6 +48,7 @@
   <!-- I couldn't have named slots in a regular __layout, not sure if there's a smarter way to make the layout more extensible-->
   <EditorLayout bind:object bind:model>
     <div slot="editor-menu">
+      <!-- Not sure if this is any more performant than the isManifest check -->
       {#if type === "manifest"}
         <SideMenuPageListButton>General Info</SideMenuPageListButton>
         <SideMenuPageListButton>Content</SideMenuPageListButton>
@@ -60,6 +61,7 @@
 
     <div slot="editor-content">
       <SideMenuPage>
+        <!-- Designed to be generic? Or can check inside for props? -->
         <AccessObjectInfoEditor bind:model />
       </SideMenuPage>
       <SideMenuPage overflowY="hidden">
