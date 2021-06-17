@@ -31,29 +31,42 @@
 
 {#if object && model}
   <!-- I couldn't have named slots in a regular __layout, not sure if there's a smarter way to make the layout more extensible-->
-  <EditorLayout bind:object bind:model>
-    <div slot="editor-menu">
-      <!-- Not sure if this is any more performant than the isManifest check -->
-      {#if type === "canvasManifest"}
+  <!-- I get an error if the check is in the EditorLayout about the slots-->
+  {#if isCanvasManifest(model)}
+    <EditorLayout bind:object bind:model>
+      <div slot="editor-menu">
         <SideMenuPageListButton>Content</SideMenuPageListButton>
-      {:else if type === "collection"}
-        <!-- Extra menus for collection-->
-      {:else}
-        <!--Extra menus for other-->
-      {/if}
-    </div>
+      </div>
 
-    <div slot="editor-content">
-      <SideMenuPage overflowY="hidden">
-        <!-- I have to use the typecheck here otherwise we get a type error-->
-        {#if isCanvasManifest(model)}
+      <div slot="editor-content">
+        <SideMenuPage overflowY="hidden">
           <ManifestContentEditor bind:manifest={model} />
-        {:else if isCollection(model)}
-          Collection! {JSON.stringify(object)}
-        {:else}
-          Other! {JSON.stringify(object)}
-        {/if}
-      </SideMenuPage>
-    </div>
-  </EditorLayout>
+        </SideMenuPage>
+      </div>
+    </EditorLayout>
+  {:else if isCollection(model)}
+    <EditorLayout bind:object bind:model>
+      <div slot="editor-menu">
+        <!-- SideMenuPageListButton>Content</SideMenuPageListButton-->
+      </div>
+
+      <div slot="editor-content">
+        <!--SideMenuPage overflowY="hidden">
+        Collection Content! {JSON.stringify(object)}
+      </SideMenuPage-->
+      </div>
+    </EditorLayout>
+  {:else}
+    <EditorLayout bind:object bind:model>
+      <div slot="editor-menu">
+        <!-- SideMenuPageListButton>Content</SideMenuPageListButton-->
+      </div>
+
+      <div slot="editor-content">
+        <!--SideMenuPage overflowY="hidden">
+        Other Content! {JSON.stringify(object)}
+      </SideMenuPage-->
+      </div>
+    </EditorLayout>
+  {/if}
 {/if}
