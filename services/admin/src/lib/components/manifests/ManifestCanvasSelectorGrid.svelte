@@ -3,7 +3,7 @@
   import type { CanvasManifest } from "@crkn-rcdr/access-data/src/access/CanvasManifest";
   import type { Canvas } from "@crkn-rcdr/access-data/src/access/CanvasManifest";
   import TiArrowBack from "svelte-icons/ti/TiArrowBack.svelte";
-  import Align from "../shared/Align.svelte";
+  import Align from "$lib/components/shared//Align.svelte";
   import CanvasSelectorGridTile from "../canvases/CanvasSelectorGridTile.svelte";
   import CanvasViewer from "../canvases/CanvasViewer.svelte";
 

@@ -2,12 +2,12 @@
   import { createEventDispatcher } from "svelte";
   import type { CanvasManifest } from "@crkn-rcdr/access-data/src/access/CanvasManifest";
   import ManifestCanvasSelectorGrid from "./ManifestCanvasSelectorGrid.svelte";
-  import Align from "../shared/Align.svelte";
-  import Switch from "../shared/Switch.svelte";
-  import SwitchCase from "../shared/SwitchCase.svelte";
-  import SwitchDefault from "../shared/SwitchDefault.svelte";
-  import ManifestSearch from "../temporary/ManifestSearch.svelte";
-  import ManifestTable from "../temporary/ManifestTable.svelte";
+  import Align from "$lib/components/shared//Align.svelte";
+  import Switch from "$lib/components/shared//Switch.svelte";
+  import SwitchCase from "$lib/components/shared//SwitchCase.svelte";
+  import SwitchDefault from "$lib/components/shared//SwitchDefault.svelte";
+  import ManifestSearch from "$lib/components/temporary/ManifestSearch.svelte";
+  import ManifestTable from "$lib/components/temporary/ManifestTable.svelte";
 
   export let destinationManifest: CanvasManifest;
   export let destinationIndex: number = 0;

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher, onMount } from "svelte";
-  import { moveArrayElement } from "../../lib/arrayUtil";
+  import { moveArrayElement } from "$lib/arrayUtil";
 
   export let dragList: any[] = [];
   export let direction = "y"; // y | x | both
@@ -12,13 +12,12 @@
   let destinationItemIndex: number;
 
   function handleDrop() {
-    clearDragAnimation();
+    if (originalItemIndex === destinationItemIndex) return;
     dragList = moveArrayElement(
       dragList,
       originalItemIndex,
       destinationItemIndex
     );
-
     dispatch("itemDropped", { originalItemIndex, destinationItemIndex });
   }
 
@@ -98,9 +97,24 @@
     element.classList?.add("draggable");
     element.setAttribute("draggable", "true");
     element.setAttribute("ondragover", "return false");
+
+    /** Hides the item being dragged in it's orginal position. This must be done during drag, else the drag preview will not show. */
+    element.addEventListener("drag", () => {
+      element.classList?.add("dragging");
+    });
+
+    /** When the dragging begins, record the items current index for moving upon drop */
     element.addEventListener("dragstart", () => {
       originalItemIndex = elementIndex;
     });
+
+    /** Shows the item being dragged in it's new position, and clears the drag target animation from the element being hovered over. */
+    element.addEventListener("dragend", () => {
+      element.classList?.remove("dragging");
+      clearDragAnimation();
+    });
+
+    /** Records the destination index for moving the dragged item to, and adds the drag target animation from the element being hovered over. */
     element.addEventListener("dragover", (event: any) => {
       destinationItemIndex = getIndexToMoveChildTo(
         event.clientX,
@@ -128,28 +142,50 @@
   }
 </script>
 
-<div class="drag-and-drop-wrap" bind:this={container} on:drop={handleDrop}>
+<div
+  class="drag-and-drop-wrap {direction}"
+  bind:this={container}
+  on:drop={handleDrop}
+>
   <slot />
 </div>
 
 <style>
   .drag-and-drop-wrap {
-    width: 100%;
+    min-width: 100%;
+  }
+  .x {
+    overflow-y: hidden;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  .y {
+    overflow-x: hidden;
+    overflow-y: auto;
+    white-space: nowrap;
+  }
+
+  :global(.x .draggable, .both .draggable) {
+    display: inline-block;
   }
   :global(.drag-target) {
     opacity: 0.3;
     filter: brightness(0.5);
   }
-  :global(.drag-target::before) {
-    display: inline-block;
-    content: "";
-    border-top: 2px solid var(--grey);
-    width: 100%;
-    margin: 0;
-    transform: translateY(-1rem);
+  :global(.y .drag-target) {
+    border-top: 4px solid var(--grey);
+  }
+  :global(.x .drag-target) {
+    border-left: 4px solid var(--grey);
+  }
+  :global(.both .drag-target) {
+    border: 4px solid var(--grey);
   }
   :global(.draggable:hover) {
     filter: brightness(1.03);
     cursor: grab;
+  }
+  :global(.dragging) {
+    visibility: hidden !important;
   }
 </style>

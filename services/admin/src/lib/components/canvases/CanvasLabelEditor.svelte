@@ -2,7 +2,7 @@
   import { createEventDispatcher } from "svelte";
   import IoMdOpen from "svelte-icons/io/IoMdOpen.svelte";
   import type { Canvas } from "@crkn-rcdr/access-data/src/access/CanvasManifest";
-  import Align from "../shared/Align.svelte";
+  import Align from "$lib/components/shared/Align.svelte";
 
   export let canvas: Canvas;
 

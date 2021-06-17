@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
 
-  import Align from "../../components/shared/Align.svelte";
+  import Align from "$lib/components/shared/Align.svelte";
 
   let container: HTMLDivElement;
 

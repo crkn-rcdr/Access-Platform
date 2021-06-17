@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Align from "../shared/Align.svelte";
+  import Align from "$lib/components/shared/Align.svelte";
   export let title = "";
 </script>
 

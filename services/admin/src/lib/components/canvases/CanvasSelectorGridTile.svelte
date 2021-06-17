@@ -1,7 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
   import type { Canvas } from "@crkn-rcdr/access-data/src/access/CanvasManifest";
-  import Align from "../shared/Align.svelte";
+  import Align from "$lib/components/shared//Align.svelte";
   import TiEye from "svelte-icons/ti/TiEye.svelte";
 
   export let canvas: Canvas;

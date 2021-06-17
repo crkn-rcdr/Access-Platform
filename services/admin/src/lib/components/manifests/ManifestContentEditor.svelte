@@ -4,13 +4,13 @@
     CanvasManifest,
     Canvas,
   } from "@crkn-rcdr/access-data/src/access/CanvasManifest";
-  import Align from "../shared/Align.svelte";
+  import Align from "$lib/components/shared//Align.svelte";
   import CanvasLabelEditor from "../canvases/CanvasLabelEditor.svelte";
   import CanvasViewer from "../canvases/CanvasViewer.svelte";
   import CanvasThumbnailList from "../canvases/CanvasThumbnailList.svelte";
-  import Switch from "../shared/Switch.svelte";
-  import SwitchCase from "../shared/SwitchCase.svelte";
-  import ManifestAddCanvasMenu from "./ManifestAddCanvasMenu.svelte";
+  import Switch from "$lib/components/shared//Switch.svelte";
+  import SwitchCase from "$lib/components/shared//SwitchCase.svelte";
+  import ManifestAddCanvasMenu from "$lib/components/manifests/ManifestAddCanvasMenu.svelte";
 
   export let manifest: CanvasManifest;
 

@@ -2,10 +2,10 @@
   import { createEventDispatcher, onMount } from "svelte";
   import TiTrash from "svelte-icons/ti/TiTrash.svelte";
   import type { Canvas } from "@crkn-rcdr/access-data/src/access/CanvasManifest";
-  import Align from "../shared/Align.svelte";
-  import AutomaticResizeNumberInput from "../shared/AutomaticResizeNumberInput.svelte";
-  import DynamicDragAndDropList from "../shared/DynamicDragAndDropList.svelte";
-  import { moveArrayElement } from "../../lib/arrayUtil";
+  import Align from "$lib/components/shared/Align.svelte";
+  import AutomaticResizeNumberInput from "$lib/components/shared/AutomaticResizeNumberInput.svelte";
+  import DynamicDragAndDropList from "$lib/components/shared/DynamicDragAndDropList.svelte";
+  import { moveArrayElement } from "$lib/arrayUtil";
 
   export let canvases: Canvas[] = [];
   export let showAddButton = true;
