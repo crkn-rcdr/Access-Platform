@@ -20,9 +20,6 @@
 <script lang="ts">
   import type { AccessObject } from "@crkn-rcdr/access-data";
   import { isCanvasManifest, isCollection } from "@crkn-rcdr/access-data";
-  import Align from "$lib/components/shared/Align.svelte";
-  import EditorActions from "$lib/components/access-objects/EditorActions.svelte";
-  import ManifestStatusIndicator from "$lib/components/manifests/ManifestStatusIndicator.svelte";
   import ManifestContentEditor from "$lib/components/manifests/ManifestContentEditor.svelte";
   import SideMenuPageListButton from "$lib/components/shared/SideMenuPageListButton.svelte";
   import SideMenuPage from "$lib/components/shared/SideMenuPage.svelte";
@@ -30,12 +27,11 @@
   import EditorLayout from "$lib/components/access-objects/EditorLayout.svelte";
 
   export let object: AccessObject;
-
-  /*let type: string | undefined; //"collection" | "manifest" | "other";
+  let type: string | undefined; //"collection" | "manifest" | "other";
   import { page } from "$app/stores";
   page.subscribe((page) => {
     ({ type } = page.params);
-  });*/
+  });
 
   let rfdc: any; // Deep copies an object
   let model: AccessObject; // | Canvas etc...
@@ -49,48 +45,33 @@
 </script>
 
 {#if object && model}
-  <!-- I have to use the typecheck here otherwise we get a type error-->
-  <!-- By having the if type here we only need to check once -->
-  {#if isCanvasManifest(model)}
-    <!-- I couldn't have named slots in a regular __layout, not sure if there's a smarter way to make the layout more extensible-->
-    <EditorLayout bind:model>
-      <Align slot="toolbar" direction="column" vertical="flex-end">
-        <ManifestStatusIndicator bind:manifest={model} />
-        <EditorActions {object} {model} />
-      </Align>
-
-      <div slot="editor-menu">
+  <!-- I couldn't have named slots in a regular __layout, not sure if there's a smarter way to make the layout more extensible-->
+  <EditorLayout bind:object bind:model>
+    <div slot="editor-menu">
+      {#if type === "manifest"}
         <SideMenuPageListButton>General Info</SideMenuPageListButton>
         <SideMenuPageListButton>Content</SideMenuPageListButton>
-      </div>
-
-      <div slot="editor-content">
-        <SideMenuPage>
-          <AccessObjectInfoEditor bind:model />
-        </SideMenuPage>
-        <SideMenuPage overflowY="hidden">
-          <ManifestContentEditor bind:manifest={model} />
-        </SideMenuPage>
-      </div>
-    </EditorLayout>
-  {:else if isCollection(model)}
-    <EditorLayout bind:model>
-      <Align slot="toolbar" direction="column" vertical="flex-end">
-        <EditorActions {object} {model} />
-        <!--collections can be published eh?-->
-      </Align>
-
-      <div slot="editor-menu">
+      {:else if type === "collection"}
         <SideMenuPageListButton>General Info</SideMenuPageListButton>
-      </div>
+      {:else}
+        <SideMenuPageListButton>General Info</SideMenuPageListButton>
+      {/if}
+    </div>
 
-      <div slot="editor-content">
-        <SideMenuPage>
-          <AccessObjectInfoEditor bind:model />
-        </SideMenuPage>
-      </div>
-    </EditorLayout>
-  {:else}
-    Other! {JSON.stringify(object)}
-  {/if}
+    <div slot="editor-content">
+      <SideMenuPage>
+        <AccessObjectInfoEditor bind:model />
+      </SideMenuPage>
+      <SideMenuPage overflowY="hidden">
+        <!-- I have to use the typecheck here otherwise we get a type error-->
+        {#if isCanvasManifest(model)}
+          <ManifestContentEditor bind:manifest={model} />
+        {:else if isCollection(model)}
+          Collection! {JSON.stringify(object)}
+        {:else}
+          Other! {JSON.stringify(object)}
+        {/if}
+      </SideMenuPage>
+    </div>
+  </EditorLayout>
 {/if}

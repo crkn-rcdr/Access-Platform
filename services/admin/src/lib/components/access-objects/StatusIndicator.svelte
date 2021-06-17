@@ -1,11 +1,11 @@
 <script lang="ts">
-  import type { CanvasManifest } from "@crkn-rcdr/access-data/src/access/CanvasManifest";
-  export let manifest: CanvasManifest;
+  import type { AccessObject } from "@crkn-rcdr/access-data";
+  export let object: AccessObject;
 </script>
 
 <span class="status">
   <span>Status: </span>
-  <span>{manifest["public"] ? "published" : "unpublished"}</span>
+  <span>{object["public"] ? "published" : "unpublished"}</span>
 </span>
 
 <style>
