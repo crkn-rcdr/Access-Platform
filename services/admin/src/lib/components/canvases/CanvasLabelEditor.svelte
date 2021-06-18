@@ -72,4 +72,8 @@
     margin-left: 0.25rem;
     margin-top: 0;
   }
+
+  a {
+    color: var(--light-font) !important;
+  }
 </style>
