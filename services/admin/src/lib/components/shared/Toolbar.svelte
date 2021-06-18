@@ -22,6 +22,6 @@
     flex: 9;
   }
   .toolbar-content {
-    flex: 1;
+    flex: 3;
   }
 </style>
