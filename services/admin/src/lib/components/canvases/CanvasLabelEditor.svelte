@@ -61,7 +61,6 @@
   }
 
   .message {
-    font-size: var(--smaller-font-size) !important;
     font-style: italic;
   }
 

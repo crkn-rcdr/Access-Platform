@@ -252,7 +252,6 @@
     font-weight: 400;
     margin-top: 0.58rem;
     margin-left: 0.58rem;
-    font-size: var(--smaller-font-size);
   }
 
   .action.icon {
