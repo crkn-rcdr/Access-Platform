@@ -133,7 +133,10 @@
   .canvas-title {
     color: var(--light-font);
     margin: 1rem !important;
-    min-height: 5.625rem; /*To make the title not shift when the add button is visible*/
+  }
+  /** Make sure the canvas title appears in the exact position of the manifest title. */
+  :global(.canvas-title .align) {
+    min-height: 3.8125rem;
   }
 
   .canvas-tiles {
