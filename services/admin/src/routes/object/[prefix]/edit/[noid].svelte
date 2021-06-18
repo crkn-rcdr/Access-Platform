@@ -9,14 +9,17 @@
 
   let object: AccessObject;
   const objectStore: SvelteStore<AccessObject> = getContext("objectStore");
-  $: object = $objectStore;
-  $: setDataModel(object);
+  object = $objectStore;
+  setDataModel(object);
+
+  objectStore.subscribe((val) => {
+    console.log("wooo,", val);
+  });
 
   let type: "collection" | "canvasManifest" | "other";
   const typeStore: SvelteStore<"collection" | "canvasManifest" | "other"> =
     getContext("typeStore");
-  $: type = $typeStore;
-  $: console.log(type);
+  type = $typeStore;
 
   let rfdc: any; // Deep copies an object
   let model: AccessObject;

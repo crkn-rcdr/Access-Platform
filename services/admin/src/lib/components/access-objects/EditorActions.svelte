@@ -22,7 +22,7 @@
 
   function save() {
     let diff: any = detailedDiff(object, model); //TODO: We can send this to the backend
-    //console.log("changes:", diff);
+    console.log("changes:", diff);
     object = clone(model);
     checkModelChanged(model);
   }

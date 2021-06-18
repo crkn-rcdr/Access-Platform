@@ -22,8 +22,6 @@
       <StatusIndicator bind:object />
       <EditorActions bind:object bind:model />
     </div>
-    <!--Align direction="column" vertical="flex-end">
-    </Align-->
   </Toolbar>
   <SideMenuContainer>
     <SideMenuPageList>
