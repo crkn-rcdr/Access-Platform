@@ -129,12 +129,7 @@
   .manifest-title,
   .canvas-title {
     color: var(--light-font);
-  }
-  .manifest-title {
     padding: 1rem !important;
-  }
-  .canvas-title {
-    padding: 1.4rem 1rem !important;
   }
 
   .canvas-tiles {
