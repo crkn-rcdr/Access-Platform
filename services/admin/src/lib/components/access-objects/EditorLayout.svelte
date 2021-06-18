@@ -19,7 +19,7 @@
   <Toolbar title={object["slug"]}>
     <Align direction="column" vertical="flex-end">
       <StatusIndicator bind:object />
-      <EditorActions {object} {model} />
+      <EditorActions bind:object bind:model />
     </Align>
   </Toolbar>
   <SideMenuContainer>

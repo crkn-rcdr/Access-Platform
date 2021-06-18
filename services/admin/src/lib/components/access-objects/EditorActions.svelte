@@ -13,6 +13,7 @@
 
   function checkModelChanged(model: AccessObject) {
     saveEnabled = !equal(object, model);
+    console.log(saveEnabled, object, model);
   }
 
   $: {
