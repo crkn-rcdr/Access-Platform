@@ -79,7 +79,7 @@
 
 <style>
   .canvas-selector-wrap {
-    padding: 2rem;
+    padding: 3.5rem 4rem;
     position: relative;
     height: 100%;
   }

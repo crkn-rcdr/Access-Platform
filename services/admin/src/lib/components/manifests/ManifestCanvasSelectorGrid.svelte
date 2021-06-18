@@ -116,7 +116,7 @@
     bottom: 0;
     left: 0;
     right: 0;
-    padding: 2rem 3em;
+    padding: 2rem 3rem;
   }
 
   .preview-canvas-wrap {
