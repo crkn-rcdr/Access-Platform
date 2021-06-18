@@ -55,7 +55,4 @@
   textarea {
     width: 100%;
   }
-  span {
-    margin-right: 1.5rem;
-  }
 </style>

@@ -20,12 +20,68 @@
   --viewport-scaling: 0.2vw;
   --default-font-size: calc(var(--base-size) + var(--viewport-scaling));
   --smaller-font-size: calc(var(--smaller-size) + var(--viewport-scaling));
+  --perfect-fourth-1: calc(var(--base-size) * 5.6 + var(--viewport-scaling));
+  --perfect-fourth-2: calc(var(--base-size) * 4.2 + var(--viewport-scaling));
+  --perfect-fourth-3: calc(var(--base-size) * 3.15 + var(--viewport-scaling));
+  --perfect-fourth-4: calc(var(--base-size) * 2.36 + var(--viewport-scaling));
+  --perfect-fourth-5: calc(var(--base-size) * 1.77 + var(--viewport-scaling));
+  --perfect-fourth-6: calc(var(--base-size) * 1.33 + var(--viewport-scaling));
+  --auto-grid-min-size: calc(var(--base-size) * 20);
+  --auto-grid-gap: calc(var(--base-size) * 3);
+  --margin-top-sm: var(--smaller-size);
+  --margin-top-md: var(--base-size);
+  --margin-top-lg: calc(var(--base-size) * 1.33);
+  --breakpoint-md: 37em;
+  --breakpoint-lg: 62em;
 }
 
+/** Font defaults */
 body {
   font-family: "Roboto", sans-serif !important;
   font-weight: 300;
   font-size: var(--default-font-size);
+}
+
+/** Reactive margins */
+.margin-top-sm {
+  margin-top: calc(var(--margin-top-sm) + var(--viewport-scaling));
+}
+
+.margin-top-md {
+  margin-top: calc(var(--margin-top-md) + var(--viewport-scaling));
+}
+
+.margin-top-lg {
+  margin-top: calc(var(--margin-top-lg) + var(--viewport-scaling));
+}
+
+/** Screen reader accessible hiding 
+Source: https://github.com/twbs/bootstrap/blob/main/scss/mixins/_visually-hidden.scss*/
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/*
+  AUTO GRID
+  Set the minimum item size with `--auto-grid-min-size` and you’ll
+  get a fully responsive grid with no media queries.
+  https://piccalil.li/tutorial/create-a-responsive-grid-layout-with-no-media-queries-using-css-grid/
+*/
+.auto-grid {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(var(--auto-grid-min-size, 16rem), 1fr)
+  );
+  grid-gap: var(--auto-grid-gap, get-size("500"));
 }
 
 /* Box sizing rules, see: https://piccalil.li/blog/a-modern-css-reset */
@@ -102,8 +158,7 @@ select {
   }
 }
 
-/* defauls*/
-
+/** Element defauls */
 h1,
 h2,
 h3,
@@ -124,27 +179,27 @@ h6 {
 }
 
 h1 {
-  font-size: calc(var(--base-size) * 5.6 + var(--viewport-scaling));
+  font-size: var(--perfect-fourth-1);
 }
 
 h2 {
-  font-size: calc(var(--base-size) * 4.2 + var(--viewport-scaling));
+  font-size: var(--perfect-fourth-2);
 }
 
 h3 {
-  font-size: calc(var(--base-size) * 3.15 + var(--viewport-scaling));
+  font-size: var(--perfect-fourth-3);
 }
 
 h4 {
-  font-size: calc(var(--base-size) * 2.36 + var(--viewport-scaling));
+  font-size: var(--perfect-fourth-4);
 }
 
 h5 {
-  font-size: calc(var(--base-size) * 1.77 + var(--viewport-scaling));
+  font-size: var(--perfect-fourth-5);
 }
 
 h6 {
-  font-size: calc(var(--base-size) * 1.33 + var(--viewport-scaling));
+  font-size: var(--perfect-fourth-6);
 }
 
 button,
@@ -207,24 +262,6 @@ a {
   color: var(--dark-font) !important;
 }
 
-.action.icon {
-  cursor: pointer;
-}
-
-.icon:hover {
-  background-color: rgba(0, 0, 0, 0.15);
-  border-radius: 0.25rem;
-}
-
-.icon {
-  width: 1.75rem;
-  height: 1.75rem;
-}
-
-.hidden {
-  display: none;
-}
-
 table {
   width: 100%;
   text-align: left;
@@ -257,16 +294,17 @@ input[type="checkbox"]:checked {
   filter: sepia() hue-rotate(140deg) brightness(1.1);
 }
 
-div[title="Zoom in"] img,
-div[title="Zoom out"] img,
-div[title="Go home"] img,
-div[title="Toggle full page"] img {
+/** Icon wrapper defaults */
+.action.icon {
   cursor: pointer;
 }
 
-div[title="Zoom in"],
-div[title="Zoom out"],
-div[title="Go home"],
-div[title="Toggle full page"] {
-  margin-left: 0.25rem !important;
+.icon:hover {
+  background-color: rgba(0, 0, 0, 0.15);
+  border-radius: 0.25rem;
+}
+
+.icon {
+  width: 1.75rem;
+  height: 1.75rem;
 }

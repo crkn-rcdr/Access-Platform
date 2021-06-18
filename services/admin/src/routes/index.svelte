@@ -10,6 +10,15 @@
   Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation
 </p>
 
+<br />
+<hr />
+<p>boop.</p>
+<p class="margin-top-sm">I have the smallest margin</p>
+<p class="margin-top-md">I have the middle margin</p>
+<p class="margin-top-lg">I have the largest margin</p>
+<hr />
+<br />
+
 <h6>Drag and drop grid</h6>
 <DynamicDragAndDropList direction="both" bind:dragList={dragListGrid}>
   {#each dragListGrid as item}

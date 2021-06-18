@@ -45,4 +45,13 @@
     width: 100%;
     height: 100%;
   }
+
+  :global(div[title="Zoom in"] img, div[title="Zoom out"]
+      img, div[title="Go home"] img, div[title="Toggle full page"] img) {
+    cursor: pointer;
+  }
+
+  :global(div[title="Zoom in"], div[title="Zoom out"], div[title="Go home"], div[title="Toggle full page"]) {
+    margin-left: 0.25rem !important;
+  }
 </style>

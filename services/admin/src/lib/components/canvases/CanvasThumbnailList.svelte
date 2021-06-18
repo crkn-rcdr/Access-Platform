@@ -250,8 +250,8 @@
 
   .pos {
     font-weight: 400;
-    margin-top: 0.5rem;
-    margin-left: 0.5rem;
+    margin-top: 0.58rem;
+    margin-left: 0.58rem;
     font-size: var(--smaller-font-size);
   }
 

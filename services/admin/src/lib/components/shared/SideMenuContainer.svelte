@@ -57,4 +57,7 @@
     width: 100%;
     height: 100%;
   }
+  :global(.hidden) {
+    display: none; /*Hide content from user + screen reader until menu clicked.*/
+  }
 </style>
