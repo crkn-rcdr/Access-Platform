@@ -204,7 +204,7 @@ select {
 }
 
 a {
-  color: var(--light-font) !important;
+  color: var(--dark-font) !important;
 }
 
 .action.icon {
