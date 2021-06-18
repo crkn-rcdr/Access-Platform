@@ -58,7 +58,7 @@ body {
 
 /** Screen reader accessible hiding 
 Source: https://github.com/twbs/bootstrap/blob/main/scss/mixins/_visually-hidden.scss*/
-.visually-hidden {
+.visibility-hidden {
   position: absolute !important;
   width: 1px !important;
   height: 1px !important;

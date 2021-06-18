@@ -58,11 +58,14 @@
         </h5>
 
         <div class="action-buttons">
-          {#if selectedCanvases.length}
-            <button class="primary" on:click={handleAddPressed}
-              >Add Canvas{selectedCanvases.length > 1 ? "es" : ""}</button
-            >
-          {/if}
+          <button
+            class="primary {selectedCanvases.length > 0
+              ? ''
+              : 'opacity-hidden'}"
+            disabled={selectedCanvases.length ? false : true}
+            on:click={handleAddPressed}
+            >Add Canvas{selectedCanvases.length > 1 ? "es" : ""}</button
+          >
         </div>
       </Align>
     </div>
@@ -129,7 +132,8 @@
   .manifest-title,
   .canvas-title {
     color: var(--light-font);
-    padding: 1rem !important;
+    margin: 1rem !important;
+    min-height: 5.625rem; /*To make the title not shift when the add button is visible*/
   }
 
   .canvas-tiles {
@@ -148,5 +152,10 @@
 
   .back-button:hover {
     background-color: #111111;
+  }
+
+  .opacity-hidden {
+    opacity: 0;
+    cursor: auto;
   }
 </style>
