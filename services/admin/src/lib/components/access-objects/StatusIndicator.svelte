@@ -14,6 +14,6 @@
     color: var(--grey);
   }
   .status span {
-    font-size: var(--smaller-font-size) !important;
+    font-size: var(--smallest-font-size) !important;
   }
 </style>

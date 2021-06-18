@@ -18,14 +18,15 @@
   --base-size: 1rem;
   --smaller-size: calc(var(--base-size) * 0.75);
   --viewport-scaling: 0.2vw;
-  --default-font-size: calc(var(--base-size) + var(--viewport-scaling));
-  --smaller-font-size: calc(var(--smaller-size) + var(--viewport-scaling));
   --perfect-fourth-1: calc(var(--base-size) * 5.6 + var(--viewport-scaling));
   --perfect-fourth-2: calc(var(--base-size) * 4.2 + var(--viewport-scaling));
   --perfect-fourth-3: calc(var(--base-size) * 3.15 + var(--viewport-scaling));
   --perfect-fourth-4: calc(var(--base-size) * 2.36 + var(--viewport-scaling));
   --perfect-fourth-5: calc(var(--base-size) * 1.77 + var(--viewport-scaling));
+  --smaller-font-size: calc(var(--base-size) * 0.9 + var(--viewport-scaling));
   --perfect-fourth-6: calc(var(--base-size) * 1.33 + var(--viewport-scaling));
+  --default-font-size: calc(var(--base-size) + var(--viewport-scaling));
+  --smallest-font-size: calc(var(--smaller-size) + var(--viewport-scaling));
   --auto-grid-min-size: calc(var(--base-size) * 20);
   --auto-grid-gap: calc(var(--base-size) * 3);
   --margin-top-sm: var(--smaller-size);
