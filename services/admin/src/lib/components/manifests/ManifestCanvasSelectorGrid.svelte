@@ -113,11 +113,11 @@
     bottom: 0;
     left: 0;
     right: 0;
-    padding: 2em 3em;
+    padding: 2rem 3em;
   }
 
   .preview-canvas-wrap {
-    padding: 0 1em;
+    padding: 0 1rem;
     height: 90%;
   }
 
@@ -129,7 +129,12 @@
   .manifest-title,
   .canvas-title {
     color: var(--light-font);
-    padding: 1em !important;
+  }
+  .manifest-title {
+    padding: 1rem !important;
+  }
+  .canvas-title {
+    padding: 1.4rem 1rem !important;
   }
 
   .canvas-tiles {
@@ -139,9 +144,9 @@
   }
 
   .back-button {
-    width: 2em;
-    height: 2em;
-    margin-right: 1em;
+    width: 2.75rem;
+    height: 2.75rem;
+    margin-right: 1rem;
     cursor: pointer;
     border-radius: 0.25rem;
   }

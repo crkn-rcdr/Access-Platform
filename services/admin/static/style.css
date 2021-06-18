@@ -33,7 +33,7 @@
   --margin-top-md: var(--md-size);
   --margin-top-lg: var(--lg-size);
   --breakpoint-md: 37em;
-  --breakpoint-lg: 62em;
+  --breakpoint-lg: 62rem;
 }
 
 /** Font defaults */
