@@ -48,7 +48,7 @@
 
 <style>
   form {
-    padding: 24px;
+    padding: 1.5rem;
   }
   label,
   input,
@@ -56,6 +56,6 @@
     width: 100%;
   }
   span {
-    margin-right: 24px;
+    margin-right: 1.5rem;
   }
 </style>

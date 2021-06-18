@@ -96,7 +96,7 @@
   .label-wrap {
     flex: 1;
     overflow-y: hidden;
-    width: 319px;
+    width: 20rem;
   }
 
   .state-wrap {

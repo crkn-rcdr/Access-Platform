@@ -45,9 +45,9 @@
   }
 
   #label {
-    width: max(80%, 250px);
+    width: max(80%, 15rem);
     margin: auto;
-    padding: 24px 0;
+    padding: 1.5rem 0;
   }
 
   textarea {
@@ -55,7 +55,7 @@
   }
 
   .takedown {
-    width: max(80%, 250px);
+    width: max(80%, 15rem);
     margin: auto;
     display: block;
   }
@@ -67,9 +67,9 @@
 
   .icon {
     display: block;
-    width: max(1.2vw, 20px);
-    height: max(1.2vw, 20px);
-    margin-left: 4px;
+    width: max(1.2vw, 1.25rem);
+    height: max(1.2vw, 1.25rem);
+    margin-left: 0.25rem;
     margin-top: 0;
   }
 </style>

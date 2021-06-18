@@ -173,13 +173,13 @@
     filter: brightness(0.5);
   }
   :global(.y .drag-target) {
-    border-top: 4px solid var(--grey);
+    border-top: 0.25rem solid var(--grey);
   }
   :global(.x .drag-target) {
-    border-left: 4px solid var(--grey);
+    border-left: 0.25rem solid var(--grey);
   }
   :global(.both .drag-target) {
-    border: 4px solid var(--grey);
+    border: 0.25rem solid var(--grey);
   }
   :global(.draggable:hover) {
     filter: brightness(1.03);

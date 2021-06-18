@@ -84,6 +84,6 @@
     height: 100%;
   }
   .cancel-button {
-    margin-left: 4px;
+    margin-left: 0.25rem;
   }
 </style>

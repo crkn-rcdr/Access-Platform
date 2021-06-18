@@ -40,8 +40,10 @@
 <style>
   .editor {
     position: fixed;
-    top: 74px; /* todo: not perfect on big screens */
-    bottom: 115px;
+    top: calc(
+      4.5rem + var(--viewport-scaling)
+    ); /* todo: not perfect on big screens */
+    bottom: 7rem;
     right: 0;
     left: 0;
   }

@@ -208,7 +208,7 @@
   }
 
   .thumbnail {
-    height: max(22vh, 250px);
+    height: max(22vh, 15rem);
     width: 100%;
     background-color: var(--structural-div-bg);
     overflow: hidden;
@@ -224,7 +224,7 @@
 
   .actions-wrap {
     flex: 1;
-    margin-left: 24px;
+    margin-left: 1.5rem;
   }
 
   .action.icon {
@@ -238,20 +238,20 @@
 
   .actions-wrap,
   .image-wrap {
-    margin-top: 24px;
+    margin-top: 1.5rem;
   }
 
   .image-wrap .thumbnail-img {
     height: max(18vh, 200px);
     width: max(13vh, 150px);
-    margin: 0 20px;
+    margin: 0 1.25rem;
     pointer-events: none;
   }
 
   .pos {
     font-weight: 400;
-    margin-top: 9px;
-    margin-left: 9px;
+    margin-top: 0.5rem;
+    margin-left: 0.5rem;
     font-size: var(--smaller-font-size);
   }
 

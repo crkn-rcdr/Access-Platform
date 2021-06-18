@@ -87,7 +87,7 @@
 <style>
   .search {
     flex: 9;
-    margin-right: 16px;
+    margin-right: 1rem;
     margin-top: 0;
   }
 </style>

@@ -57,15 +57,15 @@
 
   .canvas-tile img {
     position: absolute;
-    top: 0; /*50px;*/
+    top: 0;
     bottom: 0;
     left: 0;
     right: 0;
   }
   .canvas-tile.selected img {
     filter: sepia() hue-rotate(140deg) brightness(0.8);
-    border-radius: 4px;
-    border: 2px solid var(--teal);
+    border-radius: 0.25rem;
+    border: 0.125rem solid var(--teal);
   }
 
   .canvas-tile-body {
@@ -76,13 +76,13 @@
   }
 
   .canvas-preview-button {
-    width: 2em;
-    height: 2em;
-    padding: 0 0 3px 0;
+    width: 2rem;
+    height: 2rem;
+    padding: 0 0 0.25rem 0;
     color: var(--light-font);
     background-color: var(--grey);
-    border-radius: 4px;
-    margin: 4px 3px;
+    border-radius: 0.25rem;
+    margin: 0.25rem;
   }
 
   .canvas-preview-button:hover {

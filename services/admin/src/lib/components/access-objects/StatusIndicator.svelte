@@ -10,7 +10,7 @@
 
 <style>
   .status {
-    margin-bottom: 4px;
+    margin-bottom: 0.25rem;
     color: var(--grey);
   }
   .status span {

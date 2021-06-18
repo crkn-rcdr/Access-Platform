@@ -81,11 +81,11 @@
 <style>
   input {
     margin-top: 0;
-    padding: 8px !important;
+    padding: 0.5rem !important;
   }
   .icon {
     opacity: 0.6;
-    width: 18px;
-    height: 18px;
+    width: 1.25rem;
+    height: 1.25rem;
   }
 </style>
