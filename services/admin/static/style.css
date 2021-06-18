@@ -85,6 +85,38 @@ Source: https://github.com/twbs/bootstrap/blob/main/scss/mixins/_visually-hidden
   grid-gap: var(--auto-grid-gap, get-size("500"));
 }
 
+/** Flexbox alignment */
+.auto-align {
+  display: inline-flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  width: 100%;
+  height: 100%;
+}
+.auto-align__column {
+  flex-direction: column;
+}
+.auto-align__j-center {
+  justify-content: center;
+}
+.auto-align__j-end {
+  justify-content: flex-end;
+}
+.auto-align__a-center {
+  align-items: center;
+}
+.auto-align__a-end {
+  align-items: flex-end;
+}
+.auto-align__a-stretch {
+  align-items: stretch;
+}
+.auto-align__wrap {
+  flex-wrap: wrap;
+}
+
 /* Box sizing rules, see: https://piccalil.li/blog/a-modern-css-reset */
 *,
 *::before,

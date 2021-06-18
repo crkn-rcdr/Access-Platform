@@ -4,7 +4,6 @@
     CanvasManifest,
     Canvas,
   } from "@crkn-rcdr/access-data/src/access/CanvasManifest";
-  import Align from "$lib/components/shared//Align.svelte";
   import CanvasLabelEditor from "../canvases/CanvasLabelEditor.svelte";
   import CanvasViewer from "../canvases/CanvasViewer.svelte";
   import CanvasThumbnailList from "../canvases/CanvasThumbnailList.svelte";
@@ -36,7 +35,7 @@
 </script>
 
 {#if manifest && activeCanvas}
-  <Align>
+  <div class="auto-align">
     <div class="list-wrapper">
       <CanvasThumbnailList
         showAddButton={state != "add"}
@@ -52,7 +51,7 @@
     <div class="state-wrap">
       <Switch bind:checkVal={state}>
         <SwitchCase caseVal="view">
-          <Align>
+          <div class="auto-align">
             <div class="view-wrap">
               <CanvasViewer canvas={activeCanvas} />
             </div>
@@ -62,7 +61,7 @@
                 on:changed={triggerUpdate}
               />
             </div>
-          </Align>
+          </div>
         </SwitchCase>
         <SwitchCase caseVal="add">
           <!--TODO: Should we add the canvases after the selected canvas or just at the begining or end of the manifest?-->
@@ -76,7 +75,7 @@
         </SwitchCase>
       </Switch>
     </div>
-  </Align>
+  </div>
 {/if}
 
 <style>

@@ -2,7 +2,6 @@
   import { createEventDispatcher } from "svelte";
   import type { CanvasManifest } from "@crkn-rcdr/access-data/src/access/CanvasManifest";
   import ManifestCanvasSelectorGrid from "./ManifestCanvasSelectorGrid.svelte";
-  import Align from "$lib/components/shared//Align.svelte";
   import Switch from "$lib/components/shared//Switch.svelte";
   import SwitchCase from "$lib/components/shared//SwitchCase.svelte";
   import SwitchDefault from "$lib/components/shared//SwitchDefault.svelte";
@@ -40,14 +39,14 @@
 </script>
 
 <div class="canvas-selector-wrap">
+  <!-- TODO: replace with slug resolver component-->
   <div>
-    <!-- TODO: replace with slug resolver component-->
-    <Align>
+    <div class="auto-align auto-align__a-center">
       <ManifestSearch bind:results={manifestSearchResults} />
       <button class="secondary cancel-button" on:click={handleCancelPressed}
         >Cancel</button
       >
-    </Align>
+    </div>
   </div>
 
   {#if manifestSearchResults}

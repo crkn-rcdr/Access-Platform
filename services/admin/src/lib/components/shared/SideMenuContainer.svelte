@@ -1,8 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
 
-  import Align from "$lib/components/shared/Align.svelte";
-
   let container: HTMLDivElement;
 
   let pageButtons: NodeListOf<Element>;
@@ -47,9 +45,9 @@
 </script>
 
 <div bind:this={container} class="side-menu-container">
-  <Align vertical="stretch">
+  <div class="auto-align auto-align__a-stretch ">
     <slot />
-  </Align>
+  </div>
 </div>
 
 <style>

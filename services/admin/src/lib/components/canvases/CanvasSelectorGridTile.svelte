@@ -1,7 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
   import type { Canvas } from "@crkn-rcdr/access-data/src/access/CanvasManifest";
-  import Align from "$lib/components/shared//Align.svelte";
   import TiEye from "svelte-icons/ti/TiEye.svelte";
 
   export let canvas: Canvas;
@@ -29,14 +28,14 @@
   />
 
   <div class="canvas-tile-body">
-    <Align>
+    <div class="auto-align">
       {#if selected}
         <input class="shadow" type="checkbox" checked />
       {/if}
       <div on:click={previewCanvas} class="canvas-preview-button shadow">
         <TiEye />
       </div>
-    </Align>
+    </div>
   </div>
 </div>
 

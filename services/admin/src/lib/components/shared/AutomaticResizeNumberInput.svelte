@@ -2,7 +2,6 @@
   import { createEventDispatcher, onMount } from "svelte";
   import TiArrowSortedUp from "svelte-icons/ti/TiArrowSortedUp.svelte";
   import TiArrowSortedDown from "svelte-icons/ti/TiArrowSortedDown.svelte";
-  import Align from "$lib/components/shared/Align.svelte";
 
   export let name: string;
   export let value: number | undefined;
@@ -59,7 +58,7 @@
   });
 </script>
 
-<Align horizontal="center">
+<div class="auto-align auto-align__j-center">
   <input
     bind:this={input}
     bind:value
@@ -68,15 +67,17 @@
     on:keyup={handleKeyup}
   />
 
-  <Align direction="column" horizontal="center" vertical="center">
+  <div
+    class="auto-align auto-align__column auto-align__j-center auto-align__a-center"
+  >
     <div class="action icon" on:click={upArrowPressed}>
       <TiArrowSortedUp />
     </div>
     <div class="action icon" on:click={downArrowPressed}>
       <TiArrowSortedDown />
     </div>
-  </Align>
-</Align>
+  </div>
+</div>
 
 <style>
   input {

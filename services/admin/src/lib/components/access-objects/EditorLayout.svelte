@@ -1,6 +1,5 @@
 <script lang="ts">
   import type { AccessObject } from "@crkn-rcdr/access-data";
-  import Align from "$lib/components/shared/Align.svelte";
   import Toolbar from "$lib/components/shared/Toolbar.svelte";
   import SideMenuContainer from "$lib/components/shared/SideMenuContainer.svelte";
   import SideMenuBody from "$lib/components/shared/SideMenuBody.svelte";
@@ -17,10 +16,14 @@
 
 <div class="editor">
   <Toolbar title={object["slug"]}>
-    <Align direction="column" vertical="flex-end">
+    <div
+      class="end-content auto-align auto-align__j-end auto-align__a-end auto-align__column"
+    >
       <StatusIndicator bind:object />
       <EditorActions bind:object bind:model />
-    </Align>
+    </div>
+    <!--Align direction="column" vertical="flex-end">
+    </Align-->
   </Toolbar>
   <SideMenuContainer>
     <SideMenuPageList>

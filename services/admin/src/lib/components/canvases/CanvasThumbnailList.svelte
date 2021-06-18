@@ -2,7 +2,6 @@
   import { createEventDispatcher, onMount } from "svelte";
   import TiTrash from "svelte-icons/ti/TiTrash.svelte";
   import type { Canvas } from "@crkn-rcdr/access-data/src/access/CanvasManifest";
-  import Align from "$lib/components/shared/Align.svelte";
   import AutomaticResizeNumberInput from "$lib/components/shared/AutomaticResizeNumberInput.svelte";
   import DynamicDragAndDropList from "$lib/components/shared/DynamicDragAndDropList.svelte";
   import { moveArrayElement } from "$lib/arrayUtil";
@@ -114,7 +113,7 @@
 <svelte:window on:keydown={handleKeydown} />
 
 {#if indexModel.length}
-  <Align vertical="flex-start" direction="column">
+  <div class="auto-align auto-align__column">
     {#if showAddButton}
       <button class="primary" on:click={addClicked}>Add Canvas</button>
     {/if}
@@ -136,9 +135,9 @@
             class:active={isActive(canvas)}
             on:mousedown={() => setActiveIndex(i)}
           >
-            <Align vertical="flex-start">
+            <div class="auto-align">
               <div class="actions-wrap">
-                <Align vertical="flex-start" direction="column">
+                <div class="auto-align auto-align__column">
                   <div class="action pos">
                     {indexModel[i]}
                   </div>
@@ -163,7 +162,7 @@
                   >
                     <TiTrash />
                   </div>
-                </Align>
+                </div>
               </div>
               <div class="image-wrap">
                 <img
@@ -174,12 +173,12 @@
                   )}/full/!220,292/0/default.jpg`}
                 />
               </div>
-            </Align>
+            </div>
           </div>
         {/each}
       </DynamicDragAndDropList>
     </div>
-  </Align>
+  </div>
 {/if}
 
 <style>

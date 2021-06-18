@@ -3,7 +3,6 @@
   import type { CanvasManifest } from "@crkn-rcdr/access-data/src/access/CanvasManifest";
   import type { Canvas } from "@crkn-rcdr/access-data/src/access/CanvasManifest";
   import TiArrowBack from "svelte-icons/ti/TiArrowBack.svelte";
-  import Align from "$lib/components/shared//Align.svelte";
   import CanvasSelectorGridTile from "../canvases/CanvasSelectorGridTile.svelte";
   import CanvasViewer from "../canvases/CanvasViewer.svelte";
 
@@ -49,7 +48,7 @@
 {#if manifest}
   <div class="results">
     <div class="manifest-title">
-      <Align vertical="center">
+      <div class="auto-align auto-align__a-center">
         <div class="back-button" on:click={handleBackButtonPressed}>
           <TiArrowBack />
         </div>
@@ -67,7 +66,7 @@
             >Add Canvas{selectedCanvases.length > 1 ? "es" : ""}</button
           >
         </div>
-      </Align>
+      </div>
     </div>
 
     <div class="canvas-tiles">
@@ -85,7 +84,7 @@
 {#if previewCanvas}
   <div class="preview-wrap">
     <div class="canvas-title">
-      <Align vertical="center">
+      <div class="auto-align auto-align__a-center">
         <div
           class="back-button"
           on:click={() => {
@@ -99,7 +98,7 @@
             "label"
           ]["none"]}
         </h5>
-      </Align>
+      </div>
     </div>
     <div class="preview-canvas-wrap">
       <CanvasViewer canvas={previewCanvas} />
