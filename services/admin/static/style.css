@@ -253,7 +253,7 @@ select {
   border: 1px solid var(--border-color);
   margin-top: 0.25rem;
   outline: none;
-  padding: 1rem;
+  padding: var(--sm-size);
   border-radius: 0.25rem;
 }
 
