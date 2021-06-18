@@ -62,13 +62,14 @@
 
   .message {
     font-style: italic;
+    font-size: var(--perfect-fourth-8);
   }
 
   .icon {
     display: block;
-    width: max(1.2vw, 1.25rem);
-    height: max(1.2vw, 1.25rem);
-    margin-left: 0.25rem;
+    width: var(--perfect-fourth-7);
+    height: var(--perfect-fourth-7);
+    margin-left: 0.5rem;
     margin-top: 0;
   }
 
