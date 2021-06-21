@@ -49,7 +49,12 @@
   <div class="results">
     <div class="manifest-title">
       <div class="auto-align auto-align__a-center">
-        <div class="back-button" on:click={handleBackButtonPressed}>
+        <div
+          class="back-button"
+          data-tooltip="Back"
+          data-tooltip-flow="bottom"
+          on:click={handleBackButtonPressed}
+        >
           <TiArrowBack />
         </div>
         <h5>
@@ -87,6 +92,8 @@
       <div class="auto-align auto-align__a-center">
         <div
           class="back-button"
+          data-tooltip="Back"
+          data-tooltip-flow="bottom"
           on:click={() => {
             previewCanvas = null;
           }}

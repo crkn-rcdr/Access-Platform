@@ -32,7 +32,12 @@
       {#if selected}
         <input class="shadow" type="checkbox" checked />
       {/if}
-      <div on:click={previewCanvas} class="canvas-preview-button shadow">
+      <div
+        on:click={previewCanvas}
+        data-tooltip="Preview"
+        data-tooltip-flow="bottom"
+        class="canvas-preview-button shadow"
+      >
         <TiEye />
       </div>
     </div>

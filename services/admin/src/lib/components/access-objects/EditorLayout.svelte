@@ -14,7 +14,7 @@
   export let model: AccessObject;
 </script>
 
-<div class="editor">
+<div class="editor full-bleed">
   <Toolbar title={object["slug"]}>
     <div
       class="end-content auto-align auto-align__j-end auto-align__a-end auto-align__column"
@@ -39,14 +39,17 @@
 </div>
 
 <style>
-  .editor {
+  /*.editor {
     position: fixed;
     top: calc(
       4.5rem + var(--viewport-scaling)
-    ); /* todo: not perfect on big screens */
+    ); 
     bottom: 7rem;
     right: 0;
     left: 0;
+  }*/
+  .editor {
+    height: 80vh;
   }
   :global(.editor div[slot]) {
     width: 100%;

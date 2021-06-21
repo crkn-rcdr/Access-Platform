@@ -1,4 +1,5 @@
 <script lang="ts">
+  import TiArrowRight from "svelte-icons/ti/TiArrowRight.svelte";
   import { createEventDispatcher } from "svelte";
   import type { CanvasManifest } from "@crkn-rcdr/access-data/src/access/CanvasManifest";
 
@@ -21,7 +22,14 @@
   <tbody>
     {#each manifests as manifest}
       <tr on:click={() => handleClick(manifest)}>
-        <td>{manifest["slug"]}: {manifest["label"]["none"]}</td>
+        <td>
+          {manifest["slug"]}: {manifest["label"]["none"]}
+          <span
+            class="visibility-hidden float__right auto-align auto-align__a-center action-message"
+            >View and select canvases
+            <div class="icon"><TiArrowRight /></div>
+          </span></td
+        >
       </tr>
     {/each}
   </tbody>
@@ -38,5 +46,13 @@
 
   tbody tr:hover {
     background-color: rgb(241, 241, 241);
+  }
+
+  tbody tr:hover .action-message {
+    visibility: visible !important;
+  }
+
+  .action-message {
+    width: 16rem;
   }
 </style>

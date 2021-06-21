@@ -11,14 +11,19 @@
   function setActivePageButtonClass() {
     for (let i = 0; i < pageButtons.length; i++) {
       if (i === activeIndex) pageButtons?.[i]?.classList?.add("active");
-      else pageButtons?.[i]?.classList?.remove("active");
+      else {
+        pageBodies?.[i]?.classList?.add("display-hidden");
+        pageButtons?.[i]?.classList?.remove("active");
+      }
     }
   }
 
   function setActivePageBody() {
+    console.log("pageBodies", pageBodies);
     for (let i = 0; i < pageBodies.length; i++) {
-      if (i === activeIndex) pageBodies?.[i]?.classList?.remove("hidden");
-      else pageBodies?.[i]?.classList?.add("hidden");
+      if (i === activeIndex)
+        pageBodies?.[i]?.classList?.remove("display-hidden");
+      else pageBodies?.[i]?.classList?.add("display-hidden");
     }
   }
 
@@ -54,8 +59,5 @@
   .side-menu-container {
     width: 100%;
     height: 100%;
-  }
-  :global(.hidden) {
-    display: none; /*Hide content from user + screen reader until menu clicked.*/
   }
 </style>
