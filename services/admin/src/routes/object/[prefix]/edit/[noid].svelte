@@ -12,7 +12,7 @@
   $: object = $objectStore;
   $: setDataModel(object);
 
-  let type: "collection" | "canvasManifest" | "other";
+  let type: "collection" | "canvasManifest" | "other" = "other"; // ts complains with lack of default
   const typeStore: SvelteStore<"collection" | "canvasManifest" | "other"> =
     getContext("typeStore");
   $: type = $typeStore;
