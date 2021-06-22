@@ -29,17 +29,12 @@
   import { writable } from "svelte/store";
   import { setContext } from "svelte";
   export let object: AccessObject;
-  export let type: "collection" | "manifest" | "other";
 
   // Source: https://stackoverflow.com/questions/60911171/how-to-pass-data-from-a-layout-to-a-page-in-sapper
   // Do you know a better solution?
   const objectStore = writable(object);
   $: $objectStore = object;
   setContext("objectStore", objectStore);
-
-  const typeStore = writable(type);
-  $: $typeStore = type;
-  setContext("typeStore", typeStore);
 </script>
 
 <slot />
