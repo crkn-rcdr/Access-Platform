@@ -13,7 +13,7 @@
       let type = "other";
       if (isCollection(object)) {
         type = "collection";
-      } else if (isCanvasManifest(object)) {
+      } else if (isManifest(object)) {
         type = "canvasManifest";
       }
       return { props: { object, type } };
@@ -25,7 +25,7 @@
 
 <script lang="ts">
   import type { AccessObject } from "@crkn-rcdr/access-data";
-  import { isCanvasManifest, isCollection } from "@crkn-rcdr/access-data";
+  import { isManifest, isCollection } from "@crkn-rcdr/access-data";
   import { writable } from "svelte/store";
   import { setContext } from "svelte";
   export let object: AccessObject;
