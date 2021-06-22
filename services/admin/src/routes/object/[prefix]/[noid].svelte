@@ -6,13 +6,11 @@
   let object: AccessObject;
   const objectStore: SvelteStore<AccessObject> = getContext("objectStore");
   $: object = $objectStore;
-  $: console.log(object);
 
   let type: "collection" | "canvasManifest" | "other";
   const typeStore: SvelteStore<"collection" | "canvasManifest" | "other"> =
     getContext("typeStore");
   $: type = $typeStore;
-  $: console.log(type);
 </script>
 
 {#if object}
