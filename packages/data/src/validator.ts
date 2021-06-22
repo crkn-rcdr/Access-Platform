@@ -1,5 +1,7 @@
 import Ajv, { JSONSchemaType, ValidateFunction } from "ajv";
 
+export type { JSONSchemaType, ValidateFunction };
+
 export type SchemaHelper<T> = {
   /**
    * A schema object that can be safely inlined into the definition of another
@@ -16,11 +18,9 @@ export type SchemaHelper<T> = {
   validate: ValidateFunction<T>;
 };
 
-export const validator = new Ajv();
+const validator = new Ajv();
 
-export const generateSchema = <T>(
-  schema: JSONSchemaType<T>
-): SchemaHelper<T> => {
+const generateSchema = <T>(schema: JSONSchemaType<T>): SchemaHelper<T> => {
   const full: JSONSchemaType<T> = {
     $schema: "http://json-schema.org/draft-07/schema",
     ...schema,
@@ -41,7 +41,7 @@ export const generateSchema = <T>(
   };
 };
 
-export const generateFormat = <T extends string>(
+const generateFormat = <T extends string>(
   name: string,
   regex: RegExp
 ): SchemaHelper<T> => {
@@ -63,15 +63,15 @@ export const generateFormat = <T extends string>(
  * the subtype.
  * @param additionalProperties Sets `additionalProperties` in the new schema.
  */
-export const inherit = <TSub extends TSuper & TSpec, TSuper, TSpec>(
+const inherit = <TSub extends TSuper & TSpec, TSuper, TSpec>(
   superSchema: JSONSchemaType<TSuper>,
   specSchema: JSONSchemaType<TSpec>,
   additionalProperties = false
 ): SchemaHelper<TSub> => {
   // Ideally there wouldn't need to be an unknown cast here.
-  const subSchema = ({
+  const subSchema = {
     ...specSchema,
-  } as unknown) as JSONSchemaType<TSub>;
+  } as unknown as JSONSchemaType<TSub>;
 
   subSchema.properties = {
     ...superSchema.properties,
@@ -87,3 +87,5 @@ export const inherit = <TSub extends TSuper & TSpec, TSuper, TSpec>(
 
   return generateSchema(subSchema);
 };
+
+export { validator, generateSchema, generateFormat, inherit };

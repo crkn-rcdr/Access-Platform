@@ -8,7 +8,6 @@ export const get: RequestHandler<Locals> = async ({
   const slug = params["slug"] as string;
 
   const response = await accessor.slug.resolve(slug);
-
   return {
     status: 200,
     body: { noid: response },

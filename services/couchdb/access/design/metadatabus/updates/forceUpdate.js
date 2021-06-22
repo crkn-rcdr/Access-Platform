@@ -1,16 +1,12 @@
 module.exports = function (doc) {
-  const successReturn = (doc, message) => {
-    return [doc, JSON.stringify({ message }) + "\n"];
-  };
-
-  const errorReturn = (message) => {
-    return [null, JSON.stringify({ error: message }) + "\n"];
-  };
+  const { successReturn, errorReturn } = require("views/lib/prelude");
 
   if (!doc) {
     return errorReturn(`No document found with id ${doc.id}`);
   }
 
   doc.updateInternalmeta = { requestDate: Date.now() / 1000 };
-  return successReturn(doc, `Hammer update forced`);
+
+  const id = doc.slug || doc._id;
+  return successReturn(doc, `Hammer update forced for ${id}`);
 };

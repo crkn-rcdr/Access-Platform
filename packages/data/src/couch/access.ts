@@ -4,14 +4,7 @@ import { Document as CouchDocument, toCouchSchema, fromCouch } from "./util";
 import { AccessObject } from "../access";
 
 import { Collection, inline as collectionSchema } from "../access/Collection";
-import {
-  CanvasManifest,
-  inline as canvasManifestSchema,
-} from "../access/CanvasManifest";
-import {
-  PdfManifest,
-  inline as pdfManifestSchema,
-} from "../access/PdfManifest";
+import { Manifest, inline as manifestSchema } from "../access/Manifest";
 import { Alias, inline as aliasSchema } from "../access/Alias";
 
 /**
@@ -19,8 +12,7 @@ import { Alias, inline as aliasSchema } from "../access/Alias";
  */
 export type AccessDocument =
   | CouchDocument<Collection>
-  | CouchDocument<CanvasManifest>
-  | CouchDocument<PdfManifest>
+  | CouchDocument<Manifest>
   | CouchDocument<Alias>;
 
 export const { inline, schema, validate } = generateSchema<AccessDocument>({
@@ -29,8 +21,7 @@ export const { inline, schema, validate } = generateSchema<AccessDocument>({
   type: "object",
   oneOf: [
     toCouchSchema(collectionSchema),
-    toCouchSchema(canvasManifestSchema),
-    toCouchSchema(pdfManifestSchema),
+    toCouchSchema(manifestSchema),
     toCouchSchema(aliasSchema),
   ],
   required: ["_id", "type"],
