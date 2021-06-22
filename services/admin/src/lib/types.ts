@@ -25,3 +25,11 @@ export type Locals = {
   session: Session;
   accessor: Accessor;
 };
+
+/**
+ * Allows for the toggleable action to toggle HTML elements
+ */
+export type ToggleParams = {
+  toggled: boolean;
+  display: string;
+};

@@ -1,40 +1,65 @@
-<script context="module" lang="ts">
-  import type { Load } from "@sveltejs/kit";
-  export const load: Load = async ({ page, fetch }) => {
-    const id = [
-      page.params["prefix"] as string,
-      page.params["noid"] as string,
-    ].join("/");
-    const response = await fetch(`/object/${id}.json`);
-    const json = await response.json();
-
-    if (response.ok) {
-      const object = json.object as AccessObject;
-      let type = "other";
-      if (isCollection(object)) {
-        type = "collection";
-      } else if (isManifest(object)) {
-        type = "manifest";
-      }
-      return { props: { object, type } };
-    } else {
-      return { status: response.status, error: new Error(json.error) };
-    }
-  };
-</script>
-
 <script lang="ts">
-  // TODO: figure out why putting import statements down here works. it happens by default when you use vscode to find your import
-  import { isManifest, isCollection } from "@crkn-rcdr/access-data";
-  // if we kept AccessObject in the import above, the code fails on the client. always use `import type` with types
   import type { AccessObject } from "@crkn-rcdr/access-data";
+  import { isManifest, isCollection } from "@crkn-rcdr/access-data";
+  import ManifestContentEditor from "$lib/components/manifests/ManifestContentEditor.svelte";
+  import SideMenuPageListButton from "$lib/components/shared/SideMenuPageListButton.svelte";
+  import SideMenuPage from "$lib/components/shared/SideMenuPage.svelte";
+  import EditorLayout from "$lib/components/access-objects/EditorLayout.svelte";
+  import { getContext } from "svelte";
 
-  export let object: AccessObject;
-  export let type: "collection" | "manifest" | "other";
+  let object: AccessObject;
+  const objectStore: SvelteStore<AccessObject> = getContext("objectStore");
+  $: object = $objectStore;
+  $: setDataModel(object);
+
+  let rfdc: any; // Deep copies an object
+  let model: AccessObject;
+  async function setDataModel(object: AccessObject) {
+    rfdc = (await import("rfdc")).default();
+    model = rfdc(object) as AccessObject;
+  }
 </script>
 
-<h1>{object["id"]}</h1>
+<slot />
 
-<h2>This is a {type}</h2>
+{#if object && model}
+  <!-- I couldn't have named slots in a regular __layout, not sure if there's a smarter way to make the layout more extensible-->
+  <!-- I get an error if the check is in the EditorLayout about the slots-->
+  {#if isManifest(model)}
+    <EditorLayout bind:object bind:model>
+      <div slot="editor-menu">
+        <SideMenuPageListButton>Content</SideMenuPageListButton>
+      </div>
 
-<pre>{JSON.stringify(object, null, 2)}</pre>
+      <div slot="editor-content">
+        <SideMenuPage overflowY="hidden">
+          <ManifestContentEditor bind:manifest={model} />
+        </SideMenuPage>
+      </div>
+    </EditorLayout>
+  {:else if isCollection(model)}
+    <EditorLayout bind:object bind:model>
+      <div slot="editor-menu">
+        <!-- SideMenuPageListButton>Content</SideMenuPageListButton-->
+      </div>
+
+      <div slot="editor-content">
+        <!--SideMenuPage overflowY="hidden">
+        Collection Content! {JSON.stringify(object)}
+      </SideMenuPage-->
+      </div>
+    </EditorLayout>
+  {:else}
+    <EditorLayout bind:object bind:model>
+      <div slot="editor-menu">
+        <!-- SideMenuPageListButton>Content</SideMenuPageListButton-->
+      </div>
+
+      <div slot="editor-content">
+        <!--SideMenuPage overflowY="hidden">
+        Other Content! {JSON.stringify(object)}
+      </SideMenuPage-->
+      </div>
+    </EditorLayout>
+  {/if}
+{/if}
