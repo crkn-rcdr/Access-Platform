@@ -109,7 +109,7 @@
 <style>
   .results,
   .preview-wrap {
-    background: black;
+    background: var(--dark-gradient);
     position: absolute;
     top: 0;
     bottom: 0;

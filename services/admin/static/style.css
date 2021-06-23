@@ -7,13 +7,14 @@
   --teal: #1f8591;
   --green: #368d00;
   --grey: #686868;
-  --dark-grey: #323232;
+  --dark-grey: #0c0c0c;
   --border-color: #c3c3c3;
   --structural-div-bg: rgb(240, 240, 240);
   --light-font: white;
   --dark-font: black;
   --red: red;
-  --gradient: linear-gradient(40.79deg, #3fa200 -106.9%, #1f8591 93.69%);
+  --dark-gradient: linear-gradient(0deg, #222 0%, #111 20%, #0c0c0c 100%);
+  --color-gradient: linear-gradient(40.79deg, #3fa200 -106.9%, #1f8591 93.69%);
   --shadow: drop-shadow(0px 0.125rem 0.25rem rgba(0, 0, 0, 0.25));
   --lg-size: calc(var(--md-size) * 1.33);
   --md-size: 1rem;
@@ -288,7 +289,7 @@ button.secondary {
 }
 
 button.fancy {
-  background: var(--gradient);
+  background: var(--colour-gradient);
 }
 
 button.save {

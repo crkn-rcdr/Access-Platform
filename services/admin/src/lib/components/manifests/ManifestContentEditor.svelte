@@ -90,12 +90,19 @@
 
   .view-wrap {
     flex: 2;
+    background: var(--dark-gradient);
   }
 
   .label-wrap {
     flex: 1;
     overflow-y: hidden;
     width: 20rem;
+    color: var(--light-font);
+  }
+
+  .view-wrap,
+  .label-wrap {
+    background: var(--dark-gradient);
   }
 
   .state-wrap {

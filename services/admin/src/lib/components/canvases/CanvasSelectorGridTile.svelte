@@ -63,8 +63,8 @@
   }
   .canvas-tile.selected img {
     filter: sepia() hue-rotate(140deg) brightness(0.8);
-    /*border-radius: var(--border-radius);*/
-    /*border: 0.125rem solid var(--teal);*/
+    border-radius: var(--border-radius);
+    border: 0.125rem solid var(--teal);
   }
 
   .canvas-tile-body {

@@ -54,5 +54,6 @@
 
   .action-message {
     width: fit-content;
+    max-width: 30ch;
   }
 </style>

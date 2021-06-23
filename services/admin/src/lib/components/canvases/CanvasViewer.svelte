@@ -41,7 +41,6 @@
 
 <style>
   div {
-    background-color: black; /*#1b1b1b;*/
     width: 100%;
     height: 100%;
   }

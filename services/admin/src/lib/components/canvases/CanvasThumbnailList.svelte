@@ -199,7 +199,7 @@
     width: 100%;
     height: 100%;
     opacity: 0.8;
-    background: black;
+    background: var(--dark-grey);
   }
 
   button.primary {
