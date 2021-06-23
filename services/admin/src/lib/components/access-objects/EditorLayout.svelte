@@ -8,7 +8,7 @@
   import SideMenuPage from "$lib/components/shared/SideMenuPage.svelte";
   import EditorActions from "$lib/components/access-objects/EditorActions.svelte";
   import StatusIndicator from "$lib/components/access-objects/StatusIndicator.svelte";
-  import AccessObjectInfoEditor from "$lib/components/access-objects/AccessObjectInfoEditor.svelte";
+  import InfoEditor from "$lib/components/access-objects/InfoEditor.svelte";
 
   export let object: AccessObject;
   export let model: AccessObject;
@@ -31,7 +31,7 @@
     <SideMenuBody>
       <SideMenuPage>
         <!-- Designed to be generic? -->
-        <AccessObjectInfoEditor bind:model />
+        <InfoEditor bind:model />
       </SideMenuPage>
       <slot name="editor-content" />
     </SideMenuBody>
