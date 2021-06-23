@@ -5,6 +5,7 @@
 
 :root {
   --teal: #1f8591;
+  --teal-light: #c0d1d3;
   --green: #368d00;
   --grey: #686868;
   --dark-grey: #0c0c0c;
@@ -12,7 +13,7 @@
   --structural-div-bg: rgb(240, 240, 240);
   --light-font: white;
   --dark-font: black;
-  --red: red;
+  --red: #ca0000;
   --dark-gradient: linear-gradient(0deg, #222 0%, #111 20%, #0c0c0c 100%);
   --color-gradient: linear-gradient(40.79deg, #3fa200 -106.9%, #1f8591 93.69%);
   --shadow: drop-shadow(0px 0.125rem 0.25rem rgba(0, 0, 0, 0.25));
@@ -38,14 +39,14 @@
   --breakpoint-lg: 62rem;
 }
 
-/** Font defaults */
+/* Font defaults */
 body {
   font-family: "Roboto", sans-serif !important;
   font-weight: 300;
   font-size: var(--perfect-fourth-7);
 }
 
-/** Reactive margins */
+/* Reactive margins */
 .margin-top-sm {
   margin-top: calc(var(--margin-top-sm) + var(--viewport-scaling));
 }
@@ -58,7 +59,7 @@ body {
   margin-top: calc(var(--margin-top-lg) + var(--viewport-scaling));
 }
 
-/** Screen reader accessible hiding 
+/* Screen reader accessible hiding 
 Source: https://github.com/twbs/bootstrap/blob/main/scss/mixins/_visually-hidden.scss*/
 .visually-hidden {
   position: absolute !important;
@@ -72,7 +73,7 @@ Source: https://github.com/twbs/bootstrap/blob/main/scss/mixins/_visually-hidden
   border: 0 !important;
 }
 
-/** Hide content from user + screen reader until menu clicked.*/
+/* Hide content from user + screen reader until menu clicked.*/
 .display-hidden {
   display: none;
 }
@@ -80,7 +81,7 @@ Source: https://github.com/twbs/bootstrap/blob/main/scss/mixins/_visually-hidden
   visibility: hidden;
 }
 
-/**
+/*
   AUTO GRID
   Set the minimum item size with `--auto-grid-min-size` and you’ll
   get a fully responsive grid with no media queries.
@@ -95,7 +96,7 @@ Source: https://github.com/twbs/bootstrap/blob/main/scss/mixins/_visually-hidden
   grid-gap: var(--auto-grid-gap, get-size("500"));
 }
 
-/** Flexbox alignment */
+/* Flexbox alignment */
 .auto-align {
   display: inline-flex;
   justify-content: flex-start;
@@ -130,18 +131,32 @@ Source: https://github.com/twbs/bootstrap/blob/main/scss/mixins/_visually-hidden
   flex-wrap: wrap;
 }
 
-/** Break out of the mould of your fixed-width container to create visual interest - see: https://piccalil.li/tutorial/creating-a-full-bleed-css-utility/ */
+/* Hero element defaults. */
+.hero {
+  background: var(--color-gradient);
+  color: var(--light-font);
+  padding: var(--perfect-fourth-1) 0;
+}
+
+/* Wrapper util - default page margins */
+.wrapper {
+  margin-inline: auto;
+  padding-inline: 1rem;
+  max-width: 90rem;
+}
+
+/* Break out of the mould of your fixed-width container to create visual interest - see: https://piccalil.li/tutorial/creating-a-full-bleed-css-utility/ */
 .full-bleed {
   width: 100vw;
   margin-left: calc(50% - 50vw);
 }
 
-/** Force content to 100% page height */
+/* Force content to 100% page height */
 .full-page {
   height: 100vh;
 }
 
-/** Make the element align itself to the left/right */
+/* Make the element align itself to the left/right */
 .float__left {
   float: left;
 }
@@ -149,7 +164,7 @@ Source: https://github.com/twbs/bootstrap/blob/main/scss/mixins/_visually-hidden
   float: right;
 }
 
-/** Box sizing rules, see: https://piccalil.li/blog/a-modern-css-reset */
+/* Box sizing rules, see: https://piccalil.li/blog/a-modern-css-reset */
 *,
 *::before,
 *::after {
@@ -310,6 +325,7 @@ button.danger {
 button:hover,
 .clickable:hover {
   filter: brightness(1.2);
+  cursor: pointer;
 }
 
 label {
@@ -322,13 +338,13 @@ select {
   border: 1px solid var(--border-color);
   margin-top: 0.25rem;
   outline: none;
-  padding: var(--md-size);
+  padding: var(--perfect-fourth-8);
   border-radius: var(--border-radius);
   background-color: rgba(255, 255, 255, 0.938);
 }
 
 a {
-  color: var(--dark-font) !important;
+  color: inherit !important;
 }
 
 /* Table settings */
@@ -374,7 +390,7 @@ input[type="checkbox"]:checked {
   filter: sepia() hue-rotate(140deg) brightness(1.1);
 }
 
-/** Icon wrapper defaults */
+/* Icon wrapper defaults */
 .action.icon {
   cursor: pointer;
 }
@@ -538,4 +554,33 @@ input[type="checkbox"]:checked {
 [data-tooltip][data-tooltip-flow^="right"]:hover::before,
 [data-tooltip][data-tooltip-flow^="right"]:hover::after {
   animation: data-tooltips-horz 300ms ease-out forwards;
+}
+
+/* Alert styles */
+
+.alert {
+  padding: var(--perfect-fourth-8);
+  border-radius: var(--border-radius);
+  background-color: var(--teal-light);
+  color: var(--teal);
+  border: 1px solid var(--teal);
+  width: 100%;
+}
+
+.alert-success {
+  background-color: #dbf1cd;
+  color: var(--green);
+  border: 1px solid var(--green);
+}
+
+.alert-warn {
+  background-color: #e2d7be;
+  color: #91841f;
+  border: 1px solid #91841f;
+}
+
+.alert-danger {
+  background-color: #e2bebe;
+  color: var(--red);
+  border: 1px solid var(--red);
 }

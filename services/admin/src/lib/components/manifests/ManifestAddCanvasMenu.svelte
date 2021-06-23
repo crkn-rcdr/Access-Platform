@@ -1,14 +1,11 @@
 <script lang="ts">
-  import Resolver from "$lib/components/access-objects/Resolver.svelte";
+  import TiArrowRight from "svelte-icons/ti/TiArrowRight.svelte";
+  import type { AccessObject } from "@crkn-rcdr/access-data";
+  import { isManifest, isCollection } from "@crkn-rcdr/access-data";
+  import TypeAhead from "$lib/components/access-objects/TypeAhead.svelte";
   import { createEventDispatcher } from "svelte";
   import type { Manifest } from "@crkn-rcdr/access-data/src/access/Manifest";
   import ManifestCanvasSelectorGrid from "./ManifestCanvasSelectorGrid.svelte";
-  import Switch from "$lib/components/shared//Switch.svelte";
-  import SwitchCase from "$lib/components/shared//SwitchCase.svelte";
-  import SwitchDefault from "$lib/components/shared//SwitchDefault.svelte";
-  import ManifestSearch from "$lib/components/temporary/ManifestSearch.svelte";
-  import ManifestTable from "$lib/components/temporary/ManifestTable.svelte";
-
   export let destinationManifest: Manifest;
   export let destinationIndex: number = 0;
 
@@ -16,10 +13,23 @@
 
   let selectedManifest: Manifest;
   let manifestSearchResults: Manifest[];
-  let showManifest: boolean = false;
+  let showManifest = false;
+  let error = "";
 
-  function handleManifestTableClick(event: any) {
-    selectedManifest = event.detail.manifest;
+  async function handleSelect(event: any) {
+    let noid = event.detail;
+    const response = await fetch(`/object/${noid}.json`);
+    const json = await response.json();
+    if (response.ok) {
+      const object = json.object as AccessObject;
+      if (isCollection(object)) {
+        error = "Error: Object is a collection, please select another.";
+      } else if (isManifest(object)) {
+        selectedManifest = object;
+      }
+    } else {
+      error = json.error;
+    }
     showManifest = true;
   }
 
@@ -40,36 +50,37 @@
 </script>
 
 <div class="canvas-selector-wrap">
-  <div>
-    <Resolver><span slot="input" /></Resolver>
-    <br />
-    <br />
-    <ManifestSearch bind:results={manifestSearchResults} />
-    <button class="secondary cancel-button" on:click={handleCancelPressed}
-      >Cancel</button
-    >
-  </div>
+  <button class="danger cancel-button" on:click={handleCancelPressed}>
+    Exit
+  </button>
+  <br />
+  <br />
+  <br />
 
-  {#if manifestSearchResults}
-    <Switch bind:checkVal={manifestSearchResults.length}>
-      <SwitchCase caseVal={0}>
-        <br />
-        <p>No results.</p>
-      </SwitchCase>
-      <SwitchDefault>
-        <ManifestTable
-          title="Search Results"
-          bind:manifests={manifestSearchResults}
-          on:rowClicked={handleManifestTableClick}
-        />
-      </SwitchDefault>
-    </Switch>
+  {#if error}
+    <div class="alert alert-danger">
+      {error}
+    </div>
   {/if}
+
+  <div>
+    <!--Todo: ask how best to limit to only manifests-->
+    <TypeAhead
+      label=""
+      placeholder="Search for a manifest..."
+      on:selected={handleSelect}
+      on:keypress={() => (error = "")}
+    >
+      View and select canvases
+      <div class="icon"><TiArrowRight /></div>
+    </TypeAhead>
+  </div>
 
   {#if showManifest}
     <ManifestCanvasSelectorGrid
       bind:manifest={selectedManifest}
       on:backPressed={() => {
+        error = "";
         showManifest = false;
       }}
       on:addPressed={handleAddPressed}
@@ -83,9 +94,9 @@
     position: relative;
     height: 100%;
     background: var(--dark-gradient);
-    color: white;
+    color: var(--light-font);
   }
   .cancel-button {
-    margin-left: 0.25rem;
+    float: right;
   }
 </style>

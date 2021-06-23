@@ -61,7 +61,9 @@
   });
 </script>
 
-<div class="children-inline auto-align auto-align__a-baseline">
+<div
+  class="auto-align auto-align__column auto-align__j-baseline auto-align__wra"
+>
   <label for="slug"><slot name="input">Slug:</slot></label>
   <input
     type="text"
@@ -81,7 +83,9 @@
       >
     {:else if noid}
       <slot name="in-use">
-        <a href="/object/{noid}">⚠️ Slug in use</a>
+        <div class="alert alert-danger">
+          <a href="/object/{noid}">⚠️ Slug in use</a>
+        </div>
       </slot>
     {:else}
       <slot name="available">✅ Slug available</slot>
@@ -90,7 +94,7 @@
 </div>
 
 <style>
-  .children-inline input {
-    flex: 9;
+  input {
+    width: 100%;
   }
 </style>
