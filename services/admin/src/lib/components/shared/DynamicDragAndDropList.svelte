@@ -114,6 +114,11 @@
       clearDragAnimation();
     });
 
+    /** Disables the drag animation when the component being dragged is no longer over an element */
+    element.addEventListener("dragleave", () => {
+      clearDragAnimation();
+    });
+
     /** Records the destination index for moving the dragged item to, and adds the drag target animation from the element being hovered over. */
     element.addEventListener("dragover", (event: any) => {
       destinationItemIndex = getIndexToMoveChildTo(
