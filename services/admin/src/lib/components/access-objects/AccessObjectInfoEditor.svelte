@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { isCanvasManifest, isCollection } from "@crkn-rcdr/access-data";
+  import { isManifest, isCollection } from "@crkn-rcdr/access-data";
   import type { AccessObject } from "@crkn-rcdr/access-data";
 
   export let model: AccessObject;
@@ -7,13 +7,13 @@
 
 <form>
   <!--TODO: replace with slug resolver component-->
-  {#if isCanvasManifest(model) || isCollection(model)}
+  {#if isManifest(model) || isCollection(model)}
     <label for="slug">Slug</label><br />
     <input type="text" id="slug" name="slug" bind:value={model["slug"]} /><br
     /><br />
   {/if}
 
-  {#if isCanvasManifest(model)}
+  {#if isManifest(model)}
     <label for="label">Label</label><br />
     <textarea id="label" name="label" bind:value={model["label"]["none"]} /><br
     /><br />

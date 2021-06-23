@@ -204,7 +204,6 @@
 
   button.primary {
     width: 100%;
-    padding: 1.5rem 2rem;
   }
 
   .thumbnail {

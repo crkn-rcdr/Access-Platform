@@ -80,8 +80,8 @@
   }
 
   .canvas-preview-button {
-    width: 2.25rem;
-    height: 2.25rem;
+    width: var(--perfect-fourth-5);
+    height: var(--perfect-fourth-5);
     padding: 0 0 0.25rem 0;
     color: var(--light-font);
     background-color: var(--grey);
@@ -112,8 +112,8 @@
   }
 
   input[type="checkbox"] {
-    width: 2.25rem;
-    height: 2.25rem;
+    width: var(--perfect-fourth-5);
+    height: var(--perfect-fourth-5);
   }
 
   input[type="checkbox"]:checked {

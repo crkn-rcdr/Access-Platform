@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { AccessObject } from "@crkn-rcdr/access-data";
-  import { isCanvasManifest, isCollection } from "@crkn-rcdr/access-data";
+  import { isManifest, isCollection } from "@crkn-rcdr/access-data";
   import ManifestContentEditor from "$lib/components/manifests/ManifestContentEditor.svelte";
   import SideMenuPageListButton from "$lib/components/shared/SideMenuPageListButton.svelte";
   import SideMenuPage from "$lib/components/shared/SideMenuPage.svelte";
@@ -35,7 +35,7 @@
 {#if object && model}
   <!-- I couldn't have named slots in a regular __layout, not sure if there's a smarter way to make the layout more extensible-->
   <!-- I get an error if the check is in the EditorLayout about the slots-->
-  {#if isCanvasManifest(model)}
+  {#if isManifest(model)}
     <EditorLayout bind:object bind:model>
       <span slot="editor-menu">
         <SideMenuPageListButton>Content</SideMenuPageListButton>

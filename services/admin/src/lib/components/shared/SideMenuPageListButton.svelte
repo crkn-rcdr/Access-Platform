@@ -6,7 +6,7 @@
   li {
     background: var(--grey);
     filter: brightness(1.1);
-    padding: 1.5rem 4.5rem;
+    padding: 1rem 2.5rem;
     color: var(--light-font) !important;
     cursor: pointer;
   }

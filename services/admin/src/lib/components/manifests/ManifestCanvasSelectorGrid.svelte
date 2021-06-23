@@ -152,8 +152,8 @@
   }
 
   .back-button {
-    width: 2.75rem;
-    height: 2.75rem;
+    width: var(--perfect-fourth-4);
+    height: var(--perfect-fourth-4);
     margin-right: 1rem;
     cursor: pointer;
     border-radius: 0.25rem;
