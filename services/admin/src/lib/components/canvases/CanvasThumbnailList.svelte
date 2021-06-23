@@ -196,8 +196,8 @@
     position: absolute;
     top: 0;
     left: 0;
+    bottom: -100%; /* to ensure scrolling never cuts off the disabled;*/
     width: 100%;
-    height: 100%;
     opacity: 0.8;
     background: var(--dark-grey);
   }
