@@ -191,17 +191,17 @@
   }
   .list.disabled {
     overflow-y: hidden;
+    opacity: 0.5;
   }
-  .list.disabled::after {
+  /*.list.disabled::after {
     content: "";
     position: absolute;
     top: 0;
     left: 0;
-    bottom: -100%; /* to ensure scrolling never cuts off the disabled;*/
     width: 100%;
     opacity: 0.8;
     background: var(--dark-grey);
-  }
+  }*/
 
   button.primary {
     width: 100%;
