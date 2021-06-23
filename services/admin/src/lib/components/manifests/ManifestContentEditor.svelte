@@ -90,7 +90,6 @@
 
   .view-wrap {
     flex: 2;
-    background: var(--dark-gradient);
   }
 
   .label-wrap {
@@ -102,6 +101,7 @@
 
   .view-wrap,
   .label-wrap {
+    background: black;
     background: var(--dark-gradient);
   }
 
