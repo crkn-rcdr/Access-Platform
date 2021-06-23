@@ -1,0 +1,147 @@
+[33mcommit b360e1ba16c330cf7e5269ddf13890ed62c32449[m[33m ([m[1;36mHEAD -> [m[1;32madd-canvas-to-manifest-menu[m[33m)[m
+Author: Brittny Lapierre <brittny.lapierre@gmail.com>
+Date:   Wed Jun 23 09:44:30 2021 -0400
+
+    Discard
+
+[33mcommit b7959bd792034df2a5bd504d534463b6e289671c[m
+Author: Brittny Lapierre <brittny.lapierre@gmail.com>
+Date:   Wed Jun 23 09:42:57 2021 -0400
+
+    Remove unused component
+
+[33mcommit 4dcc8168cdcd1181733de0d7c64ecb095cad4212[m
+Merge: 8db8f4b 5642ba9
+Author: Brittny Lapierre <brittny.lapierre@gmail.com>
+Date:   Wed Jun 23 09:32:24 2021 -0400
+
+    Merge branch 'main' into add-canvas-to-manifest-menu
+
+[33mcommit 5642ba9b9b044593e97ed5b3fa896cbb57cbdf1e[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m
+Author: Brittny Lapierre <brittny.lapierre@gmail.com>
+Date:   Tue Jun 22 17:33:34 2021 -0400
+
+    Manifest editor (#147)
+    
+    Co-authored-by: Sascha Adler <sadler@crkn.ca>
+
+[33mcommit 8db8f4b54dd5a05ed5ee1c58af9c98d0b116a3cb[m[33m ([m[1;31morigin/add-canvas-to-manifest-menu[m[33m)[m
+Author: Brittny Lapierre <brittny.lapierre@gmail.com>
+Date:   Mon Jun 21 17:07:50 2021 -0400
+
+    Adding tooltips, thinking of microinteractions for add canvas menu
+
+[33mcommit 3be97539fa5e5939e314b8ad53aa001963ee9738[m
+Author: Brittny Lapierre <brittny.lapierre@gmail.com>
+Date:   Fri Jun 18 17:08:39 2021 -0400
+
+    Fix bug in Editor page that makes saving revert back to the original object
+
+[33mcommit ff7428f19075ea6997d005970617070e5b0b5c7e[m
+Author: Brittny Lapierre <brittny.lapierre@gmail.com>
+Date:   Fri Jun 18 16:56:42 2021 -0400
+
+    Fix toolbar content to not wrap so easily
+
+[33mcommit 611906f66c20198f55b85b098d8a5e791d169a74[m
+Author: Brittny Lapierre <brittny.lapierre@gmail.com>
+Date:   Fri Jun 18 16:55:07 2021 -0400
+
+    Delete Align component in favour of CSS classes
+
+[33mcommit e32df8d9a9d6ce319c195f57ec59655d03219d64[m
+Author: Brittny Lapierre <brittny.lapierre@gmail.com>
+Date:   Fri Jun 18 14:56:48 2021 -0400
+
+    Fix broken save on label change in canvas label editor
+
+[33mcommit 38784a3f6057a676acfd98f764a828f710f0fc26[m
+Author: Brittny Lapierre <brittny.lapierre@gmail.com>
+Date:   Fri Jun 18 14:47:37 2021 -0400
+
+    Smaller padding for inputs
+
+[33mcommit 1fa8930ee0c6a8bb4acec18d8228ccafa6019f86[m
+Author: Brittny Lapierre <brittny.lapierre@gmail.com>
+Date:   Fri Jun 18 14:45:58 2021 -0400
+
+    Make add canvas button in-line with side menu
+
+[33mcommit d24aa2e52c5d5234e6e211a08c70a8c429c1f532[m
+Author: Brittny Lapierre <brittny.lapierre@gmail.com>
+Date:   Fri Jun 18 14:39:18 2021 -0400
+
+    Better spacing for search step in add canvas
+
+[33mcommit a5064d3c14a38a2e35f720f2326c877c8ece9692[m
+Author: Brittny Lapierre <brittny.lapierre@gmail.com>
+Date:   Fri Jun 18 14:33:15 2021 -0400
+
+    Make sure the canvas title appears in the exact position of the manifest title
+
+[33mcommit 360722cef1a6aded431197233e27327430215fd7[m
+Author: Brittny Lapierre <brittny.lapierre@gmail.com>
+Date:   Fri Jun 18 14:29:29 2021 -0400
+
+    Hide the button on the add menu using disabled & opacity
+
+[33mcommit f3ee1a40868f5600f425c6d176e2ac236aed74b4[m
+Author: Brittny Lapierre <brittny.lapierre@gmail.com>
+Date:   Fri Jun 18 14:23:00 2021 -0400
+
+    Fix spacing error in add menu page
+
+[33mcommit 4e03d36e21f42f2bb3dba5e3867509eb0a803c51[m
+Author: Brittny Lapierre <brittny.lapierre@gmail.com>
+Date:   Fri Jun 18 14:20:24 2021 -0400
+
+    Fix canvas title position on preview
+
+[33mcommit 90dab7932e542ce2562a2adac6df4dd71e26b080[m
+Author: Brittny Lapierre <brittny.lapierre@gmail.com>
+Date:   Fri Jun 18 14:12:32 2021 -0400
+
+    Clean up size variable names
+
+[33mcommit f21f8cb05584a0583118c1b1c76e971531301295[m
+Author: Brittny Lapierre <brittny.lapierre@gmail.com>
+Date:   Fri Jun 18 14:07:20 2021 -0400
+
+    Smallest font size added
+
+[33mcommit cfd93f34b506f479b0c4490a7e5e371d172d53eb[m
+Author: Brittny Lapierre <brittny.lapierre@gmail.com>
+Date:   Fri Jun 18 13:57:34 2021 -0400
+
+    Reactive margin sizing
+
+[33mcommit 2596907dda1ca2bfb994b45e9d2e1a023b91e65f[m
+Author: Brittny Lapierre <brittny.lapierre@gmail.com>
+Date:   Fri Jun 18 13:10:39 2021 -0400
+
+    Making fonts match perfect fourth scale
+
+[33mcommit 504df49f9e7e36de283a97f70aaba6d34c387c6d[m
+Author: Brittny Lapierre <brittny.lapierre@gmail.com>
+Date:   Fri Jun 18 11:46:21 2021 -0400
+
+    Make link white on canvas label editor
+
+[33mcommit e303d1e7a3ee6af338ee1783fc5c1f7528ad4cbe[m
+Author: Brittny Lapierre <brittny.lapierre@gmail.com>
+Date:   Fri Jun 18 11:45:34 2021 -0400
+
+    Do not default links to font colour light
+
+[33mcommit ea9ab83f58596e9de288cba952b13306ad20ea4e[m
+Author: Brittny Lapierre <brittny.lapierre@gmail.com>
+Date:   Fri Jun 18 11:44:15 2021 -0400
+
+    Replace pixels with rem
+
+[33mcommit 15021b4a6a50b970174d9bf92c957382d0b817b7[m
+Merge: 678d987 58dffbe
+Author: Brittny Lapierre <brittny.lapierre@gmail.com>
+Date:   Thu Jun 17 15:51:35 2021 -0400
+
+    Merge branch 'canvasmanifest-editor' into add-canvas-to-manifest-menu

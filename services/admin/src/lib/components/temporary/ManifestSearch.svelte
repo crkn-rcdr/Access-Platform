@@ -1,7 +1,7 @@
 <script lang="ts">
-  import type { CanvasManifest } from "@crkn-rcdr/access-data/src/access/CanvasManifest";
+  import type { Manifest } from "@crkn-rcdr/access-data/src/access/Manifest";
 
-  export let results: CanvasManifest[] = [];
+  export let results: Manifest[] = [];
 
   function handleSearch() {
     results = [

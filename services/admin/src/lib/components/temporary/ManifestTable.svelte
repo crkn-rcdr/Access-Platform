@@ -1,14 +1,14 @@
 <script lang="ts">
   import TiArrowRight from "svelte-icons/ti/TiArrowRight.svelte";
   import { createEventDispatcher } from "svelte";
-  import type { CanvasManifest } from "@crkn-rcdr/access-data/src/access/CanvasManifest";
+  import type { Manifest } from "@crkn-rcdr/access-data/src/access/Manifest";
 
-  export let manifests: CanvasManifest[] = [];
+  export let manifests: Manifest[] = [];
   export let title: string = "Manifests";
 
   const dispatch = createEventDispatcher();
 
-  function handleClick(manifest: CanvasManifest) {
+  function handleClick(manifest: Manifest) {
     dispatch("rowClicked", { manifest });
   }
 </script>
@@ -53,6 +53,6 @@
   }
 
   .action-message {
-    width: 16rem;
+    width: fit-content;
   }
 </style>

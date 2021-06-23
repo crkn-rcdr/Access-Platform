@@ -1,12 +1,12 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
-  import type { CanvasManifest } from "@crkn-rcdr/access-data/src/access/CanvasManifest";
-  import type { Canvas } from "@crkn-rcdr/access-data/src/access/CanvasManifest";
+  import type { Manifest } from "@crkn-rcdr/access-data/src/access/Manifest";
+  import type { Canvas } from "@crkn-rcdr/access-data/src/access/Manifest";
   import TiArrowBack from "svelte-icons/ti/TiArrowBack.svelte";
   import CanvasSelectorGridTile from "../canvases/CanvasSelectorGridTile.svelte";
   import CanvasViewer from "../canvases/CanvasViewer.svelte";
 
-  export let manifest: CanvasManifest;
+  export let manifest: Manifest;
   let selectedCanvases: Canvas[] = [];
   let previewCanvas: Canvas | null;
 
@@ -49,12 +49,7 @@
   <div class="results">
     <div class="manifest-title">
       <div class="auto-align auto-align__a-center">
-        <div
-          class="back-button"
-          data-tooltip="Back"
-          data-tooltip-flow="bottom"
-          on:click={handleBackButtonPressed}
-        >
+        <div class="back-button" on:click={handleBackButtonPressed}>
           <TiArrowBack />
         </div>
         <h5>
@@ -92,8 +87,6 @@
       <div class="auto-align auto-align__a-center">
         <div
           class="back-button"
-          data-tooltip="Back"
-          data-tooltip-flow="bottom"
           on:click={() => {
             previewCanvas = null;
           }}

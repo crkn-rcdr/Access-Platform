@@ -269,7 +269,7 @@ button,
 }
 
 button {
-  padding: 1rem 2.5rem;
+  padding: var(--perfect-fourth-8) var(--perfect-fourth-4);
   border: none;
   box-shadow: none;
   color: white;
@@ -313,8 +313,14 @@ select {
   border: 1px solid var(--border-color);
   margin-top: 0.25rem;
   outline: none;
-  padding: var(--sm-size);
+  padding: var(--md-size);
   border-radius: 0.25rem;
+  /*filter: var(--shadow);*/
+  /* Angular style:
+  border: none;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--structural-div-bg);
+  border-radius: 0;*/
 }
 
 a {

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
   import IoMdOpen from "svelte-icons/io/IoMdOpen.svelte";
-  import type { Canvas } from "@crkn-rcdr/access-data/src/access/CanvasManifest";
+  import type { Canvas } from "@crkn-rcdr/access-data/src/access/Manifest";
 
   export let canvas: Canvas;
 

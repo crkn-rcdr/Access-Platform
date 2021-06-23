@@ -1,9 +1,9 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import type {
-    CanvasManifest,
+    Manifest,
     Canvas,
-  } from "@crkn-rcdr/access-data/src/access/CanvasManifest";
+  } from "@crkn-rcdr/access-data/src/access/Manifest";
   import CanvasLabelEditor from "../canvases/CanvasLabelEditor.svelte";
   import CanvasViewer from "../canvases/CanvasViewer.svelte";
   import CanvasThumbnailList from "../canvases/CanvasThumbnailList.svelte";
@@ -11,7 +11,7 @@
   import SwitchCase from "$lib/components/shared//SwitchCase.svelte";
   import ManifestAddCanvasMenu from "$lib/components/manifests/ManifestAddCanvasMenu.svelte";
 
-  export let manifest: CanvasManifest;
+  export let manifest: Manifest;
 
   let activeCanvas: Canvas | null;
   let state = "view";

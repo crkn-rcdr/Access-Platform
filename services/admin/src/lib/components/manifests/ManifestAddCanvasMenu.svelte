@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
-  import type { CanvasManifest } from "@crkn-rcdr/access-data/src/access/CanvasManifest";
+  import type { Manifest } from "@crkn-rcdr/access-data/src/access/Manifest";
   import ManifestCanvasSelectorGrid from "./ManifestCanvasSelectorGrid.svelte";
   import Switch from "$lib/components/shared//Switch.svelte";
   import SwitchCase from "$lib/components/shared//SwitchCase.svelte";
@@ -8,13 +8,13 @@
   import ManifestSearch from "$lib/components/temporary/ManifestSearch.svelte";
   import ManifestTable from "$lib/components/temporary/ManifestTable.svelte";
 
-  export let destinationManifest: CanvasManifest;
+  export let destinationManifest: Manifest;
   export let destinationIndex: number = 0;
 
   const dispatch = createEventDispatcher();
 
-  let selectedManifest: CanvasManifest;
-  let manifestSearchResults: CanvasManifest[];
+  let selectedManifest: Manifest;
+  let manifestSearchResults: Manifest[];
   let showManifest: boolean = false;
 
   function handleManifestTableClick(event: any) {
@@ -28,7 +28,7 @@
   }
 
   function handleAddPressed(event: any) {
-    destinationManifest.canvases.splice(
+    destinationManifest?.canvases?.splice(
       destinationIndex,
       0,
       ...event.detail.selectedCanvases
