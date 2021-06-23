@@ -40,15 +40,14 @@
 </script>
 
 <div class="canvas-selector-wrap">
-  <!-- TODO: replace with slug resolver component-->
   <div>
-    <div class="auto-align auto-align__a-center">
-      <Resolver />
-      <ManifestSearch bind:results={manifestSearchResults} />
-      <button class="secondary cancel-button" on:click={handleCancelPressed}
-        >Cancel</button
-      >
-    </div>
+    <Resolver><span slot="input" /></Resolver>
+    <br />
+    <br />
+    <ManifestSearch bind:results={manifestSearchResults} />
+    <button class="secondary cancel-button" on:click={handleCancelPressed}
+      >Cancel</button
+    >
   </div>
 
   {#if manifestSearchResults}

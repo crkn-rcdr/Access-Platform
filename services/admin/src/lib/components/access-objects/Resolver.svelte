@@ -63,7 +63,12 @@
 
 <div class="children-inline auto-align auto-align__a-baseline">
   <label for="slug"><slot name="input">Slug:</slot></label>
-  <input type="text" bind:value={slug} on:input={resolve} />
+  <input
+    type="text"
+    placeholder="Type in a slug..."
+    bind:value={slug}
+    on:input={resolve}
+  />
 
   {#if !!slug && !(hideInitial && slug === initial.slug)}
     {#if status === "LOADING"}
@@ -85,9 +90,6 @@
 </div>
 
 <style>
-  .children-inline > * {
-    margin-right: var(--sm-size);
-  }
   .children-inline input {
     flex: 9;
   }
