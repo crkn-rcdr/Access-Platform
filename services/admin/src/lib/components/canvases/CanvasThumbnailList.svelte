@@ -89,13 +89,6 @@
     }
   }
 
-  function isActive(canvas: Canvas): boolean {
-    if (canvas) {
-      return canvases?.[activeCanvasIndex]?.["id"] === canvas["id"];
-    }
-    return false;
-  }
-
   function addClicked() {
     dispatch("addClicked");
   }
@@ -133,7 +126,7 @@
         {#each canvases as canvas, i}
           <div
             class="thumbnail"
-            class:active={isActive(canvas)}
+            class:active={i === activeCanvasIndex}
             on:mousedown={() => setActiveIndex(i)}
           >
             <div class="auto-align">
