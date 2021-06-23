@@ -1,6 +1,8 @@
 <script lang="ts">
   import { onMount } from "svelte";
 
+  export let fullPage = true;
+
   let container: HTMLDivElement;
 
   let pageButtons: NodeListOf<Element>;
@@ -48,7 +50,12 @@
   });
 </script>
 
-<div bind:this={container} class="side-menu-container">
+<div
+  bind:this={container}
+  class="side-menu-container"
+  class:fixed-full-page={fullPage}
+>
+  <slot name="side-menu-header" />
   <div class="auto-align auto-align__a-stretch ">
     <slot />
   </div>
@@ -58,5 +65,13 @@
   .side-menu-container {
     width: 100%;
     height: 100%;
+  }
+
+  .side-menu-container.fixed-full-page {
+    position: fixed;
+    top: calc(4.5rem + var(--viewport-scaling));
+    bottom: 7rem;
+    right: 0;
+    left: 0;
   }
 </style>

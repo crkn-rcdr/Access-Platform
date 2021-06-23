@@ -15,15 +15,16 @@
 </script>
 
 <div class="editor full-bleed">
-  <Toolbar title={object["slug"]}>
-    <div
-      class="end-content auto-align auto-align__j-end auto-align__a-end auto-align__column"
-    >
-      <StatusIndicator bind:object />
-      <EditorActions bind:object bind:model />
-    </div>
-  </Toolbar>
   <SideMenuContainer>
+    <Toolbar slot="side-menu-header" title={object["slug"]}>
+      <div
+        class="end-content auto-align auto-align__j-end auto-align__a-end auto-align__column"
+      >
+        <StatusIndicator bind:object />
+        <EditorActions bind:object bind:model />
+      </div>
+    </Toolbar>
+
     <SideMenuPageList>
       <SideMenuPageListButton>General Info</SideMenuPageListButton>
       <slot name="editor-menu" />
@@ -39,18 +40,6 @@
 </div>
 
 <style>
-  /*.editor {
-    position: fixed;
-    top: calc(
-      4.5rem + var(--viewport-scaling)
-    ); 
-    bottom: 7rem;
-    right: 0;
-    left: 0;
-  }*/
-  .editor {
-    height: 80vh;
-  }
   :global(.editor div[slot]) {
     width: 100%;
     height: 100%;
