@@ -33,7 +33,7 @@
   // Source: https://stackoverflow.com/questions/60911171/how-to-pass-data-from-a-layout-to-a-page-in-sapper
   // Do you know a better solution?
   const objectStore = writable(object);
-  $: $objectStore = object;
+  $objectStore = object;
   setContext("objectStore", objectStore);
 </script>
 

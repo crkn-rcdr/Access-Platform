@@ -12,7 +12,6 @@
   const dispatch = createEventDispatcher();
 
   let selectedManifest: Manifest;
-  let manifestSearchResults: Manifest[];
   let showManifest = false;
   let error = "";
 
@@ -34,7 +33,6 @@
   }
 
   function handleCancelPressed() {
-    manifestSearchResults = [];
     dispatch("done");
   }
 
