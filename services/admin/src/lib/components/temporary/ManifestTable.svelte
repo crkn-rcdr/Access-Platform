@@ -21,7 +21,7 @@
   </thead>
   <tbody>
     {#each manifests as manifest}
-      <tr on:click={() => handleClick(manifest)}>
+      <tr class="clickable" on:click={() => handleClick(manifest)}>
         <td>
           {manifest["slug"]}: {manifest["label"]["none"]}
           <span
@@ -42,10 +42,6 @@
 
   tbody tr {
     cursor: pointer;
-  }
-
-  tbody tr:hover {
-    background-color: rgb(241, 241, 241);
   }
 
   tbody tr:hover .action-message {

@@ -82,6 +82,8 @@
     padding: 3.5rem 4rem;
     position: relative;
     height: 100%;
+    background: var(--dark-gradient);
+    color: white;
   }
   .cancel-button {
     margin-left: 0.25rem;

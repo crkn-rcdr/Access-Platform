@@ -277,7 +277,7 @@ button {
   padding: var(--perfect-fourth-8) var(--perfect-fourth-4);
   border: none;
   box-shadow: none;
-  color: white;
+  color: var(--light-font);
   border-radius: var(--border-radius);
   font-weight: 400;
   cursor: pointer;
@@ -320,12 +320,7 @@ select {
   outline: none;
   padding: var(--md-size);
   border-radius: var(--border-radius);
-  /*filter: var(--shadow);*/
-  /* Angular style:
-  border: none;
-  border-bottom: 1px solid var(--border-color);
-  background: var(--structural-div-bg);
-  border-radius: var(--border-radius);*/
+  background-color: rgba(255, 255, 255, 0.938);
 }
 
 a {
@@ -338,8 +333,15 @@ table {
   text-align: left;
   border-collapse: collapse;
   border-spacing: 0;
-  background: white;
   border-radius: var(--border-radius);
+}
+
+tbody {
+  background: rgba(255, 255, 255, 0.055);
+}
+
+tbody tr.clickable:hover {
+  background-color: rgba(114, 114, 114, 0.144);
 }
 
 thead th {
