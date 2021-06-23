@@ -86,6 +86,7 @@
   .list-wrapper {
     background-color: var(--structural-div-bg);
     flex: 2.5;
+    border-top: 1px solid var(--border-color);
   }
 
   .view-wrap {
