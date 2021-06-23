@@ -12,14 +12,6 @@
   object = $objectStore;
   setDataModel(object);
 
-  objectStore.subscribe((val) => {
-    console.log("val", val);
-  });
-
-  $: {
-    console.log("ooo", object);
-  }
-
   let rfdc: any; // Deep copies an object
   let model: AccessObject;
   async function setDataModel(object: AccessObject) {

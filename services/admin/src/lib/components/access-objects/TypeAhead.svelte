@@ -19,7 +19,6 @@
       });
 
       let jsonResponse = await response.json();
-      console.log({ jsonResponse });
       if (response.status === 200) {
         lookupList = jsonResponse.noid;
       } else {
