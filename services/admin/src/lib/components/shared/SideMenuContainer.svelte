@@ -19,7 +19,6 @@
   }
 
   function setActivePageBody() {
-    console.log("pageBodies", pageBodies);
     for (let i = 0; i < pageBodies.length; i++) {
       if (i === activeIndex)
         pageBodies?.[i]?.classList?.remove("display-hidden");
