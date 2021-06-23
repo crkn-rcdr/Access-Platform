@@ -45,7 +45,7 @@
     height: 564px;
     width: 425px;
     position: relative;
-    margin: 1.5em;
+    margin: var(--perfect-fourth-8) var(--perfect-fourth-4);
     color: white;
     cursor: pointer;
   }
@@ -63,8 +63,8 @@
   }
   .canvas-tile.selected img {
     filter: sepia() hue-rotate(140deg) brightness(0.8);
-    border-radius: 0.25rem;
-    border: 0.125rem solid var(--teal);
+    /*border-radius: 0.25rem;*/
+    /*border: 0.125rem solid var(--teal);*/
   }
 
   .canvas-tile-body {

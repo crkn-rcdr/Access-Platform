@@ -119,8 +119,9 @@
   }
 
   .preview-canvas-wrap {
-    padding: 0 1rem;
-    height: 90%;
+    height: 80%;
+    padding: 0 var(--perfect-fourth-4);
+    margin: auto;
   }
 
   h5 {
@@ -131,11 +132,8 @@
   .manifest-title,
   .canvas-title {
     color: var(--light-font);
-    margin: 1rem !important;
-  }
-  /** Make sure the canvas title appears in the exact position of the manifest title. */
-  :global(.canvas-title .align) {
-    min-height: 3.8125rem;
+    margin: var(--perfect-fourth-3) var(--perfect-fourth-4) !important;
+    height: var(--perfect-fourth-2);
   }
 
   .canvas-tiles {
