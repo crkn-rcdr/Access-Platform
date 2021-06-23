@@ -1,7 +1,7 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
-  import Resolver from "$lib/components/Resolver.svelte";
-  import TypeAhead from "$lib/components/TypeAhead.svelte";
+  import Resolver from "$lib/components/access-objects/Resolver.svelte";
+  import TypeAhead from "$lib/components/shared/TypeAhead.svelte";
 
   function slugSelected(event: CustomEvent<string>) {
     const noid = event.detail;

@@ -117,6 +117,9 @@ Source: https://github.com/twbs/bootstrap/blob/main/scss/mixins/_visually-hidden
 .auto-align__a-center {
   align-items: center;
 }
+.auto-align__a-baseline {
+  align-items: baseline;
+}
 .auto-align__a-end {
   align-items: flex-end;
 }

@@ -77,17 +77,4 @@
   }
 </script>
 
-<input
-  class="search"
-  placeholder="Search for a manifest to add canvases from..."
-/>
-
-<button class="primary" on:click={handleSearch}>Search</button>
-
-<style>
-  .search {
-    flex: 9;
-    margin-right: 1rem;
-    margin-top: 0;
-  }
-</style>
+<button class="primary" on:click={handleSearch}>Test</button>

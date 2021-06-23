@@ -61,7 +61,7 @@
   });
 </script>
 
-<div class="children-inline">
+<div class="children-inline auto-align auto-align__a-baseline">
   <label for="slug"><slot name="input">Slug:</slot></label>
   <input type="text" bind:value={slug} on:input={resolve} />
 
@@ -83,3 +83,12 @@
     {/if}
   {/if}
 </div>
+
+<style>
+  .children-inline > * {
+    margin-right: var(--sm-size);
+  }
+  .children-inline input {
+    flex: 9;
+  }
+</style>

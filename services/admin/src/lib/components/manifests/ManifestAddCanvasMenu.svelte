@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Resolver from "$lib/components/access-objects/Resolver.svelte";
   import { createEventDispatcher } from "svelte";
   import type { Manifest } from "@crkn-rcdr/access-data/src/access/Manifest";
   import ManifestCanvasSelectorGrid from "./ManifestCanvasSelectorGrid.svelte";
@@ -42,6 +43,7 @@
   <!-- TODO: replace with slug resolver component-->
   <div>
     <div class="auto-align auto-align__a-center">
+      <Resolver />
       <ManifestSearch bind:results={manifestSearchResults} />
       <button class="secondary cancel-button" on:click={handleCancelPressed}
         >Cancel</button
