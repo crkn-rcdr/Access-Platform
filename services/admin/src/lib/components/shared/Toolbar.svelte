@@ -2,7 +2,7 @@
   export let title = "";
 </script>
 
-<div class="toolbar shadow">
+<div class="toolbar">
   <div class="auto-align auto-align__a-center">
     <h5>{title}</h5>
     <div class="toolbar-content">
