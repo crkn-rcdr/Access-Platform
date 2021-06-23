@@ -283,6 +283,10 @@ button {
   cursor: pointer;
 }
 
+button.lg {
+  padding: var(--perfect-fourth-7) var(--perfect-fourth-3);
+}
+
 button.primary {
   background-color: var(--teal);
 }

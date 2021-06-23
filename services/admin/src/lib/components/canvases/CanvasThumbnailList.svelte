@@ -115,7 +115,7 @@
 {#if indexModel.length}
   <div class="auto-align auto-align__column">
     {#if showAddButton}
-      <button class="primary" on:click={addClicked}>Add Canvas</button>
+      <button class="primary lg" on:click={addClicked}>Add Canvas</button>
     {/if}
     <div
       bind:this={container}
