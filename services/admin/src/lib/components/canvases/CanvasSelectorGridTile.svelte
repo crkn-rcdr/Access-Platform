@@ -45,7 +45,7 @@
     height: 564px;
     width: 425px;
     position: relative;
-    margin: var(--perfect-fourth-8) var(--perfect-fourth-4);
+    margin: var(--perfect-fourth-6) var(--perfect-fourth-4);
     color: white;
     cursor: pointer;
   }
