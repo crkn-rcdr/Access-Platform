@@ -42,6 +42,7 @@
     if (index >= 0 && index < canvases.length) {
       canvases.splice(index, 1);
       canvases = canvases;
+      activeCanvasIndex = index - 1;
       setActiveIndex(activeCanvasIndex);
     }
   }

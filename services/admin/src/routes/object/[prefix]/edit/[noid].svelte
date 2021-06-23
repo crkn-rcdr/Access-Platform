@@ -12,10 +12,6 @@
   object = $objectStore;
   setDataModel(object);
 
-  objectStore.subscribe((val) => {
-    console.log("wooo,", val);
-  });
-
   let type: "collection" | "canvasManifest" | "other";
   const typeStore: SvelteStore<"collection" | "canvasManifest" | "other"> =
     getContext("typeStore");
@@ -26,7 +22,6 @@
   async function setDataModel(object: AccessObject) {
     rfdc = (await import("rfdc")).default();
     model = rfdc(object) as AccessObject;
-    console.log(model);
   }
 </script>
 

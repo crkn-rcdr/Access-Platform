@@ -13,7 +13,6 @@
 
   function checkModelChanged(model: AccessObject) {
     saveEnabled = !equal(object, model);
-    console.log(saveEnabled, object, model);
   }
 
   $: {
@@ -22,7 +21,6 @@
 
   function save() {
     let diff: any = detailedDiff(object, model); //TODO: We can send this to the backend
-    console.log("changes:", diff);
     object = clone(model);
     checkModelChanged(model);
   }
