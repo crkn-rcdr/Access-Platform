@@ -28,6 +28,8 @@
   }
 
   function setActiveIndex(index: number) {
+    if (index >= canvases.length) index = canvases.length - 1;
+    if (index < 0) index = 0;
     activeCanvasIndex = index;
     dispatch("thumbnailClicked", { index });
   }
@@ -42,7 +44,6 @@
     if (index >= 0 && index < canvases.length) {
       canvases.splice(index, 1);
       canvases = canvases;
-      activeCanvasIndex = index - 1;
       setActiveIndex(activeCanvasIndex);
     }
   }
