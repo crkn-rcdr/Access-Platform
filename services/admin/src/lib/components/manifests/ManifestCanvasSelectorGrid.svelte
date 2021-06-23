@@ -137,7 +137,7 @@
   }
 
   .canvas-tiles {
-    height: 70vh;
+    height: 75%;
     overflow-x: hidden;
     overflow-y: auto;
   }
