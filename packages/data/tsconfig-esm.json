@@ -3,6 +3,7 @@
   "include": ["src/**/*.ts"],
   "exclude": ["src/**/*.spec.ts"],
   "compilerOptions": {
-    "outDir": "./dist/esm"
+    "outDir": "./dist/esm",
+    "preserveSymlinks": true
   }
 }

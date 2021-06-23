@@ -2,9 +2,8 @@ import { ExecutionContext } from "ava";
 import { AccessObject } from ".";
 import { Alias } from "./Alias";
 import { Canvas } from "./Canvas";
-import { CanvasManifest } from "./CanvasManifest";
 import { Collection } from "./Collection";
-import { PdfManifest } from "./PdfManifest";
+import { Manifest } from "./Manifest";
 
 export const testAlias: Alias = {
   id: "69429/m02n4zg6h671",
@@ -34,7 +33,7 @@ export const testCanvas: Canvas = {
   },
 };
 
-export const testCanvasManifest: CanvasManifest = {
+export const testCanvasManifest: Manifest = {
   id: "69429/m02n4zg6h671",
   _rev: "14-12f0cda072e2f32e6efb4315220b7a88",
   type: "manifest",
@@ -117,7 +116,7 @@ export const testCollection: Collection = {
   ],
 };
 
-export const testPdfManifest: PdfManifest = {
+export const testPdfManifest: Manifest = {
   id: "69429/m0v40js9ht3k",
   _rev: "13-4fce0a4d3af3bd8f35d3fe180b6ebe69",
   type: "manifest",
@@ -150,10 +149,9 @@ export const testPdfManifest: PdfManifest = {
 };
 
 const fixtures = {
-  alias: testAlias,
-  canvasManifest: testCanvasManifest,
-  collection: testCollection,
-  pdfManifest: testPdfManifest,
+  alias: [testAlias],
+  collection: [testCollection],
+  manifest: [testCanvasManifest, testPdfManifest],
 };
 
 export const testGuard = (
@@ -161,11 +159,13 @@ export const testGuard = (
   guard: (obj: AccessObject) => boolean,
   fixtureType: keyof typeof fixtures
 ) => {
-  for (const f of Object.keys(fixtures)) {
-    if (f === fixtureType) {
-      t.true(guard(fixtures[f]));
-    } else {
-      t.false(guard(fixtures[f]));
+  for (const type of Object.keys(fixtures)) {
+    for (const f of fixtures[type]) {
+      if (type === fixtureType) {
+        t.true(guard(f));
+      } else {
+        t.false(guard(f));
+      }
     }
   }
 };

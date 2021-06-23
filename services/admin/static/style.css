@@ -151,7 +151,7 @@ Source: https://github.com/twbs/bootstrap/blob/main/scss/mixins/_visually-hidden
   box-sizing: border-box;
 }
 
-/** Remove default margin */
+/* Remove default margin */
 body,
 h1,
 h2,
@@ -165,36 +165,36 @@ dd {
   margin: 0;
 }
 
-/** Remove list styles on ul, ol elements with a list role, which suggests default styling will be removed */
+/* Remove list styles on ul, ol elements with a list role, which suggests default styling will be removed */
 ul[role="list"],
 ol[role="list"] {
   list-style: none;
 }
 
-/** Set core root defaults */
+/* Set core root defaults */
 html:focus-within {
   scroll-behavior: smooth;
 }
 
-/** Set core body defaults */
+/* Set core body defaults */
 body {
   min-height: 100vh;
   text-rendering: optimizeSpeed;
   line-height: 1.5;
 }
 
-/** 'a' elements that don't have a class get default styles */
+/* A elements that don't have a class get default styles */
 a:not([class]) {
   text-decoration-skip-ink: auto;
 }
 
-/** Make images easier to work with */
+/* Make images easier to work with */
 img,
 picture {
   display: block;
 }
 
-/** Inherit fonts for inputs and buttons */
+/* Inherit fonts for inputs and buttons */
 input,
 button,
 textarea,
@@ -218,7 +218,8 @@ select {
   }
 }
 
-/** Element defauls */
+/* Element defauls*/
+
 h1,
 h2,
 h3,
@@ -320,14 +321,13 @@ a {
   color: var(--dark-font) !important;
 }
 
-/** Table settings */
+/* Table settings */
 table {
   width: 100%;
   text-align: left;
   border-collapse: collapse;
   border-spacing: 0;
   background: white;
-  /*filter: var(--shadow);*/
   border-radius: 0.25rem;
 }
 
@@ -339,7 +339,7 @@ td {
   padding: 1rem;
 }
 
-/** Used to add a '...' cut-off to text */
+/* Used to add a '...' cut-off to text */
 
 .clamp {
   text-overflow: ellipsis;
@@ -347,7 +347,7 @@ td {
   white-space: nowrap;
 }
 
-/** Override textbok defaults to make them suit theme */
+/* Override textbok defaults to make them suit theme */
 
 input[type="checkbox"] {
   cursor: pointer;
@@ -507,7 +507,6 @@ input[type="checkbox"]:checked {
   }
 }
 
-/* FX All The Things */
 [data-tooltip]:not([data-tooltip-flow]):hover::before,
 [data-tooltip]:not([data-tooltip-flow]):hover::after,
 [data-tooltip][data-tooltip-flow^="top"]:hover::before,

@@ -47,16 +47,12 @@ export class ObjectAccessor {
     return Data.isAlias(this.data as Data.AccessObject);
   }
 
-  isCanvasManifest(): this is CanvasManifestAccessor {
-    return Data.isCanvasManifest(this.data as Data.AccessObject);
-  }
-
-  isPdfManifest(): this is PdfManifestAccessor {
-    return Data.isPdfManifest(this.data as Data.AccessObject);
-  }
-
   isCollection(): this is CollectionAccessor {
     return Data.isCollection(this.data as Data.AccessObject);
+  }
+
+  isManifest(): this is ManifestAccessor {
+    return Data.isManifest(this.data as Data.AccessObject);
   }
 }
 
@@ -72,14 +68,8 @@ export class AliasAccessor extends SluggedObjectAccessor {
 
 export class CanonicalObjectAccessor extends SluggedObjectAccessor {}
 
-export class ManifestAccessor extends CanonicalObjectAccessor {}
-
-export class PdfManifestAccessor extends ManifestAccessor {
-  declare data: Data.PdfManifest;
-}
-
-export class CanvasManifestAccessor extends ManifestAccessor {
-  declare data: Data.CanvasManifest;
+export class ManifestAccessor extends CanonicalObjectAccessor {
+  declare data: Data.Manifest;
 }
 
 export class CollectionAccessor extends CanonicalObjectAccessor {

@@ -13,7 +13,7 @@
       let type = "other";
       if (isCollection(object)) {
         type = "collection";
-      } else if (isCanvasManifest(object)) {
+      } else if (isManifest(object)) {
         type = "canvasManifest";
       }
       return { props: { object, type } };
@@ -25,21 +25,16 @@
 
 <script lang="ts">
   import type { AccessObject } from "@crkn-rcdr/access-data";
-  import { isCanvasManifest, isCollection } from "@crkn-rcdr/access-data";
+  import { isManifest, isCollection } from "@crkn-rcdr/access-data";
   import { writable } from "svelte/store";
   import { setContext } from "svelte";
   export let object: AccessObject;
-  export let type: "collection" | "manifest" | "other";
 
   // Source: https://stackoverflow.com/questions/60911171/how-to-pass-data-from-a-layout-to-a-page-in-sapper
   // Do you know a better solution?
   const objectStore = writable(object);
   $: $objectStore = object;
   setContext("objectStore", objectStore);
-
-  const typeStore = writable(type);
-  $: $typeStore = type;
-  setContext("typeStore", typeStore);
 </script>
 
 <slot />

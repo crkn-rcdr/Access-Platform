@@ -14,13 +14,13 @@ import {
 const { isValid } = tester(validate);
 
 test(
-  "Access couch schema validates a CanvasManifest document",
+  "Access couch schema validates a Manifest document from canvases",
   isValid,
   toCouch(testCanvasManifest)
 );
 
 test(
-  "Access couch schema validates a PdfManifest document",
+  "Access couch schema validates a Manifest document from a pdf",
   isValid,
   toCouch(testPdfManifest)
 );
