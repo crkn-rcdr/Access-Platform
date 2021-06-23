@@ -89,7 +89,10 @@
     }
   }
 
-  function enableDragging(element: Element | undefined, elementIndex: number) {
+  function enableDraggingOnChild(
+    element: Element | undefined,
+    elementIndex: number
+  ) {
     if (typeof element === "undefined") return;
     element.classList?.add("draggable");
     element.setAttribute("draggable", "true");
@@ -111,6 +114,11 @@
       clearDragAnimation();
     });
 
+    /** Disables the drag animation when the component being dragged is no longer over an element */
+    element.addEventListener("dragleave", () => {
+      clearDragAnimation();
+    });
+
     /** Records the destination index for moving the dragged item to, and adds the drag target animation from the element being hovered over. */
     element.addEventListener("dragover", (event: any) => {
       destinationItemIndex = getIndexToMoveChildTo(
@@ -121,11 +129,22 @@
     });
   }
 
-  onMount(() => {
-    for (let i = 0; i < container.children.length; i++) {
-      enableDragging(container?.children?.[i], i);
+  function enableDraggingOnChildren() {
+    if (container) {
+      for (let i = 0; i < container.children.length; i++) {
+        enableDraggingOnChild(container?.children?.[i], i);
+      }
     }
+  }
+
+  onMount(() => {
+    enableDraggingOnChildren();
   });
+
+  $: {
+    dragList;
+    enableDraggingOnChildren();
+  }
 </script>
 
 <div
@@ -159,13 +178,13 @@
     filter: brightness(0.5);
   }
   :global(.y .drag-target) {
-    border-top: 4px solid var(--grey);
+    border-top: 0.25rem solid var(--grey);
   }
   :global(.x .drag-target) {
-    border-left: 4px solid var(--grey);
+    border-left: 0.25rem solid var(--grey);
   }
   :global(.both .drag-target) {
-    border: 4px solid var(--grey);
+    border: 0.25rem solid var(--grey);
   }
   :global(.draggable:hover) {
     filter: brightness(1.03);

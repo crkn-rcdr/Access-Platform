@@ -61,9 +61,16 @@
   });
 </script>
 
-<div class="children-inline">
+<div
+  class="auto-align auto-align__column auto-align__j-baseline auto-align__wra"
+>
   <label for="slug"><slot name="input">Slug:</slot></label>
-  <input type="text" bind:value={slug} on:input={resolve} />
+  <input
+    type="text"
+    placeholder="Type in a slug..."
+    bind:value={slug}
+    on:input={resolve}
+  />
 
   {#if !!slug && !(hideInitial && slug === initial.slug)}
     {#if status === "LOADING"}
@@ -76,10 +83,18 @@
       >
     {:else if noid}
       <slot name="in-use">
-        <a href="/object/{noid}">⚠️ Slug in use</a>
+        <div class="alert alert-danger">
+          <a href="/object/{noid}">⚠️ Slug in use</a>
+        </div>
       </slot>
     {:else}
       <slot name="available">✅ Slug available</slot>
     {/if}
   {/if}
 </div>
+
+<style>
+  input {
+    width: 100%;
+  }
+</style>

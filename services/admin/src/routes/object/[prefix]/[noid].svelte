@@ -9,8 +9,8 @@
 
   let object: AccessObject;
   const objectStore: SvelteStore<AccessObject> = getContext("objectStore");
-  $: object = $objectStore;
-  $: setDataModel(object);
+  object = $objectStore;
+  setDataModel(object);
 
   let rfdc: any; // Deep copies an object
   let model: AccessObject;
@@ -27,39 +27,39 @@
   <!-- I get an error if the check is in the EditorLayout about the slots-->
   {#if isManifest(model)}
     <EditorLayout bind:object bind:model>
-      <div slot="editor-menu">
+      <span slot="editor-menu">
         <SideMenuPageListButton>Content</SideMenuPageListButton>
-      </div>
+      </span>
 
-      <div slot="editor-content">
+      <span slot="editor-content">
         <SideMenuPage overflowY="hidden">
           <ManifestContentEditor bind:manifest={model} />
         </SideMenuPage>
-      </div>
+      </span>
     </EditorLayout>
   {:else if isCollection(model)}
     <EditorLayout bind:object bind:model>
-      <div slot="editor-menu">
+      <span slot="editor-menu">
         <!-- SideMenuPageListButton>Content</SideMenuPageListButton-->
-      </div>
+      </span>
 
-      <div slot="editor-content">
+      <span slot="editor-content">
         <!--SideMenuPage overflowY="hidden">
         Collection Content! {JSON.stringify(object)}
       </SideMenuPage-->
-      </div>
+      </span>
     </EditorLayout>
   {:else}
     <EditorLayout bind:object bind:model>
-      <div slot="editor-menu">
+      <span slot="editor-menu">
         <!-- SideMenuPageListButton>Content</SideMenuPageListButton-->
-      </div>
+      </span>
 
-      <div slot="editor-content">
+      <span slot="editor-content">
         <!--SideMenuPage overflowY="hidden">
         Other Content! {JSON.stringify(object)}
       </SideMenuPage-->
-      </div>
+      </span>
     </EditorLayout>
   {/if}
 {/if}

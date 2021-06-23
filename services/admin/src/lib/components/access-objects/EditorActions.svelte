@@ -3,7 +3,7 @@
   import type { AccessObject } from "@crkn-rcdr/access-data";
   import { onMount } from "svelte";
   import equal from "fast-deep-equal";
-  //import { detailedDiff } from "deep-object-diff";
+  import { detailedDiff } from "deep-object-diff";
 
   export let object: AccessObject;
   export let model: AccessObject;
@@ -20,6 +20,7 @@
   }
 
   function save() {
+    let diff: any = detailedDiff(object, model); //TODO: We can send this to the backend
     object = clone(model);
     checkModelChanged(model);
   }

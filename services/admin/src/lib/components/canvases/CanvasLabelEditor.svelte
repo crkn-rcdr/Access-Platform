@@ -1,10 +1,9 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
   import IoMdOpen from "svelte-icons/io/IoMdOpen.svelte";
-  import type { Canvas } from "@crkn-rcdr/access-data/src/access/CanvasManifest";
-  import Align from "$lib/components/shared/Align.svelte";
+  import type { Canvas } from "@crkn-rcdr/access-data/src/access/Manifest";
 
-  export let canvas: Canvas | null;
+  export let canvas: Canvas;
 
   const dispatch = createEventDispatcher();
 
@@ -25,12 +24,12 @@
       />
     </div>
     <a class="takedown" href="/takedown" target="_blank">
-      <Align vertical="center">
+      <div class="auto-align auto-align__a-center">
         <div class="message">Take this canvas off of the platform</div>
         <div class="icon">
           <IoMdOpen />
         </div>
-      </Align>
+      </div>
     </a>
   {/if}
 </div>
@@ -39,15 +38,13 @@
   .backdrop {
     width: 100%;
     height: 100%;
-    color: var(--light-font);
-    background-color: #1b1b1b;
     overflow: hidden;
   }
 
   #label {
-    width: max(80%, 250px);
+    width: max(80%, 15rem);
     margin: auto;
-    padding: 24px 0;
+    padding: 1.5rem 0;
   }
 
   textarea {
@@ -55,21 +52,25 @@
   }
 
   .takedown {
-    width: max(80%, 250px);
+    width: max(80%, 15rem);
     margin: auto;
     display: block;
   }
 
   .message {
-    font-size: var(--smaller-font-size) !important;
     font-style: italic;
+    font-size: var(--perfect-fourth-8);
   }
 
   .icon {
     display: block;
-    width: max(1.2vw, 20px);
-    height: max(1.2vw, 20px);
-    margin-left: 4px;
+    width: var(--perfect-fourth-7);
+    height: var(--perfect-fourth-7);
+    margin-left: 0.5rem;
     margin-top: 0;
+  }
+
+  a {
+    color: var(--light-font) !important;
   }
 </style>

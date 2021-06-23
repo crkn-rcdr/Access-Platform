@@ -1,26 +1,27 @@
 <script lang="ts">
-  import Align from "$lib/components/shared/Align.svelte";
   export let title = "";
 </script>
 
-<div class="toolbar shadow">
-  <Align vertical="center">
+<div class="toolbar">
+  <div class="auto-align auto-align__a-center">
     <h5>{title}</h5>
-    <div class="end-content">
+    <div class="toolbar-content">
       <slot />
     </div>
-  </Align>
+  </div>
 </div>
 
 <style>
   .toolbar {
     background-color: var(--structural-div-bg);
-    border-bottom: 1px solid var(--border-color);
-    padding: 12px 32px;
+    padding: 0.75rem 2rem;
   }
   h5 {
     margin: 0 !important;
     display: inline;
     flex: 9;
+  }
+  .toolbar-content {
+    flex: 3;
   }
 </style>

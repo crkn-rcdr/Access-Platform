@@ -48,7 +48,7 @@
 
 <style>
   form {
-    padding: 24px;
+    padding: 1.5rem;
   }
   label,
   input,

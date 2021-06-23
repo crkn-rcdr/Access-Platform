@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
 
-  import Align from "$lib/components/shared/Align.svelte";
+  export let fullPage = true;
 
   let container: HTMLDivElement;
 
@@ -13,14 +13,18 @@
   function setActivePageButtonClass() {
     for (let i = 0; i < pageButtons.length; i++) {
       if (i === activeIndex) pageButtons?.[i]?.classList?.add("active");
-      else pageButtons?.[i]?.classList?.remove("active");
+      else {
+        pageBodies?.[i]?.classList?.add("display-hidden");
+        pageButtons?.[i]?.classList?.remove("active");
+      }
     }
   }
 
   function setActivePageBody() {
     for (let i = 0; i < pageBodies.length; i++) {
-      if (i === activeIndex) pageBodies?.[i]?.classList?.remove("hidden");
-      else pageBodies?.[i]?.classList?.add("hidden");
+      if (i === activeIndex)
+        pageBodies?.[i]?.classList?.remove("display-hidden");
+      else pageBodies?.[i]?.classList?.add("display-hidden");
     }
   }
 
@@ -46,15 +50,28 @@
   });
 </script>
 
-<div bind:this={container} class="side-menu-container">
-  <Align vertical="stretch">
+<div
+  bind:this={container}
+  class="side-menu-container"
+  class:fixed-full-page={fullPage}
+>
+  <slot name="side-menu-header" />
+  <div class="auto-align auto-align__a-stretch ">
     <slot />
-  </Align>
+  </div>
 </div>
 
 <style>
   .side-menu-container {
     width: 100%;
     height: 100%;
+  }
+
+  .side-menu-container.fixed-full-page {
+    position: fixed;
+    top: calc(4.5rem + var(--viewport-scaling));
+    bottom: 7rem;
+    right: 0;
+    left: 0;
   }
 </style>

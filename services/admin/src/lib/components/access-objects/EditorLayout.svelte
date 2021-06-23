@@ -1,6 +1,5 @@
 <script lang="ts">
   import type { AccessObject } from "@crkn-rcdr/access-data";
-  import Align from "$lib/components/shared/Align.svelte";
   import Toolbar from "$lib/components/shared/Toolbar.svelte";
   import SideMenuContainer from "$lib/components/shared/SideMenuContainer.svelte";
   import SideMenuBody from "$lib/components/shared/SideMenuBody.svelte";
@@ -9,20 +8,23 @@
   import SideMenuPage from "$lib/components/shared/SideMenuPage.svelte";
   import EditorActions from "$lib/components/access-objects/EditorActions.svelte";
   import StatusIndicator from "$lib/components/access-objects/StatusIndicator.svelte";
-  import AccessObjectInfoEditor from "$lib/components/access-objects/AccessObjectInfoEditor.svelte";
+  import InfoEditor from "$lib/components/access-objects/InfoEditor.svelte";
 
   export let object: AccessObject;
   export let model: AccessObject;
 </script>
 
-<div class="editor">
-  <Toolbar title={object["slug"]}>
-    <Align direction="column" vertical="flex-end">
-      <StatusIndicator bind:object />
-      <EditorActions {object} {model} />
-    </Align>
-  </Toolbar>
+<div class="editor full-bleed">
   <SideMenuContainer>
+    <Toolbar slot="side-menu-header" title={object["slug"]}>
+      <div
+        class="end-content auto-align auto-align__j-end auto-align__a-end auto-align__column"
+      >
+        <StatusIndicator bind:object />
+        <EditorActions bind:object bind:model />
+      </div>
+    </Toolbar>
+
     <SideMenuPageList>
       <SideMenuPageListButton>General Info</SideMenuPageListButton>
       <slot name="editor-menu" />
@@ -30,7 +32,7 @@
     <SideMenuBody>
       <SideMenuPage>
         <!-- Designed to be generic? -->
-        <AccessObjectInfoEditor bind:model />
+        <InfoEditor bind:model />
       </SideMenuPage>
       <slot name="editor-content" />
     </SideMenuBody>
@@ -38,13 +40,6 @@
 </div>
 
 <style>
-  .editor {
-    position: fixed;
-    top: 74px; /* todo: not perfect on big screens */
-    bottom: 115px;
-    right: 0;
-    left: 0;
-  }
   :global(.editor div[slot]) {
     width: 100%;
     height: 100%;

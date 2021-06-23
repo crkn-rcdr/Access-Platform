@@ -64,10 +64,7 @@
 
 <style>
   .site-nav {
-    padding: 24px 16px;
-    /*background: var(--gradient);
-    color: var(--light-font);*/
-    background-color: var(--structural-div-bg);
+    padding: 1.5rem 1rem;
     color: var(--dark-font);
   }
 

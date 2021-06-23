@@ -1,20 +1,19 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import type {
-    CanvasManifest,
+    Manifest,
     Canvas,
-  } from "@crkn-rcdr/access-data/src/access/CanvasManifest";
-  import Align from "$lib/components/shared/Align.svelte";
-  import CanvasLabelEditor from "$lib/components/canvases/CanvasLabelEditor.svelte";
-  import CanvasViewer from "$lib/components/canvases/CanvasViewer.svelte";
-  import CanvasThumbnailList from "$lib/components/canvases/CanvasThumbnailList.svelte";
-  import Switch from "$lib/components/shared/Switch.svelte";
-  import SwitchCase from "$lib/components/shared/SwitchCase.svelte";
+  } from "@crkn-rcdr/access-data/src/access/Manifest";
+  import CanvasLabelEditor from "../canvases/CanvasLabelEditor.svelte";
+  import CanvasViewer from "../canvases/CanvasViewer.svelte";
+  import CanvasThumbnailList from "../canvases/CanvasThumbnailList.svelte";
+  import Switch from "$lib/components/shared//Switch.svelte";
+  import SwitchCase from "$lib/components/shared//SwitchCase.svelte";
+  import ManifestAddCanvasMenu from "$lib/components/manifests/ManifestAddCanvasMenu.svelte";
 
-  export let manifest: CanvasManifest;
+  export let manifest: Manifest;
 
   let activeCanvas: Canvas | null;
-
   let state = "view";
 
   function setActiveCanvas(index: number) {
@@ -26,25 +25,33 @@
     manifest.canvases = manifest.canvases;
   }
 
+  function changeView(newState: string) {
+    state = newState;
+  }
+
   onMount(() => {
     activeCanvas = manifest?.canvases?.[0] || null;
   });
 </script>
 
 {#if manifest && activeCanvas}
-  <Align>
+  <div class="auto-align">
     <div class="list-wrapper">
       <CanvasThumbnailList
+        showAddButton={state != "add"}
         bind:canvases={manifest["canvases"]}
         on:thumbnailClicked={(e) => {
           setActiveCanvas(e.detail.index);
+        }}
+        on:addClicked={() => {
+          changeView("add");
         }}
       />
     </div>
     <div class="state-wrap">
       <Switch bind:checkVal={state}>
         <SwitchCase caseVal="view">
-          <Align>
+          <div class="auto-align">
             <div class="view-wrap">
               <CanvasViewer canvas={activeCanvas} />
             </div>
@@ -54,11 +61,21 @@
                 on:changed={triggerUpdate}
               />
             </div>
-          </Align>
+          </div>
+        </SwitchCase>
+        <SwitchCase caseVal="add">
+          <!--TODO: Should we add the canvases after the selected canvas or just at the begining or end of the manifest?-->
+          <ManifestAddCanvasMenu
+            bind:destinationManifest={manifest}
+            on:done={() => {
+              state = "view";
+              setActiveCanvas(0);
+            }}
+          />
         </SwitchCase>
       </Switch>
     </div>
-  </Align>
+  </div>
 {/if}
 
 <style>
@@ -69,6 +86,7 @@
   .list-wrapper {
     background-color: var(--structural-div-bg);
     flex: 2.5;
+    border-top: 1px solid var(--border-color);
   }
 
   .view-wrap {
@@ -78,7 +96,14 @@
   .label-wrap {
     flex: 1;
     overflow-y: hidden;
-    width: 319px;
+    width: 20rem;
+    color: var(--light-font);
+  }
+
+  .view-wrap,
+  .label-wrap {
+    background: black;
+    background: var(--dark-gradient);
   }
 
   .state-wrap {

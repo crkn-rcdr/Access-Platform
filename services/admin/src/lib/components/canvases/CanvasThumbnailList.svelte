@@ -1,13 +1,13 @@
 <script lang="ts">
   import { createEventDispatcher, onMount } from "svelte";
   import TiTrash from "svelte-icons/ti/TiTrash.svelte";
-  import type { Canvas } from "@crkn-rcdr/access-data/src/access/CanvasManifest";
-  import Align from "$lib/components/shared/Align.svelte";
+  import type { Canvas } from "@crkn-rcdr/access-data/src/access/Manifest";
   import AutomaticResizeNumberInput from "$lib/components/shared/AutomaticResizeNumberInput.svelte";
   import DynamicDragAndDropList from "$lib/components/shared/DynamicDragAndDropList.svelte";
   import { moveArrayElement } from "$lib/arrayUtil";
 
   export let canvases: Canvas[] = [];
+  export let showAddButton = true;
 
   let indexModel: number[] = [];
   let activeCanvasIndex: number = 0;
@@ -28,6 +28,8 @@
   }
 
   function setActiveIndex(index: number) {
+    if (index >= canvases.length) index = canvases.length - 1;
+    if (index < 0) index = 0;
     activeCanvasIndex = index;
     dispatch("thumbnailClicked", { index });
   }
@@ -88,25 +90,34 @@
     }
   }
 
-  function isActive(canvas: Canvas): boolean {
-    if (canvas) {
-      return canvases?.[activeCanvasIndex]?.["id"] === canvas["id"];
-    }
-    return false;
+  function addClicked() {
+    dispatch("addClicked");
   }
 
   onMount(() => {
     if (canvases.length) activeCanvasIndex = 0;
     setIndexModel();
   });
+
+  $: {
+    canvases;
+    setIndexModel();
+  }
 </script>
 
 <svelte:window on:keydown={handleKeydown} />
 
 {#if indexModel.length}
-  <Align vertical="flex-start" direction="column">
-    <button class="primary" on:click={(e) => {}}>Add Canvas</button>
-    <div bind:this={container} tabindex="0" class="list">
+  <div class="auto-align auto-align__column">
+    {#if showAddButton}
+      <button class="primary lg" on:click={addClicked}>Add Canvas</button>
+    {/if}
+    <div
+      bind:this={container}
+      tabindex="0"
+      class="list"
+      class:disabled={!showAddButton}
+    >
       <DynamicDragAndDropList
         bind:dragList={canvases}
         on:itemDropped={(e) => {
@@ -116,12 +127,12 @@
         {#each canvases as canvas, i}
           <div
             class="thumbnail"
-            class:active={isActive(canvas)}
-            on:click={() => setActiveIndex(i)}
+            class:active={i === activeCanvasIndex}
+            on:mousedown={() => setActiveIndex(i)}
           >
-            <Align vertical="flex-start">
+            <div class="auto-align">
               <div class="actions-wrap">
-                <Align vertical="flex-start" direction="column">
+                <div class="auto-align auto-align__column">
                   <div class="action pos">
                     {indexModel[i]}
                   </div>
@@ -146,7 +157,7 @@
                   >
                     <TiTrash />
                   </div>
-                </Align>
+                </div>
               </div>
               <div class="image-wrap">
                 <img
@@ -157,27 +168,41 @@
                   )}/full/!220,292/0/default.jpg`}
                 />
               </div>
-            </Align>
+            </div>
           </div>
         {/each}
       </DynamicDragAndDropList>
     </div>
-  </Align>
+  </div>
 {/if}
 
 <style>
   .list {
+    position: relative;
     flex: 9;
     width: 100%;
     overflow-y: auto;
   }
+  .list.disabled {
+    overflow-y: hidden;
+    opacity: 0.5;
+  }
+  /*.list.disabled::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    opacity: 0.8;
+    background: var(--dark-grey);
+  }*/
 
   button.primary {
     width: 100%;
   }
 
   .thumbnail {
-    height: max(22vh, 250px);
+    height: max(22vh, 15rem);
     width: 100%;
     background-color: var(--structural-div-bg);
     overflow: hidden;
@@ -193,7 +218,7 @@
 
   .actions-wrap {
     flex: 1;
-    margin-left: 24px;
+    margin-left: 1.5rem;
   }
 
   .action.icon {
@@ -207,21 +232,20 @@
 
   .actions-wrap,
   .image-wrap {
-    margin-top: 24px;
+    margin-top: 1.5rem;
   }
 
   .image-wrap .thumbnail-img {
     height: max(18vh, 200px);
     width: max(13vh, 150px);
-    margin: 0 20px;
+    margin: 0 1.25rem;
     pointer-events: none;
   }
 
   .pos {
     font-weight: 400;
-    margin-top: 9px;
-    margin-left: 9px;
-    font-size: var(--smaller-font-size);
+    margin-top: 0.58rem;
+    margin-left: 0.58rem;
   }
 
   .action.icon {

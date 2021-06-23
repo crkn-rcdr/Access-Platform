@@ -10,10 +10,10 @@
 
 <style>
   .status {
-    margin-bottom: 4px;
+    margin-bottom: 0.25rem;
     color: var(--grey);
   }
   .status span {
-    font-size: var(--smaller-font-size) !important;
+    font-size: var(--perfect-fourth-8);
   }
 </style>
