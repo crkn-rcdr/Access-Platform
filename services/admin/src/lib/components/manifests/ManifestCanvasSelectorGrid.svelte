@@ -147,7 +147,7 @@
     height: var(--perfect-fourth-4);
     margin-right: 1rem;
     cursor: pointer;
-    border-radius: 0.25rem;
+    border-radius: var(--border-radius);
   }
 
   .back-button:hover {

@@ -19,6 +19,7 @@
   --md-size: 1rem;
   --sm-size: calc(var(--md-size) * 0.75);
   --viewport-scaling: 0.2vw;
+  --border-radius: 0.25rem;
   --perfect-fourth-1: calc(var(--md-size) * 5.6 + var(--viewport-scaling));
   --perfect-fourth-2: calc(var(--md-size) * 4.2 + var(--viewport-scaling));
   --perfect-fourth-3: calc(var(--md-size) * 3.15 + var(--viewport-scaling));
@@ -273,7 +274,7 @@ button {
   border: none;
   box-shadow: none;
   color: white;
-  border-radius: 0.25rem;
+  border-radius: var(--border-radius);
   font-weight: 400;
   cursor: pointer;
 }
@@ -314,13 +315,13 @@ select {
   margin-top: 0.25rem;
   outline: none;
   padding: var(--md-size);
-  border-radius: 0.25rem;
+  border-radius: var(--border-radius);
   /*filter: var(--shadow);*/
   /* Angular style:
   border: none;
   border-bottom: 1px solid var(--border-color);
   background: var(--structural-div-bg);
-  border-radius: 0;*/
+  border-radius: var(--border-radius);*/
 }
 
 a {
@@ -334,7 +335,7 @@ table {
   border-collapse: collapse;
   border-spacing: 0;
   background: white;
-  border-radius: 0.25rem;
+  border-radius: var(--border-radius);
 }
 
 thead th {
@@ -370,7 +371,7 @@ input[type="checkbox"]:checked {
 
 .icon:hover {
   background-color: rgba(0, 0, 0, 0.15);
-  border-radius: 0.25rem;
+  border-radius: var(--border-radius);
 }
 
 .icon {
@@ -417,7 +418,7 @@ input[type="checkbox"]:checked {
   overflow: hidden;
   text-overflow: ellipsis;
   padding: 1ch 1.5ch;
-  border-radius: 0.3ch;
+  border-radius: var(--border-radius);
   box-shadow: 0 1em 2em -0.5em rgba(0, 0, 0, 0.35);
   background: var(--grey);
   color: #fff;

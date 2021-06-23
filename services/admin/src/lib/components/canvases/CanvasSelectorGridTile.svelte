@@ -63,7 +63,7 @@
   }
   .canvas-tile.selected img {
     filter: sepia() hue-rotate(140deg) brightness(0.8);
-    /*border-radius: 0.25rem;*/
+    /*border-radius: var(--border-radius);*/
     /*border: 0.125rem solid var(--teal);*/
   }
 
@@ -80,7 +80,7 @@
     padding: 0 0 0.25rem 0;
     color: var(--light-font);
     background-color: var(--grey);
-    border-radius: 0.25rem;
+    border-radius: var(--border-radius);
     margin: 0.25rem;
   }
 
