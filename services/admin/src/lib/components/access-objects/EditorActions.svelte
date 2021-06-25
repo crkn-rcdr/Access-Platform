@@ -30,7 +30,7 @@
   });
 </script>
 
-<span>
+<span class="editor-actions">
   {#if saveEnabled}
     <button class="save" on:click={save}>Save</button>
   {/if}

@@ -96,7 +96,6 @@
   .label-wrap {
     flex: 1;
     overflow-y: hidden;
-    width: 20rem;
     color: var(--light-font);
   }
 

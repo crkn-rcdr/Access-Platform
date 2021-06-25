@@ -39,5 +39,10 @@ export type ToggleParams = {
  */
 export type SideMenuPageData = {
   name: string;
-  componentData: { component: any; props: any; update: Function };
+  componentData: {
+    contentComponent: any;
+    contentComponentProps: any;
+    sideMenuPageProps: any;
+    update: Function;
+  };
 };

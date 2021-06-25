@@ -93,10 +93,10 @@
 
           <SideMenuBody>
             {#each pageComponents as pageComponentData, i}
-              <SideMenuPage>
+              <SideMenuPage {...pageComponentData["sideMenuPageProps"]}>
                 <svelte:component
-                  this={pageComponentData["component"]}
-                  {...pageComponentData["props"]}
+                  this={pageComponentData["contentComponent"]}
+                  {...pageComponentData["contentComponentProps"]}
                   bind:this={instances[i]}
                 />
               </SideMenuPage>

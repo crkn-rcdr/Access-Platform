@@ -28,8 +28,9 @@
         {
           name: "General Info",
           componentData: {
-            component: InfoEditor,
-            props: { model },
+            contentComponent: InfoEditor,
+            contentComponentProps: { model },
+            sideMenuPageProps: {},
             update: () => {
               model = model;
             },
@@ -38,8 +39,11 @@
         {
           name: "Content",
           componentData: {
-            component: ManifestContentEditor,
-            props: { manifest: model },
+            contentComponent: ManifestContentEditor,
+            contentComponentProps: { manifest: model },
+            sideMenuPageProps: {
+              overflowY: "hidden",
+            },
             update: () => {
               model = model;
             },
@@ -51,8 +55,9 @@
         {
           name: "General Info",
           componentData: {
-            component: InfoEditor,
-            props: { model },
+            contentComponent: InfoEditor,
+            contentComponentProps: { model },
+            sideMenuPageProps: {},
             update: () => {
               model = model;
             },

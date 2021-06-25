@@ -23,6 +23,10 @@
         element: container,
         prefixUrl: "/openseadragon/images/", // for the icons the viewer uses
         tileSources: [imageURL],
+        viewportMargins: {
+          top: 0,
+          bottom: 0,
+        },
       });
     }
   }
