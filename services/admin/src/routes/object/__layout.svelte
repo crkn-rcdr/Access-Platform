@@ -16,7 +16,7 @@
       } else if (isManifest(object)) {
         type = "canvasManifest";
       }
-      return { props: { object, type } };
+      return { props: { object } };
     } else {
       return { status: response.status, error: new Error(json.error) };
     }

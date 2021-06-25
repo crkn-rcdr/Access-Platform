@@ -6,31 +6,29 @@
   import SideMenuPageList from "$lib/components/shared/SideMenuPageList.svelte";
   import SideMenuPageListButton from "$lib/components/shared/SideMenuPageListButton.svelte";
   import SideMenuPage from "$lib/components/shared/SideMenuPage.svelte";
+  import type { SideMenuPageData } from "$lib/types";
 
-  /** */
+  /** Option a menu that takes up the entire body of a page, or an inline menu. */
   export let fullPage = true;
 
-  /** */
-  export let pageList:
-    | Array<{ name: string; componentData: { component: any; props: any } }> //ex: props {page1Prop: 1}
-    | undefined = undefined;
-  //let enableSetup = false;
+  /** Handles generating the side menu buttons and pages dynamically through an array */
+  export let pageList: Array<SideMenuPageData> | undefined = undefined;
 
-  let pageNames: string[] = [];
-  let pageComponents: any[] = [];
+  let pageNames: string[] = []; // Makes it easier to generate the sidenav buttons list
+  let pageComponents: any[] = []; // Makes it easier to generate the page body list
+  let instances: any = {}; // Keeps track of the actual instances of the components dynamically created throughsvelte:component.
 
-  $: console.log("pageList", pageList, pageNames, pageComponents);
-
-  /*$: {
-    pageList;
-    if (enableSetup) {
-      setup();
-    }
-  }*/
   $: pageNames = pageList ? pageList.map((el) => el["name"]) : [];
   $: pageComponents = pageList ? pageList.map((el) => el["componentData"]) : [];
+  $: {
+    for (let key in instances) {
+      instances[key].$$.after_update.push(() => {
+        pageComponents[parseInt(key)].update(); // Any time the instances object changes, add a callback to each component instance that triggers the update method passed in through the SideMenuPageData objects in the pageList array property.
+      });
+    }
+  }
 
-  /** */
+  /** Handles the hiding and showing of pages based on user interaction with the menu */
   let container: HTMLDivElement;
   let pageButtons: NodeListOf<Element>;
   let pageBodies: NodeListOf<Element>;
@@ -69,17 +67,11 @@
     }
   }
 
-  function setup() {
+  onMount(() => {
     pageButtons = container.querySelectorAll(".side-menu-page-list-button");
     pageBodies = container.querySelectorAll(".side-menu-page");
-    console.log("els", pageButtons, pageBodies);
     enablePaging();
     setPage();
-  }
-
-  onMount(() => {
-    setup();
-    //enableSetup = true;
   });
 </script>
 
@@ -99,11 +91,12 @@
       </SideMenuPageList>
 
       <SideMenuBody>
-        {#each pageComponents as pageComponentData}
+        {#each pageComponents as pageComponentData, i}
           <SideMenuPage>
             <svelte:component
               this={pageComponentData["component"]}
               {...pageComponentData["props"]}
+              bind:this={instances[i]}
             />
           </SideMenuPage>
         {/each}

@@ -5,6 +5,7 @@
   export let canvas: Canvas;
   let OpenSeadragon: any;
   let container: HTMLDivElement;
+  let imageURL = "";
 
   function clearViewer() {
     if (container) {
@@ -15,14 +16,13 @@
   async function drawImage() {
     clearViewer();
     if (canvas && OpenSeadragon) {
+      imageURL = `https://image-uvic.canadiana.ca/iiif/2/${encodeURIComponent(
+        canvas["id"]
+      )}/info.json`;
       OpenSeadragon.default({
         element: container,
         prefixUrl: "/openseadragon/images/", // for the icons the viewer uses
-        tileSources: [
-          `https://image-uvic.canadiana.ca/iiif/2/${encodeURIComponent(
-            canvas["id"]
-          )}/info.json`,
-        ],
+        tileSources: [imageURL],
       });
     }
   }
@@ -33,7 +33,10 @@
   });
 
   afterUpdate(async () => {
-    await drawImage();
+    let newImageUrl = `https://image-uvic.canadiana.ca/iiif/2/${encodeURIComponent(
+      canvas["id"]
+    )}/info.json`;
+    if (imageURL !== newImageUrl) await drawImage();
   });
 </script>
 

@@ -1,22 +1,21 @@
 <script lang="ts">
+  import { getContext } from "svelte";
   import type { AccessObject } from "@crkn-rcdr/access-data";
   import { isManifest, isCollection } from "@crkn-rcdr/access-data";
+  import type { SideMenuPageData } from "$lib/types";
   import Toolbar from "$lib/components/shared/Toolbar.svelte";
   import ManifestContentEditor from "$lib/components/manifests/ManifestContentEditor.svelte";
   import SideMenuContainer from "$lib/components/shared/SideMenuContainer.svelte";
   import EditorActions from "$lib/components/access-objects/EditorActions.svelte";
   import StatusIndicator from "$lib/components/access-objects/StatusIndicator.svelte";
   import InfoEditor from "$lib/components/access-objects/InfoEditor.svelte";
-  import { getContext } from "svelte";
 
   let object: AccessObject;
   const objectStore: SvelteStore<AccessObject> = getContext("objectStore");
   object = $objectStore;
   setDataModel(object);
 
-  let pageList:
-    | Array<{ name: string; componentData: { component: any; props: any } }> //ex: props {page1Prop: 1}
-    | undefined;
+  let pageList: Array<SideMenuPageData> | undefined;
 
   let rfdc: any; // Deep copies an object
   let model: AccessObject;
@@ -31,6 +30,9 @@
           componentData: {
             component: InfoEditor,
             props: { model },
+            update: () => {
+              model = model;
+            },
           },
         },
         {
@@ -38,6 +40,9 @@
           componentData: {
             component: ManifestContentEditor,
             props: { manifest: model },
+            update: () => {
+              model = model;
+            },
           },
         },
       ];
@@ -48,6 +53,9 @@
           componentData: {
             component: InfoEditor,
             props: { model },
+            update: () => {
+              model = model;
+            },
           },
         },
       ];
