@@ -66,14 +66,22 @@
 <slot />
 
 {#if object && model}
-  <SideMenuContainer {pageList}>
-    <Toolbar slot="side-menu-header" title={object["slug"]}>
-      <div
-        class="end-content auto-align auto-align__j-end auto-align__a-end auto-align__column"
-      >
-        <StatusIndicator bind:object />
-        <EditorActions bind:object bind:model />
-      </div>
-    </Toolbar>
-  </SideMenuContainer>
+  <div class="editor">
+    <SideMenuContainer {pageList}>
+      <Toolbar slot="side-menu-header" title={object["slug"]}>
+        <div
+          class="end-content auto-align auto-align__j-end auto-align__a-end auto-align__column"
+        >
+          <StatusIndicator bind:object />
+          <EditorActions bind:object bind:model />
+        </div>
+      </Toolbar>
+    </SideMenuContainer>
+  </div>
 {/if}
+
+<style>
+  :global(.editor .header) {
+    min-height: 5em !important;
+  }
+</style>
