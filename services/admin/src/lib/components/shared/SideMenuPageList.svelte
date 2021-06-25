@@ -7,8 +7,7 @@
 <style>
   .sidemenu {
     background: var(--structural-div-bg);
-    filter: brightness(0.9);
-    color: var(--dark-font);
+    filter: brightness(0.95);
     height: 100%;
     flex: 1.5;
   }
