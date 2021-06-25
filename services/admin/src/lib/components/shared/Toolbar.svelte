@@ -15,6 +15,8 @@
   .toolbar {
     background-color: var(--structural-div-bg);
     padding: 0.75rem 2rem;
+    width: 100%;
+    height: 100%;
   }
   h5 {
     margin: 0 !important;

@@ -9,7 +9,6 @@
     background: var(--grey);
     color: var(--light-font);
     height: 100%;
-    display: inline-block;
     flex: 1.5;
   }
   .sidemenu ul {

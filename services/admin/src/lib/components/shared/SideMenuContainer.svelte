@@ -75,49 +75,62 @@
   });
 </script>
 
-<div
-  bind:this={container}
-  class="side-menu-container"
-  class:fixed-full-page={fullPage}
->
-  <slot name="side-menu-header" />
+<div bind:this={container} class="side-menu-container">
+  <div class:fixed-full-page={fullPage}>
+    <!--auto-align auto-align__a-stretch auto-align__wrap"-->
+    <div class="header">
+      <slot name="side-menu-header" />
+    </div>
 
-  <div class="auto-align auto-align__a-stretch">
-    {#if pageList}
-      <SideMenuPageList>
-        {#each pageNames as pageName}
-          <SideMenuPageListButton>{pageName}</SideMenuPageListButton>
-        {/each}
-      </SideMenuPageList>
+    <div class="menu">
+      <div class="auto-align auto-align__a-stretch auto-align__wrap">
+        {#if pageList}
+          <SideMenuPageList>
+            {#each pageNames as pageName}
+              <SideMenuPageListButton>{pageName}</SideMenuPageListButton>
+            {/each}
+          </SideMenuPageList>
 
-      <SideMenuBody>
-        {#each pageComponents as pageComponentData, i}
-          <SideMenuPage>
-            <svelte:component
-              this={pageComponentData["component"]}
-              {...pageComponentData["props"]}
-              bind:this={instances[i]}
-            />
-          </SideMenuPage>
-        {/each}
-      </SideMenuBody>
-    {:else}
-      <slot />
-    {/if}
+          <SideMenuBody>
+            {#each pageComponents as pageComponentData, i}
+              <SideMenuPage>
+                <svelte:component
+                  this={pageComponentData["component"]}
+                  {...pageComponentData["props"]}
+                  bind:this={instances[i]}
+                />
+              </SideMenuPage>
+            {/each}
+          </SideMenuBody>
+        {:else}
+          <slot />
+        {/if}
+      </div>
+    </div>
   </div>
 </div>
 
 <style>
   .side-menu-container {
     width: 100%;
-    height: 100%;
+    position: relative;
   }
 
-  .side-menu-container.fixed-full-page {
+  .fixed-full-page {
     position: fixed;
     top: calc(4.5rem + var(--viewport-scaling));
-    bottom: 7rem;
+    bottom: 0;
     right: 0;
     left: 0;
+    height: calc(100vh - 4.5rem - var(--viewport-scaling));
+  }
+
+  .header {
+    height: 12%;
+    width: 100%;
+  }
+  .menu {
+    height: 88%;
+    width: 100%;
   }
 </style>

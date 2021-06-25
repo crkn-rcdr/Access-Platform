@@ -66,23 +66,14 @@
 <slot />
 
 {#if object && model}
-  <div class="editor full-bleed">
-    <SideMenuContainer {pageList}>
-      <Toolbar slot="side-menu-header" title={object["slug"]}>
-        <div
-          class="end-content auto-align auto-align__j-end auto-align__a-end auto-align__column"
-        >
-          <StatusIndicator bind:object />
-          <EditorActions bind:object bind:model />
-        </div>
-      </Toolbar>
-    </SideMenuContainer>
-  </div>
+  <SideMenuContainer {pageList}>
+    <Toolbar slot="side-menu-header" title={object["slug"]}>
+      <div
+        class="end-content auto-align auto-align__j-end auto-align__a-end auto-align__column"
+      >
+        <StatusIndicator bind:object />
+        <EditorActions bind:object bind:model />
+      </div>
+    </Toolbar>
+  </SideMenuContainer>
 {/if}
-
-<style>
-  :global(.editor div[slot]) {
-    width: 100%;
-    height: 100%;
-  }
-</style>
