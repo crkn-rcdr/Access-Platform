@@ -125,11 +125,11 @@
     height: calc(100vh - 4.5rem - var(--viewport-scaling));
   }
 
-  .header {
+  .fixed-full-page .header {
     height: 12%;
     width: 100%;
   }
-  .menu {
+  .fixed-full-page .menu {
     height: 88%;
     width: 100%;
   }
