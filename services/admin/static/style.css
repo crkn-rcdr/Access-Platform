@@ -1,6 +1,6 @@
 @font-face {
   font-family: "Roboto";
-  src: url("./fonts/Roboto-Light.ttf") format("truetype");
+  src: url("./fonts/Roboto-Regular.ttf") format("truetype");
 }
 
 :root {
@@ -42,7 +42,6 @@
 /* Font defaults */
 body {
   font-family: "Roboto", sans-serif !important;
-  font-weight: 300;
   font-size: var(--perfect-fourth-7);
 }
 

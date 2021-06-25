@@ -4,13 +4,12 @@
 
 <style>
   li {
-    background: var(--grey);
-    filter: brightness(1.1);
+    background: rgba(0, 0, 0, 0.025);
     padding: var(--perfect-fourth-7) var(--perfect-fourth-4);
-    color: var(--light-font) !important;
     cursor: pointer;
+    font-weight: 500;
   }
   :global(.side-menu-page-list-button.active) {
-    filter: brightness(1.2);
+    background: rgba(0, 0, 0, 0.05);
   }
 </style>
