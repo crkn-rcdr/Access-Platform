@@ -5,22 +5,26 @@
   export let model: AccessObject;
 </script>
 
-<form>
-  <!--TODO: replace with slug resolver component-->
-  {#if isManifest(model) || isCollection(model)}
-    <label for="slug">Slug</label><br />
-    <input type="text" id="slug" name="slug" bind:value={model["slug"]} /><br
-    /><br />
-  {/if}
+{#if model}
+  <form>
+    <!--TODO: replace with slug resolver component-->
+    {#if isManifest(model) || isCollection(model)}
+      <label for="slug">Slug</label><br />
+      <input type="text" id="slug" name="slug" bind:value={model["slug"]} /><br
+      /><br />
+    {/if}
 
-  {#if isManifest(model)}
-    <label for="label">Label</label><br />
-    <textarea id="label" name="label" bind:value={model["label"]["none"]} /><br
-    /><br />
+    {#if isManifest(model)}
+      <label for="label">Label</label><br />
+      <textarea
+        id="label"
+        name="label"
+        bind:value={model["label"]["none"]}
+      /><br /><br />
 
-    <!--Fixtures don't have this yet, causes save to be enabled on load-->
+      <!--Fixtures don't have this yet, causes save to be enabled on load-->
 
-    <!--span>
+      <!--span>
     <label for="behavior">Behavior</label>
     <select id="behavior" name="behavior" bind:value={manifest["behavior"]}>
       <option>continuous</option>
@@ -43,8 +47,9 @@
       <option>bottom-to-top</option>
     </select>
   </span><br /-->
-  {/if}
-</form>
+    {/if}
+  </form>
+{/if}
 
 <style>
   form {
