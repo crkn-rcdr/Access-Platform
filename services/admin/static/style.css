@@ -30,6 +30,8 @@
   --structural-div-bg: #eee;
   /* Change this to set the bg color for components that need a darker backgrop, ex: canvas viewer */
   --backdrop-bg: #ddd;
+  /* Change this to set the colour of inputs, text areas, and selects */
+  --form-field-bg: white;
   /* Change this to set the default border colour for components, ex: inputs */
   --border-color: #ccc;
   /* Change this to set the font colour for the app */
@@ -390,7 +392,7 @@ select {
   outline: none;
   padding: var(--perfect-fourth-8);
   border-radius: var(--border-radius);
-  background-color: rgba(255, 255, 255, 0.938);
+  background-color: var(--form-field-bg);
 }
 
 a {
