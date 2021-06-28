@@ -79,6 +79,7 @@
 
   {#if showManifest}
     <ManifestCanvasSelectorGrid
+      buttonActionText={"Add"}
       bind:manifest={selectedManifest}
       on:backPressed={() => {
         error = "";

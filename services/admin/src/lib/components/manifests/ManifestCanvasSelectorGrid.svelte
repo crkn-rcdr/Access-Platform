@@ -7,6 +7,8 @@
   import CanvasViewer from "../canvases/CanvasViewer.svelte";
 
   export let manifest: Manifest;
+  export let buttonActionText = "Select";
+
   let selectedCanvases: Canvas[] = [];
   let previewCanvas: Canvas | null;
 
@@ -63,7 +65,9 @@
               : 'opacity-hidden'}"
             disabled={selectedCanvases.length ? false : true}
             on:click={handleAddPressed}
-            >Select Canvas{selectedCanvases.length > 1 ? "es" : ""}</button
+            >{buttonActionText} Canvas{selectedCanvases.length > 1
+              ? "es"
+              : ""}</button
           >
         </div>
       </div>
