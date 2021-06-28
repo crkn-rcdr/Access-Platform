@@ -73,6 +73,45 @@
     currentItemIndex = destinationItemIndex;
   }
 
+  function dragStart(this: Element, elementIndex: number) {
+    currentItemIndex = elementIndex;
+    originalList = [...dragList];
+  }
+
+  function dragenter(event: any) {
+    destinationItemIndex = getIndexToMoveChildTo(event.clientX, event.clientY);
+    handleMove();
+  }
+
+  function drop() {
+    success = true;
+  }
+
+  function dragend() {
+    if (!success) dragList = originalList;
+    success = false; // Reset this after each drag operation
+  }
+
+  function addEventListeners(element: Element, elementIndex: number) {
+    element.addEventListener(
+      "dragstart",
+      dragStart.bind(element, elementIndex)
+    );
+    element.addEventListener("dragenter", dragenter);
+    element.addEventListener("drop", drop);
+    element.addEventListener("dragend", dragend);
+  }
+
+  function removeEventListeners(element: Element, elementIndex: number) {
+    element.removeEventListener(
+      "dragstart",
+      dragStart.bind(element, elementIndex)
+    );
+    element.removeEventListener("dragenter", dragenter);
+    element.removeEventListener("drop", drop);
+    element.removeEventListener("dragend", dragend);
+  }
+
   function enableDraggingOnChild(
     element: Element | undefined,
     elementIndex: number
@@ -81,28 +120,8 @@
     element.classList?.add("draggable");
     element.setAttribute("draggable", "true");
     element.setAttribute("ondragover", "return false");
-
-    element.addEventListener("dragstart", () => {
-      currentItemIndex = elementIndex;
-      originalList = [...dragList];
-    });
-
-    element.addEventListener("dragenter", (event: any) => {
-      destinationItemIndex = getIndexToMoveChildTo(
-        event.clientX,
-        event.clientY
-      );
-      handleMove();
-    });
-
-    element.addEventListener("drop", () => {
-      success = true;
-    });
-
-    element.addEventListener("dragend", () => {
-      if (!success) dragList = originalList;
-      success = false; // Reset this after each drag operation
-    });
+    removeEventListeners(element, elementIndex); // Ensure no duplicates fired
+    addEventListeners(element, elementIndex);
   }
 
   function enableDraggingOnChildren() {
