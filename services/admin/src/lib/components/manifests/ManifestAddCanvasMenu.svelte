@@ -50,7 +50,7 @@
 <div class="canvas-selector-wrap">
   <div class="add-menu-title">
     <div class="auto-align auto-align__a-center">
-      <h5>Add canvases from other manifests</h5>
+      <h6>Add canvases from other manifests</h6>
       <button class="danger cancel-button" on:click={handleCancelPressed}>
         Exit
       </button>
@@ -98,7 +98,7 @@
   .add-menu-title {
     width: 100%;
   }
-  .add-menu-title h5 {
+  h6 {
     flex: 9;
     margin: 0 !important;
   }

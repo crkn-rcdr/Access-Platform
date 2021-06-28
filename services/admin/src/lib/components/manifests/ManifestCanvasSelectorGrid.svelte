@@ -48,13 +48,13 @@
 {#if manifest}
   <div class="results">
     <div class="manifest-title">
-      <div class="auto-align">
+      <div class="auto-align auto-align__a-center">
         <div class="back-button" on:click={handleBackButtonPressed}>
           <TiArrowBack />
         </div>
-        <h5>
-          Adding canvases from {manifest["slug"]}: {manifest["label"]["none"]}
-        </h5>
+        <h6>
+          Select canvases from {manifest["slug"]}: {manifest["label"]["none"]}
+        </h6>
 
         <div class="action-buttons">
           <button
@@ -63,7 +63,7 @@
               : 'opacity-hidden'}"
             disabled={selectedCanvases.length ? false : true}
             on:click={handleAddPressed}
-            >Add Canvas{selectedCanvases.length > 1 ? "es" : ""}</button
+            >Select Canvas{selectedCanvases.length > 1 ? "es" : ""}</button
           >
         </div>
       </div>
@@ -88,7 +88,7 @@
 {#if previewCanvas}
   <div class="preview-wrap">
     <div class="canvas-title">
-      <div class="auto-align">
+      <div class="auto-align auto-align__a-center">
         <div
           class="back-button"
           on:click={() => {
@@ -97,11 +97,11 @@
         >
           <TiArrowBack />
         </div>
-        <h5>
+        <h6>
           Viewing {manifest["slug"]}: {manifest["label"]["none"]} / {previewCanvas[
             "label"
           ]["none"]}
-        </h5>
+        </h6>
       </div>
     </div>
     <div class="preview-canvas-wrap">
@@ -122,7 +122,7 @@
     padding: 2rem 3rem;
   }
 
-  h5 {
+  h6 {
     margin: 0 !important;
     flex: 9;
   }
