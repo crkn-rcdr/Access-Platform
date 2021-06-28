@@ -48,12 +48,12 @@
 {#if manifest}
   <div class="results">
     <div class="manifest-title">
-      <div class="auto-align auto-align__a-center">
+      <div class="auto-align">
         <div class="back-button" on:click={handleBackButtonPressed}>
           <TiArrowBack />
         </div>
         <h5>
-          {manifest["slug"]}: {manifest["label"]["none"]}
+          Adding canvases from {manifest["slug"]}: {manifest["label"]["none"]}
         </h5>
 
         <div class="action-buttons">
@@ -69,22 +69,26 @@
       </div>
     </div>
 
-    <div class="canvas-tiles">
-      {#each manifest["canvases"] as canvas}
-        <CanvasSelectorGridTile
-          {canvas}
-          on:tileClicked={handleSelection}
-          on:tilePreviewClicked={handlePreview}
-        />
-      {/each}
-    </div>
+    {#if manifest["canvases"] && manifest["canvases"].length}
+      <div class="canvas-tiles">
+        {#each manifest["canvases"] as canvas}
+          <CanvasSelectorGridTile
+            {canvas}
+            on:tileClicked={handleSelection}
+            on:tilePreviewClicked={handlePreview}
+          />
+        {/each}
+      </div>
+    {:else}
+      No canvases.
+    {/if}
   </div>
 {/if}
 
 {#if previewCanvas}
   <div class="preview-wrap">
     <div class="canvas-title">
-      <div class="auto-align auto-align__a-center">
+      <div class="auto-align">
         <div
           class="back-button"
           on:click={() => {
@@ -94,7 +98,7 @@
           <TiArrowBack />
         </div>
         <h5>
-          {manifest["slug"]}: {manifest["label"]["none"]} / {previewCanvas[
+          Viewing {manifest["slug"]}: {manifest["label"]["none"]} / {previewCanvas[
             "label"
           ]["none"]}
         </h5>
@@ -109,8 +113,7 @@
 <style>
   .results,
   .preview-wrap {
-    background: black;
-    background: var(--dark-gradient);
+    background-color: var(--backdrop-bg);
     position: absolute;
     top: 0;
     bottom: 0;
@@ -119,26 +122,23 @@
     padding: 2rem 3rem;
   }
 
-  .preview-canvas-wrap {
-    height: 80%;
-    padding: 0 var(--perfect-fourth-4);
-    margin: auto;
+  h5 {
+    margin: 0 !important;
+    flex: 9;
   }
 
-  h5 {
-    margin-bottom: 0 !important;
-    flex: 9;
+  .preview-canvas-wrap,
+  .canvas-tiles {
+    height: 90%;
+    margin-top: 1em;
   }
 
   .manifest-title,
   .canvas-title {
-    color: var(--light-font);
-    margin: var(--perfect-fourth-3) var(--perfect-fourth-4) !important;
     height: var(--perfect-fourth-2);
   }
 
   .canvas-tiles {
-    height: 75%;
     overflow-x: hidden;
     overflow-y: auto;
   }
@@ -152,7 +152,7 @@
   }
 
   .back-button:hover {
-    background-color: #111111;
+    background-color: rgba(0, 0, 0, 0.2);
   }
 
   .opacity-hidden {

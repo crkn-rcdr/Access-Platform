@@ -42,10 +42,10 @@
 <style>
   .canvas-tile {
     display: inline-block;
-    height: 564px;
+    height: 525px;
     width: 425px;
     position: relative;
-    margin: var(--perfect-fourth-6) var(--perfect-fourth-4);
+    margin: var(--margin-sm);
     color: white;
     cursor: pointer;
   }
@@ -64,7 +64,7 @@
   .canvas-tile.selected img {
     filter: sepia() hue-rotate(140deg) brightness(0.8);
     border-radius: var(--border-radius);
-    border: 0.125rem solid var(--teal);
+    border: 0.125rem solid var(--primary);
   }
 
   .canvas-tile-body {
@@ -79,7 +79,7 @@
     height: var(--perfect-fourth-5);
     padding: 0 0 0.25rem 0;
     color: var(--light-font);
-    background-color: var(--grey);
+    background-color: var(--secondary);
     border-radius: var(--border-radius);
     margin: 0.25rem;
   }

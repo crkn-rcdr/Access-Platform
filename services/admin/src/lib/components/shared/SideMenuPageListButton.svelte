@@ -10,6 +10,6 @@
     font-weight: 500;
   }
   :global(.side-menu-page-list-button.active) {
-    background: rgba(0, 0, 0, 0.03);
+    background: rgba(0, 0, 0, 0.02);
   }
 </style>

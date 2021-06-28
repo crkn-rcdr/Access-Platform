@@ -1,6 +1,4 @@
 <script lang="ts">
-  //See: https://svelte.dev/tutorial/svelte-component and https://svelte.dev/repl/74593f36569a4c268d8a6ab277db34b5?version=3.12.1
-
   import { onMount } from "svelte";
   import SideMenuBody from "$lib/components/shared/SideMenuBody.svelte";
   import SideMenuPageList from "$lib/components/shared/SideMenuPageList.svelte";
@@ -11,14 +9,16 @@
   /** Option a menu that takes up the entire body of a page, or an inline menu. */
   export let fullPage = true;
 
-  /** Handles generating the side menu buttons and pages dynamically through an array */
-  //export let pageList: Array<SideMenuPageData> | undefined = undefined;
-  export const pageList: Array<SideMenuPageData> = [];
+  /** Handles generating the side menu buttons and pages dynamically through an array
+   *  Developers can use either this list or just build their menus by putting in their own template components.
+   */
+  export let pageList: Array<SideMenuPageData> = [];
 
   let pageNames: string[] = []; // Makes it easier to generate the sidenav buttons list
   let pageComponents: any[] = []; // Makes it easier to generate the page body list
-  let instances: any = {}; // Keeps track of the actual instances of the components dynamically created throughsvelte:component.
+  let instances: any = {}; // Keeps track of the actual instances of the components dynamically created through svelte:component.
 
+  /** Any time the page list changes, redraw the menus and pages. */
   $: pageNames = pageList.map((el) => el["name"]);
   $: pageComponents = pageList.map((el) => el["componentData"]);
   $: {
@@ -81,10 +81,9 @@
     <div class="header">
       <slot name="side-menu-header" />
     </div>
-
     <div class="menu">
       <div class="auto-align auto-align__a-stretch auto-align__wrap">
-        {#if pageList}
+        {#if pageList.length}
           <SideMenuPageList>
             {#each pageNames as pageName}
               <SideMenuPageListButton>{pageName}</SideMenuPageListButton>
