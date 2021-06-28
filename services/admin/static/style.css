@@ -54,7 +54,7 @@
   /* Warn */
   --warn: var(--gold);
   --warn-light: var(--gold-light);
-  --danger-font: var(--light-font);
+  --warn-font: var(--light-font);
 
   /* Sizing */
   --lg-size: calc(var(--md-size) * 1.33);
