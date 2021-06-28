@@ -2,6 +2,7 @@
   import type { AccessObject } from "@crkn-rcdr/access-data";
   import { isManifest, isCollection } from "@crkn-rcdr/access-data";
   import ManifestContentEditor from "$lib/components/manifests/ManifestContentEditor.svelte";
+  import CollectionEditor from "$lib/components/collection/CollectionEditor.svelte";
   import SideMenuPageListButton from "$lib/components/shared/SideMenuPageListButton.svelte";
   import SideMenuPage from "$lib/components/shared/SideMenuPage.svelte";
   import EditorLayout from "$lib/components/access-objects/EditorLayout.svelte";
@@ -40,13 +41,14 @@
   {:else if isCollection(model)}
     <EditorLayout bind:object bind:model>
       <span slot="editor-menu">
-        <!-- SideMenuPageListButton>Content</SideMenuPageListButton-->
+        <SideMenuPageListButton>Members</SideMenuPageListButton>
       </span>
 
       <span slot="editor-content">
-        <!--SideMenuPage overflowY="hidden">
-        Collection Content! {JSON.stringify(object)}
-      </SideMenuPage-->
+        <SideMenuPage overflowY="hidden">
+          <!-- <CollectionEditor bind:collection{model} /> -->
+          Collection Editor {JSON.stringify(object)}
+        </SideMenuPage>
       </span>
     </EditorLayout>
   {:else}

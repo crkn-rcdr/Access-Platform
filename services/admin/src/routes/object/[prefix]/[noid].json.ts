@@ -6,7 +6,7 @@ export const get: RequestHandler<Locals> = async ({ params, locals }) => {
   const id = [params["prefix"] as string, params["noid"] as string].join("/");
 
   const response = await locals.accessor.retrieve(id);
-
+  console.log("*****show the response****", response);
   if (response) {
     return {
       status: 200,
