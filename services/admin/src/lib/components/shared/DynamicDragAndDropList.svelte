@@ -8,18 +8,10 @@
   const dispatch = createEventDispatcher();
 
   let container: HTMLDivElement;
-  let originalItemIndex: number;
+  let currentItemIndex: number;
   let destinationItemIndex: number;
-
-  function handleDrop() {
-    if (originalItemIndex === destinationItemIndex) return;
-    dragList = moveArrayElement(
-      dragList,
-      originalItemIndex,
-      destinationItemIndex
-    );
-    dispatch("itemDropped", { originalItemIndex, destinationItemIndex });
-  }
+  let originalList: any[] = [];
+  let success = false;
 
   function checkVerticalList(rect: DOMRect, destinationY: number): boolean {
     let y = rect.top;
@@ -55,13 +47,11 @@
         return true;
       }
     }
-
     return false;
   }
 
   function getIndexToMoveChildTo(destinationX: number, destinationY: number) {
-    let destinationItemIndex = originalItemIndex;
-
+    let destinationItemIndex = currentItemIndex;
     for (let i = container.children.length - 1; i >= 0; i--) {
       let rect = container?.children?.[i]?.getBoundingClientRect();
       if (checkIfShouldAddAfterIndex(rect, destinationX, destinationY)) {
@@ -69,24 +59,18 @@
         break;
       }
     }
-
     return destinationItemIndex;
   }
 
-  function setDragAnimation() {
-    for (let i = 0; i < container.children.length; i++) {
-      if (i === destinationItemIndex) {
-        container?.children?.[i]?.classList?.add("drag-target");
-      } else {
-        container?.children?.[i]?.classList?.remove("drag-target");
-      }
-    }
-  }
-
-  function clearDragAnimation() {
-    for (let i = 0; i < container.children.length; i++) {
-      container?.children?.[i]?.classList?.remove("drag-target");
-    }
+  function handleMove() {
+    if (currentItemIndex === destinationItemIndex) return;
+    dragList = moveArrayElement(
+      dragList,
+      currentItemIndex,
+      destinationItemIndex
+    );
+    dispatch("itemDropped", { currentItemIndex, destinationItemIndex });
+    currentItemIndex = destinationItemIndex;
   }
 
   function enableDraggingOnChild(
@@ -98,34 +82,25 @@
     element.setAttribute("draggable", "true");
     element.setAttribute("ondragover", "return false");
 
-    /** Hides the item being dragged in it's orginal position. This must be done during drag, else the drag preview will not show. */
-    element.addEventListener("drag", () => {
-      element.classList?.add("dragging");
-    });
-
-    /** When the dragging begins, record the items current index for moving upon drop */
     element.addEventListener("dragstart", () => {
-      originalItemIndex = elementIndex;
+      currentItemIndex = elementIndex;
+      originalList = [...dragList];
     });
 
-    /** Shows the item being dragged in it's new position, and clears the drag target animation from the element being hovered over. */
-    element.addEventListener("dragend", () => {
-      element.classList?.remove("dragging");
-      clearDragAnimation();
-    });
-
-    /** Disables the drag animation when the component being dragged is no longer over an element */
-    element.addEventListener("dragleave", () => {
-      clearDragAnimation();
-    });
-
-    /** Records the destination index for moving the dragged item to, and adds the drag target animation from the element being hovered over. */
-    element.addEventListener("dragover", (event: any) => {
+    element.addEventListener("dragenter", (event: any) => {
       destinationItemIndex = getIndexToMoveChildTo(
         event.clientX,
         event.clientY
       );
-      setDragAnimation();
+      handleMove();
+    });
+
+    element.addEventListener("drop", () => {
+      success = true;
+    });
+
+    element.addEventListener("dragend", () => {
+      if (!success) dragList = originalList;
     });
   }
 
@@ -147,11 +122,7 @@
   }
 </script>
 
-<div
-  class="drag-and-drop-wrap {direction}"
-  bind:this={container}
-  on:drop={handleDrop}
->
+<div class="drag-and-drop-wrap {direction}" bind:this={container}>
   <slot />
 </div>
 
@@ -189,8 +160,5 @@
   :global(.draggable:hover) {
     filter: brightness(1.03);
     cursor: grab;
-  }
-  :global(.dragging) {
-    visibility: hidden !important;
   }
 </style>
