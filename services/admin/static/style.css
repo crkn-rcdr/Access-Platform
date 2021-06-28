@@ -177,9 +177,12 @@ Source: https://github.com/twbs/bootstrap/blob/main/scss/mixins/_visually-hidden
 
 /* Hero element defaults. */
 .hero {
-  background: var(--color-gradient);
-  color: var(--light-font);
   padding: var(--perfect-fourth-1) 0;
+}
+
+.hero.hero__gradient {
+  background: var(--color-gradient);
+  color: var(--primary-font);
 }
 
 /* Wrapper util - default page margins */
