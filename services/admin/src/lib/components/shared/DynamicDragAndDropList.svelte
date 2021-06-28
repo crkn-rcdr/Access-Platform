@@ -101,6 +101,7 @@
 
     element.addEventListener("dragend", () => {
       if (!success) dragList = originalList;
+      success = false; // Reset this after each drag operation
     });
   }
 
