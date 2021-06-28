@@ -69,15 +69,17 @@
       </div>
     </div>
 
-    <div class="canvas-tiles">
-      {#each manifest["canvases"] as canvas}
-        <CanvasSelectorGridTile
-          {canvas}
-          on:tileClicked={handleSelection}
-          on:tilePreviewClicked={handlePreview}
-        />
-      {/each}
-    </div>
+    {#if manifest["canvases"]}
+      <div class="canvas-tiles">
+        {#each manifest["canvases"] as canvas}
+          <CanvasSelectorGridTile
+            {canvas}
+            on:tileClicked={handleSelection}
+            on:tilePreviewClicked={handlePreview}
+          />
+        {/each}
+      </div>
+    {/if}
   </div>
 {/if}
 

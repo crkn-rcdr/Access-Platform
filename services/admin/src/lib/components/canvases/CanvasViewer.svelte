@@ -45,12 +45,25 @@
     height: 100%;
   }
 
-  :global(div[title="Zoom in"] img, div[title="Zoom out"]
-      img, div[title="Go home"] img, div[title="Toggle full page"] img) {
+  /* These configure the display of the OpenSeadragon navigator */
+  /* svelte :global directives only allow for one specifier at a time */
+  div :global(div[title="Zoom in"] img) {
     cursor: pointer;
+    margin-left: 0.25rem !important;
   }
 
-  :global(div[title="Zoom in"], div[title="Zoom out"], div[title="Go home"], div[title="Toggle full page"]) {
+  div :global(div[title="Zoom out"] img) {
+    cursor: pointer;
+    margin-left: 0.25rem !important;
+  }
+
+  div :global(div[title="Go home"] img) {
+    cursor: pointer;
+    margin-left: 0.25rem !important;
+  }
+
+  div :global(div[title="Toggle full page"] img) {
+    cursor: pointer;
     margin-left: 0.25rem !important;
   }
 </style>
