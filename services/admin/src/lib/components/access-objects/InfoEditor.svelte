@@ -2,24 +2,24 @@
   import { isManifest, isCollection } from "@crkn-rcdr/access-data";
   import type { AccessObject } from "@crkn-rcdr/access-data";
 
-  export let model: AccessObject;
+  export let object: AccessObject; // Not sure if we should pass an object or have a list of props (ex: slug, label, ...) that can be null, and show ones that are instantiated only?
 </script>
 
-{#if model}
+{#if object}
   <form>
     <!--TODO: replace with slug resolver component-->
-    {#if isManifest(model) || isCollection(model)}
+    {#if isManifest(object) || isCollection(object)}
       <label for="slug">Slug</label><br />
-      <input type="text" id="slug" name="slug" bind:value={model["slug"]} /><br
+      <input type="text" id="slug" name="slug" bind:value={object["slug"]} /><br
       /><br />
     {/if}
 
-    {#if isManifest(model)}
+    {#if isManifest(object)}
       <label for="label">Label</label><br />
       <textarea
         id="label"
         name="label"
-        bind:value={model["label"]["none"]}
+        bind:value={object["label"]["none"]}
       /><br /><br />
 
       <!--Fixtures don't have this yet, causes save to be enabled on load-->

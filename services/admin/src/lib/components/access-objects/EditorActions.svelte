@@ -1,28 +1,27 @@
 <script lang="ts">
-  // if we kept AccessObject in the import above, the code fails on the client. always use `import type` with types
   import type { AccessObject } from "@crkn-rcdr/access-data";
   import { onMount } from "svelte";
   import equal from "fast-deep-equal";
   import { detailedDiff } from "deep-object-diff";
 
   export let object: AccessObject;
-  export let model: AccessObject;
+  export let objectModel: AccessObject;
 
   let clone: any;
   let saveEnabled = false;
 
-  function checkModelChanged(model: AccessObject) {
-    saveEnabled = !equal(object, model);
+  function checkModelChanged(objectModel: AccessObject) {
+    saveEnabled = !equal(object, objectModel);
   }
 
   $: {
-    checkModelChanged(model);
+    checkModelChanged(objectModel);
   }
 
   function save() {
-    let diff: any = detailedDiff(object, model); //TODO: We can send this to the backend
-    object = clone(model);
-    checkModelChanged(model);
+    let diff: any = detailedDiff(object, objectModel); //TODO: We can send this to the backend
+    object = clone(objectModel);
+    checkModelChanged(objectModel);
   }
 
   onMount(async () => {

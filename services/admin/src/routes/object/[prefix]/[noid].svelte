@@ -15,24 +15,24 @@
   object = $objectStore;
   setDataModel(object);
 
-  let pageList: Array<SideMenuPageData> | undefined;
+  let pageList: Array<SideMenuPageData> = [];
 
   let rfdc: any; // Deep copies an object
-  let model: AccessObject;
+  let objectModel: AccessObject; // Used to keep track of changes to the object, without changing the actual object until save is pressed.
   async function setDataModel(object: AccessObject) {
     rfdc = (await import("rfdc")).default();
-    model = rfdc(object) as AccessObject;
+    objectModel = rfdc(object) as AccessObject;
 
-    if (isManifest(model)) {
+    if (isManifest(objectModel)) {
       pageList = [
         {
           name: "General Info",
           componentData: {
             contentComponent: InfoEditor,
-            contentComponentProps: { model },
+            contentComponentProps: { object: objectModel },
             sideMenuPageProps: {},
             update: () => {
-              model = model;
+              objectModel = objectModel;
             },
           },
         },
@@ -40,26 +40,26 @@
           name: "Content",
           componentData: {
             contentComponent: ManifestContentEditor,
-            contentComponentProps: { manifest: model },
+            contentComponentProps: { manifest: objectModel },
             sideMenuPageProps: {
               overflowY: "hidden",
             },
             update: () => {
-              model = model;
+              objectModel = objectModel;
             },
           },
         },
       ];
-    } else if (isCollection(model)) {
+    } else if (isCollection(objectModel)) {
       pageList = [
         {
           name: "General Info",
           componentData: {
             contentComponent: InfoEditor,
-            contentComponentProps: { model },
+            contentComponentProps: { object: objectModel },
             sideMenuPageProps: {},
             update: () => {
-              model = model;
+              objectModel = objectModel;
             },
           },
         },
@@ -70,7 +70,7 @@
 
 <slot />
 
-{#if object && model}
+{#if object && objectModel}
   <div class="editor">
     <SideMenuContainer {pageList}>
       <Toolbar slot="side-menu-header" title={object["slug"]}>
@@ -78,7 +78,7 @@
           class="end-content auto-align auto-align__j-end auto-align__a-end auto-align__column"
         >
           <StatusIndicator bind:object />
-          <EditorActions bind:object bind:model />
+          <EditorActions bind:object bind:objectModel />
         </div>
       </Toolbar>
     </SideMenuContainer>

@@ -12,16 +12,17 @@
   export let fullPage = true;
 
   /** Handles generating the side menu buttons and pages dynamically through an array */
-  export let pageList: Array<SideMenuPageData> | undefined = undefined;
+  //export let pageList: Array<SideMenuPageData> | undefined = undefined;
+  export const pageList: Array<SideMenuPageData> = [];
 
   let pageNames: string[] = []; // Makes it easier to generate the sidenav buttons list
   let pageComponents: any[] = []; // Makes it easier to generate the page body list
   let instances: any = {}; // Keeps track of the actual instances of the components dynamically created throughsvelte:component.
 
-  $: pageNames = pageList ? pageList.map((el) => el["name"]) : [];
-  $: pageComponents = pageList ? pageList.map((el) => el["componentData"]) : [];
+  $: pageNames = pageList.map((el) => el["name"]);
+  $: pageComponents = pageList.map((el) => el["componentData"]);
   $: {
-    for (let key in instances) {
+    for (const key in instances) {
       instances[key].$$.after_update.push(() => {
         pageComponents[parseInt(key)].update(); // Any time the instances object changes, add a callback to each component instance that triggers the update method passed in through the SideMenuPageData objects in the pageList array property.
       });
@@ -77,7 +78,6 @@
 
 <div bind:this={container} class="side-menu-container">
   <div class:fixed-full-page={fullPage}>
-    <!--auto-align auto-align__a-stretch auto-align__wrap"-->
     <div class="header">
       <slot name="side-menu-header" />
     </div>
