@@ -393,6 +393,7 @@ select {
   padding: var(--perfect-fourth-8);
   border-radius: var(--border-radius);
   background-color: var(--form-field-bg);
+  color: var(--base-font-color);
 }
 
 a {
