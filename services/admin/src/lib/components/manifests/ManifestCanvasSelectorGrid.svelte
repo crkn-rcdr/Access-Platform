@@ -50,7 +50,7 @@
 {#if manifest}
   <div class="results">
     <div class="manifest-title">
-      <div class="auto-align auto-align__a-center">
+      <div class="auto-align auto-align__full auto-align auto-align__a-center">
         <div class="back-button" on:click={handleBackButtonPressed}>
           <TiArrowBack />
         </div>
@@ -92,7 +92,7 @@
 {#if previewCanvas}
   <div class="preview-wrap">
     <div class="canvas-title">
-      <div class="auto-align auto-align__a-center">
+      <div class="auto-align auto-align__full auto-align auto-align__a-center">
         <div
           class="back-button"
           on:click={() => {

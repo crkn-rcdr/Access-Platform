@@ -108,7 +108,7 @@
 <svelte:window on:keydown={handleKeydown} />
 
 {#if indexModel.length}
-  <div class="auto-align auto-align__column">
+  <div class="auto-align auto-align__full auto-align auto-align__column">
     {#if showAddButton}
       <button class="primary lg" on:click={addClicked}>Add Canvas</button>
     {/if}
@@ -130,9 +130,11 @@
             class:active={i === activeCanvasIndex}
             on:mousedown={() => setActiveIndex(i)}
           >
-            <div class="auto-align">
+            <div class="auto-align auto-align__full">
               <div class="actions-wrap">
-                <div class="auto-align auto-align__column">
+                <div
+                  class="auto-align auto-align__full auto-align auto-align__column"
+                >
                   <div class="action pos">
                     {indexModel[i]}
                   </div>

@@ -30,6 +30,8 @@
   --structural-div-bg: #eee;
   /* Change this to set the bg color for components that need a darker backgrop, ex: canvas viewer */
   --backdrop-bg: #ddd;
+  /* Change this to set the bg color for overlays, ex: modal dimmer */
+  --overlay-bg: rgba(0, 0, 0, 0.75);
   /* Change this to set the colour of inputs, text areas, and selects */
   --form-field-bg: white;
   /* Change this to set the default border colour for components, ex: inputs */
@@ -149,9 +151,13 @@ Source: https://github.com/twbs/bootstrap/blob/main/scss/mixins/_visually-hidden
   align-items: flex-start;
   flex-direction: row;
   flex-wrap: nowrap;
+}
+
+.auto-align__full {
   width: 100%;
   height: 100%;
 }
+
 .auto-align__column {
   flex-direction: column;
 }
@@ -337,7 +343,8 @@ button,
 }
 
 button {
-  padding: var(--perfect-fourth-8) var(--perfect-fourth-4);
+  padding: 0 var(--perfect-fourth-4);
+  height: var(--perfect-fourth-2);
   border: none;
   box-shadow: none;
   border-radius: var(--border-radius);
@@ -378,6 +385,16 @@ button:hover,
 .clickable:hover {
   filter: brightness(1.2);
   cursor: pointer;
+}
+
+.icon-button {
+  padding: 0 var(--perfect-fourth-6);
+}
+
+.button-icon {
+  width: var(--perfect-fourth-6);
+  height: var(--perfect-fourth-6);
+  margin: 0;
 }
 
 label {

@@ -28,7 +28,7 @@
   />
 
   <div class="canvas-tile-body">
-    <div class="auto-align">
+    <div class="auto-align auto-align__full">
       {#if selected}
         <input class="shadow" type="checkbox" checked />
       {/if}

@@ -82,7 +82,9 @@
       <slot name="side-menu-header" />
     </div>
     <div class="menu">
-      <div class="auto-align auto-align__a-stretch auto-align__wrap">
+      <div
+        class="auto-align auto-align__full auto-align auto-align__a-stretch auto-align auto-align__wrap"
+      >
         {#if pageList.length}
           <SideMenuPageList>
             {#each pageNames as pageName}

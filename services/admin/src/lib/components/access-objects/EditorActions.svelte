@@ -1,38 +1,87 @@
 <script lang="ts">
+  import FaArchive from "svelte-icons/fa/FaArchive.svelte";
   import type { AccessObject } from "@crkn-rcdr/access-data";
   import { onMount } from "svelte";
   import equal from "fast-deep-equal";
   import { detailedDiff } from "deep-object-diff";
+  import Modal from "$lib/components/shared/Modal.svelte";
 
   export let object: AccessObject;
   export let objectModel: AccessObject;
 
   let clone: any;
-  let saveEnabled = false;
+  let handleSaveEnabled = false;
+  let showMovetoStorageModal = false;
 
   function checkModelChanged(objectModel: AccessObject) {
-    saveEnabled = !equal(object, objectModel);
+    handleSaveEnabled = !equal(object, objectModel);
   }
 
   $: {
     checkModelChanged(objectModel);
   }
 
-  function save() {
+  function handleSave() {
     let diff: any = detailedDiff(object, objectModel); //TODO: We can send this to the backend
     object = clone(objectModel);
     checkModelChanged(objectModel);
   }
+
+  function handlePlaceInStorage() {
+    object["slug"] = undefined;
+    showMovetoStorageModal = false;
+  }
+
+  function handlePublishStatusChange() {}
 
   onMount(async () => {
     clone = (await import("rfdc")).default();
   });
 </script>
 
-<span class="editor-actions">
-  {#if saveEnabled}
-    <button class="save" on:click={save}>Save</button>
+<span class="editor-actions auto-align auto-align__a-center">
+  {#if handleSaveEnabled}
+    <button class="save" on:click={handleSave}>Save</button>
   {/if}
-  <button class="secondary">{object["public"] ? "Unpublish" : "Publish"}</button
+  <button class="secondary" on:click={handlePublishStatusChange}
+    >{object["public"] ? "Unpublish" : "Publish"}</button
   >
+  <button
+    class="danger icon-button"
+    data-tooltip="Place in storage"
+    data-tooltip-flow="bottom"
+    on:click={() => (showMovetoStorageModal = true)}
+  >
+    <div class="button-icon">
+      <FaArchive />
+    </div>
+  </button>
 </span>
+
+<Modal
+  bind:open={showMovetoStorageModal}
+  title={`Are you sure you want to place ${object["slug"]} in storage?`}
+>
+  <p slot="body">
+    By placing {object["slug"]} in storage you will be taking it out of all the collections
+    it belongs to. You will be unassigning its slug, '{object["slug"]}.' Objects
+    that do not have a slug assigned to them are effectively undiscoverable.
+    You'll be able to view
+    {object["slug"]} in storage and add it back into the platform
+    <a href="/storage" target="_blank">here.</a>
+  </p>
+  <div slot="footer">
+    <button class="secondary" on:click={() => (showMovetoStorageModal = false)}>
+      Cancel
+    </button>
+    <button class="danger" on:click={handlePlaceInStorage}>
+      Place in storage
+    </button>
+  </div>
+</Modal>
+
+<style>
+  button {
+    margin-left: var(--margin-sm);
+  }
+</style>
