@@ -1,7 +1,6 @@
 <script lang="ts">
   import { isManifest, isCollection } from "@crkn-rcdr/access-data";
   import type { AccessObject } from "@crkn-rcdr/access-data";
-  import CollectionEditor from "$lib/components/collection/CollectionEditor.svelte";
 
   export let model: AccessObject;
 </script>
@@ -45,7 +44,6 @@
     </select>
   </span><br /-->
   {/if}
-  <CollectionEditor bind:model />
 </form>
 
 <style>

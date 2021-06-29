@@ -46,7 +46,7 @@
 
       <span slot="editor-content">
         <SideMenuPage overflowY="hidden">
-          <!-- <CollectionEditor bind:collection{model} /> -->
+          <CollectionEditor bind:collection={model} />
           Collection Editor {JSON.stringify(object)}
         </SideMenuPage>
       </span>
