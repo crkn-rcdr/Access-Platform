@@ -87,6 +87,6 @@
 
 <style>
   :global(.editor .header) {
-    min-height: 5em !important;
+    min-height: 6em !important;
   }
 </style>
