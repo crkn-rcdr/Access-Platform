@@ -28,8 +28,9 @@
   }
 
   function handlePlaceInStorage() {
-    object["slug"] = undefined;
     showMovetoStorageModal = false;
+    objectModel["slug"] = undefined;
+    handleSave();
   }
 
   function handlePublishStatusChange() {}
