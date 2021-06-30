@@ -380,6 +380,18 @@ button:hover,
   cursor: pointer;
 }
 
+.back-button {
+  width: var(--perfect-fourth-4);
+  height: var(--perfect-fourth-4);
+  margin-right: 1rem;
+  cursor: pointer;
+  border-radius: var(--border-radius);
+}
+
+.back-button:hover {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
 label {
   padding-bottom: 0.5rem;
 }

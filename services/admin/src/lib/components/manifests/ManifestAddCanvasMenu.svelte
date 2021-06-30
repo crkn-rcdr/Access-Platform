@@ -1,11 +1,12 @@
 <script lang="ts">
+  import TiArrowBack from "svelte-icons/ti/TiArrowBack.svelte";
   import TiArrowRight from "svelte-icons/ti/TiArrowRight.svelte";
   import type { AccessObject } from "@crkn-rcdr/access-data";
   import { isManifest, isCollection } from "@crkn-rcdr/access-data";
   import TypeAhead from "$lib/components/access-objects/TypeAhead.svelte";
   import { createEventDispatcher } from "svelte";
   import type { Manifest } from "@crkn-rcdr/access-data/src/access/Manifest";
-  import ManifestCanvasSelectorGrid from "./ManifestCanvasSelectorGrid.svelte";
+  import ManifestCanvasSelector from "./ManifestCanvasSelector.svelte";
   export let destinationManifest: Manifest;
   export let destinationIndex: number = 0;
 
@@ -78,15 +79,28 @@
   </div>
 
   {#if showManifest}
-    <ManifestCanvasSelectorGrid
+    <ManifestCanvasSelector
       buttonActionText={"Add"}
       bind:manifest={selectedManifest}
-      on:backPressed={() => {
-        error = "";
-        showManifest = false;
-      }}
-      on:addPressed={handleAddPressed}
-    />
+      on:actionPressed={handleAddPressed}
+    >
+      <div class="auto-align auto-align__a-center" slot="title">
+        <div
+          class="back-button"
+          on:click={() => {
+            error = "";
+            showManifest = false;
+          }}
+        >
+          <TiArrowBack />
+        </div>
+        <h6>
+          Select canvases from {selectedManifest["slug"]}: {selectedManifest[
+            "label"
+          ]["none"]}
+        </h6>
+      </div>
+    </ManifestCanvasSelector>
   {/if}
 </div>
 

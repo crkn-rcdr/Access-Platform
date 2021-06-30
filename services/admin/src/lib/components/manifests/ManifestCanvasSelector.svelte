@@ -1,26 +1,37 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher, onMount, afterUpdate } from "svelte";
   import type { Manifest } from "@crkn-rcdr/access-data/src/access/Manifest";
   import type { Canvas } from "@crkn-rcdr/access-data/src/access/Manifest";
   import TiArrowBack from "svelte-icons/ti/TiArrowBack.svelte";
-  import CanvasSelectorGridTile from "../canvases/CanvasSelectorGridTile.svelte";
+  import CanvasSelectableCard from "../canvases/CanvasSelectableCard.svelte";
   import CanvasViewer from "../canvases/CanvasViewer.svelte";
 
   export let manifest: Manifest;
   export let buttonActionText = "Select";
+  export let fullPage = true;
+  export let multiple = true;
+  export let selectedCanvases: Canvas[] = [];
 
-  let selectedCanvases: Canvas[] = [];
   let previewCanvas: Canvas | null;
+  let maxSelected = false;
+  let manifestId = "";
 
   const dispatch = createEventDispatcher();
 
   function handleSelection(event: any) {
     let canvas = event.detail.canvas;
+
     if (selectedCanvases.includes(canvas)) {
       selectedCanvases = selectedCanvases.filter((el) => el !== canvas);
-    } else {
+    } else if (!maxSelected) {
       selectedCanvases.push(canvas);
       selectedCanvases = selectedCanvases;
+    }
+
+    if (!multiple && selectedCanvases.length) {
+      maxSelected = true;
+    } else {
+      maxSelected = false;
     }
   }
 
@@ -28,12 +39,8 @@
     previewCanvas = event.detail.canvas;
   }
 
-  function handleBackButtonPressed() {
-    dispatch("backPressed");
-  }
-
-  function handleAddPressed() {
-    dispatch("addPressed", { selectedCanvases });
+  function handleActionPressed() {
+    dispatch("actionPressed", { selectedCanvases });
   }
 
   function clearSelection() {
@@ -41,43 +48,43 @@
   }
 
   /** When the manifest changes, clear the selection */
-  $: {
-    manifest;
-    clearSelection();
-  }
+  onMount(async () => {
+    manifestId = manifest["id"];
+  });
+
+  afterUpdate(async () => {
+    let newManifestId = manifest["id"];
+    if (manifestId !== newManifestId) clearSelection();
+  });
 </script>
 
 {#if manifest}
-  <div class="results">
+  <div class="results" class:full-page={fullPage}>
     <div class="manifest-title">
       <div class="auto-align auto-align__a-center">
-        <div class="back-button" on:click={handleBackButtonPressed}>
-          <TiArrowBack />
+        <div class="title-wrap">
+          <slot name="title" />
         </div>
-        <h6>
-          Select canvases from {manifest["slug"]}: {manifest["label"]["none"]}
-        </h6>
-
         <div class="action-buttons">
           <button
             class="primary {selectedCanvases.length > 0
               ? ''
               : 'opacity-hidden'}"
             disabled={selectedCanvases.length ? false : true}
-            on:click={handleAddPressed}
-            >{buttonActionText} Canvas{selectedCanvases.length > 1
-              ? "es"
-              : ""}</button
+            on:click={handleActionPressed}
           >
+            {buttonActionText} Canvas{selectedCanvases.length > 1 ? "es" : ""}
+          </button>
         </div>
       </div>
     </div>
 
     {#if manifest["canvases"] && manifest["canvases"].length}
-      <div class="canvas-tiles">
+      <div class="canvas-tiles auto-grid">
         {#each manifest["canvases"] as canvas}
-          <CanvasSelectorGridTile
+          <CanvasSelectableCard
             {canvas}
+            disabled={maxSelected}
             on:tileClicked={handleSelection}
             on:tilePreviewClicked={handlePreview}
           />
@@ -92,7 +99,7 @@
 {#if previewCanvas}
   <div class="preview-wrap">
     <div class="canvas-title">
-      <div class="auto-grid">
+      <div class="auto-align">
         <div
           class="back-button"
           on:click={() => {
@@ -115,7 +122,11 @@
 {/if}
 
 <style>
-  .results,
+  .results {
+    width: 100%;
+    height: 100%;
+  }
+  .results.full-page,
   .preview-wrap {
     background-color: var(--backdrop-bg);
     position: absolute;
@@ -124,6 +135,10 @@
     left: 0;
     right: 0;
     padding: 2rem 3rem;
+  }
+
+  .title-wrap {
+    flex: 9;
   }
 
   h6 {
@@ -145,18 +160,6 @@
   .canvas-tiles {
     overflow-x: hidden;
     overflow-y: auto;
-  }
-
-  .back-button {
-    width: var(--perfect-fourth-4);
-    height: var(--perfect-fourth-4);
-    margin-right: 1rem;
-    cursor: pointer;
-    border-radius: var(--border-radius);
-  }
-
-  .back-button:hover {
-    background-color: rgba(0, 0, 0, 0.2);
   }
 
   .opacity-hidden {
