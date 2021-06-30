@@ -92,7 +92,7 @@
 {#if previewCanvas}
   <div class="preview-wrap">
     <div class="canvas-title">
-      <div class="auto-align auto-align__a-center">
+      <div class="auto-grid">
         <div
           class="back-button"
           on:click={() => {
