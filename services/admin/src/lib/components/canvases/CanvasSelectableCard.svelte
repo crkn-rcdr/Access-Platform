@@ -44,7 +44,7 @@
     height: var(--perfect-fourth-5);
     padding: 0 0 0.25rem 0;
     color: var(--light-font);
-    background-color: var(--grey);
+    background-color: var(--teal); /*var(--grey);*/
     border-radius: var(--border-radius);
     margin: 0.25rem;
     cursor: pointer;
@@ -64,7 +64,7 @@
     display: flex;
     align-items: flex-end;
     background: rgba(0, 0, 0, 0.75);
-    background: radial-gradient(transparent, var(--grey));
+    background: radial-gradient(transparent, #4a4a4a);
     color: white;
     font-style: italic;
     position: absolute;
