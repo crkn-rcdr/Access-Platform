@@ -37,7 +37,6 @@
       maxSelected = false;
     }
 
-    console.log(selectedCanvases);
     dispatch("selected", { selectedCanvases });
   }
 
@@ -71,7 +70,6 @@
         {#each manifest["canvases"] as canvas}
           <CanvasSelectableCard
             {canvas}
-            disabled={maxSelected}
             selected={selectedCanvases.includes(canvas)}
             on:tileClicked={handleSelection}
             on:tilePreviewClicked={handlePreview}

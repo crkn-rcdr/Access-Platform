@@ -9,8 +9,7 @@
 
   const dispatch = createEventDispatcher();
 
-  function handleClick(event: any) {
-    //selected = event.detail.selected;
+  function handleClick() {
     dispatch("tileClicked", { canvas });
   }
 
