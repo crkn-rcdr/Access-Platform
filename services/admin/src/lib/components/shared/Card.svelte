@@ -9,8 +9,11 @@
   const dispatch = createEventDispatcher();
 
   function handleClick() {
-    if (!selected && disabled) return;
-    selected = true;
+    if (disabled) {
+      selected = false;
+    } else {
+      selected = true;
+    }
     dispatch("clicked", { selected });
   }
 </script>
