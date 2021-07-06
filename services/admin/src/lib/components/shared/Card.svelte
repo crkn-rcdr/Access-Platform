@@ -120,6 +120,9 @@
   .card-actions > * {
     margin-top: 1rem;
   }
+  .card-actions > *:hover {
+    filter: brightness(1.1);
+  }
 
   .card-content img {
     position: absolute;

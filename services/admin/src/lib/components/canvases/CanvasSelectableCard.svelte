@@ -39,22 +39,12 @@
 </div>
 
 <style>
-  .canvas-preview-button {
-    width: var(--perfect-fourth-5);
-    height: var(--perfect-fourth-5);
-    padding: 0 0 0.25rem 0;
-    color: var(--light-font);
-    background-color: var(--teal); /*var(--grey);*/
-    border-radius: var(--border-radius);
-    margin: 0.25rem;
-    cursor: pointer;
-  }
-
   .canvas-card {
     height: calc(var(--perfect-fourth-1) * 4);
     width: calc(var(--perfect-fourth-1) * 3.7);
     margin: auto;
   }
+
   :global(.canvas-card .card) {
     width: 100%;
     height: 100%;
@@ -74,5 +64,16 @@
     left: 0;
     padding: 1rem;
     font-size: var(--perfect-fourth-8);
+  }
+
+  .canvas-preview-button {
+    width: var(--perfect-fourth-5);
+    height: var(--perfect-fourth-5);
+    padding: 0 0 0.25rem 0;
+    color: var(--light-font);
+    background-color: var(--teal); /*var(--grey);*/
+    border-radius: var(--border-radius);
+    margin: 0.25rem;
+    cursor: pointer;
   }
 </style>
