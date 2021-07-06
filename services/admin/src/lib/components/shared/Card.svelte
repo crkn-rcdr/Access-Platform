@@ -61,8 +61,6 @@
     background: var(--base-bg);
     border-radius: var(--border-radius);
     overflow: hidden;
-    height: calc(var(--perfect-fourth-1) * 4);
-    max-width: calc(var(--perfect-fourth-1) * 4);
   }
 
   .card.selected {
@@ -132,20 +130,6 @@
     z-index: -1;
     width: 100%;
     height: 100%;
-    border-left: 0.2rem solid black;
-    background-color: #333;
-  }
-
-  .card-body {
-    background: rgba(0, 0, 0, 0.75);
-    background: linear-gradient(145deg, black, transparent);
-    color: white;
-    font-style: italic;
-    position: absolute;
-    bottom: 0;
-    top: 0;
-    right: 0;
-    left: 0;
-    padding: 1rem;
+    background-color: var(--grey);
   }
 </style>

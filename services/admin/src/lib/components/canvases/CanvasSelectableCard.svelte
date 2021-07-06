@@ -21,20 +21,22 @@
   }
 </script>
 
-<Card
-  on:clicked={handleClick}
-  selectable={true}
-  {disabled}
-  imgURL={`https://image-uvic.canadiana.ca/iiif/2/${encodeURIComponent(
-    canvas["id"]
-  )}/full/!425,524/0/default.jpg`}
->
-  <div slot="action" on:click={previewCanvas} class="canvas-preview-button">
-    <TiEye />
-  </div>
+<div class="canvas-card">
+  <Card
+    on:clicked={handleClick}
+    selectable={true}
+    {disabled}
+    imgURL={`https://image-uvic.canadiana.ca/iiif/2/${encodeURIComponent(
+      canvas["id"]
+    )}/full/!425,524/0/default.jpg`}
+  >
+    <div slot="action" on:click={previewCanvas} class="canvas-preview-button">
+      <TiEye />
+    </div>
 
-  {canvas["label"]["none"]}
-</Card>
+    {canvas["label"]["none"]}
+  </Card>
+</div>
 
 <style>
   .canvas-preview-button {
@@ -46,5 +48,31 @@
     border-radius: var(--border-radius);
     margin: 0.25rem;
     cursor: pointer;
+  }
+
+  .canvas-card {
+    height: calc(var(--perfect-fourth-1) * 4);
+    width: calc(var(--perfect-fourth-1) * 3.7);
+    margin: auto;
+  }
+  :global(.canvas-card .card) {
+    width: 100%;
+    height: 100%;
+  }
+
+  :global(.canvas-card .card-body) {
+    display: flex;
+    align-items: flex-end;
+    background: rgba(0, 0, 0, 0.75);
+    background: radial-gradient(transparent, var(--grey));
+    color: white;
+    font-style: italic;
+    position: absolute;
+    bottom: 0;
+    top: 0;
+    right: 0;
+    left: 0;
+    padding: 1rem;
+    font-size: var(--perfect-fourth-8);
   }
 </style>

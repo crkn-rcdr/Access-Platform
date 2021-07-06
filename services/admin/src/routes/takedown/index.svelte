@@ -144,8 +144,4 @@
     background: var(--backdrop-bg);
     padding: 3rem;
   }
-
-  .title-wrap {
-    flex: 9;
-  }
 </style>
