@@ -6,12 +6,11 @@
 
   export let canvas: Canvas;
   export let selected: boolean = false;
-  export let disabled: boolean = false;
 
   const dispatch = createEventDispatcher();
 
   function handleClick(event: any) {
-    selected = event.detail.selected;
+    //selected = event.detail.selected;
     dispatch("tileClicked", { canvas });
   }
 
@@ -25,7 +24,7 @@
   <Card
     on:clicked={handleClick}
     selectable={true}
-    {disabled}
+    {selected}
     imgURL={`https://image-uvic.canadiana.ca/iiif/2/${encodeURIComponent(
       canvas["id"]
     )}/full/!425,524/0/default.jpg`}

@@ -3,33 +3,24 @@
   import { createEventDispatcher } from "svelte";
   export let selectable = false;
   export let selected = false;
-  export let disabled = false;
   export let imgURL = "";
   export let imgAlt = "";
 
   const dispatch = createEventDispatcher();
 
   function handleClick() {
-    if (disabled) {
-      selected = false;
-    } else {
-      selected = !selected;
-    }
+    selected = !selected;
     dispatch("clicked", { selected });
   }
 </script>
 
 <div class="card shadow" class:selected>
-  <div
-    class="card-select"
-    class:disabled={disabled && !selected}
-    on:click={handleClick}
-  >
+  <div class="card-select" on:click={handleClick}>
     <div class="card-content-wrap" class:selectable>
       <div
         class="card-actions auto-align auto-align__column auto-align__a-center"
       >
-        {#if selectable && (!disabled || selected)}
+        {#if selectable}
           <div class="checkmark" class:deselected={!selected}>
             <FaCheck />
           </div>

@@ -27,6 +27,8 @@
     } else if (!maxSelected) {
       selectedCanvases.push(canvas);
       selectedCanvases = selectedCanvases;
+    } else if (maxSelected) {
+      selectedCanvases = [canvas];
     }
 
     if (!multiple && selectedCanvases.length) {
@@ -35,6 +37,7 @@
       maxSelected = false;
     }
 
+    console.log(selectedCanvases);
     dispatch("selected", { selectedCanvases });
   }
 
@@ -69,6 +72,7 @@
           <CanvasSelectableCard
             {canvas}
             disabled={maxSelected}
+            selected={selectedCanvases.includes(canvas)}
             on:tileClicked={handleSelection}
             on:tilePreviewClicked={handlePreview}
           />
