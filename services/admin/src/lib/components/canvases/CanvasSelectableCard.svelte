@@ -32,7 +32,9 @@
       <TiEye />
     </div>
 
-    {canvas["label"]["none"]}
+    <!--div class="label-text">
+      {canvas["label"]["none"]}
+    </div-->
   </Card>
 </div>
 
@@ -62,7 +64,16 @@
     left: 0;
     padding: 1rem;
     font-size: var(--perfect-fourth-8);
+    opacity: 0.4;
   }
+  /*
+  :global(.canvas-card:hover .card-body) {
+    opacity: 0.4;
+  }
+
+  :global(.canvas-card:hover .label-text) {
+    display: none;
+  }*/
 
   .canvas-preview-button {
     width: var(--perfect-fourth-5);
