@@ -61,6 +61,28 @@
 
 {#if manifest}
   <div class="results" class:full-page={fullPage}>
+    {#if manifest["canvases"] && manifest["canvases"].length}
+      <div class="canvas-list">
+        <!--CanvasViewer
+          canvasIds={manifest["canvases"].map((canvas) => `${canvas["id"]}`)}
+          options={{
+            zoomPerClick: 1,
+            zoomPerScroll: 1,
+            showNavigator: true,
+            sequenceMode: true,
+            showReferenceStrip: true,
+            referenceStripScroll: true,
+            showSequenceControl: false,
+          }}
+        /-->
+      </div>
+    {/if}
+  </div>
+{/if}
+
+<!--
+{#if manifest}
+  <div class="results" class:full-page={fullPage}>
     <div class="manifest-title">
       <slot name="title" />
     </div>
@@ -106,14 +128,14 @@
     </div>
   </div>
 {/if}
-
+-->
 <style>
   .results {
     width: 100%;
     height: 100%;
   }
-  .results.full-page,
-  .preview-wrap {
+  .results.full-page/*,
+  .preview-wrap*/ {
     background-color: var(--backdrop-bg);
     position: absolute;
     top: 0;
@@ -122,6 +144,18 @@
     right: 0;
     padding: 2rem 3rem;
   }
+
+  .canvas-list {
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+  }
+
+  .canvas-list img {
+    width: 100%;
+  }
+
+  /*
 
   h6 {
     margin: 0 !important;
@@ -141,5 +175,5 @@
   .canvas-tiles {
     overflow-x: hidden;
     overflow-y: auto;
-  }
+  }*/
 </style>

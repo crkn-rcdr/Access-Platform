@@ -3,6 +3,8 @@
   import type { Canvas } from "@crkn-rcdr/access-data/src/access/Manifest";
 
   export let canvas: Canvas;
+  export let options: any = {};
+
   let OpenSeadragon: any;
   let container: HTMLDivElement;
   let imageURL = "";
@@ -27,6 +29,8 @@
           top: 0,
           bottom: 0,
         },
+        immediateRender: true,
+        ...options,
       });
     }
   }
