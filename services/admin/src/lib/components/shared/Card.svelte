@@ -1,45 +1,55 @@
 <script lang="ts">
+  import FaCheck from "svelte-icons/fa/FaCheck.svelte";
   import { createEventDispatcher } from "svelte";
   export let selectable = false;
   export let selected = false;
   export let disabled = false;
-  export let name = "";
   export let imgURL = "";
   export let imgAlt = "";
+
   const dispatch = createEventDispatcher();
 
   function handleClick() {
     if (disabled) {
       selected = false;
     } else {
-      selected = true;
+      selected = !selected;
     }
     dispatch("clicked", { selected });
   }
 </script>
 
-<div class="card shadow">
-  <label
-    for={name}
-    class="card-content-wrap"
+<div class="card shadow" class:selected>
+  <div
+    class="card-select"
     class:disabled={disabled && !selected}
+    on:click={handleClick}
   >
-    {#if selectable && name.length}
-      <input
-        type="checkbox"
-        {name}
-        id={name}
-        disabled={disabled && !selected}
-      />
-    {/if}
-    <div class="content" class:selectable={name.length} on:click={handleClick}>
-      {#if imgURL.length}
-        <img src={imgURL} alt={imgAlt} />
-      {/if}
-      <span class="checkmark" />
-      <slot />
+    <div class="card-content-wrap" class:selectable>
+      <div
+        class="card-actions auto-align auto-align__column auto-align__a-center"
+      >
+        {#if selectable && (!disabled || selected)}
+          <div class="checkmark" class:deselected={!selected}>
+            <FaCheck />
+          </div>
+        {/if}
+        <div on:click={(e) => e.preventDefault()}>
+          <slot name="action" />
+        </div>
+      </div>
+
+      <div class="card-content">
+        {#if imgURL.length}
+          <img src={imgURL} alt={imgAlt} />
+        {/if}
+
+        <div class="card-body">
+          <slot />
+        </div>
+      </div>
     </div>
-  </label>
+  </div>
 </div>
 
 <style>
@@ -47,87 +57,95 @@
     display: inline-block;
     position: relative;
     margin: 0;
-  }
-  .selectable {
-    cursor: pointer;
-  }
-  .content {
-    display: grid;
-    position: relative;
-    margin: 0;
-    text-align: center;
     box-shadow: var(--shadow);
     background: var(--base-bg);
     border-radius: var(--border-radius);
+    overflow: hidden;
+    height: calc(var(--perfect-fourth-1) * 4);
+    max-width: calc(var(--perfect-fourth-1) * 4);
+  }
+
+  .card.selected {
+    background: var(--teal-light);
+    border: 1px solid var(--teal);
+  }
+
+  .selectable {
+    cursor: pointer;
+  }
+
+  .card-select {
     width: 100%;
     height: 100%;
-    padding: 1rem;
-    grid-gap: 1rem;
-    place-content: center;
-    transition: 0.3s ease-in-out all;
   }
 
-  .content img {
-    width: 80%;
-    margin: 0 auto;
-  }
-
-  .card-content-wrap {
+  .card-select,
+  .card-content-wrap,
+  .card-content {
     position: relative;
   }
 
-  .card-content-wrap input {
-    display: none;
-  }
-
-  .card-content-wrap .checkmark {
-    position: absolute;
-    width: var(--perfect-fourth-6);
-    height: var(--perfect-fourth-6);
-    border: solid 0.025rem var(--border-color);
-    border-radius: 50%;
-    top: 1rem;
-    left: 1rem;
+  .card-content-wrap {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 1fr 4fr;
+    position: relative;
+    margin: 0;
     transition: 0.3s ease-in-out all;
-    z-index: 1;
+    overflow: hidden;
   }
 
-  .card-content-wrap input:checked + .content .checkmark {
-    display: inline-block;
-    background: var(--primary);
-    border-radius: 50%;
-    border: none;
-    transform: rotate(45deg);
+  .checkmark {
+    width: var(--perfect-fourth-5);
+    height: var(--perfect-fourth-5);
+    color: var(--light-font);
+    background-color: var(--teal);
+    border: solid 0.15rem var(--teal);
+    border-radius: var(--border-radius);
+    padding: 0.21rem;
   }
 
-  .card-content-wrap input:checked + .content .checkmark:before {
-    content: "";
-    position: absolute;
-    width: 0.2rem;
-    height: 0.8rem;
-    background-color: #fff;
-    left: 0.8rem;
-    top: 0.3rem;
+  .checkmark.deselected {
+    border: solid 0.15rem var(--border-color);
+    background: var(--base-bg);
   }
 
-  .card-content-wrap input:checked + .content .checkmark:after {
-    content: "";
-    position: absolute;
-    width: 0.5rem;
-    height: 0.2rem;
-    background-color: #fff;
-    left: 0.5rem;
-    top: 1rem;
+  .card-select.disabled .selectable {
+    cursor: initial;
   }
 
-  .card-content-wrap.disabled input,
-  .card-content-wrap.disabled .checkmark,
-  .card-content-wrap.disabled .checkmark:before,
-  .card-content-wrap.disabled .checkmark:after {
+  :global(.checkmark.deselected svg) {
     display: none;
   }
 
-  .card-content-wrap.disabled .selectable {
-    cursor: initial;
+  .card-actions > * {
+    margin-top: 1rem;
+  }
+
+  .card-content img {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    border-left: 0.2rem solid black;
+    background-color: #333;
+  }
+
+  .card-body {
+    background: rgba(0, 0, 0, 0.75);
+    background: linear-gradient(145deg, black, transparent);
+    color: white;
+    font-style: italic;
+    position: absolute;
+    bottom: 0;
+    top: 0;
+    right: 0;
+    left: 0;
+    padding: 1rem;
   }
 </style>

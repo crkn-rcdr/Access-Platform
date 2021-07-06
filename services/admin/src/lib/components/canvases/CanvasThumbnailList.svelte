@@ -165,7 +165,7 @@
                   class="thumbnail-img"
                   src={`https://image-uvic.canadiana.ca/iiif/2/${encodeURIComponent(
                     canvas["id"]
-                  )}/full/!220,292/0/default.jpg`}
+                  )}/full/!425,524/0/default.jpg`}
                 />
               </div>
             </div>

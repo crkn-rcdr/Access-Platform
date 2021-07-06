@@ -1,13 +1,14 @@
 <script lang="ts">
   import { createEventDispatcher, onMount, afterUpdate } from "svelte";
-  import type { Manifest } from "@crkn-rcdr/access-data/src/access/Manifest";
-  import type { Canvas } from "@crkn-rcdr/access-data/src/access/Manifest";
+  import type {
+    Manifest,
+    Canvas,
+  } from "@crkn-rcdr/access-data/src/access/Manifest";
   import TiArrowBack from "svelte-icons/ti/TiArrowBack.svelte";
   import CanvasSelectableCard from "../canvases/CanvasSelectableCard.svelte";
   import CanvasViewer from "../canvases/CanvasViewer.svelte";
 
   export let manifest: Manifest;
-  export let buttonActionText = "Select";
   export let fullPage = true;
   export let multiple = true;
   export let selectedCanvases: Canvas[] = [];
@@ -33,14 +34,12 @@
     } else {
       maxSelected = false;
     }
+
+    dispatch("selected", { selectedCanvases });
   }
 
   function handlePreview(event: any) {
     previewCanvas = event.detail.canvas;
-  }
-
-  function handleActionPressed() {
-    dispatch("actionPressed", { selectedCanvases });
   }
 
   function clearSelection() {
@@ -61,22 +60,7 @@
 {#if manifest}
   <div class="results" class:full-page={fullPage}>
     <div class="manifest-title">
-      <div class="auto-align auto-align__a-center">
-        <div class="title-wrap">
-          <slot name="title" />
-        </div>
-        <div class="action-buttons">
-          <button
-            class="primary {selectedCanvases.length > 0
-              ? ''
-              : 'opacity-hidden'}"
-            disabled={selectedCanvases.length ? false : true}
-            on:click={handleActionPressed}
-          >
-            {buttonActionText} Canvas{selectedCanvases.length > 1 ? "es" : ""}
-          </button>
-        </div>
-      </div>
+      <slot name="title" />
     </div>
 
     {#if manifest["canvases"] && manifest["canvases"].length}
@@ -99,7 +83,7 @@
 {#if previewCanvas}
   <div class="preview-wrap">
     <div class="canvas-title">
-      <div class="auto-align">
+      <div class="auto-align auto-align__a-center">
         <div
           class="back-button"
           on:click={() => {
@@ -137,10 +121,6 @@
     padding: 2rem 3rem;
   }
 
-  .title-wrap {
-    flex: 9;
-  }
-
   h6 {
     margin: 0 !important;
     flex: 9;
@@ -152,18 +132,12 @@
     margin-top: 1em;
   }
 
-  .manifest-title,
   .canvas-title {
-    height: var(--perfect-fourth-2);
+    height: var(--perfect-fourth-3);
   }
 
   .canvas-tiles {
     overflow-x: hidden;
     overflow-y: auto;
-  }
-
-  .opacity-hidden {
-    opacity: 0;
-    cursor: auto;
   }
 </style>

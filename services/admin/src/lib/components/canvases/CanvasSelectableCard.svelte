@@ -10,8 +10,8 @@
 
   const dispatch = createEventDispatcher();
 
-  function handleClick() {
-    selected = !selected;
+  function handleClick(event: any) {
+    selected = event.detail.selected;
     dispatch("tileClicked", { canvas });
   }
 
@@ -25,31 +25,26 @@
   on:clicked={handleClick}
   selectable={true}
   {disabled}
-  name={`${canvas["id"]}`}
   imgURL={`https://image-uvic.canadiana.ca/iiif/2/${encodeURIComponent(
     canvas["id"]
   )}/full/!425,524/0/default.jpg`}
 >
-  <div on:click={previewCanvas} class="canvas-preview-button shadow">
+  <div slot="action" on:click={previewCanvas} class="canvas-preview-button">
     <TiEye />
   </div>
+
+  {canvas["label"]["none"]}
 </Card>
 
 <style>
   .canvas-preview-button {
-    position: absolute;
-    top: 0.5rem;
-    right: 1rem;
     width: var(--perfect-fourth-5);
     height: var(--perfect-fourth-5);
     padding: 0 0 0.25rem 0;
     color: var(--light-font);
-    background-color: var(--secondary);
+    background-color: var(--grey);
     border-radius: var(--border-radius);
     margin: 0.25rem;
-  }
-
-  .canvas-preview-button:hover {
-    background-color: #4e4e4e;
+    cursor: pointer;
   }
 </style>

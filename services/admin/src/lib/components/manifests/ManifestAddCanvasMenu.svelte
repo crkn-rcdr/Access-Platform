@@ -5,7 +5,10 @@
   import { isManifest, isCollection } from "@crkn-rcdr/access-data";
   import TypeAhead from "$lib/components/access-objects/TypeAhead.svelte";
   import { createEventDispatcher } from "svelte";
-  import type { Manifest } from "@crkn-rcdr/access-data/src/access/Manifest";
+  import type {
+    Manifest,
+    Canvas,
+  } from "@crkn-rcdr/access-data/src/access/Manifest";
   import ManifestCanvasSelector from "./ManifestCanvasSelector.svelte";
   export let destinationManifest: Manifest;
   export let destinationIndex: number = 0;
@@ -13,6 +16,7 @@
   const dispatch = createEventDispatcher();
 
   let selectedManifest: Manifest;
+  let selectedCanvases: Canvas[] = [];
   let showManifest = false;
   let error = "";
 
@@ -37,11 +41,11 @@
     dispatch("done");
   }
 
-  function handleAddPressed(event: any) {
+  function handleAddPressed() {
     destinationManifest?.canvases?.splice(
       destinationIndex,
       0,
-      ...event.detail.selectedCanvases
+      ...selectedCanvases
     );
     destinationManifest = destinationManifest;
     dispatch("done");
@@ -80,25 +84,37 @@
 
   {#if showManifest}
     <ManifestCanvasSelector
-      buttonActionText={"Add"}
       bind:manifest={selectedManifest}
-      on:actionPressed={handleAddPressed}
+      bind:selectedCanvases
     >
       <div class="auto-align auto-align__a-center" slot="title">
-        <div
-          class="back-button"
-          on:click={() => {
-            error = "";
-            showManifest = false;
-          }}
-        >
-          <TiArrowBack />
+        <div class="title-wrap">
+          <div class="auto-align auto-align__a-center">
+            <div
+              class="back-button"
+              on:click={() => {
+                error = "";
+                showManifest = false;
+              }}
+            >
+              <TiArrowBack />
+            </div>
+            <h6>
+              Select canvases from {selectedManifest["slug"]}: {selectedManifest[
+                "label"
+              ]["none"]}
+            </h6>
+          </div>
         </div>
-        <h6>
-          Select canvases from {selectedManifest["slug"]}: {selectedManifest[
-            "label"
-          ]["none"]}
-        </h6>
+        <div class="action-buttons">
+          <button
+            class="primary"
+            class:opacity-hidden={selectedCanvases.length ? false : true}
+            on:click={handleAddPressed}
+          >
+            Add Canvas{selectedCanvases.length > 1 ? "es" : ""}
+          </button>
+        </div>
       </div>
     </ManifestCanvasSelector>
   {/if}
@@ -116,5 +132,8 @@
   h6 {
     flex: 9;
     margin: 0 !important;
+  }
+  .title-wrap {
+    flex: 9;
   }
 </style>

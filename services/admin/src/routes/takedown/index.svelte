@@ -1,9 +1,13 @@
 <script lang="ts">
   import type { Canvas } from "@crkn-rcdr/access-data/src/access/Canvas";
-  import type { Manifest } from "@crkn-rcdr/access-data/src/access/Manifest";
+  import type {
+    Manifest,
+    Canvas as ManifestCanvas,
+  } from "@crkn-rcdr/access-data/src/access/Manifest";
   import Toolbar from "$lib/components/shared/Toolbar.svelte";
   import ManifestCanvasSelector from "$lib/components/manifests/ManifestCanvasSelector.svelte";
 
+  let selectedCanvases: ManifestCanvas[] = [];
   let canvas: Canvas = {
     id: "69429/c0cj87k0gq3s",
     ocrType: "alto",
@@ -98,14 +102,23 @@
       none: "Vol. I, No. 1 (October 17, 1891)",
     },
   };
+
+  function handleSelectPressed() {
+    console.log(selectedCanvases);
+    console.log("Update the image in the backend...");
+  }
 </script>
 
 <!--Canvas name - image -> image replacement-->
 
 <div class="wrapper">
-  <Toolbar title={`Canvas Takedown`}>
+  <Toolbar title={`Choose an image to display for the canvas:`}>
     <div class="auto-align auto-align__j-end">
-      <button class="save">Save</button>
+      <button
+        class="save"
+        class:opacity-hidden={selectedCanvases.length ? false : true}
+        on:click={handleSelectPressed}>Save</button
+      >
     </div>
   </Toolbar>
   <div class="template-wrapper">
@@ -113,6 +126,7 @@
       manifest={takedownManifest}
       fullPage={false}
       multiple={false}
+      bind:selectedCanvases
     />
   </div>
 
@@ -129,5 +143,9 @@
   .template-wrapper {
     background: var(--backdrop-bg);
     padding: 3rem;
+  }
+
+  .title-wrap {
+    flex: 9;
   }
 </style>
