@@ -305,10 +305,8 @@
     flex: 9;
   }
 
-  .preview-canvas-wrap,
   .canvas-tiles {
-    height: 90%;
-    margin-top: 1em;
+    height: 82%;
   }
 
   .canvas-title {
@@ -318,5 +316,10 @@
   .canvas-tiles {
     overflow-x: hidden;
     overflow-y: auto;
+  }
+
+  .preview-canvas-wrap {
+    height: 90%;
+    margin-top: 1em;
   }
 </style>
