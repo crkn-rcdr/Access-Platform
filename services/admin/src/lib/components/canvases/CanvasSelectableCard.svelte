@@ -24,7 +24,7 @@
     on:clicked={handleClick}
     selectable={true}
     {selected}
-    imgURL={`https://image-uvic.canadiana.ca/iiif/2/${encodeURIComponent(
+    imgURL={`https://image-tor.canadiana.ca/iiif/2/${encodeURIComponent(
       canvas["id"]
     )}/full/!425,524/0/default.jpg`}
   >

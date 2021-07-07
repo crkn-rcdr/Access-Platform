@@ -18,7 +18,7 @@
   async function drawImage() {
     clearViewer();
     if (canvas && OpenSeadragon) {
-      imageURL = `https://image-uvic.canadiana.ca/iiif/2/${encodeURIComponent(
+      imageURL = `https://image-tor.canadiana.ca/iiif/2/${encodeURIComponent(
         canvas["id"]
       )}/info.json`;
       OpenSeadragon.default({
@@ -41,7 +41,7 @@
   });
 
   afterUpdate(async () => {
-    let newImageUrl = `https://image-uvic.canadiana.ca/iiif/2/${encodeURIComponent(
+    let newImageUrl = `https://image-tor.canadiana.ca/iiif/2/${encodeURIComponent(
       canvas["id"]
     )}/info.json`;
     if (imageURL !== newImageUrl) await drawImage();

@@ -166,6 +166,9 @@ Source: https://github.com/twbs/bootstrap/blob/main/scss/mixins/_visually-hidden
 .auto-align__j-end {
   justify-content: flex-end;
 }
+.auto-align__j-even {
+  justify-content: space-evenly;
+}
 .auto-align__a-center {
   align-items: center;
 }
@@ -411,6 +414,11 @@ select {
   border-radius: var(--border-radius);
   background-color: var(--form-field-bg);
   color: var(--base-font-color);
+}
+
+input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
 }
 
 a {
