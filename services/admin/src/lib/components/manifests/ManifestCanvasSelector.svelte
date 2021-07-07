@@ -163,7 +163,6 @@
         /-->
         </div>
       {:else}
-        <br />
         <div class="canvas-tiles auto-grid">
           {#each manifest["canvases"] as canvas}
             <CanvasSelectableCard
@@ -322,6 +321,7 @@
   .canvas-tiles {
     overflow-x: hidden;
     overflow-y: auto;
+    padding: 1rem;
   }
 
   .preview-canvas-wrap {
