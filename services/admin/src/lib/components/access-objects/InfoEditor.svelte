@@ -13,7 +13,7 @@
     /><br />
   {/if}
 
-  {#if isManifest(model)}
+  {#if isManifest(model) || isCollection(model)}
     <label for="label">Label</label><br />
     <textarea id="label" name="label" bind:value={model["label"]["none"]} /><br
     /><br />
