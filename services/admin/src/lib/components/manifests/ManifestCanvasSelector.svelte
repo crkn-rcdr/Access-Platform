@@ -63,6 +63,25 @@
   <div class="results" class:full-page={fullPage}>
     {#if manifest["canvases"] && manifest["canvases"].length}
       <div class="canvas-list">
+        {#each manifest["canvases"] as canvas, i}
+          <div class="canvas-list-item">
+            <div class="canvas-list-item-title auto-align">
+              <h6>
+                Image {i + 1} of {manifest["canvases"].length} - {canvas[
+                  "label"
+                ]["none"]}
+              </h6>
+              <button>Select</button>
+            </div>
+            <img
+              alt={canvas["label"]["value"]}
+              class="thumbnail-img"
+              src={`https://image-uvic.canadiana.ca/iiif/2/${encodeURIComponent(
+                canvas["id"]
+              )}/full/!425,524/0/default.jpg`}
+            />
+          </div>
+        {/each}
         <!--CanvasViewer
           canvasIds={manifest["canvases"].map((canvas) => `${canvas["id"]}`)}
           options={{
@@ -149,6 +168,25 @@
     width: 100%;
     height: 100%;
     overflow-y: auto;
+  }
+
+  .canvas-list-item {
+    position: relative;
+  }
+
+  .canvas-list-item-title {
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: fit-content;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.9);
+    color: var(--light-font);
+  }
+
+  .canvas-list-item-title h6 {
+    flex: 9;
   }
 
   .canvas-list img {
