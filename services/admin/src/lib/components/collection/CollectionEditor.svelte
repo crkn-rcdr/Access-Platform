@@ -1,11 +1,11 @@
 <script lang="ts">
   import { onMount, createEventDispatcher } from "svelte";
   //import type { AccessObject } from "@crkn-rcdr/access-data";
-  import { isCollection } from "@crkn-rcdr/access-data";
+  //import { isCollection } from "@crkn-rcdr/access-data";
   import type { Collection } from "@crkn-rcdr/access-data/src/access/Collection";
-  import TypeAhead from "$lib/components/access-objects/TypeAhead.svelte";
+  /* import TypeAhead from "$lib/components/access-objects/TypeAhead.svelte";
   import Switch from "$lib/components/shared//Switch.svelte";
-  import SwitchCase from "$lib/components/shared//SwitchCase.svelte";
+  import SwitchCase from "$lib/components/shared//SwitchCase.svelte"; */
   import AutomaticResizeNumberInput from "$lib/components/shared/AutomaticResizeNumberInput.svelte";
   import DynamicDragAndDropList from "$lib/components/shared/DynamicDragAndDropList.svelte";
   import { moveArrayElement } from "$lib/arrayUtil";
@@ -16,6 +16,12 @@
   let indexModel: number[] = [];
   let activeMemberIndex: number = 0;
   let container: HTMLDivElement;
+
+  const LEFT_ARROW_CODE: number = 37;
+  const UP_ARROW_CODE: number = 38;
+  const RIGHT_ARROW_CODE: number = 39;
+  const DOWN_ARROW_CODE: number = 40;
+
   const dispatch = createEventDispatcher();
   console.log("Prit Collection:", collection);
 
@@ -33,6 +39,7 @@
       index = collection.members.length - 1;
     if (index < 0) index = 0;
     activeMemberIndex = index;
+    dispatch("membersClicked", { index });
   }
   function jumpTo(index: number) {
     let membersThumbnails = container.querySelectorAll(".thumbnail");
@@ -57,13 +64,37 @@
     setActiveIndex(activeMemberIndex);
   }
 
-  function setMemberList(index: number) {
+  /* function setMemberList(index: number) {
     activeMember = collection?.members?.[index] || null;
     console.log("Check if there is activeMember in memberlist", activeMember);
     triggerUpdate();
   }
   function triggerUpdate() {
     collection.members = collection.members;
+  } */
+  function selectPrevious() {
+    if (activeMemberIndex > 0) {
+      activeMemberIndex--;
+      jumpTo(activeMemberIndex);
+      setActiveIndex(activeMemberIndex);
+    }
+  }
+  function selectNext() {
+    if (activeMemberIndex < collection.members.length - 1) {
+      activeMemberIndex++;
+      jumpTo(activeMemberIndex);
+      setActiveIndex(activeMemberIndex);
+    }
+  }
+  function handleKeydown(event: any) {
+    if (event.keyCode === LEFT_ARROW_CODE || event.keyCode === UP_ARROW_CODE) {
+      selectPrevious();
+    } else if (
+      event.keyCode === RIGHT_ARROW_CODE ||
+      event.keyCode === DOWN_ARROW_CODE
+    ) {
+      selectNext();
+    }
   }
   function addClicked() {
     dispatch("addClicked");
@@ -94,10 +125,11 @@
     /><br />
   {/if} -->
 </div>
+<svelte:window on:keydown={handleKeydown} />
 {#if indexModel.length}
   <div class="auto-align auto-align__column">
     {#if showAddButton}
-      <button class="primary lg" on:click={addClicked}>Add Canvas</button>
+      <button class="primary lg" on:click={addClicked}>Add Member</button>
     {/if}
     <div
       bind:this={container}
@@ -120,9 +152,9 @@
           <div class="auto-align">
             <div class="actions-wrap">
               <div class="auto-align auto-align__column">
-                <div class="action pos">
+                <!-- <div class="action pos">
                   {indexModel[i]}
-                </div>
+                </div> -->
                 <div
                   class="action pos-input"
                   on:click={(e) => {
