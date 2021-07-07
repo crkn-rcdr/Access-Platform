@@ -36,7 +36,6 @@
   }
 
   function handleSelection(canvas: Canvas) {
-    console.log(canvas);
     if (selectedCanvases.includes(canvas)) {
       selectedCanvases = selectedCanvases.filter((el) => el !== canvas);
     } else if (!maxSelected) {
@@ -51,7 +50,6 @@
     } else {
       maxSelected = false;
     }
-    console.log(selectedCanvases);
 
     dispatch("selected", { selectedCanvases });
   }
@@ -80,48 +78,50 @@
 {#if manifest}
   {#if manifest["canvases"] && manifest["canvases"].length}
     <div class="results" class:full-page={fullPage}>
-      <div class="manifest-title">
-        <slot name="title" />
-      </div>
+      <div class="results-header">
+        <div class="manifest-title">
+          <slot name="title" />
+        </div>
 
-      <div class="manifest-controls auto-align auto-align__a-center">
-        <span class="toggle-switch">
-          <!--Todo, component-->
-          <button
-            class="secondary toggle-button"
-            class:active={listView}
-            on:click={() => (listView = true)}
-          >
-            <div class="toggle-button-icon">
-              <TiThMenu />
-            </div>
-          </button>
-          <button
-            class="secondary toggle-button"
-            class:active={!listView}
-            on:click={() => (listView = false)}
-          >
-            <div class="toggle-button-icon">
-              <TiThLarge />
-            </div>
-          </button>
-        </span>
-        <!--button class="secondary">select all</button>
+        <div class="manifest-controls auto-align auto-align__a-center">
+          <span class="toggle-switch">
+            <!--Todo, component-->
+            <button
+              class="secondary toggle-button"
+              class:active={listView}
+              on:click={() => (listView = true)}
+            >
+              <div class="toggle-button-icon">
+                <TiThMenu />
+              </div>
+            </button>
+            <button
+              class="secondary toggle-button"
+              class:active={!listView}
+              on:click={() => (listView = false)}
+            >
+              <div class="toggle-button-icon">
+                <TiThLarge />
+              </div>
+            </button>
+          </span>
+          <!--button class="secondary">select all</button>
         <button class="secondary">deselect all</button-->
-        <label class="auto-align auto-align__a-center">
-          <input type="checkbox" bind:checked={selectAll} />
-          {manifest?.["canvases"]?.length === selectedCanvases.length
-            ? "deselect all"
-            : "select all"}
-        </label>
+          <label class="auto-align auto-align__a-center">
+            <input type="checkbox" bind:checked={selectAll} />
+            {manifest?.["canvases"]?.length === selectedCanvases.length
+              ? "deselect all"
+              : "select all"}
+          </label>
 
-        {#if selectedCanvases.length}
-          <div class="selected-canvas-list">
-            {selectedCanvases.length} canvas{selectedCanvases.length > 1
-              ? "es"
-              : ""} selected.
-          </div>
-        {/if}
+          {#if selectedCanvases.length}
+            <div class="selected-canvas-list">
+              {selectedCanvases.length} canvas{selectedCanvases.length > 1
+                ? "es"
+                : ""} selected.
+            </div>
+          {/if}
+        </div>
       </div>
 
       {#if listView}
@@ -163,6 +163,7 @@
         /-->
         </div>
       {:else}
+        <br />
         <div class="canvas-tiles auto-grid">
           {#each manifest["canvases"] as canvas}
             <CanvasSelectableCard
@@ -219,6 +220,11 @@
     left: 0;
     right: 0;
     padding: 2rem 3rem;
+  }
+
+  .results-header {
+    padding: 1rem;
+    background: var(--structural-div-bg);
   }
 
   .manifest-controls {
@@ -286,8 +292,8 @@
     right: 0;
     height: fit-content;
     padding: 1rem;
-    background: rgba(0, 0, 0, 0.9);
-    color: var(--light-font);
+    background: var(--structural-div-bg);
+    border-top: 1px solid var(--border-color);
   }
 
   .canvas-list input[type="checkbox"] {
