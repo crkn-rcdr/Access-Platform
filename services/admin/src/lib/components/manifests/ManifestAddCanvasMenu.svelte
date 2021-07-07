@@ -100,9 +100,7 @@
               <TiArrowBack />
             </div>
             <h6>
-              Select canvases from {selectedManifest["slug"]}: {selectedManifest[
-                "label"
-              ]["none"]}
+              {selectedManifest["slug"]}: {selectedManifest["label"]["none"]}
             </h6>
           </div>
         </div>

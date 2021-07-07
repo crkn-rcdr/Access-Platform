@@ -221,15 +221,15 @@
     padding: 2rem 3rem;
   }
 
-  .results-header {
-    padding: 1rem;
+  .results-header,
+  .canvas-list-item-title {
+    padding: max(1rem, 1vw);
     background: var(--structural-div-bg);
   }
 
   .manifest-controls {
     width: 100%;
     height: fit-content;
-    padding: 1rem 0;
   }
 
   .manifest-controls > * {
@@ -290,8 +290,6 @@
     left: 0;
     right: 0;
     height: fit-content;
-    padding: 1rem;
-    background: var(--structural-div-bg);
     border-top: 1px solid var(--border-color);
   }
 
