@@ -121,7 +121,7 @@
 <style>
   .canvas-selector-wrap {
     position: relative;
-    height: 100%;
+    height: calc(100% - 121px);
     padding: 1.5rem 3rem;
   }
   .add-menu-title {
