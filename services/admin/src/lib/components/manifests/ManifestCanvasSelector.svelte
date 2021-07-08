@@ -9,6 +9,7 @@
   export let manifest: Manifest;
   export let fullPage = true;
   export let multiple = true;
+  export let selectAll = false;
   export let selectedCanvases: Canvas[] = [];
 
   let manifestId = "";
@@ -39,19 +40,12 @@
 {#if manifest}
   {#if manifest["canvases"] && manifest["canvases"].length}
     <div class="results" class:full-page={fullPage}>
-      {#if multiple}
-        <div class="results-header">
-          <div class="manifest-title">
-            <slot name="title" />
-          </div>
-        </div>
-      {/if}
-
       <div class="canvas-list-item-viewer">
         <CanvasesViewer
           bind:selectedCanvases
+          bind:multiple
+          bind:selectAll
           on:selected={handleSelection}
-          {multiple}
           canvases={manifest["canvases"]}
           options={{
             showNavigator: true,
@@ -78,6 +72,7 @@
     width: 100%;
     height: 100%;
   }
+
   .results.full-page {
     background-color: var(--backdrop-bg);
     position: absolute;
@@ -85,13 +80,6 @@
     bottom: 0;
     left: 0;
     right: 0;
-  }
-
-  .results-header {
-    background: #333333;
-    z-index: 1;
-    color: var(--light-font);
-    padding: 0.7rem 0.7rem 0 0.7rem;
   }
 
   .canvas-list-item-viewer {

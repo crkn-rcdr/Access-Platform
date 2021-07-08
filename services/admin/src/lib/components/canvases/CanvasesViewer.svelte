@@ -6,6 +6,7 @@
   export let selectedCanvases: Canvas[] = [];
   export let options: any = {};
   export let multiple = true;
+  export let selectAll = false;
 
   const dispatch = createEventDispatcher();
 
@@ -14,7 +15,6 @@
   let imageURLs: string[] = [];
   let inputs: any[] = [];
   let maxSelected = false;
-  let selectAll = false;
 
   $: {
     if (selectAll) addAllToCanvasList();
@@ -140,59 +140,18 @@
   });
 </script>
 
-{#if multiple}
-  <div class="manifest-controls auto-align auto-align__a-center">
-    <label class="auto-align auto-align__a-center">
-      <input type="checkbox" bind:checked={selectAll} />
-      {canvases.length === selectedCanvases.length
-        ? "deselect all"
-        : "select all"}
-    </label>
-
-    {#if selectedCanvases.length}
-      <div class="selected-canvas-list">
-        {selectedCanvases.length} canvas{selectedCanvases.length > 1
-          ? "es"
-          : ""} selected.
-      </div>
-    {/if}
-  </div>
-{/if}
 <div class="canvases-viewer" bind:this={container} />
 
 <style>
-  .manifest-controls {
-    width: 100%;
-    height: fit-content;
-    padding-top: 0.5rem;
-    background: #333333;
-    z-index: 1;
-    color: var(--light-font);
-    padding: 0.7rem;
-  }
-
-  .manifest-controls label {
-    padding-bottom: 0;
-  }
-
-  .manifest-controls > * {
-    margin-right: 1rem;
-  }
-
   .canvases-viewer {
     width: 100%;
     height: 100%;
   }
 
-  label {
-    width: fit-content;
-    height: fit-content;
-  }
-
-  .selected-canvas-list {
+  /*.selected-canvas-list {
     flex: 9;
     text-align: right;
-  }
+  }*/
 
   :global(div[title="Zoom in"] img, div[title="Zoom out"]
       img, div[title="Go home"] img, div[title="Toggle full page"] img) {
