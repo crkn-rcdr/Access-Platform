@@ -109,7 +109,7 @@
 
         <img
           class="icon select-all"
-          src="/static/icons/select.svg"
+          src={`/static/icons/${selectAll ? "deselect.png" : "select.svg"}`}
           alt="select all"
           on:click={() => (selectAll = !selectAll)}
         />
