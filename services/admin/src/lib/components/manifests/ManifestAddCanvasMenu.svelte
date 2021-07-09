@@ -10,7 +10,7 @@
     Manifest,
     Canvas,
   } from "@crkn-rcdr/access-data/src/access/Manifest";
-  import ManifestCanvasSelector from "./ManifestCanvasSelector.svelte";
+  import CanvasesSelector from "$lib/components/canvases/CanvasesSelector.svelte";
 
   export let destinationManifest: Manifest;
   export let destinationIndex: number = 0;
@@ -143,12 +143,35 @@
       </div>
     {/if}
 
-    <ManifestCanvasSelector
-      bind:manifest={selectedManifest}
-      bind:selectedCanvases
-      bind:multiple
-      bind:selectAll
-    />
+    {#if selectedManifest}
+      {#if selectedManifest["canvases"] && selectedManifest["canvases"].length}
+        <div class="results full-page">
+          <div class="canvas-list-item-viewer">
+            <!--on:selected={handleSelection}-->
+            <CanvasesSelector
+              bind:selectedCanvases
+              bind:multiple
+              bind:selectAll
+              canvases={selectedManifest["canvases"]}
+              options={{
+                showNavigator: true,
+                sequenceMode: true,
+                showReferenceStrip: true,
+                showHomeControl: false,
+                showZoomControl: false,
+                showFullPageControl: false,
+                showSequenceControl: false,
+                referenceStripScroll: "vertical",
+                autoHideControls: false,
+                homeFillsViewer: true,
+              }}
+            />
+          </div>
+        </div>
+      {:else}
+        No canvases.
+      {/if}
+    {/if}
   {/if}
 </div>
 
@@ -164,15 +187,6 @@
 
   .manifest-selector {
     padding: 1.5rem 3rem;
-  }
-
-  .title-text {
-    flex: 9;
-    margin: 0 !important;
-  }
-
-  .title-wrap {
-    flex: 9;
   }
 
   .manifest-controls {
@@ -212,6 +226,26 @@
 
   .select-all {
     padding: 0.2rem;
+  }
+
+  .results {
+    width: 100%;
+    height: 100%;
+  }
+
+  .results.full-page {
+    background-color: var(--backdrop-bg);
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+
+  .canvas-list-item-viewer {
+    height: 100%;
+    width: 100%;
+    position: relative;
   }
 
   :global(.add-menu .referencestrip) {

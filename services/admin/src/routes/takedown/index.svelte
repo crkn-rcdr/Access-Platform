@@ -6,8 +6,8 @@
     Canvas as ManifestCanvas,
   } from "@crkn-rcdr/access-data/src/access/Manifest";
   import Toolbar from "$lib/components/shared/Toolbar.svelte";
-  import ManifestCanvasSelector from "$lib/components/manifests/ManifestCanvasSelector.svelte";
   import Modal from "$lib/components/shared/Modal.svelte";
+  import CanvasesSelector from "$lib/components/canvases/CanvasesSelector.svelte";
 
   // Grabs whatever the canvas is pointing to in the backend.
   let canvas: Canvas = {
@@ -143,13 +143,29 @@
     {/if}
   </Toolbar>
   <div class="template-wrapper">
-    <ManifestCanvasSelector
-      manifest={takedownManifest}
-      fullPage={false}
-      multiple={false}
-      bind:selectedCanvases
-      on:selected={handleSelected}
-    />
+    {#if takedownManifest}
+      {#if takedownManifest["canvases"] && takedownManifest["canvases"].length}
+        <!--on:selected={handleSelection}-->
+        <CanvasesSelector
+          bind:selectedCanvases
+          multiple={false}
+          canvases={takedownManifest["canvases"]}
+          options={{
+            showNavigator: true,
+            sequenceMode: true,
+            showReferenceStrip: true,
+            showHomeControl: false,
+            showZoomControl: false,
+            showFullPageControl: false,
+            showSequenceControl: false,
+            referenceStripScroll: "vertical",
+            autoHideControls: false,
+          }}
+        />
+      {:else}
+        No canvases.
+      {/if}
+    {/if}
   </div>
 </div>
 
