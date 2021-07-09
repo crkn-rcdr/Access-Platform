@@ -61,15 +61,19 @@
 
 <Modal
   bind:open={showMovetoStorageModal}
-  title={`Are you sure you want to place ${object["slug"]} in storage?`}
+  title={`Are you sure you want to place this object in storage?`}
 >
   <p slot="body">
-    By placing {object["slug"]} in storage you will be taking it out of all the collections
-    it belongs to. You will be unassigning its slug, '{object["slug"]}.' Objects
-    that do not have a slug assigned to them are effectively undiscoverable.
-    You'll be able to view
+    By placing this object in storage you will be taking it out of all the
+    collections it belongs to. You will be unassigning its slug, '{object[
+      "slug"
+    ]}.' You can then use that slug for other objects. Objects that do not have
+    a slug assigned to them are effectively undiscoverable. You can bookmark
+    this page to access this object again in the future. You can assign it a new
+    slug to make it discoverable in the platform again.
+    <!--You'll be able to view
     {object["slug"]} in storage and add it back into the platform
-    <a href="/storage" target="_blank">here.</a>
+    <a href="/storage" target="_blank">here.</a-->
   </p>
   <div slot="footer">
     <button class="secondary" on:click={() => (showMovetoStorageModal = false)}>

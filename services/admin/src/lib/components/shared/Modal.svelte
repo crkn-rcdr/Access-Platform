@@ -52,7 +52,7 @@
     background-color: var(--base-bg);
     width: 50rem;
     max-width: 100%;
-    height: 20rem;
+    height: 25rem;
     max-height: 100%;
   }
 

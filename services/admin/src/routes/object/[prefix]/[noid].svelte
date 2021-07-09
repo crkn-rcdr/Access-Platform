@@ -13,7 +13,7 @@
   let object: AccessObject;
   const objectStore: SvelteStore<AccessObject> = getContext("objectStore");
   object = $objectStore;
-  setDataModel(object);
+  //setDataModel(object);
 
   let pageList: Array<SideMenuPageData> = [];
 
@@ -65,6 +65,11 @@
         },
       ];
     }
+  }
+
+  $: {
+    // Share any changes that occur in this component with the sub-components in the navigator.
+    setDataModel(object);
   }
 </script>
 
