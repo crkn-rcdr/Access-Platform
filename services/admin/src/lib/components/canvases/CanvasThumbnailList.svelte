@@ -134,6 +134,7 @@
               <div class="actions-wrap">
                 <div
                   class="auto-align auto-align__full auto-align auto-align__column"
+                  class:visibility-hidden={!showAddButton}
                 >
                   <div class="action pos">
                     {indexModel[i]}
