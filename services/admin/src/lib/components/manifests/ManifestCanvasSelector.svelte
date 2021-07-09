@@ -4,7 +4,7 @@
     Manifest,
     Canvas,
   } from "@crkn-rcdr/access-data/src/access/Manifest";
-  import CanvasesViewer from "../canvases/CanvasesViewer.svelte";
+  import CanvasesSelector from "../canvases/CanvasesSelector.svelte";
 
   export let manifest: Manifest;
   export let fullPage = true;
@@ -22,6 +22,7 @@
 
   function clearSelection() {
     selectedCanvases = [];
+    console.log("cleared");
   }
 
   /** When the manifest changes, clear the selection */
@@ -41,7 +42,7 @@
   {#if manifest["canvases"] && manifest["canvases"].length}
     <div class="results" class:full-page={fullPage}>
       <div class="canvas-list-item-viewer">
-        <CanvasesViewer
+        <CanvasesSelector
           bind:selectedCanvases
           bind:multiple
           bind:selectAll

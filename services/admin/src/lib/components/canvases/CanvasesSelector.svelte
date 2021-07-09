@@ -1,11 +1,12 @@
 <script lang="ts">
-  import { onMount, afterUpdate, createEventDispatcher } from "svelte";
+  import { onMount, createEventDispatcher } from "svelte";
   import type { Canvas } from "@crkn-rcdr/access-data/src/access/Manifest";
 
   export let canvases: Canvas[];
   export let selectedCanvases: Canvas[] = [];
   export let options: any = {};
-  export let multiple = true;
+  export let multiple =
+    true; /* We could edit this to give a max number of items selectable */
   export let selectAll = false;
 
   const dispatch = createEventDispatcher();
@@ -16,20 +17,32 @@
   let inputs: any[] = [];
   let maxSelected = false;
 
-  $: {
-    if (selectAll) addAllToCanvasList();
-    else clearSelectedCanvasList();
-  }
-
   function clearSelectedCanvasList() {
     selectedCanvases = [];
     clearSelected();
   }
+
   function addAllToCanvasList() {
     if (canvases) {
       selectedCanvases = canvases;
       setAllSelected();
     }
+  }
+
+  function selectInputsFromSelectedCanvasList() {
+    let indexesToSelect: number[] = [];
+    let index = 0;
+    for (const canvas of canvases) {
+      for (const selectedCanvas of selectedCanvases) {
+        if (canvas["id"] === selectedCanvas["id"]) indexesToSelect.push(index);
+      }
+      index++;
+    }
+
+    for (const index of indexesToSelect) {
+      inputs[index].checked = true;
+    }
+    checkMaxSelected();
   }
 
   function clearSelected() {
@@ -41,6 +54,14 @@
   function setAllSelected() {
     for (const input of inputs) {
       input.checked = true;
+    }
+  }
+
+  function checkMaxSelected() {
+    if (!multiple && selectedCanvases.length) {
+      maxSelected = true;
+    } else {
+      maxSelected = false;
     }
   }
 
@@ -58,11 +79,7 @@
       input.checked = true;
     }
 
-    if (!multiple && selectedCanvases.length) {
-      maxSelected = true;
-    } else {
-      maxSelected = false;
-    }
+    checkMaxSelected();
 
     dispatch("selected", canvas);
   }
@@ -93,11 +110,11 @@
         immediateRender: true,
         ...options,
       });
-      addSelectors();
+      addInputCheckboxesToOpenseadragon();
     }
   }
 
-  function addSelectors() {
+  function addInputCheckboxesToOpenseadragon() {
     const refStrips = container.getElementsByClassName("referencestrip");
     if (refStrips && refStrips.length && refStrips[0]) {
       const refStrip: Element = refStrips[0];
@@ -118,7 +135,6 @@
             });
             inputs.push(input);
             label.appendChild(input);
-            //label.innerHTML = label.innerHTML + "select";
             navDiv.appendChild(label);
           }
         }
@@ -129,15 +145,14 @@
   onMount(async () => {
     OpenSeadragon = await import("openseadragon");
     await drawImage();
+    selectInputsFromSelectedCanvasList();
   });
 
-  afterUpdate(async () => {
-    /*let newImageUrl = `https://image-tor.canadiana.ca/iiif/2/${encodeURIComponent(
-      canvas["id"]
-    )}/info.json`;
-    if (imageURL !== newImageUrl)
-    await drawImage();*/
-  });
+  // Update inputs on select all/deselect all
+  $: {
+    if (selectAll) addAllToCanvasList();
+    else clearSelectedCanvasList();
+  }
 </script>
 
 <div class="canvases-viewer" bind:this={container} />

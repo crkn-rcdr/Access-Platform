@@ -6,9 +6,9 @@
   } from "@crkn-rcdr/access-data/src/access/Manifest";
   import Toolbar from "$lib/components/shared/Toolbar.svelte";
   import ManifestCanvasSelector from "$lib/components/manifests/ManifestCanvasSelector.svelte";
+  import { onMount } from "svelte";
 
-  let selectedCanvases: ManifestCanvas[] = [];
-  let canvas: Canvas = {
+  let originalCanvas: Canvas = {
     id: "69429/c0cj87k0gq3s",
     ocrType: "alto",
     ocrPdf: {
@@ -27,7 +27,6 @@
       width: 2968,
     },
   };
-
   let takedownManifest: Manifest = {
     id: "69429/m0696zw19t6s",
     _rev: "1-ea1f9f2304d194cd9b6f46e4f59d8d04",
@@ -42,7 +41,7 @@
     type: "manifest",
     canvases: [
       {
-        id: canvas["id"],
+        id: originalCanvas["id"],
         label: {
           none: "Original",
         },
@@ -103,10 +102,20 @@
     },
   };
 
+  let selectedCanvases: ManifestCanvas[] = [];
+
   function handleSelectPressed() {
     console.log(selectedCanvases);
     console.log("Update the image in the backend...");
   }
+
+  onMount(() => {
+    if (takedownManifest?.["canvases"]?.[0]) {
+      console.log("HERE");
+      selectedCanvases = [takedownManifest["canvases"][0]];
+      console.log(selectedCanvases);
+    }
+  });
 </script>
 
 <!--Canvas name - image -> image replacement-->
