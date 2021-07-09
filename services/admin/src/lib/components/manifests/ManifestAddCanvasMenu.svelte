@@ -42,6 +42,7 @@
   }
 
   function handleCancelPressed() {
+    selectedCanvases = [];
     dispatch("done");
   }
 
