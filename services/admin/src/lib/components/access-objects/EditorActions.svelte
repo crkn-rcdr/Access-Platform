@@ -47,16 +47,19 @@
   <button class="secondary" on:click={handlePublishStatusChange}
     >{object["public"] ? "Unpublish" : "Publish"}</button
   >
-  <button
-    class="danger icon-button"
-    data-tooltip="Place in storage"
-    data-tooltip-flow="bottom"
-    on:click={() => (showMovetoStorageModal = true)}
-  >
-    <div class="button-icon">
-      <FaArchive />
-    </div>
-  </button>
+
+  {#if objectModel["slug"]}
+    <button
+      class="danger icon-button"
+      data-tooltip="Place in storage"
+      data-tooltip-flow="bottom"
+      on:click={() => (showMovetoStorageModal = true)}
+    >
+      <div class="button-icon">
+        <FaArchive />
+      </div>
+    </button>
+  {/if}
 </span>
 
 <Modal
