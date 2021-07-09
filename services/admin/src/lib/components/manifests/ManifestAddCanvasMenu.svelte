@@ -135,7 +135,7 @@
 
         {#if selectedCanvases.length}
           <div class="selected-canvas-list">
-            {selectedCanvases.length}/{selectedCanvases.length}
+            {selectedCanvases.length}/{selectedManifest?.["canvases"]?.length}
           </div>
         {/if}
       </div>

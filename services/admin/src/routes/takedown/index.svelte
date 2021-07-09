@@ -8,6 +8,7 @@
   import Toolbar from "$lib/components/shared/Toolbar.svelte";
   import Modal from "$lib/components/shared/Modal.svelte";
   import CanvasesSelector from "$lib/components/canvases/CanvasesSelector.svelte";
+  import CanvasSelectableCard from "$lib/components/canvases/CanvasSelectableCard.svelte";
 
   // Grabs whatever the canvas is pointing to in the backend.
   let canvas: Canvas = {
