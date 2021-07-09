@@ -52,6 +52,7 @@
       ...selectedCanvases
     );
     destinationManifest = destinationManifest;
+    selectedCanvases = [];
     dispatch("done");
   }
 </script>
