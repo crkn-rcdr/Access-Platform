@@ -174,6 +174,6 @@
   .template-wrapper {
     background: var(--backdrop-bg);
     padding: 3rem;
-    height: 85vh;
+    height: 84vh;
   }
 </style>
