@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from "svelte";
   import type { Canvas } from "@crkn-rcdr/access-data/src/access/Canvas";
   import type {
     Manifest,
@@ -6,7 +7,7 @@
   } from "@crkn-rcdr/access-data/src/access/Manifest";
   import Toolbar from "$lib/components/shared/Toolbar.svelte";
   import ManifestCanvasSelector from "$lib/components/manifests/ManifestCanvasSelector.svelte";
-  import { onMount } from "svelte";
+  import Modal from "$lib/components/shared/Modal.svelte";
 
   let originalCanvas: Canvas = {
     id: "69429/c0cj87k0gq3s",
@@ -104,9 +105,12 @@
 
   let selectedCanvases: ManifestCanvas[] = [];
 
+  let saveImageModal = false;
+
   function handleSelectPressed() {
     console.log(selectedCanvases);
     console.log("Update the image in the backend...");
+    saveImageModal = false;
   }
 
   onMount(() => {
@@ -128,7 +132,7 @@
         class:opacity-hidden={selectedCanvases.length
           ? selectedCanvases?.[0]?.["id"] === originalCanvas["id"]
           : true}
-        on:click={handleSelectPressed}>Save</button
+        on:click={() => (saveImageModal = true)}>Save</button
       >
     </div>
   </Toolbar>
@@ -140,15 +144,24 @@
       bind:selectedCanvases
     />
   </div>
-
-  <!--{#each takedownManifest["canvases"] as template}
-      <CanvasSelectorGridTile
-        {canvas}
-        on:tileClicked={handleSelection}
-        on:tilePreviewClicked={handlePreview}
-      />
-    {/each}-->
 </div>
+
+<Modal
+  bind:open={saveImageModal}
+  title={`Are you sure you want take down this canvas?`}
+>
+  <p slot="body">
+    By taking down this canvas, you will be replacing its image with the one you
+    have selected, across all of the manifests it belongs to. You can undo the
+    takedown by selecting the original image and pressing save.
+  </p>
+  <div slot="footer">
+    <button class="secondary" on:click={() => (saveImageModal = false)}>
+      Cancel
+    </button>
+    <button class="danger" on:click={handleSelectPressed}> Save </button>
+  </div>
+</Modal>
 
 <style>
   .template-wrapper {

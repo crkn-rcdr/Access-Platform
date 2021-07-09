@@ -25,5 +25,6 @@
   }
   .toolbar-content {
     flex: 3;
+    text-align: right;
   }
 </style>
