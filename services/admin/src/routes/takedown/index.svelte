@@ -9,7 +9,8 @@
   import ManifestCanvasSelector from "$lib/components/manifests/ManifestCanvasSelector.svelte";
   import Modal from "$lib/components/shared/Modal.svelte";
 
-  let originalCanvas: Canvas = {
+  // Grabs whatever the canvas is pointing to in the backend.
+  let canvas: Canvas = {
     id: "69429/c0cj87k0gq3s",
     ocrType: "alto",
     ocrPdf: {
@@ -28,6 +29,7 @@
       width: 2968,
     },
   };
+
   let takedownManifest: Manifest = {
     id: "69429/m0696zw19t6s",
     _rev: "1-ea1f9f2304d194cd9b6f46e4f59d8d04",
@@ -42,7 +44,7 @@
     type: "manifest",
     canvases: [
       {
-        id: originalCanvas["id"],
+        id: canvas["id"],
         label: {
           none: "Original",
         },
@@ -106,18 +108,24 @@
   let selectedCanvases: ManifestCanvas[] = [];
 
   let saveImageModal = false;
+  let showSave = false;
 
-  function handleSelectPressed() {
-    console.log(selectedCanvases);
-    console.log("Update the image in the backend...");
+  function handleSelected() {
+    if (selectedCanvases?.[0]?.["id"] !== canvas["id"]) showSave = true;
+    else showSave = false;
+    console.log(showSave, selectedCanvases, canvas);
+  }
+
+  function handleSavePressed() {
     saveImageModal = false;
+    showSave = false;
+    if (selectedCanvases?.length && selectedCanvases?.[0]?.["id"])
+      canvas["id"] = selectedCanvases[0]["id"];
   }
 
   onMount(() => {
     if (takedownManifest?.["canvases"]?.[0]) {
-      console.log("HERE");
       selectedCanvases = [takedownManifest["canvases"][0]];
-      console.log(selectedCanvases);
     }
   });
 </script>
@@ -126,15 +134,13 @@
 
 <div class="wrapper">
   <Toolbar title={`Choose an image to display for the canvas:`}>
-    <div class="auto-align auto-align__j-end">
-      <button
-        class="save"
-        class:opacity-hidden={selectedCanvases.length
-          ? selectedCanvases?.[0]?.["id"] === originalCanvas["id"]
-          : true}
-        on:click={() => (saveImageModal = true)}>Save</button
-      >
-    </div>
+    {#if showSave}
+      <div class="auto-align auto-align__j-end">
+        <button class="save" on:click={() => (saveImageModal = true)}
+          >Save</button
+        >
+      </div>
+    {/if}
   </Toolbar>
   <div class="template-wrapper">
     <ManifestCanvasSelector
@@ -142,6 +148,7 @@
       fullPage={false}
       multiple={false}
       bind:selectedCanvases
+      on:selected={handleSelected}
     />
   </div>
 </div>
@@ -159,7 +166,7 @@
     <button class="secondary" on:click={() => (saveImageModal = false)}>
       Cancel
     </button>
-    <button class="danger" on:click={handleSelectPressed}> Save </button>
+    <button class="danger" on:click={handleSavePressed}> Save </button>
   </div>
 </Modal>
 
