@@ -97,22 +97,34 @@
             error = "";
             showManifest = false;
           }}
+          data-tooltip="Go back to manifest search"
+          data-tooltip-flow="bottom"
         >
           <TiArrowBack />
         </div>
 
         {#if selectedCanvases.length}
-          <div class="icon add-all-button" on:click={handleAddPressed}>
+          <div
+            class="icon add-all-button"
+            on:click={handleAddPressed}
+            data-tooltip="Add selected canvases"
+            data-tooltip-flow="bottom"
+          >
             <FaPlus />
           </div>
         {/if}
 
-        <img
-          class="icon select-all"
-          src={`/static/icons/${selectAll ? "deselect.png" : "select.svg"}`}
-          alt="select all"
-          on:click={() => (selectAll = !selectAll)}
-        />
+        <div
+          data-tooltip={`${selectAll ? "Deselect" : "Select"} all`}
+          data-tooltip-flow="bottom"
+        >
+          <img
+            class="icon select-all"
+            src={`/static/icons/${selectAll ? "deselect.png" : "select.svg"}`}
+            alt="select all"
+            on:click={() => (selectAll = !selectAll)}
+          />
+        </div>
 
         {#if selectedCanvases.length}
           <div class="selected-canvas-list">
