@@ -54,6 +54,7 @@
     max-width: 100%;
     height: 25rem;
     max-height: 100%;
+    text-align: left;
   }
 
   .modal-inner {
