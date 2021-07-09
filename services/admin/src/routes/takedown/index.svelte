@@ -125,7 +125,9 @@
     <div class="auto-align auto-align__j-end">
       <button
         class="save"
-        class:opacity-hidden={selectedCanvases.length ? false : true}
+        class:opacity-hidden={selectedCanvases.length
+          ? selectedCanvases?.[0]?.["id"] === originalCanvas["id"]
+          : true}
         on:click={handleSelectPressed}>Save</button
       >
     </div>
