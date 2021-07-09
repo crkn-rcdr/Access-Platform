@@ -63,7 +63,7 @@
     <div class="manifest-selector">
       <div class="add-menu-title">
         <div class="auto-align auto-align__a-center">
-          <h6>Add canvases from other manifests</h6>
+          <h6>Search for a manifest to add canvases from</h6>
           <button class="danger cancel-button" on:click={handleCancelPressed}>
             Exit
           </button>
