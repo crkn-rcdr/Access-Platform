@@ -13,7 +13,7 @@
   let object: AccessObject;
   const objectStore: SvelteStore<AccessObject> = getContext("objectStore");
   object = $objectStore;
-  setDataModel(object);
+  //setDataModel(object);
 
   let pageList: Array<SideMenuPageData> = [];
 
@@ -66,6 +66,11 @@
       ];
     }
   }
+
+  $: {
+    // Share any changes that occur in this component with the sub-components in the navigator.
+    setDataModel(object);
+  }
 </script>
 
 <slot />
@@ -75,7 +80,7 @@
     <SideMenuContainer {pageList}>
       <Toolbar slot="side-menu-header" title={object["slug"]}>
         <div
-          class="end-content auto-align auto-align__j-end auto-align__a-end auto-align__column"
+          class="end-content auto-align auto-align__full auto-align auto-align__j-end auto-align auto-align__a-end auto-align auto-align__column"
         >
           <StatusIndicator bind:object />
           <EditorActions bind:object bind:objectModel />
@@ -87,6 +92,6 @@
 
 <style>
   :global(.editor .header) {
-    min-height: 5em !important;
+    min-height: 6em !important;
   }
 </style>

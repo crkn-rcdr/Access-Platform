@@ -9,6 +9,9 @@
   /** Option a menu that takes up the entire body of a page, or an inline menu. */
   export let fullPage = true;
 
+  /** Sets the initital active page */
+  export let activeIndex = 0;
+
   /** Handles generating the side menu buttons and pages dynamically through an array
    *  Developers can use either this list or just build their menus by putting in their own template components.
    */
@@ -33,8 +36,6 @@
   let container: HTMLDivElement;
   let pageButtons: NodeListOf<Element>;
   let pageBodies: NodeListOf<Element>;
-
-  let activeIndex = 0;
 
   function setActivePageButtonClass() {
     for (let i = 0; i < pageButtons.length; i++) {
@@ -82,7 +83,9 @@
       <slot name="side-menu-header" />
     </div>
     <div class="menu">
-      <div class="auto-align auto-align__a-stretch auto-align__wrap">
+      <div
+        class="auto-align auto-align__full auto-align auto-align__a-stretch auto-align auto-align__wrap"
+      >
         {#if pageList.length}
           <SideMenuPageList>
             {#each pageNames as pageName}

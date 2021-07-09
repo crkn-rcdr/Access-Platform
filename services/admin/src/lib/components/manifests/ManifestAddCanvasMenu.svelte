@@ -34,11 +34,11 @@
         error = "Error: Object is a collection, please select another.";
       } else if (isManifest(object)) {
         selectedManifest = object;
+        showManifest = true;
       }
     } else {
       error = json.error;
     }
-    showManifest = true;
   }
 
   function handleCancelPressed() {
@@ -62,16 +62,23 @@
   {#if !showManifest}
     <div class="manifest-selector">
       <div class="add-menu-title">
-        <div class="auto-align auto-align__a-center">
-          <h6>Search for a manifest to add canvases from</h6>
-          <button class="danger cancel-button" on:click={handleCancelPressed}>
-            Exit
-          </button>
-        </div>
+        <!--div class="auto-align auto-align__full auto-align__a-center"-->
+        <button
+          class="secondary cancel-button auto-align auto-align__a-center"
+          on:click={handleCancelPressed}
+        >
+          <div class="icon">
+            <TiArrowBack />
+          </div>
+          Exit
+        </button>
+        <!--/div-->
       </div>
       <br />
+      <h6>Search for a manifest to add canvases from</h6>
 
       {#if error}
+        <br />
         <div class="alert alert-danger">
           {error}
         </div>
@@ -141,35 +148,7 @@
       bind:selectedCanvases
       bind:multiple
       bind:selectAll
-    >
-      <!--div class="auto-align auto-align__a-center" slot="title">
-        <div class="title-wrap">
-          <div class="auto-align auto-align__a-center">
-            <div
-              class="back-button"
-              on:click={() => {
-                error = "";
-                showManifest = false;
-              }}
-            >
-              <TiArrowBack />
-            </div>
-            <div class="title-text">
-              {selectedManifest["slug"]}: {selectedManifest["label"]["none"]}
-            </div>
-          </div>
-        </div>
-        <div class="action-buttons">
-          <button
-            class="primary"
-            class:opacity-hidden={selectedCanvases.length ? false : true}
-            on:click={handleAddPressed}
-          >
-            Add Canvas{selectedCanvases.length > 1 ? "es" : ""}
-          </button>
-        </div>
-      </div-->
-    </ManifestCanvasSelector>
+    />
   {/if}
 </div>
 

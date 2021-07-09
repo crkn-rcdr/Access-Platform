@@ -36,7 +36,7 @@
 </script>
 
 {#if manifest && activeCanvas}
-  <div class="auto-align">
+  <div class="auto-align auto-align__full">
     <div class="list-wrapper">
       <CanvasThumbnailList
         showAddButton={state != "add"}
@@ -52,7 +52,7 @@
     <div class="state-wrap">
       <Switch bind:checkVal={state}>
         <SwitchCase caseVal="view">
-          <div class="auto-align">
+          <div class="auto-align auto-align__full">
             <div class="view-wrap">
               <CanvasViewer canvas={activeCanvas} />
             </div>
@@ -63,7 +63,9 @@
               >
                 <!--Todo, own component-->
                 <a class="takedown" href="/takedown" target="_blank">
-                  <div class="auto-align auto-align__a-center">
+                  <div
+                    class="auto-align auto-align__full auto-align auto-align__a-center"
+                  >
                     <div class="message">
                       Take this canvas off of the platform
                     </div>
