@@ -106,7 +106,6 @@
   };
 
   let selectedCanvases: ManifestCanvas[] = [];
-
   let saveImageModal = false;
   let showSave = false;
 
@@ -130,8 +129,6 @@
   });
 </script>
 
-<!--Canvas name - image -> image replacement-->
-
 <div class="wrapper">
   <Toolbar title={`Choose an image to display for the canvas:`}>
     {#if showSave}
@@ -145,9 +142,9 @@
   <div class="template-wrapper">
     {#if takedownManifest}
       {#if takedownManifest["canvases"] && takedownManifest["canvases"].length}
-        <!--on:selected={handleSelection}-->
         <CanvasesSelector
           bind:selectedCanvases
+          on:selected={handleSelected}
           multiple={false}
           canvases={takedownManifest["canvases"]}
           options={{

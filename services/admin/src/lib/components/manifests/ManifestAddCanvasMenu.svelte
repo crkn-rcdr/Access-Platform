@@ -62,7 +62,6 @@
   {#if !showManifest}
     <div class="manifest-selector">
       <div class="add-menu-title">
-        <!--div class="auto-align auto-align__full auto-align__a-center"-->
         <button
           class="secondary cancel-button auto-align auto-align__a-center"
           on:click={handleCancelPressed}
@@ -72,7 +71,6 @@
           </div>
           Exit
         </button>
-        <!--/div-->
       </div>
       <br />
       <h6>Search for a manifest to add canvases from</h6>
@@ -147,7 +145,6 @@
       {#if selectedManifest["canvases"] && selectedManifest["canvases"].length}
         <div class="results full-page">
           <div class="canvas-list-item-viewer">
-            <!--on:selected={handleSelection}-->
             <CanvasesSelector
               bind:selectedCanvases
               bind:multiple
