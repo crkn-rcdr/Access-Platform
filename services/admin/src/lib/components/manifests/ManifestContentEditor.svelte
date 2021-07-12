@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import IoMdOpen from "svelte-icons/io/IoMdOpen.svelte";
   import type {
     Manifest,
     Canvas,
@@ -57,9 +58,21 @@
             </div>
             <div class="label-wrap">
               <CanvasLabelEditor
-                bind:canvas={activeCanvas}
+                bind:label={activeCanvas["label"]["none"]}
                 on:changed={triggerUpdate}
-              />
+              >
+                <!--Todo, own component-->
+                <a class="takedown" href="/takedown" target="_blank">
+                  <div class="auto-align auto-align__a-center">
+                    <div class="message">
+                      Take this canvas off of the platform
+                    </div>
+                    <div class="icon">
+                      <IoMdOpen />
+                    </div>
+                  </div>
+                </a>
+              </CanvasLabelEditor>
             </div>
           </div>
         </SwitchCase>
@@ -86,7 +99,7 @@
   .list-wrapper {
     background-color: var(--structural-div-bg);
     flex: 2.5;
-    border-top: 1px solid var(--border-color);
+    border-top: 1px solid rgba(100, 100, 100, 0.2);
   }
 
   .view-wrap {
@@ -96,17 +109,34 @@
   .label-wrap {
     flex: 1;
     overflow-y: hidden;
-    width: 20rem;
-    color: var(--light-font);
-  }
-
-  .view-wrap,
-  .label-wrap {
-    background: black;
-    background: var(--dark-gradient);
   }
 
   .state-wrap {
     flex: 9;
+  }
+
+  .view-wrap,
+  .label-wrap,
+  .state-wrap {
+    background-color: var(--backdrop-bg);
+  }
+
+  .takedown {
+    width: max(80%, 15rem);
+    margin: auto;
+    display: block;
+  }
+
+  .message {
+    font-style: italic;
+    font-size: var(--perfect-fourth-8);
+  }
+
+  .icon {
+    display: block;
+    width: var(--perfect-fourth-7);
+    height: var(--perfect-fourth-7);
+    margin-left: 0.5rem;
+    margin-top: 0;
   }
 </style>

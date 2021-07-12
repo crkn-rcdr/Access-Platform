@@ -48,11 +48,14 @@
 </script>
 
 <div class="canvas-selector-wrap">
-  <button class="danger cancel-button" on:click={handleCancelPressed}>
-    Exit
-  </button>
-  <br />
-  <br />
+  <div class="add-menu-title">
+    <div class="auto-align auto-align__a-center">
+      <h6>Add canvases from other manifests</h6>
+      <button class="danger cancel-button" on:click={handleCancelPressed}>
+        Exit
+      </button>
+    </div>
+  </div>
   <br />
 
   {#if error}
@@ -76,6 +79,7 @@
 
   {#if showManifest}
     <ManifestCanvasSelectorGrid
+      buttonActionText={"Add"}
       bind:manifest={selectedManifest}
       on:backPressed={() => {
         error = "";
@@ -88,13 +92,15 @@
 
 <style>
   .canvas-selector-wrap {
-    padding: 3.5rem 4rem;
     position: relative;
     height: 100%;
-    background: var(--dark-gradient);
-    color: var(--light-font);
+    padding: 1.5rem 3rem;
   }
-  .cancel-button {
-    float: right;
+  .add-menu-title {
+    width: 100%;
+  }
+  h6 {
+    flex: 9;
+    margin: 0 !important;
   }
 </style>

@@ -10,7 +10,7 @@
 </script>
 
 <div class="wrapper">
-  <div class="hero full-bleed">
+  <div class="hero hero__gradient full-bleed">
     <div class="wrapper">
       <h1>Welcome to SvelteKit</h1>
       <p>

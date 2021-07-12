@@ -5,6 +5,7 @@
   export let canvas: Canvas;
   let OpenSeadragon: any;
   let container: HTMLDivElement;
+  let imageURL = "";
 
   function clearViewer() {
     if (container) {
@@ -15,14 +16,17 @@
   async function drawImage() {
     clearViewer();
     if (canvas && OpenSeadragon) {
+      imageURL = `https://image-uvic.canadiana.ca/iiif/2/${encodeURIComponent(
+        canvas["id"]
+      )}/info.json`;
       OpenSeadragon.default({
         element: container,
         prefixUrl: "/openseadragon/images/", // for the icons the viewer uses
-        tileSources: [
-          `https://image-uvic.canadiana.ca/iiif/2/${encodeURIComponent(
-            canvas["id"]
-          )}/info.json`,
-        ],
+        tileSources: [imageURL],
+        viewportMargins: {
+          top: 0,
+          bottom: 0,
+        },
       });
     }
   }
@@ -33,7 +37,10 @@
   });
 
   afterUpdate(async () => {
-    await drawImage();
+    let newImageUrl = `https://image-uvic.canadiana.ca/iiif/2/${encodeURIComponent(
+      canvas["id"]
+    )}/info.json`;
+    if (imageURL !== newImageUrl) await drawImage();
   });
 </script>
 
@@ -48,6 +55,7 @@
   :global(div[title="Zoom in"] img, div[title="Zoom out"]
       img, div[title="Go home"] img, div[title="Toggle full page"] img) {
     cursor: pointer;
+    opacity: 0.5;
   }
 
   :global(div[title="Zoom in"], div[title="Zoom out"], div[title="Go home"], div[title="Toggle full page"]) {

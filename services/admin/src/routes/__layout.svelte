@@ -65,10 +65,11 @@
 <style>
   .site-nav {
     padding: 1.5rem 1rem;
-    color: var(--dark-font);
+    background-color: var(--structural-div-bg);
+    filter: brightness(1.1);
   }
 
   a {
-    color: var(--dark-font) !important;
+    color: var(--base-font-color) !important;
   }
 </style>
