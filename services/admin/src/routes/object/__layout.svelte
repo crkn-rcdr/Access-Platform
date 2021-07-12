@@ -17,14 +17,15 @@
         } else if (isManifest(object)) {
           type = "canvasManifest";
         }
-        return { props: { object } };
+        return { props: { object, createMode: false } };
       } else {
         return {
           status: response.status,
           error: new Error(json.error),
+          props: { createMode: false },
         };
       }
-    } else return {};
+    } else return { props: { createMode: true } };
   };
 </script>
 
@@ -43,7 +44,8 @@
   import StatusIndicator from "$lib/components/access-objects/StatusIndicator.svelte";
   import InfoEditor from "$lib/components/access-objects/InfoEditor.svelte";
 
-  export let object: AccessObject; //let object: AccessObject;
+  export let object: AccessObject;
+  export let createMode: boolean;
 
   let pageList: Array<SideMenuPageData> = [];
 
@@ -139,7 +141,10 @@
   {#if objectModel}
     <div class="editor">
       <SideMenuContainer {pageList}>
-        <Toolbar slot="side-menu-header" title={object["slug"]}>
+        <Toolbar
+          slot="side-menu-header"
+          title={createMode ? `New ${object["type"]}` : object["slug"]}
+        >
           <div
             class="end-content auto-align auto-align__full auto-align auto-align__j-end auto-align auto-align__a-end auto-align auto-align__column"
           >
