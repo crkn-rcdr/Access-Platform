@@ -1,10 +1,5 @@
 <script lang="ts">
-  import {
-    afterUpdate,
-    beforeUpdate,
-    createEventDispatcher,
-    onMount,
-  } from "svelte";
+  import { createEventDispatcher, onMount } from "svelte";
   import TiTrash from "svelte-icons/ti/TiTrash.svelte";
   import type { Canvas } from "@crkn-rcdr/access-data/src/access/Manifest";
   import AutomaticResizeNumberInput from "$lib/components/shared/AutomaticResizeNumberInput.svelte";
@@ -14,6 +9,7 @@
   export let canvases: Canvas[] = [];
   export let showAddButton = true;
 
+  let isInitialized = false;
   let indexModel: number[] = [];
   let activeCanvasIndex: number = 0;
   let container: HTMLDivElement;
@@ -106,26 +102,35 @@
   onMount(() => {
     if (canvases.length) activeCanvasIndex = 0;
     setIndexModel(false);
+    isInitialized = true;
   });
 
-  afterUpdate(() => {
+  /*afterUpdate(() => {
     if (indexModel.length !== 0) setIndexModel(true);
-  });
+  });*/
+
+  function updated() {
+    if (isInitialized) setIndexModel(true);
+  }
+  $: {
+    canvases;
+    updated();
+  }
 </script>
 
 <svelte:window on:keydown={handleKeydown} />
 
-{#if indexModel.length}
-  <div class="auto-align auto-align__full auto-align auto-align__column">
-    {#if showAddButton}
-      <button class="primary lg" on:click={addClicked}>Add Canvas</button>
-    {/if}
-    <div
-      bind:this={container}
-      tabindex="0"
-      class="list"
-      class:disabled={!showAddButton}
-    >
+<div class="auto-align auto-align__full auto-align auto-align__column">
+  {#if showAddButton}
+    <button class="primary lg" on:click={addClicked}>Add Canvas</button>
+  {/if}
+  <div
+    bind:this={container}
+    tabindex="0"
+    class="list"
+    class:disabled={!showAddButton}
+  >
+    {#if indexModel.length}
       <DynamicDragAndDropList
         bind:dragList={canvases}
         on:itemDropped={(e) => {
@@ -185,9 +190,9 @@
           </div>
         {/each}
       </DynamicDragAndDropList>
-    </div>
+    {/if}
   </div>
-{/if}
+</div>
 
 <style>
   .list {

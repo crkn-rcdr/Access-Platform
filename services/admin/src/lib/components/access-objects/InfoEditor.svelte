@@ -12,9 +12,6 @@
       <label for="slug">Slug</label><br />
       <input type="text" id="slug" name="slug" bind:value={object["slug"]} /><br
       /><br />
-    {/if}
-
-    {#if isManifest(object)}
       <label for="label">Label</label><br />
       <textarea
         id="label"

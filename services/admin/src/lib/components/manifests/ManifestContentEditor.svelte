@@ -35,7 +35,7 @@
   });
 </script>
 
-{#if manifest && activeCanvas}
+{#if manifest}
   <div class="auto-align auto-align__full">
     <div class="list-wrapper">
       <CanvasThumbnailList
@@ -54,27 +54,31 @@
         <SwitchCase caseVal="view">
           <div class="auto-align auto-align__full">
             <div class="view-wrap">
-              <CanvasViewer canvas={activeCanvas} />
+              {#if activeCanvas}
+                <CanvasViewer canvas={activeCanvas} />
+              {/if}
             </div>
             <div class="label-wrap">
-              <CanvasLabelEditor
-                bind:label={activeCanvas["label"]["none"]}
-                on:changed={triggerUpdate}
-              >
-                <!--Todo, own component-->
-                <a class="takedown" href="/takedown" target="_blank">
-                  <div
-                    class="auto-align auto-align__full auto-align auto-align__a-center"
-                  >
-                    <div class="message">
-                      Take this canvas off of the platform
+              {#if activeCanvas}
+                <CanvasLabelEditor
+                  bind:label={activeCanvas["label"]["none"]}
+                  on:changed={triggerUpdate}
+                >
+                  <!--Todo, own component-->
+                  <a class="takedown" href="/takedown" target="_blank">
+                    <div
+                      class="auto-align auto-align__full auto-align auto-align__a-center"
+                    >
+                      <div class="message">
+                        Take this canvas off of the platform
+                      </div>
+                      <div class="icon">
+                        <IoMdOpen />
+                      </div>
                     </div>
-                    <div class="icon">
-                      <IoMdOpen />
-                    </div>
-                  </div>
-                </a>
-              </CanvasLabelEditor>
+                  </a>
+                </CanvasLabelEditor>
+              {/if}
             </div>
           </div>
         </SwitchCase>
