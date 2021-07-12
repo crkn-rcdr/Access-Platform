@@ -1,5 +1,10 @@
 <script lang="ts">
-  import { createEventDispatcher, onMount } from "svelte";
+  import {
+    afterUpdate,
+    beforeUpdate,
+    createEventDispatcher,
+    onMount,
+  } from "svelte";
   import TiTrash from "svelte-icons/ti/TiTrash.svelte";
   import type { Canvas } from "@crkn-rcdr/access-data/src/access/Manifest";
   import AutomaticResizeNumberInput from "$lib/components/shared/AutomaticResizeNumberInput.svelte";
@@ -12,6 +17,7 @@
   let indexModel: number[] = [];
   let activeCanvasIndex: number = 0;
   let container: HTMLDivElement;
+  let previousCanvasArrayLength = 0;
 
   const LEFT_ARROW_CODE: number = 37;
   const UP_ARROW_CODE: number = 38;
@@ -20,11 +26,14 @@
 
   const dispatch = createEventDispatcher();
 
-  function setIndexModel() {
+  function setIndexModel(trackNewCanvases: boolean) {
+    if (trackNewCanvases) previousCanvasArrayLength = indexModel.length;
+    console.log("prevLen", previousCanvasArrayLength);
     indexModel = [];
     for (let i = 0; i < canvases.length; i++) {
       indexModel.push(i + 1);
     }
+    console.log("currlen", indexModel.length);
   }
 
   function setActiveIndex(index: number) {
@@ -55,7 +64,7 @@
     canvases = canvases;
 
     // Update the position inputs
-    setIndexModel();
+    setIndexModel(false);
 
     // Highlight and move to new position
     activeCanvasIndex = destinationItemIndex;
@@ -96,13 +105,12 @@
 
   onMount(() => {
     if (canvases.length) activeCanvasIndex = 0;
-    setIndexModel();
+    setIndexModel(false);
   });
 
-  $: {
-    canvases;
-    setIndexModel();
-  }
+  afterUpdate(() => {
+    if (indexModel.length !== 0) setIndexModel(true);
+  });
 </script>
 
 <svelte:window on:keydown={handleKeydown} />
@@ -128,6 +136,8 @@
           <div
             class="thumbnail"
             class:active={i === activeCanvasIndex}
+            class:new={previousCanvasArrayLength != 0 &&
+              i < canvases.length - previousCanvasArrayLength}
             on:mousedown={() => setActiveIndex(i)}
           >
             <div class="auto-align auto-align__full">
@@ -208,6 +218,20 @@
 
   .thumbnail.active {
     filter: brightness(1.1);
+  }
+
+  .thumbnail.new {
+    animation-name: new;
+    animation-duration: 4s;
+  }
+
+  @keyframes new {
+    from {
+      background-color: var(--gold-light);
+    }
+    to {
+      background-color: var(--structural-div-bg);
+    }
   }
 
   .actions-wrap {
