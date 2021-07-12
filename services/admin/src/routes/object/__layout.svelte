@@ -143,7 +143,9 @@
       <SideMenuContainer {pageList}>
         <Toolbar
           slot="side-menu-header"
-          title={createMode ? `New ${object["type"]}` : object["slug"]}
+          title={createMode && object?.["slug"]?.length === 0
+            ? `New ${object["type"]}`
+            : object["slug"]}
         >
           <div
             class="end-content auto-align auto-align__full auto-align auto-align__j-end auto-align auto-align__a-end auto-align auto-align__column"
