@@ -1,9 +1,7 @@
-import { CouchDBClient, initializeCouchDB } from "./drivers/couchdb.js";
+import { CouchDBClient, initializeCouchDB } from "./context/couchdb.js";
 
 export type Context = {
-  drivers: {
-    couch: CouchDBClient;
-  };
+  couch: CouchDBClient;
 };
 
 export function getFromEnv(name: string, defaultValue?: string): string {
@@ -19,8 +17,6 @@ export function getFromEnv(name: string, defaultValue?: string): string {
 
 export function createContext(): Context {
   return {
-    drivers: {
-      couch: initializeCouchDB(),
-    },
+    couch: initializeCouchDB(),
   };
 }

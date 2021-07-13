@@ -13,7 +13,7 @@
   ],
   "license": "CC0-1.0",
   "scripts": {
-    "dev": "NODE_NO_WARNINGS=1 nodemon -e ts,json -w ../.. -x node -r dotenv/config --loader ts-node/esm src/index.ts"
+    "dev": "NODE_NO_WARNINGS=1 nodemon -e ts,json -w ../../packages -w . -x node -r dotenv/config --loader ts-node/esm src/index.ts"
   },
   "dependencies": {
     "@crkn-rcdr/access-data": "workspace:^0.0.0",

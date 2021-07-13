@@ -8,6 +8,6 @@ export function createRouter() {
   return trpc.router<Context>();
 }
 
-export const lapin = createRouter().merge("slug.", slugRouter);
+export const router = createRouter().merge("slug.", slugRouter);
 
-export type LapinRouter = typeof lapin;
+export type LapinRouter = typeof router;
