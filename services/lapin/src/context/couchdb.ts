@@ -10,7 +10,7 @@ export type CouchDBClient = GenericCouchDBClient<typeof DATABASES>;
 
 export function initializeCouchDB(): CouchDBClient {
   return connect({
-    url: getFromEnv("COUCH_URL"),
+    url: getFromEnv("COUCH_ENDPOINT"),
     auth: {
       user: getFromEnv("COUCH_USER"),
       password: getFromEnv("COUCH_PASSWORD"),
