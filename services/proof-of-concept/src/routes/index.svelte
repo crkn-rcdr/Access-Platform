@@ -5,7 +5,7 @@
     try {
       return {
         props: {
-          servertest: await context.lapin.query("slug.search", "??"),
+          servertest: await context.lapin.query("slug.search", "oo"),
         },
       };
     } catch (e) {

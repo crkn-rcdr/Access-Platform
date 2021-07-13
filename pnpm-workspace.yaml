@@ -1,3 +1,6 @@
 packages:
-  - "packages/*"
-  - "services/*"
+  - "packages/data"
+  - "packages/couch-utils"
+  - "services/couchdb"
+  - "services/lapin"
+  - "services/proof-of-concept"
