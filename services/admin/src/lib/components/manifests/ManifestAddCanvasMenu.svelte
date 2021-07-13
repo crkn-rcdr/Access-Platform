@@ -73,7 +73,7 @@
         </button>
       </div>
       <br />
-      <h6>Search for a manifest to add canvases from</h6>
+      <h6>Search for a manifest to add canvases from:</h6>
 
       {#if error}
         <br />
