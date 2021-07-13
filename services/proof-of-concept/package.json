@@ -2,6 +2,7 @@
   "name": "@crkn-rcdr/proof-of-concept",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "svelte-kit dev",
     "build": "svelte-kit build",
@@ -13,13 +14,12 @@
     "@crkn-rcdr/lapin": "workspace:^0.0.0",
     "@sveltejs/adapter-node": "^1.0.0-next.0",
     "@sveltejs/kit": "next",
-    "svelte": "^3.34.0",
-    "svelte-check": "^2.0.0",
-    "svelte-preprocess": "^4.0.0",
-    "tslib": "^2.0.0",
-    "typescript": "^4.0.0"
+    "svelte": "^3.38.3",
+    "svelte-check": "^2.2.2",
+    "svelte-preprocess": "^4.7.4",
+    "tslib": "^2.3.0",
+    "typescript": "^4.3.5"
   },
-  "type": "module",
   "dependencies": {
     "@crkn-rcdr/access-data": "workspace:^0.0.0",
     "@trpc/client": "8.1.3"
