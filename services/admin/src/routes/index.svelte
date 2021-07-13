@@ -19,11 +19,15 @@
     </div>
   </div>
 
+  <!--br />
   <br />
-  <br />
-  <Resolver slug="oocihm.8_06941" />
+  <Resolver slug="oocihm.8_06941" /-->
 
   <br />
   <br />
-  <TypeAhead label="Edit object:" on:selected={slugSelected} />
+  <a href="/object"><button class="primary">Create New Object</button></a>
+
+  <br />
+  <br />
+  <TypeAhead label="Search for an object to edit:" on:selected={slugSelected} />
 </div>
