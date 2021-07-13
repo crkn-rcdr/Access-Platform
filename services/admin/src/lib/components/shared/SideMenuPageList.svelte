@@ -6,10 +6,9 @@
 
 <style>
   .sidemenu {
-    background: var(--grey);
-    color: var(--light-font);
+    background: var(--structural-div-bg);
+    filter: brightness(0.95);
     height: 100%;
-    display: inline-block;
     flex: 1.5;
   }
   .sidemenu ul {

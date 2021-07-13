@@ -33,3 +33,16 @@ export type ToggleParams = {
   toggled: boolean;
   display: string;
 };
+
+/**
+ * Defins what information to include for the dynamic generation of pages in the side menu component
+ */
+export type SideMenuPageData = {
+  name: string;
+  componentData: {
+    contentComponent: any;
+    contentComponentProps: any;
+    sideMenuPageProps: any;
+    update: Function;
+  };
+};

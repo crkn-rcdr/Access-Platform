@@ -3,7 +3,7 @@
 </script>
 
 <div class="toolbar">
-  <div class="auto-align auto-align__a-center">
+  <div class="auto-align auto-align__full auto-align auto-align__a-center">
     <h5>{title}</h5>
     <div class="toolbar-content">
       <slot />
@@ -15,6 +15,8 @@
   .toolbar {
     background-color: var(--structural-div-bg);
     padding: 0.75rem 2rem;
+    width: 100%;
+    height: 100%;
   }
   h5 {
     margin: 0 !important;
@@ -23,5 +25,6 @@
   }
   .toolbar-content {
     flex: 3;
+    text-align: right;
   }
 </style>

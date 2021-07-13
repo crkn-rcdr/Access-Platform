@@ -58,7 +58,7 @@
   });
 </script>
 
-<div class="auto-align auto-align__j-center">
+<div class="auto-align auto-align__full auto-align auto-align__j-center">
   <input
     bind:this={input}
     bind:value
@@ -68,7 +68,7 @@
   />
 
   <div
-    class="auto-align auto-align__column auto-align__j-center auto-align__a-center"
+    class="auto-align auto-align__full auto-align auto-align__column auto-align auto-align__j-center auto-align auto-align__a-center"
   >
     <div class="action icon" on:click={upArrowPressed}>
       <TiArrowSortedUp />
