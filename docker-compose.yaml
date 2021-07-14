@@ -1,0 +1,28 @@
+services:
+  couchdb-dev:
+    container_name: access-couch
+    image: couchdb:3.1
+    env_file:
+      - .env.defaults
+      - .env
+    networks:
+      access-platform:
+        ipv4_address: 172.30.0.6
+    ports:
+      - "5984:5984"
+  kivik-watch:
+    container_name: access-kivik
+    build:
+      context: .
+      target: kivik_watch
+    depends_on:
+      - couchdb-dev
+    volumes:
+      - "./services/couchdb:/repo/services/couchdb"
+    networks:
+      access-platform:
+        ipv4_address: 172.30.0.180
+
+networks:
+  access-platform:
+    external: true

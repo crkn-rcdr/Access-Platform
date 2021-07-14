@@ -42,19 +42,42 @@ importers:
       ts-node: 10.1.0_081fe99ef5db98b82a83fd528bee8c5c
       typescript: 4.3.5
 
+  packages/lapin-router:
+    specifiers:
+      '@crkn-rcdr/access-data': workspace:^0.0.0
+      '@crkn-rcdr/couch-utils': workspace:^0.0.0
+      '@trpc/server': ^8.2.0
+      '@types/node': ^16.0.0
+      ava: ^3.15.0
+      npm-run-all: ^4.1.5
+      ts-node: ^10.0.0
+      typescript: ^4.3.5
+      zod: ^3.5.1
+    dependencies:
+      '@crkn-rcdr/access-data': link:../data
+      '@crkn-rcdr/couch-utils': link:../couch-utils
+      '@trpc/server': 8.2.0
+      zod: 3.5.1
+    devDependencies:
+      '@types/node': 16.3.1
+      ava: 3.15.0
+      npm-run-all: 4.1.5
+      ts-node: 10.1.0_081fe99ef5db98b82a83fd528bee8c5c
+      typescript: 4.3.5
+
   services/couchdb:
     specifiers:
       '@crkn-rcdr/access-data': workspace:*
       '@crkn-rcdr/nano': ^2.0.1
       ava: ^3.15.0
       fs-extra: ^9.1.0
-      kivik: ^2.0.0-alpha.9
+      kivik: ^2.0.0-alpha.12
     devDependencies:
       '@crkn-rcdr/access-data': link:../../packages/data
       '@crkn-rcdr/nano': 2.0.1
       ava: 3.15.0
       fs-extra: 9.1.0
-      kivik: 2.0.0-alpha.9
+      kivik: 2.0.0-alpha.12
 
   services/lapin:
     specifiers:
@@ -97,7 +120,7 @@ importers:
     devDependencies:
       '@crkn-rcdr/lapin': link:../lapin
       '@sveltejs/adapter-node': 1.0.0-next.33
-      '@sveltejs/kit': 1.0.0-next.126_svelte@3.38.3
+      '@sveltejs/kit': 1.0.0-next.128_svelte@3.38.3
       svelte: 3.38.3
       svelte-check: 2.2.2_svelte@3.38.3
       svelte-preprocess: 4.7.4_svelte@3.38.3+typescript@4.3.5
@@ -201,8 +224,8 @@ packages:
       tiny-glob: 0.2.9
     dev: true
 
-  /@sveltejs/kit/1.0.0-next.126_svelte@3.38.3:
-    resolution: {integrity: sha512-nVQxG3XV42PRJQ3X2k44Fjpw3PMzzJHAgkQg+Nc6hhr0A/Kfbsv2Y+465gQhKKgSUgDoKL+PkTMXF8a4dN8Ccg==}
+  /@sveltejs/kit/1.0.0-next.128_svelte@3.38.3:
+    resolution: {integrity: sha512-qOJbKxulwFnkhkOPFxijhA1MLmpDJtL2Ze/M6ohMa1NFnB8cfWkif/H2tJ1APybFcAFag8w2MJ3OBJ0sXVotVQ==}
     engines: {node: ^12.20 || >=14.13}
     hasBin: true
     peerDependencies:
@@ -1677,8 +1700,8 @@ packages:
       json-buffer: 3.0.0
     dev: true
 
-  /kivik/2.0.0-alpha.9:
-    resolution: {integrity: sha512-8959Qb/eSajCAogqJAtfWBgU3YQQ9770Z6Og0GgWaEUr1DVTnsDbKXoyRtRuQD6muGII76QbgBRVTTMYGvSgDg==}
+  /kivik/2.0.0-alpha.12:
+    resolution: {integrity: sha512-G+TTdedtygO3hgq2xwkd7ZgGQbmz5V8AD00nVZ0oJHM4ThHIA4HBIjB+7MVHUeLauy2JQgfANNUqb5XjKS6z9g==}
     engines: {node: '>=12.0.0'}
     hasBin: true
     dependencies:
@@ -1691,7 +1714,7 @@ packages:
       fs-extra: 9.1.0
       get-port: 5.1.1
       p-event: 4.2.0
-      p-retry: 4.6.0
+      p-retry: 4.6.1
       winston: 3.3.3
       yaml: 1.10.2
       yargs: 16.2.0
@@ -2117,8 +2140,8 @@ packages:
       aggregate-error: 3.1.0
     dev: true
 
-  /p-retry/4.6.0:
-    resolution: {integrity: sha512-SAHbQEwg3X5DRNaLmWjT+DlGc93ba5i+aP3QLfVNDncQEQO4xjbYW4N/lcVTSuP0aJietGfx2t94dJLzfBMpXw==}
+  /p-retry/4.6.1:
+    resolution: {integrity: sha512-e2xXGNhZOZ0lfgR9kL34iGlU8N/KO0xZnQxVEwdeOvpqNDQfdnxIYizvWtK8RglUa3bGqI8g0R/BdfzLMxRkiA==}
     engines: {node: '>=8'}
     dependencies:
       '@types/retry': 0.12.1

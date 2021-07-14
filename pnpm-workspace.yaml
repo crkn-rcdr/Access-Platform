@@ -1,6 +1,7 @@
 packages:
   - "packages/data"
   - "packages/couch-utils"
+  - "packages/lapin-router"
   - "services/couchdb"
   - "services/lapin"
   - "services/proof-of-concept"
