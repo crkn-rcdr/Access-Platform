@@ -25,8 +25,6 @@
   const dispatch = createEventDispatcher();
   console.log("Prit Collection:", collection);
 
-  //let activeMember: Members | null;
-  //let state = "view";
   function setIndexModel() {
     indexModel = [];
     for (let i = 0; i < collection.members.length; i++) {
@@ -46,7 +44,7 @@
     membersThumbnails?.[index]?.scrollIntoView();
   }
   function moveMember(event: any, originalItemIndex: number) {
-    // Move the canvas and trigger saving
+    // Move the member and trigger saving
     let destinationItemIndex = parseInt(event.detail.value) - 1;
     moveArrayElement(
       collection.members,
@@ -64,14 +62,6 @@
     setActiveIndex(activeMemberIndex);
   }
 
-  /* function setMemberList(index: number) {
-    activeMember = collection?.members?.[index] || null;
-    console.log("Check if there is activeMember in memberlist", activeMember);
-    triggerUpdate();
-  }
-  function triggerUpdate() {
-    collection.members = collection.members;
-  } */
   function selectPrevious() {
     if (activeMemberIndex > 0) {
       activeMemberIndex--;
@@ -152,9 +142,9 @@
           <div class="auto-align">
             <div class="actions-wrap">
               <div class="auto-align auto-align__column">
-                <!-- <div class="action pos">
+                <div class="action pos">
                   {indexModel[i]}
-                </div> -->
+                </div>
                 <div
                   class="action pos-input"
                   on:click={(e) => {
@@ -172,8 +162,12 @@
                 </div>
               </div>
             </div>
-            <div class="image-wrap">
-              <input bind:value={members["id"]} class="thumbnail-img" />
+            <div>
+              <ul>
+                <li>
+                  <input bind:value={members["id"]} />
+                </li>
+              </ul>
             </div>
           </div>
         {/each}
@@ -181,3 +175,41 @@
     </div>
   </div>
 {/if}
+
+<style>
+  .list {
+    position: relative;
+    flex: 9;
+    width: 100%;
+    overflow-y: auto;
+  }
+  .list.disabled {
+    overflow-y: hidden;
+    opacity: 0.5;
+  }
+  /*  .actions-wrap {
+    flex: 1;
+    margin-left: 1.5rem;
+  } */
+
+  .action.icon {
+    opacity: 0.6;
+    cursor: pointer;
+  }
+  .pos {
+    font-weight: 400;
+    margin-top: 0.58rem;
+    margin-left: 0.58rem;
+  }
+
+  .action.icon {
+    display: none;
+    margin-top: 0.5em;
+  }
+  .pos-input {
+    display: none;
+  }
+  li {
+    list-style: none;
+  }
+</style>
