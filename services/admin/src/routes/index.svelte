@@ -10,20 +10,21 @@
 </script>
 
 <div class="wrapper">
-  <div class="hero full-bleed">
+  <div class="hero hero__gradient full-bleed">
     <div class="wrapper">
-      <h1>Welcome to SvelteKit</h1>
-      <p>
-        Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation
-      </p>
+      <h1>Admin Tools</h1>
     </div>
   </div>
 
   <br />
   <br />
-  <Resolver slug="oocihm.8_06941" />
+  <Resolver slug="" noid="" />
 
   <br />
   <br />
-  <TypeAhead label="Edit object:" on:selected={slugSelected} />
+  <a href="/object"><button class="primary">Create New Object</button></a>
+
+  <br />
+  <br />
+  <TypeAhead label="Search for an object to edit:" on:selected={slugSelected} />
 </div>

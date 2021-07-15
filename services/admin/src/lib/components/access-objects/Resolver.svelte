@@ -62,7 +62,7 @@
 </script>
 
 <div
-  class="auto-align auto-align__column auto-align__j-baseline auto-align__wra"
+  class="auto-align auto-align__full auto-align__column auto-align auto-align__full__j-baseline auto-align auto-align__full__wra"
 >
   <label for="slug"><slot name="input">Slug:</slot></label>
   <input

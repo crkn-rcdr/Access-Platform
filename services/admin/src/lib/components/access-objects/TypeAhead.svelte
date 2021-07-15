@@ -47,7 +47,7 @@
 
 <label for="slugInput">{label}</label>
 <div
-  class="typeahead-wrap auto-align auto-align__column auto-align__j-baseline auto-align__wrap"
+  class="typeahead-wrap auto-align auto-align__full auto-align auto-align__column auto-align auto-align__full__j-baseline auto-align auto-align__wrap"
 >
   <input
     type="text"
@@ -79,7 +79,7 @@
             <td>
               {item}
               <span
-                class="visibility-hidden float__right auto-align auto-align__a-center end-content"
+                class="visibility-hidden float__right auto-align auto-align__full auto-align auto-align__a-center end-content"
               >
                 <slot />
               </span>

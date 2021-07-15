@@ -9,9 +9,11 @@
   export let canvases: Canvas[] = [];
   export let showAddButton = true;
 
+  let isInitialized = false;
   let indexModel: number[] = [];
   let activeCanvasIndex: number = 0;
   let container: HTMLDivElement;
+  let previousCanvasArrayLength = 0;
 
   const LEFT_ARROW_CODE: number = 37;
   const UP_ARROW_CODE: number = 38;
@@ -20,11 +22,14 @@
 
   const dispatch = createEventDispatcher();
 
-  function setIndexModel() {
+  function setIndexModel(trackNewCanvases: boolean) {
+    if (trackNewCanvases) previousCanvasArrayLength = indexModel.length;
+    console.log("prevLen", previousCanvasArrayLength);
     indexModel = [];
     for (let i = 0; i < canvases.length; i++) {
       indexModel.push(i + 1);
     }
+    console.log("currlen", indexModel.length);
   }
 
   function setActiveIndex(index: number) {
@@ -55,7 +60,7 @@
     canvases = canvases;
 
     // Update the position inputs
-    setIndexModel();
+    setIndexModel(false);
 
     // Highlight and move to new position
     activeCanvasIndex = destinationItemIndex;
@@ -96,28 +101,36 @@
 
   onMount(() => {
     if (canvases.length) activeCanvasIndex = 0;
-    setIndexModel();
+    setIndexModel(false);
+    isInitialized = true;
   });
 
+  /*afterUpdate(() => {
+    if (indexModel.length !== 0) setIndexModel(true);
+  });*/
+
+  function updated() {
+    if (isInitialized) setIndexModel(true);
+  }
   $: {
     canvases;
-    setIndexModel();
+    updated();
   }
 </script>
 
 <svelte:window on:keydown={handleKeydown} />
 
-{#if indexModel.length}
-  <div class="auto-align auto-align__column">
-    {#if showAddButton}
-      <button class="primary lg" on:click={addClicked}>Add Canvas</button>
-    {/if}
-    <div
-      bind:this={container}
-      tabindex="0"
-      class="list"
-      class:disabled={!showAddButton}
-    >
+<div class="auto-align auto-align__full auto-align auto-align__column">
+  {#if showAddButton}
+    <button class="primary lg" on:click={addClicked}>Add Canvas</button>
+  {/if}
+  <div
+    bind:this={container}
+    tabindex="0"
+    class="list"
+    class:disabled={!showAddButton}
+  >
+    {#if indexModel.length}
       <DynamicDragAndDropList
         bind:dragList={canvases}
         on:itemDropped={(e) => {
@@ -128,11 +141,16 @@
           <div
             class="thumbnail"
             class:active={i === activeCanvasIndex}
+            class:new={previousCanvasArrayLength != 0 &&
+              i < canvases.length - previousCanvasArrayLength}
             on:mousedown={() => setActiveIndex(i)}
           >
-            <div class="auto-align">
+            <div class="auto-align auto-align__full">
               <div class="actions-wrap">
-                <div class="auto-align auto-align__column">
+                <div
+                  class="auto-align auto-align__full auto-align auto-align__column"
+                  class:visibility-hidden={!showAddButton}
+                >
                   <div class="action pos">
                     {indexModel[i]}
                   </div>
@@ -163,18 +181,18 @@
                 <img
                   alt={canvas["label"]["value"]}
                   class="thumbnail-img"
-                  src={`https://image-uvic.canadiana.ca/iiif/2/${encodeURIComponent(
+                  src={`https://image-tor.canadiana.ca/iiif/2/${encodeURIComponent(
                     canvas["id"]
-                  )}/full/!220,292/0/default.jpg`}
+                  )}/full/!425,524/0/default.jpg`}
                 />
               </div>
             </div>
           </div>
         {/each}
       </DynamicDragAndDropList>
-    </div>
+    {/if}
   </div>
-{/if}
+</div>
 
 <style>
   .list {
@@ -187,15 +205,6 @@
     overflow-y: hidden;
     opacity: 0.5;
   }
-  /*.list.disabled::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    opacity: 0.8;
-    background: var(--dark-grey);
-  }*/
 
   button.primary {
     width: 100%;
@@ -214,6 +223,20 @@
 
   .thumbnail.active {
     filter: brightness(1.1);
+  }
+
+  .thumbnail.new {
+    animation-name: new;
+    animation-duration: 4s;
+  }
+
+  @keyframes new {
+    from {
+      background-color: var(--gold-light);
+    }
+    to {
+      background-color: var(--structural-div-bg);
+    }
   }
 
   .actions-wrap {

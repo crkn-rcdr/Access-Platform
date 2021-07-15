@@ -1,22 +1,66 @@
 @font-face {
   font-family: "Roboto";
-  src: url("./fonts/Roboto-Light.ttf") format("truetype");
+  src: url("./fonts/Roboto-Regular.ttf") format("truetype");
 }
 
 :root {
+  /* Colours */
   --teal: #1f8591;
   --teal-light: #c0d1d3;
   --green: #368d00;
+  --green-light: #dbf1cd;
   --grey: #686868;
-  --dark-grey: #0c0c0c;
-  --border-color: #c3c3c3;
-  --structural-div-bg: rgb(240, 240, 240);
+  --red: #ca0000;
+  --red-light: #e2bebe;
+  --gold: #91841f;
+  --gold-light: #e2d7be;
+  --dark-gradient: linear-gradient(0deg, #222 0%, #111 20%, #0c0c0c 100%);
+  --color-gradient: linear-gradient(
+    40.79deg,
+    var(--green) -106.9%,
+    var(--teal) 93.69%
+  );
   --light-font: white;
   --dark-font: black;
-  --red: #ca0000;
-  --dark-gradient: linear-gradient(0deg, #222 0%, #111 20%, #0c0c0c 100%);
-  --color-gradient: linear-gradient(40.79deg, #3fa200 -106.9%, #1f8591 93.69%);
-  --shadow: drop-shadow(0px 0.125rem 0.25rem rgba(0, 0, 0, 0.25));
+
+  /* App Theme */
+  /* Change this to set the app bg color */
+  --base-bg: white;
+  /* Change this to set the toolbar, tables, menus etc. colour */
+  --structural-div-bg: #eee;
+  /* Change this to set the bg color for components that need a darker backgrop, ex: canvas viewer */
+  --backdrop-bg: #ddd;
+  /* Change this to set the bg color for overlays, ex: modal dimmer */
+  --overlay-bg: rgba(0, 0, 0, 0.75);
+  /* Change this to set the colour of inputs, text areas, and selects */
+  --form-field-bg: white;
+  /* Change this to set the default border colour for components, ex: inputs */
+  --border-color: #ccc;
+  /* Change this to set the font colour for the app */
+  --base-font-color: var(--dark-font);
+  /* Change this to set the interactive element colors, ex: alert, buttons */
+  /* Primary */
+  --primary: var(--teal);
+  --primary-light: var(--teal-light);
+  --primary-font: var(--light-font);
+  /* Secondary */
+  --secondary: var(--grey);
+  --secondary-light: var(--grey-light);
+  --secondary-font: var(--light-font);
+  /* Success */
+  --success: var(--green);
+  --success-light: var(--green-light);
+  --success-font: var(--light-font);
+  /* Danger */
+  --danger: var(--red);
+  --danger-light: var(--red-light);
+  --danger-font: var(--light-font);
+  /* Warn */
+  --warn: var(--gold);
+  --warn-light: var(--gold-light);
+  --warn-font: var(--light-font);
+
+  /* Sizing */
   --lg-size: calc(var(--md-size) * 1.33);
   --md-size: 1rem;
   --sm-size: calc(var(--md-size) * 0.75);
@@ -30,33 +74,38 @@
   --perfect-fourth-6: calc(var(--lg-size) + var(--viewport-scaling));
   --perfect-fourth-7: calc(var(--md-size) + var(--viewport-scaling));
   --perfect-fourth-8: calc(var(--sm-size) + var(--viewport-scaling));
-  --auto-grid-min-size: calc(var(--md-size) * 20);
+  --auto-grid-min-col-size: calc(var(--md-size) * 20);
+  --auto-grid-min-row-size: calc(var(--lg-size) * 20);
   --auto-grid-gap: calc(var(--md-size) * 3);
-  --margin-top-sm: var(--sm-size);
-  --margin-top-md: var(--md-size);
-  --margin-top-lg: var(--lg-size);
+  --margin-sm: var(--sm-size);
+  --margin-md: var(--md-size);
+  --margin-lg: var(--lg-size);
   --breakpoint-md: 37em;
   --breakpoint-lg: 62rem;
+
+  /* Shadows */
+  --shadow: drop-shadow(0px 0.125rem 0.25rem rgba(0, 0, 0, 0.25));
 }
 
 /* Font defaults */
 body {
   font-family: "Roboto", sans-serif !important;
-  font-weight: 300;
   font-size: var(--perfect-fourth-7);
+  color: var(--base-font-color);
+  background-color: var(--base-bg);
 }
 
 /* Reactive margins */
-.margin-top-sm {
-  margin-top: calc(var(--margin-top-sm) + var(--viewport-scaling));
+.margin-sm {
+  margin-top: calc(var(--margin-sm) + var(--viewport-scaling));
 }
 
-.margin-top-md {
-  margin-top: calc(var(--margin-top-md) + var(--viewport-scaling));
+.margin-md {
+  margin-top: calc(var(--margin-md) + var(--viewport-scaling));
 }
 
-.margin-top-lg {
-  margin-top: calc(var(--margin-top-lg) + var(--viewport-scaling));
+.margin-lg {
+  margin-top: calc(var(--margin-lg) + var(--viewport-scaling));
 }
 
 /* Screen reader accessible hiding 
@@ -72,7 +121,10 @@ Source: https://github.com/twbs/bootstrap/blob/main/scss/mixins/_visually-hidden
   white-space: nowrap !important;
   border: 0 !important;
 }
-
+.opacity-hidden {
+  opacity: 0;
+  cursor: auto;
+}
 /* Hide content from user + screen reader until menu clicked.*/
 .display-hidden {
   display: none;
@@ -91,9 +143,10 @@ Source: https://github.com/twbs/bootstrap/blob/main/scss/mixins/_visually-hidden
   display: grid;
   grid-template-columns: repeat(
     auto-fill,
-    minmax(var(--auto-grid-min-size, 16rem), 1fr)
+    minmax(var(--auto-grid-min-col-size), 1fr)
   );
-  grid-gap: var(--auto-grid-gap, get-size("500"));
+  grid-auto-rows: auto;
+  grid-gap: var(--auto-grid-gap);
 }
 
 /* Flexbox alignment */
@@ -103,9 +156,13 @@ Source: https://github.com/twbs/bootstrap/blob/main/scss/mixins/_visually-hidden
   align-items: flex-start;
   flex-direction: row;
   flex-wrap: nowrap;
+}
+
+.auto-align__full {
   width: 100%;
   height: 100%;
 }
+
 .auto-align__column {
   flex-direction: column;
 }
@@ -114,6 +171,9 @@ Source: https://github.com/twbs/bootstrap/blob/main/scss/mixins/_visually-hidden
 }
 .auto-align__j-end {
   justify-content: flex-end;
+}
+.auto-align__j-even {
+  justify-content: space-evenly;
 }
 .auto-align__a-center {
   align-items: center;
@@ -133,9 +193,12 @@ Source: https://github.com/twbs/bootstrap/blob/main/scss/mixins/_visually-hidden
 
 /* Hero element defaults. */
 .hero {
-  background: var(--color-gradient);
-  color: var(--light-font);
   padding: var(--perfect-fourth-1) 0;
+}
+
+.hero.hero__gradient {
+  background: var(--color-gradient);
+  color: var(--primary-font);
 }
 
 /* Wrapper util - default page margins */
@@ -198,7 +261,6 @@ html:focus-within {
 
 /* Set core body defaults */
 body {
-  min-height: 100vh;
   text-rendering: optimizeSpeed;
   line-height: 1.5;
 }
@@ -289,10 +351,10 @@ button,
 }
 
 button {
-  padding: var(--perfect-fourth-8) var(--perfect-fourth-4);
+  padding: 0 var(--perfect-fourth-4);
+  height: var(--perfect-fourth-2);
   border: none;
   box-shadow: none;
-  color: var(--light-font);
   border-radius: var(--border-radius);
   font-weight: 400;
   cursor: pointer;
@@ -303,29 +365,61 @@ button.lg {
 }
 
 button.primary {
-  background-color: var(--teal);
+  background-color: var(--primary);
+  color: var(--primary-font) !important;
 }
 
 button.secondary {
-  background-color: var(--grey);
+  background-color: var(--secondary);
+  color: var(--secondary-font) !important;
 }
 
 button.fancy {
   background: var(--colour-gradient);
+  color: var(--primary-font);
 }
 
 button.save {
-  background-color: var(--green);
+  background-color: var(--success);
+  color: var(--success-font);
 }
 
 button.danger {
-  background-color: var(--red);
+  background-color: var(--danger);
+  color: var(--danger-font);
 }
 
 button:hover,
 .clickable:hover {
   filter: brightness(1.2);
   cursor: pointer;
+}
+
+button .icon {
+  margin-right: 0.5rem;
+  margin-left: -1rem;
+}
+
+.back-button {
+  width: var(--perfect-fourth-4);
+  height: var(--perfect-fourth-4);
+  margin-right: 1rem;
+  cursor: pointer;
+  border-radius: var(--border-radius);
+}
+
+.back-button:hover {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.icon-button {
+  padding: 0 var(--perfect-fourth-6);
+}
+
+.button-icon {
+  width: var(--perfect-fourth-6);
+  height: var(--perfect-fourth-6);
+  margin: 0;
 }
 
 label {
@@ -340,7 +434,13 @@ select {
   outline: none;
   padding: var(--perfect-fourth-8);
   border-radius: var(--border-radius);
-  background-color: rgba(255, 255, 255, 0.938);
+  background-color: var(--form-field-bg);
+  color: var(--base-font-color);
+}
+
+input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
 }
 
 a {
@@ -357,11 +457,11 @@ table {
 }
 
 tbody {
-  background: rgba(255, 255, 255, 0.055);
+  background: var(--structural-div-bg);
 }
 
 tbody tr.clickable:hover {
-  background-color: rgba(114, 114, 114, 0.144);
+  background-color: rgba(0, 0, 0, 0.04);
 }
 
 thead th {
@@ -446,7 +546,7 @@ input[type="checkbox"]:checked {
   padding: 1ch 1.5ch;
   border-radius: var(--border-radius);
   box-shadow: 0 1em 2em -0.5em rgba(0, 0, 0, 0.35);
-  background: var(--grey);
+  background: var(--secondary);
   color: #fff;
   z-index: 1000; /* absurdity 2 */
 }
@@ -468,7 +568,7 @@ input[type="checkbox"]:checked {
 [data-tooltip][data-tooltip-flow^="top"]::before {
   bottom: 100%;
   border-bottom-width: 0;
-  border-top-color: var(--grey);
+  border-top-color: var(--secondary);
 }
 [data-tooltip]:not([data-tooltip-flow])::after,
 [data-tooltip][data-tooltip-flow^="top"]::after {
@@ -486,7 +586,7 @@ input[type="checkbox"]:checked {
 [data-tooltip][data-tooltip-flow^="bottom"]::before {
   top: 100%;
   border-top-width: 0;
-  border-bottom-color: var(--grey);
+  border-bottom-color: var(--secondary);
 }
 [data-tooltip][data-tooltip-flow^="bottom"]::after {
   top: calc(100% + 5px);
@@ -501,7 +601,7 @@ input[type="checkbox"]:checked {
 [data-tooltip][data-tooltip-flow^="left"]::before {
   top: 50%;
   border-right-width: 0;
-  border-left-color: var(--grey);
+  border-left-color: var(--secondary);
   left: calc(0em - 5px);
   transform: translate(-0.5em, -50%);
 }
@@ -515,7 +615,7 @@ input[type="checkbox"]:checked {
 [data-tooltip][data-tooltip-flow^="right"]::before {
   top: 50%;
   border-left-width: 0;
-  border-right-color: var(--grey);
+  border-right-color: var(--secondary);
   right: calc(0em - 5px);
   transform: translate(0.5em, -50%);
 }
@@ -561,26 +661,26 @@ input[type="checkbox"]:checked {
 .alert {
   padding: var(--perfect-fourth-8);
   border-radius: var(--border-radius);
-  background-color: var(--teal-light);
-  color: var(--teal);
-  border: 1px solid var(--teal);
+  background-color: var(--primary-light);
+  color: var(--primary);
+  border: 1px solid var(--primary);
   width: 100%;
 }
 
 .alert-success {
-  background-color: #dbf1cd;
-  color: var(--green);
-  border: 1px solid var(--green);
+  background-color: var(--success-light);
+  color: var(--success);
+  border: 1px solid var(--success);
 }
 
 .alert-warn {
-  background-color: #e2d7be;
-  color: #91841f;
-  border: 1px solid #91841f;
+  background-color: var(--warn-light);
+  color: var(--warn);
+  border: 1px solid var(--warn);
 }
 
 .alert-danger {
-  background-color: #e2bebe;
-  color: var(--red);
-  border: 1px solid var(--red);
+  background-color: var(--danger-light);
+  color: var(--danger);
+  border: 1px solid var(--danger);
 }
