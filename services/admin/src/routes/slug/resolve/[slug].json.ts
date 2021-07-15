@@ -1,7 +1,10 @@
 import type { RequestHandler } from "@sveltejs/kit";
-import accessor from "$lib/accessor";
+import type { Locals } from "$lib/types";
 
-export const get: RequestHandler = async ({ params }) => {
+export const get: RequestHandler<Locals> = async ({
+  params,
+  locals: { accessor },
+}) => {
   const slug = params["slug"] as string;
 
   const response = await accessor.slug.resolve(slug);

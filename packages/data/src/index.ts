@@ -2,14 +2,13 @@ export {
   AccessObject,
   Alias,
   Canvas,
-  CanvasManifest,
   Collection,
-  PdfManifest,
+  Manifest,
   isAlias,
-  isCanvasManifest,
   isCollection,
-  isPdfManifest,
+  isManifest,
 } from "./access";
+export { Dipstaging } from "./dipstaging";
 export {
   DATABASES,
   DocumentTypes,

@@ -28,6 +28,7 @@
   "homepage": "https://github.com/crkn-rcdr/Access-Platform/tree/main/couchdb",
   "main": "index.js",
   "scripts": {
+    "dev": "kivik dev --watch",
     "pull": "find . -wholename '*/fixtures/*.json' -delete && node ./pullFixtures.js",
     "test": "kivik start && ava -v; kivik stop",
     "test:all": "ava -v"
