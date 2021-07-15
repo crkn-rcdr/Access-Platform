@@ -1,14 +1,8 @@
 import * as trpc from "@trpc/server";
 import http from "http";
-import { router } from "./router.js";
-import { createContext } from "./context.js";
+import { createOptions } from "@crkn-rcdr/lapin-router";
 
-export type { LapinRouter } from "./router.js";
-
-const handler = trpc.createHttpHandler({
-  router,
-  createContext,
-});
+const handler = trpc.createHttpHandler(createOptions);
 
 const server = http.createServer((req, res) => {
   res.setHeader("Access-Control-Allow-Origin", "*");

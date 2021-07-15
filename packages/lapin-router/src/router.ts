@@ -1,11 +1,11 @@
-import * as trpc from "@trpc/server";
+import { router as trpcRouter } from "@trpc/server";
 
-import { Context } from "./context.js";
+import { LapinContext } from "./context.js";
 
 import { slugRouter } from "./routes/slug.js";
 
 export function createRouter() {
-  return trpc.router<Context>();
+  return trpcRouter<LapinContext>();
 }
 
 export const router = createRouter().merge("slug.", slugRouter);

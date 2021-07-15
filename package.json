@@ -21,6 +21,7 @@
   "scripts": {
     "cleanup": "pnpm run kivik:stop",
     "dev": "pnpm run --parallel --stream dev",
+    "docker:dev": "docker-compose down; docker-compose up --build --remove-orphans",
     "preinstall": "npx only-allow pnpm",
     "kivik:start": "cd services/couchdb && pnpx kivik start && pnpx kivik deploy local",
     "kivik:stop": "cd services/couchdb && pnpx kivik stop",

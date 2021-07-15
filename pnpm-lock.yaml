@@ -83,6 +83,7 @@ importers:
     specifiers:
       '@crkn-rcdr/access-data': workspace:^0.0.0
       '@crkn-rcdr/couch-utils': workspace:^0.0.0
+      '@crkn-rcdr/lapin-router': workspace:^0.0.0
       '@trpc/server': ^8.2.0
       '@types/node': ^16.3.1
       dotenv: ^10.0.0
@@ -93,6 +94,7 @@ importers:
     dependencies:
       '@crkn-rcdr/access-data': link:../../packages/data
       '@crkn-rcdr/couch-utils': link:../../packages/couch-utils
+      '@crkn-rcdr/lapin-router': link:../../packages/lapin-router
       '@trpc/server': 8.2.0
       zod: 3.5.1
     devDependencies:

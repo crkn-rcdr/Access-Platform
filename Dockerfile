@@ -1,22 +1,52 @@
-FROM node:16 AS pnpm
+# init
+# Sets up pnpm and copies over workspace config. Configures pnpm to install packages locally.
+
+FROM node:16 AS init
 
 ENV PNPM_VERSION 6.10.0
 RUN curl -sL https://unpkg.com/@pnpm/self-installer | node
 
-FROM pnpm AS install
-
 WORKDIR /repo
 
-COPY packages/ packages/
-COPY services/ services/
+RUN echo "store-dir=./.pnpm-store" > .npmrc
 
 COPY package.json package.json
 COPY pnpm-lock.yaml pnpm-lock.yaml
 COPY pnpm-workspace.yaml pnpm-workspace.yaml
 
+# install
+# Downloads and installs package and service dependencies.
+
+FROM init AS install
+
+COPY packages/data/package.json packages/data/package.json
+COPY packages/couch-utils/package.json packages/couch-utils/package.json
+COPY packages/lapin-router/package.json packages/lapin-router/package.json
+COPY services/couchdb/package.json services/couchdb/package.json
+COPY services/lapin/package.json services/lapin/package.json
+COPY services/proof-of-concept/package.json services/proof-of-concept/package.json
+
 RUN pnpm install -r --frozen-lockfile
 
-FROM install AS kivik_watch
+# build
+# Builds every package.
+
+FROM init AS build
+
+COPY --from=install /repo/.pnpm-store/ .pnpm-store/
+
+COPY packages/ packages/
+
+RUN pnpm install -r --frozen-lockfile
+RUN pnpm run -r build --filter ./packages
+
+# kivik_watch
+# Runs `kivik deploy --watch`, pointing to the CouchDB endpoint spun up in docker-compose
+
+FROM build AS kivik_watch
+
+COPY services/couchdb/ services/couchdb/
+RUN pnpm i --filter ./services/couchdb
 
 WORKDIR /repo/services/couchdb
 
