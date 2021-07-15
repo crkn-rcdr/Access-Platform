@@ -65,7 +65,7 @@
                   on:changed={triggerUpdate}
                 >
                   <!--Todo, own component-->
-                  <a class="takedown" href="/takedown" target="_blank">
+                  <!--a class="takedown" href="/takedown" target="_blank">
                     <div
                       class="auto-align auto-align__full auto-align auto-align__a-center"
                     >
@@ -76,7 +76,7 @@
                         <IoMdOpen />
                       </div>
                     </div>
-                  </a>
+                  </a-->
                 </CanvasLabelEditor>
               {/if}
             </div>
