@@ -6,3 +6,4 @@
 *.local
 .env
 .notes
+.docker-pnpm.store

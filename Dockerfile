@@ -8,7 +8,7 @@ RUN curl -sL https://unpkg.com/@pnpm/self-installer | node
 
 WORKDIR /repo
 
-RUN echo "store-dir=./.pnpm-store" > .npmrc
+RUN echo "store-dir=./.docker-pnpm-store" > .npmrc
 
 COPY package.json package.json
 COPY pnpm-lock.yaml pnpm-lock.yaml
@@ -25,24 +25,29 @@ COPY services/ services/
 RUN pnpm install -r --frozen-lockfile
 
 # build
-# Builds every package.
+# Builds every package. TODO: I only need this for prod
 
-FROM init AS build
+# FROM init AS build
 
-COPY --from=install /repo/.pnpm-store/ .pnpm-store/
+# COPY --from=install /repo/.docker-pnpm-store/ .docker-pnpm-store/
+# COPY --from=install /repo/node_modules/ node_modules
 
-COPY packages/ packages/
+# COPY packages/ packages/
 
-RUN pnpm install -r --frozen-lockfile
-RUN pnpm run -r build --filter ./packages
+# RUN pnpm install -r --frozen-lockfile
+# RUN pnpm run -r build --filter ./packages
+
+# package_watch
+# Recompiles every package on file change.
+
+FROM install AS package_watch
+
+CMD ["pnpm", "run", "watch", "-r", "--filter", "./packages", "--parallel"]
 
 # kivik_watch
 # Runs `kivik deploy --watch`, pointing to the CouchDB endpoint spun up in docker-compose
 
-FROM build AS kivik_watch
-
-COPY services/couchdb/ services/couchdb/
-RUN pnpm i --filter ./services/couchdb
+FROM install AS kivik_watch
 
 WORKDIR /repo/services/couchdb
 
