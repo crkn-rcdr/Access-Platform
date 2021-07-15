@@ -19,12 +19,8 @@ COPY pnpm-workspace.yaml pnpm-workspace.yaml
 
 FROM init AS install
 
-COPY packages/data/package.json packages/data/package.json
-COPY packages/couch-utils/package.json packages/couch-utils/package.json
-COPY packages/lapin-router/package.json packages/lapin-router/package.json
-COPY services/couchdb/package.json services/couchdb/package.json
-COPY services/lapin/package.json services/lapin/package.json
-COPY services/proof-of-concept/package.json services/proof-of-concept/package.json
+COPY packages/ packages/
+COPY services/ services/
 
 RUN pnpm install -r --frozen-lockfile
 
@@ -49,5 +45,7 @@ COPY services/couchdb/ services/couchdb/
 RUN pnpm i --filter ./services/couchdb
 
 WORKDIR /repo/services/couchdb
+
+RUN mv kivikrc.docker.json kivikrc.json
 
 CMD ["pnpm", "run", "watch:docker"]

@@ -1,8 +1,8 @@
-import * as trpc from "@trpc/server";
+import { createHttpHandler } from "@trpc/server";
 import http from "http";
 import { createOptions } from "@crkn-rcdr/lapin-router";
 
-const handler = trpc.createHttpHandler(createOptions);
+const handler = createHttpHandler(createOptions);
 
 const server = http.createServer((req, res) => {
   res.setHeader("Access-Control-Allow-Origin", "*");

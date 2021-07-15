@@ -3,11 +3,12 @@ services:
     container_name: access-couch
     image: couchdb:3.1
     env_file:
-      - .env.defaults
-      - .env
+      - .env.docker
     networks:
       access-platform:
         ipv4_address: 172.30.0.6
+        aliases:
+          - couch
     ports:
       - "5984:5984"
   kivik-watch:
