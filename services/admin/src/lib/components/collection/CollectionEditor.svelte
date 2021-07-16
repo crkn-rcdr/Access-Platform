@@ -1,11 +1,6 @@
 <script lang="ts">
   import { onMount, createEventDispatcher } from "svelte";
-  //import type { AccessObject } from "@crkn-rcdr/access-data";
-  //import { isCollection } from "@crkn-rcdr/access-data";
   import type { Collection } from "@crkn-rcdr/access-data/src/access/Collection";
-  /* import TypeAhead from "$lib/components/access-objects/TypeAhead.svelte";
-  import Switch from "$lib/components/shared//Switch.svelte";
-  import SwitchCase from "$lib/components/shared//SwitchCase.svelte"; */
   import AutomaticResizeNumberInput from "$lib/components/shared/AutomaticResizeNumberInput.svelte";
   import DynamicDragAndDropList from "$lib/components/shared/DynamicDragAndDropList.svelte";
   import { moveArrayElement } from "$lib/arrayUtil";
@@ -100,21 +95,6 @@
   }
 </script>
 
-<div class="editor">
-  <!-- {#if isCollection(model)}
-    <label for="Type">Type</label><br />
-    <input type="text" id="type" name="type" bind:value={model["type"]} /><br />
-  {/if}
-  {#if isCollection(model)}
-    <label for="public">Public</label><br />
-    <input
-      type="text"
-      id="public"
-      name="public"
-      bind:value={model["public"]}
-    /><br />
-  {/if} -->
-</div>
 <svelte:window on:keydown={handleKeydown} />
 {#if indexModel.length}
   <div class="auto-align auto-align__column">
@@ -187,11 +167,6 @@
     overflow-y: hidden;
     opacity: 0.5;
   }
-  /*  .actions-wrap {
-    flex: 1;
-    margin-left: 1.5rem;
-  } */
-
   .action.icon {
     opacity: 0.6;
     cursor: pointer;
