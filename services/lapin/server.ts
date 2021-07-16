@@ -17,4 +17,6 @@ const server = http.createServer((req, res) => {
   handler(req, res);
 });
 
+console.log("Starting lapin on port 5858.");
+
 server.listen(5858);

@@ -1,7 +1,7 @@
 import type { RequestHandler } from "@sveltejs/kit";
 
 const handler: RequestHandler = async (request) => {
-  const url = `http://localhost:5858/${
+  const url = `http://lapin:5858/${
     request.params["name"]
   }?${request.query.toString()}`;
 
