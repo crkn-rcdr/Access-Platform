@@ -1,6 +1,5 @@
 <script lang="ts">
   import TiArrowBack from "svelte-icons/ti/TiArrowBack.svelte";
-  import TiArrowRight from "svelte-icons/ti/TiArrowRight.svelte";
   import FaPlus from "svelte-icons/fa/FaPlus.svelte";
   import type { AccessObject } from "@crkn-rcdr/access-data";
   import { isManifest, isCollection } from "@crkn-rcdr/access-data";

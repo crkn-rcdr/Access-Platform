@@ -38,7 +38,7 @@
   import { isManifest, isCollection } from "@crkn-rcdr/access-data";
   import type { SideMenuPageData } from "$lib/types";
   import Toolbar from "$lib/components/shared/Toolbar.svelte";
-  import ManifestContentEditor from "$lib/components/manifests/ManifestContentEditor.svelte";
+  import ManifestEditor from "$lib/components/manifests/ManifestEditor.svelte";
   import SideMenuContainer from "$lib/components/shared/SideMenuContainer.svelte";
   import EditorActions from "$lib/components/access-objects/EditorActions.svelte";
   import StatusIndicator from "$lib/components/access-objects/StatusIndicator.svelte";
@@ -101,7 +101,7 @@
         {
           name: "Content",
           componentData: {
-            contentComponent: ManifestContentEditor,
+            contentComponent: ManifestEditor,
             contentComponentProps: { manifest: objectModel },
             sideMenuPageProps: {
               overflowY: "hidden",

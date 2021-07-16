@@ -4,8 +4,12 @@
 </script>
 
 <span class="status">
-  <span>Status: </span>
-  <span>{object["public"] ? "published" : "unpublished"}</span>
+  <span>Status:</span>
+  <span
+    >{object["public"]
+      ? `published on ${object["public"]}`
+      : "unpublished"}</span
+  >
 </span>
 
 <style>
