@@ -3,9 +3,9 @@ import { z } from "zod";
 import { Timestamp } from "./Timestamp.js";
 
 /**
- * Schema for a ProcessUpdate that has not yet yielded a result.
+ * A request to trigger a background process.
  */
-const ProcessRequest = z
+export const ProcessRequest = z
   .object({
     /**
      * Most recent request time for the automated process to run.
@@ -14,11 +14,13 @@ const ProcessRequest = z
   })
   .strict();
 
+export type ProcessRequest = z.infer<typeof ProcessRequest>;
+
 /**
- * Additional schema for a ProcessUpdate after it has yielded a result.
+ * The result of a background process.
  */
-const ProcessResult = z
-  .object({
+export const ProcessResult = ProcessRequest.merge(
+  z.object({
     /**
      * Most recent time the process update took place.
      */
@@ -28,20 +30,20 @@ const ProcessResult = z
      * Whether the last process was run successfully on this object.
      */
     succeeded: z.boolean(),
+
     /**
      * Error message supplied by the process.
      */
     message: z.string(),
   })
-  .strict();
+).strict();
+
+export type ProcessResult = z.infer<typeof ProcessResult>;
 
 /**
  * An object that describes a request for and the output of an automated
  * process that is applied to the parent object.
  */
-export const ProcessUpdate = z.union([
-  ProcessRequest,
-  ProcessRequest.merge(ProcessResult),
-]);
+export const ProcessUpdate = z.union([ProcessRequest, ProcessResult]);
 
 export type ProcessUpdate = z.infer<typeof ProcessUpdate>;
