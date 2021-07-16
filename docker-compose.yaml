@@ -2,6 +2,8 @@ version: "3.9"
 
 services:
   couchdb:
+    profiles:
+      - dev
     container_name: access-couch
     image: couchdb:3.1
     env_file:
@@ -14,6 +16,8 @@ services:
     ports:
       - "5984:5984"
   package-watcher:
+    profiles:
+      - dev
     container_name: access-packages
     build:
       context: .
@@ -21,7 +25,11 @@ services:
     image: access-packages:dev
     volumes:
       - .:/repo
+    networks:
+      access-platform:
   kivik-watcher:
+    profiles:
+      - dev
     container_name: access-kivik
     build:
       context: .
@@ -33,7 +41,6 @@ services:
       - .:/repo
     networks:
       access-platform:
-        ipv4_address: 172.30.0.180
 
 networks:
   access-platform:
