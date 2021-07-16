@@ -73,8 +73,6 @@
         </button>
       </div>
       <br />
-      <h6>Search for a manifest to add canvases from:</h6>
-
       {#if error}
         <br />
         <div class="alert alert-danger">
@@ -85,14 +83,10 @@
       <div>
         <!--Todo: ask how best to limit to only manifests-->
         <TypeAhead
-          label=""
-          placeholder="Search for a manifest..."
+          label="Search for a manifest to add canvases from:"
           on:selected={handleSelect}
           on:keypress={() => (error = "")}
-        >
-          View and select canvases
-          <div class="icon"><TiArrowRight /></div>
-        </TypeAhead>
+        />
       </div>
     </div>
   {:else}
