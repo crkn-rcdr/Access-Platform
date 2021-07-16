@@ -3,7 +3,7 @@
 
 FROM node:16 AS init
 
-ENV PNPM_VERSION 6.10.0
+ENV PNPM_VERSION 6.10.2
 RUN curl -sL https://unpkg.com/@pnpm/self-installer | node
 
 WORKDIR /repo
@@ -52,3 +52,9 @@ FROM install AS kivik_watch
 WORKDIR /repo/services/couchdb
 
 CMD ["pnpm", "run", "watch:docker"]
+
+FROM install AS lapin_dev
+
+WORKDIR /repo/services/lapin
+
+CMD ["pnpm", "run", "dev"]

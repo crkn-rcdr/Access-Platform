@@ -36,11 +36,32 @@ services:
       target: kivik_watch
     image: access-kivik:dev
     depends_on:
+      - package-watcher
       - couchdb
     volumes:
       - .:/repo
     networks:
       access-platform:
+  lapin-dev:
+    profiles:
+      - dev
+    container_name: access-lapin
+    build:
+      context: .
+      target: lapin_dev
+    image: access-lapin:dev
+    depends_on:
+      - package-watcher
+      - couchdb
+    volumes:
+      - .:/repo
+    networks:
+      access-platform:
+        ipv4_address: 172.30.0.9
+        aliases:
+          - lapin
+    ports:
+      - "5858:5858"
 
 networks:
   access-platform:
