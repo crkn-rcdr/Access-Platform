@@ -20,13 +20,16 @@
   "homepage": "https://github.com/crkn-rcdr/Access-Platform#readme",
   "scripts": {
     "cleanup": "pnpm run kivik:stop",
-    "dev": "pnpm run --parallel --stream dev",
+    "docker:dev": "run-s docker:dev:*",
+    "docker:dev:down": "docker-compose --profile dev down --volumes",
+    "docker:dev:up": "docker-compose --profile dev up --build --remove-orphans",
     "preinstall": "npx only-allow pnpm",
-    "kivik:start": "cd services/couchdb && pnpx kivik start && pnpx kivik deploy local",
-    "kivik:stop": "cd services/couchdb && pnpx kivik stop",
-    "test": "pnpm run kivik:start && pnpm -r test:all; pnpm run kivik:stop"
+    "test": "pnpm -r test:all"
   },
   "optionalDependencies": {
     "fsevents": "^2.3.2"
+  },
+  "devDependencies": {
+    "npm-run-all": "^4.1.5"
   }
 }

@@ -1,4 +1,13 @@
-const { validator } = require("..");
-const { validateAccessDocument } = require("@crkn-rcdr/access-data");
+const { AccessObject } = require("@crkn-rcdr/access-data");
 
-module.exports = validator(validateAccessDocument);
+module.exports = (data) => {
+  data["id"] = data["_id"];
+  const test = AccessObject.safeParse(data);
+  if (test.success) {
+    return true;
+  } else {
+    // setting this up until crkn-rcdr/kivik#72 is sorted out
+    console.log(test.error.errors);
+    return { valid: false, errors: test.error.errors };
+  }
+};

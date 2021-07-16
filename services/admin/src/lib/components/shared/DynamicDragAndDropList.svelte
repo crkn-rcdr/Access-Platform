@@ -161,7 +161,10 @@
     white-space: nowrap;
   }
 
-  :global(.x .draggable, .both .draggable) {
+  :global(.x .draggable) {
+    display: inline-block;
+  }
+  :global(.both .draggable) {
     display: inline-block;
   }
   :global(.drag-target) {
