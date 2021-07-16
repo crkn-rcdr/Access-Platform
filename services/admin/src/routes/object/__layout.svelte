@@ -43,6 +43,7 @@
   import EditorActions from "$lib/components/access-objects/EditorActions.svelte";
   import StatusIndicator from "$lib/components/access-objects/StatusIndicator.svelte";
   import InfoEditor from "$lib/components/access-objects/InfoEditor.svelte";
+  import CollectionEditor from "$lib/components/collection/CollectionEditor.svelte";
 
   export let object: AccessObject;
   export let createMode: boolean;
@@ -120,6 +121,19 @@
             contentComponent: InfoEditor,
             contentComponentProps: { object: objectModel },
             sideMenuPageProps: {},
+            update: () => {
+              objectModel = objectModel;
+            },
+          },
+        },
+        {
+          name: "Members",
+          componentData: {
+            contentComponent: CollectionEditor,
+            contentComponentProps: { collection: objectModel },
+            sideMenuPageProps: {
+              overflowY: "hidden",
+            },
             update: () => {
               objectModel = objectModel;
             },
