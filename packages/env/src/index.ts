@@ -8,6 +8,7 @@ export const Env = z
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
+    ADMIN_PORT: z.string().refine((portString) => parseInt(portString, 10)),
     COUCHDB_URL: z.string().url(),
     COUCHDB_USER: z.string().min(1),
     COUCHDB_PASSWORD: z.string().min(1),

@@ -8,10 +8,22 @@ const config = {
   preprocess: preprocess(),
 
   kit: {
-    adapter: nodeAdapter(),
+    adapter: nodeAdapter({
+      env: {
+        port: "ADMIN_PORT",
+      },
+    }),
 
     // hydrate the <div id="svelte"> element in src/app.html
     target: "#svelte",
+
+    vite: {
+      server: {
+        hmr: {
+          port: 14747,
+        },
+      },
+    },
   },
 };
 

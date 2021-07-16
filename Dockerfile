@@ -3,7 +3,7 @@
 
 FROM node:16 AS init
 
-ENV PNPM_VERSION 6.10.0
+ENV PNPM_VERSION 6.10.2
 RUN curl -sL https://unpkg.com/@pnpm/self-installer | node
 
 WORKDIR /repo
@@ -22,7 +22,7 @@ FROM init AS install
 COPY packages/ packages/
 COPY services/ services/
 
-RUN pnpm install -r --frozen-lockfile
+RUN pnpm install -r --frozen-lockfile --silent
 
 # build
 # Builds every package. TODO: I only need this for prod
@@ -52,3 +52,15 @@ FROM install AS kivik_watch
 WORKDIR /repo/services/couchdb
 
 CMD ["pnpm", "run", "watch:docker"]
+
+FROM install AS lapin_dev
+
+WORKDIR /repo/services/lapin
+
+CMD ["pnpm", "run", "dev"]
+
+FROM install AS admin_dev
+
+WORKDIR /repo/services/proof-of-concept
+
+CMD ["pnpm", "run", "dev"]
