@@ -3,12 +3,12 @@ const { writeJson } = require("fs-extra");
 const { join: pathJoin } = require("path");
 const { get: getNano } = require("@crkn-rcdr/nano");
 
-module.exports.validator = (validate) => (data) => {
-  const valid = validate(data);
-  if (valid) {
-    return valid;
+module.exports.validator = (schema) => (data) => {
+  const valid = schema.safeParse(data);
+  if (valid.success) {
+    return true;
   } else {
-    return { valid, errors: validate.errors };
+    return { valid: false, errors: valid.error.errors };
   }
 };
 

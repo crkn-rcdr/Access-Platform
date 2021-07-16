@@ -98,7 +98,7 @@
     element.setAttribute("draggable", "true");
     element.setAttribute("ondragover", "return false");
 
-    /** Hides the item being dragged in it's orginal position. This must be done during drag, else the drag preview will not show. */
+    /** Hides the item being dragged in its orginal position. This must be done during drag, else the drag preview will not show. */
     element.addEventListener("drag", () => {
       element.classList?.add("dragging");
     });
@@ -108,7 +108,7 @@
       originalItemIndex = elementIndex;
     });
 
-    /** Shows the item being dragged in it's new position, and clears the drag target animation from the element being hovered over. */
+    /** Shows the item being dragged in its new position, and clears the drag target animation from the element being hovered over. */
     element.addEventListener("dragend", () => {
       element.classList?.remove("dragging");
       clearDragAnimation();
@@ -170,7 +170,10 @@
     white-space: nowrap;
   }
 
-  :global(.x .draggable, .both .draggable) {
+  :global(.x .draggable) {
+    display: inline-block;
+  }
+  :global(.both .draggable) {
     display: inline-block;
   }
   :global(.drag-target) {

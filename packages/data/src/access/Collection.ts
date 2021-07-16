@@ -1,84 +1,43 @@
-import { JSONSchemaType } from "ajv";
-import { inherit } from "../validator";
-import { Canonical, schema as canonicalSchema } from "./Canonical";
-import { Noid, inline as noidSchema } from "../format/noid";
-import { Text, inline as textSchema } from "../util/Text";
+import { z } from "zod";
+import { Described } from "./traits/Described.js";
+import { Identified } from "./traits/Identified.js";
+import { Slugged } from "./traits/Slugged.js";
+import { ObjectList } from "./util/ObjectList.js";
 
-const BEHAVIORS = ["unordered", "individuals", "multi-part"];
+export const Collection = z
+  .object({
+    type: z.enum(["collection"]),
 
-export type Member = {
-  /**
-   * The member's Noid.
-   */
-  id: Noid;
+    /**
+     * Semantics about the nature of the collection's members list.
+     * `unordered` members have no connection to each other,
+     * `individuals` are in a meaningful order but the end of one does not
+     * link into the beginning of the other, and `multi-part` members are parts
+     * of one cohesive whole. If that was too vague, use `unordered` for
+     * thematic or project collections, and `multi-part` for serials.
+     */
+    behavior: z.enum(["unordered", "individuals", "multi-part"]),
 
-  /**
-   * The short label for this member in this collection's context.
-   * Uses the member's full label by default.
-   */
-  label?: Text;
-};
+    /**
+     * The list of members of this collection.
+     */
+    members: ObjectList,
+  })
+  .merge(Identified)
+  .merge(Slugged)
+  .merge(Described);
 
-type CollectionSpec = {
-  type: "collection";
-
-  /**
-   * Semantics about the nature of the collection's members list.
-   * `unordered` members have no connection to each other,
-   * `individuals` are in a meaningful order but the end of one does not
-   * link into the beginning of the other, and `multi-part` members are parts
-   * of one cohesive whole. If that was too vague, use `unordered` for
-   * thematic or project collections, and `multi-part` for serials.
-   */
-  behavior: typeof BEHAVIORS[number];
-
-  /**
-   * The list of members of this collection.
-   */
-  members: Member[];
-};
+export type Collection = z.infer<typeof Collection>;
 
 /**
- * A grouping of other collections and/or manifests.
+ * The staff-editable properties of a Collection.
  */
-export type Collection = Canonical & CollectionSpec;
+export const EditableCollection = Collection.pick({
+  slug: true,
+  label: true,
+  summary: true,
+  behavior: true,
+  members: true,
+});
 
-const specSchema = {
-  $id: "/access/Collection",
-  title: "Collection",
-  description: "A grouping of other collections and/or manifests.",
-  type: "object",
-  properties: {
-    type: { type: "string", const: "collection" },
-    behavior: {
-      description:
-        "Semantics about the nature of the collection's members list. `unordered` members have no connection to each other, `individuals` are in a meaningful order but the end of one does not link into the beginning of the other, and `multi-part` members are parts of one cohesive whole. If that was too vague, use `unordered` for thematic or project collections, and `multi-part` for serials",
-      type: "string",
-      enum: BEHAVIORS,
-    },
-    members: {
-      description: "The list of members of this collection.",
-      type: "array",
-      items: {
-        type: "object",
-        properties: {
-          id: { ...noidSchema, description: "The member's Noid." },
-          label: {
-            ...textSchema,
-            nullable: true,
-            description:
-              "The short label for this member in this collection's context. Uses the member's full label by default.",
-          },
-        },
-        required: ["id"],
-      },
-    },
-  },
-  required: ["type", "behavior", "members"],
-} as JSONSchemaType<CollectionSpec>;
-
-export const { inline, schema, validate } = inherit<
-  Collection,
-  Canonical,
-  CollectionSpec
->(canonicalSchema, specSchema, false);
+export type EditableCollection = z.infer<typeof EditableCollection>;

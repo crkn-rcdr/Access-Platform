@@ -1,9 +1,8 @@
 import test from "ava";
-import { tester } from "../common.spec";
+import { tester } from "../testHelper.js";
+import { Timestamp } from "./Timestamp.js";
 
-import { validate } from "./Timestamp";
-
-const { isValid, isInvalid } = tester(validate);
+const { isInvalid, isValid } = tester(Timestamp);
 
 test(
   "Timestamp validates an ISO 8601 string in UTC with no second fractions",

@@ -1,0 +1,47 @@
+version: "3.9"
+
+services:
+  couchdb:
+    profiles:
+      - dev
+    container_name: access-couch
+    image: couchdb:3.1
+    env_file:
+      - .env.docker
+    networks:
+      access-platform:
+        ipv4_address: 172.30.0.6
+        aliases:
+          - couch
+    ports:
+      - "5984:5984"
+  package-watcher:
+    profiles:
+      - dev
+    container_name: access-packages
+    build:
+      context: .
+      target: package_watch
+    image: access-packages:dev
+    volumes:
+      - .:/repo
+    networks:
+      access-platform:
+  kivik-watcher:
+    profiles:
+      - dev
+    container_name: access-kivik
+    build:
+      context: .
+      target: kivik_watch
+    image: access-kivik:dev
+    depends_on:
+      - couchdb
+    volumes:
+      - .:/repo
+    networks:
+      access-platform:
+
+networks:
+  access-platform:
+    external: true

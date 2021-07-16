@@ -22,7 +22,7 @@ const verifyToken = (token: string, secret: string): User => {
   }
 };
 
-export const handle: Handle<Locals> = async ({ request, render }) => {
+export const handle: Handle<Locals> = async ({ request, resolve }) => {
   const cookies = cookie.parse(request.headers["cookie"] || "");
   const token = cookies["auth_token"];
 
@@ -52,7 +52,7 @@ export const handle: Handle<Locals> = async ({ request, render }) => {
     }
   }
 
-  return await render(request);
+  return await resolve(request);
 };
 
 export const getSession: GetSession<Locals, Session> = (request) => {

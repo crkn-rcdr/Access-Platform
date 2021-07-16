@@ -31,13 +31,15 @@
     "dev": "kivik dev --watch",
     "pull": "find . -wholename '*/fixtures/*.json' -delete && node ./pullFixtures.js",
     "test": "kivik start && ava -v; kivik stop",
-    "test:all": "ava -v"
+    "test:all": "ava -v",
+    "watch:docker": "kivik deploy couchdb-dev-docker --watch -l info",
+    "watch:host": "kivik deploy couchdb-dev --watch -l info"
   },
   "devDependencies": {
     "@crkn-rcdr/access-data": "workspace:*",
     "@crkn-rcdr/nano": "^2.0.1",
     "ava": "^3.15.0",
     "fs-extra": "^9.1.0",
-    "kivik": "^2.0.0-alpha.9"
+    "kivik": "^2.0.0-alpha.12"
   }
 }
