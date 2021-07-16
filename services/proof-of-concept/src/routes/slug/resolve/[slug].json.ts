@@ -7,7 +7,7 @@ export const get: RequestHandler<Locals> = async ({
   locals: { accessor },
 }) => {
   const slug = params["slug"] as string;
-
+  console.log("slug", slug);
   const lapin = getLapin();
   const response = await lapin.query("slug.resolve", slug);
   console.log("slug.resolve", response);

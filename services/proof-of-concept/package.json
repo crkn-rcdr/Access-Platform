@@ -4,9 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "svelte-kit dev -p $ADMIN_PORT --host",
+    "dev": "svelte-kit dev -p 3000 --host",
     "build": "svelte-kit build",
-    "preview": "svelte-kit preview -p $ADMIN_PORT --host",
+    "preview": "svelte-kit preview -p 3000 --host",
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-check --tsconfig ./tsconfig.json --watch"
   },

@@ -18,19 +18,20 @@ export const slugRouter = createRouter()
     },
   })
   .query("resolve", {
-    input: Array,
-    async resolve({ input: q, ctx }): Promise<[Noid, Slug][]> {
+    input: Slug.parse,
+    async resolve({ input: q, ctx }): Promise<any> {
+      console.log("query", q);
       const response = await ctx.couch.access.find({
         selector: {
           slug: { $eq: q },
         },
         fields: ["_id", "slug"],
       });
+      console.log(response);
 
-      return response.map((record) => [
-        record._id as Noid,
-        record["slug"] as Slug,
-      ]);
+      return response.length
+        ? { noid: response?.[0]?._id, slug: response?.[0]?.["slug"] }
+        : null;
     },
   })
   .query("resolveMany", {
