@@ -135,14 +135,22 @@ importers:
       '@sveltejs/adapter-node': ^1.0.0-next.33
       '@sveltejs/kit': 1.0.0-next.131
       '@trpc/client': 8.1.3
+      deep-object-diff: ^1.1.0
+      fast-deep-equal: ^3.1.3
+      openseadragon: ^2.4.2
       svelte: ^3.38.3
       svelte-check: ^2.2.2
+      svelte-icons: ^2.1.0
       svelte-preprocess: ^4.7.4
       tslib: ^2.3.0
       typescript: ^4.3.5
     dependencies:
       '@crkn-rcdr/access-data': link:../../packages/data
       '@trpc/client': 8.1.3
+      deep-object-diff: 1.1.0
+      fast-deep-equal: 3.1.3
+      openseadragon: 2.4.2
+      svelte-icons: 2.1.0
     devDependencies:
       '@crkn-rcdr/lapin': link:../lapin
       '@sveltejs/adapter-node': 1.0.0-next.33
@@ -961,6 +969,10 @@ packages:
     engines: {node: '>=4.0.0'}
     dev: true
 
+  /deep-object-diff/1.1.0:
+    resolution: {integrity: sha512-b+QLs5vHgS+IoSNcUE4n9HP2NwcHj7aqnJWsjPtuG75Rh5TOaGt0OjAYInh77d5T16V5cRDC+Pw/6ZZZiETBGw==}
+    dev: false
+
   /defaults/1.0.3:
     resolution: {integrity: sha1-xlYFHpgX2f8I7YgUd/P+QBnz730=}
     dependencies:
@@ -1157,6 +1169,10 @@ packages:
     resolution: {integrity: sha512-kVscqXk4OCp68SZ0dkgEKVi6/8ij300KBWTJq32P/dYeWTSwK41WyTxalN1eRmA5Z9UU/LX9D7FWSmV9SAYx6g==}
     engines: {node: '>=0.10.0'}
     dev: true
+
+  /fast-deep-equal/3.1.3:
+    resolution: {integrity: sha512-f3qQ9oQy9j2AhBe/H9VC91wLmKBCCU/gDOnKNAYG5hswO7BLKj09Hc5HYNz9cGI++xlpDCIgDaitVs03ATR84Q==}
+    dev: false
 
   /fast-diff/1.2.0:
     resolution: {integrity: sha512-xJuoT5+L99XlZ8twedaRf6Ax2TgQVxvgZOYoPKqZufmJib0tL2tegPBOZb1pVNgIhlqDlA0eO0c3wBvQcmzx4w==}
@@ -2083,6 +2099,10 @@ packages:
       mimic-fn: 2.1.0
     dev: true
 
+  /openseadragon/2.4.2:
+    resolution: {integrity: sha512-398KbZwRtOYA6OmeWRY4Q0737NTacQ9Q6whmr9Lp1MNQO3p0eBz5LIASRne+4gwequcSM1vcHcjfy3dIndQziw==}
+    dev: false
+
   /ora/5.4.1:
     resolution: {integrity: sha512-5b6Y85tPxZZ7QytO+BQzysW31HJku27cRIlkbAXaNx+BdcVi+LlRFmVXzeF6a7JCwJpyw5c4b+YSVImQIrBpuQ==}
     engines: {node: '>=10'}
@@ -2849,6 +2869,10 @@ packages:
     dependencies:
       svelte: 3.38.3
     dev: true
+
+  /svelte-icons/2.1.0:
+    resolution: {integrity: sha512-rHPQjweEc9fGSnvM0/4gA3pDHwyZyYsC5KhttCZRhSMJfLttJST5Uq0B16Czhw+HQ+HbSOk8kLigMlPs7gZtfg==}
+    dev: false
 
   /svelte-preprocess/4.7.4_svelte@3.38.3+typescript@4.3.5:
     resolution: {integrity: sha512-mDAmaltQl6e5zU2VEtoWEf7eLTfuOTGr9zt+BpA3AGHo8MIhKiNSPE9OLTCTOMgj0vj/uL9QBbaNmpG4G1CgIA==}
