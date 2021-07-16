@@ -1,9 +1,0 @@
-{
-  "extends": "../../tsconfig-esm.json",
-  "include": ["src/**/*.ts"],
-  "exclude": ["src/**/*.spec.ts"],
-  "compilerOptions": {
-    "outDir": "./dist/esm",
-    "preserveSymlinks": true
-  }
-}

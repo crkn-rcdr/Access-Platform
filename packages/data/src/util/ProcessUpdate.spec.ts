@@ -1,29 +1,28 @@
 import test from "ava";
-import { tester } from "../common.spec";
+import { tester } from "../testHelper.js";
+import { ProcessUpdate } from "./ProcessUpdate.js";
 
-import { ProcessUpdate, validate } from "./ProcessUpdate";
+const { isValid, isInvalid } = tester(ProcessUpdate);
 
-const { isValid } = tester(validate);
-
-const minimal: ProcessUpdate = {
+const minimal = {
   requestDate: "2020-02-02T02:02:02Z",
 };
 
-const maximal: ProcessUpdate = {
+const maximal = {
   requestDate: "2020-02-02T02:02:02Z",
   processDate: "2020-02-03T02:02:02Z",
   succeeded: false,
   message: "Something went wrong.",
 };
 
-test(
-  "ProcessUpdate schema validates a minimal ProcessUpdate",
-  isValid,
-  minimal
-);
+const bogus = {
+  requestDate: "2020-02-02T02:02:02Z",
+  processDate: "2020-02-03T02:02:02Z",
+  bogus: true,
+};
 
-test(
-  "ProcessUpdate schema validates a maximal ProcessUpdate",
-  isValid,
-  maximal
-);
+test("ProcessUpdate validates a ProcessUpdate request", isValid, minimal);
+
+test("ProcessUpdate validates a ProcessUpdate result", isValid, maximal);
+
+test("ProcessUpdate invalidates a bogus ProcessUpdate", isInvalid, bogus);

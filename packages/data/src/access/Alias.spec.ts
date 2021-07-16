@@ -1,17 +1,14 @@
 import test from "ava";
-import { tester } from "../common.spec";
+import { tester } from "../testHelper.js";
+import { Alias } from "./Alias.js";
 
-import { validate } from "./Alias";
-import { isAlias } from ".";
-import { testAlias, testGuard } from "./common.spec";
+const { isValid } = tester(Alias);
 
-const { isValid } = tester(validate);
+export const testAlias: Alias = {
+  id: "69429/m02n4zg6h671",
+  type: "alias",
+  slug: "typoOfSorts",
+  to: "not.a.typo",
+};
 
 test("Alias schema validates an Alias", isValid, testAlias);
-
-test(
-  "isAlias discerns aliases from other objects",
-  testGuard,
-  isAlias,
-  "alias"
-);

@@ -1,40 +1,35 @@
-import { JSONSchemaType } from "ajv";
-import { Slugged, schema as sluggedSchema } from "./Slugged";
-import { Noid, inline as noidSchema } from "../format/noid";
-import { inherit } from "../validator";
-
-type AliasSpec = {
-  type: "alias";
-
-  /**
-   * The Noid of the object this alias points to.
-   */
-  to: Noid;
-};
+import { z } from "zod";
+import { Slug } from "../util/Slug.js";
+import { Identified } from "./traits/Identified.js";
+import { Slugged } from "./traits/Slugged.js";
 
 /**
- * A slug that points to an object primarily identified by another slug.
+ * An access object that specifies that its Slug should point to
+ * a different Slug.
  */
-export type Alias = Slugged & AliasSpec;
+export const Alias = z
+  .object({
+    type: z.enum(["alias"]),
 
-const specSchema = {
-  $id: "/access/Alias",
-  title: "Slug Alias",
-  description:
-    "A slug that points to an object primarily identified by another slug.",
-  type: "object",
-  properties: {
-    type: { type: "string", const: "alias" },
-    to: {
-      ...noidSchema,
-      description: "The Noid of the object this alias points to.",
-    },
-  },
-  required: ["type", "to"],
-} as JSONSchemaType<AliasSpec>;
+    /**
+     * The slug that this Alias points to.
+     * n.b. this used to be a Noid, but I think a Slug is more appropriate.
+     * 1. The imagined main use case for this will be to handle Slug misspellings.
+     * 2. Why keep track of a Noid that might get thrown away later?
+     */
+    to: Slug,
+  })
+  .merge(Identified)
+  .merge(Slugged);
 
-export const { inline, schema, validate } = inherit<Alias, Slugged, AliasSpec>(
-  sluggedSchema,
-  specSchema,
-  false
-);
+export type Alias = z.infer<typeof Alias>;
+
+/**
+ * The staff-editable properites of an Alias.
+ */
+export const EditableAlias = Alias.pick({
+  slug: true,
+  to: true,
+});
+
+export type EditableAlias = z.infer<typeof EditableAlias>;

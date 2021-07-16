@@ -1,37 +1,20 @@
-import { JSONSchemaType } from "ajv";
-import { Timestamp, inline as timestampSchema } from "./Timestamp";
-import { User, inline as userSchema } from "./User";
-import { generateSchema } from "../validator";
+import { z } from "zod";
+import { Timestamp } from "./Timestamp.js";
+import { User } from "./User.js";
 
 /**
- * Represents data for when a staff member 9user) updates an object, and when they had done so.
+ * A record of the most recent update to an object performed by staff.
  */
-export type StaffUpdate = {
+export const StaffUpdate = z.object({
   /**
-   * The user who has performed the update.
+   * The staff member who performed the update.
    */
-  by: User;
+  by: User,
 
   /**
-   * A timestamp showing when the user performed the update.
+   * The time the update was registered.
    */
-  date: Timestamp;
-};
+  date: Timestamp,
+});
 
-export const { inline, schema, validate } = generateSchema<StaffUpdate>({
-  $id: "/util/StaffUpdate",
-  $comment: "Represents data for when a staff member 9user) updates an object, and when they had done so.",
-  title: "StaffUpdate",
-  type: "object",
-  properties: {
-    by: {
-      ...userSchema,
-      description: "The user who has performed the update.",
-    },
-    date: {
-      ...timestampSchema,
-      description: "A timestamp showing when the user performed the update.",
-    },
-  },
-  required: ["by", "date"],
-} as JSONSchemaType<StaffUpdate>);
+export type StaffUpdate = z.infer<typeof StaffUpdate>;

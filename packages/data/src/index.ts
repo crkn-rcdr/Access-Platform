@@ -3,22 +3,29 @@ export {
   Alias,
   Canvas,
   Collection,
+  EditableAlias,
+  EditableCanvas,
+  EditableCollection,
+  EditableManifest,
+  FileRef,
+  ImageRef,
   Manifest,
+  ObjectList,
+  TextRecord,
   isAlias,
+  isCanvas,
   isCollection,
   isManifest,
-} from "./access";
-export { Dipstaging } from "./dipstaging";
-export {
-  DATABASES,
-  DocumentTypes,
-  fromCouch,
-  toAccessObject,
-  toCouch,
-  validateAccessDocument,
-  validateCanvasDocument,
-} from "./couch";
-export { Noid, Slug, UnixFilePath } from "./format";
-export { FileRef, ImageRef, ProcessUpdate, Text, Timestamp } from "./util";
+} from "./access/index.js";
 
-export { validator } from "./validator";
+export { LegacyPackage } from "./deposit/LegacyPackage.js";
+
+export {
+  MD5,
+  Noid,
+  ProcessUpdate,
+  Slug,
+  Timestamp,
+  UnixFilePath,
+  User,
+} from "./util/index.js";
