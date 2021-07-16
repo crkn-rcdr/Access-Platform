@@ -50,6 +50,8 @@ services:
       context: .
       target: lapin_dev
     image: access-lapin:dev
+    env_file:
+      - .env.docker
     depends_on:
       - package-watcher
       - couchdb
@@ -62,6 +64,28 @@ services:
           - lapin
     ports:
       - "5858:5858"
+  admin-dev:
+    profiles:
+      - dev
+    container_name: access-admin
+    build:
+      context: .
+      target: admin_dev
+    image: access-admin:dev
+    env_file:
+      - .env.docker
+    depends_on:
+      - lapin-dev
+    volumes:
+      - .:/repo
+    networks:
+      access-platform:
+        ipv4_address: 172.30.0.10
+        aliases:
+          - admin
+    ports:
+      - "4747:4747"
+      - "14747:14747"
 
 networks:
   access-platform:
