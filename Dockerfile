@@ -51,6 +51,4 @@ FROM install AS kivik_watch
 
 WORKDIR /repo/services/couchdb
 
-RUN mv kivikrc.docker.json kivikrc.json
-
 CMD ["pnpm", "run", "watch:docker"]
