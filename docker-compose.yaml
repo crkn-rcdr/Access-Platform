@@ -36,11 +36,56 @@ services:
       target: kivik_watch
     image: access-kivik:dev
     depends_on:
+      - package-watcher
       - couchdb
     volumes:
       - .:/repo
     networks:
       access-platform:
+  lapin-dev:
+    profiles:
+      - dev
+    container_name: access-lapin
+    build:
+      context: .
+      target: lapin_dev
+    image: access-lapin:dev
+    env_file:
+      - .env.docker
+    depends_on:
+      - package-watcher
+      - couchdb
+    volumes:
+      - .:/repo
+    networks:
+      access-platform:
+        ipv4_address: 172.30.0.9
+        aliases:
+          - lapin
+    ports:
+      - "5858:5858"
+  admin-dev:
+    profiles:
+      - dev
+    container_name: access-admin
+    build:
+      context: .
+      target: admin_dev
+    image: access-admin:dev
+    env_file:
+      - .env.docker
+    depends_on:
+      - lapin-dev
+    volumes:
+      - .:/repo
+    networks:
+      access-platform:
+        ipv4_address: 172.30.0.10
+        aliases:
+          - admin
+    ports:
+      - "4747:4747"
+      - "14747:14747"
 
 networks:
   access-platform:

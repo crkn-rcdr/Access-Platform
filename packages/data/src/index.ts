@@ -21,8 +21,19 @@ export {
 export { LegacyPackage } from "./deposit/LegacyPackage.js";
 
 export {
+  DMDTask,
+  SplitRequestDMDTask,
+  SplitFailureDMDTask,
+  SplitSuccessDMDTask,
+  StoreRequestDMDTask,
+  StoreResultDMDTask,
+} from "./dmd/index.js";
+
+export {
   MD5,
   Noid,
+  ProcessRequest,
+  ProcessResult,
   ProcessUpdate,
   Slug,
   Timestamp,

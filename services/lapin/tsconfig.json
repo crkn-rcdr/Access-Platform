@@ -3,9 +3,6 @@
     "target": "esnext",
     "module": "esnext",
     "lib": ["es2020"],
-    "outDir": "./dist",
-    "declaration": true,
-    "sourceMap": true,
     "moduleResolution": "node",
     "newLine": "lf",
     "stripInternal": true,
@@ -23,6 +20,5 @@
     "esModuleInterop": true,
     "preserveSymlinks": true
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["src/**/*.spec.ts"]
+  "include": ["**/*.ts"]
 }
