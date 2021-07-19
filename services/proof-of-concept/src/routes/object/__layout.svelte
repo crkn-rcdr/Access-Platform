@@ -79,7 +79,9 @@
 
   async function setDataModel(object: AccessObject) {
     if (!object) return;
-    objectModel = AccessObject.parse(object);
+
+    rfdc = (await import("rfdc")).default();
+    objectModel = rfdc(object) as AccessObject; // todo: get this done with zod
 
     if (isManifest(objectModel)) {
       pageList = [
@@ -127,7 +129,7 @@
 
   $: {
     // Share any changes that occur in this component with the sub-components in the navigator.
-    setDataModel(object);
+    if (object) setDataModel(object);
   }
 </script>
 
