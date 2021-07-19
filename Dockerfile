@@ -8,24 +8,21 @@ RUN curl -sL https://unpkg.com/@pnpm/self-installer | node
 
 WORKDIR /repo
 
-RUN echo "store-dir=./.docker-pnpm-store" > .npmrc
-
-COPY package.json package.json
 COPY pnpm-lock.yaml pnpm-lock.yaml
-COPY pnpm-workspace.yaml pnpm-workspace.yaml
+RUN pnpm fetch
 
 # install
 # Downloads and installs package and service dependencies.
 
 FROM init AS install
 
-COPY packages/ packages/
-COPY services/ services/
+COPY . .
+RUN pnpm install -r --offline --silent
 
-RUN pnpm install -r --frozen-lockfile --silent
+ENTRYPOINT ["pnpm", "run"]
 
-# build
-# Builds every package. TODO: I only need this for prod
+# # build
+# # Builds every package. TODO: I only need this for prod
 
 # FROM init AS build
 
@@ -34,33 +31,6 @@ RUN pnpm install -r --frozen-lockfile --silent
 
 # COPY packages/ packages/
 
-# RUN pnpm install -r --frozen-lockfile
+# RUN pnpm install -r --frozen-lockfile --silent
 # RUN pnpm run -r build --filter ./packages
 
-# package_watch
-# Recompiles every package on file change.
-
-FROM install AS package_watch
-
-CMD ["pnpm", "run", "watch", "-r", "--filter", "./packages", "--parallel"]
-
-# kivik_watch
-# Runs `kivik deploy --watch`, pointing to the CouchDB endpoint spun up in docker-compose
-
-FROM install AS kivik_watch
-
-WORKDIR /repo/services/couchdb
-
-CMD ["pnpm", "run", "watch:docker"]
-
-FROM install AS lapin_dev
-
-WORKDIR /repo/services/lapin
-
-CMD ["pnpm", "run", "dev"]
-
-FROM install AS admin_dev
-
-WORKDIR /repo/services/proof-of-concept
-
-CMD ["pnpm", "run", "dev"]

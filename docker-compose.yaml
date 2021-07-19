@@ -21,8 +21,9 @@ services:
     container_name: access-packages
     build:
       context: .
-      target: package_watch
-    image: access-packages:dev
+      target: install
+    image: access-platform:dev
+    command: ["watch", "-r", "--filter", "./packages", "--parallel"]
     volumes:
       - .:/repo
     networks:
@@ -31,10 +32,8 @@ services:
     profiles:
       - dev
     container_name: access-kivik
-    build:
-      context: .
-      target: kivik_watch
-    image: access-kivik:dev
+    image: access-platform:dev
+    command: ["-C", "./services/couchdb", "watch:docker"]
     depends_on:
       - package-watcher
       - couchdb
@@ -46,10 +45,8 @@ services:
     profiles:
       - dev
     container_name: access-lapin
-    build:
-      context: .
-      target: lapin_dev
-    image: access-lapin:dev
+    image: access-platform:dev
+    command: ["-C", "./services/lapin", "dev"]
     env_file:
       - .env.docker
     depends_on:
@@ -68,10 +65,8 @@ services:
     profiles:
       - dev
     container_name: access-admin
-    build:
-      context: .
-      target: admin_dev
-    image: access-admin:dev
+    image: access-platform:dev
+    command: ["-C", "./services/proof-of-concept", "dev"]
     env_file:
       - .env.docker
     depends_on:
