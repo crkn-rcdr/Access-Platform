@@ -46,7 +46,7 @@
 
   let pageList: Array<SideMenuPageData> = [];
 
-  //let rfdc: any; // Deep copies an object
+  let rfdc: any; // Deep copies an object
   let objectModel: AccessObject; // Used to keep track of changes to the object, without changing the actual object until save is pressed.
 
   function handleNewCollectionPressed() {
@@ -79,9 +79,9 @@
 
   async function setDataModel(object: AccessObject) {
     if (!object) return;
-    objectModel = JSON.parse(JSON.stringify(object)); // todo: get this done with zod
-    //console.log(parsedObject);
-    //if(parsedObject.success) objectModel
+
+    rfdc = (await import("rfdc")).default();
+    objectModel = rfdc(object) as AccessObject; // todo: get this done with zod
 
     if (isManifest(objectModel)) {
       pageList = [
