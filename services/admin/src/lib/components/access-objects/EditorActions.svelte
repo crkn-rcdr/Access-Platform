@@ -21,11 +21,10 @@
     checkModelChanged(objectModel);
   }
 
-  function save() {
-    const diff: any = detailedDiff(object, model); // TODO: We can send this to the back-end
-    console.log(diff); // TODO: replace this with some kind of back-end call
-    object = clone(model);
-    checkModelChanged(model);
+  function handleSave() {
+    let diff: any = detailedDiff(object, objectModel); //TODO: We can send this to the backend
+    object = clone(objectModel);
+    checkModelChanged(objectModel);
   }
 
   function handlePlaceInStorage() {

@@ -25,4 +25,20 @@
   };
 </script>
 
+<nav class="site-nav">
+  <p>user stuff...</p>
+</nav>
+
 <slot />
+
+<style>
+  .site-nav {
+    padding: 1.5rem 1rem;
+    background-color: var(--structural-div-bg);
+    filter: brightness(1.1);
+  }
+
+  a {
+    color: var(--base-font-color) !important;
+  }
+</style>

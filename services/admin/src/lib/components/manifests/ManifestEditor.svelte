@@ -1,6 +1,5 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import IoMdOpen from "svelte-icons/io/IoMdOpen.svelte";
   import type {
     Manifest,
     Canvas,

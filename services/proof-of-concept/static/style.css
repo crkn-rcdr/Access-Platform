@@ -1,0 +1,686 @@
+@font-face {
+  font-family: "Roboto";
+  src: url("./fonts/Roboto-Regular.ttf") format("truetype");
+}
+
+:root {
+  /* Colours */
+  --teal: #1f8591;
+  --teal-light: #c0d1d3;
+  --green: #368d00;
+  --green-light: #dbf1cd;
+  --grey: #686868;
+  --red: #ca0000;
+  --red-light: #e2bebe;
+  --gold: #91841f;
+  --gold-light: #e2d7be;
+  --dark-gradient: linear-gradient(0deg, #222 0%, #111 20%, #0c0c0c 100%);
+  --color-gradient: linear-gradient(
+    40.79deg,
+    var(--green) -106.9%,
+    var(--teal) 93.69%
+  );
+  --light-font: white;
+  --dark-font: black;
+
+  /* App Theme */
+  /* Change this to set the app bg color */
+  --base-bg: white;
+  /* Change this to set the toolbar, tables, menus etc. colour */
+  --structural-div-bg: #eee;
+  /* Change this to set the bg color for components that need a darker backgrop, ex: canvas viewer */
+  --backdrop-bg: #ddd;
+  /* Change this to set the bg color for overlays, ex: modal dimmer */
+  --overlay-bg: rgba(0, 0, 0, 0.75);
+  /* Change this to set the colour of inputs, text areas, and selects */
+  --form-field-bg: white;
+  /* Change this to set the default border colour for components, ex: inputs */
+  --border-color: #ccc;
+  /* Change this to set the font colour for the app */
+  --base-font-color: var(--dark-font);
+  /* Change this to set the interactive element colors, ex: alert, buttons */
+  /* Primary */
+  --primary: var(--teal);
+  --primary-light: var(--teal-light);
+  --primary-font: var(--light-font);
+  /* Secondary */
+  --secondary: var(--grey);
+  --secondary-light: var(--grey-light);
+  --secondary-font: var(--light-font);
+  /* Success */
+  --success: var(--green);
+  --success-light: var(--green-light);
+  --success-font: var(--light-font);
+  /* Danger */
+  --danger: var(--red);
+  --danger-light: var(--red-light);
+  --danger-font: var(--light-font);
+  /* Warn */
+  --warn: var(--gold);
+  --warn-light: var(--gold-light);
+  --warn-font: var(--light-font);
+
+  /* Sizing */
+  --lg-size: calc(var(--md-size) * 1.33);
+  --md-size: 1rem;
+  --sm-size: calc(var(--md-size) * 0.75);
+  --viewport-scaling: 0.2vw;
+  --border-radius: 0.25rem;
+  --perfect-fourth-1: calc(var(--md-size) * 5.6 + var(--viewport-scaling));
+  --perfect-fourth-2: calc(var(--md-size) * 4.2 + var(--viewport-scaling));
+  --perfect-fourth-3: calc(var(--md-size) * 3.15 + var(--viewport-scaling));
+  --perfect-fourth-4: calc(var(--md-size) * 2.36 + var(--viewport-scaling));
+  --perfect-fourth-5: calc(var(--md-size) * 1.77 + var(--viewport-scaling));
+  --perfect-fourth-6: calc(var(--lg-size) + var(--viewport-scaling));
+  --perfect-fourth-7: calc(var(--md-size) + var(--viewport-scaling));
+  --perfect-fourth-8: calc(var(--sm-size) + var(--viewport-scaling));
+  --auto-grid-min-col-size: calc(var(--md-size) * 20);
+  --auto-grid-min-row-size: calc(var(--lg-size) * 20);
+  --auto-grid-gap: calc(var(--md-size) * 3);
+  --margin-sm: var(--sm-size);
+  --margin-md: var(--md-size);
+  --margin-lg: var(--lg-size);
+  --breakpoint-md: 37em;
+  --breakpoint-lg: 62rem;
+
+  /* Shadows */
+  --shadow: drop-shadow(0px 0.125rem 0.25rem rgba(0, 0, 0, 0.25));
+}
+
+/* Font defaults */
+body {
+  font-family: "Roboto", sans-serif !important;
+  font-size: var(--perfect-fourth-7);
+  color: var(--base-font-color);
+  background-color: var(--base-bg);
+}
+
+/* Reactive margins */
+.margin-sm {
+  margin-top: calc(var(--margin-sm) + var(--viewport-scaling));
+}
+
+.margin-md {
+  margin-top: calc(var(--margin-md) + var(--viewport-scaling));
+}
+
+.margin-lg {
+  margin-top: calc(var(--margin-lg) + var(--viewport-scaling));
+}
+
+/* Screen reader accessible hiding 
+Source: https://github.com/twbs/bootstrap/blob/main/scss/mixins/_visually-hidden.scss*/
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+.opacity-hidden {
+  opacity: 0;
+  cursor: auto;
+}
+/* Hide content from user + screen reader until menu clicked.*/
+.display-hidden {
+  display: none;
+}
+.visibility-hidden {
+  visibility: hidden;
+}
+
+/*
+  AUTO GRID
+  Set the minimum item size with `--auto-grid-min-size` and you’ll
+  get a fully responsive grid with no media queries.
+  https://piccalil.li/tutorial/create-a-responsive-grid-layout-with-no-media-queries-using-css-grid/
+*/
+.auto-grid {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(var(--auto-grid-min-col-size), 1fr)
+  );
+  grid-auto-rows: auto;
+  grid-gap: var(--auto-grid-gap);
+}
+
+/* Flexbox alignment */
+.auto-align {
+  display: inline-flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+
+.auto-align__full {
+  width: 100%;
+  height: 100%;
+}
+
+.auto-align__column {
+  flex-direction: column;
+}
+.auto-align__j-center {
+  justify-content: center;
+}
+.auto-align__j-end {
+  justify-content: flex-end;
+}
+.auto-align__j-even {
+  justify-content: space-evenly;
+}
+.auto-align__a-center {
+  align-items: center;
+}
+.auto-align__a-baseline {
+  align-items: baseline;
+}
+.auto-align__a-end {
+  align-items: flex-end;
+}
+.auto-align__a-stretch {
+  align-items: stretch;
+}
+.auto-align__wrap {
+  flex-wrap: wrap;
+}
+
+/* Hero element defaults. */
+.hero {
+  padding: var(--perfect-fourth-1) 0;
+}
+
+.hero.hero__gradient {
+  background: var(--color-gradient);
+  color: var(--primary-font);
+}
+
+/* Wrapper util - default page margins */
+.wrapper {
+  margin-inline: auto;
+  padding-inline: 1rem;
+  max-width: 90rem;
+}
+
+/* Break out of the mould of your fixed-width container to create visual interest - see: https://piccalil.li/tutorial/creating-a-full-bleed-css-utility/ */
+.full-bleed {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+}
+
+/* Force content to 100% page height */
+.full-page {
+  height: 100vh;
+}
+
+/* Make the element align itself to the left/right */
+.float__left {
+  float: left;
+}
+.float__right {
+  float: right;
+}
+
+/* Box sizing rules, see: https://piccalil.li/blog/a-modern-css-reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Remove default margin */
+body,
+h1,
+h2,
+h3,
+h4,
+p,
+figure,
+blockquote,
+dl,
+dd {
+  margin: 0;
+}
+
+/* Remove list styles on ul, ol elements with a list role, which suggests default styling will be removed */
+ul[role="list"],
+ol[role="list"] {
+  list-style: none;
+}
+
+/* Set core root defaults */
+html:focus-within {
+  scroll-behavior: smooth;
+}
+
+/* Set core body defaults */
+body {
+  text-rendering: optimizeSpeed;
+  line-height: 1.5;
+}
+
+/* A elements that don't have a class get default styles */
+a:not([class]) {
+  text-decoration-skip-ink: auto;
+}
+
+/* Make images easier to work with */
+img,
+picture {
+  display: block;
+}
+
+/* Inherit fonts for inputs and buttons */
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+/* Remove all animations, transitions and smooth scroll for people that prefer not to see them */
+@media (prefers-reduced-motion: reduce) {
+  html:focus-within {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Element defauls*/
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+a {
+  font-weight: 300;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0 0 1rem 0 !important;
+}
+
+h1 {
+  font-size: var(--perfect-fourth-1);
+}
+
+h2 {
+  font-size: var(--perfect-fourth-2);
+}
+
+h3 {
+  font-size: var(--perfect-fourth-3);
+}
+
+h4 {
+  font-size: var(--perfect-fourth-4);
+}
+
+h5 {
+  font-size: var(--perfect-fourth-5);
+}
+
+h6 {
+  font-size: var(--perfect-fourth-6);
+}
+
+button,
+.shadow {
+  filter: var(--shadow);
+}
+
+button {
+  padding: 0 var(--perfect-fourth-4);
+  height: var(--perfect-fourth-2);
+  border: none;
+  box-shadow: none;
+  border-radius: var(--border-radius);
+  font-weight: 400;
+  cursor: pointer;
+}
+
+button.lg {
+  padding: var(--perfect-fourth-7) var(--perfect-fourth-3);
+}
+
+button.primary {
+  background-color: var(--primary);
+  color: var(--primary-font) !important;
+}
+
+button.secondary {
+  background-color: var(--secondary);
+  color: var(--secondary-font) !important;
+}
+
+button.fancy {
+  background: var(--colour-gradient);
+  color: var(--primary-font);
+}
+
+button.save {
+  background-color: var(--success);
+  color: var(--success-font);
+}
+
+button.danger {
+  background-color: var(--danger);
+  color: var(--danger-font);
+}
+
+button:hover,
+.clickable:hover {
+  filter: brightness(1.2);
+  cursor: pointer;
+}
+
+button .icon {
+  margin-right: 0.5rem;
+  margin-left: -1rem;
+}
+
+.back-button {
+  width: var(--perfect-fourth-4);
+  height: var(--perfect-fourth-4);
+  margin-right: 1rem;
+  cursor: pointer;
+  border-radius: var(--border-radius);
+}
+
+.back-button:hover {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.icon-button {
+  padding: 0 var(--perfect-fourth-6);
+}
+
+.button-icon {
+  width: var(--perfect-fourth-6);
+  height: var(--perfect-fourth-6);
+  margin: 0;
+}
+
+label {
+  padding-bottom: 0.5rem;
+}
+
+textarea,
+input,
+select {
+  border: 1px solid var(--border-color);
+  margin-top: 0.25rem;
+  outline: none;
+  padding: var(--perfect-fourth-8);
+  border-radius: var(--border-radius);
+  background-color: var(--form-field-bg);
+  color: var(--base-font-color);
+}
+
+input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+}
+
+a {
+  color: inherit !important;
+}
+
+/* Table settings */
+table {
+  width: 100%;
+  text-align: left;
+  border-collapse: collapse;
+  border-spacing: 0;
+  border-radius: var(--border-radius);
+}
+
+tbody {
+  background: var(--structural-div-bg);
+}
+
+tbody tr.clickable:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+thead th {
+  padding: 1rem;
+}
+
+td {
+  padding: 1rem;
+}
+
+/* Used to add a '...' cut-off to text */
+
+.clamp {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* Override textbok defaults to make them suit theme */
+
+input[type="checkbox"] {
+  cursor: pointer;
+}
+
+input[type="checkbox"]:checked {
+  filter: sepia() hue-rotate(140deg) brightness(1.1);
+}
+
+/* Icon wrapper defaults */
+.action.icon {
+  cursor: pointer;
+}
+
+.icon:hover {
+  background-color: rgba(0, 0, 0, 0.15);
+  border-radius: var(--border-radius);
+}
+
+.icon {
+  display: inline-block;
+  width: 2rem;
+  height: 2rem;
+}
+
+/* Tooltip styles, see: https://codepen.io/tutsplus/pen/WROvdG */
+[data-tooltip] {
+  position: relative; /* opinion 1 */
+}
+
+/* Applies to all data-tooltips */
+[data-tooltip]::before,
+[data-tooltip]::after {
+  text-transform: none; /* opinion 2 */
+  font-size: 0.9em; /* opinion 3 */
+  line-height: 1;
+  user-select: none;
+  pointer-events: none;
+  position: absolute;
+  display: none;
+  opacity: 0;
+}
+[data-tooltip]::before {
+  content: "";
+  border: 5px solid transparent; /* opinion 4 */
+  z-index: 1001; /* absurdity 1 */
+}
+[data-tooltip]::after {
+  content: attr(data-tooltip); /* magic! */
+
+  /* most of the rest of this is opinion */
+  text-align: center;
+
+  /* 
+    Let the content set the size of the data-tooltips 
+    but this will also keep them from being obnoxious
+    */
+  min-width: 3em;
+  max-width: 21em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 1ch 1.5ch;
+  border-radius: var(--border-radius);
+  box-shadow: 0 1em 2em -0.5em rgba(0, 0, 0, 0.35);
+  background: var(--secondary);
+  color: #fff;
+  z-index: 1000; /* absurdity 2 */
+}
+
+/* Make the data-tooltips respond to hover */
+[data-tooltip]:hover::before,
+[data-tooltip]:hover::after {
+  display: block;
+}
+
+/* don't show empty data-tooltips */
+[data-tooltip=""]::before,
+[data-tooltip=""]::after {
+  display: none !important;
+}
+
+/* FLOW: UP */
+[data-tooltip]:not([data-tooltip-flow])::before,
+[data-tooltip][data-tooltip-flow^="top"]::before {
+  bottom: 100%;
+  border-bottom-width: 0;
+  border-top-color: var(--secondary);
+}
+[data-tooltip]:not([data-tooltip-flow])::after,
+[data-tooltip][data-tooltip-flow^="top"]::after {
+  bottom: calc(100% + 5px);
+}
+[data-tooltip]:not([data-tooltip-flow])::before,
+[data-tooltip]:not([data-tooltip-flow])::after,
+[data-tooltip][data-tooltip-flow^="top"]::before,
+[data-tooltip][data-tooltip-flow^="top"]::after {
+  left: 50%;
+  transform: translate(-50%, -0.5em);
+}
+
+/* FLOW: DOWN */
+[data-tooltip][data-tooltip-flow^="bottom"]::before {
+  top: 100%;
+  border-top-width: 0;
+  border-bottom-color: var(--secondary);
+}
+[data-tooltip][data-tooltip-flow^="bottom"]::after {
+  top: calc(100% + 5px);
+}
+[data-tooltip][data-tooltip-flow^="bottom"]::before,
+[data-tooltip][data-tooltip-flow^="bottom"]::after {
+  left: 50%;
+  transform: translate(-50%, 0.5em);
+}
+
+/* FLOW: LEFT */
+[data-tooltip][data-tooltip-flow^="left"]::before {
+  top: 50%;
+  border-right-width: 0;
+  border-left-color: var(--secondary);
+  left: calc(0em - 5px);
+  transform: translate(-0.5em, -50%);
+}
+[data-tooltip][data-tooltip-flow^="left"]::after {
+  top: 50%;
+  right: calc(100% + 5px);
+  transform: translate(-0.5em, -50%);
+}
+
+/* FLOW: RIGHT */
+[data-tooltip][data-tooltip-flow^="right"]::before {
+  top: 50%;
+  border-left-width: 0;
+  border-right-color: var(--secondary);
+  right: calc(0em - 5px);
+  transform: translate(0.5em, -50%);
+}
+[data-tooltip][data-tooltip-flow^="right"]::after {
+  top: 50%;
+  left: calc(100% + 5px);
+  transform: translate(0.5em, -50%);
+}
+
+/* KEYFRAMES */
+@keyframes data-tooltips-vert {
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+@keyframes data-tooltips-horz {
+  to {
+    opacity: 1;
+    transform: translate(0, -50%);
+  }
+}
+
+[data-tooltip]:not([data-tooltip-flow]):hover::before,
+[data-tooltip]:not([data-tooltip-flow]):hover::after,
+[data-tooltip][data-tooltip-flow^="top"]:hover::before,
+[data-tooltip][data-tooltip-flow^="top"]:hover::after,
+[data-tooltip][data-tooltip-flow^="bottom"]:hover::before,
+[data-tooltip][data-tooltip-flow^="bottom"]:hover::after {
+  animation: data-tooltips-vert 300ms ease-out forwards;
+}
+
+[data-tooltip][data-tooltip-flow^="left"]:hover::before,
+[data-tooltip][data-tooltip-flow^="left"]:hover::after,
+[data-tooltip][data-tooltip-flow^="right"]:hover::before,
+[data-tooltip][data-tooltip-flow^="right"]:hover::after {
+  animation: data-tooltips-horz 300ms ease-out forwards;
+}
+
+/* Alert styles */
+
+.alert {
+  padding: var(--perfect-fourth-8);
+  border-radius: var(--border-radius);
+  background-color: var(--primary-light);
+  color: var(--primary);
+  border: 1px solid var(--primary);
+  width: 100%;
+}
+
+.alert-success {
+  background-color: var(--success-light);
+  color: var(--success);
+  border: 1px solid var(--success);
+}
+
+.alert-warn {
+  background-color: var(--warn-light);
+  color: var(--warn);
+  border: 1px solid var(--warn);
+}
+
+.alert-danger {
+  background-color: var(--danger-light);
+  color: var(--danger);
+  border: 1px solid var(--danger);
+}

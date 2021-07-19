@@ -120,6 +120,7 @@
     element.classList?.add("draggable");
     element.setAttribute("draggable", "true");
     element.setAttribute("ondragover", "return false");
+<<<<<<< HEAD
 
     /** Hides the item being dragged in its orginal position. This must be done during drag, else the drag preview will not show. */
     element.addEventListener("drag", () => {
@@ -150,6 +151,10 @@
       );
       setDragAnimation();
     });
+=======
+    removeEventListeners(element, elementIndex); // Ensure no duplicates fired
+    addEventListeners(element, elementIndex);
+>>>>>>> basic-UI-features
   }
 
   function enableDraggingOnChildren() {
