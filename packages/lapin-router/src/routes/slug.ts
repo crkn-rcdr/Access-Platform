@@ -35,7 +35,14 @@ export const slugRouter = createRouter()
     },
   })
   .query("resolveMany", {
-    input: Array,
+    // Docs: https://trpc.io/docs/quickstart
+    input: (val: unknown) => {
+      if (!Array.isArray(val)) return false;
+      for (let slug of val) {
+        Slug.parse(slug); // test each slug, throw error if issue
+      }
+      return true;
+    },
     async resolve({ input: q, ctx }): Promise<[Noid, Slug][]> {
       const response = await ctx.couch.access.find({
         selector: {

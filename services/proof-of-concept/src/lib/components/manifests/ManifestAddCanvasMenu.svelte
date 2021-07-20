@@ -1,16 +1,11 @@
 <script lang="ts">
   import TiArrowBack from "svelte-icons/ti/TiArrowBack.svelte";
   import FaPlus from "svelte-icons/fa/FaPlus.svelte";
-  import { AccessObject } from "@crkn-rcdr/access-data";
+  import { AccessObject, Manifest } from "@crkn-rcdr/access-data";
   import { isManifest, isCollection } from "@crkn-rcdr/access-data";
   import TypeAhead from "$lib/components/access-objects/TypeAhead.svelte";
   import { createEventDispatcher } from "svelte";
-  import type {
-    Manifest,
-    Canvas,
-  } from "@crkn-rcdr/access-data/src/access/Manifest";
   import CanvasesSelector from "$lib/components/canvases/CanvasesSelector.svelte";
-  import { getLapin } from "$lib/lapin";
 
   export let destinationManifest: Manifest;
   export let destinationIndex: number = 0;
@@ -19,7 +14,7 @@
   const dispatch = createEventDispatcher();
 
   let selectedManifest: Manifest;
-  let selectedCanvases: Canvas[] = [];
+  let selectedCanvases: any[] = []; // TODO: change to new data type
   let showManifest = false;
   let selectAll = false;
   let error = "";
@@ -27,15 +22,19 @@
   async function handleSelect(event: any) {
     try {
       let noid = event.detail;
-      const lapin = getLapin();
-      const response = await lapin.query("noid.resolve", noid);
-      console.log(response);
-      const object = AccessObject.parse(response);
-      if (isCollection(object)) {
-        error = "Error: Object is a collection, please select another.";
-      } else if (isManifest(object)) {
-        selectedManifest = response;
-        showManifest = true;
+      const response = await fetch(`/object/${noid}.json`, {
+        method: "GET",
+        credentials: "same-origin",
+      });
+      const json = await response.json();
+      if (response.status === 200) {
+        const object = json.data;
+        if (isCollection(object)) {
+          error = "Error: Object is a collection, please select another.";
+        } else if (isManifest(object)) {
+          selectedManifest = Manifest.parse(object);
+          showManifest = true;
+        }
       }
     } catch (e) {
       error = e;

@@ -8,6 +8,7 @@
   export let object: AccessObject;
   export let objectModel: AccessObject;
 
+  let rfdc: any; // Deep copies an object
   let handleSaveEnabled = false;
   let showMovetoStorageModal = false;
 
@@ -19,17 +20,47 @@
     checkModelChanged(objectModel);
   }
 
-  function handleSave() {
+  async function sendSaveRequest(data: any) {
+    //todo make partial of type
+    const response = await fetch(`/object/save`, {
+      method: "POST",
+      credentials: "same-origin",
+      body: JSON.stringify({
+        id: objectModel.id,
+        data,
+      }),
+    });
+    console.log("save res:", response);
+    if (response.status === 200) return await response.json();
+    return null;
+  }
+
+  async function handleSave() {
     let diff: any = detailedDiff(object, objectModel); //TODO: We can send this to the backend
     console.log("diff", diff);
-    object = AccessObject.parse(objectModel);
-    checkModelChanged(objectModel);
+
+    rfdc = (await import("rfdc")).default();
+    // might need 'deleted'
+    const data = await sendSaveRequest({
+      ...diff["added"],
+      ...diff["updated"],
+    });
+    try {
+      object = rfdc(objectModel) as AccessObject; // todo: get this done with zod
+      checkModelChanged(objectModel);
+      console.log("RES", data);
+    } catch (e) {
+      //error = e;
+      console.log(e);
+    }
   }
 
   function handlePlaceInStorage() {
     showMovetoStorageModal = false;
     objectModel["slug"] = undefined;
-    handleSave();
+    handleSave().then(() => {
+      console.log("Done saving");
+    });
   }
 
   function handlePublishStatusChange() {}
@@ -37,7 +68,14 @@
 
 <span class="editor-actions auto-align auto-align__a-center">
   {#if handleSaveEnabled}
-    <button class="save" on:click={handleSave}>Save</button>
+    <button
+      class="save"
+      on:click={() => {
+        handleSave().then(() => {
+          console.log("Done saving");
+        });
+      }}>Save</button
+    >
   {/if}
   <button class="secondary" on:click={handlePublishStatusChange}
     >{object["public"] ? "Unpublish" : "Publish"}</button

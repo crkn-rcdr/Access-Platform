@@ -25,6 +25,7 @@ export class DatabaseHandler {
   async updateWithSubset(id: string, subset: Record<string, any>) {
     let doc = await this.get(id);
     Object.assign(doc, subset);
+    console.log("DOC", doc);
     return await this.db.insert(doc);
   }
 
