@@ -185,6 +185,7 @@
 
   :global(.referencestrip) {
     margin-left: 0 !important;
+    min-width: 12vw;
   }
 
   :global(.referencestrip > *) {
