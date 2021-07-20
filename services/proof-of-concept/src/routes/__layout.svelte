@@ -23,7 +23,7 @@
   }) => {
     return {
       context: {
-        lapin: getLapin({ apiEndpoint, fetch }),
+        lapin: getLapin({ url: apiEndpoint, fetch }),
       },
     };
   };

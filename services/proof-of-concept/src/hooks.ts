@@ -3,14 +3,32 @@ import type { GetSession, Handle, ServerFetch } from "@sveltejs/kit";
 
 import { Env } from "@crkn-rcdr/access-env";
 
-const env = Env.parse(process.env);
-
 export const handle: Handle<Locals> = async ({ request, resolve }) => {
+  const env = Env.parse(process.env);
+
+  if (request.path.startsWith("/api/")) {
+    const url = `${env.lapin.urlInternal}/${request.path.slice(
+      5
+    )}?${request.query.toString()}`;
+
+    const response = await fetch(url, {
+      method: request.method,
+      body: request.rawBody,
+    });
+
+    return {
+      status: response.status,
+      // @ts-ignore
+      headers: Object.fromEntries(response.headers.entries()),
+      body: await response.text(),
+    };
+  }
+
   request.locals = {
+    env,
     session: {
       apiEndpoint: env.admin.urlExternal + "/api",
     },
-    lapinInternalUrl: env.lapin.urlInternal,
   };
 
   return await resolve(request);
@@ -21,12 +39,13 @@ export const getSession: GetSession<Locals, Session> = (request) => {
 };
 
 export const serverFetch: ServerFetch = (request) => {
-  if (request.url.startsWith(env.admin.urlExternal)) {
-    request = new Request(
-      request.url.replace(env.admin.urlExternal, env.admin.urlInternal),
-      request
-    );
-  }
+  /* Docker won't have access to local hosts files, and so
+     we replace external domains with `localhost`.
+     This assumes the external domain starts with `access`. */
+  const url = request.url.replace(
+    /^https:\/\/access.*\.canadiana\.ca/,
+    `http://localhost:${process.env["ADMIN_PORT"]}`
+  );
 
-  return fetch(request);
+  return fetch(new Request(url, request));
 };

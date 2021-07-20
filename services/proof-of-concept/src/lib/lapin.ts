@@ -3,13 +3,11 @@ import type { LoadInput } from "@sveltejs/kit";
 import { createTRPCClient } from "@trpc/client";
 
 type LapinOptions = {
-  apiEndpoint: string;
+  url: string;
   fetch: LoadInput["fetch"];
 };
 
-export const getLapin = ({ apiEndpoint, fetch }: LapinOptions) => {
-  const options = { url: apiEndpoint, fetch };
-
+export const getLapin = (options: LapinOptions) => {
   return createTRPCClient<LapinRouter>(options);
 };
 

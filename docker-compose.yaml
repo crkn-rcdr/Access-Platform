@@ -113,37 +113,59 @@ services:
   #
   # Production services
   #
-  # haproxy-prod:
-  #   profiles:
-  #     - prod
-  #   image: haproxy:2.2-alpine
-  #   container_name: access-haproxy-prod
-  #   depends_on:
-  #     - lapin-prod
-  #     - admin-prod
-  #   ports:
-  #     - "80:80"
-  #     - "443:443"
-  #   volumes:
-  #     - ./services/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
-  #     - ./services/haproxy/certs:/usr/local/etc/haproxy/certs:ro
-  #     - ./services/haproxy/error:/usr/local/etc/haproxy/error:ro
-  #   restart: unless-stopped
-  #   networks:
-  #     access-platform:
-  #       aliases:
-  #         - haproxy
-  # lapin-prod:
-  #   profiles:
-  #     - prod
-  #   container_name: access-lapin-prod
-  #   build:
-  #     context: .
-  #     target: build
-  #   image: access-platform:production
-  #   command: ["-C", "./services/lapin", "start"]
-  #   env_file:
-  #     - .env.docker
+  haproxy-prod:
+    profiles:
+      - prod
+    image: haproxy:2.2-alpine
+    container_name: access-haproxy-prod
+    depends_on:
+      - lapin-prod
+      - admin-prod
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./services/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+      - ./services/haproxy/certs:/usr/local/etc/haproxy/certs:ro
+      - ./services/haproxy/error:/usr/local/etc/haproxy/error:ro
+    restart: unless-stopped
+    networks:
+      access-platform:
+        aliases:
+          - haproxy
+  lapin-prod:
+    profiles:
+      - prod
+    container_name: access-lapin-prod
+    build:
+      context: .
+      target: prod
+    image: access-platform:prod
+    command: ["-C", "./services/lapin", "start"]
+    env_file:
+      - .env.docker
+      - .env.prod
+      - .env.secret
+    networks:
+      access-platform:
+        aliases:
+          - lapin
+  admin-prod:
+    profiles:
+      - prod
+    container_name: access-admin-prod
+    image: access-platform:prod
+    command: ["-C", "./services/proof-of-concept", "start"]
+    env_file:
+      - .env.docker
+      - .env.prod
+      - .env.secret
+    depends_on:
+      - lapin-prod
+    networks:
+      access-platform:
+        aliases:
+          - admin
 
 networks:
   access-platform:

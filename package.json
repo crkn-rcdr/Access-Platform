@@ -20,11 +20,14 @@
   "homepage": "https://github.com/crkn-rcdr/Access-Platform#readme",
   "scripts": {
     "cleanup": "pnpm run kivik:stop",
-    "dev": "run-s dev:down dev:up",
+    "dev": "run-s down dev:up",
     "dev:up": "docker-compose --profile dev up --build --remove-orphans --detach",
-    "dev:down": "docker-compose --profile dev down --volumes",
     "dev:restart": "docker-compose --profile dev restart",
+    "down": "docker-compose down --volumes",
     "preinstall": "npx only-allow pnpm",
+    "prod": "run-s down prod:up",
+    "prod:up": "docker-compose --profile prod up --build --remove-orphans --detach",
+    "prod:restart": "docker-compose --profile prod restart",
     "test": "pnpm -r test:all"
   },
   "devDependencies": {

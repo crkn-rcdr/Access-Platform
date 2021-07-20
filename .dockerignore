@@ -2,6 +2,7 @@
 .git
 .gitignore
 docker-compose*
+Dockerfile
 **/node_modules
 **/dist
 **/build

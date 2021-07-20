@@ -3,16 +3,21 @@
   import type { RootInput } from "./__layout.svelte";
 
   export const load: Load<RootInput> = async ({ context }) => {
+    let serverfailure;
+
     try {
-      return {
-        props: {
-          lapin: context.lapin,
-          servertest: await context.lapin.query("slug.search", "oo"),
-        },
-      };
+      serverfailure = await context.lapin.query("slug.search", "??");
     } catch (e) {
-      return { status: 504, error: e.message };
+      serverfailure = e;
     }
+
+    return {
+      props: {
+        lapin: context.lapin,
+        servertest: await context.lapin.query("slug.search", "oo"),
+        serverfailure,
+      },
+    };
   };
 </script>
 
@@ -20,7 +25,8 @@
   import { onMount } from "svelte";
 
   export let lapin;
-  export let servertest = "server!";
+  export let servertest;
+  export let serverfailure;
   let test = "waiting";
   let failure = "should fail";
 
@@ -38,5 +44,6 @@
 <h1>Proof of concept!</h1>
 
 <p>{servertest}</p>
+<p>{serverfailure}</p>
 <p>{test}</p>
 <p>{failure}</p>
