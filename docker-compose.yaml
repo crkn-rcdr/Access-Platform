@@ -1,6 +1,29 @@
 version: "3.9"
 
 services:
+  haproxy:
+    profiles:
+      - dev
+    image: haproxy:2.2-alpine
+    container_name: access-haproxy
+    depends_on:
+      - couchdb
+      - lapin-dev
+      - admin-dev
+    ports:
+      - "80:80"
+      - "443:443"
+      - "10000:10000"
+      - "14747:14747"
+    volumes:
+      - ./services/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+      - ./services/haproxy/certs:/usr/local/etc/haproxy/certs:ro
+      - ./services/haproxy/error:/usr/local/etc/haproxy/error:ro
+    restart: unless-stopped
+    networks:
+      access-platform:
+        aliases:
+          - haproxy
   couchdb:
     profiles:
       - dev
@@ -10,7 +33,6 @@ services:
       - .env.docker
     networks:
       access-platform:
-        ipv4_address: 172.30.0.6
         aliases:
           - couch
     ports:
@@ -56,11 +78,8 @@ services:
       - .:/repo
     networks:
       access-platform:
-        ipv4_address: 172.30.0.9
         aliases:
           - lapin
-    ports:
-      - "5858:5858"
   admin-dev:
     profiles:
       - dev
@@ -75,13 +94,24 @@ services:
       - .:/repo
     networks:
       access-platform:
-        ipv4_address: 172.30.0.10
         aliases:
           - admin
-    ports:
-      - "4747:4747"
-      - "14747:14747"
+  # lapin-prod:
+  #   profiles:
+  #     - prod
+  #   container_name: access-lapin-prod
+  #   build:
+  #     context: .
+  #     target: build
+  #   image: access-platform:production
+  #   command: ["-C", "./services/lapin", "start"]
+  #   env_file:
+  #     - .env.docker
 
 networks:
   access-platform:
-    external: true
+    name: access-platform
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.30.0.0/16

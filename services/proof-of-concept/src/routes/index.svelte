@@ -1,10 +1,12 @@
 <script context="module" lang="ts">
   import type { Load } from "@sveltejs/kit";
   import type { RootInput } from "./__layout.svelte";
+
   export const load: Load<RootInput> = async ({ context }) => {
     try {
       return {
         props: {
+          lapin: context.lapin,
           servertest: await context.lapin.query("slug.search", "oo"),
         },
       };
@@ -16,14 +18,13 @@
 
 <script lang="ts">
   import { onMount } from "svelte";
-  import { getLapin } from "$lib/lapin";
 
+  export let lapin;
   export let servertest = "server!";
   let test = "waiting";
   let failure = "should fail";
 
   onMount(async () => {
-    const lapin = getLapin();
     test = (await lapin.query("slug.search", "oo")).toString();
 
     try {

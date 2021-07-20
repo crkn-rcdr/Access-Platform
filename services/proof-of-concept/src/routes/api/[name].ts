@@ -1,7 +1,7 @@
 import type { RequestHandler } from "@sveltejs/kit";
 
 const handler: RequestHandler = async (request) => {
-  const url = `http://lapin:5858/${
+  const url = `${request.locals.lapinInternalUrl}/${
     request.params["name"]
   }?${request.query.toString()}`;
 

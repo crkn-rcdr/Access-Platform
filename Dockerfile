@@ -9,7 +9,7 @@ RUN curl -sL https://unpkg.com/@pnpm/self-installer | node
 WORKDIR /repo
 
 COPY pnpm-lock.yaml pnpm-lock.yaml
-RUN pnpm fetch
+RUN pnpm fetch --silent
 
 # install
 # Downloads and installs package and service dependencies.
@@ -17,20 +17,15 @@ RUN pnpm fetch
 FROM init AS install
 
 COPY . .
-RUN pnpm install -r --offline --silent
+RUN pnpm install --offline --silent
 
 ENTRYPOINT ["pnpm", "run"]
 
-# # build
-# # Builds every package. TODO: I only need this for prod
+# build
+# Builds every package.
 
-# FROM init AS build
+FROM install AS build
 
-# COPY --from=install /repo/.docker-pnpm-store/ .docker-pnpm-store/
-# COPY --from=install /repo/node_modules/ node_modules
+RUN pnpm run -r build
 
-# COPY packages/ packages/
-
-# RUN pnpm install -r --frozen-lockfile --silent
-# RUN pnpm run -r build --filter ./packages
-
+ENTRYPOINT [ "pnpm", "run" ]

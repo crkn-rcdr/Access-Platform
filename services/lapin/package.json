@@ -17,6 +17,7 @@
     "start": "NODE_NO_WARNINGS node --loader ts-node/esm/transpile-only ./server.ts"
   },
   "dependencies": {
+    "@crkn-rcdr/access-env": "workspace:^0.0.0",
     "@crkn-rcdr/lapin-router": "workspace:^0.0.0",
     "@trpc/server": "^8.2.0"
   },

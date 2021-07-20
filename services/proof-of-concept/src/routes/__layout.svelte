@@ -3,6 +3,7 @@
 
   import type { LapinClient } from "$lib/lapin";
   import type { Load } from "@sveltejs/kit";
+  import type { Session } from "$lib/types";
 
   type RootContext = {
     lapin: LapinClient;
@@ -16,10 +17,13 @@
     context: RootContext;
   };
 
-  export const load: Load<{}, RootOutput> = ({ fetch }) => {
+  export const load: Load<{ session: Session }, RootOutput> = ({
+    fetch,
+    session: { apiEndpoint },
+  }) => {
     return {
       context: {
-        lapin: getLapin(fetch),
+        lapin: getLapin({ apiEndpoint, fetch }),
       },
     };
   };

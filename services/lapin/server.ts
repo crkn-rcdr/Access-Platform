@@ -1,5 +1,6 @@
 import { createHttpHandler } from "@trpc/server";
 import http from "http";
+import { Env } from "@crkn-rcdr/access-env";
 import { createOptions } from "@crkn-rcdr/lapin-router";
 
 const handler = createHttpHandler(createOptions);
@@ -17,6 +18,10 @@ const server = http.createServer((req, res) => {
   handler(req, res);
 });
 
-console.log("Starting lapin on port 5858.");
+const {
+  lapin: { port },
+} = Env.parse(process.env);
 
-server.listen(5858);
+console.log(`Starting lapin on port ${port}.`);
+
+server.listen(port);
