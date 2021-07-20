@@ -1,8 +1,11 @@
 .env*
 .git
 .gitignore
+.vscode
 docker-compose*
 Dockerfile
+deprecated
+*.md
 **/node_modules
 **/dist
 **/build
