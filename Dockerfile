@@ -1,31 +1,30 @@
 # init
-# Sets up pnpm and copies over workspace config. Configures pnpm to install packages locally.
+# Sets up pnpm and copies over workspace config.
 
-FROM node:16 AS init
+FROM node:16-alpine AS init
 
-ENV PNPM_VERSION 6.10.2
+RUN apk add --no-cache curl
 RUN curl -sL https://unpkg.com/@pnpm/self-installer | node
 
 WORKDIR /repo
 
+# dev
+# Downloads and installs package and service dependencies.
+
+FROM init AS dev 
+
+# Fetch dependencies from the lockfile. If you've changed package.json for some other reason,
+# this stage is skipped, which is a lovely time-saver.
 COPY pnpm-lock.yaml pnpm-lock.yaml
 RUN pnpm fetch --silent
 
-# install
-# Downloads and installs package and service dependencies.
-
-FROM init AS install
-
+# Make sure .dockerignore has what it needs!
 COPY . .
-RUN pnpm install --offline --silent
 
-ENTRYPOINT ["pnpm", "run"]
+# The offline flag ensures that the dependencies are installed from the fetched cache 
+RUN pnpm install -r --offline --silent
 
-# build
-# Builds every package.
-
-FROM install AS build
-
-RUN pnpm run -r build
+# Lets just build every package now, to be safe
+RUN pnpm run -r build --filter ./packages
 
 ENTRYPOINT [ "pnpm", "run" ]

@@ -1,4 +1,5 @@
 .env*
 .git
+.gitignore
 docker-compose*
 **/node_modules
