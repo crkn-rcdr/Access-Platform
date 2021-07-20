@@ -3,3 +3,6 @@
 .gitignore
 docker-compose*
 **/node_modules
+**/dist
+**/build
+**/.svelte-kit
