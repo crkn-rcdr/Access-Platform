@@ -2,7 +2,7 @@
   import type { Load } from "@sveltejs/kit";
   import type { RootInput } from "./__layout.svelte";
 
-  export const load: Load<RootInput> = async ({ context }) => {
+  export const load: Load<RootInput> = async ({ context, session }) => {
     let serverfailure;
 
     try {
@@ -16,6 +16,7 @@
         lapin: context.lapin,
         servertest: await context.lapin.query("slug.search", "oo"),
         serverfailure,
+        session,
       },
     };
   };
@@ -27,6 +28,7 @@
   export let lapin;
   export let servertest;
   export let serverfailure;
+  export let session;
   let test = "waiting";
   let failure = "should fail";
 
@@ -47,3 +49,7 @@
 <p>{serverfailure}</p>
 <p>{test}</p>
 <p>{failure}</p>
+
+<pre>
+  Session: {JSON.stringify(session, null, 2)}
+</pre>

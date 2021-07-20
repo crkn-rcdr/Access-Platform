@@ -19,6 +19,8 @@ export const Env = z
     ADMIN_PORT: Port,
     ADMIN_URL_EXTERNAL: Url,
     ADMIN_URL_INTERNAL: Url,
+    AUTH_JWT_SECRET: z.string().min(1),
+    AUTH_URL: Url,
     COUCHDB_URL: Url,
     COUCHDB_USER: z.string().min(1),
     COUCHDB_PASSWORD: z.string().min(1),
@@ -33,6 +35,10 @@ export const Env = z
         wsPort: env.ADMIN_DEV_WS_PORT,
         urlExternal: env.ADMIN_URL_EXTERNAL,
         urlInternal: env.ADMIN_URL_INTERNAL,
+      },
+      auth: {
+        url: env.AUTH_URL,
+        secret: env.AUTH_JWT_SECRET,
       },
       couch: {
         url: env.COUCHDB_URL,
