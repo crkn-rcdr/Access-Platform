@@ -119,40 +119,43 @@
         }}
       >
         {#each collection?.members as members, i}
+          <!-- usage: there needs to be one top-level component or element in here otherwise drag and drop doesnt work. I'll try to fix that/open a ticket -->
           <div
             class="thumbnail"
             class:active={i === activeMemberIndex}
             on:mousedown={() => setActiveIndex(i)}
-          />
-          <div class="auto-align">
-            <div class="actions-wrap">
-              <div class="auto-align auto-align__column">
-                <div class="action pos">
-                  {indexModel[i]}
-                </div>
-                <div
-                  class="action pos-input"
-                  on:click={(e) => {
-                    e.stopPropagation();
-                  }}
-                >
-                  <AutomaticResizeNumberInput
-                    name="position"
-                    max={collection?.members.length}
-                    on:changed={(e) => {
-                      moveMember(e, i);
+          >
+            <div class="auto-align">
+              <div class="actions-wrap">
+                <div class="auto-align auto-align__column">
+                  <div class="action pos">
+                    {indexModel[i]}
+                  </div>
+                  <div
+                    class="action pos-input"
+                    on:click={(e) => {
+                      e.stopPropagation();
                     }}
-                    bind:value={indexModel[i]}
-                  />
+                  >
+                    <AutomaticResizeNumberInput
+                      name="position"
+                      max={collection?.members.length}
+                      on:changed={(e) => {
+                        moveMember(e, i);
+                      }}
+                      bind:value={indexModel[i]}
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
-            <div>
-              <ul>
-                <li>
-                  <input bind:value={members["id"]} />
-                </li>
-              </ul>
+              <div>
+                <ul>
+                  <li>
+                    {members}
+                    <input bind:value={members["id"]} />
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         {/each}
