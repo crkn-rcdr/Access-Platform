@@ -1,17 +1,14 @@
 <script lang="ts">
   import { onMount, createEventDispatcher } from "svelte";
-  //import type { AccessObject } from "@crkn-rcdr/access-data";
-  //import { isCollection } from "@crkn-rcdr/access-data";
   import type { Collection } from "@crkn-rcdr/access-data/src/access/Collection";
-  /* import TypeAhead from "$lib/components/access-objects/TypeAhead.svelte";
-  import Switch from "$lib/components/shared//Switch.svelte";
-  import SwitchCase from "$lib/components/shared//SwitchCase.svelte"; */
   import AutomaticResizeNumberInput from "$lib/components/shared/AutomaticResizeNumberInput.svelte";
   import DynamicDragAndDropList from "$lib/components/shared/DynamicDragAndDropList.svelte";
   import { moveArrayElement } from "$lib/arrayUtil";
+  //import Index from "src/object/routes/index.svelte";
 
   //export let model: AccessObject;
   export let collection: Collection;
+  export let members: {} = Object.values(collection.members);
   export let showAddButton = true;
   let indexModel: number[] = [];
   let activeMemberIndex: number = 0;
@@ -100,21 +97,6 @@
   }
 </script>
 
-<div class="editor">
-  <!-- {#if isCollection(model)}
-    <label for="Type">Type</label><br />
-    <input type="text" id="type" name="type" bind:value={model["type"]} /><br />
-  {/if}
-  {#if isCollection(model)}
-    <label for="public">Public</label><br />
-    <input
-      type="text"
-      id="public"
-      name="public"
-      bind:value={model["public"]}
-    /><br />
-  {/if} -->
-</div>
 <svelte:window on:keydown={handleKeydown} />
 {#if indexModel.length}
   <div class="auto-align auto-align__column">
@@ -127,51 +109,53 @@
       class="list"
       class:disabled={!showAddButton}
     >
-      <DynamicDragAndDropList
-        bind:dragList={collection.members}
-        on:itemDropped={(e) => {
-          setActiveIndex(e.detail.destinationItemIndex);
-        }}
-      >
-        {#each collection.members as members, i}
-          <div
-            class="thumbnail"
-            class:active={i === activeMemberIndex}
-            on:mousedown={() => setActiveIndex(i)}
-          />
-          <div class="auto-align">
-            <div class="actions-wrap">
-              <div class="auto-align auto-align__column">
-                <div class="action pos">
-                  {indexModel[i]}
-                </div>
-                <div
-                  class="action pos-input"
-                  on:click={(e) => {
-                    e.stopPropagation();
-                  }}
-                >
-                  <AutomaticResizeNumberInput
-                    name="position"
-                    max={collection.members.length}
-                    on:changed={(e) => {
-                      moveMember(e, i);
+      {#if indexModel.length}
+        <DynamicDragAndDropList
+          bind:dragList={collection.members}
+          on:itemDropped={(e) => {
+            setActiveIndex(e.detail.destinationItemIndex);
+          }}
+        >
+          {#each collection.members as members, i}
+            <div
+              class="thumbnail"
+              class:active={i === activeMemberIndex}
+              on:mousedown={() => setActiveIndex(i)}
+            />
+            <div class="auto-align">
+              <div class="actions-wrap">
+                <div class="auto-align auto-align__column">
+                  <div class="action pos">
+                    {indexModel[i]}
+                  </div>
+                  <div
+                    class="action pos-input"
+                    on:click={(e) => {
+                      e.stopPropagation();
                     }}
-                    bind:value={indexModel[i]}
-                  />
+                  >
+                    <AutomaticResizeNumberInput
+                      name="position"
+                      max={collection.members.length}
+                      on:changed={(e) => {
+                        moveMember(e, i);
+                      }}
+                      bind:value={indexModel[i]}
+                    />
+                  </div>
                 </div>
               </div>
+              <div>
+                <ul>
+                  <li>
+                    <input bind:value={members["id"]} />
+                  </li>
+                </ul>
+              </div>
             </div>
-            <div>
-              <ul>
-                <li>
-                  <input bind:value={members["id"]} />
-                </li>
-              </ul>
-            </div>
-          </div>
-        {/each}
-      </DynamicDragAndDropList>
+          {/each}
+        </DynamicDragAndDropList>
+      {/if}
     </div>
   </div>
 {/if}
@@ -187,11 +171,6 @@
     overflow-y: hidden;
     opacity: 0.5;
   }
-  /*  .actions-wrap {
-    flex: 1;
-    margin-left: 1.5rem;
-  } */
-
   .action.icon {
     opacity: 0.6;
     cursor: pointer;

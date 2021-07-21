@@ -1117,7 +1117,7 @@ packages:
     dependencies:
       is-callable: 1.2.3
       is-date-object: 1.0.2
-      is-symbol: 1.0.4
+      is-symbol: 1.0.3
     dev: true
 
   /esbuild/0.12.15:
@@ -1663,8 +1663,8 @@ packages:
     engines: {node: '>= 0.4'}
     dev: true
 
-  /is-symbol/1.0.4:
-    resolution: {integrity: sha512-C/CPBqKWnvdcxqIARxyOh4v1UUEOCHpgDa0WYgpKDFMszcrPcffg5uhwSgPCLD2WWxmq6isisz87tzT01tuGhg==}
+  /is-symbol/1.0.3:
+    resolution: {integrity: sha512-OwijhaRSgqvhm/0ZdAcXNZt9lYdKFpcRDT5ULUuYXPoT794UNOdU+gpT6Rzo7b4V2HUl/op6GqY894AZwv9faQ==}
     engines: {node: '>= 0.4'}
     dependencies:
       has-symbols: 1.0.2
@@ -3202,7 +3202,7 @@ packages:
       is-boolean-object: 1.1.0
       is-number-object: 1.0.4
       is-string: 1.0.6
-      is-symbol: 1.0.4
+      is-symbol: 1.0.3
     dev: true
 
   /which/1.3.1:
