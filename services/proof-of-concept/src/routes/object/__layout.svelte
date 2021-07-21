@@ -40,7 +40,7 @@
   import EditorActions from "$lib/components/access-objects/EditorActions.svelte";
   import StatusIndicator from "$lib/components/access-objects/StatusIndicator.svelte";
   import InfoEditor from "$lib/components/access-objects/InfoEditor.svelte";
-  import CollectionContentEditor from "$lib/components/collection/CollectionContentEditor.svelte";
+  import CollectionEditor from "$lib/components/collection/CollectionEditor.svelte";
 
   export let object: AccessObject;
   export let createMode: boolean;
@@ -127,9 +127,13 @@
         {
           name: "Members",
           componentData: {
-            contentComponent: CollectionContentEditor,
-            contentComponentProps: { object: objectModel },
+            /* usage: pass in the component to be displayed */
+            contentComponent: CollectionEditor,
+            /* usage: put in the props with the same name as how they are defined in the component.svelte file, with the value you'd like it to have*/
+            contentComponentProps: { collection: objectModel },
+            /* usage: add optional CSS to the side menu page */
             sideMenuPageProps: { overflowY: "hidden" },
+            /* usage: this method gets run any time the component's (set in contentComponent) after_update method runs*/
             update: () => {
               objectModel = objectModel;
             },

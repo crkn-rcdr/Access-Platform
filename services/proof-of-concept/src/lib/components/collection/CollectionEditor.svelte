@@ -23,18 +23,17 @@
   const DOWN_ARROW_CODE: number = 40;
 
   const dispatch = createEventDispatcher();
-  console.log("Prit Collection:", collection);
 
   function setIndexModel() {
     indexModel = [];
-    for (let i = 0; i < collection.members.length; i++) {
+    for (let i = 0; i < collection?.members.length; i++) {
       indexModel.push(i + 1);
     }
   }
 
   function setActiveIndex(index: number) {
-    if (index >= collection.members.length)
-      index = collection.members.length - 1;
+    if (index >= collection?.members.length)
+      index = collection?.members.length - 1;
     if (index < 0) index = 0;
     activeMemberIndex = index;
     dispatch("membersClicked", { index });
@@ -47,11 +46,11 @@
     // Move the member and trigger saving
     let destinationItemIndex = parseInt(event.detail.value) - 1;
     moveArrayElement(
-      collection.members,
+      collection?.members,
       originalItemIndex,
       destinationItemIndex
     );
-    collection.members = collection.members;
+    collection.members = collection?.members;
 
     // Update the position inputs
     setIndexModel();
@@ -70,7 +69,7 @@
     }
   }
   function selectNext() {
-    if (activeMemberIndex < collection.members.length - 1) {
+    if (activeMemberIndex < collection?.members.length - 1) {
       activeMemberIndex++;
       jumpTo(activeMemberIndex);
       setActiveIndex(activeMemberIndex);
@@ -90,33 +89,19 @@
     dispatch("addClicked");
   }
   onMount(() => {
-    if (collection.members.length) activeMemberIndex = 0;
+    console.log("Prit Collection:", collection);
+    if (collection?.members.length) activeMemberIndex = 0;
     setIndexModel();
   });
 
   $: {
-    collection.members;
+    collection?.members;
     setIndexModel();
   }
 </script>
 
-<div class="editor">
-  <!-- {#if isCollection(model)}
-    <label for="Type">Type</label><br />
-    <input type="text" id="type" name="type" bind:value={model["type"]} /><br />
-  {/if}
-  {#if isCollection(model)}
-    <label for="public">Public</label><br />
-    <input
-      type="text"
-      id="public"
-      name="public"
-      bind:value={model["public"]}
-    /><br />
-  {/if} -->
-</div>
 <svelte:window on:keydown={handleKeydown} />
-{#if indexModel.length}
+{#if indexModel.length && collection}
   <div class="auto-align auto-align__column">
     {#if showAddButton}
       <button class="primary lg" on:click={addClicked}>Add Member</button>
@@ -133,7 +118,7 @@
           setActiveIndex(e.detail.destinationItemIndex);
         }}
       >
-        {#each collection.members as members, i}
+        {#each collection?.members as members, i}
           <div
             class="thumbnail"
             class:active={i === activeMemberIndex}
@@ -153,7 +138,7 @@
                 >
                   <AutomaticResizeNumberInput
                     name="position"
-                    max={collection.members.length}
+                    max={collection?.members.length}
                     on:changed={(e) => {
                       moveMember(e, i);
                     }}
