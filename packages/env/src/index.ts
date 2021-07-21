@@ -12,20 +12,28 @@ const Url = z.string().url();
  * Usage: `const ENV = Env.parse(process.env)` */
 export const Env = z
   .object({
+    /**
+     * REQUIRED: Applications will fail if these are unset.
+     */
+    ADMIN_URL_EXTERNAL: Url,
+    AUTH_JWT_SECRET: z.string().min(1),
+    COUCHDB_PASSWORD: z.string().min(1),
+    /**
+     * OPTIONAL: Also defined, but with defaults. You may need to override these.
+     */
+    AUTH_URL: Url.default("https://auth.canadiana.ca"),
+    COUCHDB_URL: Url.default("http://couch:5984"),
+    COUCHDB_USER: z.string().min(1).default("admin"),
+    /**
+     * ADDITIONAL: You likely won't need to set these.
+     */
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
-    ADMIN_DEV_WS_PORT: Port.optional(),
-    ADMIN_PORT: Port,
-    ADMIN_URL_EXTERNAL: Url,
-    ADMIN_URL_INTERNAL: Url,
-    AUTH_JWT_SECRET: z.string().min(1),
-    AUTH_URL: Url,
-    COUCHDB_URL: Url,
-    COUCHDB_USER: z.string().min(1),
-    COUCHDB_PASSWORD: z.string().min(1),
-    LAPIN_PORT: Port,
-    LAPIN_URL_INTERNAL: Url,
+    ADMIN_DEV_WS_PORT: Port.default("14747"),
+    ADMIN_PORT: Port.default("4747"),
+    LAPIN_PORT: Port.default("5858"),
+    LAPIN_URL_INTERNAL: Url.default("http://lapin:5858"),
   })
   .transform((env) => {
     return {
@@ -34,7 +42,6 @@ export const Env = z
         port: env.ADMIN_PORT,
         wsPort: env.ADMIN_DEV_WS_PORT,
         urlExternal: env.ADMIN_URL_EXTERNAL,
-        urlInternal: env.ADMIN_URL_INTERNAL,
       },
       auth: {
         url: env.AUTH_URL,
