@@ -1,29 +1,38 @@
 <script context="module" lang="ts">
   import type { Load } from "@sveltejs/kit";
   import type { RootInput } from "./__layout.svelte";
-  export const load: Load<RootInput> = async ({ context }) => {
+
+  export const load: Load<RootInput> = async ({ context, session }) => {
+    let serverfailure;
+
     try {
-      return {
-        props: {
-          servertest: await context.lapin.query("slug.search", "oo"),
-        },
-      };
+      serverfailure = await context.lapin.query("slug.search", "??");
     } catch (e) {
-      return { status: 504, error: e.message };
+      serverfailure = e;
     }
+
+    return {
+      props: {
+        lapin: context.lapin,
+        servertest: await context.lapin.query("slug.search", "oo"),
+        serverfailure,
+        session,
+      },
+    };
   };
 </script>
 
 <script lang="ts">
   import { onMount } from "svelte";
-  import { getLapin } from "$lib/lapin";
 
-  export let servertest = "server!";
+  export let lapin;
+  export let servertest;
+  export let serverfailure;
+  export let session;
   let test = "waiting";
   let failure = "should fail";
 
   onMount(async () => {
-    const lapin = getLapin();
     test = (await lapin.query("slug.search", "oo")).toString();
 
     try {
@@ -37,5 +46,10 @@
 <h1>Proof of concept!</h1>
 
 <p>{servertest}</p>
+<p>{serverfailure}</p>
 <p>{test}</p>
 <p>{failure}</p>
+
+<pre>
+  Session: {JSON.stringify(session, null, 2)}
+</pre>

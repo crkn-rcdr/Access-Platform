@@ -1,0 +1,129 @@
+# This is an example file for haproxy.cfg. Rename it to haproxy.cfg for it to work with docker-compose.
+# It should work out of the box, unless you have more complicated docker network settings to wrangle.
+# Run docker-compose up to set up the access-platform docker network and serve haproxy as its frontend.
+
+global
+  # Next few lines:
+  # generated 2020-02-07, Mozilla Guideline v5.4, HAProxy 2.1, OpenSSL 1.1.1d, intermediate configuration
+  # https://ssl-config.mozilla.org/#server=haproxy&version=2.1&config=intermediate&openssl=1.1.1d&guideline=5.4
+  ssl-default-bind-ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384
+  ssl-default-bind-ciphersuites TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256
+  ssl-default-bind-options no-sslv3 no-tlsv10 no-tlsv11 no-tls-tickets
+
+  ssl-default-server-ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384
+  ssl-default-server-ciphersuites TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256
+  ssl-default-server-options no-sslv3 no-tlsv10 no-tlsv11 no-tls-tickets
+
+  tune.ssl.default-dh-param 4096
+
+  # debug logging
+  log stdout format raw local0 info
+
+defaults
+  mode http
+  timeout connect 5000ms
+  timeout client 50000ms
+  timeout server 50000ms
+
+  # debug logging
+  log global
+  option httplog
+
+  errorfile 400 /usr/local/etc/haproxy/error/400.http
+  errorfile 403 /usr/local/etc/haproxy/error/403.http
+  errorfile 405 /usr/local/etc/haproxy/error/405.http
+  errorfile 408 /usr/local/etc/haproxy/error/408.http
+  errorfile 425 /usr/local/etc/haproxy/error/425.http
+  errorfile 429 /usr/local/etc/haproxy/error/429.http
+  errorfile 500 /usr/local/etc/haproxy/error/500.http
+  errorfile 502 /usr/local/etc/haproxy/error/502.http
+  errorfile 503 /usr/local/etc/haproxy/error/503.http
+  errorfile 504 /usr/local/etc/haproxy/error/504.http
+
+  # dns!
+  default-server init-addr last,libc,none
+
+frontend public
+  bind :80
+  bind :443 ssl crt /usr/local/etc/haproxy/certs/canadiana.pem alpn h2,http/1.1
+
+  # HTTPS always. Comment if this isn't working for you.
+  http-response set-header Strict-Transport-Security max-age=63072000
+
+  # set X-Forwarded-(For,Host,Proto) headers
+  option forwardfor
+  http-request set-header X-Forwarded-Host %[req.hdr(Host)]
+  http-request set-header X-Forwarded-Port 443 if { ssl_fc }
+  http-request set-header X-Forwarded-Proto https if { ssl_fc }
+
+  # Used to log the protocol and host
+  http-request capture req.hdr(X-Forwarded-Proto) len 6
+  http-request capture req.hdr(Host) len 30
+  
+  # ACLs
+  acl is_unused_dom hdr_dom(host) -i online.canadiana.ca eco.canadiana.ca enligne.canadiana.ca canadianaonline.ca www.canadianaonline.ca canadianaenligne.ca www.canadianaenligne.ca whf.canadiana.ca 1812.canadiana.ca
+  acl is_gac hdr_dom(host) -i dfait-aeci.canadiana.ca
+  acl is_cdn hdr_dom(host) -i -m beg cdn.
+  acl is_org hdr_dom(host) -i -m end canadiana.org
+  acl is_static path_beg -i /cihm-error/ /schema /standards/
+  acl is_image hdr_dom(host) -i -m beg image. image-
+  acl is_image_api path_beg -i /status /configuration /tasks
+  acl is_couch hdr_dom(host) -i -m beg couch. couch-
+  acl is_auth hdr_dom(host) -i -m beg auth. auth-
+  acl is_admin hdr_dom(host) -i -m beg admin. admin-
+  acl is_api hdr_dom(host) -i -m beg api. api-
+  acl is_access hdr_dom(host) -i -m beg access. access-
+
+  # HTTP Request rewrites
+  http-request redirect code 301 location http://www.canadiana.ca%[capture.req.uri] if is_unused_dom
+  http-request redirect code 301 location http://gac.canadiana.ca%[capture.req.uri] if is_gac
+  http-request deny if is_image is_image_api
+  redirect scheme https code 301 if !{ ssl_fc }
+
+  # backend selection
+  default_backend cap
+  use_backend apache if is_org || is_cdn || is_static
+  use_backend cantaloupe if is_image
+  use_backend couch if is_couch
+  use_backend amsa if is_auth
+  use_backend sapindale if is_admin
+  use_backend lapin if is_api
+  use_backend access if is_access
+
+backend apache
+  server local 172.30.0.4:80
+
+backend cap
+  server local 172.30.0.3:3011
+
+backend cantaloupe
+  server local 172.30.0.5:8182
+
+backend couch
+  server local couch:5984
+
+backend amsa
+  server local 172.30.0.7:8080
+
+backend sapindale
+  server local 172.30.0.8:8080
+
+backend lapin
+  server local lapin:5858
+
+frontend admin_dev
+  bind :10000 ssl crt /usr/local/etc/haproxy/certs/canadiana.pem alpn h2,http/1.1
+  default_backend sapindale_dev
+
+backend sapindale_dev
+  server local 172.30.0.8:10000
+
+backend access
+  server local admin:4747
+
+frontend access_hmr
+  bind :14747 ssl crt /usr/local/etc/haproxy/certs/canadiana.pem alpn h2,http/1.1
+  default_backend access_hmr_ws
+
+backend access_hmr_ws
+  server local admin:14747

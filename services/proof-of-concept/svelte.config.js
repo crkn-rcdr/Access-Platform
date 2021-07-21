@@ -12,7 +12,12 @@ const config = {
       env: {
         port: "ADMIN_PORT",
       },
+      out: "dist",
     }),
+
+    prerender: {
+      enabled: false,
+    },
 
     // hydrate the <div id="svelte"> element in src/app.html
     target: "#svelte",

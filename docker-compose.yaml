@@ -1,92 +1,176 @@
 version: "3.9"
 
 services:
+  #
+  # Dev services
+  #
+  haproxy:
+    profiles:
+      - dev
+    image: haproxy:2.2-alpine
+    container_name: access-haproxy
+    depends_on:
+      - couchdb
+      - lapin
+      - admin
+    ports:
+      - "80:80"
+      - "443:443"
+      - "10000:10000"
+      - "14747:14747"
+    volumes:
+      - ./services/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+      - ./services/haproxy/certs:/usr/local/etc/haproxy/certs:ro
+      - ./services/haproxy/error:/usr/local/etc/haproxy/error:ro
+    restart: unless-stopped
+    networks:
+      access-platform:
+        aliases:
+          - haproxy
   couchdb:
     profiles:
       - dev
-    container_name: access-couch
+    container_name: access-couchdb
     image: couchdb:3.1
     env_file:
       - .env.docker
+      - .env.secret
     networks:
       access-platform:
-        ipv4_address: 172.30.0.6
         aliases:
           - couch
     ports:
       - "5984:5984"
-  package-watcher:
+  packages:
     profiles:
       - dev
     container_name: access-packages
     build:
       context: .
-      target: package_watch
-    image: access-packages:dev
+      target: dev
+    image: access-platform:dev
+    command: ["watch", "-r", "--filter", "./packages", "--parallel"]
     volumes:
       - .:/repo
     networks:
       access-platform:
-  kivik-watcher:
+  kivik:
     profiles:
       - dev
     container_name: access-kivik
     build:
       context: .
-      target: kivik_watch
-    image: access-kivik:dev
+      target: dev
+    image: access-platform:dev
+    command: ["-C", "./services/couchdb", "watch:docker"]
     depends_on:
-      - package-watcher
       - couchdb
     volumes:
       - .:/repo
     networks:
       access-platform:
-  lapin-dev:
+  lapin:
     profiles:
       - dev
     container_name: access-lapin
     build:
       context: .
-      target: lapin_dev
-    image: access-lapin:dev
+      target: dev
+    image: access-platform:dev
+    command: ["-C", "./services/lapin", "dev"]
     env_file:
-      - .env.docker
+      - ./.env.docker
+      - ./.env.secret
     depends_on:
-      - package-watcher
+      - packages
       - couchdb
     volumes:
       - .:/repo
     networks:
       access-platform:
-        ipv4_address: 172.30.0.9
         aliases:
           - lapin
-    ports:
-      - "5858:5858"
-  admin-dev:
+  admin:
     profiles:
       - dev
     container_name: access-admin
     build:
       context: .
-      target: admin_dev
-    image: access-admin:dev
+      target: dev
+    image: access-platform:dev
+    command: ["-C", "./services/proof-of-concept", "dev"]
     env_file:
-      - .env.docker
+      - ./.env.docker
+      - ./.env.secret
     depends_on:
-      - lapin-dev
+      - lapin
     volumes:
       - .:/repo
     networks:
       access-platform:
-        ipv4_address: 172.30.0.10
         aliases:
           - admin
+  #
+  # Production services
+  #
+  haproxy-prod:
+    profiles:
+      - prod
+    image: haproxy:2.2-alpine
+    container_name: access-haproxy-prod
+    depends_on:
+      - lapin-prod
+      - admin-prod
     ports:
-      - "4747:4747"
-      - "14747:14747"
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./services/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+      - ./services/haproxy/certs:/usr/local/etc/haproxy/certs:ro
+      - ./services/haproxy/error:/usr/local/etc/haproxy/error:ro
+    restart: unless-stopped
+    networks:
+      access-platform:
+        aliases:
+          - haproxy
+  lapin-prod:
+    profiles:
+      - prod
+    container_name: access-lapin-prod
+    build:
+      context: .
+      target: prod
+    image: access-platform:prod
+    command: ["-C", "./services/lapin", "start"]
+    env_file:
+      - .env.docker
+      - .env.prod
+      - .env.secret
+    networks:
+      access-platform:
+        aliases:
+          - lapin
+  admin-prod:
+    profiles:
+      - prod
+    container_name: access-admin-prod
+    image: access-platform:prod
+    command: ["-C", "./services/proof-of-concept", "start"]
+    env_file:
+      - .env.docker
+      - .env.prod
+      - .env.secret
+    depends_on:
+      - lapin-prod
+    networks:
+      access-platform:
+        aliases:
+          - admin
 
 networks:
   access-platform:
-    external: true
+    name: access-platform
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.30.0.0/16
