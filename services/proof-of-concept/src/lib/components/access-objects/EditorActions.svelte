@@ -44,6 +44,7 @@
     const data = await sendSaveRequest({
       ...diff["added"],
       ...diff["updated"],
+      // foo: "bar", uncomment to test error
     });
     try {
       object = rfdc(objectModel) as AccessObject; // todo: get this done with zod

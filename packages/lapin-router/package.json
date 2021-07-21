@@ -65,6 +65,7 @@
     "@crkn-rcdr/access-data": "workspace:^0.0.0",
     "@crkn-rcdr/couch-utils": "workspace:^0.0.0",
     "@trpc/server": "^8.2.0",
+    "deep-object-diff": "^1.1.0",
     "zod": "^3.5.1"
   }
 }
