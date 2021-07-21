@@ -97,7 +97,7 @@
   }
 </script>
 
-<svelte:window on:keydown={handleKeydown} />
+<!-- <svelte:window on:keydown={handleKeydown} />
 {#if indexModel.length}
   <div class="auto-align auto-align__column">
     {#if showAddButton}
@@ -116,7 +116,7 @@
             setActiveIndex(e.detail.destinationItemIndex);
           }}
         >
-          {#each collection.members as members, i}
+          {#each Object.values(members) as memberItems, i}
             <div
               class="thumbnail"
               class:active={i === activeMemberIndex}
@@ -136,7 +136,7 @@
                   >
                     <AutomaticResizeNumberInput
                       name="position"
-                      max={collection.members.length}
+                      max={memberItems.length}
                       on:changed={(e) => {
                         moveMember(e, i);
                       }}
@@ -148,7 +148,7 @@
               <div>
                 <ul>
                   <li>
-                    <input bind:value={members["id"]} />
+                    <input bind:value={memberItems["id"]} />
                   </li>
                 </ul>
               </div>
@@ -158,8 +158,7 @@
       {/if}
     </div>
   </div>
-{/if}
-
+{/if} -->
 <style>
   .list {
     position: relative;

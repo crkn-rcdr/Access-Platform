@@ -28,7 +28,7 @@
 {#if collection}
   <div class="auto-align auto-align__full">
     <div class="list-wrapper">
-      <CollectionEditor
+      <!-- <CollectionEditor
         showAddButton={state != "add"}
         bind:members={collection.members}
         on:membersClicked={(e) => {
@@ -37,7 +37,7 @@
         on:addClicked={() => {
           changeView("add");
         }}
-      />
+      /> -->
     </div>
   </div>
 {/if}
