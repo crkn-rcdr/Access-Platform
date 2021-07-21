@@ -8,7 +8,7 @@
       },
       "fixtures": true
     },
-    "iris": {
+    "production": {
       "url": "http://iris.tor.c7a.ca:5984",
       "auth": {
         "user": "admin",

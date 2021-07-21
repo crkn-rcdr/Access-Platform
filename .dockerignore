@@ -4,8 +4,12 @@
 .vscode
 docker-compose*
 Dockerfile
+
 deprecated
+docs
+
 *.md
+
 **/node_modules
 **/dist
 **/build

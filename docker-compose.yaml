@@ -32,15 +32,14 @@ services:
       - dev
     container_name: access-couchdb
     image: couchdb:3.1
+    environment:
+      - COUCHDB_USER=admin
     env_file:
-      - .env.docker
       - .env.secret
     networks:
       access-platform:
         aliases:
           - couch
-    ports:
-      - "5984:5984"
   packages:
     profiles:
       - dev
@@ -79,7 +78,7 @@ services:
     image: access-platform:dev
     command: ["-C", "./services/lapin", "dev"]
     env_file:
-      - ./.env.docker
+      - ./.env.dev
       - ./.env.secret
     depends_on:
       - packages
@@ -100,7 +99,7 @@ services:
     image: access-platform:dev
     command: ["-C", "./services/proof-of-concept", "dev"]
     env_file:
-      - ./.env.docker
+      - ./.env.dev
       - ./.env.secret
     depends_on:
       - lapin
@@ -143,7 +142,6 @@ services:
     image: access-platform:prod
     command: ["-C", "./services/lapin", "start"]
     env_file:
-      - .env.docker
       - .env.prod
       - .env.secret
     networks:
@@ -157,7 +155,6 @@ services:
     image: access-platform:prod
     command: ["-C", "./services/proof-of-concept", "start"]
     env_file:
-      - .env.docker
       - .env.prod
       - .env.secret
     depends_on:
