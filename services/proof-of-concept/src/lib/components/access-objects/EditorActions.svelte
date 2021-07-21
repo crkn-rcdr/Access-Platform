@@ -61,6 +61,7 @@
     objectModel["slug"] = undefined;
     handleSave().then(() => {
       console.log("Done saving");
+      // TODO: error state
     });
   }
 
