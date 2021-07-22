@@ -1,4 +1,4 @@
-<!--script context="module" lang="ts">
+<script context="module" lang="ts">
   import type { Load } from "@sveltejs/kit";
   import type { RootInput } from "./__layout.svelte";
 
@@ -22,15 +22,6 @@
   };
 </script>
 
-<script lang="ts">
-</script>
-
-<h1>Proof of concept!</h1>
-
-<p>{servertest}</p>
-<p>{serverfailure}</p>
-<p>{test}</p>
-<p>{failure}</p-->
 <script lang="ts">
   import { goto } from "$app/navigation";
   import Resolver from "$lib/components/access-objects/Resolver.svelte";
@@ -62,8 +53,13 @@
 </script>
 
 <pre>
-  Session: {JSON.stringify(session, null, 2)}
+  {#if session}
+    <nav class="site-nav">
+        Session: {JSON.stringify(session, null, 2)}
+    </nav>
+  {/if}
 </pre>
+
 <div class="wrapper">
   <div class="hero hero__gradient full-bleed">
     <div class="wrapper">
@@ -75,7 +71,6 @@
   <p>{serverfailure}</p>
   <p>{test}</p>
   <p>{failure}</p>
-
 
   <br />
   <br />
@@ -89,3 +84,15 @@
   <br />
   <TypeAhead label="Search for an object to edit:" on:selected={slugSelected} />
 </div>
+
+<style>
+  .site-nav {
+    padding: 1.5rem 1rem;
+    background-color: var(--structural-div-bg);
+    filter: brightness(1.1);
+  }
+
+  a {
+    color: var(--base-font-color) !important;
+  }
+</style>
