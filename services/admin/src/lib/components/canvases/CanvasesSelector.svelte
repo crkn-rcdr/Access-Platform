@@ -1,9 +1,9 @@
 <script lang="ts">
+  import type { ObjectList } from "@crkn-rcdr/access-data";
   import { onMount, createEventDispatcher } from "svelte";
-  import type { Canvas } from "@crkn-rcdr/access-data/src/access/Manifest";
 
-  export let canvases: Canvas[];
-  export let selectedCanvases: Canvas[] = [];
+  export let canvases: ObjectList;
+  export let selectedCanvases: ObjectList = [];
   export let options: any = {};
   export let multiple =
     true; /* We could edit this to give a max number of items selectable */
@@ -65,7 +65,7 @@
     }
   }
 
-  function handleSelection(input: any, canvas: Canvas) {
+  function handleSelection(input: any, canvas: any) {
     if (maxSelected) {
       clearSelected();
       selectedCanvases = [canvas];
@@ -131,7 +131,7 @@
             input.setAttribute("name", `checkbox-${i}`);
             input.addEventListener("click", () => {
               const index = parseInt(i);
-              handleSelection(input, <Canvas>canvases[index]);
+              handleSelection(input, canvases[index]);
             });
             inputs.push(input);
             label.appendChild(input);
@@ -168,18 +168,24 @@
     text-align: right;
   }*/
 
-  :global(div[title="Zoom in"] img, div[title="Zoom out"]
-      img, div[title="Go home"] img, div[title="Toggle full page"] img) {
+  :global(div[title="Zoom in"] img),
+  :global(div[title="Zoom out"] img),
+  :global(div[title="Go home"] img),
+  :global(div[title="Toggle full page"] img) {
     cursor: pointer;
     opacity: 0.5;
   }
 
-  :global(div[title="Zoom in"], div[title="Zoom out"], div[title="Go home"], div[title="Toggle full page"]) {
+  :global(div[title="Zoom in"]),
+  :global(div[title="Zoom out"]),
+  :global(div[title="Go home"]),
+  :global(div[title="Toggle full page"]) {
     margin-left: 0.25rem !important;
   }
 
   :global(.referencestrip) {
     margin-left: 0 !important;
+    min-width: 12vw;
   }
 
   :global(.referencestrip > *) {

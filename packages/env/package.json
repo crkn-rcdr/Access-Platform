@@ -1,6 +1,6 @@
 {
   "name": "@crkn-rcdr/access-env",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Access platform environment variable initialization",
   "type": "module",
   "main": "./dist/cjs/index.js",
@@ -11,7 +11,8 @@
       "require": "./dist/cjs/index.js",
       "import": "./dist/esm/index.js",
       "types": "./dist/esm/index.d.ts"
-    }
+    },
+    "./package.json": "./package.json"
   },
   "repository": {
     "type": "git",
@@ -55,7 +56,7 @@
     ]
   },
   "devDependencies": {
-    "@types/node": "^16.3.2",
+    "@types/node": "^16.3.3",
     "ava": "^3.15.0",
     "npm-run-all": "^4.1.5",
     "ts-node": "^10.1.0",

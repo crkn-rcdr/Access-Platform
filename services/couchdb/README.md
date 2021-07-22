@@ -1,14 +1,12 @@
-# couchdb
+# services/couchdb - CouchDB configuration
 
-CouchDB configuration for the Canadiana Access Platform's suite of services
-
-This repo contains an example CouchDB config for setting up a Canadiana platform development environment.
+This service contains the configuration that powers our CouchDB databases.
 
 ## Kivik
 
 To deploy with Kivik, copy [`./kivikrc.example.json`](kivikrc.example.json) to `kivikrc.json`, and replace the placeholder password with our production CouchDB password. You can then run:
 
-    kivik deploy iris
+    $ kivik deploy production
 
 to deploy design docs and indexes to our Couch endpoint on `iris.tor.c7a.ca`.
 
@@ -16,20 +14,9 @@ to deploy design docs and indexes to our Couch endpoint on `iris.tor.c7a.ca`.
 
 [`./prelude.js`](prelude.js) contains functions that design document functions can import and use, using CouchDB's [CommonJS module system](https://docs.couchdb.org/en/3.1.1/query-server/javascript.html#commonjs-modules). Ensure that the relevant design directory has a symlink to the root directory's prelude file in `lib/prelude.js`.
 
-## Setup
+## Notes on configuration options
 
-```
-$ docker-compose up
-```
-
-- Go to http://localhost:5984/\_utils/ and log in (Default username/password in compose file is admin/admin)
-- Go to setup (the wrench)
-- Click "Configure a Single Node"
-- Type in the username/password same as login
-
-You now have a default configuration.
-
-Other possible configuration options you may wish to add. These can be put into the `local.d/docker.ini` file, or added within the config tab (which saves changes to the `local.d/docker.ini` file).
+These can be put into the `local.d/docker.ini` file, or added within the config tab (which saves changes to the `local.d/docker.ini` file).
 
 ```
 [couchdb]

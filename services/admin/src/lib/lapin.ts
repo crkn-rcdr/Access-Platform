@@ -2,13 +2,12 @@ import type { LapinRouter } from "@crkn-rcdr/lapin-router";
 import type { LoadInput } from "@sveltejs/kit";
 import { createTRPCClient } from "@trpc/client";
 
-export const getLapin = (fetch?: LoadInput["fetch"]) => {
-  const options = { url: "http://localhost:4747/api" };
+type LapinOptions = {
+  url: string;
+  fetch: LoadInput["fetch"];
+};
 
-  if (fetch) {
-    options["fetch"] = fetch;
-  }
-
+export const getLapin = (options: LapinOptions) => {
   return createTRPCClient<LapinRouter>(options);
 };
 

@@ -1,16 +1,17 @@
 <script context="module" lang="ts">
   import type { Load } from "@sveltejs/kit";
-  export const load: Load = async ({ page, fetch }) => {
-    if (page.params["prefix"] && page.params["noid"]) {
-      const id = [
-        page.params["prefix"] as string,
-        page.params["noid"] as string,
-      ].join("/");
-      const response = await fetch(`/object/${id}.json`);
-      const json = await response.json();
-
-      if (response.ok) {
-        const object = json.object as AccessObject;
+  import { getLapin } from "$lib/lapin";
+  import type { RootInput } from "../__layout.svelte";
+  export const load: Load<RootInput> = async ({ page, context, session }) => {
+    try {
+      if (page.params["prefix"] && page.params["noid"]) {
+        const id = [
+          page.params["prefix"] as string,
+          page.params["noid"] as string,
+        ].join("/");
+        const lapin = getLapin({ url: session.apiEndpoint, fetch: null });
+        const response = await lapin.query("noid.resolve", id);
+        const object = AccessObject.parse(response);
         let type = "other";
         if (isCollection(object)) {
           type = "collection";
@@ -18,23 +19,17 @@
           type = "canvasManifest";
         }
         return { props: { object, createMode: false } };
-      } else {
-        return {
-          status: response.status,
-          error: new Error(json.error),
-          props: { createMode: false },
-        };
-      }
-    } else return { props: { createMode: true } };
+      } else return { props: { createMode: true } };
+    } catch (e) {
+      console.log("ERROR", e);
+      return e;
+    }
   };
 </script>
 
 <script lang="ts">
-  import type {
-    AccessObject,
-    Manifest,
-    Collection,
-  } from "@crkn-rcdr/access-data";
+  import { AccessObject } from "@crkn-rcdr/access-data";
+  import type { Manifest, Collection } from "@crkn-rcdr/access-data";
   import { isManifest, isCollection } from "@crkn-rcdr/access-data";
   import type { SideMenuPageData } from "$lib/types";
   import Toolbar from "$lib/components/shared/Toolbar.svelte";
@@ -43,8 +38,6 @@
   import EditorActions from "$lib/components/access-objects/EditorActions.svelte";
   import StatusIndicator from "$lib/components/access-objects/StatusIndicator.svelte";
   import InfoEditor from "$lib/components/access-objects/InfoEditor.svelte";
-  // import CollectionEditor from "$lib/components/collection/CollectionEditor.svelte";
-  import CollectionContentEditor from "$lib/components/collection/CollectionContentEditor.svelte";
 
   export let object: AccessObject;
   export let createMode: boolean;
@@ -76,7 +69,7 @@
         value: "",
       },
       type: "manifest",
-      from: "",
+      from: "canvases",
       canvases: [],
     };
     object = newManifest;
@@ -84,8 +77,9 @@
 
   async function setDataModel(object: AccessObject) {
     if (!object) return;
+
     rfdc = (await import("rfdc")).default();
-    objectModel = rfdc(object) as AccessObject;
+    objectModel = rfdc(object) as AccessObject; // todo: get this done with zod
 
     if (isManifest(objectModel)) {
       pageList = [
@@ -127,26 +121,13 @@
             },
           },
         },
-        {
-          name: "Members",
-          componentData: {
-            contentComponent: CollectionContentEditor,
-            contentComponentProps: { collection: objectModel },
-            sideMenuPageProps: {
-              overflowY: "hidden",
-            },
-            update: () => {
-              objectModel = objectModel;
-            },
-          },
-        },
       ];
     }
   }
 
   $: {
     // Share any changes that occur in this component with the sub-components in the navigator.
-    setDataModel(object);
+    if (object) setDataModel(object);
   }
 </script>
 

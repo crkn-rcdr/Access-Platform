@@ -120,41 +120,8 @@
     element.classList?.add("draggable");
     element.setAttribute("draggable", "true");
     element.setAttribute("ondragover", "return false");
-<<<<<<< HEAD
-
-    /** Hides the item being dragged in its orginal position. This must be done during drag, else the drag preview will not show. */
-    element.addEventListener("drag", () => {
-      element.classList?.add("dragging");
-    });
-
-    /** When the dragging begins, record the items current index for moving upon drop */
-    element.addEventListener("dragstart", () => {
-      originalItemIndex = elementIndex;
-    });
-
-    /** Shows the item being dragged in its new position, and clears the drag target animation from the element being hovered over. */
-    element.addEventListener("dragend", () => {
-      element.classList?.remove("dragging");
-      clearDragAnimation();
-    });
-
-    /** Disables the drag animation when the component being dragged is no longer over an element */
-    element.addEventListener("dragleave", () => {
-      clearDragAnimation();
-    });
-
-    /** Records the destination index for moving the dragged item to, and adds the drag target animation from the element being hovered over. */
-    element.addEventListener("dragover", (event: any) => {
-      destinationItemIndex = getIndexToMoveChildTo(
-        event.clientX,
-        event.clientY
-      );
-      setDragAnimation();
-    });
-=======
     removeEventListeners(element, elementIndex); // Ensure no duplicates fired
     addEventListeners(element, elementIndex);
->>>>>>> basic-UI-features
   }
 
   function enableDraggingOnChildren() {

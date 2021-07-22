@@ -1,0 +1,16 @@
+.env*
+.git
+.gitignore
+.vscode
+docker-compose*
+Dockerfile
+
+deprecated
+docs
+
+*.md
+
+**/node_modules
+**/dist
+**/build
+**/.svelte-kit

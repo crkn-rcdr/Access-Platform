@@ -4,9 +4,8 @@
   import AutomaticResizeNumberInput from "$lib/components/shared/AutomaticResizeNumberInput.svelte";
   import DynamicDragAndDropList from "$lib/components/shared/DynamicDragAndDropList.svelte";
   import { moveArrayElement } from "$lib/arrayUtil";
-  //import Index from "src/object/routes/index.svelte";
+  import type { Collection } from "@crkn-rcdr/access-data/src/access/Collection";
 
-  //export let model: AccessObject;
   export let collection: Collection;
   export let members: {} = Object.values(collection.members);
   export let showAddButton = true;
@@ -97,6 +96,21 @@
   }
 </script>
 
+<div class="editor">
+  <!-- {#if isCollection(model)}
+    <label for="Type">Type</label><br />
+    <input type="text" id="type" name="type" bind:value={model["type"]} /><br />
+  {/if}
+  {#if isCollection(model)}
+    <label for="public">Public</label><br />
+    <input
+      type="text"
+      id="public"
+      name="public"
+      bind:value={model["public"]}
+    /><br />
+  {/if} -->
+</div>
 <svelte:window on:keydown={handleKeydown} />
 {#if indexModel.length}
   <div class="auto-align auto-align__column">

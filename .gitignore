@@ -5,5 +5,5 @@
 .svelte
 *.local
 .env
+.env.secret
 .notes
-.docker-pnpm.store

@@ -11,7 +11,6 @@ export const slugRouter = createRouter()
         },
         fields: ["_id", "slug"],
       });
-
       return response.map((record) => {
         return { noid: record._id as Noid, slug: record["slug"] as Slug };
       });
@@ -20,7 +19,6 @@ export const slugRouter = createRouter()
   .query("resolve", {
     input: Slug.parse,
     async resolve({ input: q, ctx }): Promise<any> {
-      console.log("query", q);
       const response = await ctx.couch.access.find({
         selector: {
           slug: { $eq: q },
@@ -50,11 +48,6 @@ export const slugRouter = createRouter()
         },
         fields: ["_id", "slug"],
       });
-
-      console.log(
-        "resolveMany be",
-        response.map((record) => [record._id as Noid, record["slug"] as Slug])
-      );
       return response.map((record) => [
         record._id as Noid,
         record["slug"] as Slug,
