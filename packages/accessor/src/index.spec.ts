@@ -3,7 +3,7 @@ import { Accessor } from ".";
 
 const accessor = new Accessor({
   couch: {
-    url: "http://localhost:5984",
+    url: "http://127.0.0.1:5984",
     auth: {
       user: "kivik",
       password: "kivik",

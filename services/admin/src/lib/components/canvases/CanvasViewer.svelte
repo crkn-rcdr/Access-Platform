@@ -1,8 +1,8 @@
 <script lang="ts">
   import { onMount, afterUpdate } from "svelte";
-  import type { Canvas } from "@crkn-rcdr/access-data/src/access/Manifest";
+  //import type { Canvas } from "@crkn-rcdr/access-data/src/access/Manifest";
 
-  export let canvas: Canvas;
+  export let canvas: any; // TODO: should we make an ObjectListItem type?
   export let options: any = {};
 
   let OpenSeadragon: any;

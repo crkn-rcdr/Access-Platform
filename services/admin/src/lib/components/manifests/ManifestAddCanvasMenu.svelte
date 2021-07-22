@@ -1,41 +1,43 @@
 <script lang="ts">
+  import { session } from "$app/stores";
+  import { getLapin } from "$lib/lapin";
   import TiArrowBack from "svelte-icons/ti/TiArrowBack.svelte";
   import FaPlus from "svelte-icons/fa/FaPlus.svelte";
   import { AccessObject } from "@crkn-rcdr/access-data";
   import { isManifest, isCollection } from "@crkn-rcdr/access-data";
   import TypeAhead from "$lib/components/access-objects/TypeAhead.svelte";
   import { createEventDispatcher } from "svelte";
-  import type {
-    Manifest,
-    Canvas,
-  } from "@crkn-rcdr/access-data/src/access/Manifest";
+  import type { Manifest } from "@crkn-rcdr/access-data/src/access/Manifest";
+  import type { ObjectList } from "@crkn-rcdr/access-data";
   import CanvasesSelector from "$lib/components/canvases/CanvasesSelector.svelte";
-  import { getLapin } from "$lib/lapin";
 
   export let destinationManifest: Manifest;
   export let destinationIndex: number = 0;
   export let multiple = true;
 
   const dispatch = createEventDispatcher();
+  const lapin = getLapin({ url: $session["apiEndpoint"], fetch: null });
 
   let selectedManifest: Manifest;
-  let selectedCanvases: Canvas[] = [];
+  let selectedCanvases: ObjectList = [];
   let showManifest = false;
   let selectAll = false;
   let error = "";
 
   async function handleSelect(event: any) {
     try {
-      let noid = event.detail;
-      const lapin = getLapin();
-      const response = await lapin.query("noid.resolve", noid);
-      console.log(response);
-      const object = AccessObject.parse(response);
-      if (isCollection(object)) {
-        error = "Error: Object is a collection, please select another.";
-      } else if (isManifest(object)) {
-        selectedManifest = response;
-        showManifest = true;
+      let prefixedNoid = event.detail;
+      const response = await lapin.query("noid.resolve", prefixedNoid);
+      if (response) {
+        const object = AccessObject.parse(response);
+        if (isCollection(object)) {
+          error = "Error: Object is a collection, please select another.";
+        } else if (isManifest(object)) {
+          selectedManifest = object;
+          showManifest = true;
+        }
+      } else {
+        error = response.toString();
       }
     } catch (e) {
       error = e;

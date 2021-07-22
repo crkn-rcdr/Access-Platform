@@ -52,14 +52,6 @@
   }
 </script>
 
-<pre>
-  {#if session}
-    <nav class="site-nav">
-        Session: {JSON.stringify(session, null, 2)}
-    </nav>
-  {/if}
-</pre>
-
 <div class="wrapper">
   <div class="hero hero__gradient full-bleed">
     <div class="wrapper">
@@ -84,15 +76,3 @@
   <br />
   <TypeAhead label="Search for an object to edit:" on:selected={slugSelected} />
 </div>
-
-<style>
-  .site-nav {
-    padding: 1.5rem 1rem;
-    background-color: var(--structural-div-bg);
-    filter: brightness(1.1);
-  }
-
-  a {
-    color: var(--base-font-color) !important;
-  }
-</style>

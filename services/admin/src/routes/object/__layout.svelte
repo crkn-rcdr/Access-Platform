@@ -1,20 +1,17 @@
 <script context="module" lang="ts">
   import type { Load } from "@sveltejs/kit";
   import { getLapin } from "$lib/lapin";
-
-  export const load: Load = async ({ page, fetch }) => {
+  import type { RootInput } from "../__layout.svelte";
+  export const load: Load<RootInput> = async ({ page, context, session }) => {
     try {
       if (page.params["prefix"] && page.params["noid"]) {
         const id = [
           page.params["prefix"] as string,
           page.params["noid"] as string,
         ].join("/");
-
-        const lapin = getLapin();
+        const lapin = getLapin({ url: session.apiEndpoint, fetch: null });
         const response = await lapin.query("noid.resolve", id);
-        console.log("noid.search", id, response);
         const object = AccessObject.parse(response);
-        console.log("object", object);
         let type = "other";
         if (isCollection(object)) {
           type = "collection";
@@ -24,6 +21,7 @@
         return { props: { object, createMode: false } };
       } else return { props: { createMode: true } };
     } catch (e) {
+      console.log("ERROR", e);
       return e;
     }
   };

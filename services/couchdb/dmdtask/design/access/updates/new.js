@@ -7,11 +7,11 @@ module.exports = function (doc, req) {
   /*
   Creates a new document given a new unique ID.  That ID can be pulled from CouchDB itself.
   This function confirms the ID is unique, so check the return.
-  $ curl -X GET http://localhost:5984/_uuids?count=1
+  $ curl -X GET http://127.0.0.1:5984/_uuids?count=1
   {"uuids":["f529fb5e6bafb438e5a9e034ae00161f"]}
-  $ curl -X POST http://localhost:5984/dmdtask/_design/access/_update/new/f529fb5e6bafb438e5a9e034ae00161f
+  $ curl -X POST http://127.0.0.1:5984/dmdtask/_design/access/_update/new/f529fb5e6bafb438e5a9e034ae00161f
   {}
-  $ curl -X POST http://localhost:5984/dmdtask/_design/access/_update/new/f529fb5e6bafb438e5a9e034ae00161f
+  $ curl -X POST http://127.0.0.1:5984/dmdtask/_design/access/_update/new/f529fb5e6bafb438e5a9e034ae00161f
   {"error": "Document already exists"}
   */
 

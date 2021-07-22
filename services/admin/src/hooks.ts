@@ -86,11 +86,11 @@ export const getSession: GetSession<Locals, Session> = (request) => {
 
 export const serverFetch: ServerFetch = (request) => {
   /* Docker won't have access to local hosts files, and so
-     we replace external domains with `localhost`.
+     we replace external domains with `127.0.0.1`.
      This assumes the external domain starts with `access`. */
   const url = request.url.replace(
     /^https:\/\/access.*\.canadiana\.ca/,
-    `http://localhost:${process.env["ADMIN_PORT"]}`
+    `http://127.0.0.1:${process.env["ADMIN_PORT"]}`
   );
 
   return fetch(new Request(url, request));

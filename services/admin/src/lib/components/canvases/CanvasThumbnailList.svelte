@@ -1,12 +1,12 @@
 <script lang="ts">
+  import type { ObjectList } from "@crkn-rcdr/access-data";
   import { createEventDispatcher, onMount } from "svelte";
   import TiTrash from "svelte-icons/ti/TiTrash.svelte";
-  import type { Canvas } from "@crkn-rcdr/access-data/src/access/Manifest";
   import AutomaticResizeNumberInput from "$lib/components/shared/AutomaticResizeNumberInput.svelte";
   import DynamicDragAndDropList from "$lib/components/shared/DynamicDragAndDropList.svelte";
   import { moveArrayElement } from "$lib/arrayUtil";
 
-  export let canvases: Canvas[] = [];
+  export let canvases: ObjectList = [];
   export let showAddButton = true;
 
   let isInitialized = false;

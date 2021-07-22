@@ -29,4 +29,27 @@
   };
 </script>
 
+<script lang="ts">
+  import { session } from "$app/stores";
+</script>
+
+<pre>
+  {#if session}
+    <nav class="site-nav">
+        Session: {JSON.stringify($session, null, 2)}
+    </nav>
+  {/if}
+</pre>
 <slot />
+
+<style>
+  .site-nav {
+    padding: 1.5rem 1rem;
+    background-color: var(--structural-div-bg);
+    filter: brightness(1.1);
+  }
+
+  a {
+    color: var(--base-font-color) !important;
+  }
+</style>

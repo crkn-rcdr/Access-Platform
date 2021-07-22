@@ -1,9 +1,12 @@
 <script lang="ts">
+  import { session } from "$app/stores";
   import { createEventDispatcher } from "svelte";
+  import { getLapin } from "$lib/lapin";
 
   const dispatch = createEventDispatcher();
   export let label = "Please provide a label for this component.";
   export let placeholder = "Placeholder...";
+  const lapin = getLapin({ url: $session["apiEndpoint"], fetch: null });
 
   let query = "";
   let lookupList: string[];
@@ -12,17 +15,14 @@
   async function lookupSlug() {
     dispatch("keypress", query);
 
-    if (query) {
-      let response = await fetch(`/slug/search/${query}.json`, {
-        method: "POST",
-        credentials: "same-origin",
-      });
+    console.log(query, lapin);
 
-      let jsonResponse = await response.json();
-      if (response.status === 200) {
-        lookupList = jsonResponse.data;
+    if (query && query.length && lapin) {
+      const response = await lapin.query("slug.search", query);
+      if (response) {
+        lookupList = response;
       } else {
-        error = jsonResponse.error;
+        error = response.toString();
       }
     }
   }
