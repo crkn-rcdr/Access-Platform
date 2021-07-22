@@ -1,21 +1,27 @@
 <script lang="ts">
   import { onMount, createEventDispatcher } from "svelte";
-  //import type { AccessObject } from "@crkn-rcdr/access-data";
-  //import { isCollection } from "@crkn-rcdr/access-data";
+  import { AccessObject } from "@crkn-rcdr/access-data";
+  import TypeAhead from "$lib/components/access-objects/TypeAhead.svelte";
+  import { isCollection, isManifest } from "@crkn-rcdr/access-data";
   import type { Collection } from "@crkn-rcdr/access-data/src/access/Collection";
-  /* import TypeAhead from "$lib/components/access-objects/TypeAhead.svelte";
-  import Switch from "$lib/components/shared//Switch.svelte";
-  import SwitchCase from "$lib/components/shared//SwitchCase.svelte"; */
   import AutomaticResizeNumberInput from "$lib/components/shared/AutomaticResizeNumberInput.svelte";
   import DynamicDragAndDropList from "$lib/components/shared/DynamicDragAndDropList.svelte";
   import { moveArrayElement } from "$lib/arrayUtil";
+  import { getLapin } from "$lib/lapin";
+  import TiArrowBack from "svelte-icons/ti/TiArrowBack.svelte";
+  import TiTrash from "svelte-icons/ti/TiTrash.svelte";
 
   //export let model: AccessObject;
   export let collection: Collection;
   export let showAddButton = true;
+  export let members = collection.members[0].id;
+
   let indexModel: number[] = [];
   let activeMemberIndex: number = 0;
   let container: HTMLDivElement;
+  let addedMember = false;
+  let selectedCollection: Collection;
+  let error = "";
 
   const LEFT_ARROW_CODE: number = 37;
   const UP_ARROW_CODE: number = 38;
@@ -86,7 +92,43 @@
     }
   }
   function addClicked() {
+    addedMember = true;
     dispatch("addClicked");
+  }
+  function deleteCanvasByIndex(event: any, index: number) {
+    event.stopPropagation();
+    if (index >= 0 && index < collection?.members.length) {
+      collection?.members.splice(index, 1);
+      collection.members = collection?.members;
+      setActiveIndex(activeMemberIndex);
+    }
+  }
+  let addedItem = "";
+  let noid;
+  async function handleSelect(event: any) {
+    try {
+      noid = event.detail;
+      const lapin = getLapin();
+      const response = await lapin.query("noid.resolve", noid);
+      console.log(response);
+      //const object = AccessObject.parse(response);
+      collection.members[collection?.members.length] = noid;
+      //noid = "";
+      /* if (isCollection(object)) {
+        selectedCollection = response;
+      } else if (isManifest(object)) {
+        /selectedManifest = response;
+        showManifest = true; 
+        error = "Error: Object is a Manifest, please select another.";
+      } */
+    } catch (e) {
+      error = e;
+    }
+  }
+
+  function handleCancelPressed() {
+    console.log("selected test", activeMemberIndex);
+    dispatch("done");
   }
   onMount(() => {
     console.log("Prit Collection:", collection);
@@ -106,6 +148,36 @@
     {#if showAddButton}
       <button class="primary lg" on:click={addClicked}>Add Member</button>
     {/if}
+    {#if addedMember}
+      <div class="add-menu-title">
+        <button
+          class="secondary cancel-button auto-align auto-align__a-center"
+          on:click={handleCancelPressed}
+        >
+          <div class="icon">
+            <TiArrowBack />
+          </div>
+          Exit
+        </button>
+      </div>
+      <br />
+      {#if error}
+        <br />
+        <div class="alert alert-danger">
+          {error}
+        </div>
+      {/if}
+
+      <div>
+        <!--Todo: ask how best to limit to only manifests-->
+        <TypeAhead
+          label="Search for a manifest to add canvases from:"
+          on:selected={handleSelect}
+          on:keypress={() => (error = "")}
+        />
+      </div>
+    {/if}
+
     <div
       bind:this={container}
       tabindex="0"
@@ -146,12 +218,17 @@
                       bind:value={indexModel[i]}
                     />
                   </div>
+                  <div
+                    class="action icon"
+                    on:click={(e) => deleteCanvasByIndex(e, i)}
+                  >
+                    <TiTrash />
+                  </div>
                 </div>
               </div>
               <div>
                 <ul>
                   <li>
-                    {members}
                     <input bind:value={members["id"]} />
                   </li>
                 </ul>
@@ -199,5 +276,23 @@
   }
   li {
     list-style: none;
+  }
+  @keyframes new {
+    from {
+      background-color: var(--gold-light);
+    }
+    to {
+      background-color: var(--structural-div-bg);
+    }
+  }
+
+  .actions-wrap {
+    flex: 1;
+    margin-left: 1.5rem;
+  }
+
+  .action.icon {
+    opacity: 0.6;
+    cursor: pointer;
   }
 </style>
