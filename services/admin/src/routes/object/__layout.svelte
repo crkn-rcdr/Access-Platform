@@ -1,16 +1,20 @@
 <script context="module" lang="ts">
   import type { Load } from "@sveltejs/kit";
-  export const load: Load = async ({ page, fetch }) => {
-    if (page.params["prefix"] && page.params["noid"]) {
-      const id = [
-        page.params["prefix"] as string,
-        page.params["noid"] as string,
-      ].join("/");
-      const response = await fetch(`/object/${id}.json`);
-      const json = await response.json();
+  import { getLapin } from "$lib/lapin";
 
-      if (response.ok) {
-        const object = json.object as AccessObject;
+  export const load: Load = async ({ page, fetch }) => {
+    try {
+      if (page.params["prefix"] && page.params["noid"]) {
+        const id = [
+          page.params["prefix"] as string,
+          page.params["noid"] as string,
+        ].join("/");
+
+        const lapin = getLapin();
+        const response = await lapin.query("noid.resolve", id);
+        console.log("noid.search", id, response);
+        const object = AccessObject.parse(response);
+        console.log("object", object);
         let type = "other";
         if (isCollection(object)) {
           type = "collection";
@@ -18,23 +22,16 @@
           type = "canvasManifest";
         }
         return { props: { object, createMode: false } };
-      } else {
-        return {
-          status: response.status,
-          error: new Error(json.error),
-          props: { createMode: false },
-        };
-      }
-    } else return { props: { createMode: true } };
+      } else return { props: { createMode: true } };
+    } catch (e) {
+      return e;
+    }
   };
 </script>
 
 <script lang="ts">
-  import type {
-    AccessObject,
-    Manifest,
-    Collection,
-  } from "@crkn-rcdr/access-data";
+  import { AccessObject } from "@crkn-rcdr/access-data";
+  import type { Manifest, Collection } from "@crkn-rcdr/access-data";
   import { isManifest, isCollection } from "@crkn-rcdr/access-data";
   import type { SideMenuPageData } from "$lib/types";
   import Toolbar from "$lib/components/shared/Toolbar.svelte";
@@ -74,7 +71,7 @@
         value: "",
       },
       type: "manifest",
-      from: "",
+      from: "canvases",
       canvases: [],
     };
     object = newManifest;
@@ -82,8 +79,9 @@
 
   async function setDataModel(object: AccessObject) {
     if (!object) return;
+
     rfdc = (await import("rfdc")).default();
-    objectModel = rfdc(object) as AccessObject;
+    objectModel = rfdc(object) as AccessObject; // todo: get this done with zod
 
     if (isManifest(objectModel)) {
       pageList = [
@@ -131,7 +129,7 @@
 
   $: {
     // Share any changes that occur in this component with the sub-components in the navigator.
-    setDataModel(object);
+    if (object) setDataModel(object);
   }
 </script>
 

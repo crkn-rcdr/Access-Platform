@@ -20,28 +20,15 @@
 
       let jsonResponse = await response.json();
       if (response.status === 200) {
-        lookupList = jsonResponse.noid;
+        lookupList = jsonResponse.data;
       } else {
         error = jsonResponse.error;
       }
     }
   }
 
-  async function selectItem(slug: string) {
-    if (
-      lookupList &&
-      Object.keys(lookupList).filter((item) => item.includes(query)).length
-    ) {
-      let response = await fetch(`/slug/resolve/${slug}.json`, {
-        credentials: "same-origin",
-      });
-      let data = await response.json();
-      if (response.status === 200) {
-        dispatch("selected", data.noid as string);
-      } else {
-        error = data.error;
-      }
-    }
+  async function selectItem(item: any) {
+    dispatch("selected", item["noid"] as string);
   }
 </script>
 
@@ -57,14 +44,7 @@
     bind:value={query}
     on:input={lookupSlug}
   />
-  <!--TODO: figure out how to format-->
-  <!--datalist id="slugList">
-    {#if lookupList}
-      {#each Object.keys(lookupList) as item}
-        <option>{item}</option>
-      {/each}
-    {/if}
-  </datalist-->
+
   {#if query && lookupList}
     <br />
     <table>
@@ -74,10 +54,10 @@
         </tr>
       </thead>
       <tbody>
-        {#each Object.keys(lookupList) as item}
+        {#each lookupList as item}
           <tr class="clickable" on:click={() => selectItem(item)}>
             <td>
-              {item}
+              {item["slug"]}
               <span
                 class="visibility-hidden float__right auto-align auto-align__full auto-align auto-align__a-center end-content"
               >

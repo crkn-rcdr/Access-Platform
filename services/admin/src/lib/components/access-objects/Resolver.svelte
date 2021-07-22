@@ -38,8 +38,13 @@
             method: "GET",
             credentials: "same-origin",
           });
+          const json = await response.json();
           if (response.status === 200) {
-            noid = (await response.json()).noid as string;
+            if (json.data === null) {
+              noid = null;
+            } else {
+              noid = json.data.noid as string;
+            }
             status = "READY";
           } else {
             noid = null;

@@ -168,18 +168,24 @@
     text-align: right;
   }*/
 
-  :global(div[title="Zoom in"] img, div[title="Zoom out"]
-      img, div[title="Go home"] img, div[title="Toggle full page"] img) {
+  :global(div[title="Zoom in"] img),
+  :global(div[title="Zoom out"] img),
+  :global(div[title="Go home"] img),
+  :global(div[title="Toggle full page"] img) {
     cursor: pointer;
     opacity: 0.5;
   }
 
-  :global(div[title="Zoom in"], div[title="Zoom out"], div[title="Go home"], div[title="Toggle full page"]) {
+  :global(div[title="Zoom in"]),
+  :global(div[title="Zoom out"]),
+  :global(div[title="Go home"]),
+  :global(div[title="Toggle full page"]) {
     margin-left: 0.25rem !important;
   }
 
   :global(.referencestrip) {
     margin-left: 0 !important;
+    min-width: 12vw;
   }
 
   :global(.referencestrip > *) {
