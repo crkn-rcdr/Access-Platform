@@ -4,11 +4,11 @@
       "url": "http://couch:5984",
       "auth": {
         "user": "admin",
-        "password": "admin"
+        "password": "REPLACE_WITH_PASSWORD"
       },
       "fixtures": true
     },
-    "iris": {
+    "production": {
       "url": "http://iris.tor.c7a.ca:5984",
       "auth": {
         "user": "admin",

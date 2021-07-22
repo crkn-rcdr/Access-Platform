@@ -1,7 +1,6 @@
 <script lang="ts">
   import FaArchive from "svelte-icons/fa/FaArchive.svelte";
-  import type { AccessObject } from "@crkn-rcdr/access-data";
-  import { onMount } from "svelte";
+  import { AccessObject } from "@crkn-rcdr/access-data";
   import equal from "fast-deep-equal";
   import { detailedDiff } from "deep-object-diff";
   import Modal from "$lib/components/shared/Modal.svelte";
@@ -9,7 +8,6 @@
   export let object: AccessObject;
   export let objectModel: AccessObject;
 
-  let clone: any;
   let handleSaveEnabled = false;
   let showMovetoStorageModal = false;
 
@@ -23,7 +21,8 @@
 
   function handleSave() {
     let diff: any = detailedDiff(object, objectModel); //TODO: We can send this to the backend
-    object = clone(objectModel);
+    console.log("diff", diff);
+    object = AccessObject.parse(objectModel);
     checkModelChanged(objectModel);
   }
 
@@ -34,10 +33,6 @@
   }
 
   function handlePublishStatusChange() {}
-
-  onMount(async () => {
-    clone = (await import("rfdc")).default();
-  });
 </script>
 
 <span class="editor-actions auto-align auto-align__a-center">

@@ -1,10 +1,10 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
-  import type { Canvas } from "@crkn-rcdr/access-data/src/access/Manifest";
+  //import type { Canvas } from "@crkn-rcdr/access-data/src/access/Manifest";
   import TiEye from "svelte-icons/ti/TiEye.svelte";
   import Card from "../shared/Card.svelte";
 
-  export let canvas: Canvas;
+  export let canvas: any; // TODO: should we make an ObjectListItem type?
   export let selected: boolean = false;
 
   const dispatch = createEventDispatcher();

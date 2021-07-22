@@ -1,9 +1,12 @@
 <script lang="ts">
+  import { session } from "$app/stores";
   import { createEventDispatcher } from "svelte";
+  import { getLapin } from "$lib/lapin";
 
   const dispatch = createEventDispatcher();
   export let label = "Please provide a label for this component.";
   export let placeholder = "Placeholder...";
+  const lapin = getLapin({ url: $session["apiEndpoint"], fetch: null });
 
   let query = "";
   let lookupList: string[];
@@ -12,36 +15,20 @@
   async function lookupSlug() {
     dispatch("keypress", query);
 
-    if (query) {
-      let response = await fetch(`/slug/search/${query}.json`, {
-        method: "POST",
-        credentials: "same-origin",
-      });
+    console.log(query, lapin);
 
-      let jsonResponse = await response.json();
-      if (response.status === 200) {
-        lookupList = jsonResponse.noid;
+    if (query && query.length && lapin) {
+      const response = await lapin.query("slug.search", query);
+      if (response) {
+        lookupList = response;
       } else {
-        error = jsonResponse.error;
+        error = response.toString();
       }
     }
   }
 
-  async function selectItem(slug: string) {
-    if (
-      lookupList &&
-      Object.keys(lookupList).filter((item) => item.includes(query)).length
-    ) {
-      let response = await fetch(`/slug/resolve/${slug}.json`, {
-        credentials: "same-origin",
-      });
-      let data = await response.json();
-      if (response.status === 200) {
-        dispatch("selected", data.noid as string);
-      } else {
-        error = data.error;
-      }
-    }
+  async function selectItem(item: any) {
+    dispatch("selected", item["noid"] as string);
   }
 </script>
 
@@ -57,14 +44,7 @@
     bind:value={query}
     on:input={lookupSlug}
   />
-  <!--TODO: figure out how to format-->
-  <!--datalist id="slugList">
-    {#if lookupList}
-      {#each Object.keys(lookupList) as item}
-        <option>{item}</option>
-      {/each}
-    {/if}
-  </datalist-->
+
   {#if query && lookupList}
     <br />
     <table>
@@ -74,10 +54,10 @@
         </tr>
       </thead>
       <tbody>
-        {#each Object.keys(lookupList) as item}
+        {#each lookupList as item}
           <tr class="clickable" on:click={() => selectItem(item)}>
             <td>
-              {item}
+              {item["slug"]}
               <span
                 class="visibility-hidden float__right auto-align auto-align__full auto-align auto-align__a-center end-content"
               >

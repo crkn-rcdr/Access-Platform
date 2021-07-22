@@ -10,7 +10,6 @@ export const noidRouter = createRouter()
           _id: { $eq: q },
         },
       });
-
       return response;
     },
   })
@@ -23,7 +22,6 @@ export const noidRouter = createRouter()
         },
         limit: 1,
       });
-
       return response.length ? response[0] : null;
     },
   });
