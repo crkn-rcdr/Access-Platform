@@ -4,7 +4,6 @@
   import AutomaticResizeNumberInput from "$lib/components/shared/AutomaticResizeNumberInput.svelte";
   import DynamicDragAndDropList from "$lib/components/shared/DynamicDragAndDropList.svelte";
   import { moveArrayElement } from "$lib/arrayUtil";
-  import type { Collection } from "@crkn-rcdr/access-data/src/access/Collection";
 
   export let collection: Collection;
   export let members: {} = Object.values(collection.members);

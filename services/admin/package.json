@@ -37,6 +37,5 @@
     "start": "node ./dist/index.js",
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-check --tsconfig ./tsconfig.json --watch"
->>>>>>> main
   }
 }
