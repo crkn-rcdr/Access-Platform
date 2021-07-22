@@ -1,14 +1,41 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import SideMenuBody from "$lib/components/shared/SideMenuBody.svelte";
+  import SideMenuPageList from "$lib/components/shared/SideMenuPageList.svelte";
+  import SideMenuPageListButton from "$lib/components/shared/SideMenuPageListButton.svelte";
+  import SideMenuPage from "$lib/components/shared/SideMenuPage.svelte";
+  import type { SideMenuPageData } from "$lib/types";
 
+  /** Option a menu that takes up the entire body of a page, or an inline menu. */
   export let fullPage = true;
 
-  let container: HTMLDivElement;
+  /** Sets the initital active page */
+  export let activeIndex = 0;
 
+  /** Handles generating the side menu buttons and pages dynamically through an array
+   *  Developers can use either this list or just build their menus by putting in their own template components.
+   */
+  export let pageList: Array<SideMenuPageData> = [];
+
+  let pageNames: string[] = []; // Makes it easier to generate the sidenav buttons list
+  let pageComponents: any[] = []; // Makes it easier to generate the page body list
+  let instances: any = {}; // Keeps track of the actual instances of the components dynamically created through svelte:component.
+
+  /** Any time the page list changes, redraw the menus and pages. */
+  $: pageNames = pageList.map((el) => el["name"]);
+  $: pageComponents = pageList.map((el) => el["componentData"]);
+  $: {
+    for (const key in instances) {
+      instances[key].$$.after_update.push(() => {
+        pageComponents[parseInt(key)].update(); // Any time the instances object changes, add a callback to each component instance that triggers the update method passed in through the SideMenuPageData objects in the pageList array property.
+      });
+    }
+  }
+
+  /** Handles the hiding and showing of pages based on user interaction with the menu */
+  let container: HTMLDivElement;
   let pageButtons: NodeListOf<Element>;
   let pageBodies: NodeListOf<Element>;
-
-  let activeIndex = 0;
 
   function setActivePageButtonClass() {
     for (let i = 0; i < pageButtons.length; i++) {
@@ -50,28 +77,62 @@
   });
 </script>
 
-<div
-  bind:this={container}
-  class="side-menu-container"
-  class:fixed-full-page={fullPage}
->
-  <slot name="side-menu-header" />
-  <div class="auto-align auto-align__a-stretch ">
-    <slot />
+<div bind:this={container} class="side-menu-container">
+  <div class:fixed-full-page={fullPage}>
+    <div class="header">
+      <slot name="side-menu-header" />
+    </div>
+    <div class="menu">
+      <div
+        class="auto-align auto-align__full auto-align auto-align__a-stretch auto-align auto-align__wrap"
+      >
+        {#if pageList.length}
+          <SideMenuPageList>
+            {#each pageNames as pageName}
+              <SideMenuPageListButton>{pageName}</SideMenuPageListButton>
+            {/each}
+          </SideMenuPageList>
+
+          <SideMenuBody>
+            {#each pageComponents as pageComponentData, i}
+              <SideMenuPage {...pageComponentData["sideMenuPageProps"]}>
+                <svelte:component
+                  this={pageComponentData["contentComponent"]}
+                  {...pageComponentData["contentComponentProps"]}
+                  bind:this={instances[i]}
+                />
+              </SideMenuPage>
+            {/each}
+          </SideMenuBody>
+        {:else}
+          <slot />
+        {/if}
+      </div>
+    </div>
   </div>
 </div>
 
 <style>
   .side-menu-container {
     width: 100%;
-    height: 100%;
+    position: relative;
   }
 
-  .side-menu-container.fixed-full-page {
+  .fixed-full-page {
     position: fixed;
     top: calc(4.5rem + var(--viewport-scaling));
-    bottom: 7rem;
+    bottom: 0;
     right: 0;
     left: 0;
+    height: calc(100vh - 4.5rem - var(--viewport-scaling));
+  }
+
+  .fixed-full-page .header {
+    height: 12%;
+    width: 100%;
+  }
+  .fixed-full-page .menu {
+    height: 88%;
+    width: 100%;
   }
 </style>

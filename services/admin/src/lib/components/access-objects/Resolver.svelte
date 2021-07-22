@@ -1,5 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import { session } from "$app/stores";
+  import { getLapin } from "$lib/lapin";
 
   /**
    * @type {string} Slug being resolved.
@@ -17,6 +19,8 @@
    */
   export let hideInitial = false;
   // https://github.com/crkn-rcdr/Access-Platform/blob/main/data/src/format/slug.ts
+
+  const lapin = getLapin({ url: $session["apiEndpoint"], fetch: null });
   const regex = /^[\p{L}\p{Nl}\p{Nd}\-_\.]+$/u;
   const initial = { slug, noid };
   $: shouldQuery =
@@ -34,14 +38,15 @@
       if (shouldQuery) {
         noid = undefined;
         if (regex.test(slug)) {
-          const response = await fetch(`/slug/resolve/${slug}.json`, {
-            method: "GET",
-            credentials: "same-origin",
-          });
-          if (response.status === 200) {
-            noid = (await response.json()).noid as string;
+          try {
+            const response = await lapin.query("slug.resolve", slug);
+            if (response === null) {
+              noid = null;
+            } else {
+              noid = response.noid as string;
+            }
             status = "READY";
-          } else {
+          } catch (e) {
             noid = null;
             status = "ERROR";
           }
@@ -62,7 +67,7 @@
 </script>
 
 <div
-  class="auto-align auto-align__column auto-align__j-baseline auto-align__wra"
+  class="auto-align auto-align__full auto-align__column auto-align auto-align__full__j-baseline auto-align auto-align__full__wra"
 >
   <label for="slug"><slot name="input">Slug:</slot></label>
   <input

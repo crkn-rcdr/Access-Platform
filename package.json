@@ -22,6 +22,7 @@
     "cleanup": "pnpm run kivik:stop",
     "dev": "run-s down dev:up",
     "dev:up": "docker-compose --profile dev up --build --remove-orphans --detach",
+    "dev:up:watch": "docker-compose --profile dev up --build --remove-orphans",
     "dev:restart": "docker-compose --profile dev restart",
     "down": "docker-compose down --volumes",
     "preinstall": "npx only-allow pnpm",

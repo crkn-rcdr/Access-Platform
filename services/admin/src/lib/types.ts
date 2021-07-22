@@ -1,29 +1,14 @@
-import type { Accessor } from "@crkn-rcdr/accessor";
+//import type { Accessor } from "@crkn-rcdr/accessor";
+import type { User } from "@crkn-rcdr/access-data";
 
-// TODO: import this from the new User type in #83
-export type User = {
-  name: string;
-  email: string;
-};
-
-/**
- * Data exposed to client-side code from the server
- */
 export type Session = {
-  host: string;
-  user?: User | null;
-  auth?: {
-    endpoint: string;
-    error?: string;
-  };
+  apiEndpoint: string;
+  authLogout: string;
+  user: User;
 };
 
-/**
- * Data that can be referenced in server-side code
- */
 export type Locals = {
   session: Session;
-  accessor: Accessor;
 };
 
 /**
@@ -32,4 +17,17 @@ export type Locals = {
 export type ToggleParams = {
   toggled: boolean;
   display: string;
+};
+
+/**
+ * Defins what information to include for the dynamic generation of pages in the side menu component
+ */
+export type SideMenuPageData = {
+  name: string;
+  componentData: {
+    contentComponent: any;
+    contentComponentProps: any;
+    sideMenuPageProps: any;
+    update: Function;
+  }
 };
