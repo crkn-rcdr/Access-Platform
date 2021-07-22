@@ -1,66 +1,55 @@
 # init
-# Sets up pnpm and copies over workspace config. Configures pnpm to install packages locally.
+# Sets up pnpm and copies over workspace config.
 
-FROM node:16 AS init
+FROM node:16-alpine AS init
 
-ENV PNPM_VERSION 6.10.2
+ENV ADMIN_PORT=4747 \
+    ADMIN_DEV_WS_PORT=14747 \
+    LAPIN_PORT=5858
+
+RUN apk add --no-cache curl
 RUN curl -sL https://unpkg.com/@pnpm/self-installer | node
 
 WORKDIR /repo
 
-RUN echo "store-dir=./.docker-pnpm-store" > .npmrc
+ENTRYPOINT [ "pnpm", "run" ]
 
-COPY package.json package.json
-COPY pnpm-lock.yaml pnpm-lock.yaml
-COPY pnpm-workspace.yaml pnpm-workspace.yaml
-
-# install
+# dev
 # Downloads and installs package and service dependencies.
 
-FROM init AS install
+FROM init AS dev 
 
-COPY packages/ packages/
-COPY services/ services/
+# Fetch dependencies from the lockfile. If you've changed package.json for some other reason,
+# this stage is skipped, which is a lovely time-saver.
+COPY pnpm-lock.yaml pnpm-lock.yaml
+RUN pnpm fetch --silent
 
-RUN pnpm install -r --frozen-lockfile --silent
+# Make sure .dockerignore has what it needs!
+COPY . .
 
-# build
-# Builds every package. TODO: I only need this for prod
+# The offline flag ensures that the dependencies are installed from the fetched cache 
+RUN pnpm install -r --offline --silent
 
-# FROM init AS build
+# Lets just build every package now, to be safe
+RUN pnpm run -r build --filter ./packages
 
-# COPY --from=install /repo/.docker-pnpm-store/ .docker-pnpm-store/
-# COPY --from=install /repo/node_modules/ node_modules
 
-# COPY packages/ packages/
+# builder 
+# Gets things ready for production images
 
-# RUN pnpm install -r --frozen-lockfile
-# RUN pnpm run -r build --filter ./packages
+FROM dev AS builder
 
-# package_watch
-# Recompiles every package on file change.
+# Build services that need to be built
+RUN pnpm run -r build --filter ./services
 
-FROM install AS package_watch
+# Purge node_modules directories.
+RUN pnpm -r exec -- rm -rf node_modules && rm -rf node_modules
 
-CMD ["pnpm", "run", "watch", "-r", "--filter", "./packages", "--parallel"]
+# prod
+# Fresh production image.
 
-# kivik_watch
-# Runs `kivik deploy --watch`, pointing to the CouchDB endpoint spun up in docker-compose
+FROM init AS prod
 
-FROM install AS kivik_watch
+COPY --from=builder /repo /repo
 
-WORKDIR /repo/services/couchdb
-
-CMD ["pnpm", "run", "watch:docker"]
-
-FROM install AS lapin_dev
-
-WORKDIR /repo/services/lapin
-
-CMD ["pnpm", "run", "dev"]
-
-FROM install AS admin_dev
-
-WORKDIR /repo/services/proof-of-concept
-
-CMD ["pnpm", "run", "dev"]
+RUN pnpm i -r --silent --prod

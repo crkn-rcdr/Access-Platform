@@ -24,8 +24,8 @@
   },
   "type": "module",
   "dependencies": {
-    "@crkn-rcdr/access-data": "workspace:^0.0.0",
-    "@crkn-rcdr/accessor": "workspace:^0.0.0",
+    "@crkn-rcdr/access-data": "workspace:*",
+    "@crkn-rcdr/accessor": "workspace:*",
     "cookie": "^0.4.1",
     "deep-object-diff": "^1.1.0",
     "dotenv": "^8.6.0",
