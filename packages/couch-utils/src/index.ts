@@ -5,6 +5,8 @@ import { Agent as HttpsAgent } from "https";
 import { DatabaseHandler } from "./DatabaseHandler.js";
 import { Env } from "@crkn-rcdr/access-env";
 
+export type { UniqueResult } from "./DatabaseHandler.js";
+
 export type CouchDBClient<DatabaseNames extends readonly string[]> = {
   [Name in DatabaseNames[number]]: DatabaseHandler;
 };
