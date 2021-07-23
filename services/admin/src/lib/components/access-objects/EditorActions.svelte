@@ -36,8 +36,8 @@
         };
         return await lapin.mutation("object.insert", bodyObj);
       },
-      "success",
-      "fail"
+      "Changes saved!",
+      "Failed to save changes."
     );
     return response;
   }
@@ -52,7 +52,7 @@
     const data = await sendSaveRequest({
       ...diff["added"],
       ...diff["updated"],
-      // foo: "bar", uncomment to test error
+      foo: "bar", //uncomment to test error
     });
     if (data) {
       try {

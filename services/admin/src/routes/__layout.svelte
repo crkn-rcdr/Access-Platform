@@ -36,7 +36,7 @@
 <pre>
   {#if session}
     <nav class="site-nav">
-      Logged in as:<b>{$session?.user?.name}</b>, {$session?.user?.email}.
+      Logged in as: <b>{$session?.user?.name}</b>, {$session?.user?.email}.
     </nav>
   {/if}
 </pre>
