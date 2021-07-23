@@ -52,7 +52,7 @@
     const data = await sendSaveRequest({
       ...diff["added"],
       ...diff["updated"],
-      foo: "bar", //uncomment to test error
+      //foo: "bar", //uncomment to test error
     });
     if (data) {
       try {
