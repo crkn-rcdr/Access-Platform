@@ -64,10 +64,18 @@
       }
     }
   }
-  function handlePlaceInStorage() {
+  async function handlePlaceInStorage() {
     showMovetoStorageModal = false;
-    objectModel["slug"] = undefined;
-    handleSave();
+    delete objectModel["slug"];
+    console.log("objectModel", objectModel);
+    const response = await showConfirmation(
+      async () => {
+        return await lapin.mutation("object.replace", objectModel);
+      },
+      "success",
+      "fail"
+    );
+    return response;
   }
 
   function handlePublishStatusChange() {}

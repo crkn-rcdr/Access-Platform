@@ -29,6 +29,10 @@ export class DatabaseHandler {
     return await this.db.insert(doc);
   }
 
+  async update(doc: Record<string, any>) {
+    return await this.db.insert(doc);
+  }
+
   async view(
     designName: string,
     viewName: string,
