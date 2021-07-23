@@ -36,7 +36,7 @@
 <pre>
   {#if session}
     <nav class="site-nav">
-        Session: {JSON.stringify($session, null, 2)}
+      Logged in as:<b>{$session?.user?.name}</b>, {$session?.user?.email}.
     </nav>
   {/if}
 </pre>
@@ -44,7 +44,7 @@
 
 <style>
   .site-nav {
-    padding: 1.5rem 1rem;
+    padding: 0 1rem;
     background-color: var(--structural-div-bg);
     filter: brightness(1.1);
   }
