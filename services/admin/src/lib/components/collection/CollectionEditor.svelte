@@ -4,11 +4,10 @@
   import AutomaticResizeNumberInput from "$lib/components/shared/AutomaticResizeNumberInput.svelte";
   import DynamicDragAndDropList from "$lib/components/shared/DynamicDragAndDropList.svelte";
   import { moveArrayElement } from "$lib/arrayUtil";
-  //import Index from "src/object/routes/index.svelte";
 
-  //export let model: AccessObject;
   export let collection: Collection;
   export let members: {} = Object.values(collection.members);
+<<<<<<< HEAD
   //import type { AccessObject } from "@crkn-rcdr/access-data";
   //import { isCollection } from "@crkn-rcdr/access-data";
   import type { Collection } from "@crkn-rcdr/access-data/src/access/Collection";
@@ -21,6 +20,8 @@
 
   //export let model: AccessObject;
   export let collection: Collection;
+=======
+>>>>>>> saving-editor-changes
   export let showAddButton = true;
   let indexModel: number[] = [];
   let activeMemberIndex: number = 0;
@@ -136,6 +137,7 @@
       class="list"
       class:disabled={!showAddButton}
     >
+<<<<<<< HEAD
       <DynamicDragAndDropList
         bind:dragList={collection.members}
         on:itemDropped={(e) => {
@@ -181,6 +183,55 @@
           </div>
         {/each}
       </DynamicDragAndDropList>
+=======
+      {#if indexModel.length}
+        <DynamicDragAndDropList
+          bind:dragList={collection.members}
+          on:itemDropped={(e) => {
+            setActiveIndex(e.detail.destinationItemIndex);
+          }}
+        >
+          {#each collection.members as members, i}
+            <div
+              class="thumbnail"
+              class:active={i === activeMemberIndex}
+              on:mousedown={() => setActiveIndex(i)}
+            />
+            <div class="auto-align">
+              <div class="actions-wrap">
+                <div class="auto-align auto-align__column">
+                  <div class="action pos">
+                    {indexModel[i]}
+                  </div>
+                  <div
+                    class="action pos-input"
+                    on:click={(e) => {
+                      e.stopPropagation();
+                    }}
+                  >
+                    <AutomaticResizeNumberInput
+                      name="position"
+                      max={collection.members.length}
+                      on:changed={(e) => {
+                        moveMember(e, i);
+                      }}
+                      bind:value={indexModel[i]}
+                    />
+                  </div>
+                </div>
+              </div>
+              <div>
+                <ul>
+                  <li>
+                    <input bind:value={members["id"]} />
+                  </li>
+                </ul>
+              </div>
+            </div>
+          {/each}
+        </DynamicDragAndDropList>
+      {/if}
+>>>>>>> saving-editor-changes
     </div>
   </div>
 {/if}
@@ -196,11 +247,14 @@
     overflow-y: hidden;
     opacity: 0.5;
   }
+<<<<<<< HEAD
   /*  .actions-wrap {
     flex: 1;
     margin-left: 1.5rem;
   } */
 
+=======
+>>>>>>> saving-editor-changes
   .action.icon {
     opacity: 0.6;
     cursor: pointer;

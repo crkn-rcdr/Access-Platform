@@ -1,13 +1,26 @@
 <script lang="ts">
+  import { session } from "$app/stores";
+  import { getLapin } from "$lib/lapin";
   import FaArchive from "svelte-icons/fa/FaArchive.svelte";
+<<<<<<< HEAD
   import { AccessObject } from "@crkn-rcdr/access-data";
+=======
+  import type { AccessObject } from "@crkn-rcdr/access-data";
+  import { onMount } from "svelte";
+>>>>>>> saving-editor-changes
   import equal from "fast-deep-equal";
   import { detailedDiff } from "deep-object-diff";
   import Modal from "$lib/components/shared/Modal.svelte";
+  import { showConfirmation } from "$lib/confirmation";
 
   export let object: AccessObject;
   export let objectModel: AccessObject;
 
+<<<<<<< HEAD
+=======
+  const lapin = getLapin({ url: $session["apiEndpoint"], fetch: null });
+  let clone: any;
+>>>>>>> saving-editor-changes
   let handleSaveEnabled = false;
   let showMovetoStorageModal = false;
 
@@ -19,20 +32,76 @@
     checkModelChanged(objectModel);
   }
 
-  function handleSave() {
+  async function sendSaveRequest(data: any) {
+    //todo make partial of type
+    console.log("diff", data);
+    const response = await showConfirmation(
+      async () => {
+        const bodyObj = {
+          id: objectModel.id,
+          data,
+        };
+        return await lapin.mutation("object.insert", bodyObj);
+      },
+      "success",
+      "fail"
+    );
+    return response;
+  }
+
+  // TODO: check valid manifest or canvas before showing save button
+  async function handleSave() {
     let diff: any = detailedDiff(object, objectModel); //TODO: We can send this to the backend
     console.log("diff", diff);
+<<<<<<< HEAD
     object = AccessObject.parse(objectModel);
     checkModelChanged(objectModel);
   }
+=======
+>>>>>>> saving-editor-changes
 
-  function handlePlaceInStorage() {
+    clone = (await import("rfdc")).default();
+    // might need 'deleted'
+    const data = await sendSaveRequest({
+      ...diff["added"],
+      ...diff["updated"],
+      // foo: "bar", uncomment to test error
+    });
+    if (data) {
+      try {
+        object = clone(objectModel) as AccessObject; // todo: get this done with zod
+        checkModelChanged(objectModel);
+        console.log("RES", data);
+      } catch (e) {
+        //error = e;
+        console.log(e);
+      }
+    }
+  }
+  async function handlePlaceInStorage() {
     showMovetoStorageModal = false;
+    console.log("objectModel 1", objectModel);
+    const response = await showConfirmation(
+      async () => {
+        return await lapin.query("noid.unassignSlug", objectModel["id"]);
+      },
+      "success",
+      "fail"
+    );
     objectModel["slug"] = undefined;
-    handleSave();
+    object = clone(objectModel) as AccessObject; // todo: get this done with zod
+    console.log("objectModel 2", objectModel);
+    return response;
   }
 
   function handlePublishStatusChange() {}
+<<<<<<< HEAD
+=======
+
+  onMount(async () => {
+    clone = (await import("rfdc")).default();
+  });
+>>>>>>> saving-editor-changes
 </script>
 
 <span class="editor-actions auto-align auto-align__a-center">

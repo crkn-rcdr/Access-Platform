@@ -70,7 +70,11 @@
 
   <br />
   <br />
+<<<<<<< HEAD
   <a href="/object"><button class="primary">Create New Object</button></a>
+=======
+  <a href="/object/new"><button class="primary">Create New Object</button></a>
+>>>>>>> saving-editor-changes
 
   <br />
   <br />

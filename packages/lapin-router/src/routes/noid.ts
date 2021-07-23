@@ -24,4 +24,11 @@ export const noidRouter = createRouter()
       });
       return response.length ? response[0] : null;
     },
+  })
+  .query("unassignSlug", {
+    input: Noid.parse,
+    async resolve({ input: id, ctx }): Promise<any> {
+      const response = await ctx.couch.access.unassignSlug(id);
+      return response;
+    },
   });

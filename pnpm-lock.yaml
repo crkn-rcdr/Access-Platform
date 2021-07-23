@@ -24,10 +24,14 @@ importers:
       '@crkn-rcdr/access-env': link:../env
       nano: 9.0.3
     devDependencies:
+<<<<<<< HEAD
       '@types/node': 16.4.0
+=======
+      '@types/node': 16.4.1
+>>>>>>> saving-editor-changes
       ava: 3.15.0
       npm-run-all: 4.1.5
-      ts-node: 10.1.0_4ad384f65ba772ee570941d3a2e656e9
+      ts-node: 10.1.0_a8fea423019585bcf1ffe01c52481e79
       typescript: 4.3.5
 
   packages/data:
@@ -41,10 +45,14 @@ importers:
     dependencies:
       zod: 3.5.1
     devDependencies:
+<<<<<<< HEAD
       '@types/node': 16.4.0
+=======
+      '@types/node': 16.4.1
+>>>>>>> saving-editor-changes
       ava: 3.15.0
       npm-run-all: 4.1.5
-      ts-node: 10.1.0_4ad384f65ba772ee570941d3a2e656e9
+      ts-node: 10.1.0_a8fea423019585bcf1ffe01c52481e79
       typescript: 4.3.5
 
   packages/env:
@@ -58,10 +66,14 @@ importers:
     dependencies:
       zod: 3.5.1
     devDependencies:
+<<<<<<< HEAD
       '@types/node': 16.4.0
+=======
+      '@types/node': 16.4.1
+>>>>>>> saving-editor-changes
       ava: 3.15.0
       npm-run-all: 4.1.5
-      ts-node: 10.1.0_4ad384f65ba772ee570941d3a2e656e9
+      ts-node: 10.1.0_a8fea423019585bcf1ffe01c52481e79
       typescript: 4.3.5
 
   packages/lapin-router:
@@ -71,6 +83,7 @@ importers:
       '@trpc/server': ^8.3.1
       '@types/node': ^16.3.3
       ava: ^3.15.0
+      deep-object-diff: ^1.1.0
       npm-run-all: ^4.1.5
       ts-node: ^10.1.0
       typescript: ^4.3.5
@@ -79,12 +92,22 @@ importers:
       '@crkn-rcdr/access-data': link:../data
       '@crkn-rcdr/couch-utils': link:../couch-utils
       '@trpc/server': 8.4.1
+<<<<<<< HEAD
       zod: 3.5.1
     devDependencies:
       '@types/node': 16.4.0
       ava: 3.15.0
       npm-run-all: 4.1.5
       ts-node: 10.1.0_4ad384f65ba772ee570941d3a2e656e9
+=======
+      deep-object-diff: 1.1.0
+      zod: 3.5.1
+    devDependencies:
+      '@types/node': 16.4.1
+      ava: 3.15.0
+      npm-run-all: 4.1.5
+      ts-node: 10.1.0_a8fea423019585bcf1ffe01c52481e79
+>>>>>>> saving-editor-changes
       typescript: 4.3.5
 
   services/admin:
@@ -164,11 +187,19 @@ importers:
       '@crkn-rcdr/lapin-router': link:../../packages/lapin-router
       '@trpc/server': 8.4.1
     devDependencies:
+<<<<<<< HEAD
       '@types/node': 16.4.0
       dotenv: 10.0.0
       nodemon: 2.0.12
       npm-run-all: 4.1.5
       ts-node: 10.1.0_4ad384f65ba772ee570941d3a2e656e9
+=======
+      '@types/node': 16.4.1
+      dotenv: 10.0.0
+      nodemon: 2.0.12
+      npm-run-all: 4.1.5
+      ts-node: 10.1.0_a8fea423019585bcf1ffe01c52481e79
+>>>>>>> saving-editor-changes
       typescript: 4.3.5
 
 packages:
@@ -349,11 +380,19 @@ packages:
   /@types/jsonwebtoken/8.5.4:
     resolution: {integrity: sha512-4L8msWK31oXwdtC81RmRBAULd0ShnAHjBuKT9MRQpjP0piNrZdXyTRcKY9/UIfhGeKIT4PvF5amOOUbbT/9Wpg==}
     dependencies:
+<<<<<<< HEAD
       '@types/node': 16.4.0
     dev: true
 
   /@types/node/16.4.0:
     resolution: {integrity: sha512-HrJuE7Mlqcjj+00JqMWpZ3tY8w7EUd+S0U3L1+PQSWiXZbOgyQDvi+ogoUxaHApPJq5diKxYBQwA3iIlNcPqOg==}
+=======
+      '@types/node': 16.4.1
+    dev: true
+
+  /@types/node/16.4.1:
+    resolution: {integrity: sha512-UW7cbLqf/Wu5XH2RKKY1cHwUNLicIDRLMraYKz+HHAerJ0ZffUEk+fMnd8qU2JaS6cAy0r8tsaf7yqHASf/Y0Q==}
+>>>>>>> saving-editor-changes
     dev: true
 
   /@types/normalize-package-data/2.4.1:
@@ -371,7 +410,11 @@ packages:
   /@types/sass/1.16.1:
     resolution: {integrity: sha512-iZUcRrGuz/Tbg3loODpW7vrQJkUtpY2fFSf4ELqqkApcS2TkZ1msk7ie8iZPB86lDOP8QOTTmuvWjc5S0R9OjQ==}
     dependencies:
+<<<<<<< HEAD
       '@types/node': 16.4.0
+=======
+      '@types/node': 16.4.1
+>>>>>>> saving-editor-changes
     dev: true
 
   /@types/tough-cookie/4.0.1:
@@ -3111,7 +3154,11 @@ packages:
     resolution: {integrity: sha512-XrHUvV5HpdLmIj4uVMxHggLbFSZYIn7HEWsqePZcI50pco+MPqJ50wMGY794X7AOOhxOBAjbkqfAbEe/QMp2Lw==}
     dev: true
 
+<<<<<<< HEAD
   /ts-node/10.1.0_4ad384f65ba772ee570941d3a2e656e9:
+=======
+  /ts-node/10.1.0_a8fea423019585bcf1ffe01c52481e79:
+>>>>>>> saving-editor-changes
     resolution: {integrity: sha512-6szn3+J9WyG2hE+5W8e0ruZrzyk1uFLYye6IGMBadnOzDh8aP7t8CbFpsfCiEx2+wMixAhjFt7lOZC4+l+WbEA==}
     engines: {node: '>=12.0.0'}
     hasBin: true
@@ -3130,7 +3177,11 @@ packages:
       '@tsconfig/node12': 1.0.9
       '@tsconfig/node14': 1.0.1
       '@tsconfig/node16': 1.0.2
+<<<<<<< HEAD
       '@types/node': 16.4.0
+=======
+      '@types/node': 16.4.1
+>>>>>>> saving-editor-changes
       arg: 4.1.3
       create-require: 1.1.1
       diff: 4.0.2

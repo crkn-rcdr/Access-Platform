@@ -1,36 +1,5 @@
-<<<<<<< HEAD
-<script context="module" lang="ts">
-  import type { Load } from "@sveltejs/kit";
-  import { getLapin } from "$lib/lapin";
-  import type { RootInput } from "../__layout.svelte";
-  export const load: Load<RootInput> = async ({ page, context, session }) => {
-    try {
-      if (page.params["prefix"] && page.params["noid"]) {
-        const id = [
-          page.params["prefix"] as string,
-          page.params["noid"] as string,
-        ].join("/");
-        const lapin = getLapin({ url: session.apiEndpoint, fetch: null });
-        const response = await lapin.query("noid.resolve", id);
-        const object = AccessObject.parse(response);
-        let type = "other";
-        if (isCollection(object)) {
-          type = "collection";
-        } else if (isManifest(object)) {
-          type = "canvasManifest";
-        }
-        return { props: { object, createMode: false } };
-      } else return { props: { createMode: true } };
-    } catch (e) {
-      console.log("ERROR", e);
-      return e;
-    }
-  };
-</script>
-
 <script lang="ts">
-  import { AccessObject } from "@crkn-rcdr/access-data";
-  import type { Manifest, Collection } from "@crkn-rcdr/access-data";
+  import type { AccessObject } from "@crkn-rcdr/access-data";
   import { isManifest, isCollection } from "@crkn-rcdr/access-data";
   import type { SideMenuPageData } from "$lib/types";
   import Toolbar from "$lib/components/shared/Toolbar.svelte";
@@ -41,40 +10,10 @@
   import InfoEditor from "$lib/components/access-objects/InfoEditor.svelte";
 
   export let object: AccessObject;
-  export let createMode: boolean;
 
   let pageList: Array<SideMenuPageData> = [];
-
   let rfdc: any; // Deep copies an object
   let objectModel: AccessObject; // Used to keep track of changes to the object, without changing the actual object until save is pressed.
-
-  function handleNewCollectionPressed() {
-    let newCollection: Collection = {
-      id: "",
-      slug: "",
-      label: {
-        value: "",
-      },
-      type: "collection",
-      behavior: "unordered",
-      members: [],
-    };
-    object = newCollection;
-  }
-
-  function handleNewManifestPressed() {
-    let newManifest: Manifest = {
-      id: "",
-      slug: "",
-      label: {
-        value: "",
-      },
-      type: "manifest",
-      from: "canvases",
-      canvases: [],
-    };
-    object = newManifest;
-  }
 
   async function setDataModel(object: AccessObject) {
     if (!object) return;
@@ -132,6 +71,28 @@
   }
 </script>
 
-=======
->>>>>>> saving-editor-changes
-<slot />
+{#if object && objectModel}
+  <div class="editor">
+    <SideMenuContainer {pageList}>
+      <Toolbar
+        slot="side-menu-header"
+        title={object?.["slug"]?.length
+          ? object["slug"]
+          : `Slugless ${object["type"]}`}
+      >
+        <div
+          class="end-content auto-align auto-align__full auto-align auto-align__j-end auto-align auto-align__a-end auto-align auto-align__column"
+        >
+          <StatusIndicator bind:object />
+          <EditorActions bind:object bind:objectModel />
+        </div>
+      </Toolbar>
+    </SideMenuContainer>
+  </div>
+{/if}
+
+<style>
+  :global(.editor .header) {
+    min-height: 6em !important;
+  }
+</style>
