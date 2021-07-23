@@ -1,15 +1,18 @@
 <script lang="ts">
+  import { session } from "$app/stores";
+  import { getLapin } from "$lib/lapin";
   import FaArchive from "svelte-icons/fa/FaArchive.svelte";
   import type { AccessObject } from "@crkn-rcdr/access-data";
   import { onMount } from "svelte";
   import equal from "fast-deep-equal";
   import { detailedDiff } from "deep-object-diff";
   import Modal from "$lib/components/shared/Modal.svelte";
-  import showConfirmation from "$lib/confirmation";
+  import { showConfirmation } from "$lib/confirmation";
 
   export let object: AccessObject;
   export let objectModel: AccessObject;
 
+  const lapin = getLapin({ url: $session["apiEndpoint"], fetch: null });
   let clone: any;
   let handleSaveEnabled = false;
   let showMovetoStorageModal = false;
@@ -22,25 +25,41 @@
     checkModelChanged(objectModel);
   }
 
-  function handleSave() {
-    let diff: any = detailedDiff(object, objectModel); //TODO: We can send this to the backend
-    object = clone(objectModel);
-
-    /*
-        new MyComponent({
-  target: mountpoint // here the dom node where you want to mount it
-})
-        */
+  async function sendSaveRequest(data: any) {
+    //todo make partial of type
     const response = await showConfirmation(
       async () => {
-        return await lapin.query("noid.resolve", id);
+        return await lapin.mutation("object.insert", {
+          id: objectModel.id,
+          data,
+        });
       },
       "success",
       "fail"
     );
-    checkModelChanged(objectModel);
+    return response;
   }
 
+  async function handleSave() {
+    let diff: any = detailedDiff(object, objectModel); //TODO: We can send this to the backend
+    console.log("diff", diff);
+
+    clone = (await import("rfdc")).default();
+    // might need 'deleted'
+    const data = await sendSaveRequest({
+      ...diff["added"],
+      ...diff["updated"],
+      // foo: "bar", uncomment to test error
+    });
+    try {
+      object = clone(objectModel) as AccessObject; // todo: get this done with zod
+      checkModelChanged(objectModel);
+      console.log("RES", data);
+    } catch (e) {
+      //error = e;
+      console.log(e);
+    }
+  }
   function handlePlaceInStorage() {
     showMovetoStorageModal = false;
     objectModel["slug"] = undefined;
