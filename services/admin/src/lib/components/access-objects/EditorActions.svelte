@@ -27,12 +27,14 @@
 
   async function sendSaveRequest(data: any) {
     //todo make partial of type
+    console.log("diff", data);
     const response = await showConfirmation(
       async () => {
-        return await lapin.mutation("object.insert", {
+        const bodyObj = {
           id: objectModel.id,
           data,
-        });
+        };
+        return await lapin.mutation("object.insert", bodyObj);
       },
       "success",
       "fail"
@@ -51,13 +53,15 @@
       ...diff["updated"],
       // foo: "bar", uncomment to test error
     });
-    try {
-      object = clone(objectModel) as AccessObject; // todo: get this done with zod
-      checkModelChanged(objectModel);
-      console.log("RES", data);
-    } catch (e) {
-      //error = e;
-      console.log(e);
+    if (data) {
+      try {
+        object = clone(objectModel) as AccessObject; // todo: get this done with zod
+        checkModelChanged(objectModel);
+        console.log("RES", data);
+      } catch (e) {
+        //error = e;
+        console.log(e);
+      }
     }
   }
   function handlePlaceInStorage() {
