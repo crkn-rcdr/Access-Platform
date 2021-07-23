@@ -42,6 +42,7 @@
     return response;
   }
 
+  // TODO: check valid manifest or canvas before showing save button
   async function handleSave() {
     let diff: any = detailedDiff(object, objectModel); //TODO: We can send this to the backend
     console.log("diff", diff);
@@ -66,15 +67,17 @@
   }
   async function handlePlaceInStorage() {
     showMovetoStorageModal = false;
-    delete objectModel["slug"];
-    console.log("objectModel", objectModel);
+    console.log("objectModel 1", objectModel);
     const response = await showConfirmation(
       async () => {
-        return await lapin.mutation("object.replace", objectModel);
+        return await lapin.query("noid.unassignSlug", objectModel["id"]);
       },
       "success",
       "fail"
     );
+    objectModel["slug"] = undefined;
+    object = clone(objectModel) as AccessObject; // todo: get this done with zod
+    console.log("objectModel 2", objectModel);
     return response;
   }
 

@@ -78,7 +78,7 @@
         slot="side-menu-header"
         title={object?.["slug"]?.length
           ? object["slug"]
-          : `New ${object["type"]}`}
+          : `Slugless ${object["type"]}`}
       >
         <div
           class="end-content auto-align auto-align__full auto-align auto-align__j-end auto-align auto-align__a-end auto-align auto-align__column"

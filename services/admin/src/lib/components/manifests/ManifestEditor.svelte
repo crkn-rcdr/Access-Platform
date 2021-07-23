@@ -1,9 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import type {
-    Manifest,
-    Canvas,
-  } from "@crkn-rcdr/access-data/src/access/Manifest";
+  import type { Manifest } from "@crkn-rcdr/access-data/src/access/Manifest";
   import CanvasLabelEditor from "../canvases/CanvasLabelEditor.svelte";
   import CanvasViewer from "../canvases/CanvasViewer.svelte";
   import CanvasThumbnailList from "../canvases/CanvasThumbnailList.svelte";
@@ -13,7 +10,7 @@
 
   export let manifest: Manifest;
 
-  let activeCanvas: Canvas | null;
+  let activeCanvas: any;
   let state = "view";
 
   function setActiveCanvas(index: number) {

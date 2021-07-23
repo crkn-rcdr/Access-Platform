@@ -29,8 +29,9 @@ export class DatabaseHandler {
     return await this.db.insert(doc);
   }
 
-  async update(doc: Record<string, any>) {
-    return await this.db.insert(doc);
+  async unassignSlug(id: string) {
+    console.log("unassignSlug...", id);
+    return await this.updateWithSubset(id, { slug: undefined });
   }
 
   async view(
