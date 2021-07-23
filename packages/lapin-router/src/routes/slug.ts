@@ -31,7 +31,7 @@ const toResult = (
 export const slugRouter = createRouter()
   .query("search", {
     input: Slug.parse,
-    async resolve({ input: q, ctx }): Promise<{ id: Noid; slug: Slug }[]> {
+    async resolve({ input: q, ctx }): Promise<SlugResult[]> {
       const response = await ctx.couch.access.findWithPrefix<
         SlugCouchResult,
         "slug"
