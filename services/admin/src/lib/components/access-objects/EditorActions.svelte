@@ -5,6 +5,7 @@
   import equal from "fast-deep-equal";
   import { detailedDiff } from "deep-object-diff";
   import Modal from "$lib/components/shared/Modal.svelte";
+  import showConfirmation from "$lib/confirmation";
 
   export let object: AccessObject;
   export let objectModel: AccessObject;
@@ -24,6 +25,19 @@
   function handleSave() {
     let diff: any = detailedDiff(object, objectModel); //TODO: We can send this to the backend
     object = clone(objectModel);
+
+    /*
+        new MyComponent({
+  target: mountpoint // here the dom node where you want to mount it
+})
+        */
+    const response = await showConfirmation(
+      async () => {
+        return await lapin.query("noid.resolve", id);
+      },
+      "success",
+      "fail"
+    );
     checkModelChanged(objectModel);
   }
 
