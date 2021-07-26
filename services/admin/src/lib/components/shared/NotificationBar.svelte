@@ -5,16 +5,33 @@
   export let detail = "";
   export let expandable = false;
   export let float = false;
+  export let dissmissFunction = null;
+  export let notificationPosition = 1;
+
+  const notificationHeightRem = 5;
+  const notificationSpacing = 1;
 </script>
 
 {#if message && message.length}
   <div
     class={`notification-bar notification-bar-${status}`}
     class:notification-bar-float={float}
+    style={float
+      ? `bottom: ${
+          notificationPosition * notificationHeightRem + notificationSpacing
+        }rem;`
+      : ""}
   >
     {#if expandable && detail && detail.length}
-      <ExpansionTile>
-        <div slot="top">{message}</div>
+      <ExpansionTile useInfoIcon={true}>
+        <div slot="top">
+          {message}
+          {#if dissmissFunction}
+            <button class="dismiss sm ghost dark" on:click={dissmissFunction}
+              >dismiss</button
+            >
+          {/if}
+        </div>
         <div slot="bottom">{detail}</div>
       </ExpansionTile>
     {:else}
@@ -34,10 +51,9 @@
   }
   .notification-bar-float {
     position: fixed;
-    top: 1rem;
     right: 1rem;
-    min-width: 300px;
-    width: fit-content;
+    min-width: 20rem;
+    max-width: 36rem;
     display: inline-block;
   }
 
@@ -58,5 +74,9 @@
   }
   div {
     display: inline;
+  }
+
+  .dismiss {
+    float: right;
   }
 </style>

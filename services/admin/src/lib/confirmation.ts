@@ -2,7 +2,10 @@ import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
 
 const DISPLAY_TIME = 10000;
 
+let numVisibleNotifications = 0;
+//TODO: make the notifications shift down when previous is clear
 async function showConfirmation(call, successMsg, failMsg) {
+  numVisibleNotifications++;
   try {
     const res = await call();
     console.log("RES", res);
@@ -14,11 +17,21 @@ async function showConfirmation(call, successMsg, failMsg) {
         status: res ? "success" : "fail",
         expandable: true,
         float: true,
+        notificationPosition: numVisibleNotifications,
+        dissmissFunction: res
+          ? null
+          : () => {
+              notification.$destroy();
+              numVisibleNotifications--;
+            },
       },
     });
-    setTimeout(() => {
-      notification.$destroy();
-    }, DISPLAY_TIME);
+    if (res) {
+      setTimeout(() => {
+        notification.$destroy();
+        numVisibleNotifications--;
+      }, DISPLAY_TIME);
+    }
     return res;
   } catch (e) {
     const notification = new NotificationBar({
@@ -29,11 +42,13 @@ async function showConfirmation(call, successMsg, failMsg) {
         status: "fail",
         expandable: true,
         float: true,
+        notificationPosition: numVisibleNotifications,
+        dissmissFunction: () => {
+          notification.$destroy();
+          numVisibleNotifications--;
+        },
       },
     });
-    setTimeout(() => {
-      notification.$destroy();
-    }, DISPLAY_TIME);
     return e;
   }
 }

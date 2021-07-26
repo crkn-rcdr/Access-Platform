@@ -8,6 +8,7 @@
   import Modal from "$lib/components/shared/Modal.svelte";
   import { showConfirmation } from "$lib/confirmation";
   import { checkValidDiff, checkModelChanged } from "$lib/validation";
+  import { goto } from "$app/navigation";
 
   export let object: AccessObject;
   export let objectModel: AccessObject;
@@ -28,17 +29,43 @@
   async function sendSaveRequest(data: any) {
     //todo make partial of type
     console.log("diff", data);
+    let newlyCreated = false;
     const response = await showConfirmation(
       async () => {
-        const bodyObj = {
-          id: objectModel.id,
-          data,
-        };
-        return await lapin.mutation("object.insert", bodyObj);
+        if (objectModel?.id?.length) {
+          const bodyObj = {
+            id: objectModel.id,
+            data,
+          };
+          return await lapin.mutation("object.insert", bodyObj);
+        } else {
+          const bodyObj = {
+            data: objectModel,
+          };
+          if (
+            objectModel["type"] === "collection" ||
+            objectModel["type"] === "manifest"
+          ) {
+            //todo assign id in backend
+            objectModel["id"] =
+              objectModel["type"] === "collection"
+                ? "69429/s038383832838"
+                : "69429/m038383832838";
+
+            const res = await lapin.mutation(
+              `object.${objectModel["type"]}Insert`,
+              bodyObj
+            );
+            if (res) newlyCreated = true;
+            return res;
+          } else throw "Object not a collection or a manifest";
+        }
       },
       "Changes saved!",
       "Failed to save changes."
     );
+
+    if (newlyCreated) goto(`/object/${objectModel["id"]}`);
     return response;
   }
 

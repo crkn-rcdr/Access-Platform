@@ -25,12 +25,16 @@ export class DatabaseHandler {
   async updateWithSubset(id: string, subset: Record<string, any>) {
     let doc = await this.get(id);
     Object.assign(doc, subset);
-    console.log("DOC", doc);
     return await this.db.insert(doc);
   }
 
+  async insertNew(data: Record<string, any>) {
+    // TODO: figure out best way to call noid service for this
+    data["_id"] = data["id"];
+    return await this.db.insert(data);
+  }
+
   async unassignSlug(id: string) {
-    console.log("unassignSlug...", id);
     return await this.updateWithSubset(id, { slug: undefined });
   }
 
