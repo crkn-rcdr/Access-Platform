@@ -55,10 +55,12 @@ export const handle: Handle<Locals> = async ({ request, resolve }) => {
   if (request.path.startsWith("/api/")) {
     const url = `${env.lapin.urlInternal}/${fullpath.slice(5)}`;
 
-    const response = await fetch(url, {
-      method: request.method,
-      body: request.rawBody,
-    });
+    const fetchOptions = { method: request.method };
+
+    if (request.method !== "HEAD" && request.method !== "GET")
+      fetchOptions["body"] = request.rawBody;
+
+    const response = await fetch(url, fetchOptions);
 
     return {
       status: response.status,

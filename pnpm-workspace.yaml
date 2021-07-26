@@ -1,8 +1,3 @@
 packages:
-  - "packages/data"
-  - "packages/env"
-  - "packages/couch-utils"
-  - "packages/lapin-router"
-  - "services/couchdb"
-  - "services/lapin"
-  - "services/admin"
+  - "packages/*"
+  - "services/*"
