@@ -71,18 +71,23 @@
 
   // TODO: check valid manifest or canvas before showing save button
   async function handleSave() {
-    let diff: any = detailedDiff(object, objectModel); //TODO: We can send this to the backend
-    console.log("diff", diff);
+    const diff: any = detailedDiff(object, objectModel); //TODO: We can send this to the backend
 
-    clone = (await import("rfdc")).default();
-    // might need 'deleted'
-    const data = await sendSaveRequest({
+    let bodyObj = {
       ...diff["added"],
       ...diff["updated"],
-      //foo: "bar", //uncomment to test error
-    });
+    };
+
+    if (bodyObj["canvases"]) {
+      bodyObj["canvases"] = objectModel["canvases"];
+    }
+
+    // might need 'deleted'
+    const data = await sendSaveRequest(bodyObj);
+
     if (data) {
       try {
+        clone = (await import("rfdc")).default();
         object = clone(objectModel) as AccessObject; // todo: get this done with zod
         checkModelChanged(object, objectModel);
         console.log("RES", data);
