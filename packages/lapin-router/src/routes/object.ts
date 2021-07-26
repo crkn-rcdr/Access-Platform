@@ -1,4 +1,8 @@
-import { Collection, Manifest, Noid } from "@crkn-rcdr/access-data";
+import {
+  EditableCollection,
+  EditableManifest,
+  Noid,
+} from "@crkn-rcdr/access-data";
 import { createRouter } from "../router.js";
 import { deletedDiff } from "deep-object-diff";
 import { z } from "zod";
@@ -14,20 +18,20 @@ type DataType = z.infer<typeof DataType>;
 export const objectRouter = createRouter().mutation("insert", {
   input: (value: unknown) => {
     try {
-      /* Step 1 - make sure the body object was formatted correctly */
+      // Step 1 - make sure the body object was formatted correctly
       const bodyTestResult = DataType.parse(value);
       console.log("bodyTestResult", bodyTestResult);
 
-      /* Step 2 - make sure any valid keys passed in are formatted correctly */
-      const manifestTest = Manifest.partial();
+      // Step 2 - make sure any valid keys passed in are formatted correctly
+      const manifestTest = EditableManifest.partial();
       const manifestTestResult = manifestTest.parse((<DataType>value).data);
 
-      const collectionTest = Collection.partial();
+      const collectionTest = EditableCollection.partial();
       const collectionTestResult = collectionTest.parse((<DataType>value).data);
 
       const testRes = { ...manifestTestResult, ...collectionTestResult };
 
-      /* Step 3 - catch any invalid keys */
+      // Step 3 - catch any invalid keys
       const testDifference = deletedDiff((<DataType>value).data, testRes);
       if (typeof value === "object") {
         const invalidKeys = Object.keys(testDifference);
