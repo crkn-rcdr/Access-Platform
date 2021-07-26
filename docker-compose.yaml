@@ -75,8 +75,6 @@ services:
       - dev
     user: ${CURRENT_USER}
     container_name: access-lapin
-    ports:
-      - "5858:5858"
     build:
       context: .
       target: dev
@@ -142,8 +140,6 @@ services:
     profiles:
       - prod
     container_name: access-lapin-prod
-    ports:
-      - "5858:5858"
     build:
       context: .
       target: prod
