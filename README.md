@@ -49,9 +49,9 @@ Access Platform admin tools, built with [SvelteKit](https://kit.svelte.dev).
 
 ### Prerequisites
 
-To build the development and production images, all you need is Docker.
+To build the production images, all you need is Docker.
 
-For updating JavaScript dependencies and running anything on your machine without Docker, you will need to [install NodeJS 16 and pnpm](docs/node_pnpm.md). Further instructions will assume you can run pnpm on your machine.
+For development, updating JavaScript dependencies and running anything on your machine without Docker, you will need to [install NodeJS 16 and pnpm](docs/node_pnpm.md). Further instructions will assume you can run pnpm on your machine.
 
 ### pnpm Docker convenience scripts
 
@@ -79,7 +79,11 @@ To set it up, first do the following:
 1. If you are using the [HAProxy confguration found at the old repository](https://github.com/crkn-rcdr/haproxy), make sure it isn't running and either copy the `certs` directory and `pass.txt` into `./services/haproxy`, or re-run the certificate generation script. If you haven't used it before, follow the instructions in [the haproxy service directory](services/haproxy) to generate SSL certificates.
 2. Fetch the production CouchDB password and the platform authentication JWT secret from the shared development 1Password vault. If you don't have access to this, let Sascha know.
    1. Copy `.env.secret.example` into `.env.secret` and add the values there.
-   2. Copy `services/couchdb/kivirc.example.json` to `services/couchdb/kivikrc.json` and add the CouchDB password where asked. (This step will go away when [this Kivik issue](https://github.com/crkn-rcdr/kivik/issues/79) is resolved.)
+   2. Copy `services/couchdb/kivikrc.example.json` to `services/couchdb/kivikrc.json` and add the CouchDB password where asked. (This step will go away when [this Kivik issue](https://github.com/crkn-rcdr/kivik/issues/79) is resolved.)
+
+Build the repository on your host machine. As things stand right now the development environment creates a blanket Docker volume for the entire codebase (i.e. `.:/repo`). If you haven't built packages on your host machine, when this volume is instantiated, the image's build will be thrown away.
+
+    $ pnpm build
 
 Build and run the environment with
 

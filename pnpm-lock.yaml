@@ -6,15 +6,12 @@ neverBuiltDependencies:
 importers:
 
   .:
-    specifiers:
-      npm-run-all: ^4.1.5
-    devDependencies:
-      npm-run-all: 4.1.5
+    specifiers: {}
 
   packages/couch-utils:
     specifiers:
       '@crkn-rcdr/access-env': workspace:*
-      '@types/node': ^16.3.3
+      '@types/node': ^16.4.3
       ava: ^3.15.0
       nano: ^9.0.3
       npm-run-all: ^4.1.5
@@ -24,15 +21,15 @@ importers:
       '@crkn-rcdr/access-env': link:../env
       nano: 9.0.3
     devDependencies:
-      '@types/node': 16.4.1
+      '@types/node': 16.4.3
       ava: 3.15.0
       npm-run-all: 4.1.5
-      ts-node: 10.1.0_a8fea423019585bcf1ffe01c52481e79
+      ts-node: 10.1.0_9c9608add82e342d39d60fef9af9e8e0
       typescript: 4.3.5
 
   packages/data:
     specifiers:
-      '@types/node': ^16.3.3
+      '@types/node': ^16.4.3
       ava: ^3.15.0
       npm-run-all: ^4.1.5
       ts-node: ^10.1.0
@@ -41,15 +38,15 @@ importers:
     dependencies:
       zod: 3.5.1
     devDependencies:
-      '@types/node': 16.4.1
+      '@types/node': 16.4.3
       ava: 3.15.0
       npm-run-all: 4.1.5
-      ts-node: 10.1.0_a8fea423019585bcf1ffe01c52481e79
+      ts-node: 10.1.0_9c9608add82e342d39d60fef9af9e8e0
       typescript: 4.3.5
 
   packages/env:
     specifiers:
-      '@types/node': ^16.3.3
+      '@types/node': ^16.4.3
       ava: ^3.15.0
       npm-run-all: ^4.1.5
       ts-node: ^10.1.0
@@ -58,18 +55,18 @@ importers:
     dependencies:
       zod: 3.5.1
     devDependencies:
-      '@types/node': 16.4.1
+      '@types/node': 16.4.3
       ava: 3.15.0
       npm-run-all: 4.1.5
-      ts-node: 10.1.0_a8fea423019585bcf1ffe01c52481e79
+      ts-node: 10.1.0_9c9608add82e342d39d60fef9af9e8e0
       typescript: 4.3.5
 
   packages/lapin-router:
     specifiers:
       '@crkn-rcdr/access-data': workspace:*
       '@crkn-rcdr/couch-utils': workspace:*
-      '@trpc/server': ^8.3.1
-      '@types/node': ^16.3.3
+      '@trpc/server': ^8.4.1
+      '@types/node': ^16.4.3
       ava: ^3.15.0
       deep-object-diff: ^1.1.0
       npm-run-all: ^4.1.5
@@ -83,10 +80,10 @@ importers:
       deep-object-diff: 1.1.0
       zod: 3.5.1
     devDependencies:
-      '@types/node': 16.4.1
+      '@types/node': 16.4.3
       ava: 3.15.0
       npm-run-all: 4.1.5
-      ts-node: 10.1.0_a8fea423019585bcf1ffe01c52481e79
+      ts-node: 10.1.0_9c9608add82e342d39d60fef9af9e8e0
       typescript: 4.3.5
 
   services/admin:
@@ -94,9 +91,9 @@ importers:
       '@crkn-rcdr/access-data': workspace:*
       '@crkn-rcdr/access-env': workspace:*
       '@crkn-rcdr/lapin-router': workspace:*
-      '@sveltejs/adapter-node': ^1.0.0-next.35
-      '@sveltejs/kit': 1.0.0-next.131
-      '@trpc/client': 8.1.3
+      '@sveltejs/adapter-node': next
+      '@sveltejs/kit': next
+      '@trpc/client': ^8.4.1
       '@types/cookie': ^0.4.1
       '@types/jsonwebtoken': ^8.5.4
       cookie: ^0.4.1
@@ -106,7 +103,7 @@ importers:
       npm-run-all: ^4.1.5
       openseadragon: ^2.4.2
       rfdc: ^1.3.0
-      svelte: ^3.38.3
+      svelte: 3.40.1
       svelte-check: ^2.2.3
       svelte-icons: ^2.1.0
       svelte-preprocess: ^4.7.4
@@ -115,7 +112,7 @@ importers:
     dependencies:
       '@crkn-rcdr/access-data': link:../../packages/data
       '@crkn-rcdr/access-env': link:../../packages/env
-      '@trpc/client': 8.1.3
+      '@trpc/client': 8.4.1
       cookie: 0.4.1
       deep-object-diff: 1.1.0
       fast-deep-equal: 3.1.3
@@ -126,7 +123,7 @@ importers:
     devDependencies:
       '@crkn-rcdr/lapin-router': link:../../packages/lapin-router
       '@sveltejs/adapter-node': 1.0.0-next.35
-      '@sveltejs/kit': 1.0.0-next.131_svelte@3.40.1
+      '@sveltejs/kit': 1.0.0-next.137_svelte@3.40.1
       '@types/cookie': 0.4.1
       '@types/jsonwebtoken': 8.5.4
       npm-run-all: 4.1.5
@@ -154,8 +151,8 @@ importers:
     specifiers:
       '@crkn-rcdr/access-env': workspace:*
       '@crkn-rcdr/lapin-router': workspace:*
-      '@trpc/server': ^8.3.1
-      '@types/node': ^16.3.3
+      '@trpc/server': ^8.4.1
+      '@types/node': ^16.4.3
       dotenv: ^10.0.0
       nodemon: ^2.0.12
       npm-run-all: ^4.1.5
@@ -166,11 +163,11 @@ importers:
       '@crkn-rcdr/lapin-router': link:../../packages/lapin-router
       '@trpc/server': 8.4.1
     devDependencies:
-      '@types/node': 16.4.1
+      '@types/node': 16.4.3
       dotenv: 10.0.0
       nodemon: 2.0.12
       npm-run-all: 4.1.5
-      ts-node: 10.1.0_a8fea423019585bcf1ffe01c52481e79
+      ts-node: 10.1.0_9c9608add82e342d39d60fef9af9e8e0
       typescript: 4.3.5
 
 packages:
@@ -268,8 +265,8 @@ packages:
       tiny-glob: 0.2.9
     dev: true
 
-  /@sveltejs/kit/1.0.0-next.131_svelte@3.40.1:
-    resolution: {integrity: sha512-izTzzUbxTVuW+uwzCg5ltaCF4DZaD8fGI88IGb3fQ3qcmfRQi/vQUZuyfKc1CYxRDVohvaBSMQUQYie4AM6jGQ==}
+  /@sveltejs/kit/1.0.0-next.137_svelte@3.40.1:
+    resolution: {integrity: sha512-YdcwaN9zWcbz4jLZS4j9/7fNZIVO8WkXDuwGTiKARhOLIuuJAjCvSuOZ3btJdV/ySpizTWX22u632weVPLECdw==}
     engines: {node: ^12.20 || >=14.13}
     hasBin: true
     peerDependencies:
@@ -315,8 +312,8 @@ packages:
       defer-to-connect: 1.1.3
     dev: true
 
-  /@trpc/client/8.1.3:
-    resolution: {integrity: sha512-n62XI01g4oAI21+3dz1vi3M5+lMzBS+qeul6jTjv77quOoMGRfbOvfi1+iczPCSBJFvXqtA8r5v3NSgY+mtsfQ==}
+  /@trpc/client/8.4.1:
+    resolution: {integrity: sha512-Oz7olj2bCFcugBH9C9FsJaEkuKPY73OqZKfVjNK7CqETGiQa4qkg2Yz8eOpDrwAQhAhd3WGpFePIb7VE/N4D7A==}
     dependencies:
       '@babel/runtime': 7.14.8
       '@trpc/server': 8.4.1
@@ -356,6 +353,10 @@ packages:
 
   /@types/node/16.4.1:
     resolution: {integrity: sha512-UW7cbLqf/Wu5XH2RKKY1cHwUNLicIDRLMraYKz+HHAerJ0ZffUEk+fMnd8qU2JaS6cAy0r8tsaf7yqHASf/Y0Q==}
+    dev: true
+
+  /@types/node/16.4.3:
+    resolution: {integrity: sha512-GKM4FLMkWDc0sfx7tXqPWkM6NBow1kge0fgQh0bOnlqo4iT1kvTvMEKE0c1RtUGnbLlGRXiAA8SumE//90uKAg==}
     dev: true
 
   /@types/normalize-package-data/2.4.1:
@@ -3113,7 +3114,7 @@ packages:
     resolution: {integrity: sha512-XrHUvV5HpdLmIj4uVMxHggLbFSZYIn7HEWsqePZcI50pco+MPqJ50wMGY794X7AOOhxOBAjbkqfAbEe/QMp2Lw==}
     dev: true
 
-  /ts-node/10.1.0_a8fea423019585bcf1ffe01c52481e79:
+  /ts-node/10.1.0_9c9608add82e342d39d60fef9af9e8e0:
     resolution: {integrity: sha512-6szn3+J9WyG2hE+5W8e0ruZrzyk1uFLYye6IGMBadnOzDh8aP7t8CbFpsfCiEx2+wMixAhjFt7lOZC4+l+WbEA==}
     engines: {node: '>=12.0.0'}
     hasBin: true
@@ -3132,7 +3133,7 @@ packages:
       '@tsconfig/node12': 1.0.9
       '@tsconfig/node14': 1.0.1
       '@tsconfig/node16': 1.0.2
-      '@types/node': 16.4.1
+      '@types/node': 16.4.3
       arg: 4.1.3
       create-require: 1.1.1
       diff: 4.0.2
