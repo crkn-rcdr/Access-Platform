@@ -12,6 +12,8 @@ async function showConfirmation(call, successMsg, failMsg) {
         message: res ? successMsg : failMsg,
         detail: JSON.stringify(res),
         status: res ? "success" : "fail",
+        expandable: true,
+        float: true,
       },
     });
     setTimeout(() => {
@@ -25,6 +27,8 @@ async function showConfirmation(call, successMsg, failMsg) {
         message: failMsg,
         detail: JSON.stringify(e),
         status: "fail",
+        expandable: true,
+        float: true,
       },
     });
     setTimeout(() => {

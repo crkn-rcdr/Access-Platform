@@ -179,7 +179,7 @@
               </div>
               <div class="image-wrap">
                 <img
-                  alt={canvas["label"]["value"]}
+                  alt={canvas?.["label"]?.["value"]}
                   class="thumbnail-img"
                   src={`https://image-tor.canadiana.ca/iiif/2/${encodeURIComponent(
                     canvas["id"]

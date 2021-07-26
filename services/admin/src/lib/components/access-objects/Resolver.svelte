@@ -2,6 +2,8 @@
   import { onMount } from "svelte";
   import { session } from "$app/stores";
   import { getLapin } from "$lib/lapin";
+  import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
+  import { createEventDispatcher } from "svelte";
 
   /**
    * @type {string} Slug being resolved.
@@ -20,6 +22,7 @@
   export let hideInitial = false;
   // https://github.com/crkn-rcdr/Access-Platform/blob/main/data/src/format/slug.ts
 
+  const dispatch = createEventDispatcher();
   const lapin = getLapin({ url: $session["apiEndpoint"], fetch: null });
   const regex = /^[\p{L}\p{Nl}\p{Nd}\-_\.]+$/u;
   const initial = { slug, noid };
@@ -32,18 +35,20 @@
   let timer: NodeJS.Timeout | null = null;
 
   async function resolve() {
-    if (timer) clearTimeout(timer);
-    timer = setTimeout(async () => {
-      status = "LOADING";
-      if (shouldQuery) {
+    if (shouldQuery) {
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(async () => {
+        status = "LOADING";
         noid = undefined;
         if (regex.test(slug)) {
           try {
             const response = await lapin.query("slug.resolve", slug);
             if (response === null) {
               noid = null;
-            } else {
+              dispatch("available", { slug: initial.slug, status: true });
+            } else if (response.noid != initial.noid) {
               noid = response.noid as string;
+              dispatch("available", { slug: initial.slug, status: false });
             }
             status = "READY";
           } catch (e) {
@@ -54,49 +59,49 @@
           noid = null;
           status = "MALFORMED";
         }
-      } else if (slug === initial.slug) {
-        status = "READY";
-        noid = initial.noid;
-      }
-    }, 50);
+      }, 50);
+    } else if (slug === initial.slug) {
+      status = "READY";
+    }
   }
   onMount(async () => {
-    await resolve();
     initial.noid = noid;
+    initial.slug = slug;
+    await resolve();
   });
 </script>
 
-<div
-  class="auto-align auto-align__full auto-align__column auto-align auto-align__full__j-baseline auto-align auto-align__full__wra"
->
-  <label for="slug"><slot name="input">Slug:</slot></label>
-  <input
-    type="text"
-    placeholder="Type in a slug..."
-    bind:value={slug}
-    on:input={resolve}
-  />
-
+<div>
   {#if !!slug && !(hideInitial && slug === initial.slug)}
     {#if status === "LOADING"}
-      Loading
+      <NotificationBar message="Loading" />
     {:else if status === "ERROR"}
-      <span class="danger">Slug resolver unavailable.</span>
+      <NotificationBar message="Slug resolver unavailable." status="fail" />
     {:else if status === "MALFORMED"}
-      Slugs can only contain letters, numbers, and the following symbols: <code
-        >_ - .</code
-      >
-    {:else if noid}
+      <NotificationBar
+        message="Slugs can only contain letters, numbers, and the following symbols: _ - ."
+        status="fail"
+      />
+    {:else if noid && noid !== initial.noid}
       <slot name="in-use">
-        <div class="alert alert-danger">
-          <a href="/object/{noid}">⚠️ Slug in use</a>
-        </div>
+        <a href="/object/{noid}">
+          <NotificationBar message="⚠️ Slug in use" status="fail" />
+        </a>
       </slot>
-    {:else}
-      <slot name="available">✅ Slug available</slot>
+    {:else if !noid || noid !== initial.noid}
+      <slot name="available">
+        <NotificationBar message="✅ Slug available" status="success" />
+      </slot>
     {/if}
   {/if}
 </div>
+
+<input
+  type="text"
+  placeholder="Type in a slug..."
+  bind:value={slug}
+  on:input={resolve}
+/>
 
 <style>
   input {

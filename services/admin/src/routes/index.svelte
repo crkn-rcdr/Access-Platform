@@ -66,6 +66,8 @@
 
   <br />
   <br />
+  <label for="slug">Slug:</label>
+  <br />
   <Resolver slug="" noid="" />
 
   <br />

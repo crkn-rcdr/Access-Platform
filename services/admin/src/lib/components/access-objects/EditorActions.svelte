@@ -4,25 +4,25 @@
   import FaArchive from "svelte-icons/fa/FaArchive.svelte";
   import type { AccessObject } from "@crkn-rcdr/access-data";
   import { onMount } from "svelte";
-  import equal from "fast-deep-equal";
   import { detailedDiff } from "deep-object-diff";
   import Modal from "$lib/components/shared/Modal.svelte";
   import { showConfirmation } from "$lib/confirmation";
+  import { checkValidDiff, checkModelChanged } from "$lib/validation";
 
   export let object: AccessObject;
   export let objectModel: AccessObject;
 
   const lapin = getLapin({ url: $session["apiEndpoint"], fetch: null });
   let clone: any;
-  let handleSaveEnabled = false;
+  let isSaveEnabled = false;
   let showMovetoStorageModal = false;
 
-  function checkModelChanged(objectModel: AccessObject) {
-    handleSaveEnabled = !equal(object, objectModel);
+  function checkEnableSave() {
+    isSaveEnabled = checkValidDiff(object, objectModel);
   }
-
   $: {
-    checkModelChanged(objectModel);
+    objectModel;
+    checkEnableSave();
   }
 
   async function sendSaveRequest(data: any) {
@@ -57,7 +57,7 @@
     if (data) {
       try {
         object = clone(objectModel) as AccessObject; // todo: get this done with zod
-        checkModelChanged(objectModel);
+        checkModelChanged(object, objectModel);
         console.log("RES", data);
       } catch (e) {
         //error = e;
@@ -89,14 +89,14 @@
 </script>
 
 <span class="editor-actions auto-align auto-align__a-center">
-  {#if handleSaveEnabled}
+  {#if isSaveEnabled}
     <button class="save" on:click={handleSave}>Save</button>
   {/if}
   <button class="secondary" on:click={handlePublishStatusChange}
     >{object["public"] ? "Unpublish" : "Publish"}</button
   >
 
-  {#if objectModel["slug"]}
+  {#if object["slug"]}
     <button
       class="danger icon-button"
       data-tooltip="Place in storage"
