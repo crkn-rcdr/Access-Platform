@@ -30,7 +30,15 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   import FaAngleDown from "svelte-icons/fa/FaAngleDown.svelte";
   import FaInfoCircle from "svelte-icons/fa/FaInfoCircle.svelte";
   import FaAngleUp from "svelte-icons/fa/FaAngleUp.svelte";
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   export let useInfoIcon = false;
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   let toggled = false;
 </script>
 

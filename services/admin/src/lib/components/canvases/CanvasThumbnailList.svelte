@@ -34,22 +34,73 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   import DynamicDragAndDropList from "$lib/components/shared/DynamicDragAndDropList.svelte";
   import { moveArrayElement } from "$lib/arrayUtil";
 
+  /**
+   * @type {string} Slug being resolved.
+   */
   export let canvases: ObjectList = [];
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   export let showAddButton = true;
 
+  /**
+   * @type {string} Slug being resolved.
+   */
   let isInitialized = false;
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   let indexModel: number[] = [];
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   let activeCanvasIndex: number = 0;
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   let container: HTMLDivElement;
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   let previousCanvasArrayLength = 0;
 
+  /**
+   * @type {string} Slug being resolved.
+   */
   const LEFT_ARROW_CODE: number = 37;
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   const UP_ARROW_CODE: number = 38;
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   const RIGHT_ARROW_CODE: number = 39;
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   const DOWN_ARROW_CODE: number = 40;
 
+  /**
+   * @type {string} Slug being resolved.
+   */
   const dispatch = createEventDispatcher();
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function setIndexModel(trackNewCanvases: boolean) {
     if (trackNewCanvases) previousCanvasArrayLength = indexModel.length;
     console.log("prevLen", previousCanvasArrayLength);
@@ -60,6 +111,13 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
     console.log("currlen", indexModel.length);
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function setActiveIndex(index: number) {
     if (index >= canvases.length) index = canvases.length - 1;
     if (index < 0) index = 0;
@@ -67,11 +125,25 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
     dispatch("thumbnailClicked", { index });
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function jumpTo(index: number) {
     let canvasThumbnails = container.querySelectorAll(".thumbnail");
     canvasThumbnails?.[index]?.scrollIntoView();
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function deleteCanvasByIndex(event: any, index: number) {
     event.stopPropagation();
     if (index >= 0 && index < canvases.length) {
@@ -81,6 +153,13 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
     }
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function moveCanvas(event: any, originalItemIndex: number) {
     // Move the canvas and trigger saving
     let destinationItemIndex = parseInt(event.detail.value) - 1;
@@ -96,6 +175,13 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
     setActiveIndex(activeCanvasIndex);
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function selectPrevious() {
     if (activeCanvasIndex > 0) {
       activeCanvasIndex--;
@@ -104,6 +190,13 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
     }
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function selectNext() {
     if (activeCanvasIndex < canvases.length - 1) {
       activeCanvasIndex++;
@@ -112,6 +205,13 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
     }
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function handleKeydown(event: any) {
     if (event.keyCode === LEFT_ARROW_CODE || event.keyCode === UP_ARROW_CODE) {
       selectPrevious();
@@ -123,10 +223,24 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
     }
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function addClicked() {
     dispatch("addClicked");
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   onMount(() => {
     if (canvases.length) activeCanvasIndex = 0;
     setIndexModel(false);
@@ -137,9 +251,24 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
     if (indexModel.length !== 0) setIndexModel(true);
   });*/
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function updated() {
     if (isInitialized) setIndexModel(true);
   }
+
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   $: {
     canvases;
     updated();

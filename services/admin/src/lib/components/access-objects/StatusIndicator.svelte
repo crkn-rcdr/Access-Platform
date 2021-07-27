@@ -28,6 +28,10 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
 -->
 <script lang="ts">
   import type { AccessObject } from "@crkn-rcdr/access-data";
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   export let object: AccessObject;
 </script>
 

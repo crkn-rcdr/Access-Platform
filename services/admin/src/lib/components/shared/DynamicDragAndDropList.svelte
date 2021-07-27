@@ -30,27 +30,77 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   import { createEventDispatcher, onMount } from "svelte";
   import { moveArrayElement } from "$lib/arrayUtil";
 
+  /**
+   * @type {string} Slug being resolved.
+   */
   export let dragList: any[] = [];
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   export let direction = "y"; // y | x | both
 
+  /**
+   * @type {string} Slug being resolved.
+   */
   const dispatch = createEventDispatcher();
 
+  /**
+   * @type {string} Slug being resolved.
+   */
   let container: HTMLDivElement;
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   let currentItemIndex: number;
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   let destinationItemIndex: number;
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   let originalList: any[] = [];
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   let success = false;
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function checkVerticalList(rect: DOMRect, destinationY: number): boolean {
     let y = rect.top;
     return y <= destinationY;
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function checkHorizontalList(rect: DOMRect, destinationX: number): boolean {
     let x = rect.left;
     return x <= destinationX;
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function checkGrid(
     rect: DOMRect,
     destinationX: number,
@@ -61,6 +111,13 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
     return y <= destinationY && x <= destinationX;
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function checkIfShouldAddAfterIndex(
     rect: DOMRect | undefined,
     destinationX: number,
@@ -78,6 +135,13 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
     return false;
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function getIndexToMoveChildTo(destinationX: number, destinationY: number) {
     let destinationItemIndex = currentItemIndex;
     for (let i = container.children.length - 1; i >= 0; i--) {
@@ -90,6 +154,13 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
     return destinationItemIndex;
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function handleMove() {
     if (currentItemIndex === destinationItemIndex) return;
     dragList = moveArrayElement(
@@ -101,25 +172,60 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
     currentItemIndex = destinationItemIndex;
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function dragStart(this: Element, elementIndex: number) {
     currentItemIndex = elementIndex;
     originalList = [...dragList];
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function dragenter(event: any) {
     destinationItemIndex = getIndexToMoveChildTo(event.clientX, event.clientY);
     handleMove();
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function drop() {
     success = true;
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function dragend() {
     if (!success) dragList = originalList;
     success = false; // Reset this after each drag operation
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function addEventListeners(element: Element, elementIndex: number) {
     element.addEventListener(
       "dragstart",
@@ -130,6 +236,13 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
     element.addEventListener("dragend", dragend);
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function removeEventListeners(element: Element, elementIndex: number) {
     element.removeEventListener(
       "dragstart",
@@ -140,6 +253,13 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
     element.removeEventListener("dragend", dragend);
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function enableDraggingOnChild(
     element: Element | undefined,
     elementIndex: number
@@ -152,6 +272,13 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
     addEventListeners(element, elementIndex);
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function enableDraggingOnChildren() {
     if (container) {
       for (let i = 0; i < container.children.length; i++) {
@@ -160,10 +287,24 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
     }
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   onMount(() => {
     enableDraggingOnChildren();
   });
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   $: {
     dragList;
     enableDraggingOnChildren();

@@ -28,20 +28,51 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
 -->
 <script lang="ts">
   import type { Session } from "$lib/types";
-
   import { createEventDispatcher } from "svelte";
   import { getStores } from "$app/stores";
 
+  /**
+   * @type {string} Slug being resolved.
+   */
   const { session } = getStores<Session>();
 
-  const dispatch = createEventDispatcher();
+  /**
+   * @type {string} Slug being resolved.
+   */
   export let label = "Please provide a label for this component.";
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   export let placeholder = "Placeholder...";
 
+  /**
+   * @type {string} Slug being resolved.
+   */
+  const dispatch = createEventDispatcher();
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   let query = "";
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   let lookupList: string[];
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   let error = "";
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   async function lookupSlug() {
     dispatch("keypress", query);
 
@@ -55,6 +86,13 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
     }
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   async function selectItem(item: any) {
     dispatch("selected", item["noid"] as string);
   }

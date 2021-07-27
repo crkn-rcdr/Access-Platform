@@ -34,12 +34,33 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   import CanvasViewer from "../canvases/CanvasViewer.svelte";
   import type { ObjectList } from "@crkn-rcdr/access-data";
 
+  /**
+   * @type {string} Slug being resolved.
+   */
   export let manifest: Manifest;
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   let selectedCanvases: ObjectList = [];
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   let previewCanvas: any;
 
+  /**
+   * @type {string} Slug being resolved.
+   */
   const dispatch = createEventDispatcher();
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function handleSelection(event: any) {
     let canvas = event.detail.canvas;
     if (selectedCanvases.includes(canvas)) {
@@ -50,22 +71,57 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
     }
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function handlePreview(event: any) {
     previewCanvas = event.detail.canvas;
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function handleBackButtonPressed() {
     dispatch("backPressed");
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function handleAddPressed() {
     dispatch("addPressed", { selectedCanvases });
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function clearSelection() {
     selectedCanvases = [];
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   /** When the manifest changes, clear the selection */
   $: {
     manifest;

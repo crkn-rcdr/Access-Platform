@@ -29,10 +29,34 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
 <script lang="ts">
   import { getContext } from "svelte";
   import type { Writable } from "svelte/store";
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   export let caseVal: any;
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   let checkStore: SvelteStore<any> = getContext("checkStore");
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   let showDefaultStore: Writable<boolean> = getContext("showDefaultStore");
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   let switchOn = false;
+
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   $: {
     switchOn = $checkStore === caseVal;
     $showDefaultStore = $showDefaultStore && !switchOn;

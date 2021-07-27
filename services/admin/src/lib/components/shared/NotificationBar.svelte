@@ -28,15 +28,50 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
 -->
 <script lang="ts">
   import ExpansionTile from "./ExpansionTile.svelte";
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   export let status: "success" | "fail" | "warn" = "success";
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   export let message = "";
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   export let detail = "";
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   export let expandable = false;
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   export let float = false;
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   export let dissmissFunction = null;
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   export let notificationPosition = 1;
 
+  /**
+   * @type {string} Slug being resolved.
+   */
   const notificationHeightRem = 5;
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   const notificationSpacing = 1;
 </script>
 

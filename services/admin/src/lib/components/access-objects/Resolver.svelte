@@ -33,6 +33,9 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
   import { createEventDispatcher } from "svelte";
 
+  /**
+   * @type {string} Slug being resolved.
+   */
   const { session } = getStores<Session>();
 
   /**
@@ -52,17 +55,37 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   export let hideInitial = false;
   // https://github.com/crkn-rcdr/Access-Platform/blob/main/data/src/format/slug.ts
 
+  /**
+   * @type {string} Slug being resolved.
+   */
   const dispatch = createEventDispatcher();
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   const regex = /^[\p{L}\p{Nl}\p{Nd}\-_\.]+$/u;
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   const initial = { slug, noid };
-  $: shouldQuery =
-    !!slug && (slug !== initial.slug || initial.noid === undefined);
 
   /** @type {"READY" | "LOADING" | "MALFORMED" | "ERROR"} */
   let status: "READY" | "LOADING" | "MALFORMED" | "ERROR" =
     initial.noid === undefined ? "LOADING" : "READY";
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   let timer: NodeJS.Timeout | null = null;
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   async function resolve() {
     if (shouldQuery) {
       if (timer) clearTimeout(timer);
@@ -93,11 +116,29 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
       status = "READY";
     }
   }
+
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   onMount(async () => {
     initial.noid = noid;
     initial.slug = slug;
     await resolve();
   });
+
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
+  $: shouldQuery =
+    !!slug && (slug !== initial.slug || initial.noid === undefined);
 </script>
 
 <div>

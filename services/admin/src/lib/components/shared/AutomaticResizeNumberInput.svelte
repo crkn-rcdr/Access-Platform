@@ -31,15 +31,43 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   import TiArrowSortedUp from "svelte-icons/ti/TiArrowSortedUp.svelte";
   import TiArrowSortedDown from "svelte-icons/ti/TiArrowSortedDown.svelte";
 
+  /**
+   * @type {string} Slug being resolved.
+   */
   export let name: string;
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   export let value: number | undefined;
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   export let max: number;
 
+  /**
+   * @type {string} Slug being resolved.
+   */
   const dispatch = createEventDispatcher();
 
+  /**
+   * @type {string} Slug being resolved.
+   */
   let input: HTMLInputElement;
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   let prevValue: number | undefined;
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function sanitizeInput() {
     let valueInt = parseInt(`${value}`.replace(/\D/g, ""));
     if (!isNaN(valueInt)) {
@@ -47,6 +75,13 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
     }
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function upArrowPressed() {
     if (typeof value === "number") {
       value--;
@@ -54,6 +89,13 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
     }
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function downArrowPressed() {
     if (typeof value === "number") {
       value++;
@@ -61,25 +103,60 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
     }
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function resizeInput() {
     input.style.width = `${input.value.length}.9em`;
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function sendChangeEvent() {
     dispatch("changed", { value });
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function handleChange() {
     sanitizeInput();
     resizeInput();
     sendChangeEvent();
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function handleKeyup() {
     sanitizeInput();
     resizeInput();
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   onMount(() => {
     prevValue = value;
     resizeInput();

@@ -27,7 +27,14 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
 *Note: `--capt-add=SYS-ADMIN` is required for PDF rendering.*
 -->
 <script>
+  /**
+   * @type {string} Slug being resolved.
+   */
   export let overflowX = "auto";
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   export let overflowY = "auto";
 </script>
 

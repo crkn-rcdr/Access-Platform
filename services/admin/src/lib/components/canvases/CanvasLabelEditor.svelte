@@ -29,10 +29,23 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
 
+  /**
+   * @type {string} Slug being resolved.
+   */
   export let label: string | undefined;
 
+  /**
+   * @type {string} Slug being resolved.
+   */
   const dispatch = createEventDispatcher();
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function changed() {
     dispatch("changed", label);
   }

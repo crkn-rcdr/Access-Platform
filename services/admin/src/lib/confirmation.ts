@@ -1,8 +1,15 @@
 import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
 
+/**
+ * @type {string} Slug being resolved.
+ */
 const DISPLAY_TIME = 10000;
 
+/**
+ * @type {string} Slug being resolved.
+ */
 let numVisibleNotifications = 0;
+
 //TODO: make the notifications shift down when previous is clear
 /**
  *

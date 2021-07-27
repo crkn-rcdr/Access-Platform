@@ -28,8 +28,24 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
 -->
 <script lang="ts">
   import { getContext } from "svelte";
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   let showDefaultStore: SvelteStore<boolean> = getContext("showDefaultStore");
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   let showDefaultView = false;
+
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   showDefaultStore.subscribe((showDefault: boolean) => {
     showDefaultView = showDefault;
   });

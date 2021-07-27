@@ -28,7 +28,15 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
 -->
 <script>
   import TiTimes from "svelte-icons/ti/TiTimes.svelte";
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   export let open = false;
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   export let title = "Modal";
 </script>
 

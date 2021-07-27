@@ -32,15 +32,39 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   import TiEye from "svelte-icons/ti/TiEye.svelte";
   import Card from "../shared/Card.svelte";
 
+  /**
+   * @type {string} Slug being resolved.
+   */
   export let canvas: any; // TODO: should we make an ObjectListItem type?
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   export let selected: boolean = false;
 
+  /**
+   * @type {string} Slug being resolved.
+   */
   const dispatch = createEventDispatcher();
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function handleClick() {
     dispatch("tileClicked", { canvas });
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function previewCanvas(event: any) {
     event.stopPropagation();
     dispatch("tilePreviewClicked", { canvas });

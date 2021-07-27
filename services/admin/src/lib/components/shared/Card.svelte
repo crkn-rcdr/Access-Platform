@@ -29,13 +29,39 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
 <script lang="ts">
   import FaCheck from "svelte-icons/fa/FaCheck.svelte";
   import { createEventDispatcher } from "svelte";
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   export let selectable = false;
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   export let selected = false;
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   export let imgURL = "";
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   export let imgAlt = "";
 
+  /**
+   * @type {string} Slug being resolved.
+   */
   const dispatch = createEventDispatcher();
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function handleClick() {
     selected = !selected;
     dispatch("clicked", { selected });

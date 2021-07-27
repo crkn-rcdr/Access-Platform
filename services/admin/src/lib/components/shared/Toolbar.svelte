@@ -27,6 +27,9 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
 *Note: `--capt-add=SYS-ADMIN` is required for PDF rendering.*
 -->
 <script lang="ts">
+  /**
+   * @type {string} Slug being resolved.
+   */
   export let title = "";
 </script>
 

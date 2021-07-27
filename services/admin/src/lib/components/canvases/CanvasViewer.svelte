@@ -30,19 +30,51 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   import { onMount, afterUpdate } from "svelte";
   //import type { Canvas } from "@crkn-rcdr/access-data/src/access/Manifest";
 
+  /**
+   * @type {string} Slug being resolved.
+   */
   export let canvas: any; // TODO: should we make an ObjectListItem type?
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   export let options: any = {};
 
+  /**
+   * @type {string} Slug being resolved.
+   */
   let OpenSeadragon: any;
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   let container: HTMLDivElement;
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   let imageURL = "";
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function clearViewer() {
     if (container) {
       container.innerHTML = "";
     }
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   async function drawImage() {
     clearViewer();
     if (canvas && OpenSeadragon) {
@@ -63,11 +95,25 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
     }
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   onMount(async () => {
     OpenSeadragon = await import("openseadragon");
     await drawImage();
   });
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   afterUpdate(async () => {
     let newImageUrl = `https://image-tor.canadiana.ca/iiif/2/${encodeURIComponent(
       canvas["id"]

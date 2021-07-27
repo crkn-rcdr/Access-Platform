@@ -33,9 +33,19 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   import NotificationBar from "../shared/NotificationBar.svelte";
   import Resolver from "$lib/components/access-objects/Resolver.svelte";
 
+  /**
+   * @type {string} Slug being resolved.
+   */
   export let object: AccessObject; // Not sure if we should pass an object or have a list of props (ex: slug, label, ...) that can be null, and show ones that are instantiated only?
 
+  /**
+   * @type {string} Slug being resolved.
+   */
   let showSlugUnavailable = false;
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   let slugUnavailableMessage = "";
 </script>
 

@@ -50,8 +50,32 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   let instances: any = {}; // Keeps track of the actual instances of the components dynamically created through svelte:component.
 
   /** Any time the page list changes, redraw the menus and pages. */
+
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   $: pageNames = pageList.map((el) => el["name"]);
+
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   $: pageComponents = pageList.map((el) => el["componentData"]);
+
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   $: {
     for (const key in instances) {
       instances[key].$$.after_update.push(() => {
@@ -65,6 +89,13 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   let pageButtons: NodeListOf<Element>;
   let pageBodies: NodeListOf<Element>;
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function setActivePageButtonClass() {
     for (let i = 0; i < pageButtons.length; i++) {
       if (i === activeIndex) pageButtons?.[i]?.classList?.add("active");
@@ -75,6 +106,13 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
     }
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function setActivePageBody() {
     for (let i = 0; i < pageBodies.length; i++) {
       if (i === activeIndex)
@@ -83,11 +121,25 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
     }
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function setPage() {
     setActivePageButtonClass();
     setActivePageBody();
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function enablePaging() {
     for (let i = 0; i < pageButtons.length; i++) {
       pageButtons?.[i]?.addEventListener("click", () => {
@@ -97,6 +149,13 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
     }
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   onMount(() => {
     pageButtons = container.querySelectorAll(".side-menu-page-list-button");
     pageBodies = container.querySelectorAll(".side-menu-page");

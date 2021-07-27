@@ -38,32 +38,81 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   import NotificationBar from "../shared/NotificationBar.svelte";
   import { typedChecks } from "$lib/validation";
 
+  /**
+   * @type {string} Slug being resolved.
+   */
   export let manifest: Manifest;
 
+  /**
+   * @type {string} Slug being resolved.
+   */
   let activeCanvas: any;
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   let activeCanvasIndex: number = 0;
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   let state = "view";
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function setActiveCanvas(index: number) {
     activeCanvasIndex = index;
     activeCanvas = manifest?.canvases?.[index] || null;
     triggerUpdate();
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function setActiveCanvasLabel(event) {
     manifest.canvases[activeCanvasIndex]["label"]["none"] = event.detail;
     triggerUpdate();
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function triggerUpdate() {
     manifest = manifest;
     console.log("Changed?", manifest.canvases);
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function changeView(newState: string) {
     state = newState;
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   onMount(() => {
     activeCanvas = manifest?.canvases?.[0] || null;
   });

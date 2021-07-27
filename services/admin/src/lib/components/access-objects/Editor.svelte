@@ -42,10 +42,28 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
    */
   export let object: AccessObject;
 
+  /**
+   * @type {string} Slug being resolved.
+   */
   let pageList: Array<SideMenuPageData> = [];
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   let rfdc: any; // Deep copies an object
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   let objectModel: AccessObject; // Used to keep track of changes to the object, without changing the actual object until save is pressed.
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   async function setDataModel(object: AccessObject) {
     if (!object) return;
 
@@ -96,6 +114,13 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
     }
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   $: {
     // Share any changes that occur in this component with the sub-components in the navigator.
     if (object) setDataModel(object);

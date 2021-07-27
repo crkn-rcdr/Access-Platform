@@ -30,26 +30,81 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   import type { ObjectList } from "@crkn-rcdr/access-data";
   import { onMount, createEventDispatcher } from "svelte";
 
+  /**
+   * @type {string} Slug being resolved.
+   */
   export let canvases: ObjectList;
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   export let selectedCanvases: ObjectList = [];
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   export let options: any = {};
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   export let multiple =
     true; /* We could edit this to give a max number of items selectable */
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   export let selectAll = false;
 
+  /**
+   * @type {string} Slug being resolved.
+   */
   const dispatch = createEventDispatcher();
 
+  /**
+   * @type {string} Slug being resolved.
+   */
   let OpenSeadragon: any;
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   let container: HTMLDivElement;
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   let imageURLs: string[] = [];
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   let inputs: any[] = [];
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   let maxSelected = false;
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function clearSelectedCanvasList() {
     selectedCanvases = [];
     clearSelected();
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function addAllToCanvasList() {
     if (canvases) {
       selectedCanvases = canvases;
@@ -57,6 +112,13 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
     }
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function selectInputsFromSelectedCanvasList() {
     let indexesToSelect: number[] = [];
     let index = 0;
@@ -73,18 +135,39 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
     checkMaxSelected();
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function clearSelected() {
     for (const input of inputs) {
       input.checked = false;
     }
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function setAllSelected() {
     for (const input of inputs) {
       input.checked = true;
     }
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function checkMaxSelected() {
     if (!multiple && selectedCanvases.length) {
       maxSelected = true;
@@ -93,6 +176,13 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
     }
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function handleSelection(input: any, canvas: any) {
     if (maxSelected) {
       clearSelected();
@@ -112,12 +202,26 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
     dispatch("selected", canvas);
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function clearViewer() {
     if (container) {
       container.innerHTML = "";
     }
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   async function drawImage() {
     clearViewer();
     if (canvases && OpenSeadragon) {
@@ -142,6 +246,13 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
     }
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function addInputCheckboxesToOpenseadragon() {
     const refStrips = container.getElementsByClassName("referencestrip");
     if (refStrips && refStrips.length && refStrips[0]) {
@@ -170,6 +281,13 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
     }
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   onMount(async () => {
     OpenSeadragon = await import("openseadragon");
     await drawImage();
@@ -177,6 +295,13 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   });
 
   // Update inputs on select all/deselect all
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   $: {
     if (selectAll) addAllToCanvasList();
     else clearSelectedCanvasList();

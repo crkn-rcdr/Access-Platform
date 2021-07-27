@@ -39,20 +39,63 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   import type { ObjectList } from "@crkn-rcdr/access-data";
   import CanvasesSelector from "$lib/components/canvases/CanvasesSelector.svelte";
 
+  /**
+   * @type {string} Slug being resolved.
+   */
   const { session } = getStores<Session>();
 
+  /**
+   * @type {string} Slug being resolved.
+   */
   export let destinationManifest: Manifest;
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   export let destinationIndex: number = 0;
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   export let multiple = true;
 
+  /**
+   * @type {string} Slug being resolved.
+   */
   const dispatch = createEventDispatcher();
 
+  /**
+   * @type {string} Slug being resolved.
+   */
   let selectedManifest: Manifest;
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   let selectedCanvases: ObjectList = [];
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   let showManifest = false;
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   let selectAll = false;
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   let error = "";
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   async function handleSelect(event: any) {
     try {
       let prefixedNoid = event.detail;
@@ -73,11 +116,25 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
     }
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function handleCancelPressed() {
     selectedCanvases = [];
     dispatch("done");
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function handleAddPressed() {
     destinationManifest?.canvases?.splice(
       destinationIndex,

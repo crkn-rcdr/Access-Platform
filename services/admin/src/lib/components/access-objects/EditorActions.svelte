@@ -38,23 +38,54 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   import { checkValidDiff, checkModelChanged } from "$lib/validation";
   import { goto } from "$app/navigation";
 
+  /**
+   * @type {string} Slug being resolved.
+   */
   const { session } = getStores<Session>();
 
+  /**
+   * @type {string} Slug being resolved.
+   */
   export let object: AccessObject;
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   export let objectModel: AccessObject;
 
+  /**
+   * @type {string} Slug being resolved.
+   */
   let clone: any;
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   let isSaveEnabled = false;
+
+  /**
+   * @type {string} Slug being resolved.
+   */
   let showMovetoStorageModal = false;
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function checkEnableSave() {
     isSaveEnabled = checkValidDiff(object, objectModel);
   }
-  $: {
-    objectModel;
-    checkEnableSave();
-  }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   async function sendSaveRequest(data: any) {
     //todo make partial of type
     console.log("diff", data);
@@ -98,6 +129,13 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
     return response;
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   // TODO: check valid manifest or canvas before showing save button
   async function handleSave() {
     const diff: any = detailedDiff(object, objectModel); //TODO: We can send this to the backend
@@ -126,6 +164,14 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
       }
     }
   }
+
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   async function handlePlaceInStorage() {
     showMovetoStorageModal = false;
     console.log("objectModel 1", objectModel);
@@ -145,11 +191,37 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
     return response;
   }
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function handlePublishStatusChange() {}
 
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   onMount(async () => {
     clone = (await import("rfdc")).default();
   });
+
+  /**
+   *
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
+  $: {
+    objectModel;
+    checkEnableSave();
+  }
 </script>
 
 <span class="editor-actions auto-align auto-align__a-center">
