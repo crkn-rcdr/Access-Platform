@@ -10,9 +10,9 @@
   import DynamicDragAndDropList from "$lib/components/shared/DynamicDragAndDropList.svelte";
   import { moveArrayElement } from "$lib/arrayUtil";
   import TiArrowBack from "svelte-icons/ti/TiArrowBack.svelte";
+  import TiTrash from "svelte-icons/ti/TiTrash.svelte";
   import type { ObjectList } from "@crkn-rcdr/access-data";
 
-  //export let model: AccessObject;
   export let collection: Collection;
   export let showAddButton = true;
   let indexModel: number[] = [];
@@ -22,7 +22,6 @@
   let addedMember = false;
   let selectedCollection: ObjectList = [];
   let error = "";
-  //let showCollection
 
   const LEFT_ARROW_CODE: number = 37;
   const UP_ARROW_CODE: number = 38;
@@ -147,7 +146,7 @@
     {#if addedMember}
       <div>
         <TypeAhead
-          label="Search for a Collection OrManifest to add from:"
+          label="Search for a Collection Or Manifest to add from:"
           on:selected={handleSelect}
           on:keypress={() => (error = "")}
         />
@@ -185,7 +184,7 @@
       >
         {#each collection?.members as members, i}
           <div
-            class="thumbnail"
+            class="members"
             class:active={i === activeMemberIndex}
             on:mousedown={() => setActiveIndex(i)}
           >
@@ -214,14 +213,15 @@
                     class="action icon"
                     on:click={(e) => deleteCanvasByIndex(e, i)}
                   >
-                    <!--   <TiTrash /> -->
+                    <TiTrash />
                   </div>
                 </div>
               </div>
-              <div>
+              <div id="grid">
                 <ul>
                   <li>
-                    <input bind:value={members["id"]} />
+                    <!--  <input bind:value={members["id"]} /> -->
+                    {members["id"]}
                   </li>
                 </ul>
               </div>
@@ -244,10 +244,10 @@
     overflow-y: hidden;
     opacity: 0.5;
   }
-  /*  .actions-wrap {
+  .actions-wrap {
     flex: 1;
     margin-left: 1.5rem;
-  } */
+  }
 
   .action.icon {
     opacity: 0.6;
@@ -255,7 +255,7 @@
   }
   .pos {
     font-weight: 400;
-    margin-top: 0.58rem;
+    margin-top: 2rem;
     margin-left: 0.58rem;
   }
 
@@ -263,10 +263,27 @@
     display: none;
     margin-top: 0.5em;
   }
+  .members:hover .action.icon {
+    display: inherit;
+  }
   .pos-input {
+    display: none;
+  }
+  .members:hover .pos-input {
+    display: inherit;
+  }
+  .members:hover .pos {
     display: none;
   }
   li {
     list-style: none;
+  }
+  #grid {
+    margin-top: 1rem;
+    height: 5rem;
+    display: grid;
+    grid-template-areas: "a a";
+    gap: 10px;
+    grid-auto-columns: 200px;
   }
 </style>
