@@ -49,7 +49,7 @@ The resolver component allows the user to enter a slug, and then a request is se
   // https://github.com/crkn-rcdr/Access-Platform/blob/main/data/src/format/slug.ts
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {Session} The session store that contains the module for sending requests to lapin.
    */
   const { session } = getStores<Session>();
 

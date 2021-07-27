@@ -1,17 +1,18 @@
 <!--
 @component
 ### Overview
+This component displays the non content properties for an access object and allows users to edit them.
 
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| prop : type    | [required, optional] | desc |
+| object: AccessObject | required | The AccessObject object that will be manipulated by the user, usually, a copy of an access pbject that acts as a form model. |
 
 ### Usage
 ```  
-<Editor bind:object />
+<InfoEditor bind:object />
 ```
-*Note: `--capt-add=SYS-ADMIN` is required for PDF rendering.*
+*Note: `bind:` is required for changes to the object to be reflected in higher level components.*
 -->
 <script lang="ts">
   import { isManifest, isCollection } from "@crkn-rcdr/access-data";
@@ -21,17 +22,17 @@
   import Resolver from "$lib/components/access-objects/Resolver.svelte";
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {AccessObject} The AccessObject object that will be manipulated by the user, usually, a copy of an access pbject that acts as a form model.
    */
   export let object: AccessObject; // Not sure if we should pass an object or have a list of props (ex: slug, label, ...) that can be null, and show ones that are instantiated only?
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {boolean} Controls if the notification bar for slugs shows the error that the slug is unavailable, or if it shows a validation error (or nothing if it looks good)
    */
   let showSlugUnavailable = false;
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {string} The message to be shown if the slug is not available.
    */
   let slugUnavailableMessage = "";
 </script>

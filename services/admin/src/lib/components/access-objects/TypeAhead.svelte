@@ -1,19 +1,19 @@
 <!--
 @component
 ### Overview
-The overriding design goal for Markdown's formatting syntax is to make it as readable as possible. The idea is that a Markdown-formatted document should be publishable as-is, as plain text, without looking like it's been marked up with tags or formatting instructions.
+This componenet allows the user to search the backend for any access object that has a slug that contains the search term. It lists matching objects in a table.
 
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| prop : type    | [required, optional] | desc |
+| label : string       | optional | The label for the search input. |
+| placeholder : string | optional | The placeholder for the search input. |
 
 ### Usage
-**Example one**
 ```  
-<Editor bind:object />
+<TypeAhead label="Label:" placeholder="placeholder" on:selected={(event) -> { console.log(event.detail) }} />
 ```
-*Note: `--capt-add=SYS-ADMIN` is required for PDF rendering.*
+*Note: the noid of the selected item is returned from `on:selected`*
 -->
 <script lang="ts">
   import type { Session } from "$lib/types";
@@ -21,46 +21,43 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   import { getStores } from "$app/stores";
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {string} The label for the search input.
    */
-  const { session } = getStores<Session>();
+  export let label = "";
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {string} The placeholder for the search input.
    */
-  export let label = "Please provide a label for this component.";
+  export let placeholder = "Search...";
 
   /**
-   * @type {string} Slug being resolved.
-   */
-  export let placeholder = "Placeholder...";
-
-  /**
-   * @type {string} Slug being resolved.
+   * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.
    */
   const dispatch = createEventDispatcher();
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {Session} The session store that contains the module for sending requests to lapin.
+   */
+  const { session } = getStores<Session>();
+
+  /**
+   * @type {string} The search term.
    */
   let query = "";
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {string} The list of slugs that contain the search term
    */
   let lookupList: string[];
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {string} An error message to be displayed.
    */
   let error = "";
 
   /**
-   *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns
+   * Dispatches the @event on:keypress with the query set as the event.detail. It then sends a request to the backend to get the objects whos slug contains the query, if the query is not empty. If the request was successful, the results are stored in @var lookupList. Otherwise @var error is set and displayed to the user.
+   * @returns void
    */
   async function lookupSlug() {
     dispatch("keypress", query);
@@ -76,11 +73,9 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   }
 
   /**
-   *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns
+   * Dispatches the @event on:selected with the noid of the selected item set as the event.detail.
+   * @param item
+   * @returns void
    */
   async function selectItem(item: any) {
     dispatch("selected", item["noid"] as string);
@@ -139,7 +134,6 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   input {
     width: 100%;
   }
-
   .end-content {
     max-width: 30ch;
     float: right;

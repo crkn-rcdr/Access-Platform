@@ -6,7 +6,7 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| object : AccessObject    | required | An object of type AccessObject that will be editable in the editor. |
+| object : AccessObject  | required | An object of type AccessObject that will be editable in the editor. |
 
 ### Usage
 ```  

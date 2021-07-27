@@ -1,25 +1,24 @@
 <!--
 @component
 ### Overview
-The overriding design goal for Markdown's formatting syntax is to make it as readable as possible. The idea is that a Markdown-formatted document should be publishable as-is, as plain text, without looking like it's been marked up with tags or formatting instructions.
+This component displays the publish status of an access object
 
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| prop : type    | [required, optional] | desc |
+| object: AccessObject  | required | The object to display the status of. |
 
 ### Usage
-**Example one**
 ```  
-<Editor bind:object />
+<StatusIndicator bind:object />
 ```
-*Note: `--capt-add=SYS-ADMIN` is required for PDF rendering.*
+*Note: `bind:` is required for changes to the object and its model to be reflected in higher level components.*
 -->
 <script lang="ts">
   import type { AccessObject } from "@crkn-rcdr/access-data";
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {string} The object to display the status of.
    */
   export let object: AccessObject;
 </script>
