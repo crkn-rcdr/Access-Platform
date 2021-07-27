@@ -5,6 +5,13 @@
 
 import type { ToggleParams } from "$lib/types";
 
+/**
+ *
+ * @param arr
+ * @param currentIndex
+ * @param destinationIndex
+ * @returns
+ */
 export function toggleable(node: HTMLElement, parameters: ToggleParams) {
   node.style.display = parameters.toggled ? parameters.display : "none";
   return {

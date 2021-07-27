@@ -14,7 +14,4 @@ function moveArrayElement(
   arr.splice(destinationIndex, 0, item);
   return arr;
 }
-/**
- * Module: arrayUtil
- */
 export { moveArrayElement };
