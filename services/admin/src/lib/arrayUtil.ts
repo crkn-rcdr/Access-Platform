@@ -1,3 +1,10 @@
+/**
+ *
+ * @param arr
+ * @param currentIndex
+ * @param destinationIndex
+ * @returns
+ */
 function moveArrayElement(
   arr: any[],
   currentIndex: number,
@@ -7,5 +14,7 @@ function moveArrayElement(
   arr.splice(destinationIndex, 0, item);
   return arr;
 }
-
+/**
+ * Module: arrayUtil
+ */
 export { moveArrayElement };

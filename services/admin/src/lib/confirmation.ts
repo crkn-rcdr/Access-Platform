@@ -4,6 +4,13 @@ const DISPLAY_TIME = 10000;
 
 let numVisibleNotifications = 0;
 //TODO: make the notifications shift down when previous is clear
+/**
+ *
+ * @param arr
+ * @param currentIndex
+ * @param destinationIndex
+ * @returns
+ */
 async function showConfirmation(call, successMsg, failMsg) {
   numVisibleNotifications++;
   try {

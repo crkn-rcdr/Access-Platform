@@ -8,6 +8,13 @@ import {
 } from "@crkn-rcdr/access-data";
 import equal from "fast-deep-equal";
 
+/**
+ *
+ * @param arr
+ * @param currentIndex
+ * @param destinationIndex
+ * @returns
+ */
 function checkValidCollection(objectModel: AccessObject) {
   try {
     const res = EditableCollection.parse(objectModel);
@@ -19,6 +26,13 @@ function checkValidCollection(objectModel: AccessObject) {
   }
 }
 
+/**
+ *
+ * @param arr
+ * @param currentIndex
+ * @param destinationIndex
+ * @returns
+ */
 function checkValidManifest(objectModel: AccessObject) {
   try {
     const res = EditableManifest.parse(objectModel);
@@ -30,6 +44,13 @@ function checkValidManifest(objectModel: AccessObject) {
   }
 }
 
+/**
+ *
+ * @param arr
+ * @param currentIndex
+ * @param destinationIndex
+ * @returns
+ */
 function checkChangeIsValid(objectModel: AccessObject) {
   if (objectModel["type"] === "manifest") {
     return checkValidManifest(objectModel);
@@ -38,10 +59,24 @@ function checkChangeIsValid(objectModel: AccessObject) {
   }
 }
 
+/**
+ *
+ * @param arr
+ * @param currentIndex
+ * @param destinationIndex
+ * @returns
+ */
 function checkModelChanged(object: AccessObject, objectModel: AccessObject) {
   return !equal(object, objectModel);
 }
 
+/**
+ *
+ * @param arr
+ * @param currentIndex
+ * @param destinationIndex
+ * @returns
+ */
 function checkValidDiff(object: AccessObject, objectModel: AccessObject) {
   const hasModelChanged = checkModelChanged(object, objectModel);
   console.log("hasModelChanged", hasModelChanged);
@@ -54,6 +89,13 @@ function checkValidDiff(object: AccessObject, objectModel: AccessObject) {
   return false;
 }
 
+/**
+ *
+ * @param arr
+ * @param currentIndex
+ * @param destinationIndex
+ * @returns
+ */
 function getSlugValidationMsg(slug: string) {
   try {
     EditableAlias.pick({ slug: true }).parse({ slug });
@@ -63,6 +105,13 @@ function getSlugValidationMsg(slug: string) {
   }
 }
 
+/**
+ *
+ * @param arr
+ * @param currentIndex
+ * @param destinationIndex
+ * @returns
+ */
 const manifest = {
   getLabelValidationMsg: function (label: TextRecord) {
     try {
@@ -82,6 +131,13 @@ const manifest = {
   },
 };
 
+/**
+ *
+ * @param arr
+ * @param currentIndex
+ * @param destinationIndex
+ * @returns
+ */
 const collection = {
   getLabelValidationMsg: function (label: TextRecord) {
     try {
@@ -93,6 +149,9 @@ const collection = {
   },
 };
 
+/**
+ * wrapper
+ */
 const typedChecks = { manifest, collection };
 
 export { checkValidDiff, checkModelChanged, getSlugValidationMsg, typedChecks };
