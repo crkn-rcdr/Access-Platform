@@ -7,7 +7,7 @@ import { Agent as HttpsAgent } from "https";
 import { DatabaseHandler, Document } from "./DatabaseHandler.js";
 import { Env } from "@crkn-rcdr/access-env";
 
-export { CouchAttachmentRecord } from "./DatabaseHandler";
+export { CouchAttachmentRecord } from "./DatabaseHandler.js";
 
 export {
   mangoEqualSelector,
