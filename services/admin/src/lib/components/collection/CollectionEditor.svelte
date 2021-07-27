@@ -1,14 +1,16 @@
 <script lang="ts">
   import { onMount, createEventDispatcher } from "svelte";
-  //import type { AccessObject } from "@crkn-rcdr/access-data";
-  //import { isCollection } from "@crkn-rcdr/access-data";
+  import { AccessObject } from "@crkn-rcdr/access-data";
+  import { isCollection, isManifest } from "@crkn-rcdr/access-data";
   import type { Collection } from "@crkn-rcdr/access-data/src/access/Collection";
-  /* import TypeAhead from "$lib/components/access-objects/TypeAhead.svelte";
-  import Switch from "$lib/components/shared//Switch.svelte";
-  import SwitchCase from "$lib/components/shared//SwitchCase.svelte"; */
+  import TypeAhead from "$lib/components/access-objects/TypeAhead.svelte";
+  import { session } from "$app/stores";
+  import { getLapin } from "$lib/lapin";
   import AutomaticResizeNumberInput from "$lib/components/shared/AutomaticResizeNumberInput.svelte";
   import DynamicDragAndDropList from "$lib/components/shared/DynamicDragAndDropList.svelte";
   import { moveArrayElement } from "$lib/arrayUtil";
+  import TiArrowBack from "svelte-icons/ti/TiArrowBack.svelte";
+  import type { ObjectList } from "@crkn-rcdr/access-data";
 
   //export let model: AccessObject;
   export let collection: Collection;
@@ -17,11 +19,16 @@
   let activeMemberIndex: number = 0;
   let container: HTMLDivElement;
 
+  let addedMember = false;
+  let selectedCollection: ObjectList = [];
+  let error = "";
+  //let showCollection
+
   const LEFT_ARROW_CODE: number = 37;
   const UP_ARROW_CODE: number = 38;
   const RIGHT_ARROW_CODE: number = 39;
   const DOWN_ARROW_CODE: number = 40;
-
+  const lapin = getLapin({ url: $session["apiEndpoint"], fetch: null });
   const dispatch = createEventDispatcher();
   console.log("Prit Collection:", collection);
 
@@ -88,6 +95,37 @@
   }
   function addClicked() {
     dispatch("addClicked");
+    addedMember = true;
+  }
+  function deleteCanvasByIndex(event: any, index: number) {
+    event.stopPropagation();
+    if (index >= 0 && index < collection?.members.length) {
+      collection?.members.splice(index, 1);
+      collection.members = collection?.members;
+      setActiveIndex(activeMemberIndex);
+    }
+  }
+
+  let noid;
+  async function handleSelect(event: any) {
+    try {
+      noid = event.detail;
+
+      const response = await lapin.query("noid.resolve", noid);
+
+      const object = AccessObject.parse(response);
+
+      collection.members[collection.members.length] = object;
+    } catch (e) {
+      error = e;
+    }
+  }
+  function handleCancelPressed() {
+    console.log("selected test", activeMemberIndex);
+    console.log("selected Collection", selectedCollection);
+    selectedCollection = [];
+    addedMember = false;
+    dispatch("done");
   }
   onMount(() => {
     if (collection.members.length) activeMemberIndex = 0;
@@ -100,26 +138,38 @@
   }
 </script>
 
-<div class="editor">
-  <!-- {#if isCollection(model)}
-    <label for="Type">Type</label><br />
-    <input type="text" id="type" name="type" bind:value={model["type"]} /><br />
-  {/if}
-  {#if isCollection(model)}
-    <label for="public">Public</label><br />
-    <input
-      type="text"
-      id="public"
-      name="public"
-      bind:value={model["public"]}
-    /><br />
-  {/if} -->
-</div>
 <svelte:window on:keydown={handleKeydown} />
-{#if indexModel.length}
+{#if indexModel.length && collection}
   <div class="auto-align auto-align__column">
     {#if showAddButton}
       <button class="primary lg" on:click={addClicked}>Add Member</button>
+    {/if}
+    {#if addedMember}
+      <div>
+        <TypeAhead
+          label="Search for a Collection OrManifest to add from:"
+          on:selected={handleSelect}
+          on:keypress={() => (error = "")}
+        />
+      </div>
+      <div class="add-menu-title">
+        <button
+          class="secondary cancel-button auto-align auto-align__a-center"
+          on:click={handleCancelPressed}
+        >
+          <div class="icon">
+            <TiArrowBack />
+          </div>
+          Exit
+        </button>
+      </div>
+      <br />
+      {#if error}
+        <br />
+        <div class="alert alert-danger">
+          {error}
+        </div>
+      {/if}
     {/if}
     <div
       bind:this={container}
@@ -133,41 +183,48 @@
           setActiveIndex(e.detail.destinationItemIndex);
         }}
       >
-        {#each collection.members as members, i}
+        {#each collection?.members as members, i}
           <div
             class="thumbnail"
             class:active={i === activeMemberIndex}
             on:mousedown={() => setActiveIndex(i)}
-          />
-          <div class="auto-align">
-            <div class="actions-wrap">
-              <div class="auto-align auto-align__column">
-                <div class="action pos">
-                  {indexModel[i]}
-                </div>
-                <div
-                  class="action pos-input"
-                  on:click={(e) => {
-                    e.stopPropagation();
-                  }}
-                >
-                  <AutomaticResizeNumberInput
-                    name="position"
-                    max={collection.members.length}
-                    on:changed={(e) => {
-                      moveMember(e, i);
+          >
+            <div class="auto-align">
+              <div class="actions-wrap">
+                <div class="auto-align auto-align__column">
+                  <div class="action pos">
+                    {indexModel[i]}
+                  </div>
+                  <div
+                    class="action pos-input"
+                    on:click={(e) => {
+                      e.stopPropagation();
                     }}
-                    bind:value={indexModel[i]}
-                  />
+                  >
+                    <AutomaticResizeNumberInput
+                      name="position"
+                      max={collection?.members.length}
+                      on:changed={(e) => {
+                        moveMember(e, i);
+                      }}
+                      bind:value={indexModel[i]}
+                    />
+                  </div>
+                  <div
+                    class="action icon"
+                    on:click={(e) => deleteCanvasByIndex(e, i)}
+                  >
+                    <!--   <TiTrash /> -->
+                  </div>
                 </div>
               </div>
-            </div>
-            <div>
-              <ul>
-                <li>
-                  <input bind:value={members["id"]} />
-                </li>
-              </ul>
+              <div>
+                <ul>
+                  <li>
+                    <input bind:value={members["id"]} />
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         {/each}

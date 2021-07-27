@@ -1,4 +1,5 @@
 <script lang="ts">
+  import CollectionEditor from "./../collection/CollectionEditor.svelte";
   import type { AccessObject } from "@crkn-rcdr/access-data";
   import { isManifest, isCollection } from "@crkn-rcdr/access-data";
   import type { SideMenuPageData } from "$lib/types";
@@ -56,6 +57,19 @@
             contentComponent: InfoEditor,
             contentComponentProps: { object: objectModel },
             sideMenuPageProps: {},
+            update: () => {
+              objectModel = objectModel;
+            },
+          },
+        },
+        {
+          name: "Members",
+          componentData: {
+            contentComponent: CollectionEditor,
+            contentComponentProps: { collection: objectModel },
+            sideMenuPageProps: {
+              overflowY: "hidden",
+            },
             update: () => {
               objectModel = objectModel;
             },
