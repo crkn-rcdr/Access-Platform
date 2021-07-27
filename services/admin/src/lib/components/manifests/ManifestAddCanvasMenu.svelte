@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { session } from "$app/stores";
-  import { getLapin } from "$lib/lapin";
+  import type { Session } from "$lib/types";
+  import { getStores } from "$app/stores";
   import TiArrowBack from "svelte-icons/ti/TiArrowBack.svelte";
   import FaPlus from "svelte-icons/fa/FaPlus.svelte";
   import { AccessObject } from "@crkn-rcdr/access-data";
@@ -11,12 +11,13 @@
   import type { ObjectList } from "@crkn-rcdr/access-data";
   import CanvasesSelector from "$lib/components/canvases/CanvasesSelector.svelte";
 
+  const { session } = getStores<Session>();
+
   export let destinationManifest: Manifest;
   export let destinationIndex: number = 0;
   export let multiple = true;
 
   const dispatch = createEventDispatcher();
-  const lapin = getLapin({ url: $session["apiEndpoint"], fetch: null });
 
   let selectedManifest: Manifest;
   let selectedCanvases: ObjectList = [];
@@ -27,7 +28,7 @@
   async function handleSelect(event: any) {
     try {
       let prefixedNoid = event.detail;
-      const response = await lapin.query("noid.resolve", prefixedNoid);
+      const response = await $session.lapin.query("noid.resolve", prefixedNoid);
       if (response) {
         const object = AccessObject.parse(response);
         if (isCollection(object)) {
@@ -200,10 +201,6 @@
 
   .manifest-controls > * {
     margin-bottom: 1rem;
-  }
-
-  h6 {
-    flex: 9;
   }
 
   .add-all-button,

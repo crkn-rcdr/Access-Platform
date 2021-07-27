@@ -1,14 +1,31 @@
-//import type { Accessor } from "@crkn-rcdr/accessor";
+import type { TRPCClient } from "@trpc/client";
+import type { LapinRouter } from "@crkn-rcdr/lapin-router";
 import type { User } from "@crkn-rcdr/access-data";
 
-export type Session = {
+export type ServerSession = {
   apiEndpoint: string;
   authLogout: string;
   user: User;
 };
 
 export type Locals = {
-  session: Session;
+  session: ServerSession;
+};
+
+export type Session = ServerSession & {
+  lapin: TRPCClient<LapinRouter>;
+};
+
+/**
+ * Output of the root layout component's load function.
+ */
+export type RootLoadOutput = {
+  context: {
+    lapin: TRPCClient<LapinRouter>;
+  };
+  props: {
+    lapin: TRPCClient<LapinRouter>;
+  };
 };
 
 /**
@@ -29,5 +46,5 @@ export type SideMenuPageData = {
     contentComponentProps: any;
     sideMenuPageProps: any;
     update: Function;
-  }
+  };
 };

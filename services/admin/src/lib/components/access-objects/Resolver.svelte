@@ -1,9 +1,11 @@
 <script lang="ts">
+  import type { Session } from "$lib/types";
   import { onMount } from "svelte";
-  import { session } from "$app/stores";
-  import { getLapin } from "$lib/lapin";
+  import { getStores } from "$app/stores";
   import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
   import { createEventDispatcher } from "svelte";
+
+  const { session } = getStores<Session>();
 
   /**
    * @type {string} Slug being resolved.
@@ -23,7 +25,6 @@
   // https://github.com/crkn-rcdr/Access-Platform/blob/main/data/src/format/slug.ts
 
   const dispatch = createEventDispatcher();
-  const lapin = getLapin({ url: $session["apiEndpoint"], fetch: null });
   const regex = /^[\p{L}\p{Nl}\p{Nd}\-_\.]+$/u;
   const initial = { slug, noid };
   $: shouldQuery =
@@ -42,7 +43,7 @@
         noid = undefined;
         if (regex.test(slug)) {
           try {
-            const response = await lapin.query("slug.resolve", slug);
+            const response = await $session.lapin.query("slug.resolve", slug);
             if (response === null) {
               noid = null;
               dispatch("available", { slug: initial.slug, status: true });

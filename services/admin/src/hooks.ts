@@ -1,4 +1,4 @@
-import type { Locals, Session } from "$lib/types";
+import type { Locals, ServerSession } from "$lib/types";
 import type { GetSession, Handle, ServerFetch } from "@sveltejs/kit";
 import type { JwtPayload } from "jsonwebtoken";
 import type { User } from "@crkn-rcdr/access-data";
@@ -82,7 +82,7 @@ export const handle: Handle<Locals> = async ({ request, resolve }) => {
   return await resolve(request);
 };
 
-export const getSession: GetSession<Locals, Session> = (request) => {
+export const getSession: GetSession<Locals, ServerSession> = (request) => {
   return request.locals.session;
 };
 

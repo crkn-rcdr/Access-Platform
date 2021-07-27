@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { session } from "$app/stores";
-  import { getLapin } from "$lib/lapin";
+  import type { Session } from "$lib/types";
+  import { getStores } from "$app/stores";
   import FaArchive from "svelte-icons/fa/FaArchive.svelte";
   import type { AccessObject } from "@crkn-rcdr/access-data";
   import { onMount } from "svelte";
@@ -10,10 +10,11 @@
   import { checkValidDiff, checkModelChanged } from "$lib/validation";
   import { goto } from "$app/navigation";
 
+  const { session } = getStores<Session>();
+
   export let object: AccessObject;
   export let objectModel: AccessObject;
 
-  const lapin = getLapin({ url: $session["apiEndpoint"], fetch: null });
   let clone: any;
   let isSaveEnabled = false;
   let showMovetoStorageModal = false;
@@ -37,7 +38,7 @@
             id: objectModel.id,
             data,
           };
-          return await lapin.mutation("object.insert", bodyObj);
+          return await $session.lapin.mutation("object.insert", bodyObj);
         } else {
           const bodyObj = {
             data: objectModel,
@@ -52,7 +53,7 @@
                 ? "69429/s038383832838"
                 : "69429/m038383832838";
 
-            const res = await lapin.mutation(
+            const res = await $session.lapin.mutation(
               `object.${objectModel["type"]}Insert`,
               bodyObj
             );
@@ -102,7 +103,10 @@
     console.log("objectModel 1", objectModel);
     const response = await showConfirmation(
       async () => {
-        return await lapin.query("noid.unassignSlug", objectModel["id"]);
+        return await $session.lapin.query(
+          "noid.unassignSlug",
+          objectModel["id"]
+        );
       },
       "success",
       "fail"
