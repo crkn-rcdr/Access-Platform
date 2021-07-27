@@ -2,6 +2,9 @@ import type { TRPCClient } from "@trpc/client";
 import type { LapinRouter } from "@crkn-rcdr/lapin-router";
 import type { User } from "@crkn-rcdr/access-data";
 
+/**
+ * Session exported by the `getSession` hook.
+ */
 export type ServerSession = {
   apiEndpoint: string;
   authLogout: string;
@@ -12,6 +15,9 @@ export type Locals = {
   session: ServerSession;
 };
 
+/**
+ * Session after the root __layout component updates it with the lapin client.
+ */
 export type Session = ServerSession & {
   lapin: TRPCClient<LapinRouter>;
 };
