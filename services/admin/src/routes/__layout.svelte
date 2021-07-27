@@ -6,12 +6,7 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| prop : type    | [required, optional] |
-| prop : type    | [required, optional] |
-| prop : type    | [required, optional] |
-| prop : type    | [required, optional] |
-| prop : type    | [required, optional] |
-| prop : type    | [required, optional] |
+| prop : type    | [required, optional] | desc |
 -->
 <script context="module" lang="ts">
   import type { LapinRouter } from "@crkn-rcdr/lapin-router";

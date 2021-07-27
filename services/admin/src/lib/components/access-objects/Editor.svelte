@@ -6,12 +6,7 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| prop : type    | [required, optional] |
-| prop : type    | [required, optional] |
-| prop : type    | [required, optional] |
-| prop : type    | [required, optional] |
-| prop : type    | [required, optional] |
-| prop : type    | [required, optional] |
+| prop : type    | [required, optional] | desc |
 
 ### Usage
 **Example one**
@@ -20,11 +15,6 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
 ```
 *Note: `--capt-add=SYS-ADMIN` is required for PDF rendering.*
 
-**Example two**
-```  
-<Editor bind:object />
-```
-*Note: `--capt-add=SYS-ADMIN` is required for PDF rendering.*
 -->
 <script lang="ts">
   import type { AccessObject } from "@crkn-rcdr/access-data";
