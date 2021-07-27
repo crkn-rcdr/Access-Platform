@@ -1,12 +1,28 @@
+import { z } from "zod";
+import { connect } from "@crkn-rcdr/couch-utils";
 import {
-  connect,
-  CouchDBClient as GenericCouchDBClient,
-} from "@crkn-rcdr/couch-utils";
+  Alias,
+  Manifest,
+  Collection,
+  Canvas,
+  DMDTask,
+  LegacyPackage,
+} from "@crkn-rcdr/access-data";
 
-const DATABASES = ["access", "canvas", "dipstaging"] as const;
+// Use this essentially so that `slug` is defined
+const AccessDatabaseObject = z.union([Alias, Manifest, Collection]);
 
-export type CouchDBClient = GenericCouchDBClient<typeof DATABASES>;
+export function initializeCouchDB() {
+  const createHandler = connect();
 
-export function initializeCouchDB(): CouchDBClient {
-  return connect(DATABASES) as CouchDBClient;
+  return {
+    /** `access` database: Access objects that aren't canvases */
+    access: createHandler("access", AccessDatabaseObject),
+    /** `canvas` database: Access objects that _are_ canvases */
+    canvas: createHandler("canvas", Canvas),
+    /** `dipstaging` database: Record of all available legacy DIPs */
+    dips: createHandler("dipstaging", LegacyPackage),
+    /** `dmdtask` database: Descriptive metadata batch processing tasks */
+    dmd: createHandler("dmdtask", DMDTask),
+  };
 }
