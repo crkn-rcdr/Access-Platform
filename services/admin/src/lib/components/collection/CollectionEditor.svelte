@@ -93,7 +93,6 @@
     }
   }
   function addClicked() {
-    dispatch("addClicked");
     addedMember = true;
   }
   function deleteCanvasByIndex(event: any, index: number) {
@@ -115,6 +114,7 @@
       const object = AccessObject.parse(response);
 
       collection.members[collection.members.length] = object;
+      addedMember = false;
     } catch (e) {
       error = e;
     }
@@ -124,7 +124,6 @@
     console.log("selected Collection", selectedCollection);
     selectedCollection = [];
     addedMember = false;
-    dispatch("done");
   }
   onMount(() => {
     if (collection.members.length) activeMemberIndex = 0;
