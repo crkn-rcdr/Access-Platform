@@ -1,8 +1,11 @@
+import { z } from "zod";
+
 import {
   DocumentViewParams,
   DocumentScope,
   ServerScope,
   MangoQuery,
+  MangoSelector,
 } from "nano";
 
 import {
@@ -10,12 +13,51 @@ import {
   fromNanoError,
   UniqueKeyViolationError,
 } from "./errors.js";
-import { mangoEqualSelector, mangoStringRangeSelector } from "./util.js";
+import { mangoEqualSelector } from "./util.js";
+
+/**
+ * See https://docs.couchdb.org/en/stable/api/document/common.html#attachments
+ */
+export const CouchAttachmentRecord = z.record(
+  z.object({
+    content_type: z.string(),
+    data: z.string().optional(),
+    digest: z.string(),
+    encoded_length: z.number().int().min(0).optional(),
+    encoding: z.string().optional(),
+    length: z.number().optional(),
+    revpos: z.number(),
+    stub: z.boolean().optional(),
+  })
+);
+
+export type CouchAttachmentRecord = z.infer<typeof CouchAttachmentRecord>;
 
 type CouchDocument = {
   _id: string;
   _rev: string;
+  _attachments?: CouchAttachmentRecord;
   [k: string]: unknown;
+};
+
+export type Document = {
+  id: string;
+  attachments?: CouchAttachmentRecord;
+  [k: string]: unknown;
+};
+
+const fromCouch = (doc: CouchDocument): Document => {
+  const result: Document = {
+    id: doc._id,
+    attachments: doc._attachments,
+    ...doc,
+  };
+
+  delete result["_attachments"];
+  delete result["_id"];
+  delete result["_rev"];
+
+  return result;
 };
 
 type UpdateArgs<Body extends unknown> = {
@@ -29,28 +71,26 @@ type UpdateArgs<Body extends unknown> = {
   body?: Body;
 };
 
-type FindArgs<Result extends {}, TestField extends keyof Result> = {
-  testField: TestField;
-  testValue: Result[TestField];
-  resultFields: (keyof Result)[];
-};
+type MangoOptions = Omit<MangoQuery, "selector" | "fields">;
 
-type FindArrayArgs<Result extends {}, TestField extends keyof Result> = {
-  testField: TestField;
-  testValues: Result[TestField][];
-  resultFields: (keyof Result)[];
-};
+type FindResult<
+  T extends Document,
+  Fields extends readonly (keyof T & string)[]
+> = Pick<T, Fields[number]>;
 
-export type UniqueResult<Result extends {}, TestField extends keyof Result> =
-  | { found: true; result: Result }
-  | { found: false; result: Pick<Result, TestField> };
+type UniqueFindResult<
+  T extends Document,
+  Fields extends readonly (keyof T & string)[]
+> = { found: false } | { found: true; result: FindResult<T, Fields> };
 
-export class DatabaseHandler {
+export class DatabaseHandler<T extends Document> {
   private name: string;
+  private parser: z.Schema<T>;
   private db: DocumentScope<unknown>;
 
-  constructor(db: string, client: ServerScope) {
+  constructor(db: string, parser: z.Schema<T>, client: ServerScope) {
     this.name = db;
+    this.parser = parser;
     this.db = client.use(db);
   }
 
@@ -59,12 +99,15 @@ export class DatabaseHandler {
    * Throws an error if the document isn't found, or if the connection to CouchDB fails.
    * @param id ID of the document.
    */
-  async get(id: string): Promise<CouchDocument> {
+  async get(id: string): Promise<T> {
+    let doc: CouchDocument;
     try {
-      return (await this.db.get(id)) as CouchDocument;
+      doc = (await this.db.get(id)) as CouchDocument;
     } catch (e) {
       throw fromNanoError(e, { type: "document", db: this.name, id });
     }
+
+    return this.parser.parse(fromCouch(doc));
   }
 
   /**
@@ -76,8 +119,7 @@ export class DatabaseHandler {
   async getSafe(
     id: string
   ): Promise<
-    | { found: true; doc: CouchDocument }
-    | { found: false; error: DocumentNotFoundError }
+    { found: true; doc: T } | { found: false; error: DocumentNotFoundError }
   > {
     try {
       return { found: true, doc: await this.get(id) };
@@ -143,92 +185,84 @@ export class DatabaseHandler {
   }
 
   /**
-   * Returns the documents found with `query`. Possibly deprecated.
+   * Returns the documents found with `query`.
    */
-  async find(query: MangoQuery): Promise<Record<string, unknown>[]> {
+  async find<Fields extends readonly (keyof T & string)[]>(
+    selector: MangoSelector,
+    fields: Fields,
+    options: MangoOptions = {}
+  ): Promise<FindResult<T, Fields>[]> {
+    // Switch id and _id
+    const fieldSet = new Set(fields);
+    let hasId = false;
+    if (fieldSet.has("id")) {
+      hasId = true;
+      fieldSet.delete("id");
+      fieldSet.add("_id");
+    }
+
+    const query = {
+      selector,
+      fields: [...fieldSet.values()],
+      ...options,
+    };
+
     try {
       const response = await this.db.find(query);
-      return response.docs;
+
+      if (hasId) {
+        return response.docs.map((doc) => {
+          const r: Record<string, unknown> = { ...doc };
+          r["id"] = doc._id;
+          delete r["_id"];
+          return r as FindResult<T, Fields>;
+        });
+      } else {
+        return response.docs as unknown as FindResult<T, Fields>[];
+      }
     } catch (e) {
-      throw fromNanoError(e, {
-        type: "mango",
-        db: this.name,
-      });
+      throw fromNanoError(e, { type: "mango", db: this.name, query });
     }
   }
 
   /**
-   * Find all of the documents where `args.testField` equals `args.testValue`.
-   *
-   * Use `args.resultFields` to specify which fields you want returned.
+   * Returns the unique result of looking up string `key` in field `searchField`.
+   * Throws an error if more than one result is returned.
    */
-  async findEqual<Result extends {}, TestField extends keyof Result>(
-    args: FindArgs<Result, TestField>
-  ): Promise<Result[]> {
-    return (await this.find({
-      selector: mangoEqualSelector(args.testField.toString(), args.testValue),
-      fields: args.resultFields.map((field) => field.toString()),
-    })) as Result[];
+  async findUnique<
+    Fields extends readonly string[],
+    SearchField extends keyof T & string
+  >(
+    searchField: SearchField,
+    key: string,
+    fields: Fields,
+    options: MangoOptions = {}
+  ): Promise<UniqueFindResult<T, Fields>> {
+    const selector = mangoEqualSelector(searchField, key);
+    const response = await this.find(selector, fields, options);
+    if (response.length === 0) return { found: false };
+    if (response.length === 1) return { found: true, result: response[0]! };
+    throw new UniqueKeyViolationError(selector, fields, response);
   }
 
-  /**
-   * Find the document where `args.testField` equals `args.testValue`.
-   *
-   * Returns null if no document is found. Throws an error if more than one is found.
-   */
-  async findUnique<Result extends {}, TestField extends keyof Result>(
-    args: FindArgs<Result, TestField>
-  ): Promise<UniqueResult<Result, TestField>> {
-    const response = await this.findEqual(args);
-    if (response.length === 0)
-      return {
-        found: false,
-        result: { [args.testField]: args.testValue } as Pick<
-          Result,
-          typeof args.testField
-        >,
-      };
-    if (response.length === 1)
-      return { found: true, result: response[0] as Result };
-    throw new UniqueKeyViolationError(
-      args.testField as string,
-      args.testValue,
-      {
-        type: "mango",
-        db: this.name,
-      }
-    );
-  }
+  async findUniqueArray<
+    Fields extends readonly string[],
+    SearchField extends keyof T & string
+  >(
+    searchField: SearchField,
+    keys: string[],
+    fields: Fields,
+    options: MangoOptions = {}
+  ) {
+    const results: Map<string, UniqueFindResult<T, Fields>> = new Map();
 
-  /**
-   * For each value in `args.testValues`, finds the document where `args.testField` equals the value, or `null` if the document does not exist.
-   *
-   * Throws an error if more than one result is found for any of `args.testValues`.
-   */
-  async findUniqueArray<Result extends {}, TestField extends keyof Result>(
-    args: FindArrayArgs<Result, TestField>
-  ): Promise<UniqueResult<Result, TestField>[]> {
-    return Promise.all(
-      args.testValues.map(
-        async (testValue) =>
-          await this.findUnique<Result, TestField>({ ...args, testValue })
-      )
-    );
-  }
+    for await (const key of keys) {
+      results.set(
+        key,
+        await this.findUnique(searchField, key, fields, options)
+      );
+    }
 
-  /**
-   * Find all of the documents where `args.testField` starts with `args.testValue`.
-   */
-  async findWithPrefix<Result extends {}, TestField extends keyof Result>(
-    args: FindArgs<Result, TestField>
-  ): Promise<Result[]> {
-    // TODO: what is going on here
-    return (await this.find({
-      selector: mangoStringRangeSelector(
-        args.testField.toString(),
-        args.testValue as unknown as string
-      ),
-      fields: args.resultFields.map((field) => field.toString()),
-    })) as Result[];
+    return Object.fromEntries(results.entries());
   }
 }

@@ -1,13 +1,8 @@
 import { z } from "zod";
+import { mangoStringRangeSelector } from "@crkn-rcdr/couch-utils";
 import { Noid, Slug } from "@crkn-rcdr/access-data";
+
 import { createRouter } from "../router.js";
-
-import type { UniqueResult } from "@crkn-rcdr/couch-utils";
-
-type SlugCouchResult = {
-  _id: Noid;
-  slug: Slug;
-};
 
 type SlugResult = {
   id: Noid;
@@ -16,62 +11,24 @@ type SlugResult = {
 
 const SlugArray = z.array(Slug);
 
-const toResult = (
-  response: UniqueResult<SlugCouchResult, "slug">
-): UniqueResult<SlugResult, "slug"> => {
-  return {
-    found: response.found,
-    result: {
-      slug: response.result.slug,
-      id: response.found ? response.result._id : undefined,
-    },
-  } as UniqueResult<SlugResult, "slug">;
-};
-
 export const slugRouter = createRouter()
   .query("search", {
     input: Slug.parse,
     async resolve({ input: q, ctx }): Promise<SlugResult[]> {
-      const response = await ctx.couch.access.findWithPrefix<
-        SlugCouchResult,
-        "slug"
-      >({
-        testField: "slug",
-        testValue: q,
-        resultFields: ["_id", "slug"],
-      });
-      return response.map((record) => {
-        return { id: record._id, slug: record.slug };
-      });
+      const selector = mangoStringRangeSelector("slug", q);
+      const fields = ["id", "slug"] as const;
+      return (await ctx.couch.access.find(selector, fields)) as SlugResult[];
     },
   })
   .query("resolve", {
     input: Slug.parse,
     async resolve({ input: q, ctx }) {
-      const response = await ctx.couch.access.findUnique<
-        SlugCouchResult,
-        "slug"
-      >({
-        testField: "slug",
-        testValue: q,
-        resultFields: ["_id", "slug"],
-      });
-
-      return toResult(response);
+      return await ctx.couch.access.findUnique("slug", q, ["id", "type"]);
     },
   })
   .query("resolveMany", {
     input: SlugArray.parse,
     async resolve({ input: q, ctx }) {
-      const responses = await ctx.couch.access.findUniqueArray<
-        SlugCouchResult,
-        "slug"
-      >({
-        testField: "slug",
-        testValues: q,
-        resultFields: ["_id", "slug"],
-      });
-
-      return responses.map((response) => toResult(response));
+      return await ctx.couch.access.findUniqueArray("slug", q, ["id", "type"]);
     },
   });

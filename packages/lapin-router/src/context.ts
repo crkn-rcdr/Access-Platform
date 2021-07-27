@@ -1,7 +1,7 @@
-import { CouchDBClient, initializeCouchDB } from "./context/couchdb.js";
+import { initializeCouchDB } from "./context/couchdb.js";
 
 export type LapinContext = {
-  couch: CouchDBClient;
+  couch: ReturnType<typeof initializeCouchDB>;
 };
 
 export function createContext(): LapinContext {

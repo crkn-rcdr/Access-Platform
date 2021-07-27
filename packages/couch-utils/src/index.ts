@@ -1,24 +1,26 @@
+import type { z } from "zod";
+
 import nano from "nano";
 import { Agent as HttpAgent } from "http";
 import { Agent as HttpsAgent } from "https";
 
-import { DatabaseHandler } from "./DatabaseHandler.js";
+import { DatabaseHandler, Document } from "./DatabaseHandler.js";
 import { Env } from "@crkn-rcdr/access-env";
 
-export type { UniqueResult } from "./DatabaseHandler.js";
+export { CouchAttachmentRecord } from "./DatabaseHandler";
 
-export type CouchDBClient<DatabaseNames extends readonly string[]> = {
-  [Name in DatabaseNames[number]]: DatabaseHandler;
-};
+export {
+  mangoEqualSelector,
+  mangoStringRangeSelector,
+  stringRangeEnd,
+} from "./util.js";
 
 /**
  * Connect to the CouchDB endpoint specified in environment variables.
- * @param databases The list of databases you want to interact with.
- * @returns A strongly-typed object with handlers keyed by the provided database list.
+ * @param databases A record of databases mapped to Zod parsers that validate their contents.
+ * @returns A function that can retrieved a strongly-typed handler for a database.
  */
-export function connect(
-  databases: readonly string[]
-): CouchDBClient<typeof databases> {
+export function connect() {
   const env = Env.parse(process.env);
   const client = nano({
     url: env.couch.url,
@@ -30,7 +32,7 @@ export function connect(
     },
   });
 
-  return Object.fromEntries(
-    databases.map((db) => [db, new DatabaseHandler(db, client)])
-  );
+  return <T extends Document>(name: string, parser: z.Schema<T>) => {
+    return new DatabaseHandler<T>(name, parser, client);
+  };
 }

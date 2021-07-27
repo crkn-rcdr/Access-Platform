@@ -1,4 +1,4 @@
-import { RequestError } from "nano";
+import { MangoQuery, MangoSelector, RequestError } from "nano";
 
 export class AuthorizationError extends Error {
   constructor() {
@@ -31,11 +31,15 @@ Context: ${JSON.stringify(context, null, 2)}`
 }
 
 export class UniqueKeyViolationError extends Error {
-  constructor(field: string, value: unknown, context: MangoContext) {
+  constructor(
+    selector: MangoSelector,
+    fields: readonly string[],
+    response: unknown
+  ) {
     super(`Expected only one result but found multiple:
-Database: ${context.db}
-Field: ${field}
-Value: ${value}`);
+Selector: ${JSON.stringify(selector, null, 2)}
+Fields: ${JSON.stringify(fields)}
+Response: ${JSON.stringify(response, null, 2)}`);
 
     this.name = "UniqueKeyViolationError";
   }
@@ -51,7 +55,7 @@ type UpdateContext = {
   db: string;
   ddoc: string;
   name: string;
-  id: string;
+  id?: string;
 };
 type ViewContext = {
   type: "view";
@@ -62,6 +66,7 @@ type ViewContext = {
 type MangoContext = {
   type: "mango";
   db: string;
+  query: MangoQuery;
 };
 
 type Context = DocumentContext | UpdateContext | ViewContext | MangoContext;
