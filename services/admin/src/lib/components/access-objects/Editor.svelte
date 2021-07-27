@@ -1,20 +1,18 @@
 <!--
 @component
 ### Overview
-The overriding design goal for Markdown's formatting syntax is to make it as readable as possible. The idea is that a Markdown-formatted document should be publishable as-is, as plain text, without looking like it's been marked up with tags or formatting instructions.
+The editor component allows for the editing of AccessObjects. It will dynamically render the appropriate screens and options based on the AccessObject sub-type (collection, manifest...)
 
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| prop : type    | [required, optional] | desc |
+| object : AccessObject    | required | An object of type AccessObject that will be editable in the editor. |
 
 ### Usage
-**Example one**
 ```  
 <Editor bind:object />
 ```
-*Note: `--capt-add=SYS-ADMIN` is required for PDF rendering.*
-
+*Note: `bind:` is required for changes to the object to be reflected in higher level components.*
 -->
 <script lang="ts">
   import type { AccessObject } from "@crkn-rcdr/access-data";
@@ -33,33 +31,26 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   export let object: AccessObject;
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {Array<SideMenuPageData>} This list controls the pages that appear in the side menu container, and their contents.
    */
   let pageList: Array<SideMenuPageData> = [];
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {any} A module that deep copies an object
    */
-  let rfdc: any; // Deep copies an object
+  let rfdc: any;
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {AccessObject} An object of type AccessObject. This is a copy of the source object being edited. The model is used to keep track of changes to the object, without changing the actual object until save is pressed.
    */
-  let objectModel: AccessObject; // Used to keep track of changes to the object, without changing the actual object until save is pressed.
+  let objectModel: AccessObject;
 
   /**
-   *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns
+   * Sets the sidemenu container component's pages and menu items based off of the model of the object to be edited's type.
+   * @param object
+   * @returns void
    */
-  async function setDataModel(object: AccessObject) {
-    if (!object) return;
-
-    rfdc = (await import("rfdc")).default();
-    objectModel = rfdc(object) as AccessObject; // todo: get this done with zod
-
+  async function setPageList() {
     if (isManifest(objectModel)) {
       pageList = [
         {
@@ -105,15 +96,26 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   }
 
   /**
-   *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns
+   * Deep copies the object to be edited into the objectModel variable.
+   * @param object
+   * @returns void
+   */
+  async function setDataModel(object: AccessObject) {
+    if (!object) return;
+
+    rfdc = (await import("rfdc")).default();
+    objectModel = rfdc(object) as AccessObject; // todo: get this done with zod
+  }
+
+  /**
+   * @listens object
+   * @description A reactive code block that is executed any time the object to be edited changes. It calls @function setDataModel and @function setPageList, to share any changes that occur in this component with the sub-components in the navigator.
    */
   $: {
-    // Share any changes that occur in this component with the sub-components in the navigator.
-    if (object) setDataModel(object);
+    if (object) {
+      setDataModel(object);
+      setPageList();
+    }
   }
 </script>
 

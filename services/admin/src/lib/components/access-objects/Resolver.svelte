@@ -1,43 +1,47 @@
 <!--
 @component
 ### Overview
-The overriding design goal for Markdown's formatting syntax is to make it as readable as possible. The idea is that a Markdown-formatted document should be publishable as-is, as plain text, without looking like it's been marked up with tags or formatting instructions.
+The resolver component allows the user to enter a slug, and then a request is sent to the backend to vheck if an object exists with that slug. Error states are shown for invalid slugs or otherwise.
 
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| prop : type    | [required, optional] | desc |
+| slug : string                      | optional | Slug being resolved. |
+| noid: string | null | undefined    | optional | Noid that the slug resolves to, or null. |
+| hideInitial : boolean              | optional | Whether to hide the display when the current slug is the same as the initial slug provided. |
 
 ### Usage
-**Example one**
 ```  
-<Editor bind:object />
+  <Resolver
+    bind:slug={object["slug"]}
+    noid={object["id"]}
+    on:available={(event) => {
+      ..do something
+    }}
+  />
 ```
-*Note: `--capt-add=SYS-ADMIN` is required for PDF rendering.*
+*Note: `bind:` is required for changes to the properties to be reflected in higher level components.*
 -->
 <script lang="ts">
+  import { onMount, createEventDispatcher } from "svelte";
   import type { Session } from "$lib/types";
-  import { onMount } from "svelte";
   import { getStores } from "$app/stores";
   import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
-  import { createEventDispatcher } from "svelte";
-
-  /**
-   * @type {string} Slug being resolved.
-   */
-  const { session } = getStores<Session>();
 
   /**
    * @type {string} Slug being resolved.
    */
   export let slug = "";
-  /**
+
+  /** @type {string | null | undefined}
    * Noid that the slug resolves to, or null
    * if it doesn't. If this is provided, the resolver will trust that it's
    * correct.
    */
   export let noid: string | null | undefined = undefined;
+
   /**
+   * @type {boolean}
    * Whether to hide the display when the current slug is the
    * same as the initial slug provided.
    */
@@ -47,15 +51,20 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   /**
    * @type {string} Slug being resolved.
    */
+  const { session } = getStores<Session>();
+
+  /**
+   * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.
+   */
   const dispatch = createEventDispatcher();
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {RegExp} A regular expression that will validate strings as slugs.
    */
   const regex = /^[\p{L}\p{Nl}\p{Nd}\-_\.]+$/u;
 
   /**
-   * @type {string} Slug being resolved.
+   * @type { slug: string , noid:string } The intitial slug and noid passed into the component.
    */
   const initial = { slug, noid };
 
@@ -64,16 +73,13 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
     initial.noid === undefined ? "LOADING" : "READY";
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {NodeJS.Timeout | null} Used to debounce the searching of slugs.
    */
   let timer: NodeJS.Timeout | null = null;
 
   /**
-   *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns
+   * Searches the backend for an object by the inputted slug. It also shows various error states to the user.
+   * @returns void
    */
   async function resolve() {
     if (shouldQuery) {
@@ -107,11 +113,8 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   }
 
   /**
-   *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns
+   * @event onMount
+   * @description When the component instance is mounted onto the dom, @var initial object is set with the @var slug and @var noid that were passed into the component. Then, the resolve method is called.
    */
   onMount(async () => {
     initial.noid = noid;
@@ -120,11 +123,9 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   });
 
   /**
-   *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns
+   * @listens slug
+   * @listens initial
+   * @description A reactive code block that is executed any time the @var slug or @initial changes. It sets @var shouldQuery, which controls if the @function resolve method actually sends the request to the backend, or shows an error state instead.
    */
   $: shouldQuery =
     !!slug && (slug !== initial.slug || initial.noid === undefined);

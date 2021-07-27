@@ -1,83 +1,77 @@
 <!--
 @component
 ### Overview
-The overriding design goal for Markdown's formatting syntax is to make it as readable as possible. The idea is that a Markdown-formatted document should be publishable as-is, as plain text, without looking like it's been marked up with tags or formatting instructions.
+The editor actions component holds functionality that is responsible for performing actions like saving, deleting, and publishing AccessObjects.
 
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| prop : type    | [required, optional] | desc |
+| object: AccessObject        | required | This is the 'original' object of type AccessObject pulled from the backend, to be edited only once an action is successfully performed  |
+| objectModel: AccessObject   | required | This is a deep copy of the original object, it gets edited as the user makes changes in the editor. It's purpose is to contain the form state for the editors. |
 
 ### Usage
-**Example one**
 ```  
-<Editor bind:object />
+<EditorActions bind:object bind:objectModel />
 ```
-*Note: `--capt-add=SYS-ADMIN` is required for PDF rendering.*
+*Note: `bind:` is required for changes to the object and its model to be reflected in higher level components.*
 -->
 <script lang="ts">
-  import type { Session } from "$lib/types";
-  import { getStores } from "$app/stores";
-  import FaArchive from "svelte-icons/fa/FaArchive.svelte";
-  import type { AccessObject } from "@crkn-rcdr/access-data";
   import { onMount } from "svelte";
   import { detailedDiff } from "deep-object-diff";
-  import Modal from "$lib/components/shared/Modal.svelte";
+  import FaArchive from "svelte-icons/fa/FaArchive.svelte";
+  import type { AccessObject } from "@crkn-rcdr/access-data";
+  import { getStores } from "$app/stores";
+  import { goto } from "$app/navigation";
+  import type { Session } from "$lib/types";
   import { showConfirmation } from "$lib/confirmation";
   import { checkValidDiff, checkModelChanged } from "$lib/validation";
-  import { goto } from "$app/navigation";
+  import Modal from "$lib/components/shared/Modal.svelte";
 
   /**
-   * @type {string} Slug being resolved.
-   */
-  const { session } = getStores<Session>();
-
-  /**
-   * @type {string} Slug being resolved.
+   * @type {AccessObject} This is the 'original' object of type AccessObject pulled from the backend, to be edited only once an action is successfully performed.
    */
   export let object: AccessObject;
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {AccessObject} This is a deep copy of the original object, it gets edited as the user makes changes in the editor. It's purpose is to contain the form state for the editors..
    */
   export let objectModel: AccessObject;
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {Session} The session store that contains the module for sending requests to lapin.
+   */
+  const { session } = getStores<Session>();
+
+  /**
+   * @type {any} A module that quickly deep copies (clones) an object.
    */
   let clone: any;
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {boolean} Controls if the save button is displayed or not.
    */
   let isSaveEnabled = false;
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {boolean} Controls if the move to storage modal is being displayed or not.
    */
   let showMovetoStorageModal = false;
 
   /**
-   *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns
+   * Sets @var isSaveEnabled depending on if the objectModel is valid.
+   * @returns void
    */
   function checkEnableSave() {
     isSaveEnabled = checkValidDiff(object, objectModel);
   }
 
   /**
-   *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns
+   * Sends the request to save changes to the backend using lapin. Uses @function showConfirmation to display a floating notification with the results of the lapin call. The result of the lapin call is returned.
+   * @param data
+   * @returns response
    */
   async function sendSaveRequest(data: any) {
     //todo make partial of type
-    console.log("diff", data);
     let newlyCreated = false;
     const response = await showConfirmation(
       async () => {
@@ -119,26 +113,21 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   }
 
   /**
-   *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns
+   * Is called when the use presses the green save button. It cakks @function sendSaveRequest and if it succeeds, it deep clones the object model into the original object, resetung the editor state with the new changes.
    */
-  // TODO: check valid manifest or canvas before showing save button
   async function handleSave() {
-    const diff: any = detailedDiff(object, objectModel); //TODO: We can send this to the backend
+    const diff: any = detailedDiff(object, objectModel);
 
     let bodyObj = {
       ...diff["added"],
       ...diff["updated"],
     };
 
+    // Arrays are handled a bit strange in the diff module. Instead, just assign the entire array to the body data object
     if (bodyObj["canvases"]) {
       bodyObj["canvases"] = objectModel["canvases"];
     }
 
-    // might need 'deleted'
     const data = await sendSaveRequest(bodyObj);
 
     if (data) {
@@ -155,15 +144,11 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   }
 
   /**
-   *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns
+   * Sends the request to the backend to unnasign a slug from the access object. If it is successful, the object model is deep cloned into the object, and the editor state is updated to reflect the object being a 'Slugless' access object.
+   * @returns response
    */
   async function handlePlaceInStorage() {
     showMovetoStorageModal = false;
-    console.log("objectModel 1", objectModel);
     const response = await showConfirmation(
       async () => {
         return await $session.lapin.query(
@@ -176,12 +161,11 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
     );
     objectModel["slug"] = undefined;
     object = clone(objectModel) as AccessObject; // todo: get this done with zod
-    console.log("objectModel 2", objectModel);
     return response;
   }
 
   /**
-   *
+   * TODO
    * @param arr
    * @param currentIndex
    * @param destinationIndex
@@ -190,22 +174,16 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   function handlePublishStatusChange() {}
 
   /**
-   *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns
+   * @event onMount
+   * @description When the component instance is mounted onto the dom, the 'clone' variable is set to the rfdc module.
    */
   onMount(async () => {
     clone = (await import("rfdc")).default();
   });
 
   /**
-   *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns
+   * @listens objectModel
+   * @description A reactive code block that is executed any time the @var objectModel changes. It calls @function checkEnableSave, to hide or show the save button depending on the validity of the objectModel (if nothing has been changed, the save button also gets hidden.)
    */
   $: {
     objectModel;
