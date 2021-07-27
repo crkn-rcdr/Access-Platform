@@ -10,5 +10,3 @@ type LapinOptions = {
 export const getLapin = (options: LapinOptions) => {
   return createTRPCClient<LapinRouter>(options);
 };
-
-export type LapinClient = ReturnType<typeof getLapin>;

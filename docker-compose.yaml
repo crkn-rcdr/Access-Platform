@@ -43,6 +43,7 @@ services:
   packages:
     profiles:
       - dev
+    user: ${CURRENT_USER}
     container_name: access-packages
     build:
       context: .
@@ -56,6 +57,7 @@ services:
   kivik:
     profiles:
       - dev
+    user: ${CURRENT_USER}
     container_name: access-kivik
     build:
       context: .
@@ -71,6 +73,7 @@ services:
   lapin:
     profiles:
       - dev
+    user: ${CURRENT_USER}
     container_name: access-lapin
     build:
       context: .
@@ -92,6 +95,7 @@ services:
   admin:
     profiles:
       - dev
+    user: ${CURRENT_USER}
     container_name: access-admin
     build:
       context: .

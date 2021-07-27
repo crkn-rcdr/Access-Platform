@@ -1,21 +1,18 @@
 <script context="module" lang="ts">
-  import { getLapin } from "$lib/lapin";
-
-  import type { LapinClient } from "$lib/lapin";
+  import type { LapinRouter } from "@crkn-rcdr/lapin-router";
   import type { Load } from "@sveltejs/kit";
+  import type { TRPCClient } from "@trpc/client";
   import type { Session } from "$lib/types";
 
   type RootContext = {
-    lapin: LapinClient;
+    lapin: TRPCClient<LapinRouter>;
   };
 
-  type RootOutput = {
+  export type RootOutput = {
     context: RootContext;
   };
 
-  export type RootInput = {
-    context: RootContext;
-  };
+  import { createTRPCClient } from "@trpc/client";
 
   export const load: Load<{ session: Session }, RootOutput> = ({
     fetch,
@@ -23,7 +20,7 @@
   }) => {
     return {
       context: {
-        lapin: getLapin({ url: apiEndpoint, fetch }),
+        lapin: createTRPCClient<LapinRouter>({ url: apiEndpoint, fetch }),
       },
     };
   };
@@ -47,9 +44,5 @@
     padding: 1.5rem 1rem;
     background-color: var(--structural-div-bg);
     filter: brightness(1.1);
-  }
-
-  a {
-    color: var(--base-font-color) !important;
   }
 </style>

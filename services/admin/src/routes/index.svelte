@@ -1,8 +1,8 @@
 <script context="module" lang="ts">
   import type { Load } from "@sveltejs/kit";
-  import type { RootInput } from "./__layout.svelte";
+  import type { RootOutput } from "./__layout.svelte";
 
-  export const load: Load<RootInput> = async ({ context, session }) => {
+  export const load: Load<RootOutput> = async ({ context }) => {
     let serverfailure;
 
     try {
@@ -16,7 +16,6 @@
         lapin: context.lapin,
         servertest: await context.lapin.query("slug.search", "oo"),
         serverfailure,
-        session,
       },
     };
   };
@@ -32,7 +31,6 @@
   export let lapin;
   export let servertest;
   export let serverfailure;
-  export let session;
   let test = "waiting";
   let failure = "should fail";
 
@@ -70,7 +68,7 @@
 
   <br />
   <br />
-  <a href="/object"><button class="primary">Create New Object</button></a>
+  <a href="/object/new"><button class="primary">Create New Object</button></a>
 
   <br />
   <br />
