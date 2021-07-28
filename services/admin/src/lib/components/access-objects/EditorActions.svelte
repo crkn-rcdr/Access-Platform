@@ -17,9 +17,10 @@ The editor actions component holds functionality that is responsible for perform
 -->
 <script lang="ts">
   import { onMount } from "svelte";
-  import { detailedDiff } from "deep-object-diff";
+  import { session } from "$app/stores";
   import FaArchive from "svelte-icons/fa/FaArchive.svelte";
   import type { AccessObject } from "@crkn-rcdr/access-data";
+  import { detailedDiff } from "deep-object-diff";
   import { getStores } from "$app/stores";
   import { goto } from "$app/navigation";
   import type { Session } from "$lib/types";

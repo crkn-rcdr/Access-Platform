@@ -257,6 +257,7 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
     element.classList?.add("draggable");
     element.setAttribute("draggable", "true");
     element.setAttribute("ondragover", "return false");
+
     removeEventListeners(element, elementIndex); // Ensure no duplicates fired
     addEventListeners(element, elementIndex);
   }
