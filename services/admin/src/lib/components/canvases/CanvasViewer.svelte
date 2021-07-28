@@ -1,55 +1,50 @@
 <!--
 @component
 ### Overview
-The overriding design goal for Markdown's formatting syntax is to make it as readable as possible. The idea is that a Markdown-formatted document should be publishable as-is, as plain text, without looking like it's been marked up with tags or formatting instructions.
+Displays a canvas using the OpenSeadragon library
 
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| prop : type    | [required, optional] | desc |
+| canvases: ObjectList   | required | The canvas to be displayed. |
+| options: any           | optional | The openseadragon viewer options, @see https://openseadragon.github.io/docs/OpenSeadragon.html#.Options) for more oopenseadragon options. |
 
 ### Usage
-**Example one**
 ```  
-<Editor bind:object />
+<CanvasViewer {canvas} />
 ```
-*Note: `--capt-add=SYS-ADMIN` is required for PDF rendering.*
 -->
 <script lang="ts">
   import { onMount, afterUpdate } from "svelte";
-  //import type { Canvas } from "@crkn-rcdr/access-data/src/access/Manifest";
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {any} The canvas to be displayed.
    */
   export let canvas: any; // TODO: should we make an ObjectListItem type?
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {any} The openseadragon viewer options, @see https://openseadragon.github.io/docs/OpenSeadragon.html#.Options) for more oopenseadragon options.
    */
   export let options: any = {};
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {any} The OpenSeadragon module.
    */
   let OpenSeadragon: any;
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {HTMLDivElement} The html element to attach the openseadragon viewer to.
    */
   let container: HTMLDivElement;
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {string} The image api string url for the canvas.
    */
   let imageURL = "";
 
   /**
-   *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns
+   * Clears the element containing the openseadragon canvas viewer
+   * @returns void
    */
   function clearViewer() {
     if (container) {
@@ -58,11 +53,8 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   }
 
   /**
-   *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns
+   * Calls @function clearViewer to remove any old instantiations of the openseadragon viewer, then uses the options passed into this component to create a new openseadragon viewer, and attach it to the container.
+   * @returns void
    */
   async function drawImage() {
     clearViewer();
@@ -85,11 +77,8 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   }
 
   /**
-   *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns
+   * @event onMount
+   * @description When the component instance is mounted onto the dom, @var OpenSeadragon is instantiated, and the canvas is drawn by calling @function drawImage()
    */
   onMount(async () => {
     OpenSeadragon = await import("openseadragon");
@@ -97,11 +86,8 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   });
 
   /**
-   *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns
+   * @event afterUpdate
+   * @description When the component paramters are updated, the @var imageURL is compared to the new image URLgenerated fronm the current @var canvas id, if they are different (meaning the @var canvas is not the same canvas as before) the new canvas is drawn by calling @function drawImage()
    */
   afterUpdate(async () => {
     let newImageUrl = `https://image-tor.canadiana.ca/iiif/2/${encodeURIComponent(

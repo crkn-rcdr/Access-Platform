@@ -1,39 +1,38 @@
 <!--
 @component
 ### Overview
-The overriding design goal for Markdown's formatting syntax is to make it as readable as possible. The idea is that a Markdown-formatted document should be publishable as-is, as plain text, without looking like it's been marked up with tags or formatting instructions.
+This component holds the functionality for editing labels of canvases.
 
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| prop : type    | [required, optional] | desc |
+| label: string or undefined | required | The label to be edited for the canvas |
 
 ### Usage
-**Example one**
 ```  
-<Editor bind:object />
+<CanvasLabelEditor
+  bind:label={activeCanvas["label"]["none"]}
+  on:changed={(event) => { console.logs(event.detail) } }
+>
 ```
-*Note: `--capt-add=SYS-ADMIN` is required for PDF rendering.*
+*Note: `bind:` is required for changes to the parameters to be reflected in higher level components.*
 -->
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {string} The label to be edited for the canvas
    */
   export let label: string | undefined;
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.
    */
   const dispatch = createEventDispatcher();
 
   /**
-   *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns
+   * The method triggers a @event changed which outputs the new label of canvas in it's event.detail.
+   * @returns void
    */
   function changed() {
     dispatch("changed", label);
