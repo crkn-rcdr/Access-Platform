@@ -43,6 +43,8 @@ services:
       - dev
     container_name: access-noid
     image: docker.c7a.ca/noid:20210226
+    volumes:
+      - /noid/dbs
     networks:
       access-platform:
         ipv4_address: 172.30.0.53
