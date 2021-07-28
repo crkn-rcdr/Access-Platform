@@ -1,19 +1,26 @@
 <!--
 @component
 ### Overview
-The overriding design goal for Markdown's formatting syntax is to make it as readable as possible. The idea is that a Markdown-formatted document should be publishable as-is, as plain text, without looking like it's been marked up with tags or formatting instructions.
+This component allows the user to search through other manifests and select canvases from a manifest to add to a manifest
 
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| prop : type    | [required, optional] | desc |
+| destinationManifest: Manifest  | required | The manifest to add selected canvases to. |
+| destinationIndex: number       | optional | The starting index to add the selected canvases at. |
+| multiple: boolean              | optional | If the user is allowed to select multiple canvases to add. |
 
 ### Usage
-**Example one**
 ```  
-<Editor bind:object />
+<ManifestAddCanvasMenu
+  bind:destinationManifest={manifest}
+  on:done={() => {
+    state = "view";
+    setActiveCanvas(0);
+  }}
+/>
 ```
-*Note: `--capt-add=SYS-ADMIN` is required for PDF rendering.*
+*Note: `bind:` is required for changes to the parameters to be reflected in higher level components.*
 -->
 <script lang="ts">
   import type { Session } from "$lib/types";
@@ -29,61 +36,59 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   import CanvasesSelector from "$lib/components/canvases/CanvasesSelector.svelte";
 
   /**
-   * @type {string} Slug being resolved.
-   */
-  const { session } = getStores<Session>();
-
-  /**
-   * @type {string} Slug being resolved.
+   * @type {Manifest} The manifest to add selected canvases to.
    */
   export let destinationManifest: Manifest;
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {number} The starting index to add the selected canvases at.
    */
-  export let destinationIndex: number = 0;
+  export let destinationIndex = 0;
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {boolean} If the user is allowed to select multiple canvases to add.
    */
   export let multiple = true;
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {Session} The session store that contains the module for sending requests to lapin.
+   */
+  const { session } = getStores<Session>();
+
+  /**
+   * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.
    */
   const dispatch = createEventDispatcher();
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {Manifest} The manifest to select canvases from.
    */
   let selectedManifest: Manifest;
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {ObjectList} The canvases the user selects.
    */
   let selectedCanvases: ObjectList = [];
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {string} If a manifest is selected.
    */
-  let showManifest = false;
+  let isManifestSelected = false;
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {string} If the select all button is activated.
    */
-  let selectAll = false;
+  let isAllSelected = false;
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {string} An error message to be displayed.
    */
   let error = "";
 
   /**
-   *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns
+   * When a manifest is selected from the table of search results, grab its details from the backend.
+   * @param event
+   * @returns void
    */
   async function handleSelect(event: any) {
     try {
@@ -95,7 +100,7 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
           error = "Error: Object is a collection, please select another.";
         } else if (isManifest(object)) {
           selectedManifest = object;
-          showManifest = true;
+          isManifestSelected = true;
         }
       } else {
         error = response.toString();
@@ -106,11 +111,8 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   }
 
   /**
-   *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns
+   * When canceled is pressed, reset the selected canvases, and signify to the parent through the @event done that the user is done adding canvases
+   * @returns void
    */
   function handleCancelPressed() {
     selectedCanvases = [];
@@ -118,11 +120,8 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   }
 
   /**
-   *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns
+   * When add is pressed, add the selected canvases to the begining of the destination manifest's canvases list, and signify to the parent through the @event done that the user is done adding canvases
+   * @returns void
    */
   function handleAddPressed() {
     destinationManifest?.canvases?.splice(
@@ -137,7 +136,7 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
 </script>
 
 <div class="canvas-selector-wrap add-menu">
-  {#if !showManifest}
+  {#if !isManifestSelected}
     <div class="manifest-selector">
       <div class="add-menu-title">
         <button
@@ -174,7 +173,7 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
           class="icon"
           on:click={() => {
             error = "";
-            showManifest = false;
+            isManifestSelected = false;
           }}
           data-tooltip="Go back to manifest search"
           data-tooltip-flow="bottom"
@@ -194,14 +193,16 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
         {/if}
 
         <div
-          data-tooltip={`${selectAll ? "Deselect" : "Select"} all`}
+          data-tooltip={`${isAllSelected ? "Deselect" : "Select"} all`}
           data-tooltip-flow="bottom"
         >
           <img
             class="icon select-all"
-            src={`/static/icons/${selectAll ? "deselect.png" : "select.svg"}`}
+            src={`/static/icons/${
+              isAllSelected ? "deselect.png" : "select.svg"
+            }`}
             alt="select all"
-            on:click={() => (selectAll = !selectAll)}
+            on:click={() => (isAllSelected = !isAllSelected)}
           />
         </div>
 
@@ -220,7 +221,7 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
             <CanvasesSelector
               bind:selectedCanvases
               bind:multiple
-              bind:selectAll
+              bind:selectAll={isAllSelected}
               canvases={selectedManifest["canvases"]}
               options={{
                 showNavigator: true,

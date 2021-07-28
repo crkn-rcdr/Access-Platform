@@ -19,7 +19,7 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
   import { isManifest, isCollection } from "@crkn-rcdr/access-data";
   import type { SideMenuPageData } from "$lib/types";
   import Toolbar from "$lib/components/shared/Toolbar.svelte";
-  import ManifestEditor from "$lib/components/manifests/ManifestEditor.svelte";
+  import ManifestContentEditor from "$lib/components/manifests/ManifestContentEditor.sveltetEditor.svelte";
   import SideMenuContainer from "$lib/components/shared/SideMenuContainer.svelte";
   import EditorActions from "$lib/components/access-objects/EditorActions.svelte";
   import StatusIndicator from "$lib/components/access-objects/StatusIndicator.svelte";
@@ -67,7 +67,7 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
         {
           name: "Content",
           componentData: {
-            contentComponent: ManifestEditor,
+            contentComponent: ManifestContentEditor,
             contentComponentProps: { manifest: objectModel },
             sideMenuPageProps: {
               overflowY: "hidden",
