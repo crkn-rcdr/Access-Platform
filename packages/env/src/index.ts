@@ -17,12 +17,14 @@ export const Env = z
      */
     ADMIN_URL_EXTERNAL: Url,
     AUTH_JWT_SECRET: z.string().min(1),
+    COUCHDB_URL: Url,
     COUCHDB_PASSWORD: z.string().min(1),
+    LAPIN_URL: Url,
+    NOID_URL: Url,
     /**
      * OPTIONAL: Also defined, but with defaults. You may need to override these.
      */
     AUTH_URL: Url.default("https://auth.canadiana.ca"),
-    COUCHDB_URL: Url.default("http://couch:5984"),
     COUCHDB_USER: z.string().min(1).default("admin"),
     /**
      * ADDITIONAL: You likely won't need to set these.
@@ -33,7 +35,6 @@ export const Env = z
     ADMIN_DEV_WS_PORT: Port.default("14747"),
     ADMIN_PORT: Port.default("4747"),
     LAPIN_PORT: Port.default("5858"),
-    LAPIN_URL_INTERNAL: Url.default("http://lapin:5858"),
   })
   .transform((env) => {
     return {
@@ -56,7 +57,10 @@ export const Env = z
       },
       lapin: {
         port: env.LAPIN_PORT,
-        urlInternal: env.LAPIN_URL_INTERNAL,
+        url: env.LAPIN_URL,
+      },
+      noid: {
+        url: env.NOID_URL,
       },
     };
   });
