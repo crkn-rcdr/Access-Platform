@@ -9,10 +9,6 @@ services:
       - dev
     image: haproxy:2.2-alpine
     container_name: access-haproxy
-    depends_on:
-      - couchdb
-      - lapin
-      - admin
     ports:
       - "80:80"
       - "443:443"
@@ -42,6 +38,8 @@ services:
     profiles:
       - dev
     container_name: access-noid
+    depends_on:
+      - haproxy
     image: docker.c7a.ca/noid:20210226
     volumes:
       - /noid/dbs
@@ -66,6 +64,9 @@ services:
   kivik:
     profiles:
       - dev
+    depends_on:
+      - haproxy
+      - couchdb
     user: ${CURRENT_USER}
     container_name: access-kivik
     build:
@@ -83,6 +84,10 @@ services:
   lapin:
     profiles:
       - dev
+    depends_on:
+      - haproxy
+      - couchdb
+      - noid
     user: ${CURRENT_USER}
     container_name: access-lapin
     build:
@@ -104,6 +109,9 @@ services:
   admin:
     profiles:
       - dev
+    depends_on:
+      - haproxy
+      - lapin
     user: ${CURRENT_USER}
     container_name: access-admin
     build:
