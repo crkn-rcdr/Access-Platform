@@ -25,6 +25,7 @@ services:
     restart: unless-stopped
     networks:
       access-platform:
+        ipv4_address: 172.30.0.2
   couchdb:
     profiles:
       - dev
@@ -59,6 +60,7 @@ services:
       - .:/repo
     networks:
       access-platform:
+        ipv4_address: 172.30.0.100
   kivik:
     profiles:
       - dev
@@ -75,6 +77,7 @@ services:
       - .:/repo
     networks:
       access-platform:
+        ipv4_address: 172.30.0.101
   lapin:
     profiles:
       - dev
@@ -137,8 +140,7 @@ services:
     restart: unless-stopped
     networks:
       access-platform:
-        aliases:
-          - haproxy
+        ipv4_address: 172.30.0.2
   lapin-prod:
     profiles:
       - prod
