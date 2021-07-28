@@ -1,19 +1,19 @@
 <!--
 @component
 ### Overview
-Holds
+Allows the user to modify the canvas list for a manifest.
 
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| prop : type    | [required, optional] | desc |
+| manifest : Manifest    | required | The manifest thats contents should be edited. |
 
 ### Usage
 **Example one**
 ```  
-<Editor bind:object />
+<ManifestContentEditor bind:manifest />
 ```
-*Note: `--capt-add=SYS-ADMIN` is required for PDF rendering.*
+*Note: `bind:` is required for changes to the object to be reflected in higher level components.*
 -->
 <script lang="ts">
   import { onMount } from "svelte";
@@ -28,31 +28,31 @@ Holds
   import { typedChecks } from "$lib/validation";
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {Manifest} The manifest thats contents should be edited.
    */
   export let manifest: Manifest;
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {any} The canvas being displayed in the canvas viewer.
    */
   let activeCanvas: any;
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {number} The index of the canvas being displayed in the canvas viewer.
    */
-  let activeCanvasIndex: number = 0;
+  let activeCanvasIndex = 0;
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {string} A control for what component is displayed in the free space of the content editor.
    */
   let state = "view";
 
   /**
-   *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns
+   * Sets the @var activeCanvas to the canvas at index in the manifests canvas list.
+   * Sets the @car activeCanvasIndex to the index passed in.
+   * Calls @function triggerUpdate to make any other components aware of changes
+   * @param index
+   * @returns void
    */
   function setActiveCanvas(index: number) {
     activeCanvasIndex = index;
@@ -61,11 +61,9 @@ Holds
   }
 
   /**
-   *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns
+   * Changes the label of the active canvas to the event.detail property of the label editors @event changed
+   * @param event
+   * @returns void
    */
   function setActiveCanvasLabel(event) {
     manifest.canvases[activeCanvasIndex]["label"]["none"] = event.detail;
@@ -73,34 +71,25 @@ Holds
   }
 
   /**
-   *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns
+   * Causes any parent components to be aware of changes made to the manifest.
+   * @returns void
    */
   function triggerUpdate() {
     manifest = manifest;
-    console.log("Changed?", manifest.canvases);
   }
 
   /**
-   *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns
+   * Sets @var state to the newState passed in.
+   * @param newState
+   * @returns void
    */
   function changeView(newState: string) {
     state = newState;
   }
 
   /**
-   *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns
+   * @event onMount
+   * @description When the component instance is mounted onto the dom, @var activeCanvas is set to the first canvas in the manifests canvas list, or null if the list is empty
    */
   onMount(() => {
     activeCanvas = manifest?.canvases?.[0] || null;
