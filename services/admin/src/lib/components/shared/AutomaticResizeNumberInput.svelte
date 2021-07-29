@@ -1,19 +1,27 @@
 <!--
 @component
 ### Overview
-The overriding design goal for Markdown's formatting syntax is to make it as readable as possible. The idea is that a Markdown-formatted document should be publishable as-is, as plain text, without looking like it's been marked up with tags or formatting instructions.
+A number input that automatically resizes based on its value.
 
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| prop : type    | [required, optional] | desc |
+| name : string                | required | The name HTML attribute associated with the number input |
+| value: number or undefined   | required | The value of the number input |
+| max: number                  | required | The maximum value of the number input |
 
 ### Usage
-**Example one**
 ```  
-<Editor bind:object />
+<AutomaticResizeNumberInput
+  name="numberInput"
+  max={0}
+  on:changed={(event) => {
+    console.logs(event.detail)
+  }}
+  bind:value
+/>
 ```
-*Note: `--capt-add=SYS-ADMIN` is required for PDF rendering.*
+*Note: `bind:` is required for changes to the parameters to be reflected in higher level components.*
 -->
 <script lang="ts">
   import { createEventDispatcher, onMount } from "svelte";
@@ -21,40 +29,37 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   import TiArrowSortedDown from "svelte-icons/ti/TiArrowSortedDown.svelte";
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {string} The name HTML attribute associated with the number input.
    */
   export let name: string;
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {number | undefined} The value of the number input.
    */
   export let value: number | undefined;
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {number} The maximum value of the number input.
    */
   export let max: number;
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.
    */
   const dispatch = createEventDispatcher();
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {HTMLInputElement} The html input element for the number.
    */
   let input: HTMLInputElement;
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {number | undefined} The previous value of the number input before it was changed.
    */
   let prevValue: number | undefined;
 
   /**
-   *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
+   * Removes any non numeric characters from the @var value and resets the @var value to @var prevValue if the one entered is out of bounds
    * @returns
    */
   function sanitizeInput() {
@@ -65,11 +70,8 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   }
 
   /**
-   *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns
+   * Decrements the value when the up arrow icon is pressed. Calls @function handleChange afterwards.
+   * @returns void
    */
   function upArrowPressed() {
     if (typeof value === "number") {
@@ -79,11 +81,8 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   }
 
   /**
-   *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns
+   * Increments the value when the down arrow icon is pressed. Calls @function handleChange afterwards.
+   * @returns void
    */
   function downArrowPressed() {
     if (typeof value === "number") {
@@ -93,33 +92,24 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   }
 
   /**
-   *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns
+   * Resizes the input based on the length of the value
+   * @returns void
    */
   function resizeInput() {
     input.style.width = `${input.value.length}.9em`;
   }
 
   /**
-   *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns
+   * Sends the @event changed to any parent components with the new value in the event.detail.
+   * @returns void
    */
   function sendChangeEvent() {
     dispatch("changed", { value });
   }
 
   /**
-   *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns
+   * Helper method to be called after any time the value is changed to @function sanitizeInput, @function resizeInput, and @function sendChangeEvent
+   * @returns void
    */
   function handleChange() {
     sanitizeInput();
@@ -128,11 +118,8 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   }
 
   /**
-   *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns
+   * Calls @function sanizeInput and @function resizeInput upon user typing the value into the input
+   * @returns void
    */
   function handleKeyup() {
     sanitizeInput();
@@ -140,11 +127,8 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   }
 
   /**
-   *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns
+   * @event onMount
+   * @description When the component instance is mounted onto the dom, @var prevValue is set to the @var value, and the size of the input is set by calling @function resizeInput.
    */
   onMount(() => {
     prevValue = value;

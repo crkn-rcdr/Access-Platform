@@ -1,7 +1,7 @@
 <!--
 @component
 ### Overview
-The overriding design goal for Markdown's formatting syntax is to make it as readable as possible. The idea is that a Markdown-formatted document should be publishable as-is, as plain text, without looking like it's been marked up with tags or formatting instructions.
+A card component that optionally allows for user selection
 
 ### Properties
 |    |    |    |
@@ -11,21 +11,27 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
 ### Usage
 **Example one**
 ```  
-<Editor bind:object />
+<Card
+    on:clicked={(event) => {console.logs(event.detail)}}
+    selectable={true}
+    {selected}
+    imgURL={`default.jpg`}
+  >
+  ...content
+</Card>
 ```
-*Note: `--capt-add=SYS-ADMIN` is required for PDF rendering.*
 -->
 <script lang="ts">
   import FaCheck from "svelte-icons/fa/FaCheck.svelte";
   import { createEventDispatcher } from "svelte";
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {boolean} Slug being resolved.
    */
   export let selectable = false;
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {boolean} Slug being resolved.
    */
   export let selected = false;
 

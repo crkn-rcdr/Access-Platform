@@ -1,25 +1,31 @@
 <!--
 @component
 ### Overview
-The overriding design goal for Markdown's formatting syntax is to make it as readable as possible. The idea is that a Markdown-formatted document should be publishable as-is, as plain text, without looking like it's been marked up with tags or formatting instructions.
+A wrapper component allowing the developer to use the display:flex options in a cleaner way.
 
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| prop : type    | [required, optional] | desc |
+| display : string (inline-flex or flex)    | optional | The CSS display property value |
+| horizontal : string                       | optional | The CSS justify-content property value |
+| vertical : string                         | optional | The CSS align-items property value |
+| direction : string                        | optional | The CSS flex-direction property value |
 
 ### Usage
-**Example one**
 ```  
-<Editor bind:object />
+<Align ...props>
+  Content
+  Goes 
+  Here
+</Align>
 ```
-*Note: `--capt-add=SYS-ADMIN` is required for PDF rendering.*
+*Note: see [flexbox documentation](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Flexible_Box_Layout/Basic_Concepts_of_Flexbox)*
 -->
 <script lang="ts">
   /**
    * @type {string} Slug being resolved.
    */
-  export let display = "inline-flex";
+  export let display: "inline-flex" | "flex" = "inline-flex";
 
   /**
    * @type {string} Slug being resolved.
