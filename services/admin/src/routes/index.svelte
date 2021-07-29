@@ -1,8 +1,7 @@
 <script context="module" lang="ts">
   import type { Load } from "@sveltejs/kit";
-  import type { RootOutput } from "./__layout.svelte";
 
-  export const load: Load<RootOutput> = async ({ context }) => {
+  export const load: Load<RootLoadOutput> = async ({ context }) => {
     let serverfailure;
 
     try {
@@ -27,6 +26,7 @@
   import TypeAhead from "$lib/components/access-objects/TypeAhead.svelte";
 
   import { onMount } from "svelte";
+  import type { RootLoadOutput } from "$lib/types";
 
   export let lapin;
   export let servertest;
@@ -63,6 +63,8 @@
   <p>{failure}</p>
 
   <br />
+  <br />
+  <label for="slug">Slug:</label>
   <br />
   <Resolver slug="" noid="" />
 

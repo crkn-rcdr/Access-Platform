@@ -24,12 +24,10 @@
 
   function setIndexModel(trackNewCanvases: boolean) {
     if (trackNewCanvases) previousCanvasArrayLength = indexModel.length;
-    console.log("prevLen", previousCanvasArrayLength);
     indexModel = [];
     for (let i = 0; i < canvases.length; i++) {
       indexModel.push(i + 1);
     }
-    console.log("currlen", indexModel.length);
   }
 
   function setActiveIndex(index: number) {
@@ -179,7 +177,7 @@
               </div>
               <div class="image-wrap">
                 <img
-                  alt={canvas["label"]["value"]}
+                  alt={canvas?.["label"]?.["value"]}
                   class="thumbnail-img"
                   src={`https://image-tor.canadiana.ca/iiif/2/${encodeURIComponent(
                     canvas["id"]

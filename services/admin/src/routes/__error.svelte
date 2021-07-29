@@ -1,4 +1,4 @@
-<!--script context="module" lang="ts">
+<script context="module" lang="ts">
   import type { ErrorLoad } from "@sveltejs/kit";
   export const load: ErrorLoad = ({ error, status }) => {
     return {
@@ -13,4 +13,4 @@
   export let title: string;
 </script>
 
-<h1>{title}</h1-->
+<h1>{title}</h1>

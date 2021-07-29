@@ -12,5 +12,4 @@ export function createRouter() {
 export const router = createRouter()
   .merge("slug.", slugRouter)
   .merge("noid.", noidRouter);
-
 export type LapinRouter = typeof router;

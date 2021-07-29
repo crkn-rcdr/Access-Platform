@@ -6,11 +6,11 @@
   const dispatch = createEventDispatcher();
 
   function changed() {
-    dispatch("changed");
+    dispatch("changed", label);
   }
 </script>
 
-{#if label}
+{#if typeof label !== "undefined"}
   <div id="label">
     <label for="canvasLabel">Canvas Label</label>
     <textarea

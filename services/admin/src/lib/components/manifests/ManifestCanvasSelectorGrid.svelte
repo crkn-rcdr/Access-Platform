@@ -1,14 +1,14 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
   import type { Manifest } from "@crkn-rcdr/access-data/src/access/Manifest";
-  import type { Canvas } from "@crkn-rcdr/access-data/src/access/Manifest";
   import TiArrowBack from "svelte-icons/ti/TiArrowBack.svelte";
   import CanvasSelectorGridTile from "../canvases/CanvasSelectorGridTile.svelte";
   import CanvasViewer from "../canvases/CanvasViewer.svelte";
+  import type { ObjectList } from "@crkn-rcdr/access-data";
 
   export let manifest: Manifest;
-  let selectedCanvases: Canvas[] = [];
-  let previewCanvas: Canvas | null;
+  let selectedCanvases: ObjectList = [];
+  let previewCanvas: any;
 
   const dispatch = createEventDispatcher();
 

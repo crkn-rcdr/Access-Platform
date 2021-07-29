@@ -31,7 +31,6 @@ importers:
 
   packages/data:
     specifiers:
-      '@crkn-rcdr/couch-utils': workspace:^0.0.0
       '@types/node': ^16.4.3
       ava: ^3.15.0
       npm-run-all: ^4.1.5
@@ -39,7 +38,6 @@ importers:
       typescript: ^4.3.5
       zod: ^3.5.1
     dependencies:
-      '@crkn-rcdr/couch-utils': link:../couch-utils
       zod: 3.5.1
     devDependencies:
       '@types/node': 16.4.3
@@ -74,6 +72,7 @@ importers:
       '@types/node': ^16.4.3
       '@types/node-fetch': ^2.5.12
       ava: ^3.15.0
+      deep-object-diff: ^1.1.0
       node-fetch: ^2.6.1
       npm-run-all: ^4.1.5
       ts-node: ^10.1.0
@@ -84,6 +83,7 @@ importers:
       '@crkn-rcdr/access-env': link:../env
       '@crkn-rcdr/couch-utils': link:../couch-utils
       '@trpc/server': 8.4.1
+      deep-object-diff: 1.1.0
       node-fetch: 2.6.1
       zod: 3.5.1
     devDependencies:
@@ -131,7 +131,7 @@ importers:
     devDependencies:
       '@crkn-rcdr/lapin-router': link:../../packages/lapin-router
       '@sveltejs/adapter-node': 1.0.0-next.35
-      '@sveltejs/kit': 1.0.0-next.137_svelte@3.40.1
+      '@sveltejs/kit': 1.0.0-next.138_svelte@3.40.1
       '@types/cookie': 0.4.1
       '@types/jsonwebtoken': 8.5.4
       npm-run-all: 4.1.5
@@ -273,8 +273,8 @@ packages:
       tiny-glob: 0.2.9
     dev: true
 
-  /@sveltejs/kit/1.0.0-next.137_svelte@3.40.1:
-    resolution: {integrity: sha512-YdcwaN9zWcbz4jLZS4j9/7fNZIVO8WkXDuwGTiKARhOLIuuJAjCvSuOZ3btJdV/ySpizTWX22u632weVPLECdw==}
+  /@sveltejs/kit/1.0.0-next.138_svelte@3.40.1:
+    resolution: {integrity: sha512-ajJVravr/h0uWysyKyrdqOphNj1bgPZ7Ovgf6dv/L+ubE5LKA8ZgqqxgfmMHIwm9d66vcYU6TydaQOAGrlIGCA==}
     engines: {node: ^12.20 || >=14.13}
     hasBin: true
     peerDependencies:

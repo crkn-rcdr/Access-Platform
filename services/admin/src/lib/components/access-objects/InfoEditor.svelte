@@ -1,22 +1,59 @@
 <script lang="ts">
   import { isManifest, isCollection } from "@crkn-rcdr/access-data";
   import type { AccessObject } from "@crkn-rcdr/access-data";
+  import { getSlugValidationMsg, typedChecks } from "$lib/validation";
+  import NotificationBar from "../shared/NotificationBar.svelte";
+  import Resolver from "$lib/components/access-objects/Resolver.svelte";
 
   export let object: AccessObject; // Not sure if we should pass an object or have a list of props (ex: slug, label, ...) that can be null, and show ones that are instantiated only?
+
+  let showSlugUnavailable = false;
+  let slugUnavailableMessage = "";
 </script>
 
 {#if object}
   <form>
-    <!--TODO: replace with slug resolver component-->
     {#if isManifest(object) || isCollection(object)}
-      <label for="slug">Slug</label><br />
-      <input type="text" id="slug" name="slug" bind:value={object["slug"]} /><br
-      /><br />
-      <label for="label">Label</label><br />
+      <label for="slug">Slug</label>
+      <NotificationBar
+        message={showSlugUnavailable
+          ? slugUnavailableMessage
+          : getSlugValidationMsg(object["slug"])}
+        status="fail"
+      />
+      <Resolver
+        bind:slug={object["slug"]}
+        noid={object["id"]}
+        on:available={(event) => {
+          if (!event?.detail?.["status"]) {
+            slugUnavailableMessage = `${object["slug"]} was unavailable.  The input has been reset, please try again with a different slug.`;
+            object["slug"] = event.detail["slug"]; // No easier way to disable save button that I can think of
+            showSlugUnavailable = true;
+          } else {
+            showSlugUnavailable = false;
+          }
+        }}
+      />
+
+      <br /><br />
+
+      <label for="label">Label</label>
+      <br />
+      <NotificationBar
+        message={typedChecks[object["type"]].getLabelValidationMsg(
+          object["label"]
+        )}
+        status="fail"
+      />
       <textarea
         id="label"
         name="label"
         bind:value={object["label"]["none"]}
+        on:keyup={() => {
+          // Triggers validation msg
+          if (object?.["label"]?.["none"]?.length === 0)
+            object["label"]["none"] = undefined;
+        }}
       /><br /><br />
 
       <!--Fixtures don't have this yet, causes save to be enabled on load-->

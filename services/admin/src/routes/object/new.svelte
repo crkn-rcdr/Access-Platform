@@ -5,6 +5,7 @@
 
   let object: AccessObject;
 
+  //TODO: call niod service to generate id in the backend
   function handleNewCollectionPressed() {
     let newCollection: Collection = {
       id: "",
