@@ -14,6 +14,7 @@
   import type { ObjectList } from "@crkn-rcdr/access-data";
 
   export let collection: Collection;
+ 
   export let showAddButton = true;
   let indexModel: number[] = [];
   let activeMemberIndex: number = 0;

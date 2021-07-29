@@ -2,46 +2,45 @@
   import type { LapinRouter } from "@crkn-rcdr/lapin-router";
   import type { Load } from "@sveltejs/kit";
   import type { TRPCClient } from "@trpc/client";
-  import type { Session } from "$lib/types";
-
-  type RootContext = {
-    lapin: TRPCClient<LapinRouter>;
-  };
-
-  export type RootOutput = {
-    context: RootContext;
-  };
+  import type { RootLoadOutput, ServerSession, Session } from "$lib/types";
 
   import { createTRPCClient } from "@trpc/client";
 
-  export const load: Load<{ session: Session }, RootOutput> = ({
+  export const load: Load<{ session: ServerSession }, RootLoadOutput> = ({
     fetch,
     session: { apiEndpoint },
   }) => {
+    const lapin = createTRPCClient<LapinRouter>({
+      url: apiEndpoint,
+      fetch,
+    });
     return {
-      context: {
-        lapin: createTRPCClient<LapinRouter>({ url: apiEndpoint, fetch }),
-      },
+      context: { lapin },
+      props: { lapin },
     };
   };
 </script>
 
 <script lang="ts">
-  import { session } from "$app/stores";
+  import { getStores } from "$app/stores";
+
+  export let lapin: TRPCClient<LapinRouter>;
+
+  const { session } = getStores<Session>();
+
+  session.set({ ...$session, lapin });
 </script>
 
 <pre>
-  {#if session}
-    <nav class="site-nav">
-        Session: {JSON.stringify($session, null, 2)}
-    </nav>
-  {/if}
+  <nav class="site-nav">
+    Logged in as: <b>{$session.user}</b>.
+  </nav>
 </pre>
 <slot />
 
 <style>
   .site-nav {
-    padding: 1.5rem 1rem;
+    padding: 0 1rem;
     background-color: var(--structural-div-bg);
     filter: brightness(1.1);
   }

@@ -21,6 +21,7 @@
 
     rfdc = (await import("rfdc")).default();
     objectModel = rfdc(object) as AccessObject; // todo: get this done with zod
+    console.log(object, objectModel);
 
     if (isManifest(objectModel)) {
       pageList = [
@@ -92,7 +93,7 @@
         slot="side-menu-header"
         title={object?.["slug"]?.length
           ? object["slug"]
-          : `New ${object["type"]}`}
+          : `Slugless ${object["type"]}`}
       >
         <div
           class="end-content auto-align auto-align__full auto-align auto-align__j-end auto-align auto-align__a-end auto-align auto-align__column"

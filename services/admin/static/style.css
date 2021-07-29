@@ -87,6 +87,10 @@
   --shadow: drop-shadow(0px 0.125rem 0.25rem rgba(0, 0, 0, 0.25));
 }
 
+html {
+  height: 100%;
+}
+
 /* Font defaults */
 body {
   font-family: "Roboto", sans-serif !important;
@@ -350,6 +354,11 @@ button,
   filter: var(--shadow);
 }
 
+button.sm {
+  padding: 0 var(--perfect-fourth-8);
+  height: var(--perfect-fourth-5);
+}
+
 button {
   padding: 0 var(--perfect-fourth-4);
   height: var(--perfect-fourth-2);
@@ -367,6 +376,14 @@ button.lg {
 button.primary {
   background-color: var(--primary);
   color: var(--primary-font) !important;
+}
+button.ghost.dark {
+  background-color: rgba(0, 0, 0, 0.2) !important;
+  color: rgba(0, 0, 0, 0.7) !important;
+}
+button.ghost.light {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  color: rgba(255, 255, 255, 0.7) !important;
 }
 
 button.secondary {

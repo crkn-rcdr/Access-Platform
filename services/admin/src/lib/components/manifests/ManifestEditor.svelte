@@ -1,28 +1,35 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import type {
-    Manifest,
-    Canvas,
-  } from "@crkn-rcdr/access-data/src/access/Manifest";
+  import type { Manifest } from "@crkn-rcdr/access-data/src/access/Manifest";
   import CanvasLabelEditor from "../canvases/CanvasLabelEditor.svelte";
   import CanvasViewer from "../canvases/CanvasViewer.svelte";
   import CanvasThumbnailList from "../canvases/CanvasThumbnailList.svelte";
   import Switch from "$lib/components/shared//Switch.svelte";
   import SwitchCase from "$lib/components/shared//SwitchCase.svelte";
   import ManifestAddCanvasMenu from "$lib/components/manifests/ManifestAddCanvasMenu.svelte";
+  import NotificationBar from "../shared/NotificationBar.svelte";
+  import { typedChecks } from "$lib/validation";
 
   export let manifest: Manifest;
 
-  let activeCanvas: Canvas | null;
+  let activeCanvas: any;
+  let activeCanvasIndex: number = 0;
   let state = "view";
 
   function setActiveCanvas(index: number) {
+    activeCanvasIndex = index;
     activeCanvas = manifest?.canvases?.[index] || null;
     triggerUpdate();
   }
 
+  function setActiveCanvasLabel(event) {
+    manifest.canvases[activeCanvasIndex]["label"]["none"] = event.detail;
+    triggerUpdate();
+  }
+
   function triggerUpdate() {
-    manifest.canvases = manifest.canvases;
+    manifest = manifest;
+    console.log("Changed?", manifest.canvases);
   }
 
   function changeView(newState: string) {
@@ -35,8 +42,18 @@
 </script>
 
 {#if manifest}
+  <NotificationBar
+    message={typedChecks.manifest.getCanvasesValidationMsg(manifest.canvases)}
+    status="fail"
+  />
   <div class="auto-align auto-align__full">
     <div class="list-wrapper">
+      <!--button
+        on:click={() => {
+          manifest.canvases[activeCanvasIndex]["label"]["none"] = null;
+          triggerUpdate();
+        }}>test error</button
+      > uncomment to test canvas error -->
       <CanvasThumbnailList
         showAddButton={state != "add"}
         bind:canvases={manifest["canvases"]}
@@ -58,10 +75,10 @@
               {/if}
             </div>
             <div class="label-wrap">
-              {#if activeCanvas}
+              {#if activeCanvas && activeCanvas?.["label"]?.["none"]}
                 <CanvasLabelEditor
                   bind:label={activeCanvas["label"]["none"]}
-                  on:changed={triggerUpdate}
+                  on:changed={setActiveCanvasLabel}
                 >
                   <!--Todo, own component-->
                   <!--a class="takedown" href="/takedown" target="_blank">

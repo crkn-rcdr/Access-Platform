@@ -1,49 +1,151 @@
 <script lang="ts">
+  import type { Session } from "$lib/types";
+  import { getStores } from "$app/stores";
   import FaArchive from "svelte-icons/fa/FaArchive.svelte";
-  import { AccessObject } from "@crkn-rcdr/access-data";
-  import equal from "fast-deep-equal";
+  import type { AccessObject } from "@crkn-rcdr/access-data";
+  import { onMount } from "svelte";
   import { detailedDiff } from "deep-object-diff";
   import Modal from "$lib/components/shared/Modal.svelte";
+  import { showConfirmation } from "$lib/confirmation";
+  import { checkValidDiff, checkModelChanged } from "$lib/validation";
+  import { goto } from "$app/navigation";
+
+  const { session } = getStores<Session>();
 
   export let object: AccessObject;
   export let objectModel: AccessObject;
 
-  let handleSaveEnabled = false;
+  let clone: any;
+  let isSaveEnabled = false;
   let showMovetoStorageModal = false;
 
-  function checkModelChanged(objectModel: AccessObject) {
-    handleSaveEnabled = !equal(object, objectModel);
+  function checkEnableSave() {
+    isSaveEnabled = checkValidDiff(object, objectModel);
   }
-
   $: {
-    checkModelChanged(objectModel);
+    objectModel;
+    checkEnableSave();
   }
 
-  function handleSave() {
-    let diff: any = detailedDiff(object, objectModel); //TODO: We can send this to the backend
-    console.log("diff", diff);
-    object = AccessObject.parse(objectModel);
-    checkModelChanged(objectModel);
+  async function sendSaveRequest(data: any) {
+    //todo make partial of type
+    console.log("diff", data);
+    try {
+      for (const prop in data) {
+        const bodyObj = { id: objectModel.id };
+        bodyObj[prop] = data[prop];
+        console.log("bodyObj", bodyObj);
+        await $session.lapin.mutation(`${prop}.edit`, bodyObj);
+      }
+      return true;
+    } catch (e) {
+      console.log("e", e);
+      return e;
+    }
+    /*console.log("diff", data);
+    let newlyCreated = false;
+    const response = await showConfirmation(
+      async () => {
+        if (objectModel?.id?.length) {
+          const bodyObj = {
+            id: objectModel.id,
+            data,
+          };
+          return await $session.lapin.mutation("object.insert", bodyObj);
+        } else {
+          const bodyObj = {
+            data: objectModel,
+          };
+          if (
+            objectModel["type"] === "collection" ||
+            objectModel["type"] === "manifest"
+          ) {
+            //todo assign id in backend
+            objectModel["id"] =
+              objectModel["type"] === "collection"
+                ? "69429/s038383832838"
+                : "69429/m038383832838";
+
+            const res = await $session.lapin.mutation(
+              `object.${objectModel["type"]}Insert`,
+              bodyObj
+            );
+            if (res) newlyCreated = true;
+            return res;
+          } else throw "Object not a collection or a manifest";
+        }
+      },
+      "Changes saved!",
+      "Failed to save changes."
+    );
+
+    if (newlyCreated) goto(`/object/${objectModel["id"]}`);
+    return response;*/
   }
 
-  function handlePlaceInStorage() {
+  // TODO: check valid manifest or canvas before showing save button
+  async function handleSave() {
+    const diff: any = detailedDiff(object, objectModel); //TODO: We can send this to the backend
+
+    let bodyObj = {
+      ...diff["added"],
+      ...diff["updated"],
+    };
+
+    if (bodyObj["canvases"]) {
+      bodyObj["canvases"] = objectModel["canvases"];
+    }
+
+    // might need 'deleted'
+    const data = await sendSaveRequest(bodyObj);
+
+    if (data) {
+      try {
+        clone = (await import("rfdc")).default();
+        object = clone(objectModel) as AccessObject; // todo: get this done with zod
+        checkModelChanged(object, objectModel);
+        console.log("RES", data);
+      } catch (e) {
+        //error = e;
+        console.log(e);
+      }
+    }
+  }
+  async function handlePlaceInStorage() {
     showMovetoStorageModal = false;
+    console.log("objectModel 1", objectModel);
+    const response = await showConfirmation(
+      async () => {
+        return await $session.lapin.query(
+          "noid.unassignSlug",
+          objectModel["id"]
+        );
+      },
+      "success",
+      "fail"
+    );
     objectModel["slug"] = undefined;
-    handleSave();
+    object = clone(objectModel) as AccessObject; // todo: get this done with zod
+    console.log("objectModel 2", objectModel);
+    return response;
   }
 
   function handlePublishStatusChange() {}
+
+  onMount(async () => {
+    clone = (await import("rfdc")).default();
+  });
 </script>
 
 <span class="editor-actions auto-align auto-align__a-center">
-  {#if handleSaveEnabled}
+  {#if isSaveEnabled}
     <button class="save" on:click={handleSave}>Save</button>
   {/if}
   <button class="secondary" on:click={handlePublishStatusChange}
     >{object["public"] ? "Unpublish" : "Publish"}</button
   >
 
-  {#if objectModel["slug"]}
+  {#if object["slug"]}
     <button
       class="danger icon-button"
       data-tooltip="Place in storage"

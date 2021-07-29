@@ -1,10 +1,29 @@
 import { z } from "zod";
-import { CouchAttachmentRecord } from "@crkn-rcdr/couch-utils";
 
 import { ProcessRequest, ProcessResult } from "../util/ProcessUpdate.js";
 import { Slug } from "../util/Slug.js";
 import { Timestamp } from "../util/Timestamp.js";
 import { User } from "../util/User.js";
+
+/**
+ * See https://docs.couchdb.org/en/stable/api/document/common.html#attachments
+ * I've also defined this in `couch-utils`. Eventually it should live here and be
+ * imported by `couch-utils`.
+ */
+export const CouchAttachmentRecord = z.record(
+  z.object({
+    content_type: z.string(),
+    data: z.string().optional(),
+    digest: z.string(),
+    encoded_length: z.number().int().min(0).optional(),
+    encoding: z.string().optional(),
+    length: z.number().optional(),
+    revpos: z.number(),
+    stub: z.boolean().optional(),
+  })
+);
+
+export type CouchAttachmentRecord = z.infer<typeof CouchAttachmentRecord>;
 
 /**
  * A newly created task for processing descriptive metadata, awaiting a split operation.

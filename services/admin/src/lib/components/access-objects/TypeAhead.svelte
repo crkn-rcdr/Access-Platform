@@ -1,12 +1,14 @@
 <script lang="ts">
-  import { session } from "$app/stores";
+  import type { Session } from "$lib/types";
+
   import { createEventDispatcher } from "svelte";
-  import { getLapin } from "$lib/lapin";
+  import { getStores } from "$app/stores";
+
+  const { session } = getStores<Session>();
 
   const dispatch = createEventDispatcher();
   export let label = "Please provide a label for this component.";
   export let placeholder = "Placeholder...";
-  const lapin = getLapin({ url: $session["apiEndpoint"], fetch: null });
 
   let query = "";
   let lookupList: string[];
@@ -15,10 +17,8 @@
   async function lookupSlug() {
     dispatch("keypress", query);
 
-    console.log(query, lapin);
-
-    if (query && query.length && lapin) {
-      const response = await lapin.query("slug.search", query);
+    if (query && query.length) {
+      const response = await $session.lapin.query("slug.search", query);
       if (response) {
         lookupList = response;
       } else {
@@ -28,7 +28,7 @@
   }
 
   async function selectItem(item: any) {
-    dispatch("selected", item["noid"] as string);
+    dispatch("selected", item["id"] as string);
   }
 </script>
 
