@@ -20,7 +20,6 @@
 
     rfdc = (await import("rfdc")).default();
     objectModel = rfdc(object) as AccessObject; // todo: get this done with zod
-    console.log(object, objectModel);
 
     if (isManifest(objectModel)) {
       pageList = [

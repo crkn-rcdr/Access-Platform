@@ -9,7 +9,6 @@
   import SwitchCase from "$lib/components/shared//SwitchCase.svelte";
  */
   export let collection: Collection;
-  console.log("collection in contetent", collection.members);
   let state = "view";
   let activeMembers: {} = Object.values(collection.members);
 

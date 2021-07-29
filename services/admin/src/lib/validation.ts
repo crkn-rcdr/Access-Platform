@@ -11,10 +11,8 @@ import equal from "fast-deep-equal";
 function checkValidCollection(objectModel: AccessObject) {
   try {
     const res = EditableCollection.parse(objectModel);
-    console.log("collection res: ", res);
     return true;
   } catch (e) {
-    console.log("collection error: ", e);
     return false;
   }
 }
@@ -22,10 +20,8 @@ function checkValidCollection(objectModel: AccessObject) {
 function checkValidManifest(objectModel: AccessObject) {
   try {
     const res = EditableManifest.parse(objectModel);
-    console.log("manifest res: ", res);
     return true;
   } catch (e) {
-    console.log("manifest error: ", JSON.stringify(e));
     return false;
   }
 }
@@ -44,10 +40,8 @@ function checkModelChanged(object: AccessObject, objectModel: AccessObject) {
 
 function checkValidDiff(object: AccessObject, objectModel: AccessObject) {
   const hasModelChanged = checkModelChanged(object, objectModel);
-  console.log("hasModelChanged", hasModelChanged);
   if (hasModelChanged) {
     const isModelValid = checkChangeIsValid(objectModel);
-    console.log("isModelValid", isModelValid);
     if (isModelValid) return true;
     return false;
   }

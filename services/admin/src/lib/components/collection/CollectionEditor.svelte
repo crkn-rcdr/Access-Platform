@@ -6,7 +6,6 @@
   import { moveArrayElement } from "$lib/arrayUtil";
 
   export let collection: Collection;
-  export let members: {} = Object.values(collection.members);
   export let showAddButton = true;
   let indexModel: number[] = [];
   let activeMemberIndex: number = 0;
@@ -18,7 +17,6 @@
   const DOWN_ARROW_CODE: number = 40;
 
   const dispatch = createEventDispatcher();
-  console.log("Prit Collection:", collection);
 
   function setIndexModel() {
     indexModel = [];

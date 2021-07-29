@@ -8,7 +8,6 @@ async function showConfirmation(call, successMsg, failMsg) {
   numVisibleNotifications++;
   try {
     const res = await call();
-    console.log("RES", res);
     const notification = new NotificationBar({
       target: document.body,
       props: {

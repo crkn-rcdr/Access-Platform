@@ -113,7 +113,6 @@
   function handleSelected() {
     if (selectedCanvases?.[0]?.["id"] !== canvas["id"]) showSave = true;
     else showSave = false;
-    console.log(showSave, selectedCanvases, canvas);
   }
 
   function handleSavePressed() {

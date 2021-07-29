@@ -9,7 +9,6 @@
           page.params["noid"] as string,
         ].join("/");
         const response = await context.lapin.query("noid.resolve", id);
-        console.log("response", response);
         const object = AccessObject.parse(response["doc"]);
         let type = "other";
         if (isCollection(object)) {
@@ -20,7 +19,6 @@
         return { props: { object, createMode: false } };
       } else return { props: { createMode: true } };
     } catch (e) {
-      console.log("ERROR", e);
       return e;
     }
   };

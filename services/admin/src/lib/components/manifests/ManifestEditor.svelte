@@ -29,7 +29,6 @@
 
   function triggerUpdate() {
     manifest = manifest;
-    console.log("Changed?", manifest.canvases);
   }
 
   function changeView(newState: string) {
