@@ -53,7 +53,7 @@ export const handle: Handle<Locals> = async ({ request, resolve }) => {
 
   // Fetch api response from lapin and return it
   if (request.path.startsWith("/api/")) {
-    const url = `${env.lapin.urlInternal}/${fullpath.slice(5)}`;
+    const url = `${env.lapin.url}/${fullpath.slice(5)}`;
 
     const fetchOptions = { method: request.method };
 

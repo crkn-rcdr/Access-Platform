@@ -69,6 +69,7 @@ The development environment runs the services defined in [docker-compose.yaml](d
 
 - `haproxy`: proxy between host connections and services
 - `couchdb`: a fresh CouchDB instance
+- `noid`: an ephemeral [noid](https://github.com/crkn-rcdr/noid) service for minting unique access object identifiers
 - `packages`: watches for changes in all `packages` directories and rebuilds them
 - `kivik`: service that initializes the CouchDB instance, deploys our CouchDB configuration to it, and then watches for changes to that configuration
 - `lapin`: API server, which reloads if its dependencies have changed
@@ -76,8 +77,13 @@ The development environment runs the services defined in [docker-compose.yaml](d
 
 To set it up, first do the following:
 
-1. If you are using the [HAProxy confguration found at the old repository](https://github.com/crkn-rcdr/haproxy), make sure it isn't running and either copy the `certs` directory and `pass.txt` into `./services/haproxy`, or re-run the certificate generation script. If you haven't used it before, follow the instructions in [the haproxy service directory](services/haproxy) to generate SSL certificates.
-2. Fetch the production CouchDB password and the platform authentication JWT secret from the shared development 1Password vault. If you don't have access to this, let Sascha know.
+1. Connect to the Canadiana VPN.
+2. Ensure you are logged into our private Docker registry at `docker.c7a.ca`. The username and password can be found in the shared development 1Password vault. Log in by running the following:
+
+   $ docker login docker.c7a.ca
+
+3. If you are using the [HAProxy confguration found at the old repository](https://github.com/crkn-rcdr/haproxy), make sure it isn't running and either copy the `certs` directory and `pass.txt` into `./services/haproxy`, or re-run the certificate generation script. If you haven't used it before, follow the instructions in [the haproxy service directory](services/haproxy) to generate SSL certificates.
+4. Fetch the production CouchDB password and the platform authentication JWT secret from the shared development 1Password vault. If you don't have access to this, let Sascha know.
    1. Copy `.env.secret.example` into `.env.secret` and add the values there.
    2. Copy `services/couchdb/kivikrc.example.json` to `services/couchdb/kivikrc.json` and add the CouchDB password where asked. (This step will go away when [this Kivik issue](https://github.com/crkn-rcdr/kivik/issues/79) is resolved.)
 
@@ -85,7 +91,7 @@ Build the repository on your host machine. As things stand right now the develop
 
     $ pnpm build
 
-Build and run the environment with
+If this is your first time running the dev environment, you will need to be connected to the Canadiana VPN to pull the noid service image. Build and run the environment with
 
     $ pnpm dev
 
@@ -117,7 +123,7 @@ Ensure that you are connected to the Canadiana VPN. Run
 to build and run the production environment on your machine. Differences between this and the development environment:
 
 - Files are not watched for changes
-- Local services connect to remote, production CouchDB
+- Live production CouchDB and noid services are used
 - Only `haproxy-prod`, `lapin-prod`, and `admin-prod` are started
 
 There is no automated deploy of CouchDB configuration to production CouchDB. If you've made changes to files in `services/couchdb` you will need to deploy them yourself. You can do this by running
