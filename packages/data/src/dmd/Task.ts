@@ -1,22 +1,10 @@
 import { z } from "zod";
+import { CouchAttachmentRecord } from "@crkn-rcdr/couch-utils";
+
 import { ProcessRequest, ProcessResult } from "../util/ProcessUpdate.js";
 import { Slug } from "../util/Slug.js";
 import { Timestamp } from "../util/Timestamp.js";
 import { User } from "../util/User.js";
-
-/**
- * See https://docs.couchdb.org/en/stable/api/document/common.html#attachments
- */
-const CouchDBAttachmentRecord = z.object({
-  content_type: z.string(),
-  data: z.string().optional(),
-  digest: z.string(),
-  encoded_length: z.number().int().min(0).optional(),
-  encoding: z.string().optional(),
-  length: z.number().optional(),
-  revpos: z.number(),
-  stub: z.boolean().optional(),
-});
 
 /**
  * A newly created task for processing descriptive metadata, awaiting a split operation.
@@ -30,7 +18,7 @@ export const SplitRequestDMDTask = z.object({
   /**
    * CouchDB `_attachments` object.
    */
-  attachments: z.record(CouchDBAttachmentRecord),
+  attachments: CouchAttachmentRecord,
 
   /**
    * Record of the user who created this task.
