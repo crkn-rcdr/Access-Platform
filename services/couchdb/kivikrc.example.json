@@ -1,7 +1,7 @@
 {
   "deployments": {
     "couchdb-dev-docker": {
-      "url": "http://couch:5984",
+      "url": "http://172.30.0.50:5984",
       "auth": {
         "user": "admin",
         "password": "REPLACE_WITH_PASSWORD"
