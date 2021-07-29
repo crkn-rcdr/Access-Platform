@@ -9,10 +9,6 @@ services:
       - dev
     image: haproxy:2.2-alpine
     container_name: access-haproxy
-    depends_on:
-      - couchdb
-      - lapin
-      - admin
     ports:
       - "80:80"
       - "443:443"
@@ -25,8 +21,7 @@ services:
     restart: unless-stopped
     networks:
       access-platform:
-        aliases:
-          - haproxy
+        ipv4_address: 172.30.0.2
   couchdb:
     profiles:
       - dev
@@ -38,8 +33,19 @@ services:
       - .env.secret
     networks:
       access-platform:
-        aliases:
-          - couch
+        ipv4_address: 172.30.0.50
+  noid:
+    profiles:
+      - dev
+    container_name: access-noid
+    depends_on:
+      - haproxy
+    image: docker.c7a.ca/noid:20210226
+    volumes:
+      - /noid/dbs
+    networks:
+      access-platform:
+        ipv4_address: 172.30.0.53
   packages:
     profiles:
       - dev
@@ -54,9 +60,13 @@ services:
       - .:/repo
     networks:
       access-platform:
+        ipv4_address: 172.30.0.100
   kivik:
     profiles:
       - dev
+    depends_on:
+      - haproxy
+      - couchdb
     user: ${CURRENT_USER}
     container_name: access-kivik
     build:
@@ -70,9 +80,14 @@ services:
       - .:/repo
     networks:
       access-platform:
+        ipv4_address: 172.30.0.101
   lapin:
     profiles:
       - dev
+    depends_on:
+      - haproxy
+      - couchdb
+      - noid
     user: ${CURRENT_USER}
     container_name: access-lapin
     build:
@@ -90,11 +105,13 @@ services:
       - .:/repo
     networks:
       access-platform:
-        aliases:
-          - lapin
+        ipv4_address: 172.30.0.51
   admin:
     profiles:
       - dev
+    depends_on:
+      - haproxy
+      - lapin
     user: ${CURRENT_USER}
     container_name: access-admin
     build:
@@ -111,8 +128,7 @@ services:
       - .:/repo
     networks:
       access-platform:
-        aliases:
-          - admin
+        ipv4_address: 172.30.0.52
   #
   # Production services
   #
@@ -134,8 +150,7 @@ services:
     restart: unless-stopped
     networks:
       access-platform:
-        aliases:
-          - haproxy
+        ipv4_address: 172.30.0.2
   lapin-prod:
     profiles:
       - prod
@@ -150,8 +165,7 @@ services:
       - .env.secret
     networks:
       access-platform:
-        aliases:
-          - lapin
+        ipv4_address: 172.30.0.51
   admin-prod:
     profiles:
       - prod
@@ -165,8 +179,7 @@ services:
       - lapin-prod
     networks:
       access-platform:
-        aliases:
-          - admin
+        ipv4_address: 172.30.0.52
 
 networks:
   access-platform:
