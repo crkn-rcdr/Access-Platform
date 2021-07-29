@@ -1,7 +1,7 @@
 import { createRouter } from "../router.js";
 
-export const objectRouter = createRouter().mutation("insert", {
-  input: (value: unknown) => {
+export const behaviorRouter = createRouter().mutation("edit", {
+  input: (value: any) => {
     try {
       // test
       return value;
@@ -12,12 +12,12 @@ export const objectRouter = createRouter().mutation("insert", {
   async resolve({ input: q, ctx }): Promise<any> {
     try {
       console.log("q", q);
-      const response = await ctx.couch.access.update(
-        "access",
-        "edit",
-        q.id,
-        q.behaviour
-      );
+      const response = await ctx.couch.access.update({
+        ddoc: "access",
+        name: "editBehavior",
+        docId: q.id,
+        body: q.behavior,
+      });
       return response;
     } catch (e) {
       throw e; // Catch any issues with updating the database

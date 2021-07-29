@@ -1,12 +1,11 @@
-module.exports = function (doc, req) {
+module.exports = function (doc, members) {
   const { successReturn, errorReturn } = require("views/lib/prelude");
 
   if (!doc) return errorReturn(`No document found with id ${doc.id}`);
-  if (!req) return errorReturn(`Expecting request body in second parameter`);
-  if (!req["members"])
-    return errorReturn(`Expecting request body to have parameter 'members'`);
+  if (!members)
+    return errorReturn(`Expecting request body in second parameter, 'members`);
 
-  doc["members"] = req["members"];
+  doc["members"] = members;
 
   return successReturn(doc, `${doc.slug ? doc.slug : doc.id} members updated`);
 };

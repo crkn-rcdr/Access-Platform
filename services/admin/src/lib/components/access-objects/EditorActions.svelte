@@ -30,6 +30,19 @@
   async function sendSaveRequest(data: any) {
     //todo make partial of type
     console.log("diff", data);
+    try {
+      for (const prop in data) {
+        const bodyObj = { id: objectModel.id };
+        bodyObj[prop] = data[prop];
+        console.log("bodyObj", bodyObj);
+        await $session.lapin.mutation(`${prop}.edit`, bodyObj);
+      }
+      return true;
+    } catch (e) {
+      console.log("e", e);
+      return e;
+    }
+    /*console.log("diff", data);
     let newlyCreated = false;
     const response = await showConfirmation(
       async () => {
@@ -67,7 +80,7 @@
     );
 
     if (newlyCreated) goto(`/object/${objectModel["id"]}`);
-    return response;
+    return response;*/
   }
 
   // TODO: check valid manifest or canvas before showing save button

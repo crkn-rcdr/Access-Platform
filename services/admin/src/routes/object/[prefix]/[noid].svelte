@@ -9,7 +9,8 @@
           page.params["noid"] as string,
         ].join("/");
         const response = await context.lapin.query("noid.resolve", id);
-        const object = AccessObject.parse(response);
+        console.log("response", response);
+        const object = AccessObject.parse(response["doc"]);
         let type = "other";
         if (isCollection(object)) {
           type = "collection";
@@ -34,7 +35,9 @@
 </script>
 
 {#if object}
+  {object}
   <Editor bind:object />
 {:else}
+  {object}
   Loading...
 {/if}

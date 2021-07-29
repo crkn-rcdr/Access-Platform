@@ -28,7 +28,7 @@
   }
 
   async function selectItem(item: any) {
-    dispatch("selected", item["noid"] as string);
+    dispatch("selected", item["id"] as string);
   }
 </script>
 

@@ -1,12 +1,13 @@
-module.exports = function (doc, req) {
+module.exports = function (doc, pageLabels) {
   const { successReturn, errorReturn } = require("views/lib/prelude");
 
   if (!doc) return errorReturn(`No document found with id ${doc.id}`);
-  if (!req) return errorReturn(`Expecting request body in second parameter`);
-  if (!req["pageLabels"])
-    return errorReturn(`Expecting request body to have parameter 'pageLabels'`);
+  if (!pageLabels)
+    return errorReturn(
+      `Expecting request body in second parameter, 'pageLabels`
+    );
 
-  doc["pageLabels"] = req["pageLabels"];
+  doc["pageLabels"] = pageLabels;
 
   return successReturn(
     doc,
