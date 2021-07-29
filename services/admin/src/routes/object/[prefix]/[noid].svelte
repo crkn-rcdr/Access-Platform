@@ -35,9 +35,7 @@
 </script>
 
 {#if object}
-  {object}
   <Editor bind:object />
 {:else}
-  {object}
   Loading...
 {/if}
