@@ -29,21 +29,17 @@
 
   async function sendSaveRequest(data: any) {
     //todo make partial of type
-    console.log("diff", data);
     try {
       for (const prop in data) {
         const bodyObj = { id: objectModel.id };
         bodyObj[prop] = data[prop];
-        console.log("bodyObj", bodyObj);
         await $session.lapin.mutation(`${prop}.edit`, bodyObj);
       }
       return true;
     } catch (e) {
-      console.log("e", e);
       return e;
     }
-    /*console.log("diff", data);
-    let newlyCreated = false;
+    /*let newlyCreated = false;
     const response = await showConfirmation(
       async () => {
         if (objectModel?.id?.length) {
@@ -104,16 +100,13 @@
         clone = (await import("rfdc")).default();
         object = clone(objectModel) as AccessObject; // todo: get this done with zod
         checkModelChanged(object, objectModel);
-        console.log("RES", data);
       } catch (e) {
         //error = e;
-        console.log(e);
       }
     }
   }
   async function handlePlaceInStorage() {
     showMovetoStorageModal = false;
-    console.log("objectModel 1", objectModel);
     const response = await showConfirmation(
       async () => {
         return await $session.lapin.query(
@@ -126,7 +119,6 @@
     );
     objectModel["slug"] = undefined;
     object = clone(objectModel) as AccessObject; // todo: get this done with zod
-    console.log("objectModel 2", objectModel);
     return response;
   }
 

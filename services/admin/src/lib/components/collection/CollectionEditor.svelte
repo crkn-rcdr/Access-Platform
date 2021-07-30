@@ -103,10 +103,10 @@
     try {
       noid = event.detail;
       const response = await $session.lapin.query("noid.resolve", noid);
-      console.log("show the response", response.doc);
-      const object = AccessObject.parse(response.doc);
-      console.log("Show the object", object);
-      collection.members[collection.members.length] = object;
+      if (response.found) {
+        const object = AccessObject.parse(response.doc);
+        collection.members[collection.members.length] = object;
+      }
     } catch (e) {
       error = e;
     }

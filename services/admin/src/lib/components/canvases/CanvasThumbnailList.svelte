@@ -24,12 +24,10 @@
 
   function setIndexModel(trackNewCanvases: boolean) {
     if (trackNewCanvases) previousCanvasArrayLength = indexModel.length;
-    console.log("prevLen", previousCanvasArrayLength);
     indexModel = [];
     for (let i = 0; i < canvases.length; i++) {
       indexModel.push(i + 1);
     }
-    console.log("currlen", indexModel.length);
   }
 
   function setActiveIndex(index: number) {

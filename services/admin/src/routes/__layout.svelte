@@ -33,7 +33,7 @@
 
 <pre>
   <nav class="site-nav">
-    Logged in as: <b>{$session.user}</b>.
+    Logged in as: <b>{$session.user.name}</b>, {$session.user.email}.
   </nav>
 </pre>
 <slot />
