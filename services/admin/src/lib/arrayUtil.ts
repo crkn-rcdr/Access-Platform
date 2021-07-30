@@ -1,20 +1,15 @@
 /**
  * @module
- * Overview:
- * The overriding design goal for Markdown's formatting syntax is to make it as readable as possible. The idea is that a Markdown-formatted document should be publishable as-is, as plain text, without looking like it's been marked up with tags or formatting instructions.
- *
- * Usage:
- * <Editor bind:object />
- *
- * Note: `--capt-add=SYS-ADMIN` is required for PDF rendering.*
+ * @description
+ * This module contains methods that are useful for manipulating arrays.
  */
 
 /**
- *
+ * Moves an element of an array from currentIndex to destinationIndex, and returns the array.
  * @param arr
  * @param currentIndex
  * @param destinationIndex
- * @returns
+ * @returns any[]
  */
 function moveArrayElement(
   arr: any[],

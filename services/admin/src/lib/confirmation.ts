@@ -1,32 +1,28 @@
 /**
  * @module
- * Overview:
- * The overriding design goal for Markdown's formatting syntax is to make it as readable as possible. The idea is that a Markdown-formatted document should be publishable as-is, as plain text, without looking like it's been marked up with tags or formatting instructions.
- *
- * Usage:
- * <Editor bind:object />
- *
- * Note: `--capt-add=SYS-ADMIN` is required for PDF rendering.*
+ * @description
+ * This module contains methods that enable script code to show notifications in the notifications list depending on the result of a method call.
  */
+
 import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
 
 /**
- * @type {string} Slug being resolved.
+ * @type {number} The length of time the notification should be displayed on the screen.
  */
 const DISPLAY_TIME = 10000;
 
 /**
- * @type {string} Slug being resolved.
+ * @type {number} A counter of the number of notifications visible on the screen.
  */
 let numVisibleNotifications = 0;
 
-//TODO: make the notifications shift down when previous is clear
+//TODO: make the notifications shift down when previous is clear, add an expected result to test the failure case
 /**
- *
- * @param arr
- * @param currentIndex
- * @param destinationIndex
- * @returns
+ * Shows a confirmation notification at the bottom right corner when the call (a lapin function) fails. The successMsg will display upon suggess, and the failMsg will show if it fails. The response of the call or the error is returned.
+ * @param call
+ * @param successMsg
+ * @param failMsg
+ * @returns any
  */
 async function showConfirmation(call, successMsg, failMsg) {
   numVisibleNotifications++;

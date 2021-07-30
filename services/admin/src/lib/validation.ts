@@ -1,12 +1,7 @@
 /**
  * @module
- * Overview:
- * The overriding design goal for Markdown's formatting syntax is to make it as readable as possible. The idea is that a Markdown-formatted document should be publishable as-is, as plain text, without looking like it's been marked up with tags or formatting instructions.
- *
- * Usage:
- * <Editor bind:object />
- *
- * Note: `--capt-add=SYS-ADMIN` is required for PDF rendering.*
+ * @description
+ * This module contains methods that are used to validate that varianbles and objects are like Collections and Manifests are in a valid state.
  */
 
 import {
@@ -20,11 +15,9 @@ import {
 import equal from "fast-deep-equal";
 
 /**
- *
- * @param arr
- * @param currentIndex
- * @param destinationIndex
- * @returns
+ * Checks to see if the parameter bassed in is a valid collection
+ * @param objectModel
+ * @returns boolean
  */
 function checkValidCollection(objectModel: AccessObject) {
   try {
@@ -38,11 +31,9 @@ function checkValidCollection(objectModel: AccessObject) {
 }
 
 /**
- *
- * @param arr
- * @param currentIndex
- * @param destinationIndex
- * @returns
+ * Checks to see if the parameter bassed in is a valid manifest
+ * @param objectModel
+ * @returns boolean
  */
 function checkValidManifest(objectModel: AccessObject) {
   try {
@@ -56,11 +47,9 @@ function checkValidManifest(objectModel: AccessObject) {
 }
 
 /**
- *
- * @param arr
- * @param currentIndex
- * @param destinationIndex
- * @returns
+ * Checks to see if the object passed in is valid based on its type
+ * @param objectModel
+ * @returns boolean
  */
 function checkChangeIsValid(objectModel: AccessObject) {
   if (objectModel["type"] === "manifest") {
@@ -71,29 +60,26 @@ function checkChangeIsValid(objectModel: AccessObject) {
 }
 
 /**
- *
- * @param arr
- * @param currentIndex
- * @param destinationIndex
- * @returns
+ * Checks to see if the object param is different form the object model param.
+ * @see (fast-deep-equal)[https://www.npmjs.com/package/fast-deep-equal]
+ * @param object
+ * @param objectModel
+ * @returns boolean
  */
 function checkModelChanged(object: AccessObject, objectModel: AccessObject) {
   return !equal(object, objectModel);
 }
 
 /**
- *
- * @param arr
- * @param currentIndex
- * @param destinationIndex
- * @returns
+ * Checks to see if anything is different between the object and object model by calling @function checkModelChanged then calls @function checkChangeIsValid to see if the change was valid.
+ * @param object
+ * @param objectModel
+ * @returns boolean
  */
 function checkValidDiff(object: AccessObject, objectModel: AccessObject) {
   const hasModelChanged = checkModelChanged(object, objectModel);
-  console.log("hasModelChanged", hasModelChanged);
   if (hasModelChanged) {
     const isModelValid = checkChangeIsValid(objectModel);
-    console.log("isModelValid", isModelValid);
     if (isModelValid) return true;
     return false;
   }
@@ -101,11 +87,9 @@ function checkValidDiff(object: AccessObject, objectModel: AccessObject) {
 }
 
 /**
- *
- * @param arr
- * @param currentIndex
- * @param destinationIndex
- * @returns
+ * Validates the slug passed in. Returns a message if the slug is invalid.
+ * @param slug
+ * @returns string
  */
 function getSlugValidationMsg(slug: string) {
   try {
@@ -117,13 +101,15 @@ function getSlugValidationMsg(slug: string) {
 }
 
 /**
- *
- * @param arr
- * @param currentIndex
- * @param destinationIndex
- * @returns
+ * @object
+ * @description wrapper around the validation functions specifically for the manifest type
  */
 const manifest = {
+  /**
+   * Validates the label passed in. Returns a message if the TextRecord is invalid.
+   * @param label
+   * @returns string
+   */
   getLabelValidationMsg: function (label: TextRecord) {
     try {
       EditableManifest.pick({ label: true }).parse({ label });
@@ -132,6 +118,11 @@ const manifest = {
       return e["issues"][0]["message"];
     }
   },
+  /**
+   * Validates the ObjectList passed in. Returns a message if the ObjectList is invalid.
+   * @param canvases
+   * @returns string
+   */
   getCanvasesValidationMsg: function (canvases: ObjectList) {
     try {
       EditableManifest.pick({ canvases: true }).parse({ canvases });
@@ -143,13 +134,15 @@ const manifest = {
 };
 
 /**
- *
- * @param arr
- * @param currentIndex
- * @param destinationIndex
- * @returns
+ * @object
+ * @description wrapper around the validation functions specifically for the collection type
  */
 const collection = {
+  /**
+   * Validates the label passed in. Returns a message if the TextRecord is invalid.
+   * @param label
+   * @returns string
+   */
   getLabelValidationMsg: function (label: TextRecord) {
     try {
       EditableCollection.pick({ label: true }).parse({ label });
@@ -161,7 +154,8 @@ const collection = {
 };
 
 /**
- * wrapper
+ * @object
+ * @description Wrapper around the manifest and collection objects
  */
 const typedChecks = { manifest, collection };
 
