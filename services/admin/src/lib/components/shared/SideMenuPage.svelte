@@ -1,19 +1,28 @@
 <!--
 @component
 ### Overview
-The overriding design goal for Markdown's formatting syntax is to make it as readable as possible. The idea is that a Markdown-formatted document should be publishable as-is, as plain text, without looking like it's been marked up with tags or formatting instructions.
+The portion of the side menu container that contains a page controlled by the side menu.
 
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| prop : type    | [required, optional] | desc |
-
+| overflowX : string       | optional | A string value for the CSS overflow-x property. This will allow you to set the x axis scrolling behaviour for the page. |
+| overflowY : string       | optional | A string value for the CSS overflow-x property. This will allow you to set the x axis scrolling behaviour for the page.  |
+         
 ### Usage
-**Example one**
 ```  
-<Editor bind:object />
+<SideMenuContainer>
+  <SideMenuPageList>
+    <SideMenuPageListButton/>
+  </SideMenuPageList>
+  <SideMenuBody>
+    <SideMenuPage overflowX={"hidden"} overflowY={"hidden"}>
+    </SideMenuPage>
+  </SideMenuBody>
+</SideMenuContainer>
 ```
-*Note: `--capt-add=SYS-ADMIN` is required for PDF rendering.*
+
+*Note: see [Overflow CSS documentation](https://developer.mozilla.org/en-US/docs/Web/CSS/overflow) for more information.*
 -->
 <script>
   /**

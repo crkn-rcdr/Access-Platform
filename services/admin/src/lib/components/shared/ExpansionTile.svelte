@@ -1,19 +1,24 @@
 <!--
 @component
 ### Overview
-The overriding design goal for Markdown's formatting syntax is to make it as readable as possible. The idea is that a Markdown-formatted document should be publishable as-is, as plain text, without looking like it's been marked up with tags or formatting instructions.
-
+A container that expands to show more content when the user clicks the expand icon.
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| prop : type    | [required, optional] | desc |
+| useInfoIcon : boolean    | optional | Allows for configuring the toggle icon for the detail section. If this is false, an upward facing carat will show. If it is true, and info icon will show. |
 
 ### Usage
-**Example one**
-```  
-<Editor bind:object />
 ```
-*Note: `--capt-add=SYS-ADMIN` is required for PDF rendering.*
+<ExpansionTile useInfoIcon={true}>
+  <div slot="top">
+    ...Before the fold
+  </div>
+  <div slot="bottom">
+
+    ...After the fold
+  </div>
+</ExpansionTile>
+```
 -->
 <script lang="ts">
   import FaAngleDown from "svelte-icons/fa/FaAngleDown.svelte";
@@ -21,12 +26,12 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   import FaAngleUp from "svelte-icons/fa/FaAngleUp.svelte";
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {boolean} Allows for configuring the toggle icon for the detail section. If this is false, an upward facing carat will show. If it is true, and info icon will show.
    */
   export let useInfoIcon = false;
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {boolean} If the bottom section is toggled open or not.
    */
   let toggled = false;
 </script>

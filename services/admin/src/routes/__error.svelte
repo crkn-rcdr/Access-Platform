@@ -1,4 +1,8 @@
-<!--script context="module" lang="ts">
+<script context="module" lang="ts">
+  /**
+   * @module
+   * @description
+   */
   import type { ErrorLoad } from "@sveltejs/kit";
   export const load: ErrorLoad = ({ error, status }) => {
     return {
@@ -10,7 +14,11 @@
 </script>
 
 <script lang="ts">
+  /**
+   * @template
+   * @description
+   */
   export let title: string;
 </script>
 
-<h1>{title}</h1-->
+<h1>{title}</h1>

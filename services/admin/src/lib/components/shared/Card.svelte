@@ -6,10 +6,12 @@ A card component that optionally allows for user selection
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| prop : type    | [required, optional] | desc |
+| selectable : boolean  | optional | If the card should be selectable |
+| selected : boolean    | optional | If the card is selected by default |
+| imgURL : string       | optional | An image to display in the card |
+| imgAlt : string       | optional | The alternative text for the image displayed in the card |
 
 ### Usage
-**Example one**
 ```  
 <Card
     on:clicked={(event) => {console.logs(event.detail)}}
@@ -26,36 +28,33 @@ A card component that optionally allows for user selection
   import { createEventDispatcher } from "svelte";
 
   /**
-   * @type {boolean} Slug being resolved.
+   * @type {boolean} If the card should be selectable.
    */
   export let selectable = false;
 
   /**
-   * @type {boolean} Slug being resolved.
+   * @type {boolean} If the card is selected by default.
    */
   export let selected = false;
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {string} An image to display in the card.
    */
   export let imgURL = "";
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {string} The alternative text for the image displayed in the card.
    */
   export let imgAlt = "";
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.
    */
   const dispatch = createEventDispatcher();
 
   /**
-   *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns
+   * Changes the checkbox on the cards state, and then lets parent's know the card was clicked though the @event clicked, with the selected status in the event.detail
+   * @returns void
    */
   function handleClick() {
     selected = !selected;

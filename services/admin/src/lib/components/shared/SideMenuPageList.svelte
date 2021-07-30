@@ -1,19 +1,23 @@
 <!--
 @component
 ### Overview
-The overriding design goal for Markdown's formatting syntax is to make it as readable as possible. The idea is that a Markdown-formatted document should be publishable as-is, as plain text, without looking like it's been marked up with tags or formatting instructions.
+The portion of the side menu container that contains the list of buttons for the list pages available in the side menu. When the user presses a button, the associated page displays in the SideMenuBody.
 
 ### Properties
-|    |    |    |
-| -- | -- | -- |
-| prop : type    | [required, optional] | desc |
-
+None
+                   
 ### Usage
-**Example one**
 ```  
-<Editor bind:object />
+<SideMenuContainer>
+  <SideMenuPageList>
+    <SideMenuPageListButton/>
+  </SideMenuPageList>
+  <SideMenuBody>
+    <SideMenuPage>
+    </SideMenuPage>
+  </SideMenuBody>
+</SideMenuContainer>
 ```
-*Note: `--capt-add=SYS-ADMIN` is required for PDF rendering.*
 -->
 <nav class="sidemenu">
   <ul>

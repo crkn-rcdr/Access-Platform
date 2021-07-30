@@ -1,23 +1,25 @@
 <!--
 @component
 ### Overview
-The overriding design goal for Markdown's formatting syntax is to make it as readable as possible. The idea is that a Markdown-formatted document should be publishable as-is, as plain text, without looking like it's been marked up with tags or formatting instructions.
+A solid title/header component to break apart your pages into sections.
 
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| prop : type    | [required, optional] | desc |
+| title : string    | optional | The title text to display in the toolbar |
 
 ### Usage
-**Example one**
 ```  
-<Editor bind:object />
+<Toolbar title={"Hello world"}>
+  <div>
+    <button>action button</button>
+  </div>
+</Toolbar>
 ```
-*Note: `--capt-add=SYS-ADMIN` is required for PDF rendering.*
 -->
 <script lang="ts">
   /**
-   * @type {string} Slug being resolved.
+   * @type {string} The title text to display in the toolbar.
    */
   export let title = "";
 </script>

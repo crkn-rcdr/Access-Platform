@@ -1,39 +1,41 @@
 <!--
 @component
 ### Overview
-The overriding design goal for Markdown's formatting syntax is to make it as readable as possible. The idea is that a Markdown-formatted document should be publishable as-is, as plain text, without looking like it's been marked up with tags or formatting instructions.
+The default case for the Switch component. To be shown if all other cases fail.
 
 ### Properties
-|    |    |    |
-| -- | -- | -- |
-| prop : type    | [required, optional] | desc |
+none
 
 ### Usage
-**Example one**
 ```  
-<Editor bind:object />
+<Switch bind:checkVal={state}>
+  <SwitchCase caseVal="one">
+  </SwitchCase>
+  <SwitchCase caseVal="two">
+  </SwitchCase>
+  <SwitchDefault>
+    ...other
+  </SwitchDefault>
+</Switch>
 ```
-*Note: `--capt-add=SYS-ADMIN` is required for PDF rendering.*
+*Note: `bind:` is required for changes to the object and its model to be reflected in higher level components.*
 -->
 <script lang="ts">
   import { getContext } from "svelte";
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {Writable<boolean>} A store that the cases manipulate, which the default case uses to determine if it should display its contents.
    */
   let showDefaultStore: SvelteStore<boolean> = getContext("showDefaultStore");
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {boolean} If the default should display its contents or not.
    */
   let showDefaultView = false;
 
   /**
-   *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns
+   * @listens showDefaultStore
+   * @description Any time the value of showDefaultStore changes, the @var showDefaultView is set to the aggregate calculation made in all of the other cases through the @var showDefaultStore that has been shared with them through the parent Switch component context.
    */
   showDefaultStore.subscribe((showDefault: boolean) => {
     showDefaultView = showDefault;

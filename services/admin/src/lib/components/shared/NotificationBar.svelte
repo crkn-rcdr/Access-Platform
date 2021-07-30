@@ -1,12 +1,18 @@
 <!--
 @component
 ### Overview
-The overriding design goal for Markdown's formatting syntax is to make it as readable as possible. The idea is that a Markdown-formatted document should be publishable as-is, as plain text, without looking like it's been marked up with tags or formatting instructions.
+A component used to notify the user to something. It can have a green background (state = success), red background (state = "fail"), or a yellow background (state = "warn".) Depending on the value of the float property, it can either display in-line in the DOM or float over it, sticking to the bottom right.
 
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| prop : type    | [required, optional] | desc |
+| message : string                                | required | The message to be displayed on the notification bar, must be a non-empty string |
+| status: string, "success" or "fail" or "warn"   | optional | The state of the notification, determines the colour displayed and options available. |
+| detail : string                                 | optional | Any detailed information that will be shown in the expandable portion |
+| expandable : boolean                            | optional| If there will be an expandible portion or not |
+| float : boolean                                 | optional | If the notification bar should be drawn independant of the rest of the dom, floating on the bottom right, or if it should be drawn in-place |
+| dissmissFunction : Function                     | optional | A function that will run when the user presses the 'dismiss' button |
+| notificationPosition : number                   | optional | The position of the notifciation in the list of notifications on the bottom right corner |
 
 ### Usage
 **Example one**
@@ -19,47 +25,47 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   import ExpansionTile from "./ExpansionTile.svelte";
 
   /**
-   * @type {string} Slug being resolved.
-   */
-  export let status: "success" | "fail" | "warn" = "success";
-
-  /**
-   * @type {string} Slug being resolved.
+   * @type {string} The message to be displayed on the notification bar, must be a non-empty string.
    */
   export let message = "";
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {"success" | "fail" | "warn" = "success"} The state of the notification, determines the colour displayed and options available.
+   */
+  export let status: "success" | "fail" | "warn" = "success";
+
+  /**
+   * @type {string} Any detailed information that will be shown in the expandable portion.
    */
   export let detail = "";
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {boolean} If there will be an expandible portion or not.
    */
   export let expandable = false;
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {boolean} If the notification bar should be drawn independant of the rest of the dom, floating on the bottom right, or if it should be drawn in-place.
    */
   export let float = false;
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {Function} A function that will run when the user presses the 'dismiss' button.
    */
   export let dissmissFunction = null;
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {number} The position of the notifciation in the list of notifications on the bottom right corner.
    */
   export let notificationPosition = 1;
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {number} The height of the notification bar.
    */
   const notificationHeightRem = 5;
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {number} The spacing between notifciations in the list of notifications on the bottom right corner.
    */
   const notificationSpacing = 1;
 </script>

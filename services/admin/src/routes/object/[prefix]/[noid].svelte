@@ -1,14 +1,8 @@
-<!--
-@component
-### Overview
-The overriding design goal for Markdown's formatting syntax is to make it as readable as possible. The idea is that a Markdown-formatted document should be publishable as-is, as plain text, without looking like it's been marked up with tags or formatting instructions.
-
-### Properties
-|    |    |    |
-| -- | -- | -- |
-| prop : type    | [required, optional] | desc |
--->
 <script context="module" lang="ts">
+  /**
+   * @module
+   * @description
+   */
   import type { Load } from "@sveltejs/kit";
   import type { RootLoadOutput } from "$lib/types";
   export const load: Load<RootLoadOutput> = async ({ page, context }) => {
@@ -36,6 +30,10 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
 </script>
 
 <script lang="ts">
+  /**
+   * @file
+   * @description
+   */
   import { AccessObject } from "@crkn-rcdr/access-data";
   import { isManifest, isCollection } from "@crkn-rcdr/access-data";
   import Editor from "$lib/components/access-objects/Editor.svelte";

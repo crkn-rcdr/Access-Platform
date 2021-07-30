@@ -1,51 +1,56 @@
 <!--
 @component
 ### Overview
-The overriding design goal for Markdown's formatting syntax is to make it as readable as possible. The idea is that a Markdown-formatted document should be publishable as-is, as plain text, without looking like it's been marked up with tags or formatting instructions.
+A handy component for adding switch like syntax to your svelte template code.
 
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| prop : type    | [required, optional] | desc |
+| checkVal: any  | required | The value to pass into the switch, that it uses to determine which case to show. |
 
 ### Usage
-**Example one**
 ```  
-<Editor bind:object />
+<Switch bind:checkVal={state}>
+  <SwitchCase caseVal="one">
+  </SwitchCase>
+  <SwitchCase caseVal="two">
+  </SwitchCase>
+  <SwitchDefault>
+    ...other
+  </SwitchDefault>
+</Switch>
 ```
-*Note: `--capt-add=SYS-ADMIN` is required for PDF rendering.*
+*Note: `bind:` is required for changes to the object and its model to be reflected in higher level components.*
 -->
 <script lang="ts">
   import { setContext } from "svelte";
   import { writable } from "svelte/store";
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {any} The value to pass into the switch, that it uses to determine which case to show.
    */
   export let checkVal: any;
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {Writable<any>} A store that the cases use to determine if they should display their contents.
    */
   let checkStore = writable(checkVal);
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {Writable<boolean>} A store that the cases manipulate, which the default case uses to determine if it should display its contents.
    */
   let showDefaultStore = writable(true);
 
   /**
-   *
+   * Adds the stores to the shared context for this component and its childred, the SwitchCase and SwitchDefault. This allows the cases to react when the value changes.
    */
   setContext("checkStore", checkStore);
   setContext("showDefaultStore", showDefaultStore);
 
   /**
-   *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns
+   * Updates the value of the check store and default stores, causing the case and default components to re-evaluate which one of them should be shown.
+   * @param checkVal
+   * @returns void
    */
   function updateMethod(checkVal: any) {
     checkStore.set(checkVal);
@@ -53,11 +58,8 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   }
 
   /**
-   *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns
+   * @listens checkVal
+   * @description calls @function updateMethod when the @var checkVal changes
    */
   $: {
     updateMethod(checkVal);

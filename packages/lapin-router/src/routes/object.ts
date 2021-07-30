@@ -1,16 +1,12 @@
-import {
+/*import {
   Collection,
   EditableCollection,
   EditableManifest,
   Manifest,
   Noid,
-} from "@crkn-rcdr/access-data";
-import { createRouter } from "../router.js";
-import { deletedDiff } from "deep-object-diff";
-import { z } from "zod";
+} from "@crkn-rcdr/access-data";*/
 /*
 input: ,
-*/
 const UpdateDataType = z.object({
   id: Noid,
   data: z.any(),
@@ -22,7 +18,12 @@ const InsertDataType = z.object({
 });
 type InsertDataType = z.infer<typeof InsertDataType>;
 
-export const objectRouter = createRouter()
+//import { z } from "zod";
+*/
+
+import { createRouter } from "../router.js";
+export const objectRouter = createRouter();
+/*
   .mutation("insert", {
     input: (value: unknown) => {
       try {
@@ -155,4 +156,4 @@ export const objectRouter = createRouter()
         throw e; // Catch any issues with updating the database
       }
     },
-  });
+  });*/

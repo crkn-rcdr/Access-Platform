@@ -1,30 +1,41 @@
 <!--
 @component
 ### Overview
-The overriding design goal for Markdown's formatting syntax is to make it as readable as possible. The idea is that a Markdown-formatted document should be publishable as-is, as plain text, without looking like it's been marked up with tags or formatting instructions.
+A component that overlays ontop of the application, in the center of the screen.
 
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| prop : type    | [required, optional] | desc |
+| open : boolean    | required | The state control for showing or hiding the modal |
+| title : string    | optional | The title text of the modal. |
 
 ### Usage
-**Example one**
 ```  
-<Editor bind:object />
+<Modal
+  bind:open={aBooleanVariable}
+  title={"Do something"}
+>
+  <div slot="body">
+    ...content
+  </div>
+  <div slot="footer">
+    ... buttons
+  </div>
+</Modal>
 ```
-*Note: `--capt-add=SYS-ADMIN` is required for PDF rendering.*
+*Note: `bind:` is required for changes to the object and its model to be reflected in higher level components.*
+
 -->
 <script>
   import TiTimes from "svelte-icons/ti/TiTimes.svelte";
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {boolean} The state control for showing or hiding the modal.
    */
   export let open = false;
 
   /**
-   * @type {string} Slug being resolved.
+   * @type {string} The title text of the modal.
    */
   export let title = "Modal";
 </script>

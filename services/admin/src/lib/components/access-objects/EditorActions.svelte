@@ -17,13 +17,12 @@ The editor actions component holds functionality that is responsible for perform
 -->
 <script lang="ts">
   import { onMount } from "svelte";
-  import { session } from "$app/stores";
+  import type { Session } from "$lib/types";
   import FaArchive from "svelte-icons/fa/FaArchive.svelte";
   import type { AccessObject } from "@crkn-rcdr/access-data";
   import { detailedDiff } from "deep-object-diff";
   import { getStores } from "$app/stores";
   import { goto } from "$app/navigation";
-  import type { Session } from "$lib/types";
   import { showConfirmation } from "$lib/confirmation";
   import { checkValidDiff, checkModelChanged } from "$lib/validation";
   import Modal from "$lib/components/shared/Modal.svelte";
