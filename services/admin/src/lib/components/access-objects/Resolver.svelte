@@ -90,7 +90,11 @@ The resolver component allows the user to enter a slug, and then a request is se
         if (regex.test(slug)) {
           try {
             const response = await $session.lapin.query("slug.resolve", slug);
-            if (response === null) {
+            if (
+              response &&
+              response.hasOwnProperty("found") &&
+              response["found"] === false
+            ) {
               noid = null;
               dispatch("available", { slug: initial.slug, status: true });
             } else if (response.noid != initial.noid) {

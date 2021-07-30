@@ -1,5 +1,5 @@
 /**
- * @module
+ * @module arrayUtil
  * @description
  * This module contains methods that are useful for manipulating arrays.
  */

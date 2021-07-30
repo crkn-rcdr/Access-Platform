@@ -1,5 +1,5 @@
 /**
- * @module
+ * @module validation
  * @description
  * This module contains methods that are used to validate that varianbles and objects are like Collections and Manifests are in a valid state.
  */
@@ -22,10 +22,8 @@ import equal from "fast-deep-equal";
 function checkValidCollection(objectModel: AccessObject) {
   try {
     const res = EditableCollection.parse(objectModel);
-    console.log("collection res: ", res);
     return true;
   } catch (e) {
-    console.log("collection error: ", e);
     return false;
   }
 }
@@ -38,10 +36,8 @@ function checkValidCollection(objectModel: AccessObject) {
 function checkValidManifest(objectModel: AccessObject) {
   try {
     const res = EditableManifest.parse(objectModel);
-    console.log("manifest res: ", res);
     return true;
   } catch (e) {
-    console.log("manifest error: ", JSON.stringify(e));
     return false;
   }
 }

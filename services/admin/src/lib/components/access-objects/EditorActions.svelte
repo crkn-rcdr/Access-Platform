@@ -23,14 +23,9 @@ The editor actions component holds functionality that is responsible for perform
   import { detailedDiff } from "deep-object-diff";
   import { getStores } from "$app/stores";
   import { goto } from "$app/navigation";
-  import { showConfirmation } from "$lib/confirmation.js";
-  import { checkValidDiff, checkModelChanged } from "$lib/validation.js";
-  import Modal from "$lib/components/shared/Modal.svelte";
   import { showConfirmation } from "$lib/confirmation";
   import { checkValidDiff, checkModelChanged } from "$lib/validation";
-  import { goto } from "$app/navigation";
-
-  const { session } = getStores<Session>();
+  import Modal from "$lib/components/shared/Modal.svelte";
 
   /**
    * @type {AccessObject} This is the 'original' object of type AccessObject pulled from the backend, to be edited only once an action is successfully performed.
@@ -140,7 +135,6 @@ The editor actions component holds functionality that is responsible for perform
         clone = (await import("rfdc")).default();
         object = clone(objectModel) as AccessObject; // todo: get this done with zod
         checkModelChanged(object, objectModel);
-        console.log("RES", data);
       } catch (e) {
         //error = e;
         console.log(e);

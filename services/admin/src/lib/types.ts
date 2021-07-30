@@ -1,5 +1,5 @@
 /**
- * @module
+ * @module types
  * @description
  * This module contains types that are used throughout the admin app.
  */
@@ -49,7 +49,7 @@ export type ToggleParams = {
 };
 
 /**
- * Defins what information to include for the dynamic generation of pages in the side menu component
+ * Defines what information to include for the dynamic generation of pages in the side menu component
  */
 export type SideMenuPageData = {
   name: string;

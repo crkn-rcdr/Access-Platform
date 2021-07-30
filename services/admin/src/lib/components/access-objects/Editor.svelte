@@ -52,6 +52,7 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
    * @returns void
    */
   async function setPageList() {
+    if (!object || !objectModel) return;
     if (isManifest(objectModel)) {
       pageList = [
         {
@@ -92,7 +93,7 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
             },
           },
         },
-        {
+        /*{
           name: "Content",
           componentData: {
             contentComponent: CollectionContentEditor,
@@ -104,7 +105,7 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
               objectModel = objectModel;
             },
           },
-        },
+        },*/
       ];
     }
   }
@@ -119,6 +120,7 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
 
     rfdc = (await import("rfdc")).default();
     objectModel = rfdc(object) as AccessObject; // todo: get this done with zod
+    setPageList();
   }
 
   /**
@@ -128,7 +130,6 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
   $: {
     if (object) {
       setDataModel(object);
-      setPageList();
     }
   }
 </script>

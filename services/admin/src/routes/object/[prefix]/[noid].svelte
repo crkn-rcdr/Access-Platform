@@ -13,15 +13,18 @@
           page.params["noid"] as string,
         ].join("/");
         const response = await context.lapin.query("noid.resolve", id);
-        const object = AccessObject.parse(response);
-        let type = "other";
-        if (isCollection(object)) {
-          type = "collection";
-        } else if (isManifest(object)) {
-          type = "canvasManifest";
+        if (response && response["doc"]) {
+          const object = AccessObject.parse(response["doc"]);
+          let type = "other";
+          if (isCollection(object)) {
+            type = "collection";
+          } else if (isManifest(object)) {
+            type = "canvasManifest";
+          }
+          return { props: { object } };
         }
-        return { props: { object, createMode: false } };
-      } else return { props: { createMode: true } };
+      }
+      return { props: {} };
     } catch (e) {
       return e;
     }

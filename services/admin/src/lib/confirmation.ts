@@ -1,5 +1,5 @@
 /**
- * @module
+ * @module confirmation
  * @description
  * This module contains methods that enable script code to show notifications in the notifications list depending on the result of a method call.
  */

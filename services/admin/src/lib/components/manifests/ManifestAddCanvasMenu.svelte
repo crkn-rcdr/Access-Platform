@@ -94,8 +94,8 @@ This component allows the user to search through other manifests and select canv
     try {
       let prefixedNoid = event.detail;
       const response = await $session.lapin.query("noid.resolve", prefixedNoid);
-      if (response) {
-        const object = AccessObject.parse(response);
+      if (response && response["doc"]) {
+        const object = AccessObject.parse(response["doc"]);
         if (isCollection(object)) {
           error = "Error: Object is a collection, please select another.";
         } else if (isManifest(object)) {
