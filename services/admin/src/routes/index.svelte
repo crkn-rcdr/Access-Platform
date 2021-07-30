@@ -1,7 +1,7 @@
 <script context="module" lang="ts">
   /**
    * @module
-   * @description
+   * @description tests the lapin connection
    */
   import type { Load } from "@sveltejs/kit";
 
@@ -27,7 +27,7 @@
 <script lang="ts">
   /**
    * @file
-   * @description
+   * @description This is the main page for the app
    */
   import { goto } from "$app/navigation";
   import Resolver from "$lib/components/access-objects/Resolver.svelte";
@@ -36,7 +36,12 @@
   import { onMount } from "svelte";
   import type { RootLoadOutput } from "$lib/types";
 
+  /**
+   * @type {TRPCClient<any>} Allows for communication to the lapin api
+   */
   export let lapin;
+
+  /** Tests, to be deleted */
   export let servertest;
   export let serverfailure;
   let test = "waiting";
@@ -52,6 +57,11 @@
     }
   });
 
+  /**
+   * Routes to the object the user clicks from the TypeAhead component
+   * @param event
+   * @returns void
+   */
   function slugSelected(event: CustomEvent<string>) {
     const noid = event.detail;
     goto(`/object/${noid}`);

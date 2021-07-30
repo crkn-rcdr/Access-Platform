@@ -1,7 +1,7 @@
 <script context="module" lang="ts">
   /**
    * @module
-   * @description
+   * @description Creates a lapin router for the app to interact with
    */
   import type { LapinRouter } from "@crkn-rcdr/lapin-router";
   import type { Load } from "@sveltejs/kit";
@@ -28,14 +28,21 @@
 <script lang="ts">
   /**
    * @template
-   * @description
+   * @description This is the common layout for the application
    */
   import { getStores } from "$app/stores";
 
+  /**
+   * @type {TRPCClient<LapinRouter>} Allows the app to to speak to the lapin api
+   */
   export let lapin: TRPCClient<LapinRouter>;
 
+  /**
+   * @type {Session} The session store that contains the module for sending requests to lapin.
+   */
   const { session } = getStores<Session>();
 
+  /** Allows all other pages to access lapin */
   session.set({ ...$session, lapin });
 </script>
 

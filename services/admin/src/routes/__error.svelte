@@ -1,7 +1,7 @@
 <script context="module" lang="ts">
   /**
    * @module
-   * @description
+   * @description Catches any errors
    */
   import type { ErrorLoad } from "@sveltejs/kit";
   export const load: ErrorLoad = ({ error, status }) => {
@@ -16,7 +16,7 @@
 <script lang="ts">
   /**
    * @template
-   * @description
+   * @description Displays the error to the user
    */
   export let title: string;
 </script>
