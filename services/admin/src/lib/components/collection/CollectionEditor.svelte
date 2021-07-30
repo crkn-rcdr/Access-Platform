@@ -1,11 +1,11 @@
 <script lang="ts">
   import { onMount, createEventDispatcher } from "svelte";
   import { AccessObject } from "@crkn-rcdr/access-data";
-  import { isCollection, isManifest } from "@crkn-rcdr/access-data";
+  //import { isCollection, isManifest } from "@crkn-rcdr/access-data";
   import type { Collection } from "@crkn-rcdr/access-data/src/access/Collection";
   import TypeAhead from "$lib/components/access-objects/TypeAhead.svelte";
-  import { session } from "$app/stores";
-  import { getLapin } from "$lib/lapin";
+  import type { Session } from "$lib/types";
+  import { getStores } from "$app/stores";
   import AutomaticResizeNumberInput from "$lib/components/shared/AutomaticResizeNumberInput.svelte";
   import DynamicDragAndDropList from "$lib/components/shared/DynamicDragAndDropList.svelte";
   import { moveArrayElement } from "$lib/arrayUtil";
@@ -14,31 +14,28 @@
   import type { ObjectList } from "@crkn-rcdr/access-data";
 
   export let collection: Collection;
- 
   export let showAddButton = true;
+
   let indexModel: number[] = [];
   let activeMemberIndex: number = 0;
   let container: HTMLDivElement;
-
   let addedMember = false;
   let selectedCollection: ObjectList = [];
   let error = "";
-
   const LEFT_ARROW_CODE: number = 37;
   const UP_ARROW_CODE: number = 38;
   const RIGHT_ARROW_CODE: number = 39;
   const DOWN_ARROW_CODE: number = 40;
-  const lapin = getLapin({ url: $session["apiEndpoint"], fetch: null });
   const dispatch = createEventDispatcher();
-  console.log("Prit Collection:", collection);
+  const { session } = getStores<Session>();
 
+  console.log("Prit Collection:", collection);
   function setIndexModel() {
     indexModel = [];
     for (let i = 0; i < collection.members.length; i++) {
       indexModel.push(i + 1);
     }
   }
-
   function setActiveIndex(index: number) {
     if (index >= collection.members.length)
       index = collection.members.length - 1;
@@ -59,16 +56,13 @@
       destinationItemIndex
     );
     collection.members = collection.members;
-
     // Update the position inputs
     setIndexModel();
-
     // Highlight and move to new position
     activeMemberIndex = destinationItemIndex;
     jumpTo(activeMemberIndex);
     setActiveIndex(activeMemberIndex);
   }
-
   function selectPrevious() {
     if (activeMemberIndex > 0) {
       activeMemberIndex--;
@@ -104,18 +98,15 @@
       setActiveIndex(activeMemberIndex);
     }
   }
-
   let noid;
   async function handleSelect(event: any) {
     try {
       noid = event.detail;
-
-      const response = await lapin.query("noid.resolve", noid);
-
-      const object = AccessObject.parse(response);
-
+      const response = await $session.lapin.query("noid.resolve", noid);
+      console.log("show the response", response.doc);
+      const object = AccessObject.parse(response.doc);
+      console.log("Show the object", object);
       collection.members[collection.members.length] = object;
-      addedMember = false;
     } catch (e) {
       error = e;
     }
@@ -130,7 +121,6 @@
     if (collection.members.length) activeMemberIndex = 0;
     setIndexModel();
   });
-
   $: {
     collection.members;
     setIndexModel();
@@ -220,7 +210,6 @@
               <div id="grid">
                 <ul>
                   <li>
-                    <!--  <input bind:value={members["id"]} /> -->
                     {members["id"]}
                   </li>
                 </ul>
@@ -244,10 +233,11 @@
     overflow-y: hidden;
     opacity: 0.5;
   }
+  /*  .actions-wrap {
   .actions-wrap {
     flex: 1;
     margin-left: 1.5rem;
-  }
+  } */
 
   .action.icon {
     opacity: 0.6;
@@ -255,10 +245,10 @@
   }
   .pos {
     font-weight: 400;
+    margin-top: 0.58rem;
     margin-top: 2rem;
     margin-left: 0.58rem;
   }
-
   .action.icon {
     display: none;
     margin-top: 0.5em;

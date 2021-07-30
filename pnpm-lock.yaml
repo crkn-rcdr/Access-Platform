@@ -72,11 +72,8 @@ importers:
       '@types/node': ^16.4.3
       '@types/node-fetch': ^2.5.12
       ava: ^3.15.0
-<<<<<<< HEAD
-      node-fetch: ^2.6.1
-=======
       deep-object-diff: ^1.1.0
->>>>>>> saving-editor-changes
+      node-fetch: ^2.6.1
       npm-run-all: ^4.1.5
       ts-node: ^10.1.0
       typescript: ^4.3.5
@@ -86,18 +83,12 @@ importers:
       '@crkn-rcdr/access-env': link:../env
       '@crkn-rcdr/couch-utils': link:../couch-utils
       '@trpc/server': 8.4.1
-<<<<<<< HEAD
+      deep-object-diff: 1.1.0
       node-fetch: 2.6.1
       zod: 3.5.1
     devDependencies:
-      '@types/node': 16.4.3
-      '@types/node-fetch': 2.5.12
-=======
-      deep-object-diff: 1.1.0
-      zod: 3.5.1
-    devDependencies:
       '@types/node': 16.4.6
->>>>>>> saving-editor-changes
+      '@types/node-fetch': 2.5.12
       ava: 3.15.0
       npm-run-all: 4.1.5
       ts-node: 10.1.0_92fbe6d45ea3425f3fea1cc0335d940a
@@ -368,7 +359,6 @@ packages:
       '@types/node': 16.4.6
     dev: true
 
-<<<<<<< HEAD
   /@types/node-fetch/2.5.12:
     resolution: {integrity: sha512-MKgC4dlq4kKNa/mYrwpKfzQMB5X3ee5U6fSprkKpToBqBmX4nFZL9cW5jl6sWn+xpRJ7ypWh2yyqqr8UUCstSw==}
     dependencies:
@@ -376,16 +366,12 @@ packages:
       form-data: 3.0.1
     dev: true
 
-  /@types/node/16.4.3:
-    resolution: {integrity: sha512-GKM4FLMkWDc0sfx7tXqPWkM6NBow1kge0fgQh0bOnlqo4iT1kvTvMEKE0c1RtUGnbLlGRXiAA8SumE//90uKAg==}
-=======
-  /@types/node/16.4.6:
-    resolution: {integrity: sha512-FKyawK3o5KL16AwbeFajen8G4K3mmqUrQsehn5wNKs8IzlKHE8TfnSmILXVMVziAEcnB23u1RCFU1NT6hSyr7Q==}
->>>>>>> saving-editor-changes
-    dev: true
-
   /@types/node/16.4.5:
     resolution: {integrity: sha512-+0GPv/hIFNoy8r5MFf7vRpBjnqNYNrlHdetoy23E7TYc7JB2ctwyi3GMKpviozaHQ/Sy2kBNUTvG9ywN66zV1g==}
+    dev: true
+
+  /@types/node/16.4.6:
+    resolution: {integrity: sha512-FKyawK3o5KL16AwbeFajen8G4K3mmqUrQsehn5wNKs8IzlKHE8TfnSmILXVMVziAEcnB23u1RCFU1NT6hSyr7Q==}
     dev: true
 
   /@types/normalize-package-data/2.4.1:
