@@ -78,7 +78,7 @@ This componenet allows the user to search the backend for any access object that
    * @returns void
    */
   async function selectItem(item: any) {
-    dispatch("selected", item["noid"] as string);
+    dispatch("selected", item["id"] as string);
   }
 </script>
 

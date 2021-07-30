@@ -124,7 +124,6 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   function handleSelected() {
     if (selectedCanvases?.[0]?.["id"] !== canvas["id"]) showSave = true;
     else showSave = false;
-    console.log(showSave, selectedCanvases, canvas);
   }
 
   function handleSavePressed() {

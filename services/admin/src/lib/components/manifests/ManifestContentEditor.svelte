@@ -22,9 +22,9 @@ Allows the user to modify the canvas list for a manifest.
   import CanvasViewer from "../canvases/CanvasViewer.svelte";
   import CanvasThumbnailList from "../canvases/CanvasThumbnailList.svelte";
   import Switch from "$lib/components/shared//Switch.svelte";
-  import SwitchCase from "$lib/components/shared//SwitchCase.svelte";
+  import SwitchCase from "$lib/components/shared/SwitchCase.svelte";
   import ManifestAddCanvasMenu from "$lib/components/manifests/ManifestAddCanvasMenu.svelte";
-  import NotificationBar from "../shared/NotificationBar.svelte";
+  import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
   import { typedChecks } from "$lib/validation.js";
 
   /**

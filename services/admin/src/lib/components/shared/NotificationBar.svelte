@@ -1,7 +1,7 @@
 <!--
 @component
 ### Overview
-A component used to notify the user to something. It can have a green background (state = success), red background (state = "fail"), or a yellow background (state = "warn".) Depending on the value of the float property, it can either display in-line in the DOM or float over it, sticking to the bottom right.
+A component tha tis used to highlight important messages to the user
 
 ### Properties
 |    |    |    |
@@ -17,9 +17,9 @@ A component used to notify the user to something. It can have a green background
 ### Usage
 **Example one**
 ```  
-<Editor bind:object />
+<NotificationBar message="A non empty string" status="success" />
 ```
-*Note: `--capt-add=SYS-ADMIN` is required for PDF rendering.*
+*Note: `message` must be non-empty to have the notification display.*
 -->
 <script lang="ts">
   import ExpansionTile from "./ExpansionTile.svelte";

@@ -4,7 +4,6 @@ import { LapinContext } from "./context.js";
 
 import { slugRouter } from "./routes/slug.js";
 import { noidRouter } from "./routes/noid.js";
-import { objectRouter } from "./routes/object.js";
 
 export function createRouter() {
   return trpcRouter<LapinContext>();
@@ -12,7 +11,5 @@ export function createRouter() {
 
 export const router = createRouter()
   .merge("slug.", slugRouter)
-  .merge("noid.", noidRouter)
-  .merge("object.", objectRouter);
-
+  .merge("noid.", noidRouter);
 export type LapinRouter = typeof router;

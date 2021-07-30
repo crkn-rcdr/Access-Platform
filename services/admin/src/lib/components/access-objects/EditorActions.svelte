@@ -26,6 +26,11 @@ The editor actions component holds functionality that is responsible for perform
   import { showConfirmation } from "$lib/confirmation.js";
   import { checkValidDiff, checkModelChanged } from "$lib/validation.js";
   import Modal from "$lib/components/shared/Modal.svelte";
+  import { showConfirmation } from "$lib/confirmation";
+  import { checkValidDiff, checkModelChanged } from "$lib/validation";
+  import { goto } from "$app/navigation";
+
+  const { session } = getStores<Session>();
 
   /**
    * @type {AccessObject} This is the 'original' object of type AccessObject pulled from the backend, to be edited only once an action is successfully performed.

@@ -23,7 +23,6 @@
         return { props: { object, createMode: false } };
       } else return { props: { createMode: true } };
     } catch (e) {
-      console.log("ERROR", e);
       return e;
     }
   };
