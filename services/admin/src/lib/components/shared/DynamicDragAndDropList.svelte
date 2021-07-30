@@ -279,21 +279,16 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
 
   /**
    *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns
+   * @event onMount
+   * @description
    */
   onMount(() => {
     enableDraggingOnChildren();
   });
 
   /**
-   *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns
+   * @listens arr
+   * @description
    */
   $: {
     dragList;

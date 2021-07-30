@@ -1,19 +1,50 @@
 <!--
 @component
 ### Overview
-The overriding design goal for Markdown's formatting syntax is to make it as readable as possible. The idea is that a Markdown-formatted document should be publishable as-is, as plain text, without looking like it's been marked up with tags or formatting instructions.
+A component that shows a navigable set of pages with a side menu to allow the user to choose which page to see.
 
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| prop : type    | [required, optional] | desc |
+| fullPage : boolean                 | optional | If the menu that takes up the entire body of a page, or if it should be an inline menu. |
+| activeIndex : number               | optional | Sets the initital active page |
+| pageList: Array<SideMenuPageData>  | optional | For dynamic sidenavs. Handles generating the side menu buttons and pages dynamically through an array. Developers can use either this list or just build their menus by putting in their own template components. |
 
 ### Usage
-**Example one**
+**Dynamic Side Menu with pageList**
 ```  
-<Editor bind:object />
+<script>
+  pageList = [
+    {
+      name: "Page Title",
+      componentData: {
+        contentComponent: <Component to be displayed in the page>,
+        contentComponentProps: { ...Any properties to set in the component above },
+        sideMenuPageProps: { ...Any properties to pass to the SideMenuPage component generated for this array item },
+        update: () => {
+          Here you can put code that should run any time the params passed into contentComponentProps are updated.
+        },
+      },
+    },
+  ];
+</script>
+<SideMenuContainer {pageList}>
+  ...header
+</SideMenuContainer>
 ```
-*Note: `--capt-add=SYS-ADMIN` is required for PDF rendering.*
+**Regular Side Menu**
+```
+<SideMenuContainer>
+  <SideMenuPageList>
+    <SideMenuPageListButton>
+    </SideMenuPageListButton>
+  </SideMenuPageList>
+  <SideMenuBody>
+    <SideMenuPage>
+    </SideMenuPage>
+  </SideMenuBody>
+</SideMenuContainer>
+```
 -->
 <script lang="ts">
   import { onMount } from "svelte";
@@ -23,84 +54,69 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   import SideMenuPage from "$lib/components/shared/SideMenuPage.svelte";
   import type { SideMenuPageData } from "$lib/types";
 
-  /** Option a menu that takes up the entire body of a page, or an inline menu. */
+  /**
+   * @type {boolean} If the menu that takes up the entire body of a page, or if it should be an inline menu.
+   */
   export let fullPage = true;
 
-  /** Sets the initital active page */
+  /**
+   * @type {number} Sets the initital active page
+   */
   export let activeIndex = 0;
 
-  /** Handles generating the side menu buttons and pages dynamically through an array
-   *  Developers can use either this list or just build their menus by putting in their own template components.
+  /**
+   * @type {Array<SideMenuPageData>} For dynamic sidenavs. Handles generating the side menu buttons and pages dynamically through an array. Developers can use either this list or just build their menus by putting in their own template components.
    */
   export let pageList: Array<SideMenuPageData> = [];
 
-  let pageNames: string[] = []; // Makes it easier to generate the sidenav buttons list
-  let pageComponents: any[] = []; // Makes it easier to generate the page body list
-  let instances: any = {}; // Keeps track of the actual instances of the components dynamically created through svelte:component.
-
-  /** Any time the page list changes, redraw the menus and pages. */
+  /**
+   * @type {string[]} For dynamic sidenavs. Makes it easier to generate the sidenav buttons list
+   */
+  let pageNames: string[] = [];
 
   /**
-   *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns
+   * @type {any[]} For dynamic sidenavs. Makes it easier to generate the page body list
    */
-  $: pageNames = pageList.map((el) => el["name"]);
+  let pageComponents: any[] = [];
 
   /**
-   *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns
+   * @type {any} For dynamic sidenavs. Keeps track of the actual instances of the components dynamically created through svelte:component.
    */
-  $: pageComponents = pageList.map((el) => el["componentData"]);
-
-  /**
-   *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns
-   */
-  $: {
-    for (const key in instances) {
-      instances[key].$$.after_update.push(() => {
-        pageComponents[parseInt(key)].update(); // Any time the instances object changes, add a callback to each component instance that triggers the update method passed in through the SideMenuPageData objects in the pageList array property.
-      });
-    }
-  }
+  let instances: any = {};
 
   /** Handles the hiding and showing of pages based on user interaction with the menu */
+  /**
+   * @type {HTMLDivElement} The wrapper container for all of the sidenav contents.
+   */
   let container: HTMLDivElement;
+
+  /**
+   * @type {NodeListOf<Element>} The HTML elements that correspond to each page button.
+   */
   let pageButtons: NodeListOf<Element>;
+
+  /**
+   * @type {NodeListOf<Element>} The HTML elements that correspond to each page.
+   */
   let pageBodies: NodeListOf<Element>;
 
   /**
-   *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns
+   * Uses the @var activeIndex and finds the corresponding page button in the @var pageButtons  page list to highlight. All other pages are unhighlighted.
+   * @returns void
    */
   function setActivePageButtonClass() {
     for (let i = 0; i < pageButtons.length; i++) {
       if (i === activeIndex) pageButtons?.[i]?.classList?.add("active");
       else {
-        pageBodies?.[i]?.classList?.add("display-hidden");
+        //pageBodies?.[i]?.classList?.add("display-hidden");
         pageButtons?.[i]?.classList?.remove("active");
       }
     }
   }
 
   /**
-   *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns
+   * Uses the @var activeIndex and finds the corresponding page in the @var pageBodies  page list to display. All other pages are hidden.
+   * @returns void
    */
   function setActivePageBody() {
     for (let i = 0; i < pageBodies.length; i++) {
@@ -111,11 +127,8 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   }
 
   /**
-   *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns
+   * Calls @function setActivePageButtonClass and @function setActivePageBody
+   * @returns void
    */
   function setPage() {
     setActivePageButtonClass();
@@ -123,11 +136,9 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   }
 
   /**
-   *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns
+   * Adds a statement to set the @var activeIndex of the page button in the @var pageButtons array that was clicked, upon it being clicked.
+   * Adds the @function setPage to each @var pageButtons click event.
+   * @returns void
    */
   function enablePaging() {
     for (let i = 0; i < pageButtons.length; i++) {
@@ -139,11 +150,8 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
   }
 
   /**
-   *
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns
+   * @event onMount
+   * @description When the component instance is mounted onto the dom, the @var pageButtons are grapped from the @var container, and the @var pageBodies are also grabbed. @function enablePaging and @function setPage are called.
    */
   onMount(() => {
     pageButtons = container.querySelectorAll(".side-menu-page-list-button");
@@ -151,6 +159,32 @@ The overriding design goal for Markdown's formatting syntax is to make it as rea
     enablePaging();
     setPage();
   });
+
+  /* For dynamicly generated sidenavs. */
+
+  /**
+   * @listens pageList
+   * @description Any time the page list changes, redraw the menus.
+   */
+  $: pageNames = pageList.map((el) => el["name"]);
+
+  /**
+   * @listens pageList
+   * @description Any time the page list changes, redraw the pages.
+   */
+  $: pageComponents = pageList.map((el) => el["componentData"]);
+
+  /**
+   * @listens instances
+   * @description Any time the instances object changes, add a callback to each component instance that triggers the update method passed in through the SideMenuPageData objects in the pageList array property.
+   */
+  $: {
+    for (const key in instances) {
+      instances[key].$$.after_update.push(() => {
+        pageComponents[parseInt(key)].update();
+      });
+    }
+  }
 </script>
 
 <div bind:this={container} class="side-menu-container">
