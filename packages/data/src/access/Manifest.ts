@@ -80,6 +80,6 @@ export const EditableManifest = Manifest.pick({
   viewingDirection: true,
   canvases: true,
   pageLabels: true,
-});
+}).partial();
 
 export type EditableManifest = z.infer<typeof EditableManifest>;

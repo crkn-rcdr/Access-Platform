@@ -10,6 +10,7 @@ importers:
 
   packages/couch-utils:
     specifiers:
+      '@crkn-rcdr/access-data': workspace:^0.0.0
       '@crkn-rcdr/access-env': workspace:*
       '@types/node': ^16.4.3
       ava: ^3.15.0
@@ -19,6 +20,7 @@ importers:
       typescript: ^4.3.5
       zod: ^3.5.1
     dependencies:
+      '@crkn-rcdr/access-data': link:../data
       '@crkn-rcdr/access-env': link:../env
       nano: 9.0.3
       zod: 3.5.1

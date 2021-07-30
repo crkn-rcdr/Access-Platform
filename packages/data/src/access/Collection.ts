@@ -38,6 +38,6 @@ export const EditableCollection = Collection.pick({
   summary: true,
   behavior: true,
   members: true,
-});
+}).partial();
 
 export type EditableCollection = z.infer<typeof EditableCollection>;

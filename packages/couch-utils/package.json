@@ -63,6 +63,7 @@
     "typescript": "^4.3.5"
   },
   "dependencies": {
+    "@crkn-rcdr/access-data": "workspace:^0.0.0",
     "@crkn-rcdr/access-env": "workspace:*",
     "nano": "^9.0.3",
     "zod": "^3.5.1"

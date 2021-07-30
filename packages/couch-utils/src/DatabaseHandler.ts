@@ -142,7 +142,7 @@ export class DatabaseHandler<T extends Document> {
    */
   async update<Body = unknown>(args: UpdateArgs<Body>) {
     try {
-      return await this.db.updateWithHandler(
+      await this.db.updateWithHandler(
         args.ddoc,
         args.name,
         args.docId,
