@@ -23,8 +23,8 @@ The editor actions component holds functionality that is responsible for perform
   import { detailedDiff } from "deep-object-diff";
   import { getStores } from "$app/stores";
   import { goto } from "$app/navigation";
-  import { showConfirmation } from "$lib/confirmation";
-  import { checkValidDiff, checkModelChanged } from "$lib/validation";
+  import { showConfirmation } from "$lib/confirmation.js";
+  import { checkValidDiff, checkModelChanged } from "$lib/validation.js";
   import Modal from "$lib/components/shared/Modal.svelte";
 
   /**
