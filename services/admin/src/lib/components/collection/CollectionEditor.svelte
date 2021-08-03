@@ -106,6 +106,7 @@
       if (response.found) {
         const object = AccessObject.parse(response.doc);
         collection.members[collection.members.length] = object;
+        addedMember = false;
       }
     } catch (e) {
       error = e;
@@ -210,7 +211,7 @@
               <div id="grid">
                 <ul>
                   <li>
-                    {members["id"]}
+                    <a href="/object/{members['id']}">{members["id"]}</a>
                   </li>
                 </ul>
               </div>
