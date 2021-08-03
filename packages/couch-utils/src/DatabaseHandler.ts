@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { default as createError } from "http-errors";
+import createHttpError from "http-errors";
 import type { HttpError } from "http-errors";
 
 import {
@@ -115,7 +115,7 @@ export class DatabaseHandler<T extends Document> {
     try {
       doc = (await this.db.get(id)) as CouchDocument;
     } catch (e) {
-      throw createError(e.statusCode, e.error);
+      throw createHttpError(e.statusCode, e.error);
     }
 
     return this.parser.parse(fromCouch(doc));
@@ -157,7 +157,7 @@ export class DatabaseHandler<T extends Document> {
         args.body
       );
     } catch (e) {
-      throw createError(e.statusCode, e.error);
+      throw createHttpError(e.statusCode, e.error);
     }
   }
 
@@ -177,7 +177,7 @@ export class DatabaseHandler<T extends Document> {
     try {
       return await this.db.view(designName, viewName, options);
     } catch (e) {
-      throw createError(e.statusCode, e.error);
+      throw createHttpError(e.statusCode, e.error);
     }
   }
 
@@ -218,7 +218,7 @@ export class DatabaseHandler<T extends Document> {
         return response.docs as unknown as FindResult<T, Fields>[];
       }
     } catch (e) {
-      throw createError(e.statusCode, e.error);
+      throw createHttpError(e.statusCode, e.error);
     }
   }
 
@@ -239,7 +239,7 @@ export class DatabaseHandler<T extends Document> {
     const response = await this.find(selector, fields, options);
     if (response.length === 0) return { found: false };
     if (response.length === 1) return { found: true, result: response[0]! };
-    throw createError(
+    throw createHttpError(
       400,
       `More than one result found when looking up ${searchField} = ${key}`
     );

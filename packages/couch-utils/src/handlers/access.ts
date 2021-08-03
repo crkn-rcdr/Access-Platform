@@ -6,6 +6,7 @@ import {
   Noid,
   EditableCollection,
   EditableManifest,
+  StaffUpdate,
   User,
 } from "@crkn-rcdr/access-data";
 import { ServerScope } from "nano";
@@ -17,11 +18,24 @@ const AccessDatabaseObject = z.union([Alias, Manifest, Collection]);
 
 type AccessDatabaseObject = z.infer<typeof AccessDatabaseObject>;
 
+const makeStaffUpdate = (user: User): StaffUpdate => {
+  return {
+    by: user,
+    date: Date.now() / 1000,
+  };
+};
+
+/**
+ * Interact with Access Objects in their database.
+ */
 export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
   constructor(client: ServerScope) {
     super("access", AccessDatabaseObject, client);
   }
 
+  /**
+   * Publish an Access Object.
+   */
   async publish(id: Noid) {
     await this.update({
       ddoc: "access",
@@ -30,6 +44,9 @@ export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
     });
   }
 
+  /**
+   * Unpublish an Access Object.
+   */
   async unpublish(id: Noid) {
     await this.update({
       ddoc: "access",
@@ -38,23 +55,33 @@ export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
     });
   }
 
-  async editCollection(id: Noid, user: User, data: EditableCollection) {
-    const body = { ...data, user };
+  private async editObject<T>(args: { id: Noid; user: User; data: T }) {
+    const body = { ...args.data, staff: makeStaffUpdate(args.user) };
     await this.update({
       ddoc: "access",
-      name: "editCollecton",
-      docId: id,
+      name: "editObject",
+      docId: args.id,
       body,
     });
   }
 
-  async editManifest(id: Noid, user: User, data: EditableManifest) {
-    const body = { ...data, user };
-    await this.update({
-      ddoc: "access",
-      name: "editManifest",
-      docId: id,
-      body,
-    });
+  /**
+   * Update the staff-editable fields of a Collection.
+   */
+  async editCollection(args: {
+    id: Noid;
+    user: User;
+    data: EditableCollection;
+  }) {
+    const data = EditableCollection.parse(args.data);
+    return await this.editObject({ id: args.id, user: args.user, data });
+  }
+
+  /**
+   * Update the staff-editable fields of a Manifest.
+   */
+  async editManifest(args: { id: Noid; user: User; data: EditableManifest }) {
+    const data = EditableManifest.parse(args.data);
+    return await this.editObject({ id: args.id, user: args.user, data });
   }
 }
