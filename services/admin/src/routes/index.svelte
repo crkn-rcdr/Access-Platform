@@ -27,6 +27,8 @@
 
   import { onMount } from "svelte";
   import type { RootLoadOutput } from "$lib/types";
+  import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
+  import DropdownMenu from "$lib/components/shared/DropdownMenu.svelte";
 
   export let lapin;
   export let servertest;
@@ -51,7 +53,7 @@
 </script>
 
 <div class="wrapper">
-  <div class="hero hero__gradient full-bleed">
+  <!--div class="hero hero__gradient full-bleed">
     <div class="wrapper">
       <h1>Admin Tools</h1>
     </div>
@@ -66,13 +68,17 @@
   <br />
   <label for="slug">Slug:</label>
   <br />
-  <Resolver slug="" noid="" />
+  <Resolver slug="" noid="" /-->
 
+  <NotificationBar message="New fix pushed!" status="success" />
+  <NotificationBar message="There is some error!" status="fail" />
+  <NotificationBar
+    message="The platform is experiencing an outage."
+    status="warn"
+  />
   <br />
-  <br />
-  <a href="/object/new"><button class="primary">Create New Object</button></a>
-
-  <br />
-  <br />
-  <TypeAhead label="Search for an object to edit:" on:selected={slugSelected} />
+  <TypeAhead
+    placeholder="Search for a canvas or manifest..."
+    on:selected={slugSelected}
+  />
 </div>

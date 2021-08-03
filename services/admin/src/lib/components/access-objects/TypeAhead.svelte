@@ -7,7 +7,7 @@
   const { session } = getStores<Session>();
 
   const dispatch = createEventDispatcher();
-  export let label = "Please provide a label for this component.";
+  export let label = "";
   export let placeholder = "Placeholder...";
 
   let query = "";
