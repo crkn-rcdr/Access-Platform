@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { default as createError } from "http-errors";
+import type { HttpError } from "http-errors";
 
 import {
   DocumentViewParams,
@@ -8,11 +10,6 @@ import {
   MangoSelector,
 } from "nano";
 
-import {
-  DocumentNotFoundError,
-  fromNanoError,
-  UniqueKeyViolationError,
-} from "./errors.js";
 import { mangoEqualSelector } from "./util.js";
 
 /**
@@ -94,7 +91,6 @@ type UniqueFindResult<
  * Also handles translating `_id` and `_attachments` to non-underscored versions.
  */
 export class DatabaseHandler<T extends Document> {
-  private name: string;
   private parser: z.Schema<T>;
   private db: DocumentScope<unknown>;
 
@@ -105,7 +101,6 @@ export class DatabaseHandler<T extends Document> {
    * @param client A `couchdb-nano` instance pointing to a CouchDB endpoint that provides access to the database.
    */
   constructor(db: string, parser: z.Schema<T>, client: ServerScope) {
-    this.name = db;
     this.parser = parser;
     this.db = client.use(db);
   }
@@ -120,7 +115,7 @@ export class DatabaseHandler<T extends Document> {
     try {
       doc = (await this.db.get(id)) as CouchDocument;
     } catch (e) {
-      throw fromNanoError(e, { type: "document", db: this.name, id });
+      throw createError(e.statusCode, e.error);
     }
 
     return this.parser.parse(fromCouch(doc));
@@ -134,17 +129,14 @@ export class DatabaseHandler<T extends Document> {
    */
   async getSafe(
     id: string
-  ): Promise<
-    { found: true; doc: T } | { found: false; error: DocumentNotFoundError }
-  > {
+  ): Promise<{ found: true; doc: T } | { found: false }> {
     try {
       return { found: true, doc: await this.get(id) };
-    } catch (e) {
-      if (e instanceof DocumentNotFoundError) {
-        return { found: false, error: e };
-      } else {
-        throw e;
+    } catch (error) {
+      if ((error as HttpError).status === 404) {
+        return { found: false };
       }
+      throw error;
     }
   }
 
@@ -165,13 +157,7 @@ export class DatabaseHandler<T extends Document> {
         args.body
       );
     } catch (e) {
-      throw fromNanoError(e, {
-        type: "update",
-        db: this.name,
-        ddoc: args.ddoc,
-        name: args.name,
-        id: args.docId,
-      });
+      throw createError(e.statusCode, e.error);
     }
   }
 
@@ -191,12 +177,7 @@ export class DatabaseHandler<T extends Document> {
     try {
       return await this.db.view(designName, viewName, options);
     } catch (e) {
-      throw fromNanoError(e, {
-        type: "view",
-        db: this.name,
-        ddoc: designName,
-        name: viewName,
-      });
+      throw createError(e.statusCode, e.error);
     }
   }
 
@@ -237,7 +218,7 @@ export class DatabaseHandler<T extends Document> {
         return response.docs as unknown as FindResult<T, Fields>[];
       }
     } catch (e) {
-      throw fromNanoError(e, { type: "mango", db: this.name, query });
+      throw createError(e.statusCode, e.error);
     }
   }
 
@@ -258,7 +239,10 @@ export class DatabaseHandler<T extends Document> {
     const response = await this.find(selector, fields, options);
     if (response.length === 0) return { found: false };
     if (response.length === 1) return { found: true, result: response[0]! };
-    throw new UniqueKeyViolationError(selector, fields, response);
+    throw createError(
+      400,
+      `More than one result found when looking up ${searchField} = ${key}`
+    );
   }
 
   async findUniqueArray<

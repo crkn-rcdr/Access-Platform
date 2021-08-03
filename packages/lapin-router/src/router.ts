@@ -1,9 +1,23 @@
-import { router as trpcRouter } from "@trpc/server";
+import { router as trpcRouter, TRPCError } from "@trpc/server";
 
 import { LapinContext } from "./context.js";
 
-import { slugRouter } from "./routes/slug.js";
+import { accessObjectRouter } from "./routes/accessObject.js";
 import { noidRouter } from "./routes/noid.js";
+import { slugRouter } from "./routes/slug.js";
+
+export function httpErrorToTRPC(error: { status: number; message: string }) {
+  // theoretically this is being sorted upstream
+  const code =
+    error.status === 400
+      ? "BAD_REQUEST"
+      : error.status === 401
+      ? "UNAUTHORIZED"
+      : error.status === 404
+      ? "PATH_NOT_FOUND"
+      : "INTERNAL_SERVER_ERROR";
+  return new TRPCError({ message: error.message, code });
+}
 
 export function createRouter() {
   return trpcRouter<LapinContext>();
@@ -11,5 +25,7 @@ export function createRouter() {
 
 export const router = createRouter()
   .merge("slug.", slugRouter)
-  .merge("noid.", noidRouter);
+  .merge("noid.", noidRouter)
+  .merge("accessObject.", accessObjectRouter);
+
 export type LapinRouter = typeof router;
