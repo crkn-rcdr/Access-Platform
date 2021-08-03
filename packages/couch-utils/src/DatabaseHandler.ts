@@ -16,6 +16,7 @@ import {
 import { mangoEqualSelector } from "./util.js";
 
 /**
+ * The specification for a CouchDB document's `_attachments` object.
  * See https://docs.couchdb.org/en/stable/api/document/common.html#attachments
  */
 export const CouchAttachmentRecord = z.record(
@@ -40,6 +41,9 @@ type CouchDocument = {
   [k: string]: unknown;
 };
 
+/**
+ * An object that can be inserted into or retrieved from a CouchDB database.
+ */
 export type Document = {
   id: string;
   attachments?: CouchAttachmentRecord;
@@ -53,6 +57,7 @@ const fromCouch = (doc: CouchDocument): Document => {
     ...doc,
   };
 
+  // TODO: do this without `delete`
   delete result["_attachments"];
   delete result["_id"];
   delete result["_rev"];
@@ -83,11 +88,22 @@ type UniqueFindResult<
   Fields extends readonly (keyof T & string)[]
 > = { found: false } | { found: true; result: FindResult<T, Fields> };
 
+/**
+ * Handler for interactions with a CouchDB database.
+ *
+ * Also handles translating `_id` and `_attachments` to non-underscored versions.
+ */
 export class DatabaseHandler<T extends Document> {
   private name: string;
   private parser: z.Schema<T>;
   private db: DocumentScope<unknown>;
 
+  /**
+   * Creates a DatabaseHandler.
+   * @param db Name of the database.
+   * @param parser A Zod parser for data that belongs in this database.
+   * @param client A `couchdb-nano` instance pointing to a CouchDB endpoint that provides access to the database.
+   */
   constructor(db: string, parser: z.Schema<T>, client: ServerScope) {
     this.name = db;
     this.parser = parser;
