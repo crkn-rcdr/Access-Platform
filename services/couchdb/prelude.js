@@ -5,7 +5,7 @@
  * @returns {[Record<string, string>, { message: string }]} An array that can be returned by an update function.
  */
 exports.successReturn = (doc, message) => {
-  return [doc, JSON.stringify({ message }) + "\n"];
+  return [doc, { json: { message: message } }];
 };
 
 /**
@@ -13,8 +13,8 @@ exports.successReturn = (doc, message) => {
  * @param {string} message A message describing the error that prevented the update.
  * @returns {[null, { error: string }]} An array that can be returned by an update function.
  */
-exports.errorReturn = (message) => {
-  return [null, JSON.stringify({ error: message }) + "\n"];
+exports.errorReturn = (message, code = 400) => {
+  return [null, { code, json: { error: message } }];
 };
 
 // TODO: use more correct types for this
