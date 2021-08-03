@@ -1,5 +1,4 @@
 <script context="module" lang="ts">
-  import FaRegUserCircle from "svelte-icons/fa/FaRegUserCircle.svelte";
   import type { LapinRouter } from "@crkn-rcdr/lapin-router";
   import type { Load } from "@sveltejs/kit";
   import type { TRPCClient } from "@trpc/client";
@@ -22,6 +21,8 @@
 </script>
 
 <script lang="ts">
+  import FaRegQuestionCircle from "svelte-icons/fa/FaRegQuestionCircle.svelte";
+  import FaRegUserCircle from "svelte-icons/fa/FaRegUserCircle.svelte";
   import { getStores } from "$app/stores";
   import DropdownMenu from "$lib/components/shared/DropdownMenu.svelte";
 
@@ -37,17 +38,24 @@
   <a href="/"><img width="200" src="/static/canadiana-tag-color.svg" alt="canadiana.ca"/></a>
 
   <nav class="auto-align">
-    <a href="/import">Import Packages</a>
-    <a href="/dmd/new">New DMD Task</a>
-    <a href="/object/new">New Object</a>
+    <a href="/import">Import from Preservation</a>
+    <a href="/dmd/new">DMD Processing</a>
+    <a href="/object/new">Create New Object</a>
   </nav>
   
-  <DropdownMenu direction="right">
-    <div slot="dropdown-button" class="icon">
-      <FaRegUserCircle/>
-    </div>
-    <div class="disabled">Logged in as: <b>{$session.user.name}</b>, {$session.user.email}.</div>
-  </DropdownMenu>
+  <div class="right-menu auto-align auto-align__a-center">
+    <a href="https://github.com/crkn-rcdr/Access-Platform/issues" target="_blank" data-tooltip="Click for help!" data-tooltip-flow="bottom">
+      <div class="icon">
+        <FaRegQuestionCircle/>
+      </div>
+    </a>
+    <DropdownMenu direction="right">
+      <div slot="dropdown-button" class="icon">
+        <FaRegUserCircle/>
+      </div>
+      <div class="disabled">Logged in as: <b>{$session.user.name}</b>, {$session.user.email}.</div>
+    </DropdownMenu>
+  </div>
 </pre>
 <slot />
 
@@ -72,5 +80,9 @@
     font-family: "Roboto";
     margin-right: var(--perfect-fourth-4);
     color: var(--primary) !important;
+  }
+
+  .right-menu > * {
+    margin-right: 1rem;
   }
 </style>
