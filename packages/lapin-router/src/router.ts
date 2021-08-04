@@ -7,8 +7,12 @@ import { collectionRouter } from "./routes/collection.js";
 import { manifestRouter } from "./routes/manifest.js";
 import { slugRouter } from "./routes/slug.js";
 
+/**
+ * Converts an HTTP Error (i.e. one with `status` as its 3-digit code) to
+ * the JSON-RPC format tRPC prefers. It looks like tRPC 9.x might accept
+ * HTTP codes for errors, thankfully.
+ */
 export function httpErrorToTRPC(error: { status: number; message: string }) {
-  // theoretically this is being sorted upstream
   const code =
     error.status === 400
       ? "BAD_REQUEST"
