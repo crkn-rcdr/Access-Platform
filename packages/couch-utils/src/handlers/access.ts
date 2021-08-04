@@ -6,24 +6,17 @@ import {
   Noid,
   EditableCollection,
   EditableManifest,
-  StaffUpdate,
   User,
 } from "@crkn-rcdr/access-data";
 import { ServerScope } from "nano";
 
 import { DatabaseHandler } from "../DatabaseHandler.js";
+import createHttpError from "http-errors";
 
 // Use this essentially so that `slug` is defined
 const AccessDatabaseObject = z.union([Alias, Manifest, Collection]);
 
 type AccessDatabaseObject = z.infer<typeof AccessDatabaseObject>;
-
-const makeStaffUpdate = (user: User): StaffUpdate => {
-  return {
-    by: user,
-    date: Date.now() / 1000,
-  };
-};
 
 /**
  * Interact with Access Objects in their database.
@@ -55,13 +48,24 @@ export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
     });
   }
 
-  private async editObject<T>(args: { id: Noid; user: User; data: T }) {
-    const body = { ...args.data, staff: makeStaffUpdate(args.user) };
+  private async editObject<T extends { slug?: string }>(args: {
+    id: Noid;
+    user: User;
+    data: T;
+  }) {
+    const { slug } = args.data;
+
+    if (slug) {
+      const response = await this.findUnique("slug", slug, ["id"] as const);
+      if (response.found && response.result.id !== args.id)
+        throw createHttpError(400, `Slug ${slug} already in use.`);
+    }
+
     await this.update({
       ddoc: "access",
       name: "editObject",
       docId: args.id,
-      body,
+      body: args,
     });
   }
 
