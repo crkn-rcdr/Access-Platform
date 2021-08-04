@@ -75,6 +75,11 @@ none
     position: relative;
   }
 
+  /* The wrapper around the drop down control element */
+  .dropbtn {
+    cursor: pointer;
+  }
+
   /* Dropdown Content (Hidden by Default) */
   .dropdown-content {
     display: none;
