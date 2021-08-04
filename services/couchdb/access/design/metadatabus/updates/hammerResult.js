@@ -6,7 +6,7 @@ module.exports = function (doc, req) {
   } = require("views/lib/prelude");
 
   if (!doc) {
-    return errorReturn(`No document found with id ${doc.id}`);
+    return errorReturn(`No document found with id ${req.id}`, 404);
   }
 
   const data = extractJSONFromBody(req);

@@ -38,6 +38,11 @@ export const EditableCollection = Collection.pick({
   summary: true,
   behavior: true,
   members: true,
-});
+})
+  .partial()
+  .refine(
+    (obj) => Object.keys(obj).length > 0,
+    "Cannot edit a collection with an empty object"
+  );
 
 export type EditableCollection = z.infer<typeof EditableCollection>;
