@@ -5,7 +5,6 @@ import { LapinContext } from "./context.js";
 import { accessObjectRouter } from "./routes/accessObject.js";
 import { collectionRouter } from "./routes/collection.js";
 import { manifestRouter } from "./routes/manifest.js";
-import { noidRouter } from "./routes/noid.js";
 import { slugRouter } from "./routes/slug.js";
 
 export function httpErrorToTRPC(error: { status: number; message: string }) {
@@ -27,7 +26,6 @@ export function createRouter() {
 
 export const router = createRouter()
   .merge("slug.", slugRouter)
-  .merge("noid.", noidRouter)
   .merge("accessObject.", accessObjectRouter)
   .merge("manifest.", manifestRouter)
   .merge("collection.", collectionRouter);
