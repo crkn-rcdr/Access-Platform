@@ -3,6 +3,7 @@ import { router as trpcRouter, TRPCError } from "@trpc/server";
 import { LapinContext } from "./context.js";
 
 import { accessObjectRouter } from "./routes/accessObject.js";
+import { collectionRouter } from "./routes/collection.js";
 import { manifestRouter } from "./routes/manifest.js";
 import { noidRouter } from "./routes/noid.js";
 import { slugRouter } from "./routes/slug.js";
@@ -28,6 +29,7 @@ export const router = createRouter()
   .merge("slug.", slugRouter)
   .merge("noid.", noidRouter)
   .merge("accessObject.", accessObjectRouter)
-  .merge("manifest.", manifestRouter);
+  .merge("manifest.", manifestRouter)
+  .merge("collection.", collectionRouter);
 
 export type LapinRouter = typeof router;

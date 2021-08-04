@@ -1,4 +1,7 @@
 import { z } from "zod";
+import createHttpError from "http-errors";
+import { ServerScope } from "nano";
+
 import {
   Alias,
   Manifest,
@@ -8,10 +11,8 @@ import {
   EditableManifest,
   User,
 } from "@crkn-rcdr/access-data";
-import { ServerScope } from "nano";
 
 import { DatabaseHandler } from "../DatabaseHandler.js";
-import createHttpError from "http-errors";
 
 // Use this essentially so that `slug` is defined
 const AccessDatabaseObject = z.union([Alias, Manifest, Collection]);
@@ -52,13 +53,23 @@ export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
     id: Noid;
     user: User;
     data: T;
+    type: "manifest" | "collection" | "alias";
   }) {
-    const { slug } = args.data;
+    const typeCheck = await this.findUnique("id", args.id, ["type"] as const);
+    if (!typeCheck.found)
+      throw createHttpError(404, `No ${args.type} found with id ${args.id}.`);
+    if (typeCheck.result.type !== args.type)
+      throw createHttpError(
+        400,
+        `Object ${args.id} has type: ${typeCheck.result.type}.`
+      );
 
-    if (slug) {
-      const response = await this.findUnique("slug", slug, ["id"] as const);
-      if (response.found && response.result.id !== args.id)
-        throw createHttpError(400, `Slug ${slug} already in use.`);
+    if (args.data.slug) {
+      const slugCheck = await this.findUnique("slug", args.data.slug, [
+        "id",
+      ] as const);
+      if (slugCheck.found && slugCheck.result.id !== args.id)
+        throw createHttpError(400, `Slug ${args.data.slug} already in use.`);
     }
 
     await this.update({
@@ -71,21 +82,41 @@ export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
 
   /**
    * Update the staff-editable fields of a Collection.
+   * @returns The updated Collection.
    */
   async editCollection(args: {
     id: Noid;
     user: User;
     data: EditableCollection;
-  }) {
+  }): Promise<Collection> {
     const data = EditableCollection.parse(args.data);
-    return await this.editObject({ id: args.id, user: args.user, data });
+    await this.editObject({
+      id: args.id,
+      user: args.user,
+      data,
+      type: "collection",
+    });
+    const collection = await this.get(args.id);
+    return Collection.parse(collection);
   }
 
   /**
    * Update the staff-editable fields of a Manifest.
+   * @returns The updated Manifest.
    */
-  async editManifest(args: { id: Noid; user: User; data: EditableManifest }) {
+  async editManifest(args: {
+    id: Noid;
+    user: User;
+    data: EditableManifest;
+  }): Promise<Manifest> {
     const data = EditableManifest.parse(args.data);
-    return await this.editObject({ id: args.id, user: args.user, data });
+    await this.editObject({
+      id: args.id,
+      user: args.user,
+      data,
+      type: "manifest",
+    });
+    const manifest = await this.get(args.id);
+    return Manifest.parse(manifest);
   }
 }
