@@ -363,7 +363,8 @@ button.sm {
   height: var(--perfect-fourth-5);
 }
 
-button {
+button,
+.button {
   padding: 0 var(--perfect-fourth-4);
   height: var(--perfect-fourth-2);
   border: none;
@@ -373,50 +374,67 @@ button {
   cursor: pointer;
 }
 
-button.lg {
+.button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+button.lg,
+.button.lg {
   padding: var(--perfect-fourth-7) var(--perfect-fourth-3);
 }
 
-button.primary {
+button.primary,
+.button.primary {
   background-color: var(--primary);
   color: var(--primary-font) !important;
 }
-button.ghost.dark {
+button.ghost.dark,
+.button.ghost.dark {
   background-color: rgba(0, 0, 0, 0.2) !important;
   color: rgba(0, 0, 0, 0.7) !important;
 }
-button.ghost.light {
+button.ghost.light,
+.button.ghost.light {
   background-color: rgba(255, 255, 255, 0.2) !important;
   color: rgba(255, 255, 255, 0.7) !important;
 }
 
-button.secondary {
+button.secondary,
+.button.secondary {
   background-color: var(--secondary);
   color: var(--secondary-font) !important;
 }
 
-button.fancy {
+button.fancy,
+.button.fancy {
   background: var(--colour-gradient);
   color: var(--primary-font);
 }
 
-button.save {
+button.save,
+.button.save {
   background-color: var(--success);
   color: var(--success-font);
 }
 
-button.danger {
+button.danger,
+.button.danger {
   background-color: var(--danger);
   color: var(--danger-font);
 }
 
 button:hover,
+.button:hover,
 .clickable:hover {
   filter: brightness(1.2);
   cursor: pointer;
 }
 
-button .icon {
+button .icon,
+.button .icon {
   margin-right: 0.5rem;
   margin-left: -1rem;
 }

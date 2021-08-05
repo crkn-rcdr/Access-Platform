@@ -3,7 +3,7 @@ version: "3.9"
 services:
   #
   # Dev services
-  #
+  # 
   haproxy:
     profiles:
       - dev
@@ -40,7 +40,7 @@ services:
     container_name: access-noid
     depends_on:
       - haproxy
-    image: b1c52239daf2
+    image: docker.c7a.ca/noid:20210226
     volumes:
       - /noid/dbs
     networks:

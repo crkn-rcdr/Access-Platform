@@ -2,6 +2,7 @@
   import DmdPrefixSelector from "$lib/components/dmd/DmdPrefixSelector.svelte";
   import ScrollStepper from "$lib/components/shared/ScrollStepper.svelte";
   import ScrollStepperStep from "$lib/components/shared/ScrollStepperStep.svelte";
+  import FileSelector from "../shared/FileSelector.svelte";
 
   export let id = undefined;
 
@@ -44,16 +45,16 @@
 </script>
 
 <ScrollStepper bind:activeStepIndex>
-  <ScrollStepperStep>
-    <fieldset>
-      <legend>Metadata file</legend>
-
-      <legend>
+  <ScrollStepperStep title="Metadata file">
+    <div slot="icon">1</div>
+    <div>
+      <div>
         Select depositor:
         <DmdPrefixSelector bind:prefix={depositor} />
-      </legend>
+      </div>
 
-      <legend>
+      <br />
+      <div>
         Select type:
         <select bind:value={mdtype}>
           <option value="" />
@@ -63,25 +64,21 @@
           <option value="marcoocihm">MARC - ID in oocihm interpretation</option>
           <option value="marcooe">MARC - ID in ooe interpretation</option>
         </select>
-      </legend>
+      </div>
 
-      <legend>
-        Upload file:
-        <input
-          type="file"
-          id="upload"
-          name="upload"
-          on:change={() => {
-            //uploadFile();
-            console.log("uploadFile");
-            activeStepIndex = 1;
-          }}
-        />
-      </legend>
-    </fieldset>
+      <br />
+      <FileSelector
+        on:change={(e) => {
+          //uploadFile();
+          console.log("uploadFile", e);
+          activeStepIndex = 1;
+        }}
+      />
+    </div>
   </ScrollStepperStep>
 
-  <ScrollStepperStep>
+  <ScrollStepperStep title="Initiate Split">
+    <div slot="icon">2</div>
     {#if myattachment}
       <table>
         <tr>
@@ -98,78 +95,75 @@
         </tr>
       </table>
     {/if}
-    <p>
-      <button
-        type="submit"
-        on:click={() => {
-          console.log("Sumbit");
-          activeStepIndex = 2;
-        }}
-      >
-        Initiate Split
-      </button>
-    </p>
+
+    <br />
+    <button
+      class="button primary"
+      type="submit"
+      on:click={() => {
+        console.log("Sumbit");
+        activeStepIndex = 2;
+      }}
+    >
+      Initiate Split
+    </button>
   </ScrollStepperStep>
 
-  <ScrollStepperStep>
-    <br />
+  <ScrollStepperStep title="Split task" isLastStep={true}>
+    <div slot="icon">3</div>
     {#if mydoc && "split" in mydoc}
-      <fieldset>
-        <legend>Split task</legend>
-        <table>
-          {#if "requestDate" in mydoc.split}
-            <tr>
-              <td>Request Date</td>
-              <td>{mydoc.split.requestDate}</td>
-            </tr>
-          {/if}
-          {#if "succeeded" in mydoc.split}
-            <tr>
-              <td>Success?</td>
-              <td>{mydoc.split.succeeded ? "Yes" : "No"}</td>
-            </tr>
-          {/if}
-          {#if mydoc.split.message !== ""}
-            <tr>
-              <td>Message</td>
-              <td class="message">{mydoc.split.message}</td>
-            </tr>
-          {/if}
-          {#if "processDate" in mydoc.split}
-            <tr>
-              <td>Process Date</td>
-              <td>{mydoc.split.processDate}</td>
-            </tr>
-          {/if}
-        </table>
-      </fieldset>
+      <table>
+        {#if "requestDate" in mydoc.split}
+          <tr>
+            <td>Request Date</td>
+            <td>{mydoc.split.requestDate}</td>
+          </tr>
+        {/if}
+        {#if "succeeded" in mydoc.split}
+          <tr>
+            <td>Success?</td>
+            <td>{mydoc.split.succeeded ? "Yes" : "No"}</td>
+          </tr>
+        {/if}
+        {#if mydoc.split.message !== ""}
+          <tr>
+            <td>Message</td>
+            <td class="message">{mydoc.split.message}</td>
+          </tr>
+        {/if}
+        {#if "processDate" in mydoc.split}
+          <tr>
+            <td>Process Date</td>
+            <td>{mydoc.split.processDate}</td>
+          </tr>
+        {/if}
+      </table>
     {/if}
     <br />
 
     {#if myitems}
-      <fieldset>
-        <legend>Metadata records found</legend>
-        <table>
-          {#each myitems as item}
-            <tr>
-              <td>{item.id ? item.id : "[not found]"}</td>
-              <td>{item.accessidfound ? item.accessidfound : "[not found]"}</td>
-              <td>
-                {item.preservationidfound
-                  ? item.preservationidfound
-                  : "[not found]"}
-              </td>
-              <td>{item.validated ? "Yes" : "No"}</td>
-              <td>{item.message ? item.message : ""}</td>
-              <td>{item.pubmin ? item.pubmin : ""}</td>
-              <td>{item.pubmax ? item.pubmax : ""}</td>
-              <td>Copy2access</td>
-              <td>copy2preservation</td>
-            </tr>
-          {/each}
-        </table>
-      </fieldset>
+      <table>
+        <caption>Metadata records found</caption>
+        {#each myitems as item}
+          <tr>
+            <td>{item.id ? item.id : "[not found]"}</td>
+            <td>{item.accessidfound ? item.accessidfound : "[not found]"}</td>
+            <td>
+              {item.preservationidfound
+                ? item.preservationidfound
+                : "[not found]"}
+            </td>
+            <td>{item.validated ? "Yes" : "No"}</td>
+            <td>{item.message ? item.message : ""}</td>
+            <td>{item.pubmin ? item.pubmin : ""}</td>
+            <td>{item.pubmax ? item.pubmax : ""}</td>
+            <td>Copy2access</td>
+            <td>copy2preservation</td>
+          </tr>
+        {/each}
+      </table>
     {/if}
+    <br />
     <table>
       {#if depositor}
         <tr>
