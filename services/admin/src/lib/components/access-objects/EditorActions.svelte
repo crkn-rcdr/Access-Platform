@@ -63,11 +63,11 @@
               bodyObj
             );
             console.log("res", response);
-            return true;
+            return response?.id;
           }
           return false;
         } catch (e) {
-          return e;
+          return false;
         }
       },
       "Changes saved!",
