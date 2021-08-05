@@ -20,7 +20,7 @@
     }, // set in update local/update
     myattachment = {
       // set in update local/update
-      content_type: "",
+      content_type: "a type",
       data: "", // .optional(),
       digest: "",
       encoded_length: 123, //.optional(),
@@ -83,15 +83,15 @@
     {#if myattachment}
       <table>
         <tr>
-          <td>Name</td>
+          <td><b>Name</b></td>
           <td>{mdname}</td>
         </tr>
         <tr>
-          <td>Length</td>
+          <td><b>Length</b></td>
           <td>{myattachment.length}</td>
         </tr>
         <tr>
-          <td>Content Type</td>
+          <td><b>Content Type</b></td>
           <td>{myattachment.content_type}</td>
         </tr>
       </table>
@@ -113,28 +113,46 @@
     <div slot="icon">3</div>
     {#if mydoc && "split" in mydoc}
       <table>
-        {#if "requestDate" in mydoc.split}
-          <tr>
-            <td>Request Date</td>
-            <td>{mydoc.split.requestDate}</td>
-          </tr>
-        {/if}
         {#if "succeeded" in mydoc.split}
           <tr>
-            <td>Success?</td>
+            <td><b>Success?</b></td>
             <td>{mydoc.split.succeeded ? "Yes" : "No"}</td>
           </tr>
         {/if}
         {#if mydoc.split.message !== ""}
           <tr>
-            <td>Message</td>
+            <td><b>Message</b></td>
             <td class="message">{mydoc.split.message}</td>
+          </tr>
+        {/if}
+        {#if "requestDate" in mydoc.split}
+          <tr>
+            <td><b>Request Date</b></td>
+            <td>{mydoc.split.requestDate}</td>
           </tr>
         {/if}
         {#if "processDate" in mydoc.split}
           <tr>
-            <td>Process Date</td>
+            <td><b>Process Date</b></td>
             <td>{mydoc.split.processDate}</td>
+          </tr>
+        {/if}
+        {#if mydoc && mydoc._rev}
+          <tr>
+            <td><b>Revision</b></td>
+            <td>{mydoc._rev}</td>
+          </tr>
+        {/if}
+        {#if depositor}
+          <tr>
+            <td><b>Depositor</b></td>
+            <td>{depositor}</td>
+          </tr>
+        {/if}
+        {#if mdtype}
+          <tr>
+            <td><b>Metadata type</b></td>
+            <td>{mdtype}</td>
           </tr>
         {/if}
       </table>
@@ -142,7 +160,7 @@
     <br />
     {#if myitems}
       <table>
-        <caption>Metadata records found</caption>
+        <caption><b>Metadata records found</b></caption>
         {#each myitems as item}
           <tr>
             <td>{item.id ? item.id : "[not found]"}</td>
@@ -162,27 +180,6 @@
         {/each}
       </table>
     {/if}
-    <br />
-    <table>
-      {#if depositor}
-        <tr>
-          <td>Depositor</td>
-          <td>{depositor}</td>
-        </tr>
-      {/if}
-      {#if mdtype}
-        <tr>
-          <td>Metadata type</td>
-          <td>{mdtype}</td>
-        </tr>
-      {/if}
-      {#if mydoc && mydoc._rev}
-        <tr>
-          <td>Revision</td>
-          <td>{mydoc._rev}</td>
-        </tr>
-      {/if}
-    </table>
   </ScrollStepperStep>
 </ScrollStepper>
 

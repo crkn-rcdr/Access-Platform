@@ -495,6 +495,11 @@ table {
   border-radius: var(--border-radius);
 }
 
+caption {
+  text-align: left;
+  padding: 1rem;
+}
+
 tbody {
   background: var(--structural-div-bg);
 }
