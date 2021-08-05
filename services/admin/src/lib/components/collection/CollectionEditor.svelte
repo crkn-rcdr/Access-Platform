@@ -137,7 +137,7 @@
     {#if addedMember}
       <div>
         <TypeAhead
-          label="Search for a Collection Or Manifest to add from:"
+          placeholder="Search for a Collection Or Manifest to add from..."
           on:selected={handleSelect}
           on:keypress={() => (error = "")}
         />

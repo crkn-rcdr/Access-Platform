@@ -120,11 +120,11 @@
 
   .fixed-full-page {
     position: fixed;
-    top: calc(4.5rem + var(--viewport-scaling));
+    top: calc(6.5rem + var(--viewport-scaling));
     bottom: 0;
     right: 0;
     left: 0;
-    height: calc(100vh - 4.5rem - var(--viewport-scaling));
+    height: calc(100vh - 6.5rem - var(--viewport-scaling));
   }
 
   .fixed-full-page .header {
