@@ -90,7 +90,7 @@
       <div>
         <!--Todo: ask how best to limit to only manifests-->
         <TypeAhead
-          label="Search for a manifest to add canvases from:"
+          placeholder="Search for a manifest to add canvases from..."
           on:selected={handleSelect}
           on:keypress={() => (error = "")}
         />
