@@ -25,9 +25,13 @@ The vast majority of lapin routes will need to interact with access object metad
 
 Lapin routes can access the database handlers provided by couch-utils in the `couch` property of the lapin context.
 
+### Generic requests
+
+Many requests will not require database-specific logic. [The DatabaseHandler class](../packages/couch-utils/src/DatabaseHandler.ts), which every database handler inherits from, provides many generic request methods.
+
 ### Queries
 
-Queries for CouchDB data may involve document get requests, Mango queries, or design document views. Unless a query requires interacting with more than one database, a dedicated method for the query should be added to the associated database handler class. See [AccessHandler#get](../packages/couch-utils/src/handlers/access.ts) for a simple example.
+Queries for CouchDB data may involve document get requests, Mango queries, or design document views. Unless a query requires interacting with more than one database, a dedicated method for the query should be added to the associated database handler class.
 
 ### Mutations of a single access object
 
