@@ -44,5 +44,6 @@
   .icon {
     float: right;
     margin: 0 0.5rem;
+    cursor: pointer;
   }
 </style>

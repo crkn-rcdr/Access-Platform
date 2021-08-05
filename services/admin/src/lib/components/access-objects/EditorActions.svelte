@@ -22,64 +22,59 @@
   function checkEnableSave() {
     isSaveEnabled = checkValidDiff(object, objectModel);
   }
+
   $: {
     objectModel;
     checkEnableSave();
   }
 
-  async function sendSaveRequest(data: any) {
-    //todo make partial of type
-    try {
-      for (const prop in data) {
-        const bodyObj = { id: objectModel.id };
-        bodyObj[prop] = data[prop];
-        await $session.lapin.mutation(`${prop}.edit`, bodyObj);
-      }
-      return true;
-    } catch (e) {
-      return e;
-    }
-    /*let newlyCreated = false;
-    const response = await showConfirmation(
+  /* TODO: ask how to set up an insert request */
+  async function sendCreateRequest(data: any) {
+    return await showConfirmation(
       async () => {
-        if (objectModel?.id?.length) {
-          const bodyObj = {
-            id: objectModel.id,
-            data,
-          };
-          return await $session.lapin.mutation("object.insert", bodyObj);
-        } else {
-          const bodyObj = {
-            data: objectModel,
-          };
-          if (
-            objectModel["type"] === "collection" ||
-            objectModel["type"] === "manifest"
-          ) {
-            //todo assign id in backend
-            objectModel["id"] =
-              objectModel["type"] === "collection"
-                ? "69429/s038383832838"
-                : "69429/m038383832838";
+        try {
+          //if(response) goto(`/object/${objectModel["id"]}`);
+          return true;
+        } catch (e) {
+          return e;
+        }
+      },
+      `${objectModel.type} created!`,
+      `Failed to create ${objectModel.type}.`
+    );
+  }
 
-            const res = await $session.lapin.mutation(
-              `object.${objectModel["type"]}Insert`,
+  async function sendSaveRequest(data: any) {
+    return await showConfirmation(
+      async () => {
+        try {
+          if (
+            objectModel.type === "manifest" ||
+            objectModel.type === "collection"
+          ) {
+            const bodyObj = {
+              id: objectModel.id,
+              user: $session.user,
+              data,
+            };
+            console.log("bodyObj", bodyObj);
+            const response = await $session.lapin.mutation(
+              `${objectModel.type}.edit`,
               bodyObj
             );
-            if (res) newlyCreated = true;
-            return res;
-          } else throw "Object not a collection or a manifest";
+            console.log("res", response);
+            return true;
+          }
+          return false;
+        } catch (e) {
+          return e;
         }
       },
       "Changes saved!",
       "Failed to save changes."
     );
-
-    if (newlyCreated) goto(`/object/${objectModel["id"]}`);
-    return response;*/
   }
 
-  // TODO: check valid manifest or canvas before showing save button
   async function handleSave() {
     const diff: any = detailedDiff(object, objectModel); //TODO: We can send this to the backend
 
@@ -92,9 +87,10 @@
       bodyObj["canvases"] = objectModel["canvases"];
     }
 
-    // might need 'deleted'
+    /* const data = objectModel?.id?.length
+      ? await sendSaveRequest(bodyObj)
+      : await sendCreateRequest(bodyObj); */
     const data = await sendSaveRequest(bodyObj);
-
     if (data) {
       try {
         clone = (await import("rfdc")).default();
@@ -102,24 +98,47 @@
         checkModelChanged(object, objectModel);
       } catch (e) {
         //error = e;
+        console.log(e);
       }
     }
   }
+
+  /* TODO: ask what the best way to set this to undefined is, because it seems like undefined params get trimmed from the data object */
   async function handlePlaceInStorage() {
     showMovetoStorageModal = false;
-    const response = await showConfirmation(
+    return await showConfirmation(
       async () => {
-        return await $session.lapin.query(
-          "noid.unassignSlug",
-          objectModel["id"]
-        );
+        if (
+          objectModel.type === "manifest" ||
+          objectModel.type === "collection"
+        ) {
+          try {
+            const response = await $session.lapin.mutation(
+              `${objectModel.type}.edit`,
+              {
+                id: objectModel.id,
+                user: $session.user,
+                data: {
+                  slug: "",
+                },
+              }
+            );
+            console.log("res", response);
+            if (response) {
+              objectModel["slug"] = undefined;
+              object = clone(objectModel) as AccessObject; // todo: get this done with zod
+            }
+            return true;
+          } catch (e) {
+            //error = e;
+            console.log(e);
+          }
+        }
+        return false;
       },
       "success",
       "fail"
     );
-    objectModel["slug"] = undefined;
-    object = clone(objectModel) as AccessObject; // todo: get this done with zod
-    return response;
   }
 
   function handlePublishStatusChange() {}
