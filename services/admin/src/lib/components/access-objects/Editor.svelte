@@ -8,7 +8,7 @@
   import EditorActions from "$lib/components/access-objects/EditorActions.svelte";
   import StatusIndicator from "$lib/components/access-objects/StatusIndicator.svelte";
   import InfoEditor from "$lib/components/access-objects/InfoEditor.svelte";
-
+  import CollectionEditor from "$lib/components/collection/CollectionEditor.svelte";
   export let object: AccessObject;
 
   let pageList: Array<SideMenuPageData> = [];
@@ -20,6 +20,7 @@
 
     rfdc = (await import("rfdc")).default();
     objectModel = rfdc(object) as AccessObject; // todo: get this done with zod
+    console.log(object, objectModel);
 
     if (isManifest(objectModel)) {
       pageList = [
@@ -56,6 +57,19 @@
             contentComponent: InfoEditor,
             contentComponentProps: { object: objectModel },
             sideMenuPageProps: {},
+            update: () => {
+              objectModel = objectModel;
+            },
+          },
+        },
+        {
+          name: "Members",
+          componentData: {
+            contentComponent: CollectionEditor,
+            contentComponentProps: { collection: objectModel },
+            sideMenuPageProps: {
+              overflowY: "hidden",
+            },
             update: () => {
               objectModel = objectModel;
             },

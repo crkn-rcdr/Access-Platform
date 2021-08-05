@@ -1,30 +1,41 @@
 <script lang="ts">
   import { onMount, createEventDispatcher } from "svelte";
+  import { AccessObject } from "@crkn-rcdr/access-data";
+  //import { isCollection, isManifest } from "@crkn-rcdr/access-data";
   import type { Collection } from "@crkn-rcdr/access-data/src/access/Collection";
+  import TypeAhead from "$lib/components/access-objects/TypeAhead.svelte";
+  import type { Session } from "$lib/types";
+  import { getStores } from "$app/stores";
   import AutomaticResizeNumberInput from "$lib/components/shared/AutomaticResizeNumberInput.svelte";
   import DynamicDragAndDropList from "$lib/components/shared/DynamicDragAndDropList.svelte";
   import { moveArrayElement } from "$lib/arrayUtil";
+  import TiArrowBack from "svelte-icons/ti/TiArrowBack.svelte";
+  import TiTrash from "svelte-icons/ti/TiTrash.svelte";
+  import type { ObjectList } from "@crkn-rcdr/access-data";
 
   export let collection: Collection;
   export let showAddButton = true;
+
   let indexModel: number[] = [];
   let activeMemberIndex: number = 0;
   let container: HTMLDivElement;
-
+  let addedMember = false;
+  let selectedCollection: ObjectList = [];
+  let error = "";
   const LEFT_ARROW_CODE: number = 37;
   const UP_ARROW_CODE: number = 38;
   const RIGHT_ARROW_CODE: number = 39;
   const DOWN_ARROW_CODE: number = 40;
-
   const dispatch = createEventDispatcher();
+  const { session } = getStores<Session>();
 
+  console.log("Prit Collection:", collection);
   function setIndexModel() {
     indexModel = [];
     for (let i = 0; i < collection.members.length; i++) {
       indexModel.push(i + 1);
     }
   }
-
   function setActiveIndex(index: number) {
     if (index >= collection.members.length)
       index = collection.members.length - 1;
@@ -45,16 +56,13 @@
       destinationItemIndex
     );
     collection.members = collection.members;
-
     // Update the position inputs
     setIndexModel();
-
     // Highlight and move to new position
     activeMemberIndex = destinationItemIndex;
     jumpTo(activeMemberIndex);
     setActiveIndex(activeMemberIndex);
   }
-
   function selectPrevious() {
     if (activeMemberIndex > 0) {
       activeMemberIndex--;
@@ -80,39 +88,78 @@
     }
   }
   function addClicked() {
-    dispatch("addClicked");
+    addedMember = true;
+  }
+  function deleteCanvasByIndex(event: any, index: number) {
+    event.stopPropagation();
+    if (index >= 0 && index < collection?.members.length) {
+      collection?.members.splice(index, 1);
+      collection.members = collection?.members;
+      setActiveIndex(activeMemberIndex);
+    }
+  }
+  let noid;
+  async function handleSelect(event: any) {
+    try {
+      noid = event.detail;
+      const response = await $session.lapin.query("accessObject.get", noid);
+      if (response) {
+        const object = AccessObject.parse(response);
+        collection.members[collection.members.length] = object;
+        addedMember = false;
+      }
+    } catch (e) {
+      error = e;
+    }
+  }
+  function handleCancelPressed() {
+    console.log("selected test", activeMemberIndex);
+    console.log("selected Collection", selectedCollection);
+    selectedCollection = [];
+    addedMember = false;
   }
   onMount(() => {
     if (collection.members.length) activeMemberIndex = 0;
     setIndexModel();
   });
-
   $: {
     collection.members;
     setIndexModel();
   }
 </script>
 
-<div class="editor">
-  <!-- {#if isCollection(model)}
-    <label for="Type">Type</label><br />
-    <input type="text" id="type" name="type" bind:value={model["type"]} /><br />
-  {/if}
-  {#if isCollection(model)}
-    <label for="public">Public</label><br />
-    <input
-      type="text"
-      id="public"
-      name="public"
-      bind:value={model["public"]}
-    /><br />
-  {/if} -->
-</div>
 <svelte:window on:keydown={handleKeydown} />
-{#if indexModel.length}
+{#if indexModel.length && collection}
   <div class="auto-align auto-align__column">
     {#if showAddButton}
       <button class="primary lg" on:click={addClicked}>Add Member</button>
+    {/if}
+    {#if addedMember}
+      <div>
+        <TypeAhead
+          label="Search for a Collection Or Manifest to add from:"
+          on:selected={handleSelect}
+          on:keypress={() => (error = "")}
+        />
+      </div>
+      <div class="add-menu-title">
+        <button
+          class="secondary cancel-button auto-align auto-align__a-center"
+          on:click={handleCancelPressed}
+        >
+          <div class="icon">
+            <TiArrowBack />
+          </div>
+          Exit
+        </button>
+      </div>
+      <br />
+      {#if error}
+        <br />
+        <div class="alert alert-danger">
+          {error}
+        </div>
+      {/if}
     {/if}
     <div
       bind:this={container}
@@ -120,19 +167,18 @@
       class="list"
       class:disabled={!showAddButton}
     >
-      {#if indexModel.length}
-        <DynamicDragAndDropList
-          bind:dragList={collection.members}
-          on:itemDropped={(e) => {
-            setActiveIndex(e.detail.destinationItemIndex);
-          }}
-        >
-          {#each collection.members as members, i}
-            <div
-              class="thumbnail"
-              class:active={i === activeMemberIndex}
-              on:mousedown={() => setActiveIndex(i)}
-            />
+      <DynamicDragAndDropList
+        bind:dragList={collection.members}
+        on:itemDropped={(e) => {
+          setActiveIndex(e.detail.destinationItemIndex);
+        }}
+      >
+        {#each collection?.members as members, i}
+          <div
+            class="members"
+            class:active={i === activeMemberIndex}
+            on:mousedown={() => setActiveIndex(i)}
+          >
             <div class="auto-align">
               <div class="actions-wrap">
                 <div class="auto-align auto-align__column">
@@ -147,26 +193,32 @@
                   >
                     <AutomaticResizeNumberInput
                       name="position"
-                      max={collection.members.length}
+                      max={collection?.members.length}
                       on:changed={(e) => {
                         moveMember(e, i);
                       }}
                       bind:value={indexModel[i]}
                     />
                   </div>
+                  <div
+                    class="action icon"
+                    on:click={(e) => deleteCanvasByIndex(e, i)}
+                  >
+                    <TiTrash />
+                  </div>
                 </div>
               </div>
-              <div>
+              <div id="grid">
                 <ul>
                   <li>
-                    <input bind:value={members["id"]} />
+                    <a href="/object/{members['id']}">{members["id"]}</a>
                   </li>
                 </ul>
               </div>
             </div>
-          {/each}
-        </DynamicDragAndDropList>
-      {/if}
+          </div>
+        {/each}
+      </DynamicDragAndDropList>
     </div>
   </div>
 {/if}
@@ -182,6 +234,12 @@
     overflow-y: hidden;
     opacity: 0.5;
   }
+  /*  .actions-wrap {
+  .actions-wrap {
+    flex: 1;
+    margin-left: 1.5rem;
+  } */
+
   .action.icon {
     opacity: 0.6;
     cursor: pointer;
@@ -189,17 +247,34 @@
   .pos {
     font-weight: 400;
     margin-top: 0.58rem;
+    margin-top: 2rem;
     margin-left: 0.58rem;
   }
-
   .action.icon {
     display: none;
     margin-top: 0.5em;
   }
+  .members:hover .action.icon {
+    display: inherit;
+  }
   .pos-input {
+    display: none;
+  }
+  .members:hover .pos-input {
+    display: inherit;
+  }
+  .members:hover .pos {
     display: none;
   }
   li {
     list-style: none;
+  }
+  #grid {
+    margin-top: 1rem;
+    height: 5rem;
+    display: grid;
+    grid-template-areas: "a a";
+    gap: 10px;
+    grid-auto-columns: 200px;
   }
 </style>
