@@ -27,7 +27,7 @@ Lapin routes can access the database handlers provided by couch-utils in the `co
 
 ### Queries
 
-Queries for CouchDB data may involve document get requests, Mango queries, or design document views. Unless a query requires interacting with more than one database, a dedicated method for the query should be added to the associated database handler class. See [AccessHandler#get](../packages/couch-utils/src/handlers/AccessHandler.ts) for a simple example.
+Queries for CouchDB data may involve document get requests, Mango queries, or design document views. Unless a query requires interacting with more than one database, a dedicated method for the query should be added to the associated database handler class. See [AccessHandler#get](../packages/couch-utils/src/handlers/access.ts) for a simple example.
 
 ### Mutations of a single access object
 
