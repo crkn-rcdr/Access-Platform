@@ -12,12 +12,6 @@
    */
   export let slug = "";
   /**
-   * Noid that the slug resolves to, or null
-   * if it doesn't. If this is provided, the resolver will trust that it's
-   * correct.
-   */
-  export let noid: string | null | undefined = undefined;
-  /**
    * Whether to hide the display when the current slug is the
    * same as the initial slug provided.
    */
@@ -26,54 +20,55 @@
 
   const dispatch = createEventDispatcher();
   const regex = /^[\p{L}\p{Nl}\p{Nd}\-_\.]+$/u;
-  const initial = { slug, noid };
-  $: shouldQuery =
-    !!slug && (slug !== initial.slug || initial.noid === undefined);
-
   /** @type {"READY" | "LOADING" | "MALFORMED" | "ERROR"} */
   let status: "READY" | "LOADING" | "MALFORMED" | "ERROR" =
-    initial.noid === undefined ? "LOADING" : "READY";
+    slug === undefined ? "LOADING" : "READY";
   let timer: NodeJS.Timeout | null = null;
+  let found = false;
+  let initial = slug;
+
+  $: shouldQuery = !!slug && slug !== initial;
 
   async function resolve() {
     if (shouldQuery) {
       if (timer) clearTimeout(timer);
       timer = setTimeout(async () => {
         status = "LOADING";
-        noid = undefined;
         if (regex.test(slug)) {
           try {
             const response = await $session.lapin.query("slug.resolve", slug);
+            console.log(slug, "Test:", response);
             if (response === null) {
-              noid = null;
-              dispatch("available", { slug: initial.slug, status: true });
-            } else if (response.noid != initial.noid) {
-              noid = response.noid as string;
-              dispatch("available", { slug: initial.slug, status: false });
+              dispatch("available", { slug: initial, status: false });
+              status = "ERROR";
+            } else if (!response.found) {
+              dispatch("available", { slug: slug, status: true });
+              found = false;
+              status = "READY";
+            } else {
+              dispatch("available", { slug: initial, status: false });
+              found = true;
+              status = "READY";
             }
-            status = "READY";
           } catch (e) {
-            noid = null;
             status = "ERROR";
           }
         } else {
-          noid = null;
           status = "MALFORMED";
         }
       }, 50);
-    } else if (slug === initial.slug) {
+    } else if (slug === initial) {
       status = "READY";
     }
   }
   onMount(async () => {
-    initial.noid = noid;
-    initial.slug = slug;
-    await resolve();
+    initial = slug;
+    if (!hideInitial) await resolve();
   });
 </script>
 
 <div>
-  {#if !!slug && !(hideInitial && slug === initial.slug)}
+  {#if !!slug && !(slug === initial)}
     {#if status === "LOADING"}
       <NotificationBar message="Loading" />
     {:else if status === "ERROR"}
@@ -83,13 +78,13 @@
         message="Slugs can only contain letters, numbers, and the following symbols: _ - ."
         status="fail"
       />
-    {:else if noid && noid !== initial.noid}
+    {:else if found}
       <slot name="in-use">
-        <a href="/object/{noid}">
+        <a href="/object/blurr">
           <NotificationBar message="⚠️ Slug in use" status="fail" />
         </a>
       </slot>
-    {:else if !noid || noid !== initial.noid}
+    {:else if !found}
       <slot name="available">
         <NotificationBar message="✅ Slug available" status="success" />
       </slot>
