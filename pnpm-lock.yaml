@@ -29,7 +29,7 @@ importers:
       zod: 3.5.1
     devDependencies:
       '@types/http-errors': 1.8.1
-      '@types/node': 16.4.3
+      '@types/node': 16.4.6
       ava: 3.15.0
       npm-run-all: 4.1.5
       ts-node: 10.1.0_92fbe6d45ea3425f3fea1cc0335d940a
@@ -136,8 +136,8 @@ importers:
       svelte-icons: 2.1.0
     devDependencies:
       '@crkn-rcdr/lapin-router': link:../../packages/lapin-router
-      '@sveltejs/adapter-node': 1.0.0-next.35
-      '@sveltejs/kit': 1.0.0-next.138_svelte@3.40.1
+      '@sveltejs/adapter-node': 1.0.0-next.36
+      '@sveltejs/kit': 1.0.0-next.141_svelte@3.40.1
       '@types/cookie': 0.4.1
       '@types/jsonwebtoken': 8.5.4
       npm-run-all: 4.1.5
@@ -272,15 +272,15 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
-  /@sveltejs/adapter-node/1.0.0-next.35:
-    resolution: {integrity: sha512-IUn1WTyA5DlUBj6oHkk25v42JFwLq9g0fvqmujYFavJLoJ38WBAvHOOiirI5w0y1E7lXUn3HFlEjCfc3JsScPg==}
+  /@sveltejs/adapter-node/1.0.0-next.36:
+    resolution: {integrity: sha512-wTaVgK0kA6a/OEMGIRbDpvHyovs4EBCdASRtxuyONOQzkzdHT/BLG0W2VgI07RWOm4dbeEV0eRwXGxZWagSmpQ==}
     dependencies:
       esbuild: 0.12.16
       tiny-glob: 0.2.9
     dev: true
 
-  /@sveltejs/kit/1.0.0-next.138_svelte@3.40.1:
-    resolution: {integrity: sha512-ajJVravr/h0uWysyKyrdqOphNj1bgPZ7Ovgf6dv/L+ubE5LKA8ZgqqxgfmMHIwm9d66vcYU6TydaQOAGrlIGCA==}
+  /@sveltejs/kit/1.0.0-next.141_svelte@3.40.1:
+    resolution: {integrity: sha512-6pU+3IRiRKPbpfd1YszlrXeradkiWTBu01dD+HqwFkZQO0iapwYZyRY93vnKw1bqeIjy87JW6QAwO3h9yU7jhQ==}
     engines: {node: ^12.20 || >=14.13}
     hasBin: true
     peerDependencies:

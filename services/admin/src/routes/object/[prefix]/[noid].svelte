@@ -8,8 +8,8 @@
           page.params["prefix"] as string,
           page.params["noid"] as string,
         ].join("/");
-        const response = await context.lapin.query("noid.resolve", id);
-        const object = AccessObject.parse(response["doc"]);
+        const response = await context.lapin.query("accessObject.get", id);
+        const object = AccessObject.parse(response);
         let type = "other";
         if (isCollection(object)) {
           type = "collection";
@@ -33,7 +33,6 @@
 </script>
 
 {#if object}
-  {object}
   <Editor bind:object />
 {:else}
   {object}

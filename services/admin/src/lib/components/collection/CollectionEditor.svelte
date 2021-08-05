@@ -102,9 +102,9 @@
   async function handleSelect(event: any) {
     try {
       noid = event.detail;
-      const response = await $session.lapin.query("noid.resolve", noid);
-      if (response.found) {
-        const object = AccessObject.parse(response.doc);
+      const response = await $session.lapin.query("accessObject.get", noid);
+      if (response) {
+        const object = AccessObject.parse(response);
         collection.members[collection.members.length] = object;
         addedMember = false;
       }
