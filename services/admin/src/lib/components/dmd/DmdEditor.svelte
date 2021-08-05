@@ -1,4 +1,6 @@
 <script>
+  import FaCheckCircle from "svelte-icons/fa/FaCheckCircle.svelte";
+  import FaTimesCircle from "svelte-icons/fa/FaTimesCircle.svelte";
   import DmdPrefixSelector from "$lib/components/dmd/DmdPrefixSelector.svelte";
   import ScrollStepper from "$lib/components/shared/ScrollStepper.svelte";
   import ScrollStepperStep from "$lib/components/shared/ScrollStepperStep.svelte";
@@ -110,7 +112,20 @@
   </ScrollStepperStep>
 
   <ScrollStepperStep title="Task results" isLastStep={true}>
-    <div slot="icon">3</div>
+    <div
+      slot="icon"
+      class="auto-align auto-align__j-center auto-align__a-center s-9immjC5o-rnn"
+    >
+      {#if mydoc && "split" in mydoc && "succeeded" in mydoc.split}
+        {#if mydoc.split.succeeded}
+          <FaCheckCircle />
+        {:else}
+          <FaTimesCircle />
+        {/if}
+      {:else}
+        3
+      {/if}
+    </div>
     {#if mydoc && "split" in mydoc}
       <table>
         {#if "succeeded" in mydoc.split}
