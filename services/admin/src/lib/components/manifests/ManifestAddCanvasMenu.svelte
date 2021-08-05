@@ -28,7 +28,10 @@
   async function handleSelect(event: any) {
     try {
       let prefixedNoid = event.detail;
-      const response = await $session.lapin.query("noid.resolve", prefixedNoid);
+      const response = await $session.lapin.query(
+        "accessObject.get",
+        prefixedNoid
+      );
       if (response) {
         const object = AccessObject.parse(response);
         if (isCollection(object)) {
