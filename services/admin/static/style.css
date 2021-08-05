@@ -727,3 +727,13 @@ input[type="checkbox"]:checked {
   color: var(--danger);
   border: 1px solid var(--danger);
 }
+
+/* Fieldset */
+
+fieldset {
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--border-color);
+  padding: 2rem;
+  border-radius: var(--border-radius);
+}

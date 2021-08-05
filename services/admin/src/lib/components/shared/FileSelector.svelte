@@ -13,7 +13,7 @@
       dispatch("change", e);
     }}
   />
-  <label for="file" class="button primary">Choose a file</label>
+  <label for="file" class="button primary">Choose File</label>
 </div>
 
 <style>

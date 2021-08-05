@@ -45,39 +45,40 @@
 </script>
 
 <ScrollStepper bind:activeStepIndex>
-  <ScrollStepperStep title="Metadata file">
+  <ScrollStepperStep title="Enter Task Information">
     <div slot="icon">1</div>
     <div>
-      <div>
-        Select depositor:
-        <DmdPrefixSelector bind:prefix={depositor} />
-      </div>
-
+      <DmdPrefixSelector bind:prefix={depositor} />
       <br />
-      <div>
-        Select type:
-        <select bind:value={mdtype}>
-          <option value="" />
-          <option value="issueinfocsv">Issueinfo CSV</option>
-          <option value="dccsv">Dublin Core CSV</option>
-          <option value="marc490">MARC - ID in 490</option>
-          <option value="marcoocihm">MARC - ID in oocihm interpretation</option>
-          <option value="marcooe">MARC - ID in ooe interpretation</option>
-        </select>
-      </div>
-
       <br />
-      <FileSelector
-        on:change={(e) => {
-          //uploadFile();
-          console.log("uploadFile", e);
-          activeStepIndex = 1;
-        }}
-      />
+      <fieldset>
+        <legend>Metadata file information</legend>
+        <div>
+          Select type:
+          <select name="metadata-type" bind:value={mdtype}>
+            <option value="" />
+            <option value="issueinfocsv">Issueinfo CSV</option>
+            <option value="dccsv">Dublin Core CSV</option>
+            <option value="marc490">MARC - ID in 490</option>
+            <option value="marcoocihm"
+              >MARC - ID in oocihm interpretation</option
+            >
+            <option value="marcooe">MARC - ID in ooe interpretation</option>
+          </select>
+        </div>
+        <br />
+        <FileSelector
+          on:change={(e) => {
+            //uploadFile();
+            console.log("uploadFile", e);
+            activeStepIndex = 1;
+          }}
+        />
+      </fieldset>
     </div>
   </ScrollStepperStep>
 
-  <ScrollStepperStep title="Initiate Split">
+  <ScrollStepperStep title="Review & Initiate Task">
     <div slot="icon">2</div>
     {#if myattachment}
       <table>
@@ -95,7 +96,6 @@
         </tr>
       </table>
     {/if}
-
     <br />
     <button
       class="button primary"
@@ -105,11 +105,11 @@
         activeStepIndex = 2;
       }}
     >
-      Initiate Split
+      Initiate Task
     </button>
   </ScrollStepperStep>
 
-  <ScrollStepperStep title="Split task" isLastStep={true}>
+  <ScrollStepperStep title="Task results" isLastStep={true}>
     <div slot="icon">3</div>
     {#if mydoc && "split" in mydoc}
       <table>
@@ -140,7 +140,6 @@
       </table>
     {/if}
     <br />
-
     {#if myitems}
       <table>
         <caption>Metadata records found</caption>
@@ -190,5 +189,8 @@
 <style>
   td.message {
     word-wrap: break-word;
+  }
+  select {
+    width: 100%;
   }
 </style>

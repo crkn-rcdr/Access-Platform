@@ -45,9 +45,17 @@
   ];
 </script>
 
-<select bind:value={prefix}>
+<label for="depositor">Select depositor:</label>
+<select name="depositor" bind:value={prefix}>
   <option value="">No prefix</option>
   {#each prefixes as prefix}
     <option value={prefix.string}>{prefix.label} ({prefix.string})</option>
   {/each}
 </select>
+
+<style>
+  label,
+  select {
+    width: 100%;
+  }
+</style>
