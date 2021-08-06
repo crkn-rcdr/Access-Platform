@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 const { readJson, writeJson } = require("fs-extra");
+=======
+const { writeJson } = require("fs-extra");
+>>>>>>> 9e9f87c (Upgrades kivik and removes ddoc tests; they'll be done in couch-utils)
 const { join: pathJoin } = require("path");
 const { get: getNano } = require("@crkn-rcdr/nano");
 
