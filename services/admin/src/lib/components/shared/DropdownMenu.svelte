@@ -46,7 +46,6 @@ none
    */
   onMount(() => {
     window.onclick = function (event) {
-      console.log("wat", event.target);
       const target: Element = event.target;
       if (dropdownWrapper !== target && !dropdownWrapper.contains(target)) {
         if (dropdownMenu.classList.contains("show")) {

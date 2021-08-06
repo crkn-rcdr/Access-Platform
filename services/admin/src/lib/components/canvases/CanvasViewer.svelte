@@ -1,20 +1,61 @@
+<!--
+@component
+### Overview
+Displays a canvas using the OpenSeadragon library
+
+### Properties
+|    |    |    |
+| -- | -- | -- |
+| canvases: ObjectList   | required | The canvas to be displayed. |
+| options: any           | optional | The openseadragon viewer options, @see https://openseadragon.github.io/docs/OpenSeadragon.html#.Options) for more oopenseadragon options. |
+
+### Usage
+```  
+<CanvasViewer {canvas} />
+```
+-->
 <script lang="ts">
   import { onMount, afterUpdate } from "svelte";
-  //import type { Canvas } from "@crkn-rcdr/access-data/src/access/Manifest";
 
+  /**
+   * @type {any} The canvas to be displayed.
+   */
   export let canvas: any; // TODO: should we make an ObjectListItem type?
+
+  /**
+   * @type {any} The openseadragon viewer options, @see https://openseadragon.github.io/docs/OpenSeadragon.html#.Options) for more oopenseadragon options.
+   */
   export let options: any = {};
 
+  /**
+   * @type {any} The OpenSeadragon module.
+   */
   let OpenSeadragon: any;
+
+  /**
+   * @type {HTMLDivElement} The html element to attach the openseadragon viewer to.
+   */
   let container: HTMLDivElement;
+
+  /**
+   * @type {string} The image api string url for the canvas.
+   */
   let imageURL = "";
 
+  /**
+   * Clears the element containing the openseadragon canvas viewer
+   * @returns void
+   */
   function clearViewer() {
     if (container) {
       container.innerHTML = "";
     }
   }
 
+  /**
+   * Calls @function clearViewer to remove any old instantiations of the openseadragon viewer, then uses the options passed into this component to create a new openseadragon viewer, and attach it to the container.
+   * @returns void
+   */
   async function drawImage() {
     clearViewer();
     if (canvas && OpenSeadragon) {
@@ -35,11 +76,19 @@
     }
   }
 
+  /**
+   * @event onMount
+   * @description When the component instance is mounted onto the dom, @var OpenSeadragon is instantiated, and the canvas is drawn by calling @function drawImage()
+   */
   onMount(async () => {
     OpenSeadragon = await import("openseadragon");
     await drawImage();
   });
 
+  /**
+   * @event afterUpdate
+   * @description When the component paramters are updated, the @var imageURL is compared to the new image URLgenerated fronm the current @var canvas id, if they are different (meaning the @var canvas is not the same canvas as before) the new canvas is drawn by calling @function drawImage()
+   */
   afterUpdate(async () => {
     let newImageUrl = `https://image-tor.canadiana.ca/iiif/2/${encodeURIComponent(
       canvas["id"]

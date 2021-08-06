@@ -1,21 +1,59 @@
+<!--
+@component
+### Overview
+Displays a card for a canvas, containing it's thumbnail, label, a preview button, and a checkbox input allowing the user to be able to select it.
+
+### Properties
+|    |    |    |
+| -- | -- | -- |
+| canvas: any        | required | The canvas to be displayed |
+| selected: boolean  | optional | if the canvas is selected |
+
+### Usage
+**Example one**
+```  
+<CanvasSelectableCard {canvas} 
+on:selected={(event) => {console.logs(event.detail)}} 
+on:previewClicked={(event) => {console.logs(event.detail)}}/>
+```
+*Note: `--capt-add=SYS-ADMIN` is required for PDF rendering.*
+-->
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
-  //import type { Canvas } from "@crkn-rcdr/access-data/src/access/Manifest";
   import TiEye from "svelte-icons/ti/TiEye.svelte";
-  import Card from "../shared/Card.svelte";
+  import Card from "$lib/components/shared/Card.svelte";
 
+  /**
+   * @type {any} The canvas to be displayed
+   */
   export let canvas: any; // TODO: should we make an ObjectListItem type?
+
+  /**
+   * @type {boolean} If the canvas is selected.
+   */
   export let selected: boolean = false;
 
+  /**
+   * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.
+   */
   const dispatch = createEventDispatcher();
 
+  /**
+   * The method triggers a @event selected which outputs the canvas that was selected in its event.detail.
+   * @returns void
+   */
   function handleClick() {
-    dispatch("tileClicked", { canvas });
+    dispatch("selected", { canvas });
   }
 
+  /**
+   * The method triggers a @event previewClicked which outputs the canvas that was selected in its event.detail.
+   * @param event
+   * @returns void
+   */
   function previewCanvas(event: any) {
     event.stopPropagation();
-    dispatch("tilePreviewClicked", { canvas });
+    dispatch("previewClicked", { canvas });
   }
 </script>
 

@@ -1,4 +1,8 @@
 <script context="module" lang="ts">
+  /**
+   * @module
+   * @description Creates a lapin router for the app to interact with
+   */
   import type { LapinRouter } from "@crkn-rcdr/lapin-router";
   import type { Load } from "@sveltejs/kit";
   import type { TRPCClient } from "@trpc/client";
@@ -21,15 +25,26 @@
 </script>
 
 <script lang="ts">
+  /**
+   * @template
+   * @description This is the common layout for the application
+   */
   import FaRegQuestionCircle from "svelte-icons/fa/FaRegQuestionCircle.svelte";
   import FaRegUserCircle from "svelte-icons/fa/FaRegUserCircle.svelte";
   import { getStores } from "$app/stores";
   import DropdownMenu from "$lib/components/shared/DropdownMenu.svelte";
 
+  /**
+   * @type {TRPCClient<LapinRouter>} Allows the app to to speak to the lapin api
+   */
   export let lapin: TRPCClient<LapinRouter>;
 
+  /**
+   * @type {Session} The session store that contains the module for sending requests to lapin.
+   */
   const { session } = getStores<Session>();
 
+  /** Allows all other pages to access lapin */
   session.set({ ...$session, lapin });
 </script>
 

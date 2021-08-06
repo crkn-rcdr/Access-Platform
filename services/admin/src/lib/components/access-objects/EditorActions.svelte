@@ -1,100 +1,144 @@
+<!--
+@component
+### Overview
+The editor actions component holds functionality that is responsible for performing actions like saving, deleting, and publishing AccessObjects.
+
+### Properties
+|    |    |    |
+| -- | -- | -- |
+| object: AccessObject        | required | This is the 'original' object of type AccessObject pulled from the backend, to be edited only once an action is successfully performed  |
+| objectModel: AccessObject   | required | This is a deep copy of the original object, it gets edited as the user makes changes in the editor. It's purpose is to contain the form state for the editors. |
+
+### Usage
+```  
+<EditorActions bind:object bind:objectModel />
+```
+*Note: `bind:` is required for changes to the object and its model to be reflected in higher level components.*
+-->
 <script lang="ts">
+  import { onMount } from "svelte";
   import type { Session } from "$lib/types";
-  import { getStores } from "$app/stores";
   import FaArchive from "svelte-icons/fa/FaArchive.svelte";
   import type { AccessObject } from "@crkn-rcdr/access-data";
-  import { onMount } from "svelte";
   import { detailedDiff } from "deep-object-diff";
-  import Modal from "$lib/components/shared/Modal.svelte";
+  import { getStores } from "$app/stores";
+  import { goto } from "$app/navigation";
   import { showConfirmation } from "$lib/confirmation";
   import { checkValidDiff, checkModelChanged } from "$lib/validation";
-  import { goto } from "$app/navigation";
+  import Modal from "$lib/components/shared/Modal.svelte";
 
-  const { session } = getStores<Session>();
-
+  /**
+   * @type {AccessObject} This is the 'original' object of type AccessObject pulled from the backend, to be edited only once an action is successfully performed.
+   */
   export let object: AccessObject;
+
+  /**
+   * @type {AccessObject} This is a deep copy of the original object, it gets edited as the user makes changes in the editor. It's purpose is to contain the form state for the editors..
+   */
   export let objectModel: AccessObject;
 
+  /**
+   * @type {Session} The session store that contains the module for sending requests to lapin.
+   */
+  const { session } = getStores<Session>();
+
+  /**
+   * @type {any} A module that quickly deep copies (clones) an object.
+   */
   let clone: any;
+
+  /**
+   * @type {boolean} Controls if the save button is displayed or not.
+   */
   let isSaveEnabled = false;
+
+  /**
+   * @type {boolean} Controls if the move to storage modal is being displayed or not.
+   */
   let showMovetoStorageModal = false;
 
+  /**
+   * Sets @var isSaveEnabled depending on if the objectModel is valid.
+   * @returns void
+   */
   function checkEnableSave() {
     isSaveEnabled = checkValidDiff(object, objectModel);
   }
+
   $: {
     objectModel;
     checkEnableSave();
   }
 
-  async function sendSaveRequest(data: any) {
-    //todo make partial of type
-    try {
-      for (const prop in data) {
-        const bodyObj = { id: objectModel.id };
-        bodyObj[prop] = data[prop];
-        await $session.lapin.mutation(`${prop}.edit`, bodyObj);
-      }
-      return true;
-    } catch (e) {
-      return e;
-    }
-    /*let newlyCreated = false;
-    const response = await showConfirmation(
+  /* TODO: ask how to set up an insert request */
+  async function sendCreateRequest(data: any) {
+    return await showConfirmation(
       async () => {
-        if (objectModel?.id?.length) {
-          const bodyObj = {
-            id: objectModel.id,
-            data,
-          };
-          return await $session.lapin.mutation("object.insert", bodyObj);
-        } else {
-          const bodyObj = {
-            data: objectModel,
-          };
-          if (
-            objectModel["type"] === "collection" ||
-            objectModel["type"] === "manifest"
-          ) {
-            //todo assign id in backend
-            objectModel["id"] =
-              objectModel["type"] === "collection"
-                ? "69429/s038383832838"
-                : "69429/m038383832838";
+        try {
+          //if(response) goto(`/object/${objectModel["id"]}`);
+          return true;
+        } catch (e) {
+          return e;
+        }
+      },
+      `${objectModel.type} created!`,
+      `Failed to create ${objectModel.type}.`
+    );
+  }
 
-            const res = await $session.lapin.mutation(
-              `object.${objectModel["type"]}Insert`,
+  /**
+   * Sends the request to save changes to the backend using lapin. Uses @function showConfirmation to display a floating notification with the results of the lapin call. The result of the lapin call is returned.
+   * @param data
+   * @returns response
+   */
+  async function sendSaveRequest(data: any) {
+    return await showConfirmation(
+      async () => {
+        try {
+          if (
+            objectModel.type === "manifest" ||
+            objectModel.type === "collection"
+          ) {
+            const bodyObj = {
+              id: objectModel.id,
+              user: $session.user,
+              data,
+            };
+            console.log("bodyObj", bodyObj);
+            const response = await $session.lapin.mutation(
+              `${objectModel.type}.edit`,
               bodyObj
             );
-            if (res) newlyCreated = true;
-            return res;
-          } else throw "Object not a collection or a manifest";
+            console.log("res", response);
+            return response?.id;
+          }
+          return false;
+        } catch (e) {
+          return false;
         }
       },
       "Changes saved!",
       "Failed to save changes."
     );
-
-    if (newlyCreated) goto(`/object/${objectModel["id"]}`);
-    return response;*/
   }
 
-  // TODO: check valid manifest or canvas before showing save button
   async function handleSave() {
-    const diff: any = detailedDiff(object, objectModel); //TODO: We can send this to the backend
+    const diff: any = detailedDiff(object, objectModel);
 
     let bodyObj = {
       ...diff["added"],
       ...diff["updated"],
     };
 
+    // Arrays are handled a bit strange in the diff module. Instead, just assign the entire array to the body data object
     if (bodyObj["canvases"]) {
       bodyObj["canvases"] = objectModel["canvases"];
     }
 
-    // might need 'deleted'
+    /* const data = objectModel?.id?.length
+      ? await sendSaveRequest(bodyObj)
+      : await sendCreateRequest(bodyObj); */
     const data = await sendSaveRequest(bodyObj);
-
     if (data) {
       try {
         clone = (await import("rfdc")).default();
@@ -102,31 +146,78 @@
         checkModelChanged(object, objectModel);
       } catch (e) {
         //error = e;
+        console.log(e);
       }
     }
   }
+
+  /**
+   * Sends the request to the backend to unnasign a slug from the access object. If it is successful, the object model is deep cloned into the object, and the editor state is updated to reflect the object being a 'Slugless' access object.
+   * @returns response
+   */
+  /* TODO: ask what the best way to set this to undefined is, because it seems like undefined params get trimmed from the data object */
   async function handlePlaceInStorage() {
     showMovetoStorageModal = false;
-    const response = await showConfirmation(
+    return await showConfirmation(
       async () => {
-        return await $session.lapin.query(
-          "noid.unassignSlug",
-          objectModel["id"]
-        );
+        if (
+          objectModel.type === "manifest" ||
+          objectModel.type === "collection"
+        ) {
+          try {
+            const response = await $session.lapin.mutation(
+              `${objectModel.type}.edit`,
+              {
+                id: objectModel.id,
+                user: $session.user,
+                data: {
+                  slug: "",
+                },
+              }
+            );
+            console.log("res", response);
+            if (response) {
+              objectModel["slug"] = undefined;
+              object = clone(objectModel) as AccessObject; // todo: get this done with zod
+            }
+            return true;
+          } catch (e) {
+            //error = e;
+            console.log(e);
+          }
+        }
+        return false;
       },
       "success",
       "fail"
     );
-    objectModel["slug"] = undefined;
-    object = clone(objectModel) as AccessObject; // todo: get this done with zod
-    return response;
   }
 
+  /**
+   * TODO
+   * @param arr
+   * @param currentIndex
+   * @param destinationIndex
+   * @returns
+   */
   function handlePublishStatusChange() {}
 
+  /**
+   * @event onMount
+   * @description When the component instance is mounted onto the dom, the 'clone' variable is set to the rfdc module.
+   */
   onMount(async () => {
     clone = (await import("rfdc")).default();
   });
+
+  /**
+   * @listens objectModel
+   * @description A reactive code block that is executed any time the @var objectModel changes. It calls @function checkEnableSave, to hide or show the save button depending on the validity of the objectModel (if nothing has been changed, the save button also gets hidden.)
+   */
+  $: {
+    objectModel;
+    checkEnableSave();
+  }
 </script>
 
 <span class="editor-actions auto-align auto-align__a-center">

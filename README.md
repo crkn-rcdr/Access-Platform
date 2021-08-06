@@ -110,6 +110,10 @@ The `haproxy` service is configured to handle passing requests to particular dom
 
 visiting <https://couch-dev.canadiana.ca/_utils> should bring you to the development CouchDB instance, and visiting <https://access-dev.canadiana.ca> should bring you to the admin tools. By default the services' ports will not be directly accessible to your host machine.
 
+### Adding new functionality
+
+Access platform functionality passes through lapin, an HTTP service with a router defined by [tRPC](https://trpc.io). [Read more on how this works here](docs/creating_lapin_routes.md).
+
 ### Testing
 
 Work on a comprehensive testing image is forthcoming. Plans are to add a test watcher to the development environment and to create a test stage for potential CI use.

@@ -1,28 +1,105 @@
+<!--
+@component
+### Overview
+A container that enables the dragging and dropping of it's childen elements.
+
+### Properties
+|    |    |    |
+| -- | -- | -- |
+| dragList: any[]                         | required | A list of anything that has the exact same number of elements as the number of children directly under the DynamicDragAndDropList component. It is updated as the elements under DynamicDragAndDropList are dragged around, meaning that if child element of DynamicDragAndDropList at position 'i' is drragged and dropped to position 'j', the draglist item at position 'i' is also moved to position 'j'. |
+| direction: ctring, "y" or "x" or "both" | optional | The orientation of the drag list, either vertical (y), horizontal (x), or a grid (both) |
+
+### Usage
+**Example one**
+```  
+<DynamicDragAndDropList
+  bind:dragList={items}
+  on:itemDropped={(e) => {
+    console.logs(e.detail.destinationItemIndex);
+  }}
+>
+  {#each items as item, i}
+    <div>
+      I am draggable!!!! {i}
+    </div>
+  {/each}
+</DynamicDragAndDropList>
+```
+*Note: `dragList` must have the same number of elements as the number of children direcly under the DynamicDragAndDropList component.*
+-->
 <script lang="ts">
   import { createEventDispatcher, onMount } from "svelte";
   import { moveArrayElement } from "$lib/arrayUtil";
 
-  export let dragList: any[] = [];
-  export let direction = "y"; // y | x | both
+  /**
+   * @type {string} A list of anything that has the exact same number of elements as the number of children directly under the DynamicDragAndDropList component. It is updated as the elements under DynamicDragAndDropList are dragged around, meaning that if child element of DynamicDragAndDropList at position 'i' is drragged and dropped to position 'j', the draglist item at position 'i' is also moved to position 'j'.
+   */
+  export let dragList: any[] = []; // TODO: make optional and edit the position of the actual elements array if not set
 
+  /**
+   * @type {"y" | "x" | "both"} The orientation of the drag list, either vertical (y), horizontal (x), or a grid (both).
+   */
+  export let direction: "y" | "x" | "both" = "y"; //
+
+  /**
+   * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.
+   */
   const dispatch = createEventDispatcher();
 
+  /**
+   * @type {HTMLDivElement} The html element holding all of the elements that can be dragged around.
+   */
   let container: HTMLDivElement;
+
+  /**
+   * @type {number} The index of the element that is being dragged.
+   */
   let currentItemIndex: number;
+
+  /**
+   * @type {number} The index in the dragList to drop a dragged item to.
+   */
   let destinationItemIndex: number;
+
+  /**
+   * @type {any[]} A store for the list (dragList) to be used to reset it if a drop fails.
+   */
   let originalList: any[] = [];
+
+  /**
+   * @type {boolean} If the move was successful.
+   */
   let success = false;
 
+  /**
+   * If the y coordinate of the element being dragged is greater than or equal to the y coordinate of the rectangle return true otherwise return false (because we are iterating through the rects in decreasing order! This simplifies the calculation)
+   * @param rect
+   * @param destinationY
+   * @returns boolean
+   */
   function checkVerticalList(rect: DOMRect, destinationY: number): boolean {
     let y = rect.top;
     return y <= destinationY;
   }
 
+  /**
+   * If the x coordinate of the element being dragged is greater than or equal to the x coordinate of the rectangle return true otherwise return false (because we are iterating through the rects in decreasing order! This simplifies the calculation)
+   * @param rect
+   * @param destinationX
+   * @returns boolean
+   */
   function checkHorizontalList(rect: DOMRect, destinationX: number): boolean {
     let x = rect.left;
     return x <= destinationX;
   }
 
+  /**
+   * If the coordinates of the element being dragged are greater than or equal to the coordinates of the rectangle return true otherwise return false (because we are iterating through the rects in decreasing order! This simplifies the calculation)
+   * @param rect
+   * @param destinationX
+   * @param destinationY
+   * @returns boolean
+   */
   function checkGrid(
     rect: DOMRect,
     destinationX: number,
@@ -33,6 +110,13 @@
     return y <= destinationY && x <= destinationX;
   }
 
+  /**
+   * Checks a rect's area representing a valid drop zone against the destination coordinates (of the element being dragged) to see if this rect is the one being hovered over by the item being dragged. Calls @function checkVerticalList or @function checkHorizontalList or @function checkGrid depending on the @var direction
+   * @param rect
+   * @param destinationX
+   * @param destinationY
+   * @returns boolean
+   */
   function checkIfShouldAddAfterIndex(
     rect: DOMRect | undefined,
     destinationX: number,
@@ -50,6 +134,12 @@
     return false;
   }
 
+  /**
+   * When an item enters a valid drop zone, check its coordinates against the coordinates of the other draggable elements to find the index to move the item at @var currentItemIndex in the dragList to
+   * @param destinationX
+   * @param destinationY
+   * @returns number
+   */
   function getIndexToMoveChildTo(destinationX: number, destinationY: number) {
     let destinationItemIndex = currentItemIndex;
     for (let i = container.children.length - 1; i >= 0; i--) {
@@ -62,6 +152,10 @@
     return destinationItemIndex;
   }
 
+  /**
+   * Takes care of moving the dragged item from @var currentItemIndex to @var destinationItemIndex in @var dragList. Triggers the @event itemDropped that sends out these indexes to the parent in its event.detail
+   * @returns void
+   */
   function handleMove() {
     if (currentItemIndex === destinationItemIndex) return;
     dragList = moveArrayElement(
@@ -73,25 +167,49 @@
     currentItemIndex = destinationItemIndex;
   }
 
+  /**
+   * When dragging begins, set the @var currentItemIndex to the index of the element being dragged and keep track of the state of the @var dragList by setting the @var originalList to a copy of it.
+   * @param this
+   * @param elementIndex
+   * @returns void
+   */
   function dragStart(this: Element, elementIndex: number) {
     currentItemIndex = elementIndex;
     originalList = [...dragList];
   }
 
+  /**
+   * When an item enters a valid drop zone, check its coordinates against the coordinates of the other draggable elements to find the index to move the item at @var currentItemIndex in the dragList to by calling @function getIndexToMoveChildTo. Then call @function handleMove to perform the move.
+   * @returns void
+   */
   function dragenter(event: any) {
     destinationItemIndex = getIndexToMoveChildTo(event.clientX, event.clientY);
     handleMove();
   }
 
+  /**
+   * When a successful drop occurs, set the @var success check to true.
+   * @returns void
+   */
   function drop() {
     success = true;
   }
 
+  /**
+   * When dragging is complete, if the drop wasn't successful, reset @var dragList to the @var originalList. Then, reset the @var success check.
+   * @returns void
+   */
   function dragend() {
     if (!success) dragList = originalList;
     success = false; // Reset this after each drag operation
   }
 
+  /**
+   * Sets the event listers that enable the dragging behaviour for the element passed in, that is at elementIndex in the array of children of it's parent element.
+   * @param element
+   * @param elementIndex
+   * @returns void
+   */
   function addEventListeners(element: Element, elementIndex: number) {
     element.addEventListener(
       "dragstart",
@@ -102,6 +220,12 @@
     element.addEventListener("dragend", dragend);
   }
 
+  /**
+   * Clears the event listers that enable the dragging behaviour for the element passed in, that is at elementIndex in the array of children of it's parent element.
+   * @param element
+   * @param elementIndex
+   * @returns void
+   */
   function removeEventListeners(element: Element, elementIndex: number) {
     element.removeEventListener(
       "dragstart",
@@ -112,6 +236,12 @@
     element.removeEventListener("dragend", dragend);
   }
 
+  /**
+   * Sets the event listers and attributes that enable the dragging behaviour for the element passed in, that is at elementIndex in the array of children of it's parent element.
+   * @param element
+   * @param elementIndex
+   * @returns void
+   */
   function enableDraggingOnChild(
     element: Element | undefined,
     elementIndex: number
@@ -120,10 +250,15 @@
     element.classList?.add("draggable");
     element.setAttribute("draggable", "true");
     element.setAttribute("ondragover", "return false");
+
     removeEventListeners(element, elementIndex); // Ensure no duplicates fired
     addEventListeners(element, elementIndex);
   }
 
+  /**
+   * Iterates over the children of @var container and calls @function enableDraggingOnChild on each one.
+   * @returns void
+   */
   function enableDraggingOnChildren() {
     if (container) {
       for (let i = 0; i < container.children.length; i++) {
@@ -132,10 +267,18 @@
     }
   }
 
+  /**
+   * @event onMount
+   * @description When the component instance is mounted onto the dom, enable dragging  by calling @function enableDraggingOnChildren
+   */
   onMount(() => {
     enableDraggingOnChildren();
   });
 
+  /**
+   * @listens dragList
+   * @description Enables dragging any time the dragList is updated by calling @function enableDraggingOnChildren
+   */
   $: {
     dragList;
     enableDraggingOnChildren();

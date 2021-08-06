@@ -1,3 +1,9 @@
+/**
+ * @module types
+ * @description
+ * This module contains types that are used throughout the admin app.
+ */
+
 import type { TRPCClient } from "@trpc/client";
 import type { LapinRouter } from "@crkn-rcdr/lapin-router";
 import type { User } from "@crkn-rcdr/access-data";
@@ -43,7 +49,7 @@ export type ToggleParams = {
 };
 
 /**
- * Defins what information to include for the dynamic generation of pages in the side menu component
+ * Defines what information to include for the dynamic generation of pages in the side menu component
  */
 export type SideMenuPageData = {
   name: string;

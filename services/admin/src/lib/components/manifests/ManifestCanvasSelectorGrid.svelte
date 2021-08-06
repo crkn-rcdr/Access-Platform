@@ -1,9 +1,23 @@
+<!--
+@component
+
+TODO
+
+### Overview
+
+### Properties
+
+### Usage
+```  
+
+```
+-->
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
   import type { Manifest } from "@crkn-rcdr/access-data/src/access/Manifest";
   import TiArrowBack from "svelte-icons/ti/TiArrowBack.svelte";
-  import CanvasSelectorGridTile from "../canvases/CanvasSelectorGridTile.svelte";
-  import CanvasViewer from "../canvases/CanvasViewer.svelte";
+  import CanvasSelectorGridTile from "$lib/components/canvases/CanvasSelectorGridTile.svelte";
+  import CanvasViewer from "$lib/components/canvases/CanvasViewer.svelte";
   import type { ObjectList } from "@crkn-rcdr/access-data";
 
   export let manifest: Manifest;

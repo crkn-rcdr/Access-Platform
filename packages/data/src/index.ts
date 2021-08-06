@@ -36,6 +36,7 @@ export {
   ProcessResult,
   ProcessUpdate,
   Slug,
+  StaffUpdate,
   Timestamp,
   UnixFilePath,
   User,
