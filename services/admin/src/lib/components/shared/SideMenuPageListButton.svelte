@@ -1,3 +1,24 @@
+<!--
+@component
+### Overview
+The button for a pages available in the side menu. When the user presses a button, the associated page displays in the SideMenuBody.
+
+### Properties
+None
+                   
+### Usage
+```  
+<SideMenuContainer>
+  <SideMenuPageList>
+    <SideMenuPageListButton/>
+  </SideMenuPageList>
+  <SideMenuBody>
+    <SideMenuPage>
+    </SideMenuPage>
+  </SideMenuBody>
+</SideMenuContainer>
+```
+-->
 <li class="side-menu-page-list-button clickable">
   <slot />
 </li>

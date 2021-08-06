@@ -1,40 +1,96 @@
+<!--
+@component
+### Overview
+Allows the user to modify the canvas list for a manifest.
+
+### Properties
+|    |    |    |
+| -- | -- | -- |
+| manifest : Manifest    | required | The manifest thats contents should be edited. |
+
+### Usage
+**Example one**
+```  
+<ManifestContentEditor bind:manifest />
+```
+*Note: `bind:` is required for changes to the object to be reflected in higher level components.*
+-->
 <script lang="ts">
   import { onMount } from "svelte";
   import type { Manifest } from "@crkn-rcdr/access-data/src/access/Manifest";
-  import CanvasLabelEditor from "../canvases/CanvasLabelEditor.svelte";
-  import CanvasViewer from "../canvases/CanvasViewer.svelte";
-  import CanvasThumbnailList from "../canvases/CanvasThumbnailList.svelte";
-  import Switch from "$lib/components/shared//Switch.svelte";
-  import SwitchCase from "$lib/components/shared//SwitchCase.svelte";
+  import CanvasLabelEditor from "$lib/components/canvases/CanvasLabelEditor.svelte";
+  import CanvasViewer from "$lib/components/canvases/CanvasViewer.svelte";
+  import CanvasThumbnailList from "$lib/components/canvases/CanvasThumbnailList.svelte";
+  import Switch from "$lib/components/shared/Switch.svelte";
+  import SwitchCase from "$lib/components/shared/SwitchCase.svelte";
   import ManifestAddCanvasMenu from "$lib/components/manifests/ManifestAddCanvasMenu.svelte";
-  import NotificationBar from "../shared/NotificationBar.svelte";
+  import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
   import { typedChecks } from "$lib/validation";
 
+  /**
+   * @type {Manifest} The manifest thats contents should be edited.
+   */
   export let manifest: Manifest;
 
+  /**
+   * @type {any} The canvas being displayed in the canvas viewer.
+   */
   let activeCanvas: any;
-  let activeCanvasIndex: number = 0;
+
+  /**
+   * @type {number} The index of the canvas being displayed in the canvas viewer.
+   */
+  let activeCanvasIndex = 0;
+
+  /**
+   * @type {string} A control for what component is displayed in the free space of the content editor.
+   */
   let state = "view";
 
+  /**
+   * Sets the @var activeCanvas to the canvas at index in the manifests canvas list.
+   * Sets the @car activeCanvasIndex to the index passed in.
+   * Calls @function triggerUpdate to make any other components aware of changes
+   * @param index
+   * @returns void
+   */
   function setActiveCanvas(index: number) {
     activeCanvasIndex = index;
     activeCanvas = manifest?.canvases?.[index] || null;
     triggerUpdate();
   }
 
+  /**
+   * Changes the label of the active canvas to the event.detail property of the label editors @event changed
+   * @param event
+   * @returns void
+   */
   function setActiveCanvasLabel(event) {
     manifest.canvases[activeCanvasIndex]["label"]["none"] = event.detail;
     triggerUpdate();
   }
 
+  /**
+   * Causes any parent components to be aware of changes made to the manifest.
+   * @returns void
+   */
   function triggerUpdate() {
     manifest = manifest;
   }
 
+  /**
+   * Sets @var state to the newState passed in.
+   * @param newState
+   * @returns void
+   */
   function changeView(newState: string) {
     state = newState;
   }
 
+  /**
+   * @event onMount
+   * @description When the component instance is mounted onto the dom, @var activeCanvas is set to the first canvas in the manifests canvas list, or null if the list is empty
+   */
   onMount(() => {
     activeCanvas = manifest?.canvases?.[0] || null;
   });
@@ -142,13 +198,13 @@
     background-color: var(--backdrop-bg);
   }
 
-  .takedown {
+  /*.takedown {
     width: max(80%, 15rem);
     margin: auto;
     display: block;
-  }
+  }*/
 
-  .message {
+  /*.message {
     font-style: italic;
     font-size: var(--perfect-fourth-8);
   }
@@ -159,5 +215,5 @@
     height: var(--perfect-fourth-7);
     margin-left: 0.5rem;
     margin-top: 0;
-  }
+  }*/
 </style>

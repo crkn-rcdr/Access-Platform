@@ -1,19 +1,64 @@
+<!--
+@component
+### Overview
+This componenet allows the user to search the backend for any access object that has a slug that contains the search term. It lists matching objects in a table.
+
+### Properties
+|    |    |    |
+| -- | -- | -- |
+| label : string       | optional | The label for the search input. |
+| placeholder : string | optional | The placeholder for the search input. |
+
+### Usage
+```  
+<TypeAhead label="Label:" placeholder="placeholder" on:selected={(event) -> { console.log(event.detail) }} />
+```
+*Note: the noid of the selected item is returned from `on:selected`*
+-->
 <script lang="ts">
   import type { Session } from "$lib/types";
-
   import { createEventDispatcher } from "svelte";
   import { getStores } from "$app/stores";
 
-  const { session } = getStores<Session>();
-
-  const dispatch = createEventDispatcher();
+  /**
+   * @type {string} The label for the search input.
+   */
   export let label = "";
+
+  /**
+   * @type {string} The placeholder for the search input.
+   */
   export let placeholder = "Placeholder...";
 
+  /**
+   * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.
+   */
+  const dispatch = createEventDispatcher();
+
+  /**
+   * @type {Session} The session store that contains the module for sending requests to lapin.
+   */
+  const { session } = getStores<Session>();
+
+  /**
+   * @type {string} The search term.
+   */
   let query = "";
+
+  /**
+   * @type {string} The list of slugs that contain the search term
+   */
   let lookupList: string[];
+
+  /**
+   * @type {string} An error message to be displayed.
+   */
   let error = "";
 
+  /**
+   * Dispatches the @event on:keypress with the query set as the event.detail. It then sends a request to the backend to get the objects whos slug contains the query, if the query is not empty. If the request was successful, the results are stored in @var lookupList. Otherwise @var error is set and displayed to the user.
+   * @returns void
+   */
   async function lookupSlug() {
     dispatch("keypress", query);
 
@@ -27,6 +72,11 @@
     }
   }
 
+  /**
+   * Dispatches the @event on:selected with the noid of the selected item set as the event.detail.
+   * @param item
+   * @returns void
+   */
   async function selectItem(item: any) {
     dispatch("selected", item["id"] as string);
   }
@@ -84,7 +134,6 @@
   input {
     width: 100%;
   }
-
   .end-content {
     max-width: 30ch;
     float: right;

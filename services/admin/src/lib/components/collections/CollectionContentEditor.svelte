@@ -1,3 +1,17 @@
+<!--
+@component
+
+TODO
+
+### Overview
+
+### Properties
+
+### Usage
+```  
+
+```
+-->
 <script lang="ts">
   import { onMount, createEventDispatcher } from "svelte";
   import { AccessObject } from "@crkn-rcdr/access-data";
@@ -12,7 +26,6 @@
   import TiArrowBack from "svelte-icons/ti/TiArrowBack.svelte";
   import TiTrash from "svelte-icons/ti/TiTrash.svelte";
   import type { ObjectList } from "@crkn-rcdr/access-data";
-
   export let collection: Collection;
   export let showAddButton = true;
 
@@ -28,7 +41,6 @@
   const DOWN_ARROW_CODE: number = 40;
   const dispatch = createEventDispatcher();
   const { session } = getStores<Session>();
-
   console.log("Prit Collection:", collection);
   function setIndexModel() {
     indexModel = [];
@@ -239,7 +251,6 @@
     flex: 1;
     margin-left: 1.5rem;
   } */
-
   .action.icon {
     opacity: 0.6;
     cursor: pointer;

@@ -1,4 +1,4 @@
-<script lang="ts">
+<!--script lang="ts">
   import { onMount } from "svelte";
   import type { Canvas } from "@crkn-rcdr/access-data/src/access/Canvas";
   import type {
@@ -189,4 +189,4 @@
     padding: 3rem;
     height: 84vh;
   }
-</style>
+</style-->

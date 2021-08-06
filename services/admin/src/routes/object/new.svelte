@@ -1,11 +1,23 @@
 <script lang="ts">
+  /**
+   * @file
+   * @description This page shows the editor for creating a new object.
+   */
   import type { AccessObject } from "@crkn-rcdr/access-data";
   import type { Manifest, Collection } from "@crkn-rcdr/access-data";
   import Editor from "$lib/components/access-objects/Editor.svelte";
 
+  /**
+   * @type {AccessObject} Object being created.
+   */
   let object: AccessObject;
 
   //TODO: call niod service to generate id in the backend
+
+  /**
+   * Sets the @var object to a new Collection type object
+   * @returns void
+   */
   function handleNewCollectionPressed() {
     let newCollection: Collection = {
       id: "",
@@ -20,6 +32,10 @@
     object = newCollection;
   }
 
+  /**
+   * Sets the @var object to a new Manifest type object
+   * @returns void
+   */
   function handleNewManifestPressed() {
     let newManifest: Manifest = {
       id: "",

@@ -1,4 +1,8 @@
 <script context="module" lang="ts">
+  /**
+   * @module
+   * @description loads in the object from the backend using the params in the route of the page
+   */
   import type { Load } from "@sveltejs/kit";
   import type { RootLoadOutput } from "$lib/types";
   export const load: Load<RootLoadOutput> = async ({ page, context }) => {
@@ -10,14 +14,9 @@
         ].join("/");
         const response = await context.lapin.query("accessObject.get", id);
         const object = AccessObject.parse(response);
-        let type = "other";
-        if (isCollection(object)) {
-          type = "collection";
-        } else if (isManifest(object)) {
-          type = "canvasManifest";
-        }
-        return { props: { object, createMode: false } };
-      } else return { props: { createMode: true } };
+        return { props: { object } };
+      }
+      return { props: {} };
     } catch (e) {
       return e;
     }
@@ -25,16 +24,23 @@
 </script>
 
 <script lang="ts">
+  /**
+   * @file
+   * @description This page shows the editor for the object.
+   * The object is given to the page from the module above.
+   */
   import { AccessObject } from "@crkn-rcdr/access-data";
   import { isManifest, isCollection } from "@crkn-rcdr/access-data";
   import Editor from "$lib/components/access-objects/Editor.svelte";
 
+  /**
+   * @type {AccessObject} Object being edited.
+   */
   export let object: AccessObject;
 </script>
 
 {#if object}
   <Editor bind:object />
 {:else}
-  {object}
   Loading...
 {/if}
