@@ -98,6 +98,6 @@
     margin: auto;
     width: 65%;
     margin-top: var(--perfect-fourth-2);
-    padding-left: 6rem;
+    padding-left: 5.5rem;
   }
 </style>
