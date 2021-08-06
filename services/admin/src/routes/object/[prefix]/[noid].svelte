@@ -14,12 +14,7 @@
         ].join("/");
         const response = await context.lapin.query("accessObject.get", id);
         const object = AccessObject.parse(response);
-        let type = "other";
-        if (isCollection(object)) {
-          type = "collection";
-        } else if (isManifest(object)) {
-          type = "canvasManifest";
-        }
+        return { props: { object } };
       }
       return { props: {} };
     } catch (e) {
@@ -47,6 +42,5 @@
 {#if object}
   <Editor bind:object />
 {:else}
-  {object}
   Loading...
 {/if}

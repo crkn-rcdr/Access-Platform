@@ -198,13 +198,13 @@ Allows the user to modify the canvas list for a manifest.
     background-color: var(--backdrop-bg);
   }
 
-  .takedown {
+  /*.takedown {
     width: max(80%, 15rem);
     margin: auto;
     display: block;
-  }
+  }*/
 
-  .message {
+  /*.message {
     font-style: italic;
     font-size: var(--perfect-fourth-8);
   }
@@ -215,5 +215,5 @@ Allows the user to modify the canvas list for a manifest.
     height: var(--perfect-fourth-7);
     margin-left: 0.5rem;
     margin-top: 0;
-  }
+  }*/
 </style>

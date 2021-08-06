@@ -6,19 +6,19 @@
   import type { Load } from "@sveltejs/kit";
 
   export const load: Load<RootLoadOutput> = async ({ context }) => {
-    let serverfailure;
+    //let serverfailure;
 
-    try {
+    /*try {
       serverfailure = await context.lapin.query("slug.search", "??");
     } catch (e) {
       serverfailure = e;
-    }
+    }*/
 
     return {
       props: {
         lapin: context.lapin,
-        servertest: await context.lapin.query("slug.search", "oo"),
-        serverfailure,
+        //servertest: await context.lapin.query("slug.search", "oo"),
+        //serverfailure,
       },
     };
   };
@@ -44,8 +44,8 @@
   export let lapin;
 
   /** Tests, to be deleted */
-  export let servertest;
-  export let serverfailure;
+  //export let servertest;
+  //export let serverfailure;
   let test = "waiting";
   let failure = "should fail";
 

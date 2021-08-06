@@ -116,7 +116,6 @@ This component displays the non content properties for an access object and allo
     padding: 1.5rem;
   }
   label,
-  input,
   textarea {
     width: 100%;
   }

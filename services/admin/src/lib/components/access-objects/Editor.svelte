@@ -116,6 +116,7 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
    * @returns void
    */
   async function setDataModel(object: AccessObject) {
+    console.log(object);
     if (!object) return;
 
     rfdc = (await import("rfdc")).default();
