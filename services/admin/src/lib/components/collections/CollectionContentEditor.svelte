@@ -1,3 +1,17 @@
+<!--
+@component
+
+TODO
+
+### Overview
+
+### Properties
+
+### Usage
+```  
+
+```
+-->
 <script lang="ts">
   import { onMount, createEventDispatcher } from "svelte";
   import { AccessObject } from "@crkn-rcdr/access-data";

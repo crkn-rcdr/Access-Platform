@@ -18,9 +18,9 @@ Allows the user to modify the canvas list for a manifest.
 <script lang="ts">
   import { onMount } from "svelte";
   import type { Manifest } from "@crkn-rcdr/access-data/src/access/Manifest";
-  import CanvasLabelEditor from "../canvases/CanvasLabelEditor.svelte";
-  import CanvasViewer from "../canvases/CanvasViewer.svelte";
-  import CanvasThumbnailList from "../canvases/CanvasThumbnailList.svelte";
+  import CanvasLabelEditor from "$lib/components/canvases/CanvasLabelEditor.svelte";
+  import CanvasViewer from "$lib/components/canvases/CanvasViewer.svelte";
+  import CanvasThumbnailList from "$lib/components/canvases/CanvasThumbnailList.svelte";
   import Switch from "$lib/components/shared/Switch.svelte";
   import SwitchCase from "$lib/components/shared/SwitchCase.svelte";
   import ManifestAddCanvasMenu from "$lib/components/manifests/ManifestAddCanvasMenu.svelte";
