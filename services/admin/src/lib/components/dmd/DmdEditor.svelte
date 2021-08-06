@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import FaCheckCircle from "svelte-icons/fa/FaCheckCircle.svelte";
   import FaTimesCircle from "svelte-icons/fa/FaTimesCircle.svelte";
   import DmdPrefixSelector from "$lib/components/dmd/DmdPrefixSelector.svelte";

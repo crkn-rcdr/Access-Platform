@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   export let prefix = "oocihm";
   // TODO: add period to end of each prefix?
   const prefixes = [
