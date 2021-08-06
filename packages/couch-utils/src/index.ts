@@ -15,12 +15,9 @@ export {
   stringRangeEnd,
 } from "./util.js";
 
-/**
- * Get handlers for accessing CouchDB Access Platform databases.
- */
-export function connect() {
+export function client() {
   const env = Env.parse(process.env);
-  const client = nano({
+  return nano({
     url: env.couch.url,
     requestDefaults: {
       auth: env.couch.auth,
@@ -29,8 +26,15 @@ export function connect() {
       httpsAgent: new HttpsAgent({ maxSockets: 1 }),
     },
   });
+}
+
+/**
+ * Get handlers for accessing CouchDB Access Platform databases.
+ */
+export function connect() {
+  const c = client();
 
   return {
-    access: new AccessHandler(client),
+    access: new AccessHandler(c),
   };
 }

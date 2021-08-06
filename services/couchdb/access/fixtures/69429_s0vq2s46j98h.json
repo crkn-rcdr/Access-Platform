@@ -1,10 +1,18 @@
 {
   "_id": "69429/s0vq2s46j98h",
-  "_rev": "1-a8228d3bee3706907c77265ec06158d6",
+  "_rev": "2-4f6540a308c71bdfeec15d5f725174b0",
+  "updateInternalmeta": {
+    "requestDate": "2020-09-17T04:22:24Z",
+    "message": "",
+    "processDate": "2020-09-17T06:01:50Z",
+    "succeeded": true
+  },
   "label": {
     "none": "The Pacific harbor light"
   },
+  "type": "collection",
   "public": "2020-03-03T18:43:17Z",
+  "dmdType": "dc",
   "slug": "oocihm.8_06941",
   "members": [
     {
@@ -14,13 +22,5 @@
       "id": "69429/m02n4zg6h671"
     }
   ],
-  "type": "collection",
-  "behavior": "multi-part",
-  "updateInternalmeta": {
-    "processDate": "2020-09-17T06:01:50Z",
-    "requestDate": "2020-09-17T04:22:24Z",
-    "message": "",
-    "succeeded": true
-  },
-  "dmdType": "dc"
+  "behavior": "multi-part"
 }

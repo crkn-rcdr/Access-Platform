@@ -23,8 +23,13 @@ type AccessDatabaseObject = z.infer<typeof AccessDatabaseObject>;
  * Interact with Access Objects in their database.
  */
 export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
-  constructor(client: ServerScope) {
-    super("access", AccessDatabaseObject, client);
+  /**
+   * Create an AccessHandler.
+   * @param client A couchdb-nano client.
+   * @param suffix Suffix to append to the access database's name.
+   */
+  constructor(client: ServerScope, suffix?: string) {
+    super(suffix ? `access-${suffix}` : `access`, AccessDatabaseObject, client);
   }
 
   /**

@@ -56,6 +56,9 @@ services:
       target: dev
     image: access-platform:dev
     command: ["watch", "-r", "--filter", "./packages", "--parallel"]
+    env_file:
+      - ./.env.dev
+      - ./.env.secret
     volumes:
       - .:/repo
     networks:
