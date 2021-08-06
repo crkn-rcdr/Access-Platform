@@ -1,5 +1,5 @@
 <script>
-  export let prefix = "";
+  export let prefix = "oocihm";
   // TODO: add period to end of each prefix?
   const prefixes = [
     {
