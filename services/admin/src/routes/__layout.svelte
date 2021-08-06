@@ -87,6 +87,7 @@
     padding: 0 1rem;
     background-color: var(--structural-div-bg);
     filter: brightness(1.1);
+    z-index: 0;
   }
   .icon {
     padding: 0.1rem;
