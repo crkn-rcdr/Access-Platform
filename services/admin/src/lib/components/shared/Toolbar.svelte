@@ -1,4 +1,26 @@
+<!--
+@component
+### Overview
+A solid title/header component to break apart your pages into sections.
+
+### Properties
+|    |    |    |
+| -- | -- | -- |
+| title : string    | optional | The title text to display in the toolbar |
+
+### Usage
+```  
+<Toolbar title={"Hello world"}>
+  <div>
+    <button>action button</button>
+  </div>
+</Toolbar>
+```
+-->
 <script lang="ts">
+  /**
+   * @type {string} The title text to display in the toolbar.
+   */
   export let title = "";
 </script>
 

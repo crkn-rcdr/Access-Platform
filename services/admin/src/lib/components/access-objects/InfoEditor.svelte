@@ -1,13 +1,39 @@
+<!--
+@component
+### Overview
+This component displays the non content properties for an access object and allows users to edit them.
+
+### Properties
+|    |    |    |
+| -- | -- | -- |
+| object: AccessObject | required | The AccessObject object that will be manipulated by the user, usually, a copy of an access pbject that acts as a form model. |
+
+### Usage
+```  
+<InfoEditor bind:object />
+```
+*Note: `bind:` is required for changes to the object to be reflected in higher level components.*
+-->
 <script lang="ts">
   import { isManifest, isCollection } from "@crkn-rcdr/access-data";
   import type { AccessObject } from "@crkn-rcdr/access-data";
   import { getSlugValidationMsg, typedChecks } from "$lib/validation";
-  import NotificationBar from "../shared/NotificationBar.svelte";
+  import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
   import Resolver from "$lib/components/access-objects/Resolver.svelte";
 
+  /**
+   * @type {AccessObject} The AccessObject object that will be manipulated by the user, usually, a copy of an access pbject that acts as a form model.
+   */
   export let object: AccessObject; // Not sure if we should pass an object or have a list of props (ex: slug, label, ...) that can be null, and show ones that are instantiated only?
 
+  /**
+   * @type {boolean} Controls if the notification bar for slugs shows the error that the slug is unavailable, or if it shows a validation error (or nothing if it looks good)
+   */
   let showSlugUnavailable = false;
+
+  /**
+   * @type {string} The message to be shown if the slug is not available.
+   */
   let slugUnavailableMessage = "";
 </script>
 
@@ -90,7 +116,6 @@
     padding: 1.5rem;
   }
   label,
-  input,
   textarea {
     width: 100%;
   }

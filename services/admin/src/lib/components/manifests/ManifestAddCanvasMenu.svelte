@@ -1,3 +1,27 @@
+<!--
+@component
+### Overview
+This component allows the user to search through other manifests and select canvases from a manifest to add to a manifest
+
+### Properties
+|    |    |    |
+| -- | -- | -- |
+| destinationManifest: Manifest  | required | The manifest to add selected canvases to. |
+| destinationIndex: number       | optional | The starting index to add the selected canvases at. |
+| multiple: boolean              | optional | If the user is allowed to select multiple canvases to add. |
+
+### Usage
+```  
+<ManifestAddCanvasMenu
+  bind:destinationManifest={manifest}
+  on:done={() => {
+    state = "view";
+    setActiveCanvas(0);
+  }}
+/>
+```
+*Note: `bind:` is required for changes to the parameters to be reflected in higher level components.*
+-->
 <script lang="ts">
   import type { Session } from "$lib/types";
   import { getStores } from "$app/stores";
@@ -11,20 +35,61 @@
   import type { ObjectList } from "@crkn-rcdr/access-data";
   import CanvasesSelector from "$lib/components/canvases/CanvasesSelector.svelte";
 
-  const { session } = getStores<Session>();
-
+  /**
+   * @type {Manifest} The manifest to add selected canvases to.
+   */
   export let destinationManifest: Manifest;
-  export let destinationIndex: number = 0;
+
+  /**
+   * @type {number} The starting index to add the selected canvases at.
+   */
+  export let destinationIndex = 0;
+
+  /**
+   * @type {boolean} If the user is allowed to select multiple canvases to add.
+   */
   export let multiple = true;
 
+  /**
+   * @type {Session} The session store that contains the module for sending requests to lapin.
+   */
+  const { session } = getStores<Session>();
+
+  /**
+   * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.
+   */
   const dispatch = createEventDispatcher();
 
+  /**
+   * @type {Manifest} The manifest to select canvases from.
+   */
   let selectedManifest: Manifest;
+
+  /**
+   * @type {ObjectList} The canvases the user selects.
+   */
   let selectedCanvases: ObjectList = [];
-  let showManifest = false;
-  let selectAll = false;
+
+  /**
+   * @type {string} If a manifest is selected.
+   */
+  let isManifestSelected = false;
+
+  /**
+   * @type {string} If the select all button is activated.
+   */
+  let isAllSelected = false;
+
+  /**
+   * @type {string} An error message to be displayed.
+   */
   let error = "";
 
+  /**
+   * When a manifest is selected from the table of search results, grab its details from the backend.
+   * @param event
+   * @returns void
+   */
   async function handleSelect(event: any) {
     try {
       let prefixedNoid = event.detail;
@@ -38,7 +103,7 @@
           error = "Error: Object is a collection, please select another.";
         } else if (isManifest(object)) {
           selectedManifest = object;
-          showManifest = true;
+          isManifestSelected = true;
         }
       } else {
         error = response.toString();
@@ -48,11 +113,19 @@
     }
   }
 
+  /**
+   * When canceled is pressed, reset the selected canvases, and signify to the parent through the @event done that the user is done adding canvases
+   * @returns void
+   */
   function handleCancelPressed() {
     selectedCanvases = [];
     dispatch("done");
   }
 
+  /**
+   * When add is pressed, add the selected canvases to the begining of the destination manifest's canvases list, and signify to the parent through the @event done that the user is done adding canvases
+   * @returns void
+   */
   function handleAddPressed() {
     destinationManifest?.canvases?.splice(
       destinationIndex,
@@ -66,7 +139,7 @@
 </script>
 
 <div class="canvas-selector-wrap add-menu">
-  {#if !showManifest}
+  {#if !isManifestSelected}
     <div class="manifest-selector">
       <div class="add-menu-title">
         <button
@@ -103,7 +176,7 @@
           class="icon"
           on:click={() => {
             error = "";
-            showManifest = false;
+            isManifestSelected = false;
           }}
           data-tooltip="Go back to manifest search"
           data-tooltip-flow="bottom"
@@ -123,14 +196,16 @@
         {/if}
 
         <div
-          data-tooltip={`${selectAll ? "Deselect" : "Select"} all`}
+          data-tooltip={`${isAllSelected ? "Deselect" : "Select"} all`}
           data-tooltip-flow="bottom"
         >
           <img
             class="icon select-all"
-            src={`/static/icons/${selectAll ? "deselect.png" : "select.svg"}`}
+            src={`/static/icons/${
+              isAllSelected ? "deselect.png" : "select.svg"
+            }`}
             alt="select all"
-            on:click={() => (selectAll = !selectAll)}
+            on:click={() => (isAllSelected = !isAllSelected)}
           />
         </div>
 
@@ -149,7 +224,7 @@
             <CanvasesSelector
               bind:selectedCanvases
               bind:multiple
-              bind:selectAll
+              bind:selectAll={isAllSelected}
               canvases={selectedManifest["canvases"]}
               options={{
                 showNavigator: true,

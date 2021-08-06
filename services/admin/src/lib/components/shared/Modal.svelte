@@ -1,6 +1,42 @@
+<!--
+@component
+### Overview
+A component that overlays ontop of the application, in the center of the screen.
+
+### Properties
+|    |    |    |
+| -- | -- | -- |
+| open : boolean    | required | The state control for showing or hiding the modal |
+| title : string    | optional | The title text of the modal. |
+
+### Usage
+```  
+<Modal
+  bind:open={aBooleanVariable}
+  title={"Do something"}
+>
+  <div slot="body">
+    ...content
+  </div>
+  <div slot="footer">
+    ... buttons
+  </div>
+</Modal>
+```
+*Note: `bind:` is required for changes to the object and its model to be reflected in higher level components.*
+
+-->
 <script>
   import TiTimes from "svelte-icons/ti/TiTimes.svelte";
+
+  /**
+   * @type {boolean} The state control for showing or hiding the modal.
+   */
   export let open = false;
+
+  /**
+   * @type {string} The title text of the modal.
+   */
   export let title = "Modal";
 </script>
 
