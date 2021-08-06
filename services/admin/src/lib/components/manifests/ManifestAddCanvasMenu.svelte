@@ -93,9 +93,12 @@ This component allows the user to search through other manifests and select canv
   async function handleSelect(event: any) {
     try {
       let prefixedNoid = event.detail;
-      const response = await $session.lapin.query("noid.resolve", prefixedNoid);
-      if (response && response["doc"]) {
-        const object = AccessObject.parse(response["doc"]);
+      const response = await $session.lapin.query(
+        "accessObject.get",
+        prefixedNoid
+      );
+      if (response) {
+        const object = AccessObject.parse(response);
         if (isCollection(object)) {
           error = "Error: Object is a collection, please select another.";
         } else if (isManifest(object)) {
@@ -160,7 +163,7 @@ This component allows the user to search through other manifests and select canv
       <div>
         <!--Todo: ask how best to limit to only manifests-->
         <TypeAhead
-          label="Search for a manifest to add canvases from:"
+          placeholder="Search for a manifest to add canvases from..."
           on:selected={handleSelect}
           on:keypress={() => (error = "")}
         />

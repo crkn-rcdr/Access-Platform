@@ -93,8 +93,8 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
             },
           },
         },
-        /*{
-          name: "Content",
+        {
+          name: "Members",
           componentData: {
             contentComponent: CollectionContentEditor,
             contentComponentProps: { collection: objectModel },
@@ -105,7 +105,7 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
               objectModel = objectModel;
             },
           },
-        },*/
+        },
       ];
     }
   }

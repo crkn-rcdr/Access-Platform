@@ -74,5 +74,6 @@ A container that expands to show more content when the user clicks the expand ic
   .icon {
     float: right;
     margin: 0 0.5rem;
+    cursor: pointer;
   }
 </style>

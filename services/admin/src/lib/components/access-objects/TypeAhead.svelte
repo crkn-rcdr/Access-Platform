@@ -28,7 +28,7 @@ This componenet allows the user to search the backend for any access object that
   /**
    * @type {string} The placeholder for the search input.
    */
-  export let placeholder = "Search...";
+  export let placeholder = "Placeholder...";
 
   /**
    * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.

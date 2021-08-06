@@ -108,7 +108,7 @@ const manifest = {
    */
   getLabelValidationMsg: function (label: TextRecord) {
     try {
-      EditableManifest.pick({ label: true }).parse({ label });
+      EditableManifest.parse({ label });
       return "";
     } catch (e) {
       return e["issues"][0]["message"];
@@ -121,7 +121,7 @@ const manifest = {
    */
   getCanvasesValidationMsg: function (canvases: ObjectList) {
     try {
-      EditableManifest.pick({ canvases: true }).parse({ canvases });
+      EditableManifest.parse({ canvases });
       return "";
     } catch (e) {
       return e["issues"][0]["message"];
@@ -141,7 +141,7 @@ const collection = {
    */
   getLabelValidationMsg: function (label: TextRecord) {
     try {
-      EditableCollection.pick({ label: true }).parse({ label });
+      EditableCollection.parse({ label });
       return "";
     } catch (e) {
       return e["issues"][0]["message"];

@@ -14,6 +14,7 @@
   import type { ObjectList } from "@crkn-rcdr/access-data";
   export let collection: Collection;
   export let showAddButton = true;
+
   let indexModel: number[] = [];
   let activeMemberIndex: number = 0;
   let container: HTMLDivElement;
@@ -99,11 +100,12 @@
   async function handleSelect(event: any) {
     try {
       noid = event.detail;
-      const response = await $session.lapin.query("noid.resolve", noid);
-      console.log("show the response", response.doc);
-      const object = AccessObject.parse(response.doc);
-      console.log("Show the object", object);
-      collection.members[collection.members.length] = object;
+      const response = await $session.lapin.query("accessObject.get", noid);
+      if (response) {
+        const object = AccessObject.parse(response);
+        collection.members[collection.members.length] = object;
+        addedMember = false;
+      }
     } catch (e) {
       error = e;
     }
@@ -133,7 +135,7 @@
     {#if addedMember}
       <div>
         <TypeAhead
-          label="Search for a Collection Or Manifest to add from:"
+          placeholder="Search for a Collection Or Manifest to add from..."
           on:selected={handleSelect}
           on:keypress={() => (error = "")}
         />
@@ -207,7 +209,7 @@
               <div id="grid">
                 <ul>
                   <li>
-                    {members["id"]}
+                    <a href="/object/{members['id']}">{members["id"]}</a>
                   </li>
                 </ul>
               </div>

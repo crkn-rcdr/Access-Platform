@@ -1,4 +1,6 @@
 import { z } from "zod";
+import createHttpError from "http-errors";
+import type { HttpError } from "http-errors";
 
 import {
   DocumentViewParams,
@@ -8,14 +10,10 @@ import {
   MangoSelector,
 } from "nano";
 
-import {
-  DocumentNotFoundError,
-  fromNanoError,
-  UniqueKeyViolationError,
-} from "./errors.js";
 import { mangoEqualSelector } from "./util.js";
 
 /**
+ * The specification for a CouchDB document's `_attachments` object.
  * See https://docs.couchdb.org/en/stable/api/document/common.html#attachments
  */
 export const CouchAttachmentRecord = z.record(
@@ -40,6 +38,9 @@ type CouchDocument = {
   [k: string]: unknown;
 };
 
+/**
+ * An object that can be inserted into or retrieved from a CouchDB database.
+ */
 export type Document = {
   id: string;
   attachments?: CouchAttachmentRecord;
@@ -53,6 +54,7 @@ const fromCouch = (doc: CouchDocument): Document => {
     ...doc,
   };
 
+  // TODO: do this without `delete`
   delete result["_attachments"];
   delete result["_id"];
   delete result["_rev"];
@@ -83,13 +85,22 @@ type UniqueFindResult<
   Fields extends readonly (keyof T & string)[]
 > = { found: false } | { found: true; result: FindResult<T, Fields> };
 
+/**
+ * Handler for interactions with a CouchDB database.
+ *
+ * Also handles translating `_id` and `_attachments` to non-underscored versions.
+ */
 export class DatabaseHandler<T extends Document> {
-  private name: string;
   private parser: z.Schema<T>;
   private db: DocumentScope<unknown>;
 
+  /**
+   * Creates a DatabaseHandler.
+   * @param db Name of the database.
+   * @param parser A Zod parser for data that belongs in this database.
+   * @param client A `couchdb-nano` instance pointing to a CouchDB endpoint that provides access to the database.
+   */
   constructor(db: string, parser: z.Schema<T>, client: ServerScope) {
-    this.name = db;
     this.parser = parser;
     this.db = client.use(db);
   }
@@ -104,7 +115,7 @@ export class DatabaseHandler<T extends Document> {
     try {
       doc = (await this.db.get(id)) as CouchDocument;
     } catch (e) {
-      throw fromNanoError(e, { type: "document", db: this.name, id });
+      throw createHttpError(e.statusCode, e.error);
     }
 
     return this.parser.parse(fromCouch(doc));
@@ -118,17 +129,14 @@ export class DatabaseHandler<T extends Document> {
    */
   async getSafe(
     id: string
-  ): Promise<
-    { found: true; doc: T } | { found: false; error: DocumentNotFoundError }
-  > {
+  ): Promise<{ found: true; doc: T } | { found: false }> {
     try {
       return { found: true, doc: await this.get(id) };
-    } catch (e) {
-      if (e instanceof DocumentNotFoundError) {
-        return { found: false, error: e };
-      } else {
-        throw e;
+    } catch (error) {
+      if ((error as HttpError).status === 404) {
+        return { found: false };
       }
+      throw error;
     }
   }
 
@@ -142,20 +150,14 @@ export class DatabaseHandler<T extends Document> {
    */
   async update<Body = unknown>(args: UpdateArgs<Body>) {
     try {
-      return await this.db.updateWithHandler(
+      await this.db.updateWithHandler(
         args.ddoc,
         args.name,
         args.docId,
         args.body
       );
     } catch (e) {
-      throw fromNanoError(e, {
-        type: "update",
-        db: this.name,
-        ddoc: args.ddoc,
-        name: args.name,
-        id: args.docId,
-      });
+      throw createHttpError(e.statusCode, e.error);
     }
   }
 
@@ -175,12 +177,7 @@ export class DatabaseHandler<T extends Document> {
     try {
       return await this.db.view(designName, viewName, options);
     } catch (e) {
-      throw fromNanoError(e, {
-        type: "view",
-        db: this.name,
-        ddoc: designName,
-        name: viewName,
-      });
+      throw createHttpError(e.statusCode, e.error);
     }
   }
 
@@ -221,7 +218,7 @@ export class DatabaseHandler<T extends Document> {
         return response.docs as unknown as FindResult<T, Fields>[];
       }
     } catch (e) {
-      throw fromNanoError(e, { type: "mango", db: this.name, query });
+      throw createHttpError(e.statusCode, e.error);
     }
   }
 
@@ -242,7 +239,10 @@ export class DatabaseHandler<T extends Document> {
     const response = await this.find(selector, fields, options);
     if (response.length === 0) return { found: false };
     if (response.length === 1) return { found: true, result: response[0]! };
-    throw new UniqueKeyViolationError(selector, fields, response);
+    throw createHttpError(
+      400,
+      `More than one result found when looking up ${searchField} = ${key}`
+    );
   }
 
   async findUniqueArray<

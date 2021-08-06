@@ -65,56 +65,63 @@ The editor actions component holds functionality that is responsible for perform
     isSaveEnabled = checkValidDiff(object, objectModel);
   }
 
+  $: {
+    objectModel;
+    checkEnableSave();
+  }
+
+  /* TODO: ask how to set up an insert request */
+  async function sendCreateRequest(data: any) {
+    return await showConfirmation(
+      async () => {
+        try {
+          //if(response) goto(`/object/${objectModel["id"]}`);
+          return true;
+        } catch (e) {
+          return e;
+        }
+      },
+      `${objectModel.type} created!`,
+      `Failed to create ${objectModel.type}.`
+    );
+  }
+
   /**
    * Sends the request to save changes to the backend using lapin. Uses @function showConfirmation to display a floating notification with the results of the lapin call. The result of the lapin call is returned.
    * @param data
    * @returns response
    */
   async function sendSaveRequest(data: any) {
-    //todo make partial of type
-    let newlyCreated = false;
-    const response = await showConfirmation(
+    return await showConfirmation(
       async () => {
-        if (objectModel?.id?.length) {
-          const bodyObj = {
-            id: objectModel.id,
-            data,
-          };
-          return await $session.lapin.mutation("object.insert", bodyObj);
-        } else {
-          const bodyObj = {
-            data: objectModel,
-          };
+        try {
           if (
-            objectModel["type"] === "collection" ||
-            objectModel["type"] === "manifest"
+            objectModel.type === "manifest" ||
+            objectModel.type === "collection"
           ) {
-            //todo assign id in backend
-            objectModel["id"] =
-              objectModel["type"] === "collection"
-                ? "69429/s038383832838"
-                : "69429/m038383832838";
-
-            const res = await $session.lapin.mutation(
-              `object.${objectModel["type"]}Insert`,
+            const bodyObj = {
+              id: objectModel.id,
+              user: $session.user,
+              data,
+            };
+            console.log("bodyObj", bodyObj);
+            const response = await $session.lapin.mutation(
+              `${objectModel.type}.edit`,
               bodyObj
             );
-            if (res) newlyCreated = true;
-            return res;
-          } else throw "Object not a collection or a manifest";
+            console.log("res", response);
+            return response?.id;
+          }
+          return false;
+        } catch (e) {
+          return false;
         }
       },
       "Changes saved!",
       "Failed to save changes."
     );
-
-    if (newlyCreated) goto(`/object/${objectModel["id"]}`);
-    return response;
   }
 
-  /**
-   * Is called when the use presses the green save button. It cakks @function sendSaveRequest and if it succeeds, it deep clones the object model into the original object, resetung the editor state with the new changes.
-   */
   async function handleSave() {
     const diff: any = detailedDiff(object, objectModel);
 
@@ -128,8 +135,10 @@ The editor actions component holds functionality that is responsible for perform
       bodyObj["canvases"] = objectModel["canvases"];
     }
 
+    /* const data = objectModel?.id?.length
+      ? await sendSaveRequest(bodyObj)
+      : await sendCreateRequest(bodyObj); */
     const data = await sendSaveRequest(bodyObj);
-
     if (data) {
       try {
         clone = (await import("rfdc")).default();
@@ -146,21 +155,42 @@ The editor actions component holds functionality that is responsible for perform
    * Sends the request to the backend to unnasign a slug from the access object. If it is successful, the object model is deep cloned into the object, and the editor state is updated to reflect the object being a 'Slugless' access object.
    * @returns response
    */
+  /* TODO: ask what the best way to set this to undefined is, because it seems like undefined params get trimmed from the data object */
   async function handlePlaceInStorage() {
     showMovetoStorageModal = false;
-    const response = await showConfirmation(
+    return await showConfirmation(
       async () => {
-        return await $session.lapin.query(
-          "noid.unassignSlug",
-          objectModel["id"]
-        );
+        if (
+          objectModel.type === "manifest" ||
+          objectModel.type === "collection"
+        ) {
+          try {
+            const response = await $session.lapin.mutation(
+              `${objectModel.type}.edit`,
+              {
+                id: objectModel.id,
+                user: $session.user,
+                data: {
+                  slug: "",
+                },
+              }
+            );
+            console.log("res", response);
+            if (response) {
+              objectModel["slug"] = undefined;
+              object = clone(objectModel) as AccessObject; // todo: get this done with zod
+            }
+            return true;
+          } catch (e) {
+            //error = e;
+            console.log(e);
+          }
+        }
+        return false;
       },
       "success",
       "fail"
     );
-    objectModel["slug"] = undefined;
-    object = clone(objectModel) as AccessObject; // todo: get this done with zod
-    return response;
   }
 
   /**

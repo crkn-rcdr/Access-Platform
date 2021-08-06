@@ -15,6 +15,7 @@ export const mangoEqualSelector = <FieldValue>(
   field: string,
   value: FieldValue
 ): MangoSelector => {
+  if (field === "id") field = "_id";
   // Thanks to ComputedPropertyName
   // https://262.ecma-international.org/6.0/#sec-object-initializer
   return { [field]: { $eq: value } };
@@ -27,5 +28,6 @@ export const mangoStringRangeSelector = (
   field: string,
   value: string
 ): MangoSelector => {
+  if (field === "id") field = "_id";
   return { [field]: { $gte: value, $lt: stringRangeEnd(value) } };
 };

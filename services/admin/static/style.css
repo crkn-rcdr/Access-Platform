@@ -161,12 +161,13 @@ Source: https://github.com/twbs/bootstrap/blob/main/scss/mixins/_visually-hidden
   flex-direction: row;
   flex-wrap: nowrap;
 }
-
+.auto-align__block {
+  display: flex;
+}
 .auto-align__full {
   width: 100%;
   height: 100%;
 }
-
 .auto-align__column {
   flex-direction: column;
 }
@@ -178,6 +179,9 @@ Source: https://github.com/twbs/bootstrap/blob/main/scss/mixins/_visually-hidden
 }
 .auto-align__j-even {
   justify-content: space-evenly;
+}
+.auto-align__j-between {
+  justify-content: space-between;
 }
 .auto-align__a-center {
   align-items: center;
@@ -483,6 +487,10 @@ tbody tr.clickable:hover {
 
 thead th {
   padding: 1rem;
+}
+
+th {
+  font-weight: normal;
 }
 
 td {

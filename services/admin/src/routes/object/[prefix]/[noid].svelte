@@ -12,16 +12,13 @@
           page.params["prefix"] as string,
           page.params["noid"] as string,
         ].join("/");
-        const response = await context.lapin.query("noid.resolve", id);
-        if (response && response["doc"]) {
-          const object = AccessObject.parse(response["doc"]);
-          let type = "other";
-          if (isCollection(object)) {
-            type = "collection";
-          } else if (isManifest(object)) {
-            type = "canvasManifest";
-          }
-          return { props: { object } };
+        const response = await context.lapin.query("accessObject.get", id);
+        const object = AccessObject.parse(response);
+        let type = "other";
+        if (isCollection(object)) {
+          type = "collection";
+        } else if (isManifest(object)) {
+          type = "canvasManifest";
         }
       }
       return { props: {} };
@@ -50,5 +47,6 @@
 {#if object}
   <Editor bind:object />
 {:else}
+  {object}
   Loading...
 {/if}

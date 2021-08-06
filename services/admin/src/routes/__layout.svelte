@@ -7,7 +7,6 @@
   import type { Load } from "@sveltejs/kit";
   import type { TRPCClient } from "@trpc/client";
   import type { RootLoadOutput, ServerSession, Session } from "$lib/types";
-
   import { createTRPCClient } from "@trpc/client";
 
   export const load: Load<{ session: ServerSession }, RootLoadOutput> = ({
@@ -30,7 +29,10 @@
    * @template
    * @description This is the common layout for the application
    */
+  import FaRegQuestionCircle from "svelte-icons/fa/FaRegQuestionCircle.svelte";
+  import FaRegUserCircle from "svelte-icons/fa/FaRegUserCircle.svelte";
   import { getStores } from "$app/stores";
+  import DropdownMenu from "$lib/components/shared/DropdownMenu.svelte";
 
   /**
    * @type {TRPCClient<LapinRouter>} Allows the app to to speak to the lapin api
@@ -46,17 +48,56 @@
   session.set({ ...$session, lapin });
 </script>
 
-<pre>
-  <nav class="site-nav">
-    Logged in as: <b>{$session.user.name}</b>, {$session.user.email}.
+<pre
+  class="site-nav auto-align auto-align__block auto-align__a-center auto-align__j-between auto-align__wrap">
+  <a href="/"><img width="200" src="/static/canadiana-tag-color.svg" alt="canadiana.ca"/></a>
+
+  <nav class="auto-align">
+    <a href="/import">Import from Preservation</a>
+    <a href="/dmd/new">DMD Processing</a>
+    <a href="/object/new">Create New Object</a>
   </nav>
+  
+  <div class="right-menu auto-align auto-align__a-center">
+    <a href="https://github.com/crkn-rcdr/Access-Platform/issues" target="_blank" data-tooltip="Click for help!" data-tooltip-flow="bottom">
+      <div class="icon">
+        <FaRegQuestionCircle/>
+      </div>
+    </a>
+    <DropdownMenu direction="right">
+      <div slot="dropdown-button" class="icon">
+        <FaRegUserCircle/>
+      </div>
+      <div class="disabled">Logged in as: <b>{$session.user.name}</b>, {$session.user.email}.</div>
+    </DropdownMenu>
+  </div>
 </pre>
 <slot />
 
 <style>
+  @font-face {
+    font-family: "Roboto";
+    src: url("/static/fonts/Roboto-Regular.ttf") format("truetype");
+  }
+  pre {
+    position: relative;
+    z-index: 1;
+  }
   .site-nav {
     padding: 0 1rem;
     background-color: var(--structural-div-bg);
     filter: brightness(1.1);
+  }
+  .icon {
+    padding: 0.1rem;
+  }
+  nav > * {
+    font-family: "Roboto";
+    margin-right: var(--perfect-fourth-4);
+    color: var(--primary) !important;
+  }
+
+  .right-menu > * {
+    margin-right: 1rem;
   }
 </style>

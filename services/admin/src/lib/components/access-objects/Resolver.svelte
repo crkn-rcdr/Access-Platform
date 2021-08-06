@@ -33,15 +33,9 @@ The resolver component allows the user to enter a slug, and then a request is se
    */
   export let slug = "";
 
-  /** @type {string | null | undefined}
-   * Noid that the slug resolves to, or null
-   * if it doesn't. If this is provided, the resolver will trust that it's
-   * correct.
-   */
-  export let noid: string | null | undefined = undefined;
-
   /**
    * @type {boolean}
+  /**
    * Whether to hide the display when the current slug is the
    * same as the initial slug provided.
    */
@@ -62,20 +56,24 @@ The resolver component allows the user to enter a slug, and then a request is se
    * @type {RegExp} A regular expression that will validate strings as slugs.
    */
   const regex = /^[\p{L}\p{Nl}\p{Nd}\-_\.]+$/u;
-
-  /**
-   * @type { slug: string , noid:string } The intitial slug and noid passed into the component.
-   */
-  const initial = { slug, noid };
-
   /** @type {"READY" | "LOADING" | "MALFORMED" | "ERROR"} */
   let status: "READY" | "LOADING" | "MALFORMED" | "ERROR" =
-    initial.noid === undefined ? "LOADING" : "READY";
+    slug === undefined ? "LOADING" : "READY";
 
   /**
    * @type {NodeJS.Timeout | null} Used to debounce the searching of slugs.
    */
   let timer: NodeJS.Timeout | null = null;
+
+  /**
+   * @type {boolean} If the slug was isFound in the database
+   */
+  let isFound = false;
+
+  /**
+   * @type {string} The intitial slug passed into the component.
+   */
+  let initial = slug;
 
   /**
    * Searches the backend for an object by the inputted slug. It also shows various error states to the user.
@@ -86,32 +84,30 @@ The resolver component allows the user to enter a slug, and then a request is se
       if (timer) clearTimeout(timer);
       timer = setTimeout(async () => {
         status = "LOADING";
-        noid = undefined;
         if (regex.test(slug)) {
           try {
             const response = await $session.lapin.query("slug.resolve", slug);
-            if (
-              response &&
-              response.hasOwnProperty("found") &&
-              response["found"] === false
-            ) {
-              noid = null;
-              dispatch("available", { slug: initial.slug, status: true });
-            } else if (response.noid != initial.noid) {
-              noid = response.noid as string;
-              dispatch("available", { slug: initial.slug, status: false });
+            console.log(slug, "Test:", response);
+            if (response === null) {
+              dispatch("available", { slug: initial, status: false });
+              status = "ERROR";
+            } else if (!response.found) {
+              dispatch("available", { slug: slug, status: true });
+              isFound = false;
+              status = "READY";
+            } else {
+              dispatch("available", { slug: initial, status: false });
+              isFound = true;
+              status = "READY";
             }
-            status = "READY";
           } catch (e) {
-            noid = null;
             status = "ERROR";
           }
         } else {
-          noid = null;
           status = "MALFORMED";
         }
       }, 50);
-    } else if (slug === initial.slug) {
+    } else if (slug === initial) {
       status = "READY";
     }
   }
@@ -121,9 +117,8 @@ The resolver component allows the user to enter a slug, and then a request is se
    * @description When the component instance is mounted onto the dom, @var initial object is set with the @var slug and @var noid that were passed into the component. Then, the resolve method is called.
    */
   onMount(async () => {
-    initial.noid = noid;
-    initial.slug = slug;
-    await resolve();
+    initial = slug;
+    if (!hideInitial) await resolve();
   });
 
   /**
@@ -131,12 +126,11 @@ The resolver component allows the user to enter a slug, and then a request is se
    * @listens initial
    * @description A reactive code block that is executed any time the @var slug or @initial changes. It sets @var shouldQuery, which controls if the @function resolve method actually sends the request to the backend, or shows an error state instead.
    */
-  $: shouldQuery =
-    !!slug && (slug !== initial.slug || initial.noid === undefined);
+  $: shouldQuery = !!slug && slug !== initial;
 </script>
 
 <div>
-  {#if !!slug && !(hideInitial && slug === initial.slug)}
+  {#if !!slug && !(slug === initial)}
     {#if status === "LOADING"}
       <NotificationBar message="Loading" />
     {:else if status === "ERROR"}
@@ -146,13 +140,13 @@ The resolver component allows the user to enter a slug, and then a request is se
         message="Slugs can only contain letters, numbers, and the following symbols: _ - ."
         status="fail"
       />
-    {:else if noid && noid !== initial.noid}
+    {:else if isFound}
       <slot name="in-use">
-        <a href="/object/{noid}">
+        <a href="/object/blurr">
           <NotificationBar message="⚠️ Slug in use" status="fail" />
         </a>
       </slot>
-    {:else if !noid || noid !== initial.noid}
+    {:else if !isFound}
       <slot name="available">
         <NotificationBar message="✅ Slug available" status="success" />
       </slot>
