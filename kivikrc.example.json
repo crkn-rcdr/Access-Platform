@@ -15,5 +15,6 @@
         "password": "REPLACE_WITH_PASSWORD"
       }
     }
-  }
+  },
+  "subdirectory": "services/couchdb"
 }

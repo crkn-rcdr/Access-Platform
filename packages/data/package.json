@@ -46,7 +46,8 @@
     "test": "NODE_NO_WARNINGS=1 ava -v",
     "watch": "run-p watch:*",
     "watch:cjs": "tsc -p ./tsconfig-cjs.json --watch",
-    "watch:esm": "tsc --watch"
+    "watch:esm": "tsc --watch",
+    "watch:test": "NODE_NO_WARNINGS=1 ava -v -w"
   },
   "ava": {
     "extensions": {

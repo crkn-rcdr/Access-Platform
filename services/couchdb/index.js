@@ -1,5 +1,4 @@
-const { getInstance } = require("kivik");
-const { writeJson } = require("fs-extra");
+const { readJson, writeJson } = require("fs-extra");
 const { join: pathJoin } = require("path");
 const { get: getNano } = require("@crkn-rcdr/nano");
 
@@ -12,23 +11,15 @@ module.exports.validator = (schema) => (data) => {
   }
 };
 
-let instance;
-module.exports.getInstance = async () => {
-  if (!instance) {
-    instance = await getInstance(__dirname);
-  }
-  return instance;
-};
-
 module.exports.pullFixtures = async () => {
   const {
     deployments: {
-      iris: {
+      production: {
         url,
         auth: { user, password },
       },
     },
-  } = require("./kivikrc.json");
+  } = await readJson(pathJoin(__dirname, "..", "..", "kivikrc.json"));
 
   const client = getNano(url, { user, password });
 
