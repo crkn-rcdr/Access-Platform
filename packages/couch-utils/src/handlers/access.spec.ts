@@ -7,17 +7,12 @@ type AccessHandlerContext = BaseContext & { access: AccessHandler };
 
 const test = anyTest as TestInterface<AccessHandlerContext>;
 
-<<<<<<< HEAD
 const MANIFEST_TWO = "69429/m02n4zg6h671";
 const MANIFEST_TWO_SLUG = "oocihm.8_06941_2";
 const COLLECTION = "69429/s0vq2s46j98h";
 const COLLECTION_SLUG = "oocihm.8_06941";
 
 const USER = { name: "User McGee", email: "mcgee@crkn.ca" };
-=======
-const MANIFEST_ONE = "69429/m02n4zg6h671";
-const COLLECTION = "69429/s0vq2s46j98h";
->>>>>>> 396e444 (I'm testing some things!)
 
 test.before(async (t) => {
   const baseContext = await getTestContext();
@@ -29,7 +24,6 @@ test.before(async (t) => {
 });
 
 test.serial("Manifests are parseable", async (t) => {
-<<<<<<< HEAD
   const doc = await t.context.access.get(MANIFEST_TWO);
   t.true(Manifest.safeParse(doc).success);
 });
@@ -92,45 +86,6 @@ test.serial("Cannot edit something if it's the wrong type", async (t) => {
   );
 
   t.true(error.message.includes("has type: manifest"));
-=======
-  try {
-    const doc = await t.context.access.get(MANIFEST_ONE);
-    t.true(Manifest.safeParse(doc).success);
-  } catch (e) {
-    t.fail(e.message);
-  }
-});
-
-test.serial("Collections are parseable", async (t) => {
-  try {
-    const doc = await t.context.access.get(COLLECTION);
-    t.true(Collection.safeParse(doc).success);
-  } catch (e) {
-    t.fail(e.message);
-  }
-});
-
-test.serial("Objects can be published and unpublished", async (t) => {
-  try {
-    await t.context.access.unpublish(MANIFEST_ONE);
-
-    let doc = await t.context.access.get(MANIFEST_ONE);
-    t.falsy(doc.public);
-
-    let error = await t.throwsAsync(t.context.access.unpublish(MANIFEST_ONE));
-    t.is(error.message, "Trying to unpublish an object that isn't public");
-
-    await t.context.access.publish(MANIFEST_ONE);
-
-    doc = await t.context.access.get(MANIFEST_ONE);
-    t.true(Timestamp.safeParse(doc.public).success);
-
-    error = await t.throwsAsync(t.context.access.publish(MANIFEST_ONE));
-    t.is(error.message, "Trying to publish an object that is already public");
-  } catch (e) {
-    t.fail(e.message);
-  }
->>>>>>> 396e444 (I'm testing some things!)
 });
 
 test.after(async (t) => {
