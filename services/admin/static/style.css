@@ -92,7 +92,8 @@ html {
 }
 
 /* Font defaults */
-body {
+body,
+pre {
   font-family: "Roboto", sans-serif !important;
   font-size: var(--perfect-fourth-7);
   color: var(--base-font-color);

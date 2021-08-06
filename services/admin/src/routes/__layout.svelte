@@ -50,9 +50,9 @@
 
 <pre
   class="site-nav auto-align auto-align__block auto-align__a-center auto-align__j-between auto-align__wrap">
-  <a href="/"><img width="200" src="/static/canadiana-tag-color.svg" alt="canadiana.ca"/></a>
+  <a href="/"><img width="220" src="/static/canadiana-pa-tag-color.png" alt="canadiana by CRKN, par RCDR"/></a>
 
-  <nav class="auto-align">
+  <nav class="auto-align auto-align__wrap">
     <a href="/import">Import from Preservation</a>
     <a href="/dmd/new">DMD Processing</a>
     <a href="/object/new">Create New Object</a>
@@ -95,8 +95,8 @@
     font-family: "Roboto";
     margin-right: var(--perfect-fourth-4);
     color: var(--primary) !important;
+    width: min-content;
   }
-
   .right-menu > * {
     margin-right: 1rem;
   }

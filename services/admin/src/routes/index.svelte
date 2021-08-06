@@ -6,19 +6,9 @@
   import type { Load } from "@sveltejs/kit";
 
   export const load: Load<RootLoadOutput> = async ({ context }) => {
-    //let serverfailure;
-
-    /*try {
-      serverfailure = await context.lapin.query("slug.search", "??");
-    } catch (e) {
-      serverfailure = e;
-    }*/
-
     return {
       props: {
         lapin: context.lapin,
-        //servertest: await context.lapin.query("slug.search", "oo"),
-        //serverfailure,
       },
     };
   };
@@ -43,22 +33,6 @@
    */
   export let lapin;
 
-  /** Tests, to be deleted */
-  //export let servertest;
-  //export let serverfailure;
-  let test = "waiting";
-  let failure = "should fail";
-
-  onMount(async () => {
-    test = (await lapin.query("slug.search", "oo")).toString();
-
-    try {
-      failure = (await lapin.query("slug.search", "??")).toString();
-    } catch (e) {
-      failure += ": " + e;
-    }
-  });
-
   /**
    * Routes to the object the user clicks from the TypeAhead component
    * @param event
@@ -71,32 +45,49 @@
 </script>
 
 <div class="wrapper">
-  <!--div class="hero hero__gradient full-bleed">
-    <div class="wrapper">
-      <h1>Admin Tools</h1>
+  <div class="notifications">
+    <!--NotificationBar message="New fix pushed!" status="success" />
+    <NotificationBar message="There is some error!" status="fail" />
+    <NotificationBar
+      message="The platform is experiencing an outage."
+      status="warn"
+    /-->
+  </div>
+  <div class="center">
+    <div class="title">
+      <img
+        width="520"
+        src="/static/canadiana-pa-tag-color.png"
+        alt="Canadiana by CRKN, par RCDR"
+      />
+    </div>
+    <div class="search">
+      <TypeAhead
+        placeholder="Search for existing canvases and manifests to edit..."
+        on:selected={slugSelected}
+      />
     </div>
   </div>
-
-  <p>{servertest}</p>
-  <p>{serverfailure}</p>
-  <p>{test}</p>
-  <p>{failure}</p>
-
-  <br />
-  <br />
-  <label for="slug">Slug:</label>
-  <br />
-  <Resolver slug="" noid="" /-->
-
-  <NotificationBar message="New fix pushed!" status="success" />
-  <NotificationBar message="There is some error!" status="fail" />
-  <NotificationBar
-    message="The platform is experiencing an outage."
-    status="warn"
-  />
-  <br />
-  <TypeAhead
-    placeholder="Search for a canvas or manifest..."
-    on:selected={slugSelected}
-  />
 </div>
+
+<style>
+  .notifications {
+    padding-top: var(--perfect-fourth-3);
+  }
+  .center {
+    padding-top: var(--perfect-fourth-1);
+    text-align: center;
+  }
+  .title,
+  .title img {
+    position: relative;
+    margin: auto;
+  }
+  .search {
+    position: relative;
+    margin: auto;
+    width: 65%;
+    margin-top: var(--perfect-fourth-2);
+    padding-left: 6rem;
+  }
+</style>
