@@ -7,8 +7,12 @@ type AccessHandlerContext = BaseContext & { access: AccessHandler };
 
 const test = anyTest as TestInterface<AccessHandlerContext>;
 
-const MANIFEST_ONE = "69429/m02n4zg6h671";
+const MANIFEST_TWO = "69429/m02n4zg6h671";
+const MANIFEST_TWO_SLUG = "oocihm.8_06941_2";
 const COLLECTION = "69429/s0vq2s46j98h";
+const COLLECTION_SLUG = "oocihm.8_06941";
+
+const USER = { name: "User McGee", email: "mcgee@crkn.ca" };
 
 test.before(async (t) => {
   const baseContext = await getTestContext();
@@ -20,43 +24,68 @@ test.before(async (t) => {
 });
 
 test.serial("Manifests are parseable", async (t) => {
-  try {
-    const doc = await t.context.access.get(MANIFEST_ONE);
-    t.true(Manifest.safeParse(doc).success);
-  } catch (e) {
-    t.fail(e.message);
-  }
+  const doc = await t.context.access.get(MANIFEST_TWO);
+  t.true(Manifest.safeParse(doc).success);
 });
 
 test.serial("Collections are parseable", async (t) => {
-  try {
-    const doc = await t.context.access.get(COLLECTION);
-    t.true(Collection.safeParse(doc).success);
-  } catch (e) {
-    t.fail(e.message);
-  }
+  const doc = await t.context.access.get(COLLECTION);
+  t.true(Collection.safeParse(doc).success);
 });
 
 test.serial("Objects can be published and unpublished", async (t) => {
-  try {
-    await t.context.access.unpublish(MANIFEST_ONE);
+  await t.context.access.unpublish(MANIFEST_TWO);
 
-    let doc = await t.context.access.get(MANIFEST_ONE);
-    t.falsy(doc.public);
+  let doc = await t.context.access.get(MANIFEST_TWO);
+  t.falsy(doc.public);
 
-    let error = await t.throwsAsync(t.context.access.unpublish(MANIFEST_ONE));
-    t.is(error.message, "Trying to unpublish an object that isn't public");
+  let error = await t.throwsAsync(t.context.access.unpublish(MANIFEST_TWO));
+  t.is(error.message, "Trying to unpublish an object that isn't public");
 
-    await t.context.access.publish(MANIFEST_ONE);
+  await t.context.access.publish(MANIFEST_TWO);
 
-    doc = await t.context.access.get(MANIFEST_ONE);
-    t.true(Timestamp.safeParse(doc.public).success);
+  doc = await t.context.access.get(MANIFEST_TWO);
+  t.true(Timestamp.safeParse(doc.public).success);
 
-    error = await t.throwsAsync(t.context.access.publish(MANIFEST_ONE));
-    t.is(error.message, "Trying to publish an object that is already public");
-  } catch (e) {
-    t.fail(e.message);
-  }
+  error = await t.throwsAsync(t.context.access.publish(MANIFEST_TWO));
+  t.is(error.message, "Trying to publish an object that is already public");
+});
+
+test.serial("Slugs can only change if they aren't taken", async (t) => {
+  const error = await t.throwsAsync(
+    t.context.access.editCollection({
+      id: COLLECTION,
+      user: USER,
+      data: { slug: MANIFEST_TWO_SLUG },
+    })
+  );
+  t.true(error.message.includes("already in use"));
+
+  const doc = await t.context.access.editCollection({
+    id: COLLECTION,
+    user: USER,
+    data: { slug: "definitely_available" },
+  });
+
+  t.is(doc.slug, "definitely_available");
+
+  await t.context.access.editCollection({
+    id: COLLECTION,
+    user: USER,
+    data: { slug: COLLECTION_SLUG },
+  });
+});
+
+test.serial("Cannot edit something if it's the wrong type", async (t) => {
+  const error = await t.throwsAsync(
+    t.context.access.editCollection({
+      id: MANIFEST_TWO,
+      user: USER,
+      data: { label: { none: "hi" } },
+    })
+  );
+
+  t.true(error.message.includes("has type: manifest"));
 });
 
 test.after(async (t) => {
