@@ -7,6 +7,7 @@ type AccessHandlerContext = BaseContext & { access: AccessHandler };
 
 const test = anyTest as TestInterface<AccessHandlerContext>;
 
+// MANIFEST_ONE and MANIFEST_TWO are members of COLLECTION
 const MANIFEST_ONE = "69429/m0696zw19t6s";
 const MANIFEST_TWO = "69429/m02n4zg6h671";
 const MANIFEST_TWO_SLUG = "oocihm.8_06941_2";
