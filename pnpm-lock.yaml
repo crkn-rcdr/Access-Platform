@@ -13,16 +13,16 @@ importers:
       '@crkn-rcdr/access-data': workspace:^0.0.0
       '@crkn-rcdr/access-env': workspace:*
       '@types/http-errors': ^1.8.1
-      '@types/node': ^16.4.3
+      '@types/node': ^16.4.13
       ava: ^3.15.0
       http-errors: ^1.8.0
       kivik: ^2.0.0-alpha.13
       nano: ^9.0.3
       npm-run-all: ^4.1.5
       p-retry: ^4.6.1
-      ts-node: ^10.1.0
+      ts-node: ^10.2.0
       typescript: ^4.3.5
-      zod: ^3.5.1
+      zod: ^3.7.1
     dependencies:
       '@crkn-rcdr/access-data': link:../data
       '@crkn-rcdr/access-env': link:../env
@@ -36,41 +36,41 @@ importers:
       kivik: 2.0.0-alpha.13
       npm-run-all: 4.1.5
       p-retry: 4.6.1
-      ts-node: 10.1.0_dea0625f6d31b223e93dc3dc354b8b43
+      ts-node: 10.2.0_dea0625f6d31b223e93dc3dc354b8b43
       typescript: 4.3.5
 
   packages/data:
     specifiers:
-      '@types/node': ^16.4.3
+      '@types/node': ^16.4.13
       ava: ^3.15.0
       npm-run-all: ^4.1.5
-      ts-node: ^10.1.0
+      ts-node: ^10.2.0
       typescript: ^4.3.5
-      zod: ^3.5.1
+      zod: ^3.7.1
     dependencies:
       zod: 3.7.1
     devDependencies:
       '@types/node': 16.4.13
       ava: 3.15.0
       npm-run-all: 4.1.5
-      ts-node: 10.1.0_dea0625f6d31b223e93dc3dc354b8b43
+      ts-node: 10.2.0_dea0625f6d31b223e93dc3dc354b8b43
       typescript: 4.3.5
 
   packages/env:
     specifiers:
-      '@types/node': ^16.4.3
+      '@types/node': ^16.4.13
       ava: ^3.15.0
       npm-run-all: ^4.1.5
-      ts-node: ^10.1.0
+      ts-node: ^10.2.0
       typescript: ^4.3.5
-      zod: ^3.5.1
+      zod: ^3.7.1
     dependencies:
       zod: 3.7.1
     devDependencies:
       '@types/node': 16.4.13
       ava: 3.15.0
       npm-run-all: 4.1.5
-      ts-node: 10.1.0_dea0625f6d31b223e93dc3dc354b8b43
+      ts-node: 10.2.0_dea0625f6d31b223e93dc3dc354b8b43
       typescript: 4.3.5
 
   packages/lapin-router:
@@ -78,16 +78,16 @@ importers:
       '@crkn-rcdr/access-data': workspace:*
       '@crkn-rcdr/access-env': workspace:^0.0.1
       '@crkn-rcdr/couch-utils': workspace:*
-      '@trpc/server': ^8.4.1
-      '@types/node': ^16.4.3
+      '@trpc/server': ^8.4.2
+      '@types/node': ^16.4.13
       '@types/node-fetch': ^2.5.12
       ava: ^3.15.0
       deep-object-diff: ^1.1.0
       node-fetch: ^2.6.1
       npm-run-all: ^4.1.5
-      ts-node: ^10.1.0
+      ts-node: ^10.2.0
       typescript: ^4.3.5
-      zod: ^3.5.1
+      zod: ^3.7.1
     dependencies:
       '@crkn-rcdr/access-data': link:../data
       '@crkn-rcdr/access-env': link:../env
@@ -101,7 +101,7 @@ importers:
       '@types/node-fetch': 2.5.12
       ava: 3.15.0
       npm-run-all: 4.1.5
-      ts-node: 10.1.0_dea0625f6d31b223e93dc3dc354b8b43
+      ts-node: 10.2.0_dea0625f6d31b223e93dc3dc354b8b43
       typescript: 4.3.5
 
   services/admin:
@@ -111,7 +111,7 @@ importers:
       '@crkn-rcdr/lapin-router': workspace:*
       '@sveltejs/adapter-node': next
       '@sveltejs/kit': next
-      '@trpc/client': ^8.4.1
+      '@trpc/client': ^8.4.2
       '@types/cookie': ^0.4.1
       '@types/jsonwebtoken': ^8.5.4
       cookie: ^0.4.1
@@ -122,7 +122,7 @@ importers:
       openseadragon: ^2.4.2
       rfdc: ^1.3.0
       svelte: 3.40.1
-      svelte-check: ^2.2.3
+      svelte-check: ^2.2.4
       svelte-icons: ^2.1.0
       svelte-preprocess: ^4.7.4
       tslib: ^2.3.0
@@ -141,7 +141,7 @@ importers:
     devDependencies:
       '@crkn-rcdr/lapin-router': link:../../packages/lapin-router
       '@sveltejs/adapter-node': 1.0.0-next.39
-      '@sveltejs/kit': 1.0.0-next.142_svelte@3.40.1
+      '@sveltejs/kit': 1.0.0-next.144_svelte@3.40.1
       '@types/cookie': 0.4.1
       '@types/jsonwebtoken': 8.5.4
       npm-run-all: 4.1.5
@@ -169,12 +169,12 @@ importers:
     specifiers:
       '@crkn-rcdr/access-env': workspace:*
       '@crkn-rcdr/lapin-router': workspace:*
-      '@trpc/server': ^8.4.1
-      '@types/node': ^16.4.3
+      '@trpc/server': ^8.4.2
+      '@types/node': ^16.4.13
       dotenv: ^10.0.0
       nodemon: ^2.0.12
       npm-run-all: ^4.1.5
-      ts-node: ^10.1.0
+      ts-node: ^10.2.0
       typescript: ^4.3.5
     dependencies:
       '@crkn-rcdr/access-env': link:../../packages/env
@@ -185,7 +185,7 @@ importers:
       dotenv: 10.0.0
       nodemon: 2.0.12
       npm-run-all: 4.1.5
-      ts-node: 10.1.0_dea0625f6d31b223e93dc3dc354b8b43
+      ts-node: 10.2.0_dea0625f6d31b223e93dc3dc354b8b43
       typescript: 4.3.5
 
 packages:
@@ -234,6 +234,18 @@ packages:
       - debug
     dev: true
 
+  /@cspotcode/source-map-consumer/0.8.0:
+    resolution: {integrity: sha512-41qniHzTU8yAGbCp04ohlmSrZf8bkf/iJsl3V0dRGsQN/5GFfx+LbCSsCpp2gqrqjTVg/K6O8ycoV35JIwAzAg==}
+    engines: {node: '>= 12'}
+    dev: true
+
+  /@cspotcode/source-map-support/0.6.1:
+    resolution: {integrity: sha512-DX3Z+T5dt1ockmPdobJS/FAsQPW4V4SrWEhD2iYQT2Cb2tQsiMnYxrcUH9By/Z3B+v0S5LMBkQtV/XOBbpLEOg==}
+    engines: {node: '>=12'}
+    dependencies:
+      '@cspotcode/source-map-consumer': 0.8.0
+    dev: true
+
   /@dabh/diagnostics/2.0.2:
     resolution: {integrity: sha512-+A1YivoVDNNVCdfozHSR8v/jyuuLTMXwjWuxPFlFlUapXoGc+Gj9mDlTDDfrwl7rXCl2tNZ0kE8sIBO6YOn96Q==}
     dependencies:
@@ -279,12 +291,12 @@ packages:
   /@sveltejs/adapter-node/1.0.0-next.39:
     resolution: {integrity: sha512-5esWwnomzO3Oq6Ie5HQ64lpTTESvlPfN/MS9DtyjkVEna2pgNp2/Pi+6eIunAYyPzkvaq2Ac6ngqQJ3QU1ESEA==}
     dependencies:
-      esbuild: 0.12.18
+      esbuild: 0.12.19
       tiny-glob: 0.2.9
     dev: true
 
-  /@sveltejs/kit/1.0.0-next.142_svelte@3.40.1:
-    resolution: {integrity: sha512-MxoQz/kxlYOXVHETlxh8+wIvfZ4N2EScDqyuaWwFHqWg6fj6FHADJfZ7JCniqvAe8ME2jA9Om/gVR8e1oY04+w==}
+  /@sveltejs/kit/1.0.0-next.144_svelte@3.40.1:
+    resolution: {integrity: sha512-c+UX7Xp3PUzkGvXgkXAJpM8+zbouTMukhWIIqehUUFMXJlRlbRiO1YkiZRWFqbb7aV80d8klCWGprFXQVcwlbw==}
     engines: {node: ^12.20 || >=14.13}
     hasBin: true
     peerDependencies:
@@ -1176,8 +1188,8 @@ packages:
       is-symbol: 1.0.4
     dev: true
 
-  /esbuild/0.12.18:
-    resolution: {integrity: sha512-arWhBQSy+oiBAp8VRRCFvAU+3jyf0gGacABLO3haMHboXCDjzq4WUqyQklst2XRuFS8MXgap+9uvODqj9Iygpg==}
+  /esbuild/0.12.19:
+    resolution: {integrity: sha512-5NuT1G6THW7l3fsSCDkcPepn24R0XtyPjKoqKHD8LfhqMXzCdz0mrS9HgO6hIhzVT7zt0T+JGbzCqF5AH8hS9w==}
     hasBin: true
     requiresBuild: true
     dev: true
@@ -1587,8 +1599,8 @@ packages:
     resolution: {integrity: sha512-eVRqCvVlZbuw3GrM63ovNSNAeA1K16kaR/LRY/92w0zxQ5/1YzwblUX652i4Xs9RwAGjW9d9y6X88t8OaAJfWQ==}
     dev: true
 
-  /is-bigint/1.0.2:
-    resolution: {integrity: sha512-0JV5+SOCQkIdzjBK9buARcV804Ddu7A0Qet6sHi3FimE9ne6m4BGQZfRn+NZiXbBk4F4XmHfDZIipLj9pX8dSA==}
+  /is-bigint/1.0.3:
+    resolution: {integrity: sha512-ZU538ajmYJmzysE5yU4Y7uIrPQ2j704u+hXFiIPQExpqzzUbpe5jCPdTfmz7jXRxZdvjY3KZ3ZNenoXQovX+Dg==}
     dev: true
 
   /is-binary-path/2.1.0:
@@ -2682,8 +2694,8 @@ packages:
       glob: 7.1.7
     dev: true
 
-  /rollup/2.56.0:
-    resolution: {integrity: sha512-weEafgbjbHCnrtJPNyCrhYnjP62AkF04P0BcV/1mofy1+gytWln4VVB1OK462cq2EAyWzRDpTMheSP/o+quoiA==}
+  /rollup/2.56.1:
+    resolution: {integrity: sha512-KkrsNjeiTfGJMUFBi/PNfj3fnt70akqdoNXOjlzwo98uA1qrlkmgt6SGaK5OwhyDYCVnJb6jb2Xa2wbI47P4Nw==}
     engines: {node: '>=10.0.0'}
     hasBin: true
     optionalDependencies:
@@ -2822,7 +2834,7 @@ packages:
     resolution: {integrity: sha512-cOYcUWwhCuHCXi49RhFRCyJEK3iPj1Ziz9DpViV3tbZOwXD49QzIN3MpOLJNxh2qwq2lJJZaKMVw9qNi4jTC0w==}
     dependencies:
       spdx-expression-parse: 3.0.1
-      spdx-license-ids: 3.0.9
+      spdx-license-ids: 3.0.10
     dev: true
 
   /spdx-exceptions/2.3.0:
@@ -2833,11 +2845,11 @@ packages:
     resolution: {integrity: sha512-cbqHunsQWnJNE6KhVSMsMeH5H/L9EpymbzqTQ3uLwNCLZ1Q481oWaofqH7nO6V07xlXwY6PhQdQ2IedWx/ZK4Q==}
     dependencies:
       spdx-exceptions: 2.3.0
-      spdx-license-ids: 3.0.9
+      spdx-license-ids: 3.0.10
     dev: true
 
-  /spdx-license-ids/3.0.9:
-    resolution: {integrity: sha512-Ki212dKK4ogX+xDo4CtOZBVIwhsKBEfsEEcwmJfLQzirgc2jIWdzg40Unxz/HzEUqM1WFzVlQSMF9kZZ2HboLQ==}
+  /spdx-license-ids/3.0.10:
+    resolution: {integrity: sha512-oie3/+gKf7QtpitB0LYLETe+k8SifzsX4KixvpOsbI6S0kRiRQ5MKOio8eMSAKQ17N06+wdEOXRiId+zOxo0hA==}
     dev: true
 
   /sprintf-js/1.0.3:
@@ -3131,8 +3143,8 @@ packages:
     resolution: {integrity: sha512-XrHUvV5HpdLmIj4uVMxHggLbFSZYIn7HEWsqePZcI50pco+MPqJ50wMGY794X7AOOhxOBAjbkqfAbEe/QMp2Lw==}
     dev: true
 
-  /ts-node/10.1.0_dea0625f6d31b223e93dc3dc354b8b43:
-    resolution: {integrity: sha512-6szn3+J9WyG2hE+5W8e0ruZrzyk1uFLYye6IGMBadnOzDh8aP7t8CbFpsfCiEx2+wMixAhjFt7lOZC4+l+WbEA==}
+  /ts-node/10.2.0_dea0625f6d31b223e93dc3dc354b8b43:
+    resolution: {integrity: sha512-FstYHtQz6isj8rBtYMN4bZdnXN1vq4HCbqn9vdNQcInRqtB86PePJQIxE6es0PhxKWhj2PHuwbG40H+bxkZPmg==}
     engines: {node: '>=12.0.0'}
     hasBin: true
     peerDependencies:
@@ -3146,16 +3158,18 @@ packages:
       '@swc/wasm':
         optional: true
     dependencies:
+      '@cspotcode/source-map-support': 0.6.1
       '@tsconfig/node10': 1.0.8
       '@tsconfig/node12': 1.0.9
       '@tsconfig/node14': 1.0.1
       '@tsconfig/node16': 1.0.2
       '@types/node': 16.4.13
+      acorn: 8.4.1
+      acorn-walk: 8.1.1
       arg: 4.1.3
       create-require: 1.1.1
       diff: 4.0.2
       make-error: 1.3.6
-      source-map-support: 0.5.19
       typescript: 4.3.5
       yn: 3.1.1
     dev: true
@@ -3293,10 +3307,10 @@ packages:
     engines: {node: '>=12.0.0'}
     hasBin: true
     dependencies:
-      esbuild: 0.12.18
+      esbuild: 0.12.19
       postcss: 8.3.6
       resolve: 1.20.0
-      rollup: 2.56.0
+      rollup: 2.56.1
     optionalDependencies:
       fsevents: 2.3.2
     dev: true
@@ -3315,7 +3329,7 @@ packages:
   /which-boxed-primitive/1.0.2:
     resolution: {integrity: sha512-bwZdv0AKLpplFY2KZRX6TvyuN7ojjr7lwkg6ml0roIy9YeuSr7JS372qlNW18UQYzgYK9ziGcerWqZOmEn9VNg==}
     dependencies:
-      is-bigint: 1.0.2
+      is-bigint: 1.0.3
       is-boolean-object: 1.1.2
       is-number-object: 1.0.6
       is-string: 1.0.7
