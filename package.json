@@ -21,6 +21,7 @@
   "scripts": {
     "build": "pnpm clean && pnpm install && pnpm build -r --filter ./packages",
     "clean": "pnpm clean -r",
+    "deploy": "./deployImage.sh",
     "dev": "pnpm down && pnpm dev:up",
     "dev:up": "CURRENT_USER=$(id -u):$(id -g) docker-compose --profile dev up --build --remove-orphans --detach",
     "down": "CURRENT_USER=$(id -u):$(id -g) docker-compose down --volumes",
