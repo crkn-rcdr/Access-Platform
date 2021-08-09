@@ -6,50 +6,52 @@
   export let dmdTask: DMDTask = undefined;
 </script>
 
-<table>
-  {#if "succeeded" in dmdTask["split"]}
-    <tr>
-      <td><b>Success?</b></td>
-      <td>{dmdTask["split"]["succeeded"] ? "Yes" : "No"}</td>
-    </tr>
-  {/if}
-  {#if "message" in dmdTask["split"]}
-    <tr>
-      <td><b>Message</b></td>
-      <td>{dmdTask["split"]["message"]}</td>
-    </tr>
-  {/if}
-  {#if "requestDate" in dmdTask["split"]}
-    <tr>
-      <td><b>Request Date</b></td>
-      <td>{dmdTask["split"]["requestDate"]}</td>
-    </tr>
-  {/if}
-  {#if "processDate" in dmdTask["split"]}
-    <tr>
-      <td><b>Process Date</b></td>
-      <td>{dmdTask["split"]["processDate"]}</td>
-    </tr>
-  {/if}
-  {#if dmdTask?.["attachments"]?.["metadata"]?.["revpos"]}
-    <tr>
-      <td><b>Revision</b></td>
-      <td>{dmdTask["attachments"]["metadata"]["revpos"]}</td>
-    </tr>
-  {/if}
-  {#if depositorPrefix}
-    <tr>
-      <td><b>Depositor</b></td>
-      <td>{depositorPrefix}</td>
-    </tr>
-  {/if}
-  {#if metadataType}
-    <tr>
-      <td><b>Metadata type</b></td>
-      <td>{metadataType}</td>
-    </tr>
-  {/if}
-</table>
+{#if dmdTask["split"]}
+  <table>
+    {#if "succeeded" in dmdTask["split"]}
+      <tr>
+        <td><b>Success?</b></td>
+        <td>{dmdTask["split"]["succeeded"] ? "Yes" : "No"}</td>
+      </tr>
+    {/if}
+    {#if "message" in dmdTask["split"]}
+      <tr>
+        <td><b>Message</b></td>
+        <td>{dmdTask["split"]["message"]}</td>
+      </tr>
+    {/if}
+    {#if "requestDate" in dmdTask["split"]}
+      <tr>
+        <td><b>Request Date</b></td>
+        <td>{dmdTask["split"]["requestDate"]}</td>
+      </tr>
+    {/if}
+    {#if "processDate" in dmdTask["split"]}
+      <tr>
+        <td><b>Process Date</b></td>
+        <td>{dmdTask["split"]["processDate"]}</td>
+      </tr>
+    {/if}
+    {#if dmdTask?.["attachments"]?.["metadata"]?.["revpos"]}
+      <tr>
+        <td><b>Revision</b></td>
+        <td>{dmdTask["attachments"]["metadata"]["revpos"]}</td>
+      </tr>
+    {/if}
+    {#if depositorPrefix}
+      <tr>
+        <td><b>Depositor</b></td>
+        <td>{depositorPrefix}</td>
+      </tr>
+    {/if}
+    {#if metadataType}
+      <tr>
+        <td><b>Metadata type</b></td>
+        <td>{metadataType}</td>
+      </tr>
+    {/if}
+  </table>
+{/if}
 <br />
 {#if dmdTask["items"]}
   <table>

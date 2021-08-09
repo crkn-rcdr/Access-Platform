@@ -1,5 +1,6 @@
 <script lang="ts">
   export let title: string = "";
+  export let status: "success" | "fail" | "warn" | "neutral" = "neutral";
   export let isLastStep: boolean = false;
 </script>
 
@@ -8,7 +9,9 @@
   class:scroll-stepper-step-not-last={!isLastStep}
 >
   <h6 class="auto-align auto-align__block auto-align__a-center">
-    <div class="step-icon auto-align auto-align__j-center auto-align__a-center">
+    <div
+      class={`step-icon step-icon-${status} auto-align auto-align__j-center auto-align__a-center`}
+    >
       <slot name="icon" />
     </div>
     {title}
@@ -34,10 +37,10 @@
     padding: var(--perfect-fourth-2) 0;
     z-index: 1;
   }
-  :global(.scroll-stepper-step.show) {
+  :global(.scroll-stepper-step.show .scroll-stepper-step-body) {
     display: block;
   }
-  :global(.scroll-stepper-step.hide) {
+  :global(.scroll-stepper-step.hide .scroll-stepper-step-body) {
     display: none;
   }
   h6 {
@@ -51,6 +54,18 @@
     border-radius: 50%;
     color: var(--light-font);
     margin-right: 1rem;
+  }
+  :global(.scroll-stepper-step-active .step-icon) {
+    background: var(--primary);
+  }
+  :global(.scroll-stepper-step-active .step-icon.step-icon-success) {
+    background: var(--success);
+  }
+  :global(.scroll-stepper-step-active .step-icon.step-icon-warn) {
+    background: var(--warn);
+  }
+  :global(.scroll-stepper-step-active .step-icon.step-icon-fail) {
+    background: var(--danger);
   }
   .scroll-stepper-step .scroll-stepper-step-body {
     padding-left: 5rem;

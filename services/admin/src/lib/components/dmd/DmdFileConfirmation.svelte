@@ -14,7 +14,7 @@
   }
 </script>
 
-{#if dmdTask["attachments"]["metadata"]}
+{#if dmdTask?.["attachments"]?.["metadata"]}
   <table>
     <tr>
       <td><b>Name</b></td>
@@ -29,8 +29,8 @@
       <td>{dmdTask["attachments"]["metadata"].content_type}</td>
     </tr>
   </table>
+  <br />
+  <button class="button primary" type="submit" on:click={handleConfirm}>
+    Confirm Load
+  </button>
 {/if}
-<br />
-<button class="button primary" type="submit" on:click={handleConfirm}>
-  Confirm Load
-</button>

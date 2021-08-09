@@ -19,6 +19,11 @@
       if (i <= activeStepIndex) {
         steps[i].classList.add("show");
         steps[i].classList.remove("hide");
+        if (i === activeStepIndex) {
+          steps[i].classList.add("scroll-stepper-step-active");
+        } else {
+          steps[i].classList.remove("scroll-stepper-step-active");
+        }
       } else {
         steps[i].classList.add("hide");
         steps[i].classList.remove("show");

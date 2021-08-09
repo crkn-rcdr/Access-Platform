@@ -31,23 +31,6 @@
     },
     prefix: "oochim",
     mdType: "csvissueinfo", //"csvissueinfo" | "csvdc" | "marc490" | "marcoocihm" | "marcooe"
-    split: {
-      requestDate: 12345,
-      processDate: 123456,
-      message: "a msg",
-      succeeded: true,
-    },
-    items: [
-      {
-        id: "123456",
-        splitResult: {
-          message: "",
-          accessSlug: "oochim.12345",
-          preservationId: "noid?",
-          valid: true,
-        },
-      },
-    ],
   };
 
   // Attachment: { data?: string; length?: number; encoded_length?: number; encoding?: string; stub?: boolean; content_type: string; digest: string; revpos: number; }
@@ -76,27 +59,50 @@
       on:confirm={() => {
         console.log("Sumbit");
         activeStepIndex = 2;
+        dmdTask["split"] = {
+          requestDate: 12345,
+          processDate: 123456,
+          message: "a msg",
+          succeeded: false,
+        };
+        dmdTask["items"] = [
+          {
+            id: "123456",
+            splitResult: {
+              message: "",
+              accessSlug: "oochim.12345",
+              preservationId: "noid?",
+              valid: true,
+            },
+          },
+        ];
       }}
     />
   </ScrollStepperStep>
 
-  {#if "split" in dmdTask}
-    <ScrollStepperStep title="Task results" isLastStep={true}>
-      <div
-        slot="icon"
-        class="auto-align auto-align__j-center auto-align__a-center s-9immjC5o-rnn"
-      >
-        {#if "succeeded" in dmdTask["split"]}
-          {#if dmdTask["split"].succeeded}
-            <FaCheckCircle />
-          {:else}
-            <FaTimesCircle />
-          {/if}
+  <ScrollStepperStep
+    title="Task results"
+    status={!dmdTask?.["split"]
+      ? "neutral"
+      : dmdTask?.["split"]?.["succeeded"]
+      ? "success"
+      : "fail"}
+    isLastStep={true}
+  >
+    <div
+      slot="icon"
+      class="auto-align auto-align__j-center auto-align__a-center s-9immjC5o-rnn"
+    >
+      {#if dmdTask?.["split"]}
+        {#if dmdTask?.["split"]?.["succeeded"]}
+          <FaCheckCircle />
         {:else}
-          3
+          <FaTimesCircle />
         {/if}
-      </div>
-      <DmdTaskResults bind:depositorPrefix bind:metadataType bind:dmdTask />
-    </ScrollStepperStep>
-  {/if}
+      {:else}
+        3
+      {/if}
+    </div>
+    <DmdTaskResults bind:depositorPrefix bind:metadataType bind:dmdTask />
+  </ScrollStepperStep>
 </ScrollStepper>
