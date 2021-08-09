@@ -1,7 +1,9 @@
 <script lang="ts">
-  export let prefix = "oocihm";
+  import type { Depositor } from "$lib/types";
+
+  export let prefix: string = "oocihm";
   // TODO: add period to end of each prefix?
-  const prefixes = [
+  const prefixes: Array<Depositor> = [
     {
       string: "ams",
       label: "Shortgrass Public Library System",
@@ -41,6 +43,10 @@
     {
       string: "qmma",
       label: "McGill University Archives",
+    },
+    {
+      string: "490",
+      label: "MARC File",
     },
   ];
 </script>
