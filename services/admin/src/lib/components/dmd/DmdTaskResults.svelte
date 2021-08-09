@@ -73,22 +73,11 @@
         <td
           >{item?.["splitResult"]?.["preservationId"]
             ? item["splitResult"]["preservationId"]
-            : "No prreservation id"}</td
+            : "No preservation id"}</td
         >
         <td>Copy2access</td>
         <td>copy2preservation</td>
       </tr>
     {/each}
   </table>
-  <!--
-          {
-        id: "123456",
-        splitResult: {
-          message: "",
-          accessSlug: "oochim.12345",
-          preservationId: "noid?",
-          valid: true,
-        },
-      },
-        -->
 {/if}
