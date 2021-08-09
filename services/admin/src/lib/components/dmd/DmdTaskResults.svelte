@@ -65,12 +65,14 @@
             : "No message"}</td
         >
         <td>
-          {item?.["accessSlug"] ? item["accessSlug"] : "No access slug"}
+          {item?.["splitResult"]?.["accessSlug"]
+            ? item["splitResult"]["accessSlug"]
+            : "No access slug"}
         </td>
-        <td>{item?.["valid"] ? "Yes" : "No"}</td>
+        <td>{item?.["splitResult"]?.["valid"] ? "Yes" : "No"}</td>
         <td
-          >{item?.["preservationId"]
-            ? item["preservationId"]
+          >{item?.["splitResult"]?.["preservationId"]
+            ? item["splitResult"]["preservationId"]
             : "No prreservation id"}</td
         >
         <td>Copy2access</td>
@@ -90,9 +92,3 @@
       },
         -->
 {/if}
-
-<style>
-  td.message {
-    word-wrap: break-word;
-  }
-</style>

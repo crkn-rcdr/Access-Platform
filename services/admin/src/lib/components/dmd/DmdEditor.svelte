@@ -63,13 +63,13 @@
           requestDate: 12345,
           processDate: 123456,
           message: "a msg",
-          succeeded: false,
+          succeeded: true,
         };
         dmdTask["items"] = [
           {
             id: "123456",
             splitResult: {
-              message: "",
+              message: "A msg",
               accessSlug: "oochim.12345",
               preservationId: "noid?",
               valid: true,
