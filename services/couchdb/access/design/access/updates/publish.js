@@ -1,5 +1,10 @@
 module.exports = function (doc, req) {
-  const { successReturn, errorReturn } = require("views/lib/prelude");
+  const {
+    successReturn,
+    errorReturn,
+    extractJSONFromBody,
+    updateObject,
+  } = require("views/lib/prelude");
 
   if (!doc) {
     return errorReturn(`No document found with id ${req.id}`, 404);
@@ -9,8 +14,15 @@ module.exports = function (doc, req) {
     return errorReturn(`Trying to publish an object that is already public`);
   }
 
+  const user = extractJSONFromBody(req);
+  if (!user) {
+    return errorReturn(`Could not parse request body as JSON: ${req.body}`);
+  }
+
   const now = Date.now() / 1000;
   doc.public = now;
-  doc.updateInternalmeta = { requestDate: now };
+
+  updateObject(doc, user);
+
   return successReturn(doc, `${doc.slug ? doc.slug : doc.id} published`);
 };
