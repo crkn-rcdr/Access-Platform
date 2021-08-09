@@ -19,7 +19,16 @@
     },
     id: "123",
     updated: 12345,
-    attachments: {},
+    attachments: {
+      metadata: {
+        data: "",
+        length: 0,
+        content_type: "text/csv", // @see: https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
+        encoding: "",
+        digest: "",
+        revpos: 1,
+      },
+    },
     prefix: "oochim",
     mdType: "csvissueinfo", //"csvissueinfo" | "csvdc" | "marc490" | "marcoocihm" | "marcooe"
     split: {
@@ -42,14 +51,6 @@
   };
 
   // Attachment: { data?: string; length?: number; encoded_length?: number; encoding?: string; stub?: boolean; content_type: string; digest: string; revpos: number; }
-  // Set after split?
-  /*metadata: {
-        data: "",
-        content_type: "text/csv", // @see: https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
-        encoding: "",
-        digest: "",
-        revpos: 1,
-      },*/
 
   let activeStepIndex = 0;
 </script>
