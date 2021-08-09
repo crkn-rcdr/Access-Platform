@@ -1,5 +1,9 @@
 module.exports = function (doc, req) {
-  const { successReturn, errorReturn } = require("views/lib/prelude");
+  const {
+    successReturn,
+    errorReturn,
+    updateObject,
+  } = require("views/lib/prelude");
 
   if (!doc) {
     return errorReturn(`No document found with id ${req.id}`, 404);
@@ -11,6 +15,9 @@ module.exports = function (doc, req) {
 
   const now = Date.now() / 1000;
   doc.public = now;
-  doc.updateInternalmeta = { requestDate: now };
+
+  // TODO: require a User for this
+  updateObject(doc);
+
   return successReturn(doc, `${doc.slug ? doc.slug : doc.id} published`);
 };

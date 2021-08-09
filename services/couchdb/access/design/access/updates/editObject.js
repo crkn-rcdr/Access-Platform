@@ -3,6 +3,7 @@ module.exports = function (doc, req) {
     successReturn,
     errorReturn,
     extractJSONFromBody,
+    updateObject,
   } = require("views/lib/prelude");
 
   if (!doc) {
@@ -16,8 +17,7 @@ module.exports = function (doc, req) {
 
   doc = Object.assign(doc, input.data);
 
-  const now = Date.now() / 1000;
-  doc.updateInternalmeta = { requestDate: now };
-  doc.staff = { by: input.user, date: now };
+  updateObject(doc, input.user);
+
   return successReturn(doc, `${doc.slug ? doc.slug : doc.id} updated`);
 };
