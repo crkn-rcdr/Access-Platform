@@ -39,7 +39,7 @@
 </script>
 
 <ScrollStepper bind:activeStepIndex>
-  <ScrollStepperStep title="Enter Task Information">
+  <ScrollStepperStep title="Enter File Information">
     <div slot="icon">1</div>
     <DmdFileSpecification
       bind:depositorPrefix
@@ -52,7 +52,7 @@
     />
   </ScrollStepperStep>
 
-  <ScrollStepperStep title="Review & Initiate Task">
+  <ScrollStepperStep title="Review & Load Content">
     <div slot="icon">2</div>
     <DmdFileConfirmation
       bind:dmdTask
@@ -81,7 +81,7 @@
   </ScrollStepperStep>
 
   <ScrollStepperStep
-    title="Task results"
+    title="DMD Task results"
     status={!dmdTask?.["split"]
       ? "neutral"
       : dmdTask?.["split"]?.["succeeded"]
