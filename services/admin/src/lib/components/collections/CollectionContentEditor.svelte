@@ -4,13 +4,16 @@
 TODO
 
 ### Overview
-
+Allows the user to modify the member list for a collection.
 ### Properties
-
+|    |    |    |
+| -- | -- | -- |
+| collection : Collection    | required | The collection thats contents should be edited. |
 ### Usage
 ```  
-
+<CollectionContentEditor bind:collection />
 ```
+*Note: `bind:` is required for changes to the object to be reflected in higher level components.*
 -->
 <script lang="ts">
   import { onMount, createEventDispatcher } from "svelte";

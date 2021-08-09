@@ -13,10 +13,13 @@ importers:
       '@crkn-rcdr/access-data': workspace:^0.0.0
       '@crkn-rcdr/access-env': workspace:*
       '@types/http-errors': ^1.8.1
+      '@types/lodash': ^4.14.172
       '@types/node': ^16.4.3
       ava: ^3.15.0
       http-errors: ^1.8.0
       kivik: ^2.0.0-alpha.13
+      lodash: ^4.17.21
+      lodash.xorwith: ^4.5.0
       nano: ^9.0.3
       npm-run-all: ^4.1.5
       p-retry: ^4.6.1
@@ -27,10 +30,13 @@ importers:
       '@crkn-rcdr/access-data': link:../data
       '@crkn-rcdr/access-env': link:../env
       http-errors: 1.8.0
+      lodash: 4.17.21
+      lodash.xorwith: 4.5.0
       nano: 9.0.3
       zod: 3.7.1
     devDependencies:
       '@types/http-errors': 1.8.1
+      '@types/lodash': 4.14.172
       '@types/node': 16.4.13
       ava: 3.15.0
       kivik: 2.0.0-alpha.13
@@ -141,7 +147,7 @@ importers:
     devDependencies:
       '@crkn-rcdr/lapin-router': link:../../packages/lapin-router
       '@sveltejs/adapter-node': 1.0.0-next.39
-      '@sveltejs/kit': 1.0.0-next.142_svelte@3.40.1
+      '@sveltejs/kit': 1.0.0-next.144_svelte@3.40.1
       '@types/cookie': 0.4.1
       '@types/jsonwebtoken': 8.5.4
       npm-run-all: 4.1.5
@@ -279,12 +285,12 @@ packages:
   /@sveltejs/adapter-node/1.0.0-next.39:
     resolution: {integrity: sha512-5esWwnomzO3Oq6Ie5HQ64lpTTESvlPfN/MS9DtyjkVEna2pgNp2/Pi+6eIunAYyPzkvaq2Ac6ngqQJ3QU1ESEA==}
     dependencies:
-      esbuild: 0.12.18
+      esbuild: 0.12.19
       tiny-glob: 0.2.9
     dev: true
 
-  /@sveltejs/kit/1.0.0-next.142_svelte@3.40.1:
-    resolution: {integrity: sha512-MxoQz/kxlYOXVHETlxh8+wIvfZ4N2EScDqyuaWwFHqWg6fj6FHADJfZ7JCniqvAe8ME2jA9Om/gVR8e1oY04+w==}
+  /@sveltejs/kit/1.0.0-next.144_svelte@3.40.1:
+    resolution: {integrity: sha512-c+UX7Xp3PUzkGvXgkXAJpM8+zbouTMukhWIIqehUUFMXJlRlbRiO1YkiZRWFqbb7aV80d8klCWGprFXQVcwlbw==}
     engines: {node: ^12.20 || >=14.13}
     hasBin: true
     peerDependencies:
@@ -371,6 +377,10 @@ packages:
     resolution: {integrity: sha512-4L8msWK31oXwdtC81RmRBAULd0ShnAHjBuKT9MRQpjP0piNrZdXyTRcKY9/UIfhGeKIT4PvF5amOOUbbT/9Wpg==}
     dependencies:
       '@types/node': 16.4.13
+    dev: true
+
+  /@types/lodash/4.14.172:
+    resolution: {integrity: sha512-/BHF5HAx3em7/KkzVKm3LrsD6HZAXuXO1AJZQ3cRRBZj4oHZDviWPYu0aEplAqDFNHZPW6d3G7KN+ONcCCC7pw==}
     dev: true
 
   /@types/node-fetch/2.5.12:
@@ -1176,8 +1186,8 @@ packages:
       is-symbol: 1.0.4
     dev: true
 
-  /esbuild/0.12.18:
-    resolution: {integrity: sha512-arWhBQSy+oiBAp8VRRCFvAU+3jyf0gGacABLO3haMHboXCDjzq4WUqyQklst2XRuFS8MXgap+9uvODqj9Iygpg==}
+  /esbuild/0.12.19:
+    resolution: {integrity: sha512-5NuT1G6THW7l3fsSCDkcPepn24R0XtyPjKoqKHD8LfhqMXzCdz0mrS9HgO6hIhzVT7zt0T+JGbzCqF5AH8hS9w==}
     hasBin: true
     requiresBuild: true
     dev: true
@@ -1968,9 +1978,12 @@ packages:
     resolution: {integrity: sha1-DdOXEhPHxW34gJd9UEyI+0cal6w=}
     dev: false
 
+  /lodash.xorwith/4.5.0:
+    resolution: {integrity: sha1-jdFQIzXZatyeRtmlbsO+TvJvwqc=}
+    dev: false
+
   /lodash/4.17.21:
     resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
-    dev: true
 
   /log-symbols/4.1.0:
     resolution: {integrity: sha512-8XPvpAA8uyhfteu8pIvQxpJZ7SYYdpUivZpGy6sFsBuKRY/7rQGavedeB8aK+Zkyq6upMFVL/9AW6vOYzfRyLg==}
@@ -2682,8 +2695,8 @@ packages:
       glob: 7.1.7
     dev: true
 
-  /rollup/2.56.0:
-    resolution: {integrity: sha512-weEafgbjbHCnrtJPNyCrhYnjP62AkF04P0BcV/1mofy1+gytWln4VVB1OK462cq2EAyWzRDpTMheSP/o+quoiA==}
+  /rollup/2.56.1:
+    resolution: {integrity: sha512-KkrsNjeiTfGJMUFBi/PNfj3fnt70akqdoNXOjlzwo98uA1qrlkmgt6SGaK5OwhyDYCVnJb6jb2Xa2wbI47P4Nw==}
     engines: {node: '>=10.0.0'}
     hasBin: true
     optionalDependencies:
@@ -3293,10 +3306,10 @@ packages:
     engines: {node: '>=12.0.0'}
     hasBin: true
     dependencies:
-      esbuild: 0.12.18
+      esbuild: 0.12.19
       postcss: 8.3.6
       resolve: 1.20.0
-      rollup: 2.56.0
+      rollup: 2.56.1
     optionalDependencies:
       fsevents: 2.3.2
     dev: true

@@ -13,6 +13,8 @@ import {
 } from "@crkn-rcdr/access-data";
 
 import { DatabaseHandler } from "../DatabaseHandler.js";
+import { xorWith } from "lodash";
+import { isEqual } from "lodash/fp";
 
 // Use this essentially so that `slug` is defined
 const AccessDatabaseObject = z.union([Alias, Manifest, Collection]);
@@ -53,7 +55,9 @@ export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
       docId: id,
     });
   }
-
+  /**
+   * Edit an Access Object.
+   */
   private async editObject<T extends { slug?: string }>(args: {
     id: Noid;
     user: User;
@@ -95,6 +99,14 @@ export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
     data: EditableCollection;
   }): Promise<Collection> {
     const data = EditableCollection.parse(args.data);
+    if (data.members) {
+      const currentMembers = Collection.parse(await this.get(args.id)).members;
+
+      const filteredMembers = xorWith(data.members, currentMembers, isEqual);
+
+      console.log("data in accesshandler", filteredMembers);
+    }
+
     await this.editObject({
       id: args.id,
       user: args.user,

@@ -58,6 +58,7 @@
   },
   "devDependencies": {
     "@types/http-errors": "^1.8.1",
+    "@types/lodash": "^4.14.172",
     "@types/node": "^16.4.3",
     "ava": "^3.15.0",
     "kivik": "^2.0.0-alpha.13",
@@ -70,6 +71,8 @@
     "@crkn-rcdr/access-data": "workspace:^0.0.0",
     "@crkn-rcdr/access-env": "workspace:*",
     "http-errors": "^1.8.0",
+    "lodash": "^4.17.21",
+    "lodash.xorwith": "^4.5.0",
     "nano": "^9.0.3",
     "zod": "^3.5.1"
   }
