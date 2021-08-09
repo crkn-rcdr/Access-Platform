@@ -33,6 +33,14 @@ export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
   }
 
   /**
+   * Returns the Noids of the Collections the object identified by `id` is a member of.
+   */
+  async isMemberOf(id: Noid): Promise<Noid[]> {
+    const response = await this.view("access", "members", { key: id });
+    return response.rows.map((row) => row.id);
+  }
+
+  /**
    * Publish an Access Object.
    */
   async publish(args: { id: Noid; user: User }) {
@@ -127,5 +135,24 @@ export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
     return Manifest.parse(manifest);
   }
 
-  async unassignSlug(_args: { id: Noid; user: User }): Promise<void> {}
+  async unassignSlug(args: { id: Noid; user: User }): Promise<void> {
+    const { id, user } = args;
+    const collections = await this.isMemberOf(id);
+
+    for (const collection of collections) {
+      await this.update({
+        ddoc: "access",
+        name: "removeMember",
+        docId: collection,
+        body: { id, user },
+      });
+    }
+
+    await this.update({
+      ddoc: "access",
+      name: "unassignSlug",
+      docId: id,
+      body: user,
+    });
+  }
 }
