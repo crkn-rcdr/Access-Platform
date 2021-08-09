@@ -62,3 +62,17 @@ exports.dateAsArray = (date) => {
     date.getUTCSeconds(),
   ];
 };
+
+/**
+ * Updates the fields that change when an Access Object is edited. Creates an internalmeta request.
+ * @param {Record<string, string>} doc The Access Object's document.
+ * @param {{name: string; email: string} | undefined} user The user who triggered this update, if one exists.
+ */
+exports.updateObject = (doc, user) => {
+  const now = Date.now() / 1000;
+  if (user) {
+    doc.staff = { by: user, date: now };
+  }
+  doc.updateInternalmeta = { requestDate: now };
+  doc.updated = now;
+};

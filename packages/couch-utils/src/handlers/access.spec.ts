@@ -7,6 +7,8 @@ type AccessHandlerContext = BaseContext & { access: AccessHandler };
 
 const test = anyTest as TestInterface<AccessHandlerContext>;
 
+// MANIFEST_ONE and MANIFEST_TWO are members of COLLECTION
+const MANIFEST_ONE = "69429/m0696zw19t6s";
 const MANIFEST_TWO = "69429/m02n4zg6h671";
 const MANIFEST_TWO_SLUG = "oocihm.8_06941_2";
 const COLLECTION = "69429/s0vq2s46j98h";
@@ -34,20 +36,26 @@ test.serial("Collections are parseable", async (t) => {
 });
 
 test.serial("Objects can be published and unpublished", async (t) => {
-  await t.context.access.unpublish(MANIFEST_TWO);
+  await t.context.access.unpublish({ id: MANIFEST_TWO, user: USER });
 
   let doc = await t.context.access.get(MANIFEST_TWO);
   t.falsy(doc.public);
+  t.deepEqual(doc.staff?.by, USER);
 
-  let error = await t.throwsAsync(t.context.access.unpublish(MANIFEST_TWO));
+  let error = await t.throwsAsync(
+    t.context.access.unpublish({ id: MANIFEST_TWO, user: USER })
+  );
   t.is(error.message, "Trying to unpublish an object that isn't public");
 
-  await t.context.access.publish(MANIFEST_TWO);
+  await t.context.access.publish({ id: MANIFEST_TWO, user: USER });
 
   doc = await t.context.access.get(MANIFEST_TWO);
   t.true(Timestamp.safeParse(doc.public).success);
+  t.deepEqual(doc.staff?.by, USER);
 
-  error = await t.throwsAsync(t.context.access.publish(MANIFEST_TWO));
+  error = await t.throwsAsync(
+    t.context.access.publish({ id: MANIFEST_TWO, user: USER })
+  );
   t.is(error.message, "Trying to publish an object that is already public");
 });
 
@@ -87,6 +95,24 @@ test.serial("Cannot edit something if it's the wrong type", async (t) => {
 
   t.true(error.message.includes("has type: manifest"));
 });
+
+test.serial("Can unassign a slug", async (t) => {
+  await t.context.access.unassignSlug({ id: MANIFEST_TWO, user: USER });
+
+  const collection = Collection.parse(await t.context.access.get(COLLECTION));
+
+  const isMember = (id: string) =>
+    collection.members.findIndex((member) => member.id === id) >= 0;
+
+  t.false(isMember(MANIFEST_TWO));
+  t.true(isMember(MANIFEST_ONE));
+
+  const manifest = Manifest.parse(await t.context.access.get(MANIFEST_TWO));
+
+  t.is(manifest.slug, undefined);
+});
+
+// n.b MANIFEST_TWO is no longer a member of COLLECTION
 
 test.after(async (t) => {
   await t.context.testDestroy("access", "handler");

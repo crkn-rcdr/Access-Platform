@@ -16,7 +16,7 @@ export const slugRouter = createRouter()
     input: Slug.parse,
     async resolve({ input: q, ctx }): Promise<SlugResult[]> {
       const selector = mangoStringRangeSelector("slug", q);
-      const fields = ["id", "slug"] as const;
+      const fields = ["id", "slug", "type"] as const;
       return (await ctx.couch.access.find(selector, fields)) as SlugResult[];
     },
   })
