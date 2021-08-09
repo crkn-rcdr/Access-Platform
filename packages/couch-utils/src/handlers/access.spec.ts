@@ -34,20 +34,26 @@ test.serial("Collections are parseable", async (t) => {
 });
 
 test.serial("Objects can be published and unpublished", async (t) => {
-  await t.context.access.unpublish(MANIFEST_TWO);
+  await t.context.access.unpublish({ id: MANIFEST_TWO, user: USER });
 
   let doc = await t.context.access.get(MANIFEST_TWO);
   t.falsy(doc.public);
+  t.deepEqual(doc.staff?.by, USER);
 
-  let error = await t.throwsAsync(t.context.access.unpublish(MANIFEST_TWO));
+  let error = await t.throwsAsync(
+    t.context.access.unpublish({ id: MANIFEST_TWO, user: USER })
+  );
   t.is(error.message, "Trying to unpublish an object that isn't public");
 
-  await t.context.access.publish(MANIFEST_TWO);
+  await t.context.access.publish({ id: MANIFEST_TWO, user: USER });
 
   doc = await t.context.access.get(MANIFEST_TWO);
   t.true(Timestamp.safeParse(doc.public).success);
+  t.deepEqual(doc.staff?.by, USER);
 
-  error = await t.throwsAsync(t.context.access.publish(MANIFEST_TWO));
+  error = await t.throwsAsync(
+    t.context.access.publish({ id: MANIFEST_TWO, user: USER })
+  );
   t.is(error.message, "Trying to publish an object that is already public");
 });
 

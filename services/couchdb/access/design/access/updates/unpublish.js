@@ -2,6 +2,7 @@ module.exports = function (doc, req) {
   const {
     successReturn,
     errorReturn,
+    extractJSONFromBody,
     updateObject,
   } = require("views/lib/prelude");
 
@@ -13,10 +14,14 @@ module.exports = function (doc, req) {
     return errorReturn(`Trying to unpublish an object that isn't public`);
   }
 
+  const user = extractJSONFromBody(req);
+  if (!user) {
+    return errorReturn(`Could not parse request body as JSON: ${req.body}`);
+  }
+
   delete doc.public;
 
-  // TODO: require a User for this
-  updateObject(doc);
+  updateObject(doc, user);
 
   return successReturn(doc, `${doc.slug ? doc.slug : doc.id} unpublished`);
 };

@@ -2,6 +2,7 @@ module.exports = function (doc, req) {
   const {
     successReturn,
     errorReturn,
+    extractJSONFromBody,
     updateObject,
   } = require("views/lib/prelude");
 
@@ -13,11 +14,15 @@ module.exports = function (doc, req) {
     return errorReturn(`Trying to publish an object that is already public`);
   }
 
+  const user = extractJSONFromBody(req);
+  if (!user) {
+    return errorReturn(`Could not parse request body as JSON: ${req.body}`);
+  }
+
   const now = Date.now() / 1000;
   doc.public = now;
 
-  // TODO: require a User for this
-  updateObject(doc);
+  updateObject(doc, user);
 
   return successReturn(doc, `${doc.slug ? doc.slug : doc.id} published`);
 };

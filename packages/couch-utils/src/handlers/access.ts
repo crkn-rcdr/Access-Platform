@@ -35,22 +35,24 @@ export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
   /**
    * Publish an Access Object.
    */
-  async publish(id: Noid) {
+  async publish(args: { id: Noid; user: User }) {
     await this.update({
       ddoc: "access",
       name: "publish",
-      docId: id,
+      docId: args.id,
+      body: args.user,
     });
   }
 
   /**
    * Unpublish an Access Object.
    */
-  async unpublish(id: Noid) {
+  async unpublish(args: { id: Noid; user: User }) {
     await this.update({
       ddoc: "access",
       name: "unpublish",
-      docId: id,
+      docId: args.id,
+      body: args.user,
     });
   }
 
