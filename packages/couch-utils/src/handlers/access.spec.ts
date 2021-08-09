@@ -7,6 +7,7 @@ type AccessHandlerContext = BaseContext & { access: AccessHandler };
 
 const test = anyTest as TestInterface<AccessHandlerContext>;
 
+const MANIFEST_ONE = "69429/m0696zw19t6s";
 const MANIFEST_TWO = "69429/m02n4zg6h671";
 const MANIFEST_TWO_SLUG = "oocihm.8_06941_2";
 const COLLECTION = "69429/s0vq2s46j98h";
@@ -99,10 +100,11 @@ test.serial("Can unassign a slug", async (t) => {
 
   const collection = Collection.parse(await t.context.access.get(COLLECTION));
 
-  t.is(
-    collection.members.find((member) => member.id === MANIFEST_TWO),
-    undefined
-  );
+  const isMember = (id: string) =>
+    collection.members.findIndex((member) => member.id === id) >= 0;
+
+  t.false(isMember(MANIFEST_TWO));
+  t.true(isMember(MANIFEST_ONE));
 
   const manifest = Manifest.parse(await t.context.access.get(MANIFEST_TWO));
 
