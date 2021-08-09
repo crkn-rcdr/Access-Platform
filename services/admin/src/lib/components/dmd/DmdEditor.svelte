@@ -31,6 +31,11 @@
     },
     prefix: "oochim",
     mdType: "csvissueinfo", //"csvissueinfo" | "csvdc" | "marc490" | "marcoocihm" | "marcooe"
+    store: {
+      processDate: 1234,
+      succeeded: false,
+      message: "oops",
+    },
   };
 
   // Attachment: { data?: string; length?: number; encoded_length?: number; encoding?: string; stub?: boolean; content_type: string; digest: string; revpos: number; }
@@ -73,6 +78,14 @@
               accessSlug: "oochim.12345",
               preservationId: "noid?",
               valid: true,
+            },
+            storeRequest: {
+              message: "A msg",
+              accessSlug: "oochim.12345",
+              preservationId: "noid?",
+              valid: true,
+              access: true,
+              preservation: false,
             },
           },
         ];

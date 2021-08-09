@@ -10,9 +10,6 @@
   let container: HTMLDivElement;
 
   function handleStepChange() {
-    console.log(activeStepIndex);
-
-    console.log("container", container);
     if (!container) return;
     let steps = container.getElementsByClassName("scroll-stepper-step");
     for (let i = 0; i < steps.length; i++) {
@@ -28,8 +25,13 @@
         steps[i].classList.add("hide");
         steps[i].classList.remove("show");
       }
-      console.log(i, "steps", steps[i]);
-      if (i === activeStepIndex) steps[i].scrollIntoView();
+      if (i === activeStepIndex && i !== 0 && window) {
+        const y =
+          i === steps.length - 1
+            ? steps[i].getBoundingClientRect().top + steps[i].clientHeight
+            : steps[i].getBoundingClientRect().top - 20;
+        window.scrollTo({ top: y, behavior: "smooth" });
+      }
     }
   }
 
