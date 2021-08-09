@@ -4,7 +4,7 @@
   import FaTimesCircle from "svelte-icons/fa/FaTimesCircle.svelte";
   import ScrollStepper from "$lib/components/shared/ScrollStepper.svelte";
   import ScrollStepperStep from "$lib/components/shared/ScrollStepperStep.svelte";
-  import DmdFileSpecification from "$lib/components/dmd/DmdFileSpecification.svelteecification.svelte";
+  import DmdFileSpecification from "$lib/components/dmd/DmdFileSpecification.svelte";
   import DmdFileConfirmation from "$lib/components/dmd/DmdFileConfirmation.svelte";
   import DmdTaskResults from "./DmdTaskResults.svelte";
 
