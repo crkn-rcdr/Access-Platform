@@ -124,4 +124,6 @@ export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
     const manifest = await this.get(args.id);
     return Manifest.parse(manifest);
   }
+
+  async unassignSlug(_args: { id: Noid; user: User }): Promise<void> {}
 }

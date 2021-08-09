@@ -88,6 +88,23 @@ test.serial("Cannot edit something if it's the wrong type", async (t) => {
   t.true(error.message.includes("has type: manifest"));
 });
 
+test.serial("Can unassign a slug", async (t) => {
+  await t.context.access.unassignSlug({ id: MANIFEST_TWO, user: USER });
+
+  const collection = Collection.parse(await t.context.access.get(COLLECTION));
+
+  t.is(
+    collection.members.find((member) => member.id === MANIFEST_TWO),
+    undefined
+  );
+
+  const manifest = Manifest.parse(await t.context.access.get(MANIFEST_TWO));
+
+  t.is(manifest.slug, undefined);
+});
+
+// n.b MANIFEST_TWO is no longer a member of COLLECTION
+
 test.after(async (t) => {
   await t.context.testDestroy("access", "handler");
 });
