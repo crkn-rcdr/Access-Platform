@@ -7,6 +7,9 @@ import cookie from "cookie";
 import jwt from "jsonwebtoken";
 import { Env } from "@crkn-rcdr/access-env";
 
+import { readFileSync } from "fs";
+import { join as pathJoin } from "path";
+
 const verifyToken = (token: string, secret: string): User => {
   const payload = jwt.verify(token, secret) as JwtPayload;
   return {
@@ -51,6 +54,17 @@ export const handle: Handle<Locals> = async ({ request, resolve }) => {
     };
   }
 
+  // I don't know why this is necessary; might have to do with https://github.com/sveltejs/kit/issues/2102
+  if (env.mode === "production" && request.path.startsWith("/static/")) {
+    try {
+      const filepath = pathJoin(process.cwd(), "static", request.path.slice(8));
+      const file = readFileSync(filepath);
+      return { status: 200, headers: {}, body: file };
+    } catch (e) {
+      return { status: 404, headers: {}, body: "" };
+    }
+  }
+
   // Fetch api response from lapin and return it
   if (request.path.startsWith("/api/")) {
     const url = `${env.lapin.url}/${fullpath.slice(5)}`;
@@ -90,6 +104,9 @@ export const serverFetch: ServerFetch = (request) => {
   /* Docker won't have access to local hosts files, and so
      we replace external domains with `127.0.0.1`.
      This assumes the external domain starts with `access`. */
+
+  console.log(request);
+
   const url = request.url.replace(
     /^https:\/\/access.*\.canadiana\.ca/,
     `http://127.0.0.1:${process.env["ADMIN_PORT"]}`
