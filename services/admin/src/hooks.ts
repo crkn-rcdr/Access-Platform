@@ -46,7 +46,7 @@ export const handle: Handle<Locals> = async ({ request, resolve }) => {
       };
     }
   } else {
-    const returnUrl = `${env.admin.urlExternal}/${fullpath}`;
+    const returnUrl = `${env.admin.urlExternal}${fullpath}`;
     const redirectUrl = `${env.auth.url}/azuread/login?redirectUrl=${returnUrl}`;
     return {
       status: 307,
