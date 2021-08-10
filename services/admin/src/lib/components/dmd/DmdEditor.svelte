@@ -10,9 +10,9 @@
   import DmdPrefixSelector from "$lib/components/dmd/DmdPrefixSelector.svelte";
   import DmdStoreTask from "./DmdStoreTask.svelte";
 
-  let depositorPrefix = undefined, // step 1
-    metadataType = undefined, // step 2
-    metadataFile: File | undefined = undefined; // set in upload file
+  let depositorPrefix = "";
+  let metadataType = "";
+  let metadataFile: File | undefined = undefined;
 
   let dmdTask: DMDTask = {
     user: {
@@ -33,16 +33,37 @@
     },
     prefix: "oochim",
     mdType: "csvissueinfo", //"csvissueinfo" | "csvdc" | "marc490" | "marcoocihm" | "marcooe"
-    store: {
-      processDate: 1234,
-      succeeded: false,
-      message: "oops",
-    },
   };
 
   // Attachment: { data?: string; length?: number; encoded_length?: number; encoding?: string; stub?: boolean; content_type: string; digest: string; revpos: number; }
 
   let activeStepIndex = 0;
+
+  function resetForm() {
+    depositorPrefix = "";
+    metadataType = "";
+    metadataFile = undefined;
+    dmdTask = {
+      user: {
+        name: "Brittny Lapierre",
+        email: "blapierre@crkn.ca",
+      },
+      id: "123",
+      updated: 12345,
+      attachments: {
+        metadata: {
+          data: "",
+          length: 0,
+          content_type: "text/csv", // @see: https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
+          encoding: "",
+          digest: "",
+          revpos: 1,
+        },
+      },
+      prefix: "oochim",
+      mdType: "csvissueinfo", //"csvissueinfo" | "csvdc" | "marc490" | "marcoocihm" | "marcooe"
+    };
+  }
 </script>
 
 <ScrollStepper bind:activeStepIndex>
@@ -129,6 +150,11 @@
       bind:dmdTask
       on:store={() => {
         activeStepIndex = 3;
+      }}
+      on:cancel={() => {
+        console.log("cancel");
+        activeStepIndex = 0;
+        resetForm();
       }}
     />
   </ScrollStepperStep>

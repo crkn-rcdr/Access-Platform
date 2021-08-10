@@ -14,6 +14,10 @@
   function handleStore(event: any) {
     dispatch("store", event);
   }
+
+  function handleCancel(event: any) {
+    dispatch("cancel", event);
+  }
 </script>
 
 <div class="split-task-result">
@@ -105,6 +109,10 @@
   <br />
   <button class="button primary" type="submit" on:click={handleStore}>
     Store Results
+  </button>
+
+  <button class="button secondary" type="submit" on:click={handleCancel}>
+    Try Again
   </button>
 </div>
 

@@ -2,8 +2,8 @@
   import { createEventDispatcher } from "svelte";
   import FileSelector from "../shared/FileSelector.svelte";
 
-  export let metadataType = undefined;
-  export let metadataFile: File = undefined;
+  export let metadataType: string | undefined = undefined;
+  export let metadataFile: File | undefined = undefined;
 
   /**
    * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.

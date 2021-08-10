@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { Depositor } from "$lib/types";
 
-  export let prefix: string = "oocihm";
+  export let prefix: string | undefined = undefined;
   // TODO: add period to end of each prefix?
   const prefixes: Array<Depositor> = [
     {
