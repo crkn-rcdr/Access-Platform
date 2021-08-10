@@ -1,16 +1,30 @@
 <!--
 @component
 ### Overview
+The scroll stepper component is a component that breaks down a long task into smaller, more digestible, steps for the user. You can either hide the previous steps, or keep them visible. When they are visible, the component will scroll nicely to the next step as the user progresses.
 
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| canvases: ObjectList    | optional | An ObjectList containing canvases to be listed |
-| showAddButton: boolean  | optional | If the add button should be displayed over the list of canvases |
+| activeStepIndex: number   | optional | Used to control which step is the active step in the stepper |
+| furthestStepVisitedIndex: number  | optional | Used to control which step is the furthest step visited in the stepper. |
+| displayPrevious: boolean | optional | If the previous steps to the active step should be 'collapsed' or 'expanded'
 
 
 ### Usage
 ```  
+<ScrollStepper bind:activeIndex>
+  <ScrollStepperStep title="Step number 1">
+    <div slot="icon">1/div>
+    ... step body
+  </ScrollStepperStep>
+  <ScrollStepperStep 
+    title="Step number 2" 
+    isLastStep={true}>
+    <div slot="icon">2/div>
+    ... step body
+  </ScrollStepperStep>
+</ScrollStepper>
 ```
 *Note: `bind:` is required for changes to the parameters to be reflected in higher level components.*
 -->
@@ -18,19 +32,19 @@
   import { onMount } from "svelte";
 
   /**
-   * @type {} description
+   * @type {number} Used to control which step is the active step in the stepper
    */
-  export let activeStepIndex = 0;
+  let activeStepIndex: number = 0;
 
   /**
-   * @type {} description
+   * @type {number} Used to control which step is the furthest step visited in the stepper. It is reset upon cancelation of a task.
    */
-  export let displayPrevious = false;
+  let furthestStepVisitedIndex: number = 0;
 
   /**
-   * @type {} description
+   * @type {boolean} If the previous steps to the active step should be 'collapsed' or 'expanded'
    */
-  export let furthestStepVisitedIndex = 0;
+  export let displayPrevious: boolean = false;
 
   /**
    * @type {HTMLDivElement} This container element holds the drop down menu items
@@ -38,7 +52,7 @@
   let container: HTMLDivElement;
 
   /**
-   * Desc
+   * This function taked the step titles and makes them clickable if they are the furthest visited step or one of its predecessors.
    * @returns void
    */
   function makeVisitedStepsClickable() {
@@ -54,7 +68,7 @@
   }
 
   /**
-   * Desc
+   * This function sets the furthest visitied step if needed when the active step changes.
    * @returns void
    */
   function trackFurthestStepVisited() {
@@ -63,7 +77,7 @@
   }
 
   /**
-   * Desc
+   * This method enabled changing the active step if a step title is clicked by creating a clicked event handler on all of the step titles.
    * @returns void
    */
   function changeStepOnTitleClick() {
@@ -82,7 +96,8 @@
   }
 
   /**
-   * Desc
+   * This method is a helpful method for getting the true offset of an element from the top of the page.
+   * @see https://stackoverflow.com/questions/13716786/getoffset-function-in-chrome-and-safari
    * @returns void
    */
   function getOffset(el) {
@@ -97,7 +112,11 @@
   }
 
   /**
-   * Desc
+   * This method does the following when the active step is changed:
+   * 1. Expands the active step, and hides the other steps as indicated by the @var displayPrevious
+   * 2. Adds the scroll-stepper-step-active to the active step for appropriate highlighting
+   * 3. Scrolls to the active step
+   * 4. Removes the scroll-stepper-step-active from any other step.
    * @returns void
    */
   function handleStepChange() {
@@ -129,7 +148,7 @@
   }
 
   /**
-   * Desc
+   * This method wraps the various methods that are required to run when the active index changes. It calls @function trackFurthestStepVisited, @function makeVisitedStepsClickable, and @function handleStepChange
    * @returns void
    */
   function handleActiveStepChange() {
