@@ -1,32 +1,47 @@
 <!--
 @component
 ### Overview
+A step (section) of a ScrollStepper. Generally used to isolate a group of required inputs or actions for a larger task. When the step is active, the page will scroll nicely to it.
 
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| canvases: ObjectList    | optional | An ObjectList containing canvases to be listed |
-| showAddButton: boolean  | optional | If the add button should be displayed over the list of canvases |
+| title: string  | optional | The title to be displayed for the step |
+| status: "success" or "fail" or "warn" or "neutral"  | optional | The status of the step, used to display the icon in an appropriate color |
+: isLastStep: boolean | optional | If the step is the last step or not. Set this to hide the line to the next step. (TODO: remove the need for this) |
 
 
 ### Usage
 ```  
+<ScrollStepper bind:activeIndex>
+  <ScrollStepperStep title="Step number 1">
+    <div slot="icon">1/div>
+    ... step body
+  </ScrollStepperStep>
+  <ScrollStepperStep 
+    title="Step number 2" 
+    isLastStep={true}>
+    <div slot="icon">2/div>
+    ... step body
+  </ScrollStepperStep>
+</ScrollStepper>
+
 ```
 *Note: `bind:` is required for changes to the parameters to be reflected in higher level components.*
 -->
 <script lang="ts">
   /**
-   * @type {} description
+   * @type {string} The title to be displayed for the step
    */
   export let title: string = "";
 
   /**
-   * @type {} description
+   * @type {"success" | "fail" | "warn" | "neutral"} The status of the step, used to display the icon in an appropriate color
    */
   export let status: "success" | "fail" | "warn" | "neutral" = "neutral";
 
   /**
-   * @type {} description
+   * @type {boolean} If the step is the last step or not. Set this to hide the line to the next step. (TODO: remove the need for this)
    */
   export let isLastStep: boolean = false;
 </script>
