@@ -1,8 +1,35 @@
+<!--
+@component
+### Overview
+
+### Properties
+|    |    |    |
+| -- | -- | -- |
+| canvases: ObjectList    | optional | An ObjectList containing canvases to be listed |
+| showAddButton: boolean  | optional | If the add button should be displayed over the list of canvases |
+
+
+### Usage
+```  
+```
+*Note: `bind:` is required for changes to the parameters to be reflected in higher level components.*
+-->
 <script lang="ts">
   import { onMount } from "svelte";
 
+  /**
+   * @type {} description
+   */
   export let activeStepIndex = 0;
+
+  /**
+   * @type {} description
+   */
   export let displayPrevious = false;
+
+  /**
+   * @type {} description
+   */
   export let furthestStepVisitedIndex = 0;
 
   /**
@@ -10,6 +37,10 @@
    */
   let container: HTMLDivElement;
 
+  /**
+   * Desc
+   * @returns void
+   */
   function makeVisitedStepsClickable() {
     if (!container) return;
     let stepTitles = container.getElementsByClassName(
@@ -22,11 +53,19 @@
     }
   }
 
+  /**
+   * Desc
+   * @returns void
+   */
   function trackFurthestStepVisited() {
     if (activeStepIndex >= furthestStepVisitedIndex)
       furthestStepVisitedIndex = activeStepIndex;
   }
 
+  /**
+   * Desc
+   * @returns void
+   */
   function changeStepOnTitleClick() {
     if (!container) return;
     let stepTitles = container.getElementsByClassName(
@@ -42,6 +81,10 @@
     }
   }
 
+  /**
+   * Desc
+   * @returns void
+   */
   function getOffset(el) {
     var _x = 0;
     var _y = 0;
@@ -53,6 +96,10 @@
     return { top: _y, left: _x };
   }
 
+  /**
+   * Desc
+   * @returns void
+   */
   function handleStepChange() {
     if (!container) return;
     let steps = container.getElementsByClassName("scroll-stepper-step");
@@ -81,17 +128,29 @@
     }
   }
 
+  /**
+   * Desc
+   * @returns void
+   */
   function handleActiveStepChange() {
     trackFurthestStepVisited();
     makeVisitedStepsClickable();
     handleStepChange();
   }
 
+  /**
+   * @listens activeStepIndex
+   * @description Watches for changes in the @var activeStepIndex, and calls @function handleActiveStepChange to preform the appropriate actions
+   */
   $: {
     activeStepIndex;
     handleActiveStepChange();
   }
 
+  /**
+   * @event onMount
+   * @description When the component instance is mounted onto the dom, the @function handleStepChange is called to render the stepper, and the @function changeStepOnTitleClick is called if @var displayPrevious is false.
+   */
   onMount(() => {
     handleStepChange();
     if (!displayPrevious) changeStepOnTitleClick();

@@ -1,9 +1,35 @@
+<!--
+@component
+### Overview
+
+### Properties
+|    |    |    |
+| -- | -- | -- |
+| canvases: ObjectList    | optional | An ObjectList containing canvases to be listed |
+| showAddButton: boolean  | optional | If the add button should be displayed over the list of canvases |
+
+### Usage
+```  
+```
+*Note: `bind:` is required for changes to the parameters to be reflected in higher level components.*
+-->
 <script lang="ts">
   import type { DMDTask } from "@crkn-rcdr/access-data";
   import { createEventDispatcher } from "svelte";
 
+  /**
+   * @type {} description
+   */
   export let depositorPrefix: string = undefined;
+
+  /**
+   * @type {} description
+   */
   export let metadataType = undefined;
+
+  /**
+   * @type {} description
+   */
   export let dmdTask: DMDTask = undefined;
 
   /**
@@ -11,10 +37,20 @@
    */
   const dispatch = createEventDispatcher();
 
-  function handleStore(event: any) {
-    dispatch("store", event);
+  /**
+   * Triggers @event store to tell the parent component that the user wants to go through with the task.
+   * @param event
+   * @returns void
+   */
+  function handleContinue(event: any) {
+    dispatch("continue", event);
   }
 
+  /**
+   * Triggers @event cancel to tell the parent component that the user does not want to go through with the task.
+   * @param event
+   * @returns void
+   */
   function handleCancel(event: any) {
     dispatch("cancel", event);
   }
@@ -111,7 +147,7 @@
     </table>
   {/if}
   <br />
-  <button class="button primary" type="submit" on:click={handleStore}>
+  <button class="button primary" type="submit" on:click={handleContinue}>
     Store Results
   </button>
 

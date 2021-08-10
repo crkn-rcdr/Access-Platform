@@ -1,8 +1,30 @@
+<!--
+@component
+### Overview
+
+### Properties
+|    |    |    |
+| -- | -- | -- |
+| canvases: ObjectList    | optional | An ObjectList containing canvases to be listed |
+| showAddButton: boolean  | optional | If the add button should be displayed over the list of canvases |
+
+### Usage
+```  
+```
+*Note: `bind:` is required for changes to the parameters to be reflected in higher level components.*
+-->
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
   import FileSelector from "../shared/FileSelector.svelte";
 
+  /**
+   * @type {} description
+   */
   export let metadataType: string | undefined = undefined;
+
+  /**
+   * @type {} description
+   */
   export let metadataFile: File | undefined = undefined;
 
   /**
@@ -10,8 +32,12 @@
    */
   const dispatch = createEventDispatcher();
 
+  /**
+   * Calls @event fileSelected to tell the parent component that a file has been selected. Sets the @var metadataFile to the selected file for convenience.
+   * @param event
+   * @returns void
+   */
   function handleFileselected(event: any) {
-    console.log("file", event.detail);
     dispatch("fileSelected", event.detail);
     metadataFile = event.detail;
   }

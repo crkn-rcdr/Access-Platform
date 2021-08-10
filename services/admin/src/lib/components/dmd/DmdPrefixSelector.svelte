@@ -1,8 +1,30 @@
+<!--
+@component
+### Overview
+
+### Properties
+|    |    |    |
+| -- | -- | -- |
+| canvases: ObjectList    | optional | An ObjectList containing canvases to be listed |
+| showAddButton: boolean  | optional | If the add button should be displayed over the list of canvases |
+
+### Usage
+```  
+```
+*Note: `bind:` is required for changes to the parameters to be reflected in higher level components.*
+-->
 <script lang="ts">
   import type { Depositor } from "$lib/types";
 
+  /**
+   * @type {} description
+   */
   export let prefix: string | undefined = undefined;
+
   // TODO: add period to end of each prefix?
+  /**
+   * @type {} description
+   */
   const prefixes: Array<Depositor> = [
     {
       string: "ams",

@@ -1,6 +1,33 @@
+<!--
+@component
+### Overview
+
+### Properties
+|    |    |    |
+| -- | -- | -- |
+| canvases: ObjectList    | optional | An ObjectList containing canvases to be listed |
+| showAddButton: boolean  | optional | If the add button should be displayed over the list of canvases |
+
+
+### Usage
+```  
+```
+*Note: `bind:` is required for changes to the parameters to be reflected in higher level components.*
+-->
 <script lang="ts">
+  /**
+   * @type {} description
+   */
   export let title: string = "";
+
+  /**
+   * @type {} description
+   */
   export let status: "success" | "fail" | "warn" | "neutral" = "neutral";
+
+  /**
+   * @type {} description
+   */
   export let isLastStep: boolean = false;
 </script>
 

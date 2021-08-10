@@ -1,3 +1,14 @@
+<!--
+@component
+### Overview
+
+### Properties
+none
+
+### Usage
+```  
+```
+-->
 <script lang="ts">
   import type { DMDTask } from "@crkn-rcdr/access-data";
   import FaCheckCircle from "svelte-icons/fa/FaCheckCircle.svelte";
@@ -10,10 +21,24 @@
   import DmdPrefixSelector from "$lib/components/dmd/DmdPrefixSelector.svelte";
   import DmdStoreTask from "./DmdStoreTask.svelte";
 
+  /**
+   * @type {} description
+   */
   let depositorPrefix = "";
+
+  /**
+   * @type {} description
+   */
   let metadataType = "";
+
+  /**
+   * @type {} description
+   */
   let metadataFile: File | undefined = undefined;
 
+  /**
+   * @type {} description
+   */
   let dmdTask: DMDTask = {
     user: {
       name: "Brittny Lapierre",
@@ -37,9 +62,20 @@
 
   // Attachment: { data?: string; length?: number; encoded_length?: number; encoding?: string; stub?: boolean; content_type: string; digest: string; revpos: number; }
 
-  let activeStepIndex = 0,
-    furthestStepVisitedIndex = 0;
+  /**
+   * @type {} description
+   */
+  let activeStepIndex = 0;
 
+  /**
+   * @type {} description
+   */
+  let furthestStepVisitedIndex = 0;
+
+  /**
+   * Resets the @var depositorPrefix, @var metadataType, @var metadataFile, and @var dmdTask to values that will clear the form feilds.
+   * @returns void
+   */
   function resetForm() {
     depositorPrefix = "";
     metadataType = "";
@@ -154,7 +190,7 @@
       bind:depositorPrefix
       bind:metadataType
       bind:dmdTask
-      on:store={() => {
+      on:continue={() => {
         activeStepIndex = 3;
       }}
       on:cancel={() => {

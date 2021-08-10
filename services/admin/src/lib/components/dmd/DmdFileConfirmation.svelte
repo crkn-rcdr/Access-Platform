@@ -1,6 +1,24 @@
+<!--
+@component
+### Overview
+
+### Properties
+|    |    |    |
+| -- | -- | -- |
+| canvases: ObjectList    | optional | An ObjectList containing canvases to be listed |
+| showAddButton: boolean  | optional | If the add button should be displayed over the list of canvases |
+
+### Usage
+```  
+```
+*Note: `bind:` is required for changes to the parameters to be reflected in higher level components.*
+-->
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
 
+  /**
+   * @type {} description
+   */
   export let metadataFile: File = undefined;
 
   /**
@@ -8,6 +26,11 @@
    */
   const dispatch = createEventDispatcher();
 
+  /**
+   * Calls @event process to tell the parent component that the user would like to process the file. TODO: add lapin request to start split here
+   * @param event
+   * @returns void
+   */
   function handleProcess(event: any) {
     dispatch("process", event);
   }
