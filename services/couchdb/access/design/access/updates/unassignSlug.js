@@ -10,14 +10,15 @@ module.exports = function (doc, req) {
     return errorReturn(`No document found with id ${req.id}`, 404);
   }
 
-  const input = extractJSONFromBody(req);
-  if (!input) {
+  const user = extractJSONFromBody(req);
+  if (!user) {
     return errorReturn(`Could not parse request body as JSON: ${req.body}`);
   }
 
-  doc = Object.assign(doc, input.data);
+  const slug = doc.slug;
+  delete doc.slug;
 
-  updateObject(doc, input.user);
+  updateObject(doc, user);
 
-  return successReturn(doc, `${doc.slug ? doc.slug : doc.id} updated`);
+  return successReturn(doc, `${slug} is no longer assigned to ${doc.id}`);
 };
