@@ -1,24 +1,25 @@
 <!--
 @component
 ### Overview
+This component allows a user to select a file, or multiple files, from their computer.
 
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| canvases: ObjectList    | optional | An ObjectList containing canvases to be listed |
-| showAddButton: boolean  | optional | If the add button should be displayed over the list of canvases |
-
+| multiple: boolean    | optional | If the file selector should support selecting multiple files or not. |
 
 ### Usage
 ```  
+<FileSelector on:change={(e) => {
+  console.logs("Access File(s) from:", e.target.files)
+}} />
 ```
-*Note: `bind:` is required for changes to the parameters to be reflected in higher level components.*
 -->
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
 
   /**
-   * @type {} description
+   * @type {boolean} If the file selector should support selecting multiple files or not.
    */
   export let multiple = false;
 
