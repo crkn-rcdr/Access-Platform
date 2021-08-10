@@ -6,11 +6,13 @@
   import ScrollStepperStep from "$lib/components/shared/ScrollStepperStep.svelte";
   import DmdFileSpecification from "$lib/components/dmd/DmdFileSpecification.svelte";
   import DmdFileConfirmation from "$lib/components/dmd/DmdFileConfirmation.svelte";
-  import DmdTaskResults from "./DmdTaskResults.svelte";
+  import DmdSplitTaskResults from "$lib/components/dmd/DmdSplitTaskResults.svelte";
+  import DmdPrefixSelector from "$lib/components/dmd/DmdPrefixSelector.svelte";
+  import DmdStoreTask from "./DmdStoreTask.svelte";
 
   let depositorPrefix = undefined, // step 1
     metadataType = undefined, // step 2
-    metadataFile = undefined; // set in upload file
+    metadataFile: File | undefined = undefined; // set in upload file
 
   let dmdTask: DMDTask = {
     user: {
@@ -44,25 +46,27 @@
 </script>
 
 <ScrollStepper bind:activeStepIndex>
-  <ScrollStepperStep title="Enter File Information">
+  <ScrollStepperStep title="Create New Task">
     <div slot="icon">1</div>
-    <DmdFileSpecification
-      bind:depositorPrefix
-      bind:metadataType
-      bind:metadataFile
-      on:fileSelected={(e) => {
-        console.log(e);
-        activeStepIndex = 1;
-      }}
-    />
+    <div>
+      <DmdPrefixSelector bind:prefix={depositorPrefix} />
+      <br />
+      <br />
+      <DmdFileSpecification
+        bind:metadataType
+        bind:metadataFile
+        on:fileSelected={() => {
+          activeStepIndex = 1;
+        }}
+      />
+    </div>
   </ScrollStepperStep>
 
-  <ScrollStepperStep title="Review & Load Content">
+  <ScrollStepperStep title="Review & Process Metadata File">
     <div slot="icon">2</div>
     <DmdFileConfirmation
-      bind:dmdTask
-      on:confirm={() => {
-        console.log("Sumbit");
+      bind:metadataFile
+      on:process={() => {
         activeStepIndex = 2;
         dmdTask["split"] = {
           requestDate: 12345,
@@ -94,17 +98,16 @@
   </ScrollStepperStep>
 
   <ScrollStepperStep
-    title="DMD Task results"
+    title="Metadata File Processing Results"
     status={!dmdTask?.["split"]
       ? "neutral"
       : dmdTask?.["split"]?.["succeeded"]
       ? "success"
       : "fail"}
-    isLastStep={true}
   >
     <div
       slot="icon"
-      class="auto-align auto-align__j-center auto-align__a-center s-9immjC5o-rnn"
+      class="auto-align auto-align__j-center auto-align__a-center"
     >
       {#if dmdTask?.["split"]}
         {#if dmdTask?.["split"]?.["succeeded"]}
@@ -116,6 +119,26 @@
         3
       {/if}
     </div>
-    <DmdTaskResults bind:depositorPrefix bind:metadataType bind:dmdTask />
+    <DmdSplitTaskResults
+      bind:depositorPrefix
+      bind:metadataType
+      bind:dmdTask
+      on:store={() => {
+        activeStepIndex = 3;
+      }}
+    />
+  </ScrollStepperStep>
+
+  <ScrollStepperStep
+    title="Store Processed Metadata into Access and/or Preservation"
+    isLastStep={true}
+  >
+    <div
+      slot="icon"
+      class="auto-align auto-align__j-center auto-align__a-center"
+    >
+      4
+    </div>
+    <DmdStoreTask />
   </ScrollStepperStep>
 </ScrollStepper>

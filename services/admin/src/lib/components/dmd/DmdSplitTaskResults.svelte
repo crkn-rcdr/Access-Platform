@@ -1,13 +1,33 @@
 <script lang="ts">
   import type { DMDTask } from "@crkn-rcdr/access-data";
+  import { createEventDispatcher } from "svelte";
 
   export let depositorPrefix: string = undefined;
   export let metadataType = undefined;
   export let dmdTask: DMDTask = undefined;
+
+  /**
+   * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.
+   */
+  const dispatch = createEventDispatcher();
+
+  function handleStore(event: any) {
+    dispatch("store", event);
+  }
 </script>
 
-<div class="dmd-task-result">
+<div class="split-task-result">
   {#if dmdTask["split"]}
+    <!--TODO: slug information-->
+    <!--label for="valid-slugs"><b>Slugs</b></label>
+  <br />
+  <NotificationBar
+    status="fail"
+    message="An invalid slug was removed from the list: oe3iu48rwdheks"
+  />
+  <textarea name="valid-slugs" value="oochim.12345, oochim.242445" />
+  <br />
+  <br /-->
     <table>
       {#if "succeeded" in dmdTask["split"]}
         <tr>
@@ -82,10 +102,14 @@
       {/each}
     </table>
   {/if}
+  <br />
+  <button class="button primary" type="submit" on:click={handleStore}>
+    Store Results
+  </button>
 </div>
 
 <style>
-  .dmd-task-result {
+  .split-task-result {
     min-height: 50rem;
   }
 </style>

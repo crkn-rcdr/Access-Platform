@@ -1,9 +1,7 @@
 <script lang="ts">
-  import DmdPrefixSelector from "$lib/components/dmd/DmdPrefixSelector.svelte";
   import { createEventDispatcher } from "svelte";
   import FileSelector from "../shared/FileSelector.svelte";
 
-  export let depositorPrefix: string = undefined;
   export let metadataType = undefined;
   export let metadataFile: File = undefined;
 
@@ -13,17 +11,15 @@
   const dispatch = createEventDispatcher();
 
   function handleFileselected(event: any) {
-    dispatch("fileSelected", event);
-    metadataFile = event;
+    console.log("file", event.detail);
+    dispatch("fileSelected", event.detail);
+    metadataFile = event.detail;
   }
 </script>
 
 <div>
-  <DmdPrefixSelector bind:prefix={depositorPrefix} />
-  <br />
-  <br />
   <fieldset>
-    <legend>Metadata file information</legend>
+    <legend>Metadata File Information</legend>
     <div>
       Select type:
       <select name="metadata-type" bind:value={metadataType}>

@@ -1,5 +1,7 @@
 <script>
   import { createEventDispatcher } from "svelte";
+
+  export let multiple = false;
   const dispatch = createEventDispatcher();
 </script>
 
@@ -10,8 +12,11 @@
     id="file"
     class="inputfile"
     on:change={(e) => {
-      dispatch("change", e);
+      const files = e.target["files"];
+      const data = multiple ? files : files.length ? files[0] : null;
+      dispatch("change", data);
     }}
+    {multiple}
   />
   <label for="file" class="button primary">Choose File</label>
 </div>
