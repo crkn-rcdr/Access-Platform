@@ -17,9 +17,9 @@
   import { createEventDispatcher } from "svelte";
 
   /**
-   * @type {} description
+   * @type {File | undefined} description
    */
-  export let metadataFile: File = undefined;
+  export let metadataFile: File | undefined = undefined;
 
   /**
    * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.

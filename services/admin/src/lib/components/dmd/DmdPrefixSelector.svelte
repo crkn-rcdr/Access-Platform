@@ -1,15 +1,17 @@
 <!--
 @component
 ### Overview
+Allows the user to select one of many pre-defined depositors.
 
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| canvases: ObjectList    | optional | An ObjectList containing canvases to be listed |
-| showAddButton: boolean  | optional | If the add button should be displayed over the list of canvases |
+| prefix: string    | optional | The prefix that is selected in the selection element |
+
 
 ### Usage
 ```  
+<DmdPrefixSelector bind:prefix={depositorPrefix} />
 ```
 *Note: `bind:` is required for changes to the parameters to be reflected in higher level components.*
 -->
@@ -17,13 +19,13 @@
   import type { Depositor } from "$lib/types";
 
   /**
-   * @type {} description
+   * @type {string | undefined} The prefix that is selected in the selection element |
    */
   export let prefix: string | undefined = undefined;
 
   // TODO: add period to end of each prefix?
   /**
-   * @type {} description
+   * @type { Array<Depositor>} The array of prefix opetions for the selection element.
    */
   const prefixes: Array<Depositor> = [
     {
