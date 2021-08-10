@@ -6,7 +6,7 @@ This component shows a summary of the metadata file that was selected for proces
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| metadataFile: File | undefined | optional | The metadata file that was selected for processing |
+| metadataFile: File or undefined | optional | The metadata file that was selected for processing |
 
 ### Usage
 ``` 

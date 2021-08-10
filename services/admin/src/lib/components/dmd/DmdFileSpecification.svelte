@@ -1,15 +1,23 @@
 <!--
 @component
 ### Overview
+This component holds the form elements that correspond to the metadata file when filling out a dmd task form.
 
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| canvases: ObjectList    | optional | An ObjectList containing canvases to be listed |
-| showAddButton: boolean  | optional | If the add button should be displayed over the list of canvases |
+| metadataType: string or undefined    | optional | Used to tell the dmdtask deamons what kind of metadata format the metadata being processed is in. |
+| metadataFile: File or undefined | Used to hold the actual file to be processed, that holds the object ids to attach the metadata to |
 
 ### Usage
 ```  
+<DmdFileSpecification
+  bind:metadataType
+  bind:metadataFile
+  on:fileSelected={() => {
+    ...do something
+  }}
+/>
 ```
 *Note: `bind:` is required for changes to the parameters to be reflected in higher level components.*
 -->
@@ -18,12 +26,12 @@
   import FileSelector from "../shared/FileSelector.svelte";
 
   /**
-   * @type {} description
+   * @type {string | undefined} Used to tell the dmdtask deamons what kind of metadata format the metadata being processed is in.
    */
   export let metadataType: string | undefined = undefined;
 
   /**
-   * @type {} description
+   * @type {File | undefined} Used to hold the actual file to be processed, that holds the object ids to attach the metadata to
    */
   export let metadataFile: File | undefined = undefined;
 
