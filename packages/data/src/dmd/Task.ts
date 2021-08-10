@@ -80,9 +80,9 @@ export type WaitingDMDTask = z.infer<typeof WaitingDMDTask>;
 export const FailedDMDTask = WaitingDMDTask.merge(
   z.object({
     /**
-     * Result update for the split operation.
+     * The request has been processed.
      */
-    split: ProcessResult,
+    process: ProcessResult,
   })
 );
 
