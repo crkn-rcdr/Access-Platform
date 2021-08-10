@@ -21,7 +21,7 @@ none
   import DmdFileConfirmation from "$lib/components/dmd/DmdFileConfirmation.svelte";
   import DmdSplitTaskResults from "$lib/components/dmd/DmdSplitTaskResults.svelte";
   import DmdPrefixSelector from "$lib/components/dmd/DmdPrefixSelector.svelte";
-  import DmdStoreTask from "./DmdStoreTask.svelte";
+  import DmdStoreTask from "$lib/components/dmd/DmdStoreTask.svelte";
 
   /**
    * @type {string} Represents the end platform/repository for to look for the items specified in the metadata file in.
