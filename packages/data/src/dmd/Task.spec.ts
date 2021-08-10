@@ -6,7 +6,8 @@ import { WaitingDMDTask, FailedDMDTask, SucceededDMDTask } from "./Task.js";
 
 const { isValid: isValidWaiting } = tester(WaitingDMDTask);
 const { isValid: isValidFailed } = tester(FailedDMDTask);
-const { isValid: isValidSucceeded } = tester(SucceededDMDTask);
+const { isValid: isValidSucceeded, isInvalid: isInvalidSucceeded } =
+  tester(SucceededDMDTask);
 
 const USER: User = { name: "User McGee", email: "mcgee@crkn.ca" };
 
@@ -86,4 +87,18 @@ test(
   "SucceededDMDTask schema parses a valid object",
   isValidSucceeded,
   goodSucceeded
+);
+
+const parsedWithoutId = {
+  ...goodSucceeded,
+  items: [
+    { parsed: true, id: "good.id", message: "Figured this one out" },
+    { parsed: true, message: "No id, though!" },
+  ],
+};
+
+test(
+  "SucceededDMDTask schema does not parse an items array where a parsed item lacks an id",
+  isInvalidSucceeded,
+  parsedWithoutId
 );
