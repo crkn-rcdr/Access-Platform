@@ -46,24 +46,28 @@
 </script>
 
 <ScrollStepper bind:activeStepIndex>
-  <ScrollStepperStep title="Create New Task">
+  <ScrollStepperStep title="Enter DMD Task Information">
     <div slot="icon">1</div>
-    <div>
-      <DmdPrefixSelector bind:prefix={depositorPrefix} />
-      <br />
-      <br />
-      <DmdFileSpecification
-        bind:metadataType
-        bind:metadataFile
-        on:fileSelected={() => {
-          activeStepIndex = 1;
-        }}
-      />
-    </div>
+    <DmdPrefixSelector bind:prefix={depositorPrefix} />
+    <br />
+    <br />
+    <DmdFileSpecification
+      bind:metadataType
+      bind:metadataFile
+      on:fileSelected={() => {
+        activeStepIndex = 1;
+      }}
+    />
   </ScrollStepperStep>
 
   <ScrollStepperStep title="Review & Process Metadata File">
     <div slot="icon">2</div>
+    <b>Depositor Prefix: </b><span>{depositorPrefix}</span>
+    <br />
+    <br />
+    <b>Metadata Type: </b><span>{metadataType}</span>
+    <br />
+    <br />
     <DmdFileConfirmation
       bind:metadataFile
       on:process={() => {

@@ -14,7 +14,7 @@
 </script>
 
 {#if metadataFile}
-  <b>Metadata file info</b>
+  <b>Metadata File Information</b>
   <table>
     <tr>
       <td><b>Name</b></td>

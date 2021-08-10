@@ -51,7 +51,7 @@
   ];
 </script>
 
-<label for="depositor">Select depositor:</label>
+<label for="depositor">Depositor:</label>
 <select name="depositor" bind:value={prefix}>
   <option value="">No prefix</option>
   {#each prefixes as prefix}

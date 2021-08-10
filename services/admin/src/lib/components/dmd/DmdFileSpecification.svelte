@@ -18,22 +18,23 @@
 </script>
 
 <div>
-  <fieldset>
-    <legend>Metadata File Information</legend>
-    <div>
-      Select type:
-      <select name="metadata-type" bind:value={metadataType}>
-        <option value="" />
-        <option value="issueinfocsv">Issueinfo CSV</option>
-        <option value="dccsv">Dublin Core CSV</option>
-        <option value="marc490">MARC - ID in 490</option>
-        <option value="marcoocihm">MARC - ID in oocihm interpretation</option>
-        <option value="marcooe">MARC - ID in ooe interpretation</option>
-      </select>
-    </div>
-    <br />
-    <FileSelector on:change={handleFileselected} />
-  </fieldset>
+  <!--fieldset>
+    <legend>Metadata File Information</legend-->
+  <div>
+    <label for="metadata-type">Metadata Type:</label>
+    <select name="metadata-type" bind:value={metadataType}>
+      <option value="" />
+      <option value="issueinfocsv">Issueinfo CSV</option>
+      <option value="dccsv">Dublin Core CSV</option>
+      <option value="marc490">MARC - ID in 490</option>
+      <option value="marcoocihm">MARC - ID in oocihm interpretation</option>
+      <option value="marcooe">MARC - ID in ooe interpretation</option>
+    </select>
+  </div>
+  <br />
+  <span>Metadata File:</span>
+  <FileSelector on:change={handleFileselected} />
+  <!--/fieldset-->
 </div>
 
 <style>
