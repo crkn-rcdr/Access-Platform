@@ -1,15 +1,27 @@
 <!--
 @component
 ### Overview
+This componenet displays the results (if available) of the splitting (creating of XML/json files per each item in the metadata file) and allows the user to confirm if they would like to store the results in access and or preservation per each item.
 
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| canvases: ObjectList    | optional | An ObjectList containing canvases to be listed |
-| showAddButton: boolean  | optional | If the add button should be displayed over the list of canvases |
-
+| depositorPrefix: string or undefined   | optional | The depositor prefix string for the repository the objects gaining metadata are found in. |
+| metadataType: string or undefined    | optional | Used to tell the dmdtask deamons what kind of metadata format the metadata being processed is in. |
+| dmdTask: DMDTask or undefined | optional | The DMD task for which results are being displayed.
 ### Usage
 ```  
+<DmdSplitTaskResults
+  bind:depositorPrefix
+  bind:metadataType
+  bind:dmdTask
+  on:continue={() => {
+    ...do something
+  }}
+  on:cancel={() => {
+    ...do something else
+  }}
+/>
 ```
 *Note: `bind:` is required for changes to the parameters to be reflected in higher level components.*
 -->
@@ -18,17 +30,18 @@
   import { createEventDispatcher } from "svelte";
 
   /**
-   * @type {} description
+   * @type {string | undefined} The depositor prefix string for the repository the objects gaining metadata are found in.
    */
-  export let depositorPrefix: string = undefined;
+  export let depositorPrefix: string | undefined = undefined;
 
   /**
-   * @type {} description
+   * @type {string | undefined} Used to tell the dmdtask deamons what kind of metadata format the metadata being processed is in.
    */
-  export let metadataType = undefined;
+  export let metadataType: string | undefined = undefined;
 
   /**
-   * @type {} description
+   * @type { DMDTask | undefined } The DMD task for which results are being displayed.
+### Usage
    */
   export let dmdTask: DMDTask = undefined;
 
