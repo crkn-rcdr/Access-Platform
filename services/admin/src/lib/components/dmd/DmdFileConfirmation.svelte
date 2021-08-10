@@ -1,15 +1,21 @@
 <!--
 @component
 ### Overview
+This component shows a summary of the metadata file that was selected for processing to the user. 
 
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| canvases: ObjectList    | optional | An ObjectList containing canvases to be listed |
-| showAddButton: boolean  | optional | If the add button should be displayed over the list of canvases |
+| metadataFile: File | undefined | optional | The metadata file that was selected for processing |
 
 ### Usage
-```  
+``` 
+<DmdFileConfirmation
+  bind:metadataFile
+  on:process={() => {
+    ...do something
+  }}
+/> 
 ```
 *Note: `bind:` is required for changes to the parameters to be reflected in higher level components.*
 -->
@@ -17,7 +23,7 @@
   import { createEventDispatcher } from "svelte";
 
   /**
-   * @type {File | undefined} description
+   * @type {File | undefined} The metadata file that was selected for processing
    */
   export let metadataFile: File | undefined = undefined;
 
