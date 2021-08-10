@@ -37,7 +37,8 @@
 
   // Attachment: { data?: string; length?: number; encoded_length?: number; encoding?: string; stub?: boolean; content_type: string; digest: string; revpos: number; }
 
-  let activeStepIndex = 0;
+  let activeStepIndex = 0,
+    furthestStepVisitedIndex = 0;
 
   function resetForm() {
     depositorPrefix = "";
@@ -66,7 +67,7 @@
   }
 </script>
 
-<ScrollStepper bind:activeStepIndex>
+<ScrollStepper bind:activeStepIndex bind:furthestStepVisitedIndex>
   <ScrollStepperStep title="Enter DMD Task Information">
     <div slot="icon">1</div>
     <DmdPrefixSelector bind:prefix={depositorPrefix} />
@@ -159,6 +160,7 @@
       on:cancel={() => {
         console.log("cancel");
         activeStepIndex = 0;
+        furthestStepVisitedIndex = 0;
         resetForm();
       }}
     />

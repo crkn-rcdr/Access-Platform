@@ -3,12 +3,44 @@
 
   export let activeStepIndex = 0;
   export let displayPrevious = false;
+  export let furthestStepVisitedIndex = 0;
 
-  // scroll-stepper-step
   /**
    * @type {HTMLDivElement} This container element holds the drop down menu items
    */
   let container: HTMLDivElement;
+
+  function makeVisitedStepsClickable() {
+    if (!container) return;
+    let stepTitles = container.getElementsByClassName(
+      "scroll-stepper-step-title"
+    );
+    for (let i = 0; i < stepTitles.length; i++) {
+      if (i <= furthestStepVisitedIndex && i !== activeStepIndex)
+        stepTitles[i].classList.add("clickable");
+      else stepTitles[i].classList.remove("clickable");
+    }
+  }
+
+  function trackFurthestStepVisited() {
+    if (activeStepIndex >= furthestStepVisitedIndex)
+      furthestStepVisitedIndex = activeStepIndex;
+  }
+
+  function changeStepOnTitleClick() {
+    if (!container) return;
+    let stepTitles = container.getElementsByClassName(
+      "scroll-stepper-step-title"
+    );
+    for (let i = 0; i < stepTitles.length; i++) {
+      stepTitles[i].addEventListener("click", () => {
+        if (i <= furthestStepVisitedIndex) {
+          activeStepIndex = i;
+          handleStepChange();
+        }
+      });
+    }
+  }
 
   function getOffset(el) {
     var _x = 0;
@@ -49,13 +81,20 @@
     }
   }
 
+  function handleActiveStepChange() {
+    trackFurthestStepVisited();
+    makeVisitedStepsClickable();
+    handleStepChange();
+  }
+
   $: {
     activeStepIndex;
-    handleStepChange();
+    handleActiveStepChange();
   }
 
   onMount(() => {
     handleStepChange();
+    if (!displayPrevious) changeStepOnTitleClick();
   });
 </script>
 

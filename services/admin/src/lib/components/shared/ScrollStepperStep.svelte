@@ -8,7 +8,9 @@
   class="scroll-stepper-step"
   class:scroll-stepper-step-not-last={!isLastStep}
 >
-  <h6 class="auto-align auto-align__block auto-align__a-center">
+  <h6
+    class="scroll-stepper-step-title auto-align auto-align__block auto-align__a-center"
+  >
     <div
       class={`step-icon step-icon-${status} auto-align auto-align__j-center auto-align__a-center`}
     >
@@ -66,6 +68,9 @@
   }
   :global(.scroll-stepper-step-active .step-icon.step-icon-fail) {
     background: var(--danger);
+  }
+  .scroll-stepper-step-title.clickable {
+    cursor: pointer;
   }
   .scroll-stepper-step .scroll-stepper-step-body {
     padding-left: 5rem;
