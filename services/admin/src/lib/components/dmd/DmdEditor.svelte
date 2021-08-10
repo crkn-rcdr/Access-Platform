@@ -1,12 +1,14 @@
 <!--
 @component
 ### Overview
+The DMD Editor allows the user to go through the steps of creating and proccessing DMD tasks.
 
 ### Properties
 none
 
 ### Usage
 ```  
+ <DmdEditor />
 ```
 -->
 <script lang="ts">
@@ -22,22 +24,22 @@ none
   import DmdStoreTask from "./DmdStoreTask.svelte";
 
   /**
-   * @type {} description
+   * @type {string} Represents the end platform/repository for to look for the items specified in the metadata file in.
    */
   let depositorPrefix = "";
 
   /**
-   * @type {} description
+   * @type {string} Used to tell the dmdtask deamons what kind of metadata format the metadata being processed is in.
    */
   let metadataType = "";
 
   /**
-   * @type {} description
+   * @type {File | undefined} Used to hold the actual file to be processed, that holds the object ids to attach the metadata to.
    */
   let metadataFile: File | undefined = undefined;
 
   /**
-   * @type {} description
+   * @type {DMDTask} This object represents the DMD task being managed through this editor.
    */
   let dmdTask: DMDTask = {
     user: {
@@ -63,12 +65,12 @@ none
   // Attachment: { data?: string; length?: number; encoded_length?: number; encoding?: string; stub?: boolean; content_type: string; digest: string; revpos: number; }
 
   /**
-   * @type {} description
+   * @type {number} Used to control which step is the active step in the stepper
    */
   let activeStepIndex = 0;
 
   /**
-   * @type {} description
+   * @type {number} Used to control which step is the furthest step visited in the stepper. It is reset upon cancelation of a task.
    */
   let furthestStepVisitedIndex = 0;
 
