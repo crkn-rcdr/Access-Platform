@@ -1,3 +1,4 @@
+export { CouchAttachmentRecord } from "./CouchAttachmentRecord.js";
 export { MD5 } from "./MD5.js";
 export { Noid } from "./Noid.js";
 export {
