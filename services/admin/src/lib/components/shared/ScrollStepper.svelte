@@ -34,12 +34,12 @@ The scroll stepper component is a component that breaks down a long task into sm
   /**
    * @type {number} Used to control which step is the active step in the stepper
    */
-  let activeStepIndex: number = 0;
+  export let activeStepIndex: number = 0;
 
   /**
    * @type {number} Used to control which step is the furthest step visited in the stepper. It is reset upon cancelation of a task.
    */
-  let furthestStepVisitedIndex: number = 0;
+  export let furthestStepVisitedIndex: number = 0;
 
   /**
    * @type {boolean} If the previous steps to the active step should be 'collapsed' or 'expanded'
