@@ -85,7 +85,9 @@
     title="Review Selections & Inititate Metadata File Processing"
   >
     <div slot="icon">2</div>
-    <b>Depositor Prefix: </b><span>{depositorPrefix}</span>
+    <b>Depositor Prefix: </b><span
+      >{depositorPrefix ? depositorPrefix : "No Prefix"}</span
+    >
     <br />
     <br />
     <b>Metadata Type: </b><span>{metadataType}</span>
@@ -94,6 +96,7 @@
     <DmdFileConfirmation
       bind:metadataFile
       on:process={() => {
+        //TODO: file and metadata type must be defined
         activeStepIndex = 2;
         dmdTask["split"] = {
           requestDate: 12345,

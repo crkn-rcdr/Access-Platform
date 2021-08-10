@@ -100,8 +100,12 @@
               ? item["splitResult"]["preservationId"]
               : "No preservation id"}</td
           >
-          <td>Copy2access</td>
-          <td>copy2preservation</td>
+          <td class="auto-align auto-align__a-center"
+            >Store in access? <input type="checkbox" /></td
+          >
+          <td class="auto-align auto-align__a-center"
+            >Store in preservation? <input type="checkbox" /></td
+          >
         </tr>
       {/each}
     </table>
