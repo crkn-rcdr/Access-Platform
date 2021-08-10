@@ -81,7 +81,9 @@
     />
   </ScrollStepperStep>
 
-  <ScrollStepperStep title="Review & Process Metadata File">
+  <ScrollStepperStep
+    title="Review Selections & Inititate Metadata File Processing"
+  >
     <div slot="icon">2</div>
     <b>Depositor Prefix: </b><span>{depositorPrefix}</span>
     <br />
