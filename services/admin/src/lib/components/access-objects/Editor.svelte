@@ -67,7 +67,7 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
           },
         },
         {
-          name: "Content",
+          name: "Manage Content",
           componentData: {
             contentComponent: ManifestContentEditor,
             contentComponentProps: { manifest: objectModel },
@@ -94,7 +94,7 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
           },
         },
         {
-          name: "Members",
+          name: "Manage Members",
           componentData: {
             contentComponent: CollectionContentEditor,
             contentComponentProps: { collection: objectModel },
