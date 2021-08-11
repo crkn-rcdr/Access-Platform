@@ -8,6 +8,7 @@ import {
   ServerScope,
   MangoQuery,
   MangoSelector,
+  RequestError,
 } from "nano";
 
 import { mangoEqualSelector } from "./util.js";
@@ -264,5 +265,119 @@ export class DatabaseHandler<T extends Document> {
     }
 
     return Object.fromEntries(results.entries());
+  }
+
+  /**
+   * Gets an attachment from a CouchDB document.
+   * Throws if the document or attachment do not exist.
+   * @returns A `Buffer` containing the attachment.
+   */
+  async getAttachment(args: {
+    /** Document id */
+    document: string;
+    /** Attachment name */
+    attachment: string;
+  }): Promise<Buffer> {
+    const { document, attachment } = args;
+    try {
+      return await this.db.attachment.get(document, attachment);
+    } catch (e) {
+      const error = e as RequestError;
+      if (error.statusCode === 404) {
+        if (error.reason === "Document is missing attachment")
+          throw createHttpError(
+            404,
+            `Document ${document} does not have an attachment named ${attachment}`
+          );
+        if (error.reason === "missing")
+          throw createHttpError(404, `Document ${document} does not exist`);
+      }
+      throw createHttpError(error.statusCode || 500, error.message);
+    }
+  }
+
+  /**
+   * Gets an attachment from a CouchDB document and then parses it as JSON.
+   * Throws if the document or attachment do not exist, or if the
+   * attachment cannot be parsed.
+   * @returns Whatever the file was parsed as.
+   */
+  async getAttachmentAsJSON(args: {
+    /** Document id */
+    document: string;
+    /** Attachment name */
+    attachment: string;
+  }): Promise<unknown> {
+    const attachment = await this.getAttachment(args);
+    try {
+      return JSON.parse(attachment.toString("utf-8"));
+    } catch (e) {
+      throw createHttpError(
+        400,
+        `Could not parse attachment ${args.attachment} as JSON: ${e.message}`
+      );
+    }
+  }
+
+  /**
+   * Uploads an attachment to a CouchDB document.
+   * Throws if there is an error uploading, or if the document does not exist.
+   */
+  async uploadAttachment(args: {
+    /** Document id */
+    document: string;
+    /** Attachment name */
+    attachmentName: string;
+    /** Attachment (as a Buffer) */
+    attachment: Buffer;
+    /** Attachment content type. Default: application/octet-stream */
+    contentType?: string;
+  }) {
+    const { document, attachmentName, attachment } = args;
+    const contentType = args.contentType || "application/octet-stream";
+
+    let headers: { etag: string };
+    try {
+      // Get the current document revision (headers.etag)
+      headers = await this.db.head(document);
+    } catch (e) {
+      const error = e as RequestError;
+      if (error.statusCode === 404)
+        throw createHttpError(404, `Document ${document} does not exist.`);
+      throw createHttpError(error.statusCode || 500, error.message);
+    }
+
+    try {
+      await this.db.attachment.insert(
+        document,
+        attachmentName,
+        attachment,
+        contentType,
+        { rev: headers.etag }
+      );
+    } catch (e) {
+      throw createHttpError(e.statusCode, e.error);
+    }
+  }
+
+  /**
+   * Uploads a base64-encoded string as an attachment to a CouchDB document.
+   * Throws if there is an error uploading, or if the document does not exist.
+   */
+  async uploadBase64Attachment(args: {
+    /** Document id */
+    document: string;
+    /** Attachment name */
+    attachmentName: string;
+    /** Attachment (as a base64-encoded string) */
+    attachment: string;
+    /** Attachment content type. Default: applicaton/octet-stream */
+    contentType?: string;
+  }) {
+    const buffer = Buffer.from(args.attachment, "base64");
+    await this.uploadAttachment({
+      ...args,
+      attachment: buffer,
+    });
   }
 }
