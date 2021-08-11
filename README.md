@@ -136,7 +136,7 @@ There is no automated deploy of CouchDB configuration to production CouchDB. If 
 
 Avoid doing this frivolously, as changes to these files could cause hours-long database index updates.
 
-The production image is tagged `access-platform:prod`. When you're satisfied with how the production containers look, follow the not-yet-established standard procedure for deploying the image to our private Docker registry. TODO: establish this procedure!
+The production image is tagged `access-platform:prod`. When you're satisfied with how the production containers look, run `pnpm deploy` to tag and push the image to our private Docker repository.
 
 ### Production environment variables
 

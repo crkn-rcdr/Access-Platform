@@ -105,8 +105,6 @@ export const serverFetch: ServerFetch = (request) => {
      we replace external domains with `127.0.0.1`.
      This assumes the external domain starts with `access`. */
 
-  console.log(request);
-
   const url = request.url.replace(
     /^https:\/\/access.*\.canadiana\.ca/,
     `http://127.0.0.1:${process.env["ADMIN_PORT"]}`

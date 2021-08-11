@@ -1,8 +1,8 @@
 export {
   DMDTask,
-  SplitRequestDMDTask,
-  SplitFailureDMDTask,
-  SplitSuccessDMDTask,
-  StoreRequestDMDTask,
-  StoreResultDMDTask,
+  WaitingDMDTask,
+  FailedDMDTask,
+  SucceededDMDTask,
 } from "./Task.js";
+
+export { MDTYPES, MDType } from "./types.js";
