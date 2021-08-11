@@ -20,6 +20,7 @@
     var(--green) -106.9%,
     var(--teal) 93.69%
   );
+  --color-gradient-text: linear-gradient(45deg, var(--green), var(--teal));
   --light-font: white;
   --dark-font: black;
 
