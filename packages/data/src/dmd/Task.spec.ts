@@ -78,7 +78,12 @@ const goodSucceeded: SucceededDMDTask = {
     message: "Good job, everyone.",
   },
   items: [
-    { parsed: true, id: "good.id", message: "Figured this one out" },
+    {
+      parsed: true,
+      id: "good.id",
+      label: "nice label",
+      message: "Figured this one out",
+    },
     { parsed: false, message: "This one not so much" },
   ],
 };
@@ -92,13 +97,37 @@ test(
 const parsedWithoutId = {
   ...goodSucceeded,
   items: [
-    { parsed: true, id: "good.id", message: "Figured this one out" },
-    { parsed: true, message: "No id, though!" },
+    {
+      parsed: true,
+      id: "good.id",
+      label: "nice label",
+      message: "Figured this one out",
+    },
+    { parsed: true, label: "nice label", message: "No id, though!" },
   ],
 };
 
 test(
-  "SucceededDMDTask schema does not parse an items array where a parsed item lacks an id",
+  "SucceededDMDTask schema does not parse when a parsed item lacks an id",
   isInvalidSucceeded,
   parsedWithoutId
+);
+
+const parsedWithoutLabel = {
+  ...goodSucceeded,
+  items: [
+    {
+      parsed: true,
+      id: "good.id",
+      label: "nice label",
+      message: "Figured this one out",
+    },
+    { parsed: true, id: "good.id", message: "No label, though!" },
+  ],
+};
+
+test(
+  "SucceededDMDTask schema does not parse when a parsed item lacks a label",
+  isInvalidSucceeded,
+  parsedWithoutLabel
 );

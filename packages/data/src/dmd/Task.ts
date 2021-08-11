@@ -26,13 +26,19 @@ const ParseRecord = z
     id: Slug.optional(),
 
     /**
+     * The label extracted for this record. Also required for a successfully
+     * parsed record.
+     */
+    label: z.string().optional(),
+
+    /**
      * Any message returned by the metadata processor.
      */
     message: z.string().optional(),
   })
   .refine(
-    (record) => !record.parsed || record.id,
-    "A successfully parsed record must provide an id"
+    (record) => !record.parsed || (record.id && record.label),
+    "A successfully parsed record must provide an id and label"
   );
 
 export type ParseRecord = z.infer<typeof ParseRecord>;
