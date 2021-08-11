@@ -22,8 +22,8 @@
     "@trpc/client": "^8.4.2",
     "cookie": "^0.4.1",
     "deep-object-diff": "^1.1.0",
-    "fast-deep-equal": "^3.1.3",
     "jsonwebtoken": "^8.5.1",
+    "lodash-es": "^4.17.21",
     "openseadragon": "^2.4.2",
     "rfdc": "^1.3.0",
     "svelte-icons": "^2.1.0"

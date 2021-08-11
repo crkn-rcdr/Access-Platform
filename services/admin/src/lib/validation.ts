@@ -12,7 +12,7 @@ import {
   TextRecord,
   ObjectList,
 } from "@crkn-rcdr/access-data";
-import equal from "fast-deep-equal";
+import isEqual from "lodash-es/isEqual";
 
 /**
  * Checks to see if the parameter bassed in is a valid collection
@@ -63,7 +63,7 @@ function checkChangeIsValid(objectModel: AccessObject) {
  * @returns boolean
  */
 function checkModelChanged(object: AccessObject, objectModel: AccessObject) {
-  return !equal(object, objectModel);
+  return !isEqual(object, objectModel);
 }
 
 /**
