@@ -33,7 +33,7 @@ async function showConfirmation(call, successMsg, failMsg) {
       props: {
         message: res ? successMsg : failMsg,
         detail: res["details"],
-        status: res ? "success" : "fail",
+        status: res["success"] ? "success" : "fail",
         expandable: true,
         float: true,
         notificationPosition: numVisibleNotifications,
