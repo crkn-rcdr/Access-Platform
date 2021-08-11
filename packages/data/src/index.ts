@@ -22,14 +22,14 @@ export { LegacyPackage } from "./deposit/LegacyPackage.js";
 
 export {
   DMDTask,
-  SplitRequestDMDTask,
-  SplitFailureDMDTask,
-  SplitSuccessDMDTask,
-  StoreRequestDMDTask,
-  StoreResultDMDTask,
+  MDTYPES,
+  WaitingDMDTask,
+  FailedDMDTask,
+  SucceededDMDTask,
 } from "./dmd/index.js";
 
 export {
+  CouchAttachmentRecord,
   MD5,
   Noid,
   ProcessRequest,

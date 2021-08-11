@@ -125,9 +125,10 @@ export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
       const filteredMembers = xorWith(data.members, currentMembers, isEqual);
 
       console.log("data in accesshandler", filteredMembers);
-      for (const collection of filteredMembers) {
-        await this.forceUpdate({collection});
-      }
+      // await this.forceUpdate({
+      //   id: args.id,
+      //   user: args.user,
+      // });
     }
 
     /*Return the Collection Object here? after forceUpdate?*/

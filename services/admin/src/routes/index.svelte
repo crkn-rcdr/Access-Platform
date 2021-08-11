@@ -6,6 +6,8 @@
   import { goto } from "$app/navigation";
   import TypeAhead from "$lib/components/access-objects/TypeAhead.svelte";
 
+  import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
+  
   /**
    * Routes to the object the user clicks from the TypeAhead component
    * @param event
@@ -18,8 +20,49 @@
 </script>
 
 <div class="wrapper">
-  <TypeAhead
-    placeholder="Search for a collection or manifest..."
-    on:selected={slugSelected}
-  />
+  <div class="notifications">
+    <!--NotificationBar message="New fix pushed!" status="success" />
+    <NotificationBar message="There is some error!" status="fail" />
+    <NotificationBar
+      message="The platform is experiencing an outage."
+      status="warn"
+    /-->
+  </div>
+  <div class="center">
+    <div class="title">
+      <img
+        width="520"
+        src="/static/canadiana-pa-tag-color.png"
+        alt="Canadiana by CRKN, par RCDR"
+      />
+    </div>
+    <div class="search">
+      <TypeAhead
+        placeholder="Search for existing canvases and manifests to edit..."
+        on:selected={slugSelected}
+      />
+    </div>
+  </div>
 </div>
+
+<style>
+  .notifications {
+    padding-top: var(--perfect-fourth-3);
+  }
+  .center {
+    padding-top: var(--perfect-fourth-1);
+    text-align: center;
+  }
+  .title,
+  .title img {
+    position: relative;
+    margin: auto;
+  }
+  .search {
+    position: relative;
+    margin: auto;
+    width: 65%;
+    margin-top: var(--perfect-fourth-2);
+    padding-left: 5.5rem;
+  }
+</style>

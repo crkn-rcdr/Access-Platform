@@ -6,23 +6,20 @@ This package is used by Access Platform services to ensure that environment vari
 
 You will need to set these yourself:
 
-- `ADMIN_URL_EXTERNAL`: external URL serving the admin tools (e.g. `https://access.canadiana.ca`)
+- `NODE_ENV`: set this to `production` if running in production
+- `ADMIN_URL_EXTERNAL`: public-facing URL serving the admin tools (e.g. `https://access.canadiana.ca`)
 - `AUTH_JWT_SECRET`: secret for verifying platform JWTs
+- `COUCHDB_URL`: URL serving CouchDB (e.g. `http://iris.tor.c7a.ca:5984`)
 - `COUCHDB_PASSWORD`: the CouchDB admin user's password
+- `LAPIN_URL`: network-internal URL serving lapin (i.e., something the admin tools has access to)
+- `NOID_URL`: URL pointing to the Noid minting service (e.g. `http://noid.c7a.ca`)
 
 ## Optional variables
 
 You may not need to change these, and they have default values.
 
 - `AUTH_URL`: URL serving the the platform authentication service (default: `https://auth.canadiana.ca`)
-- `COUCHDB_URL`: URL serving CouchDB (default: `http://couch:5984`)
 - `COUCHDB_USER`: name of the CouchDB admin user (default: `admin`)
-
-## Internal variables
-
-Access platform services assume that they are being run inside a Docker network with the appropriate aliases configured (e.g. `lapin` for [the lapin service](../../services/lapin)). This is also controlled by environment variables:
-
-- `LAPIN_URL_INTERNAL`: URL serving lapin (default: `http://lapin:5858`)
 
 ## Default ports
 
