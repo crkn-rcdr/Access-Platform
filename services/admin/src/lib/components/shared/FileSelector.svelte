@@ -29,6 +29,9 @@ This component allows a user to select a file, or multiple files, from their com
    */
   const dispatch = createEventDispatcher();
 
+  /**
+   * @type {string} Used to show a confirmation to the user that their file has been selected.
+   */
   let fileName: string = "";
 
   /**

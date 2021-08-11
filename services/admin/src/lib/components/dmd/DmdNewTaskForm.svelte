@@ -1,6 +1,7 @@
 <!--
 @component
 ### Overview
+This component allows the user to create new DMD tasks to attach metadata to objects. The metadata and objects are specified by a file that is selected from their computer.
 
 ### Properties
 none
@@ -30,6 +31,10 @@ none
    */
   let b64EncodedMetadataFileText: string | undefined = undefined;
 
+  /**
+   * Converts the selected file into a base 64 encoded string and stores it in the @var b64EncodedMetadataFileText
+   * @returns void
+   */
   async function handleFileSelected(event: any) {
     const file: File = event.detail;
     const metadataFileText = await file.text();
@@ -38,6 +43,10 @@ none
     }
   }
 
+  /**
+   * TODO: will send the create request to lapin
+   * @returns void
+   */
   async function handleCreateTask() {
     const bodyObj = {
       user: $session.user,
@@ -54,9 +63,6 @@ none
 <div class="new-task-wrapper">
   <h6>Create a new DMD Task</h6>
   <fieldset class="new-task-fields">
-    <!--fieldset>
-    <legend>Metadata File Information</legend-->
-
     <label for="metadata-type">Metadata Type:</label>
     <select name="metadata-type" bind:value={metadataType}>
       <option value="" />
@@ -84,14 +90,12 @@ none
     width: fit-content;
     margin: auto;
   }
-
   .new-task-fields {
     display: grid;
     grid-template-areas: "a a";
     gap: 2rem;
     align-items: center;
   }
-
   .new-task-button {
     float: right;
   }
