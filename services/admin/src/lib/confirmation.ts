@@ -27,17 +27,17 @@ let numVisibleNotifications = 0;
 async function showConfirmation(call, successMsg, failMsg) {
   numVisibleNotifications++;
   try {
-    const res = await call();
+    const res: { success: boolean; details: string } = await call();
     const notification = new NotificationBar({
       target: document.body,
       props: {
         message: res ? successMsg : failMsg,
-        detail: JSON.stringify(res),
+        detail: res["details"],
         status: res ? "success" : "fail",
         expandable: true,
         float: true,
         notificationPosition: numVisibleNotifications,
-        dissmissFunction: res
+        dissmissFunction: res["success"]
           ? null
           : () => {
               notification.$destroy();
@@ -45,19 +45,20 @@ async function showConfirmation(call, successMsg, failMsg) {
             },
       },
     });
-    if (res) {
+    if (res["success"]) {
       setTimeout(() => {
         notification.$destroy();
         numVisibleNotifications--;
       }, DISPLAY_TIME);
     }
-    return res;
+    return res["success"];
   } catch (e) {
+    // In case something really blows up, or someone forgets to wrap implementation of call in try/catch
     const notification = new NotificationBar({
       target: document.body,
       props: {
         message: failMsg,
-        detail: JSON.stringify(e),
+        detail: e.message,
         status: "fail",
         expandable: true,
         float: true,

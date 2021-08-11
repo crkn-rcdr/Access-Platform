@@ -76,9 +76,15 @@ The editor actions component holds functionality that is responsible for perform
       async () => {
         try {
           //if(response) goto(`/object/${objectModel["id"]}`);
-          return true;
+          return {
+            success: true,
+            details: "done",
+          };
         } catch (e) {
-          return e;
+          return {
+            success: false,
+            details: e.message,
+          };
         }
       },
       `Success! Created ${objectModel.type}.`,
@@ -108,11 +114,20 @@ The editor actions component holds functionality that is responsible for perform
               `${objectModel.type}.edit`,
               bodyObj
             );
-            return response?.id;
+            return {
+              success: true,
+              details: JSON.stringify(bodyObj),
+            };
           }
-          return false;
+          return {
+            success: false,
+            details: "Object not of type canvas or manifest",
+          };
         } catch (e) {
-          return false;
+          return {
+            success: false,
+            details: e.message,
+          };
         }
       },
       "Success! Changes saved.",
@@ -153,7 +168,6 @@ The editor actions component holds functionality that is responsible for perform
    * Sends the request to the backend to unnasign a slug from the access object. If it is successful, the object model is deep cloned into the object, and the editor state is updated to reflect the object being a 'Slugless' access object.
    * @returns response
    */
-  /* TODO: ask what the best way to set this to undefined is, because it seems like undefined params get trimmed from the data object */
   async function handleUnassignSlug() {
     showUnassignSlugModal = false;
     return await showConfirmation(
@@ -172,15 +186,19 @@ The editor actions component holds functionality that is responsible for perform
             );
             objectModel["slug"] = undefined;
             object = clone(objectModel) as AccessObject; // todo: get this done with zod
-            return true;
+            return { success: true, details: "" };
           } catch (e) {
             console.log(e);
+            return { success: false, details: e.message };
           }
         }
-        return false;
+        return {
+          success: false,
+          details: "Object not of type canvas or manifest",
+        };
       },
       `Success! Unassigned the slug '${objectModel["slug"]}.'`,
-      `Error: unassign the slug, '${objectModel["slug"]}.'`
+      `Error unassigning slug '${objectModel["slug"]}.'`
     );
   }
 
@@ -219,12 +237,19 @@ The editor actions component holds functionality that is responsible for perform
               objectModel["public"] = Date.now() / 1000;
             }
             object = clone(objectModel) as AccessObject; // todo: get this done with zod
-            return true;
+            return {
+              success: true,
+              details: JSON.stringify(object),
+            };
           } catch (e) {
             console.log(e);
+            return { success: false, details: e.message };
           }
         }
-        return false;
+        return {
+          success: false,
+          details: "Object not of type canvas or manifest",
+        };
       },
       `Success! ${objectModel["public"] ? "Unublish" : "Publish"}ed ${
         objectModel["type"]
@@ -284,9 +309,6 @@ The editor actions component holds functionality that is responsible for perform
     effectively undiscoverable. You can bookmark this page to access this object
     again in the future. You can assign it a new slug to make it discoverable in
     the platform again.
-    <!--You'll be able to view
-    {object["slug"]} in storage and add it back into the platform
-    <a href="/storage" target="_blank">here.</a-->
   </p>
   <div slot="footer">
     <button class="secondary" on:click={() => (showUnassignSlugModal = false)}>
