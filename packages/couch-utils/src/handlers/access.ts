@@ -68,12 +68,12 @@ export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
   /**
    * forceUpdate an Access Object.
    */
-  async forceUpdate(args: { id: Noid; user: User }) {
-    await this.forceUpdate({
-      id: args.id,
-      user: args.user,
-    });
-  }
+  // async forceUpdate(args: { id: Noid; user: User }) {
+  //   await this.forceUpdate({
+  //     id: args.id,
+  //     user: args.user,
+  //   });
+  // }
   /**
    * Edit an Access Object.
    */
@@ -124,10 +124,10 @@ export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
       const filteredMembers = xorWith(data.members, currentMembers, isEqual);
 
       console.log("data in accesshandler", filteredMembers);
-      await this.forceUpdate({
-        id: args.id,
-        user: args.user,
-      });
+      // await this.forceUpdate({
+      //   id: args.id,
+      //   user: args.user,
+      // });
     }
     /*Return the Collection Object here? after forceUpdate?*/
     await this.editObject({
