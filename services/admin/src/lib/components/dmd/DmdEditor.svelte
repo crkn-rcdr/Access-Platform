@@ -11,7 +11,7 @@ none
  <DmdEditor />
 ```
 -->
-<script lang="ts">
+<!--script lang="ts">
   import type { DMDTask } from "@crkn-rcdr/access-data";
   import FaCheckCircle from "svelte-icons/fa/FaCheckCircle.svelte";
   import FaTimesCircle from "svelte-icons/fa/FaTimesCircle.svelte";
@@ -216,4 +216,4 @@ none
     </div>
     <DmdStoreTask />
   </ScrollStepperStep>
-</ScrollStepper>
+</ScrollStepper-->

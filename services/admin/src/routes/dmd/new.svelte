@@ -1,7 +1,7 @@
 <script>
-  import DmdEditor from "$lib/components/dmd/DmdEditor.svelte";
+  import DmdNewTaskForm from "$lib/components/dmd/DmdNewTaskForm.svelte";
 </script>
 
 <div class="wrapper">
-  <DmdEditor />
+  <DmdNewTaskForm />
 </div>

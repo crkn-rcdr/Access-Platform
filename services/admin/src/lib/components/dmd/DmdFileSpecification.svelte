@@ -45,9 +45,9 @@ This component holds the form elements that correspond to the metadata file when
    * @param event
    * @returns void
    */
-  function handleFileselected(event: any) {
-    dispatch("fileSelected", event.detail);
+  function handleFileSelected(event: any) {
     metadataFile = event.detail;
+    dispatch("fileSelected", event.detail);
   }
 </script>
 
@@ -67,7 +67,7 @@ This component holds the form elements that correspond to the metadata file when
   </div>
   <br />
   <span>Metadata File:</span>
-  <FileSelector on:change={handleFileselected} />
+  <FileSelector on:change={handleFileSelected} />
   <!--/fieldset-->
 </div>
 

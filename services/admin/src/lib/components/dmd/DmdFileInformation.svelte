@@ -12,9 +12,6 @@ This component shows a summary of the metadata file that was selected for proces
 ``` 
 <DmdFileConfirmation
   bind:metadataFile
-  on:process={() => {
-    ...do something
-  }}
 /> 
 ```
 *Note: `bind:` is required for changes to the parameters to be reflected in higher level components.*
@@ -26,20 +23,6 @@ This component shows a summary of the metadata file that was selected for proces
    * @type {File | undefined} The metadata file that was selected for processing
    */
   export let metadataFile: File | undefined = undefined;
-
-  /**
-   * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.
-   */
-  const dispatch = createEventDispatcher();
-
-  /**
-   * Calls @event process to tell the parent component that the user would like to process the file. TODO: add lapin request to start split here
-   * @param event
-   * @returns void
-   */
-  function handleProcess(event: any) {
-    dispatch("process", event);
-  }
 </script>
 
 {#if metadataFile}
@@ -59,13 +42,4 @@ This component shows a summary of the metadata file that was selected for proces
     </tr>
   </table>
   <br />
-  <button class="button primary" type="submit" on:click={handleProcess}>
-    Process File
-  </button>
 {/if}
-
-<style>
-  textarea {
-    width: 100%;
-  }
-</style>
