@@ -26,7 +26,7 @@ This component shows a summary of the metadata file that was selected for proces
 </script>
 
 {#if metadataFile}
-  <b>Metadata File Information</b>
+  <b>Metadata File Information:</b>
   <table>
     <tr>
       <td><b>Name</b></td>

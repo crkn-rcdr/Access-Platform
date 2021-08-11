@@ -12,8 +12,8 @@ none
 -->
 <script lang="ts">
   import type { Session } from "$lib/types";
-  import DmdFileSpecification from "$lib/components/dmd/DmdFileSpecification.svelte";
-  import DmdFileInformation from "$$lib/components/dmd/DmdFileInformation.svelte";
+  import DmdNewTaskFileSpecification from "$lib/components/dmd/DmdNewTaskFileSpecification.svelte";
+  import DmdNewTaskFileInformation from "$lib/components/dmd/DmdNewTaskFileInformation.svelte";
   //import DmdPrefixSelector from "$lib/components/dmd/DmdPrefixSelector.svelte";
   import { getStores } from "$app/stores";
 
@@ -21,11 +21,6 @@ none
    * @type {Session} The session store that contains the module for sending requests to lapin.
    */
   const { session } = getStores<Session>();
-
-  /**
-   * @type {string} Represents the end platform/repository for to look for the items specified in the metadata file in.
-   */
-  //let depositorPrefix = "";
 
   /**
    * @type {string} Used to tell the dmdtask deamons what kind of metadata format the metadata being processed is in.
@@ -53,10 +48,7 @@ none
 </script>
 
 <h6>Enter DMD Task Information</h6>
-<!--DmdPrefixSelector bind:prefix={depositorPrefix} />
-<br />
-<br /-->
-<DmdFileSpecification
+<DmdNewTaskFileSpecification
   bind:metadataType
   bind:metadataFile
   on:fileSelected={async () => {
@@ -67,18 +59,18 @@ none
     // Todo, error
   }}
 />
+<br />
+<br />
+<br />
 
 <h6>Review Selections & Inititate Metadata File Processing</h6>
-<!--b>Depositor Prefix: </b><span
-  >{depositorPrefix ? depositorPrefix : "No Prefix"}</span
->
-<br />
-<br /-->
 <b>Metadata Type: </b><span>{metadataType}</span>
 <br />
 <br />
-<DmdFileInformation bind:metadataFile />
+<DmdNewTaskFileInformation bind:metadataFile />
 
-<br />
-<br />
-<button class="primary" on:click={handleCreateTask}>Create Task</button>
+{#if metadataType && b64EncodedMetadataFileText}
+  <br />
+  <br />
+  <button class="primary" on:click={handleCreateTask}>Create Task</button>
+{/if}

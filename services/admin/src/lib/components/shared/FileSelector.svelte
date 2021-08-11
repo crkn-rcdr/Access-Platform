@@ -49,7 +49,7 @@ This component allows a user to select a file, or multiple files, from their com
     on:change={handleFileSelected}
     {multiple}
   />
-  <label for="file" class="button primary">Choose File</label>
+  <label for="file" class="button secondary">Choose File</label>
 </div>
 
 <style>
