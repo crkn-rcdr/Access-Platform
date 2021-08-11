@@ -55,7 +55,7 @@ The editor actions component holds functionality that is responsible for perform
   /**
    * @type {boolean} Controls if the move to storage modal is being displayed or not.
    */
-  let showMovetoStorageModal = false;
+  let showUnassignSlugModal = false;
 
   /**
    * Sets @var isSaveEnabled depending on if the objectModel is valid.
@@ -154,8 +154,8 @@ The editor actions component holds functionality that is responsible for perform
    * @returns response
    */
   /* TODO: ask what the best way to set this to undefined is, because it seems like undefined params get trimmed from the data object */
-  async function handlePlaceInStorage() {
-    showMovetoStorageModal = false;
+  async function handleUnassignSlug() {
+    showUnassignSlugModal = false;
     return await showConfirmation(
       async () => {
         if (
@@ -179,8 +179,8 @@ The editor actions component holds functionality that is responsible for perform
         }
         return false;
       },
-      `Success! Placed ${objectModel["type"]} in storage. (Slug unassigned!)`,
-      `Error: couldn't place ${objectModel["type"]} in storage. (Slug not unassigned!)`
+      `Success! Unassigned the slug '${objectModel["slug"]}.'`,
+      `Error: unassign the slug, '${objectModel["slug"]}.'`
     );
   }
 
@@ -262,9 +262,9 @@ The editor actions component holds functionality that is responsible for perform
   {#if object["slug"]}
     <button
       class="danger icon-button"
-      data-tooltip="Place in storage"
+      data-tooltip="Unassign Slug"
       data-tooltip-flow="bottom"
-      on:click={() => (showMovetoStorageModal = true)}
+      on:click={() => (showUnassignSlugModal = true)}
     >
       <div class="button-icon">
         <FaArchive />
@@ -274,27 +274,26 @@ The editor actions component holds functionality that is responsible for perform
 </span>
 
 <Modal
-  bind:open={showMovetoStorageModal}
-  title={`Are you sure you want to place this object in storage?`}
+  bind:open={showUnassignSlugModal}
+  title={`Are you sure you want to unassign this slug?`}
 >
   <p slot="body">
-    By placing this object in storage you will be taking it out of all the
-    collections it belongs to. You will be unassigning its slug, '{object[
-      "slug"
-    ]}.' You can then use that slug for other objects. Objects that do not have
-    a slug assigned to them are effectively undiscoverable. You can bookmark
-    this page to access this object again in the future. You can assign it a new
-    slug to make it discoverable in the platform again.
+    By unassigning this object's slug, you will be taking it out of all the
+    collections it belongs to. You can then use the slug, '{object["slug"]}' for
+    other objects. Objects that do not have a slug assigned to them are
+    effectively undiscoverable. You can bookmark this page to access this object
+    again in the future. You can assign it a new slug to make it discoverable in
+    the platform again.
     <!--You'll be able to view
     {object["slug"]} in storage and add it back into the platform
     <a href="/storage" target="_blank">here.</a-->
   </p>
   <div slot="footer">
-    <button class="secondary" on:click={() => (showMovetoStorageModal = false)}>
+    <button class="secondary" on:click={() => (showUnassignSlugModal = false)}>
       Cancel
     </button>
-    <button class="danger" on:click={handlePlaceInStorage}>
-      Place in storage
+    <button class="danger" on:click={handleUnassignSlug}>
+      Unassign Slug
     </button>
   </div>
 </Modal>
