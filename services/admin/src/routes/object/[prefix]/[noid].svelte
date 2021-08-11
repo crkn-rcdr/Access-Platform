@@ -13,8 +13,8 @@
           page.params["noid"] as string,
         ].join("/");
         const response = await context.lapin.query("accessObject.get", id);
-        const object = AccessObject.parse(response);
-        return { props: { object } };
+        const serverObject = AccessObject.parse(response);
+        return { props: { serverObject } };
       }
       return { props: {} };
     } catch (e) {
@@ -30,17 +30,16 @@
    * The object is given to the page from the module above.
    */
   import { AccessObject } from "@crkn-rcdr/access-data";
-  import { isManifest, isCollection } from "@crkn-rcdr/access-data";
   import Editor from "$lib/components/access-objects/Editor.svelte";
 
   /**
    * @type {AccessObject} Object being edited.
    */
-  export let object: AccessObject;
+  export let serverObject: AccessObject;
 </script>
 
-{#if object}
-  <Editor bind:object />
+{#if serverObject}
+  <Editor bind:serverObject />
 {:else}
   Loading...
 {/if}

@@ -5,6 +5,7 @@
    */
   import { goto } from "$app/navigation";
   import TypeAhead from "$lib/components/access-objects/TypeAhead.svelte";
+  import { Noid } from "@crkn-rcdr/access-data";
 
   import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
   
@@ -15,7 +16,11 @@
    */
   function slugSelected(event: CustomEvent<string>) {
     const noid = event.detail;
-    goto(`/object/${noid}`);
+    try {
+      if (Noid.parse(noid)) goto(`/object/${noid}`);
+    } catch (e) {
+      console.log(e);
+    }
   }
 </script>
 

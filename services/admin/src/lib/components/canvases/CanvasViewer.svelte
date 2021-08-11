@@ -62,17 +62,21 @@ Displays a canvas using the OpenSeadragon library
       imageURL = `https://image-tor.canadiana.ca/iiif/2/${encodeURIComponent(
         canvas["id"]
       )}/info.json`;
-      OpenSeadragon.default({
-        element: container,
-        prefixUrl: "/openseadragon/images/", // for the icons the viewer uses
-        tileSources: [imageURL],
-        viewportMargins: {
-          top: 0,
-          bottom: 0,
-        },
-        immediateRender: true,
-        ...options,
-      });
+      try {
+        OpenSeadragon.default({
+          element: container,
+          prefixUrl: "/openseadragon/images/", // for the icons the viewer uses
+          tileSources: [imageURL],
+          viewportMargins: {
+            top: 0,
+            bottom: 0,
+          },
+          immediateRender: true,
+          ...options,
+        });
+      } catch (e) {
+        console.log("OpenSeadragon error:", e);
+      }
     }
   }
 

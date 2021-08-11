@@ -41,7 +41,6 @@ TODO
   const DOWN_ARROW_CODE: number = 40;
   const dispatch = createEventDispatcher();
   const { session } = getStores<Session>();
-  console.log("Prit Collection:", collection);
   function setIndexModel() {
     indexModel = [];
     for (let i = 0; i < collection.members.length; i++) {
@@ -125,8 +124,6 @@ TODO
     }
   }
   function handleCancelPressed() {
-    console.log("selected test", activeMemberIndex);
-    console.log("selected Collection", selectedCollection);
     selectedCollection = [];
     addedMember = false;
   }

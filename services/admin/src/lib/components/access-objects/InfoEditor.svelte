@@ -1,18 +1,18 @@
 <!--
 @component
 ### Overview
-This component displays the non content properties for an access object and allows users to edit them.
+This component displays the non content properties for an access editorObject and allows users to edit them.
 
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| object: AccessObject | required | The AccessObject object that will be manipulated by the user, usually, a copy of an access pbject that acts as a form model. |
+| serverObject: AccessObject | required | The AccessObject editorObject that will be manipulated by the user, usually, a copy of an access pbject that acts as a form model. |
 
 ### Usage
 ```  
-<InfoEditor bind:object />
+<InfoEditor bind:editorObject />
 ```
-*Note: `bind:` is required for changes to the object to be reflected in higher level components.*
+*Note: `bind:` is required for changes to the editorObject to be reflected in higher level components.*
 -->
 <script lang="ts">
   import { isManifest, isCollection } from "@crkn-rcdr/access-data";
@@ -22,9 +22,9 @@ This component displays the non content properties for an access object and allo
   import Resolver from "$lib/components/access-objects/Resolver.svelte";
 
   /**
-   * @type {AccessObject} The AccessObject object that will be manipulated by the user, usually, a copy of an access pbject that acts as a form model.
+   * @type {AccessObject} The AccessObject editorObject that will be manipulated by the user, usually, a copy of an access pbject that acts as a form model.
    */
-  export let object: AccessObject; // Not sure if we should pass an object or have a list of props (ex: slug, label, ...) that can be null, and show ones that are instantiated only?
+  export let editorObject: AccessObject; // Not sure if we should pass an editorObject or have a list of props (ex: slug, label, ...) that can be null, and show ones that are instantiated only?
 
   /**
    * @type {boolean} Controls if the notification bar for slugs shows the error that the slug is unavailable, or if it shows a validation error (or nothing if it looks good)
@@ -37,22 +37,22 @@ This component displays the non content properties for an access object and allo
   let slugUnavailableMessage = "";
 </script>
 
-{#if object}
+{#if editorObject}
   <form>
-    {#if isManifest(object) || isCollection(object)}
+    {#if isManifest(editorObject) || isCollection(editorObject)}
       <label for="slug">Slug</label>
       <NotificationBar
         message={showSlugUnavailable
           ? slugUnavailableMessage
-          : getSlugValidationMsg(object["slug"])}
+          : getSlugValidationMsg(editorObject["slug"])}
         status="fail"
       />
       <Resolver
-        bind:slug={object["slug"]}
+        bind:slug={editorObject["slug"]}
         on:available={(event) => {
           if (!event?.detail?.["status"]) {
-            slugUnavailableMessage = `${object["slug"]} was unavailable.  The input has been reset, please try again with a different slug.`;
-            object["slug"] = event.detail["slug"]; // No easier way to disable save button that I can think of
+            slugUnavailableMessage = `${editorObject["slug"]} was unavailable.  The input has been reset, please try again with a different slug.`;
+            editorObject["slug"] = event.detail["slug"]; // No easier way to disable save button that I can think of
             showSlugUnavailable = true;
           } else {
             showSlugUnavailable = false;
@@ -65,19 +65,19 @@ This component displays the non content properties for an access object and allo
       <label for="label">Label</label>
       <br />
       <NotificationBar
-        message={typedChecks[object["type"]].getLabelValidationMsg(
-          object["label"]
+        message={typedChecks[editorObject["type"]].getLabelValidationMsg(
+          editorObject["label"]
         )}
         status="fail"
       />
       <textarea
         id="label"
         name="label"
-        bind:value={object["label"]["none"]}
+        bind:value={editorObject["label"]["none"]}
         on:keyup={() => {
           // Triggers validation msg
-          if (object?.["label"]?.["none"]?.length === 0)
-            object["label"]["none"] = undefined;
+          if (editorObject?.["label"]?.["none"]?.length === 0)
+            editorObject["label"]["none"] = undefined;
         }}
       /><br /><br />
 
