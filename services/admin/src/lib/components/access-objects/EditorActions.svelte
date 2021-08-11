@@ -166,30 +166,23 @@ The editor actions component holds functionality that is responsible for perform
         ) {
           try {
             const response = await $session.lapin.mutation(
-              `${objectModel.type}.edit`,
+              `accessObject.unassignSlug`,
               {
                 id: objectModel.id,
                 user: $session.user,
-                data: {
-                  slug: "",
-                },
               }
             );
-            console.log("res", response);
-            if (response) {
-              objectModel["slug"] = undefined;
-              object = clone(objectModel) as AccessObject; // todo: get this done with zod
-            }
+            objectModel["slug"] = undefined;
+            object = clone(objectModel) as AccessObject; // todo: get this done with zod
             return true;
           } catch (e) {
-            //error = e;
             console.log(e);
           }
         }
         return false;
       },
-      "success",
-      "fail"
+      `Placed ${objectModel["type"]} in storage. (Slug unassigned!)`,
+      `Couldn't place ${objectModel["type"]} in storage. (Slug not unassigned!)`
     );
   }
 
