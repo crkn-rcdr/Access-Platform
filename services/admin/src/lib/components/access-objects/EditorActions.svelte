@@ -201,7 +201,7 @@ The editor actions component holds functionality that is responsible for perform
    * @param arr
    * @param currentIndex
    * @param destinationIndex
-   * @returns void
+   * @returns response
    */
   async function handlePublishStatusChange() {
     return await showConfirmation(
