@@ -60,3 +60,8 @@ export type SideMenuPageData = {
     update: Function;
   };
 };
+
+export type Depositor = {
+  string: string;
+  label: string;
+};

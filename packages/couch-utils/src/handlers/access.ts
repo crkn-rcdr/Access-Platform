@@ -13,8 +13,8 @@ import {
 } from "@crkn-rcdr/access-data";
 
 import { DatabaseHandler } from "../DatabaseHandler.js";
-import { xorWith } from "lodash";
-import { isEqual } from "lodash/fp";
+
+import { xorWith, isEqual } from "lodash-es";
 
 // Use this essentially so that `slug` is defined
 const AccessDatabaseObject = z.union([Alias, Manifest, Collection]);
@@ -63,6 +63,15 @@ export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
       name: "unpublish",
       docId: args.id,
       body: args.user,
+    });
+  }
+  /**
+   * forceUpdate an Access Object.
+   */
+  async forceUpdate(args: { id: Noid; user: User }) {
+    await this.forceUpdate({
+      id: args.id,
+      user: args.user,
     });
   }
   /**
@@ -115,8 +124,12 @@ export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
       const filteredMembers = xorWith(data.members, currentMembers, isEqual);
 
       console.log("data in accesshandler", filteredMembers);
+      await this.forceUpdate({
+        id: args.id,
+        user: args.user,
+      });
     }
-
+    /*Return the Collection Object here? after forceUpdate?*/
     await this.editObject({
       id: args.id,
       user: args.user,
