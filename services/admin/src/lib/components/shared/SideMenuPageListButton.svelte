@@ -28,11 +28,12 @@ None
     padding: var(--perfect-fourth-7) var(--perfect-fourth-4);
     font-weight: 500;
   }
-  li:hover {
+  li:not(.active):hover {
     background: rgba(255, 255, 255, 0.45);
     transition: background 0.5s ease;
   }
   :global(.side-menu-page-list-button.active) {
+    background: rgba(255, 255, 255, 0.45);
     color: var(--primary);
   }
 </style>
