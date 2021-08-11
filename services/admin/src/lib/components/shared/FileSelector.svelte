@@ -16,6 +16,7 @@ This component allows a user to select a file, or multiple files, from their com
 ```
 -->
 <script lang="ts">
+  import FaCheckCircle from "svelte-icons/fa/FaCheckCircle.svelte";
   import { createEventDispatcher } from "svelte";
 
   /**
@@ -28,6 +29,8 @@ This component allows a user to select a file, or multiple files, from their com
    */
   const dispatch = createEventDispatcher();
 
+  let fileName: string = "";
+
   /**
    * Triggers @event change to tell the parent component that the user has selected a file.
    * @param event
@@ -35,21 +38,36 @@ This component allows a user to select a file, or multiple files, from their com
    */
   function handleFileSelected(event: any) {
     const files = event.target["files"];
-    const data = multiple ? files : files.length ? files[0] : null;
+    let data = null;
+    if (multiple) {
+      fileName = files.map((file) => file["name"]).join(",");
+      data = files;
+    } else if (files.length) {
+      fileName = files[0]["name"];
+      data = files[0];
+    }
     dispatch("change", data);
   }
 </script>
 
-<div>
-  <input
-    type="file"
-    name="file"
-    id="file"
-    class="inputfile"
-    on:change={handleFileSelected}
-    {multiple}
-  />
-  <label for="file" class="button secondary">Choose File</label>
+<div class="auto-align auto-align__a-center">
+  <span>
+    <input
+      type="file"
+      name="file"
+      id="file"
+      class="inputfile"
+      on:change={handleFileSelected}
+      {multiple}
+    />
+    <label for="file" class="button secondary">Choose File</label>
+  </span>
+  {#if fileName}
+    <div class="auto-align auto-align__a-center">
+      <div class="icon"><FaCheckCircle /></div>
+      {fileName}
+    </div>
+  {/if}
 </div>
 
 <style>
@@ -60,5 +78,11 @@ This component allows a user to select a file, or multiple files, from their com
     overflow: hidden;
     position: absolute;
     z-index: -1;
+  }
+
+  .icon {
+    margin-left: var(--margin-lg);
+    margin-right: var(--margin-sm);
+    color: var(--success);
   }
 </style>

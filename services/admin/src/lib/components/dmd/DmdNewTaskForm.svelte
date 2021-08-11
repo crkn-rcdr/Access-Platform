@@ -12,9 +12,7 @@ none
 -->
 <script lang="ts">
   import type { Session } from "$lib/types";
-  import DmdNewTaskFileSpecification from "$lib/components/dmd/DmdNewTaskFileSpecification.svelte";
-  import DmdNewTaskFileInformation from "$lib/components/dmd/DmdNewTaskFileInformation.svelte";
-  //import DmdPrefixSelector from "$lib/components/dmd/DmdPrefixSelector.svelte";
+  import FileSelector from "$lib/components/shared/FileSelector.svelte";
   import { getStores } from "$app/stores";
 
   /**
@@ -28,16 +26,19 @@ none
   let metadataType = "";
 
   /**
-   * @type {File | undefined} Used to hold the actual file to be processed, that holds the object ids to attach the metadata to.
-   */
-  let metadataFile: File | undefined = undefined;
-
-  /**
    * @type {string | undefined} This is the base 64 encoded string for the metadata file that will be stored in the couch attachment.
    */
   let b64EncodedMetadataFileText: string | undefined = undefined;
 
-  function handleCreateTask() {
+  async function handleFileSelected(event: any) {
+    const file: File = event.detail;
+    const metadataFileText = await file.text();
+    if (metadataFileText) {
+      b64EncodedMetadataFileText = btoa(metadataFileText);
+    }
+  }
+
+  async function handleCreateTask() {
     const bodyObj = {
       user: $session.user,
       mdType: metadataType,
@@ -47,30 +48,51 @@ none
   }
 </script>
 
-<h6>Enter DMD Task Information</h6>
-<DmdNewTaskFileSpecification
-  bind:metadataType
-  bind:metadataFile
-  on:fileSelected={async () => {
-    const metadataFileText = await metadataFile.text();
-    if (metadataFileText) {
-      b64EncodedMetadataFileText = btoa(metadataFileText);
-    }
-    // Todo, error
-  }}
-/>
-<br />
 <br />
 <br />
 
-<h6>Review Selections & Inititate Metadata File Processing</h6>
-<b>Metadata Type: </b><span>{metadataType}</span>
-<br />
-<br />
-<DmdNewTaskFileInformation bind:metadataFile />
+<div class="new-task-wrapper">
+  <h6>Create a new DMD Task</h6>
+  <fieldset class="new-task-fields">
+    <!--fieldset>
+    <legend>Metadata File Information</legend-->
 
-{#if metadataType && b64EncodedMetadataFileText}
+    <label for="metadata-type">Metadata Type:</label>
+    <select name="metadata-type" bind:value={metadataType}>
+      <option value="" />
+      <option value="issueinfocsv">Issueinfo CSV</option>
+      <option value="dccsv">Dublin Core CSV</option>
+      <option value="marc490">MARC - ID in 490</option>
+      <option value="marcoocihm">MARC - ID in oocihm interpretation</option>
+      <option value="marcooe">MARC - ID in ooe interpretation</option>
+    </select>
+    <span>Metadata File:</span>
+    <FileSelector on:change={handleFileSelected} />
+    <!--/fieldset-->
+  </fieldset>
   <br />
   <br />
-  <button class="primary" on:click={handleCreateTask}>Create Task</button>
-{/if}
+  {#if metadataType && b64EncodedMetadataFileText}
+    <button class="primary new-task-button" on:click={handleCreateTask}
+      >Create Task</button
+    >
+  {/if}
+</div>
+
+<style>
+  .new-task-wrapper {
+    width: fit-content;
+    margin: auto;
+  }
+
+  .new-task-fields {
+    display: grid;
+    grid-template-areas: "a a";
+    gap: 2rem;
+    align-items: center;
+  }
+
+  .new-task-button {
+    float: right;
+  }
+</style>
