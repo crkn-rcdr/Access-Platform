@@ -29,6 +29,8 @@ Allows the user to modify the member list for a collection.
   import TiArrowBack from "svelte-icons/ti/TiArrowBack.svelte";
   import TiTrash from "svelte-icons/ti/TiTrash.svelte";
   import type { ObjectList } from "@crkn-rcdr/access-data";
+  import CollectionMembersAddition from "./CollectionMembersAddition.svelte";
+
   export let collection: Collection;
   export let showAddButton = true;
 
@@ -237,6 +239,7 @@ Allows the user to modify the member list for a collection.
     </div>
   </div>
 {/if}
+<CollectionMembersAddition bind:destinationMember={collection} />
 
 <style>
   .list {

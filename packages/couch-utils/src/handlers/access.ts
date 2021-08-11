@@ -14,7 +14,7 @@ import {
 
 import { DatabaseHandler } from "../DatabaseHandler.js";
 
-import { xorWith, isEqual } from "lodash-es";
+import { xorWith, isEqual, identity } from "lodash-es";
 
 // Use this essentially so that `slug` is defined
 const AccessDatabaseObject = z.union([Alias, Manifest, Collection]);
@@ -68,10 +68,11 @@ export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
   /**
    * forceUpdate an Access Object.
    */
-  async forceUpdate(args: { id: Noid; user: User }) {
-    await this.forceUpdate({
-      id: args.id,
-      user: args.user,
+  async forceUpdate(id: Noid): Promise<void> {
+    await this.update({
+      ddoc: "access",
+      name: "forceUpdate",
+      docId: id,
     });
   }
   /**
@@ -124,11 +125,11 @@ export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
       const filteredMembers = xorWith(data.members, currentMembers, isEqual);
 
       console.log("data in accesshandler", filteredMembers);
-      await this.forceUpdate({
-        id: args.id,
-        user: args.user,
-      });
+      for (const collection of filteredMembers) {
+        await this.forceUpdate({collection});
+      }
     }
+
     /*Return the Collection Object here? after forceUpdate?*/
     await this.editObject({
       id: args.id,

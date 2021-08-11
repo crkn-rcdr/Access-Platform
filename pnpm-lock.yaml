@@ -13,15 +13,12 @@ importers:
       '@crkn-rcdr/access-data': workspace:^0.0.0
       '@crkn-rcdr/access-env': workspace:*
       '@types/http-errors': ^1.8.1
-      '@types/lodash': ^4.14.172
       '@types/lodash-es': ^4.17.4
       '@types/node': ^16.4.13
       ava: ^3.15.0
       http-errors: ^1.8.0
       kivik: ^2.0.0-alpha.13
-      lodash: ^4.17.21
       lodash-es: ^4.17.21
-      lodash.xorwith: ^4.5.0
       nano: ^9.0.3
       npm-run-all: ^4.1.5
       p-retry: ^4.6.1
@@ -32,14 +29,11 @@ importers:
       '@crkn-rcdr/access-data': link:../data
       '@crkn-rcdr/access-env': link:../env
       http-errors: 1.8.0
-      lodash: 4.17.21
       lodash-es: 4.17.21
-      lodash.xorwith: 4.5.0
       nano: 9.0.3
       zod: 3.7.1
     devDependencies:
       '@types/http-errors': 1.8.1
-      '@types/lodash': 4.14.172
       '@types/lodash-es': 4.17.4
       '@types/node': 16.4.13
       ava: 3.15.0
@@ -2004,12 +1998,9 @@ packages:
     resolution: {integrity: sha1-DdOXEhPHxW34gJd9UEyI+0cal6w=}
     dev: false
 
-  /lodash.xorwith/4.5.0:
-    resolution: {integrity: sha1-jdFQIzXZatyeRtmlbsO+TvJvwqc=}
-    dev: false
-
   /lodash/4.17.21:
     resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
+    dev: true
 
   /log-symbols/4.1.0:
     resolution: {integrity: sha512-8XPvpAA8uyhfteu8pIvQxpJZ7SYYdpUivZpGy6sFsBuKRY/7rQGavedeB8aK+Zkyq6upMFVL/9AW6vOYzfRyLg==}

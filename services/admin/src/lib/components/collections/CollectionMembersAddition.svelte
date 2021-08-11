@@ -36,7 +36,7 @@
   const dispatch = createEventDispatcher();
 
   /**
-   * @type {Manifest} The manifest to select canvases from.
+   * @type {Collection} The manifest to select canvases from.
    */
   let selectedMember: Collection;
 
