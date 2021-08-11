@@ -19,7 +19,7 @@ The editor actions component holds functionality that is responsible for perform
   import { onMount } from "svelte";
   import type { Session } from "$lib/types";
   import FaArchive from "svelte-icons/fa/FaArchive.svelte";
-  import type { AccessObject } from "@crkn-rcdr/access-data";
+  import { AccessObject } from "@crkn-rcdr/access-data";
   import { detailedDiff } from "deep-object-diff";
   import { getStores } from "$app/stores";
   import { showConfirmation } from "$lib/confirmation";
@@ -147,14 +147,10 @@ The editor actions component holds functionality that is responsible for perform
       bodyObj["canvases"] = editorObject["canvases"];
     }
 
-    /* const data = editorObject?.id?.length
-      ? await sendSaveRequest(bodyObj)
-      : await sendCreateRequest(bodyObj); */
     const data = await sendSaveRequest(bodyObj);
     if (data) {
       try {
-        clone = (await import("rfdc")).default();
-        serverObject = clone(editorObject) as AccessObject; // todo: get this done with zod
+        await pullServerObject();
         checkModelChanged(serverObject, editorObject);
       } catch (e) {
         //error = e;
@@ -183,8 +179,7 @@ The editor actions component holds functionality that is responsible for perform
                 user: $session.user,
               }
             );
-            editorObject["slug"] = undefined;
-            serverObject = clone(editorObject) as AccessObject; // todo: get this done with zod
+            await pullServerObject();
             return { success: true, details: "" };
           } catch (e) {
             console.log(e);
@@ -202,11 +197,11 @@ The editor actions component holds functionality that is responsible for perform
   }
 
   /**
-   * TODO
+   * This method sends the request to the backend to publish or unpublish an object from the platform.
    * @param arr
    * @param currentIndex
    * @param destinationIndex
-   * @returns
+   * @returns void
    */
   async function handlePublishStatusChange() {
     return await showConfirmation(
@@ -224,7 +219,6 @@ The editor actions component holds functionality that is responsible for perform
                   user: $session.user,
                 }
               );
-              editorObject["public"] = undefined;
             } else {
               const response = await $session.lapin.mutation(
                 `accessObject.publish`,
@@ -233,9 +227,8 @@ The editor actions component holds functionality that is responsible for perform
                   user: $session.user,
                 }
               );
-              editorObject["public"] = Date.now() / 1000;
             }
-            serverObject = clone(editorObject) as AccessObject; // todo: get this done with zod
+            await pullServerObject();
             return {
               success: true,
               details: JSON.stringify(serverObject),
@@ -255,6 +248,22 @@ The editor actions component holds functionality that is responsible for perform
       }.`,
       `Error: Couldn't publish ${editorObject["type"]}.`
     );
+  }
+
+  /**
+   * This method pulls the 'serverObject' from the backend. This resets the form and ensures that any problems saving changes are caught.
+   * @returns void
+   */
+  async function pullServerObject() {
+    try {
+      const response = await $session.lapin.query(
+        "accessObject.get",
+        serverObject["id"]
+      );
+      serverObject = AccessObject.parse(response);
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   /**

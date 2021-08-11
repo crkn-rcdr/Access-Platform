@@ -30,7 +30,6 @@
    * The object is given to the page from the module above.
    */
   import { AccessObject } from "@crkn-rcdr/access-data";
-  import { isManifest, isCollection } from "@crkn-rcdr/access-data";
   import Editor from "$lib/components/access-objects/Editor.svelte";
 
   /**
