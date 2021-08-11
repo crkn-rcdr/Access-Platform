@@ -104,12 +104,10 @@ The editor actions component holds functionality that is responsible for perform
               user: $session.user,
               data,
             };
-            console.log("bodyObj", bodyObj);
             const response = await $session.lapin.mutation(
               `${objectModel.type}.edit`,
               bodyObj
             );
-            console.log("res", response);
             return response?.id;
           }
           return false;
