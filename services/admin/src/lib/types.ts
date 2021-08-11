@@ -60,3 +60,11 @@ export type SideMenuPageData = {
     update: Function;
   };
 };
+
+/**
+ * Used to creatre a pull-down of available depositors to prepend to identifiers in the CSV or MarcXML files.
+ */
+export type Depositor = {
+  string: string;
+  label: string;
+};

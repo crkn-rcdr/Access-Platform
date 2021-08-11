@@ -1,34 +1,52 @@
 import { z } from "zod";
 
+import { CouchAttachmentRecord } from "../util/CouchAttachmentRecord.js";
 import { ProcessRequest, ProcessResult } from "../util/ProcessUpdate.js";
 import { Slug } from "../util/Slug.js";
 import { Timestamp } from "../util/Timestamp.js";
 import { User } from "../util/User.js";
 
+import { MDTYPES } from "./types.js";
+
 /**
- * See https://docs.couchdb.org/en/stable/api/document/common.html#attachments
- * I've also defined this in `couch-utils`. Eventually it should live here and be
- * imported by `couch-utils`.
+ * The result of attempting to parse an individual metadata
+ * record, after it has been split from the task's file.
  */
-export const CouchAttachmentRecord = z.record(
-  z.object({
-    content_type: z.string(),
-    data: z.string().optional(),
-    digest: z.string(),
-    encoded_length: z.number().int().min(0).optional(),
-    encoding: z.string().optional(),
-    length: z.number().optional(),
-    revpos: z.number(),
-    stub: z.boolean().optional(),
+const ParseRecord = z
+  .object({
+    /**
+     * Whether this record's metadata has been parsed successfully.
+     */
+    parsed: z.boolean(),
+
+    /**
+     * The id extracted for this record. When the record's metadata has been
+     * parsed successfully, this must be provided.
+     */
+    id: Slug.optional(),
+
+    /**
+     * The label extracted for this record. Also required for a successfully
+     * parsed record.
+     */
+    label: z.string().optional(),
+
+    /**
+     * Any message returned by the metadata processor.
+     */
+    message: z.string().optional(),
   })
-);
+  .refine(
+    (record) => !record.parsed || (record.id && record.label),
+    "A successfully parsed record must provide an id and label"
+  );
 
-export type CouchAttachmentRecord = z.infer<typeof CouchAttachmentRecord>;
+export type ParseRecord = z.infer<typeof ParseRecord>;
 
 /**
- * A newly created task for processing descriptive metadata, awaiting a split operation.
+ * DMDTask awaiting processing.
  */
-export const SplitRequestDMDTask = z.object({
+export const WaitingDMDTask = z.object({
   /**
    * Unique ID assigned to the task.
    */
@@ -42,22 +60,17 @@ export const SplitRequestDMDTask = z.object({
   /**
    * Record of the user who created this task.
    */
-  user: User.optional(),
-
-  /**
-   * Prepend this string when looking up objects in preservation and access.
-   */
-  prefix: Slug,
+  user: User,
 
   /**
    * Type of attached descriptive metadata file.
    */
-  mdType: z.enum(["csvissueinfo", "csvdc", "marc490", "marcoocihm", "marcooe"]),
+  mdType: z.enum(MDTYPES),
 
   /**
-   * The request to split and process the metadata file into multiple records.
+   * The request to split, validate, and flatten the metadata in the attached file.
    */
-  split: ProcessRequest,
+  process: ProcessRequest,
 
   /**
    * Timestamp of the task's most recent update.
@@ -65,126 +78,49 @@ export const SplitRequestDMDTask = z.object({
   updated: Timestamp,
 });
 
-export type SplitRequestDMDTask = z.infer<typeof SplitRequestDMDTask>;
+export type WaitingDMDTask = z.infer<typeof WaitingDMDTask>;
 
 /**
- * The record of a failed descriptive metadata split operation.
+ * DMDTask whose metadata file could not be processed into individual records.
  */
-export const SplitFailureDMDTask = SplitRequestDMDTask.merge(
+export const FailedDMDTask = WaitingDMDTask.merge(
   z.object({
     /**
-     * Result update for the split operation.
+     * The request has been processed.
      */
-    split: ProcessResult,
+    process: ProcessResult,
   })
 );
 
-export type SplitFailureDMDTask = z.infer<typeof SplitFailureDMDTask>;
-
-const SplitRecord = z.object({
-  /**
-   * The ID extracted from the descriptive metadata record for this object.
-   */
-  id: Slug,
-
-  /**
-   * Result of the split operation.
-   */
-  splitResult: z.object({
-    /**
-     * Found Access Platform slug for this object. May have the prefix prepended.
-     */
-    accessSlug: Slug.optional(),
-
-    /**
-     * Found legacy preservation platform AIP id for this object. May have the prefix prepended.
-     */
-    preservationId: Slug.optional(),
-
-    /**
-     * Whether the descriptive metadata record for this object validated against the `mdType` schema.
-     */
-    valid: z.boolean(),
-
-    /**
-     * Message returned by the split operation.
-     */
-    message: z.string().optional(),
-  }),
-});
-
-type SplitRecord = z.infer<typeof SplitRecord>;
+export type FailedDMDTask = z.infer<typeof FailedDMDTask>;
 
 /**
- * The record of a successful descriptive metadata split operation.
+ * DMDTask whose metadata file could be processed into individual records.
  */
-export const SplitSuccessDMDTask = SplitFailureDMDTask.merge(
+export const SucceededDMDTask = FailedDMDTask.merge(
   z.object({
     /**
-     * List of split records. Not provided if the metadata file could not be parsed.
+     * List of individual items found in the metadata file.
+     * Successfully parsed records will be attached to the document,
+     * referenceable by the record's index in this array.
      */
-    items: z.array(SplitRecord).optional(),
+    items: z.array(ParseRecord),
   })
 );
 
-export type SplitSuccessDMDTask = z.infer<typeof SplitSuccessDMDTask>;
-
-// Could add a refinement to prevent this from parsing
-// if the corresponding fields in splitResult are missing
-const StoreRecord = SplitRecord.merge(
-  z.object({
-    /**
-     * This object's requested store operations
-     */
-    storeRequest: z.object({
-      access: z.boolean(),
-      preservation: z.boolean(),
-    }),
-  })
-);
+export type SucceededDMDTask = z.infer<typeof SucceededDMDTask>;
 
 /**
- * A descriptive metadata task awaiting a store operation.
- */
-export const StoreRequestDMDTask = SplitSuccessDMDTask.merge(
-  z.object({
-    /**
-     * Request object for the store process.
-     */
-    store: ProcessRequest,
-
-    /**
-     * Array of objects with their store requests.
-     */
-    items: z.array(StoreRecord),
-  })
-);
-
-export type StoreRequestDMDTask = z.infer<typeof StoreRequestDMDTask>;
-
-/**
- * The record of a descriptive metadata store operation.
- */
-export const StoreResultDMDTask = StoreRequestDMDTask.merge(
-  z.object({
-    /**
-     * Result object for the store process.
-     */
-    store: ProcessResult,
-  })
-);
-
-export type StoreResultDMDTask = z.infer<typeof StoreResultDMDTask>;
-
-/**
- * Record of a descriptive metadata processing task.
+ * A descriptive metadata task (DMDTask) can be in three states:
+ *
+ * 1. Waiting for background processing to complete (WaitingDMDTask). An uploaded metadata file in a format hopefully matching `mdType` has been attached to the task.
+ * 2. Reporting that background processing could not split or validate the metadata file (FailedDMDTask).
+ * 3. Reporting that background processing could split or validate the metadata file. The processor attempted to parse each individual item it extracted from the file; those items that parsed successfully have their own attachments added to the document.
  */
 export const DMDTask = z.union([
-  SplitRequestDMDTask,
-  SplitFailureDMDTask,
-  SplitSuccessDMDTask,
-  StoreRequestDMDTask,
-  StoreResultDMDTask,
+  WaitingDMDTask,
+  FailedDMDTask,
+  SucceededDMDTask,
 ]);
 
 export type DMDTask = z.infer<typeof DMDTask>;
