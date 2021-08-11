@@ -80,7 +80,7 @@ A component that overlays ontop of the application, in the center of the screen.
     height: 100vh;
     width: 100vw;
     background-color: var(--overlay-bg);
-    z-index: 1;
+    z-index: 2;
   }
 
   .modal {

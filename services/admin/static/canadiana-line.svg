@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 864 280.5345">
+  <defs>
+    <linearGradient id="linear-gradient" x1="3.5067" y1="105.2004" x2="3.5067" y2="175.334" gradientUnits="userSpaceOnUse">
+      <stop offset="0.001" stop-color="#64c850"/>
+      <stop offset="1" stop-color="#00789c"/>
+    </linearGradient>
+    <linearGradient id="linear-gradient-2" x1="73.6403" y1="164.814" x2="73.6403" y2="171.8274" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-3" x1="17.5334" y1="77.147" x2="17.5334" y2="203.3875" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-4" x1="31.5601" y1="52.6002" x2="31.5601" y2="227.9343" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-5" x1="45.5869" y1="38.5735" x2="45.5869" y2="206.8942" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-6" x1="59.6136" y1="24.5468" x2="59.6136" y2="77.147" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-7" x1="73.6403" y1="17.5334" x2="73.6403" y2="115.7205" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-8" x1="87.667" y1="10.52" x2="87.667" y2="94.6804" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-9" x1="101.6937" y1="35.0668" x2="101.6937" y2="84.1603" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-10" x1="101.6937" y1="3.5067" x2="101.6937" y2="28.0534" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-11" x1="115.7205" y1="0" x2="115.7205" y2="77.147" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-12" x1="87.667" y1="185.8541" x2="87.667" y2="270.0144" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-13" x1="73.6403" y1="178.8407" x2="73.6403" y2="263.0011" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-14" x1="101.6937" y1="196.3741" x2="101.6937" y2="277.0278" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-15" x1="115.7205" y1="203.3875" x2="115.7205" y2="238.4543" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-16" x1="115.7205" y1="245.4677" x2="115.7205" y2="280.5345" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-17" x1="129.7472" y1="206.8942" x2="129.7472" y2="280.5345" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-18" x1="129.7472" y1="0" x2="129.7472" y2="73.6403" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-19" x1="143.7739" y1="210.4009" x2="143.7739" y2="280.5345" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-20" x1="143.7739" y1="0" x2="143.7739" y2="56.1069" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-21" x1="157.8006" y1="0" x2="157.8006" y2="73.6403" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-22" x1="171.8274" y1="3.5067" x2="171.8274" y2="77.147" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-23" x1="185.8541" y1="7.0134" x2="185.8541" y2="87.667" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-24" x1="185.8541" y1="192.8675" x2="185.8541" y2="238.4543" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-25" x1="185.8541" y1="259.4944" x2="185.8541" y2="273.5211" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-26" x1="199.8808" y1="14.0267" x2="199.8808" y2="80.6537" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-27" x1="199.8808" y1="199.8808" x2="199.8808" y2="266.5078" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-28" x1="213.9075" y1="21.0401" x2="213.9075" y2="66.6269" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-29" x1="213.9075" y1="213.9075" x2="213.9075" y2="259.4944" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-30" x1="227.9343" y1="31.5601" x2="227.9343" y2="52.6002" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-31" x1="227.9343" y1="227.9343" x2="227.9343" y2="248.9743" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-32" x1="171.8274" y1="203.3875" x2="171.8274" y2="277.0278" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-33" x1="157.8006" y1="206.8942" x2="157.8006" y2="280.5345" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-34" x1="241.961" y1="42.0802" x2="241.961" y2="49.0935" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-35" x1="143.7739" y1="63.1203" x2="143.7739" y2="70.1336" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-36" x1="241.961" y1="231.4409" x2="241.961" y2="238.4543" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-37" x1="185.8541" y1="245.4677" x2="185.8541" y2="252.481" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-38" x1="59.6136" y1="84.1603" x2="59.6136" y2="255.9877" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-39" x1="45.5869" y1="213.9075" x2="45.5869" y2="241.961" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-40" x1="455.9374" y1="210.4118" x2="455.9374" y2="243.9751" xlink:href="#linear-gradient"/>
+  </defs>
+  <title>canadiana-tag-logo-full-color-rgb</title>
+<path id="fullLogo-46" data-name="fullLogo" d="M455.9374,210.4118h0a1.3972,1.3972,0,0,1,1.3971,1.3972v30.7689a1.3971,1.3971,0,0,1-1.3971,1.3972h0a1.3971,1.3971,0,0,1-1.3972-1.3972V211.809A1.3972,1.3972,0,0,1,455.9374,210.4118Z" style="fill: url(#linear-gradient-40)"/>
+
+  </g>
+</svg>

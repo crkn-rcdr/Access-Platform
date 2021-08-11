@@ -49,7 +49,6 @@ This component displays the non content properties for an access object and allo
       />
       <Resolver
         bind:slug={object["slug"]}
-        noid={object["id"]}
         on:available={(event) => {
           if (!event?.detail?.["status"]) {
             slugUnavailableMessage = `${object["slug"]} was unavailable.  The input has been reset, please try again with a different slug.`;
