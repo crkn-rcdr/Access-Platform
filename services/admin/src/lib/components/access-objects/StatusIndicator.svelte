@@ -27,7 +27,9 @@ This component displays the publish status of an access object
   <span>Status:</span>
   <span
     >{object["public"]
-      ? `published on ${object["public"]}`
+      ? `published on ${new Date(
+          parseInt(`${object["public"]}`) * 1000
+        ).toLocaleString()}`
       : "unpublished"}</span
   >
 </span>

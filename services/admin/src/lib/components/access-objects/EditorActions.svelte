@@ -81,8 +81,8 @@ The editor actions component holds functionality that is responsible for perform
           return e;
         }
       },
-      `${objectModel.type} created!`,
-      `Failed to create ${objectModel.type}.`
+      `Success! Created ${objectModel.type}.`,
+      `Error: couldn't to create ${objectModel.type}.`
     );
   }
 
@@ -117,8 +117,8 @@ The editor actions component holds functionality that is responsible for perform
           return false;
         }
       },
-      "Changes saved!",
-      "Failed to save changes."
+      "Success! Changes saved.",
+      "Error: failed to save changes."
     );
   }
 
@@ -181,8 +181,8 @@ The editor actions component holds functionality that is responsible for perform
         }
         return false;
       },
-      `Placed ${objectModel["type"]} in storage. (Slug unassigned!)`,
-      `Couldn't place ${objectModel["type"]} in storage. (Slug not unassigned!)`
+      `Success! Placed ${objectModel["type"]} in storage. (Slug unassigned!)`,
+      `Error: couldn't place ${objectModel["type"]} in storage. (Slug not unassigned!)`
     );
   }
 
@@ -193,7 +193,47 @@ The editor actions component holds functionality that is responsible for perform
    * @param destinationIndex
    * @returns
    */
-  function handlePublishStatusChange() {}
+  async function handlePublishStatusChange() {
+    return await showConfirmation(
+      async () => {
+        if (
+          objectModel.type === "manifest" ||
+          objectModel.type === "collection"
+        ) {
+          try {
+            if (objectModel["public"]) {
+              const response = await $session.lapin.mutation(
+                `accessObject.unpublish`,
+                {
+                  id: objectModel.id,
+                  user: $session.user,
+                }
+              );
+              objectModel["public"] = undefined;
+            } else {
+              const response = await $session.lapin.mutation(
+                `accessObject.publish`,
+                {
+                  id: objectModel.id,
+                  user: $session.user,
+                }
+              );
+              objectModel["public"] = Date.now() / 1000;
+            }
+            object = clone(objectModel) as AccessObject; // todo: get this done with zod
+            return true;
+          } catch (e) {
+            console.log(e);
+          }
+        }
+        return false;
+      },
+      `Success! ${objectModel["public"] ? "Unublish" : "Publish"}ed ${
+        objectModel["type"]
+      }.`,
+      `Error: Couldn't publish ${objectModel["type"]}.`
+    );
+  }
 
   /**
    * @event onMount
