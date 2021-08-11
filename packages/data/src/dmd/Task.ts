@@ -6,7 +6,7 @@ import { Slug } from "../util/Slug.js";
 import { Timestamp } from "../util/Timestamp.js";
 import { User } from "../util/User.js";
 
-import { MDTYPES } from "./index.js";
+import { MDTYPES } from "./types.js";
 
 /**
  * The result of attempting to parse an individual metadata
