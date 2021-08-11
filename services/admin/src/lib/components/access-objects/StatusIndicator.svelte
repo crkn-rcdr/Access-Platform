@@ -1,34 +1,34 @@
 <!--
 @component
 ### Overview
-This component displays the publish status of an access object
+This component displays the publish status of an access serverObject
 
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| object: AccessObject  | required | The object to display the status of. |
+| serverObject: AccessObject  | required | The serverObject to display the status of. |
 
 ### Usage
 ```  
-<StatusIndicator bind:object />
+<StatusIndicator bind:serverObject />
 ```
-*Note: `bind:` is required for changes to the object and its model to be reflected in higher level components.*
+*Note: `bind:` is required for changes to the serverObject and its model to be reflected in higher level components.*
 -->
 <script lang="ts">
   import type { AccessObject } from "@crkn-rcdr/access-data";
 
   /**
-   * @type {string} The object to display the status of.
+   * @type {string} The serverObject to display the status of.
    */
-  export let object: AccessObject;
+  export let serverObject: AccessObject;
 </script>
 
 <span class="status">
   <span>Status:</span>
   <span
-    >{object["public"]
+    >{serverObject["public"]
       ? `published on ${new Date(
-          parseInt(`${object["public"]}`) * 1000
+          parseInt(`${serverObject["public"]}`) * 1000
         ).toLocaleString()}`
       : "unpublished"}</span
   >

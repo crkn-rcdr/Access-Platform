@@ -6,13 +6,13 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| object : AccessObject  | required | An object of type AccessObject that will be editable in the editor. |
+| serverObject : AccessObject  | required | An serverObject of type AccessObject that will be editable in the editor. |
 
 ### Usage
 ```  
-<Editor bind:object />
+<Editor bind:serverObject />
 ```
-*Note: `bind:` is required for changes to the object to be reflected in higher level components.*
+*Note: `bind:` is required for changes to the serverObject to be reflected in higher level components.*
 -->
 <script lang="ts">
   import type { AccessObject } from "@crkn-rcdr/access-data";
@@ -29,7 +29,7 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
   /**
    * @type {AccessObject} Object being edited.
    */
-  export let object: AccessObject;
+  export let serverObject: AccessObject;
 
   /**
    * @type {Array<SideMenuPageData>} This list controls the pages that appear in the side menu container, and their contents.
@@ -37,32 +37,32 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
   let pageList: Array<SideMenuPageData> = [];
 
   /**
-   * @type {any} A module that deep copies an object
+   * @type {any} A module that deep copies an serverObject
    */
   let rfdc: any;
 
   /**
-   * @type {AccessObject} An object of type AccessObject. This is a copy of the source object being edited. The model is used to keep track of changes to the object, without changing the actual object until save is pressed.
+   * @type {AccessObject} An serverObject of type AccessObject. This is a copy of the source serverObject being edited. The model is used to keep track of changes to the serverObject, without changing the actual serverObject until save is pressed.
    */
-  let objectModel: AccessObject;
+  let editorObject: AccessObject;
 
   /**
-   * Sets the sidemenu container component's pages and menu items based off of the model of the object to be edited's type.
-   * @param object
+   * Sets the sidemenu container component's pages and menu items based off of the model of the serverObject to be edited's type.
+   * @param serverObject
    * @returns void
    */
   async function setPageList() {
-    if (!object || !objectModel) return;
-    if (isManifest(objectModel)) {
+    if (!serverObject || !editorObject) return;
+    if (isManifest(editorObject)) {
       pageList = [
         {
           name: "General Info",
           componentData: {
             contentComponent: InfoEditor,
-            contentComponentProps: { object: objectModel },
+            contentComponentProps: { editorObject: editorObject },
             sideMenuPageProps: {},
             update: () => {
-              objectModel = objectModel;
+              editorObject = editorObject;
             },
           },
         },
@@ -70,26 +70,26 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
           name: "Content",
           componentData: {
             contentComponent: ManifestContentEditor,
-            contentComponentProps: { manifest: objectModel },
+            contentComponentProps: { manifest: editorObject },
             sideMenuPageProps: {
               overflowY: "hidden",
             },
             update: () => {
-              objectModel = objectModel;
+              editorObject = editorObject;
             },
           },
         },
       ];
-    } else if (isCollection(objectModel)) {
+    } else if (isCollection(editorObject)) {
       pageList = [
         {
           name: "General Info",
           componentData: {
             contentComponent: InfoEditor,
-            contentComponentProps: { object: objectModel },
+            contentComponentProps: { editorObject: editorObject },
             sideMenuPageProps: {},
             update: () => {
-              objectModel = objectModel;
+              editorObject = editorObject;
             },
           },
         },
@@ -97,12 +97,12 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
           name: "Members",
           componentData: {
             contentComponent: CollectionContentEditor,
-            contentComponentProps: { collection: objectModel },
+            contentComponentProps: { collection: editorObject },
             sideMenuPageProps: {
               overflowY: "hidden",
             },
             update: () => {
-              objectModel = objectModel;
+              editorObject = editorObject;
             },
           },
         },
@@ -111,43 +111,43 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
   }
 
   /**
-   * Deep copies the object to be edited into the objectModel variable.
-   * @param object
+   * Deep copies the serverObject to be edited into the editorObject variable.
+   * @param serverObject
    * @returns void
    */
-  async function setDataModel(object: AccessObject) {
-    if (!object) return;
+  async function setDataModel(serverObject: AccessObject) {
+    if (!serverObject) return;
 
     rfdc = (await import("rfdc")).default();
-    objectModel = rfdc(object) as AccessObject; // todo: get this done with zod
+    editorObject = rfdc(serverObject) as AccessObject; // todo: get this done with zod
     setPageList();
   }
 
   /**
-   * @listens object
-   * @description A reactive code block that is executed any time the object to be edited changes. It calls @function setDataModel and @function setPageList, to share any changes that occur in this component with the sub-components in the navigator.
+   * @listens serverObject
+   * @description A reactive code block that is executed any time the serverObject to be edited changes. It calls @function setDataModel and @function setPageList, to share any changes that occur in this component with the sub-components in the navigator.
    */
   $: {
-    if (object) {
-      setDataModel(object);
+    if (serverObject) {
+      setDataModel(serverObject);
     }
   }
 </script>
 
-{#if object && objectModel}
+{#if serverObject && editorObject}
   <div class="editor">
     <SideMenuContainer {pageList}>
       <Toolbar
         slot="side-menu-header"
-        title={object?.["slug"]?.length
-          ? object["slug"]
-          : `Slugless ${object["type"]}`}
+        title={serverObject?.["slug"]?.length
+          ? serverObject["slug"]
+          : `Slugless ${serverObject["type"]}`}
       >
         <div
           class="end-content auto-align auto-align__full auto-align auto-align__j-end auto-align auto-align__a-end auto-align auto-align__column"
         >
-          <StatusIndicator bind:object />
-          <EditorActions bind:object bind:objectModel />
+          <StatusIndicator bind:serverObject />
+          <EditorActions bind:serverObject bind:editorObject />
         </div>
       </Toolbar>
     </SideMenuContainer>

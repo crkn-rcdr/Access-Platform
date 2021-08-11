@@ -6,14 +6,14 @@ The editor actions component holds functionality that is responsible for perform
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| object: AccessObject        | required | This is the 'original' object of type AccessObject pulled from the backend, to be edited only once an action is successfully performed  |
-| objectModel: AccessObject   | required | This is a deep copy of the original object, it gets edited as the user makes changes in the editor. It's purpose is to contain the form state for the editors. |
+| serverObject: AccessObject        | required | This is the 'original' serverObject of type AccessObject pulled from the backend, to be edited only once an action is successfully performed  |
+| editorObject: AccessObject   | required | This is a deep copy of the original serverObject, it gets edited as the user makes changes in the editor. It's purpose is to contain the form state for the editors. |
 
 ### Usage
 ```  
-<EditorActions bind:object bind:objectModel />
+<EditorActions bind:serverObject bind:editorObject />
 ```
-*Note: `bind:` is required for changes to the object and its model to be reflected in higher level components.*
+*Note: `bind:` is required for changes to the serverObject and its model to be reflected in higher level components.*
 -->
 <script lang="ts">
   import { onMount } from "svelte";
@@ -22,20 +22,19 @@ The editor actions component holds functionality that is responsible for perform
   import type { AccessObject } from "@crkn-rcdr/access-data";
   import { detailedDiff } from "deep-object-diff";
   import { getStores } from "$app/stores";
-  import { goto } from "$app/navigation";
   import { showConfirmation } from "$lib/confirmation";
   import { checkValidDiff, checkModelChanged } from "$lib/validation";
   import Modal from "$lib/components/shared/Modal.svelte";
 
   /**
-   * @type {AccessObject} This is the 'original' object of type AccessObject pulled from the backend, to be edited only once an action is successfully performed.
+   * @type {AccessObject} This is the 'original' serverObject of type AccessObject pulled from the backend, to be edited only once an action is successfully performed.
    */
-  export let object: AccessObject;
+  export let serverObject: AccessObject;
 
   /**
-   * @type {AccessObject} This is a deep copy of the original object, it gets edited as the user makes changes in the editor. It's purpose is to contain the form state for the editors..
+   * @type {AccessObject} This is a deep copy of the original serverObject, it gets edited as the user makes changes in the editor. It's purpose is to contain the form state for the editors..
    */
-  export let objectModel: AccessObject;
+  export let editorObject: AccessObject;
 
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
@@ -43,7 +42,7 @@ The editor actions component holds functionality that is responsible for perform
   const { session } = getStores<Session>();
 
   /**
-   * @type {any} A module that quickly deep copies (clones) an object.
+   * @type {any} A module that quickly deep copies (clones) an serverObject.
    */
   let clone: any;
 
@@ -58,15 +57,15 @@ The editor actions component holds functionality that is responsible for perform
   let showUnassignSlugModal = false;
 
   /**
-   * Sets @var isSaveEnabled depending on if the objectModel is valid.
+   * Sets @var isSaveEnabled depending on if the editorObject is valid.
    * @returns void
    */
   function checkEnableSave() {
-    isSaveEnabled = checkValidDiff(object, objectModel);
+    isSaveEnabled = checkValidDiff(serverObject, editorObject);
   }
 
   $: {
-    objectModel;
+    editorObject;
     checkEnableSave();
   }
 
@@ -75,7 +74,7 @@ The editor actions component holds functionality that is responsible for perform
     return await showConfirmation(
       async () => {
         try {
-          //if(response) goto(`/object/${objectModel["id"]}`);
+          //if(response) goto(`/serverObject/${editorObject["id"]}`);
           return {
             success: true,
             details: "done",
@@ -87,8 +86,8 @@ The editor actions component holds functionality that is responsible for perform
           };
         }
       },
-      `Success! Created ${objectModel.type}.`,
-      `Error: couldn't to create ${objectModel.type}.`
+      `Success! Created ${editorObject.type}.`,
+      `Error: couldn't to create ${editorObject.type}.`
     );
   }
 
@@ -102,16 +101,16 @@ The editor actions component holds functionality that is responsible for perform
       async () => {
         try {
           if (
-            objectModel.type === "manifest" ||
-            objectModel.type === "collection"
+            editorObject.type === "manifest" ||
+            editorObject.type === "collection"
           ) {
             const bodyObj = {
-              id: objectModel.id,
+              id: editorObject.id,
               user: $session.user,
               data,
             };
             const response = await $session.lapin.mutation(
-              `${objectModel.type}.edit`,
+              `${editorObject.type}.edit`,
               bodyObj
             );
             return {
@@ -136,27 +135,27 @@ The editor actions component holds functionality that is responsible for perform
   }
 
   async function handleSave() {
-    const diff: any = detailedDiff(object, objectModel);
+    const diff: any = detailedDiff(serverObject, editorObject);
 
     let bodyObj = {
       ...diff["added"],
       ...diff["updated"],
     };
 
-    // Arrays are handled a bit strange in the diff module. Instead, just assign the entire array to the body data object
+    // Arrays are handled a bit strange in the diff module. Instead, just assign the entire array to the body data serverObject
     if (bodyObj["canvases"]) {
-      bodyObj["canvases"] = objectModel["canvases"];
+      bodyObj["canvases"] = editorObject["canvases"];
     }
 
-    /* const data = objectModel?.id?.length
+    /* const data = editorObject?.id?.length
       ? await sendSaveRequest(bodyObj)
       : await sendCreateRequest(bodyObj); */
     const data = await sendSaveRequest(bodyObj);
     if (data) {
       try {
         clone = (await import("rfdc")).default();
-        object = clone(objectModel) as AccessObject; // todo: get this done with zod
-        checkModelChanged(object, objectModel);
+        serverObject = clone(editorObject) as AccessObject; // todo: get this done with zod
+        checkModelChanged(serverObject, editorObject);
       } catch (e) {
         //error = e;
         console.log(e);
@@ -165,7 +164,7 @@ The editor actions component holds functionality that is responsible for perform
   }
 
   /**
-   * Sends the request to the backend to unnasign a slug from the access object. If it is successful, the object model is deep cloned into the object, and the editor state is updated to reflect the object being a 'Slugless' access object.
+   * Sends the request to the backend to unnasign a slug from the access serverObject. If it is successful, the serverObject model is deep cloned into the serverObject, and the editor state is updated to reflect the serverObject being a 'Slugless' access serverObject.
    * @returns response
    */
   async function handleUnassignSlug() {
@@ -173,19 +172,19 @@ The editor actions component holds functionality that is responsible for perform
     return await showConfirmation(
       async () => {
         if (
-          objectModel.type === "manifest" ||
-          objectModel.type === "collection"
+          editorObject.type === "manifest" ||
+          editorObject.type === "collection"
         ) {
           try {
             const response = await $session.lapin.mutation(
               `accessObject.unassignSlug`,
               {
-                id: objectModel.id,
+                id: editorObject.id,
                 user: $session.user,
               }
             );
-            objectModel["slug"] = undefined;
-            object = clone(objectModel) as AccessObject; // todo: get this done with zod
+            editorObject["slug"] = undefined;
+            serverObject = clone(editorObject) as AccessObject; // todo: get this done with zod
             return { success: true, details: "" };
           } catch (e) {
             console.log(e);
@@ -197,8 +196,8 @@ The editor actions component holds functionality that is responsible for perform
           details: "Object not of type canvas or manifest",
         };
       },
-      `Success! Unassigned the slug '${objectModel["slug"]}.'`,
-      `Error unassigning slug '${objectModel["slug"]}.'`
+      `Success! Unassigned the slug '${editorObject["slug"]}.'`,
+      `Error unassigning slug '${editorObject["slug"]}.'`
     );
   }
 
@@ -213,33 +212,33 @@ The editor actions component holds functionality that is responsible for perform
     return await showConfirmation(
       async () => {
         if (
-          objectModel.type === "manifest" ||
-          objectModel.type === "collection"
+          editorObject.type === "manifest" ||
+          editorObject.type === "collection"
         ) {
           try {
-            if (objectModel["public"]) {
+            if (editorObject["public"]) {
               const response = await $session.lapin.mutation(
                 `accessObject.unpublish`,
                 {
-                  id: objectModel.id,
+                  id: editorObject.id,
                   user: $session.user,
                 }
               );
-              objectModel["public"] = undefined;
+              editorObject["public"] = undefined;
             } else {
               const response = await $session.lapin.mutation(
                 `accessObject.publish`,
                 {
-                  id: objectModel.id,
+                  id: editorObject.id,
                   user: $session.user,
                 }
               );
-              objectModel["public"] = Date.now() / 1000;
+              editorObject["public"] = Date.now() / 1000;
             }
-            object = clone(objectModel) as AccessObject; // todo: get this done with zod
+            serverObject = clone(editorObject) as AccessObject; // todo: get this done with zod
             return {
               success: true,
-              details: JSON.stringify(object),
+              details: JSON.stringify(serverObject),
             };
           } catch (e) {
             console.log(e);
@@ -251,10 +250,10 @@ The editor actions component holds functionality that is responsible for perform
           details: "Object not of type canvas or manifest",
         };
       },
-      `Success! ${objectModel["public"] ? "Unublish" : "Publish"}ed ${
-        objectModel["type"]
+      `Success! ${editorObject["public"] ? "Unublish" : "Publish"}ed ${
+        editorObject["type"]
       }.`,
-      `Error: Couldn't publish ${objectModel["type"]}.`
+      `Error: Couldn't publish ${editorObject["type"]}.`
     );
   }
 
@@ -267,11 +266,11 @@ The editor actions component holds functionality that is responsible for perform
   });
 
   /**
-   * @listens objectModel
-   * @description A reactive code block that is executed any time the @var objectModel changes. It calls @function checkEnableSave, to hide or show the save button depending on the validity of the objectModel (if nothing has been changed, the save button also gets hidden.)
+   * @listens editorObject
+   * @description A reactive code block that is executed any time the @var editorObject changes. It calls @function checkEnableSave, to hide or show the save button depending on the validity of the editorObject (if nothing has been changed, the save button also gets hidden.)
    */
   $: {
-    objectModel;
+    editorObject;
     checkEnableSave();
   }
 </script>
@@ -281,10 +280,10 @@ The editor actions component holds functionality that is responsible for perform
     <button class="save" on:click={handleSave}>Save</button>
   {/if}
   <button class="secondary" on:click={handlePublishStatusChange}
-    >{object["public"] ? "Unpublish" : "Publish"}</button
+    >{serverObject["public"] ? "Unpublish" : "Publish"}</button
   >
 
-  {#if object["slug"]}
+  {#if serverObject["slug"]}
     <button
       class="danger icon-button"
       data-tooltip="Unassign Slug"
@@ -303,12 +302,13 @@ The editor actions component holds functionality that is responsible for perform
   title={`Are you sure you want to unassign this slug?`}
 >
   <p slot="body">
-    By unassigning this object's slug, you will be taking it out of all the
-    collections it belongs to. You can then use the slug, '{object["slug"]}' for
-    other objects. Objects that do not have a slug assigned to them are
-    effectively undiscoverable. You can bookmark this page to access this object
-    again in the future. You can assign it a new slug to make it discoverable in
-    the platform again.
+    By unassigning this serverObject's slug, you will be taking it out of all
+    the collections it belongs to. You can then use the slug, '{serverObject[
+      "slug"
+    ]}' for other serverObjects. Objects that do not have a slug assigned to
+    them are effectively undiscoverable. You can bookmark this page to access
+    this serverObject again in the future. You can assign it a new slug to make
+    it discoverable in the platform again.
   </p>
   <div slot="footer">
     <button class="secondary" on:click={() => (showUnassignSlugModal = false)}>
