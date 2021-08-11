@@ -13,7 +13,7 @@
    */
   function slugSelected(event: CustomEvent<string>) {
     const noid = event.detail;
-    goto(`/object/${noid}`);
+    if (noid) goto(`/object/${noid}`);
   }
 </script>
 
