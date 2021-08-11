@@ -87,7 +87,7 @@ The editor actions component holds functionality that is responsible for perform
         }
       },
       `Success! Created ${editorObject.type}.`,
-      `Error: couldn't to create ${editorObject.type}.`
+      `Error: could not create ${editorObject.type}.`
     );
   }
 
@@ -246,7 +246,7 @@ The editor actions component holds functionality that is responsible for perform
       `Success! ${editorObject["public"] ? "Unublish" : "Publish"}ed ${
         editorObject["type"]
       }.`,
-      `Error: Couldn't publish ${editorObject["type"]}.`
+      `Error: could not publish ${editorObject["type"]}.`
     );
   }
 
