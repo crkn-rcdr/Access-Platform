@@ -22,9 +22,14 @@ none
   const { session } = getStores<Session>();
 
   /**
-   * @type {string} Used to tell the dmdtask deamons what kind of metadata format the metadata being processed is in.
+   * @type {"csvissueinfo" | "csvdc" | "marc490" | "marcoocihm" | "marcooe"} Used to tell the dmdtask deamons what kind of metadata format the metadata being processed is in.
    */
-  let metadataType = "";
+  let metadataType:
+    | "csvissueinfo"
+    | "csvdc"
+    | "marc490"
+    | "marcoocihm"
+    | "marcooe";
 
   /**
    * @type {string | undefined} This is the base 64 encoded string for the metadata file that will be stored in the couch attachment.
@@ -66,8 +71,8 @@ none
     <label for="metadata-type">Metadata Type:</label>
     <select name="metadata-type" bind:value={metadataType}>
       <option value="" />
-      <option value="issueinfocsv">Issueinfo CSV</option>
-      <option value="dccsv">Dublin Core CSV</option>
+      <option value="csvissueinfo">Issueinfo CSV</option>
+      <option value="csvdc">Dublin Core CSV</option>
       <option value="marc490">MARC - ID in 490</option>
       <option value="marcoocihm">MARC - ID in oocihm interpretation</option>
       <option value="marcooe">MARC - ID in ooe interpretation</option>
