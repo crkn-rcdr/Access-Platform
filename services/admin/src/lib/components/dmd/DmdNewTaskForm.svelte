@@ -80,7 +80,7 @@ none
 <br />
 
 <div class="new-task-wrapper">
-  <h6>Create a new DMD Task</h6>
+  <h6>Start a new Metadata upload</h6>
   <NotificationBar message={errorText} status="fail" />
   <fieldset class="new-task-fields">
     <label for="metadata-type">Metadata Type:</label>

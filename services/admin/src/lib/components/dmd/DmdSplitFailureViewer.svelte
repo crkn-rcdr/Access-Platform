@@ -46,7 +46,7 @@ Displays a dmd task in an error state.
     <div
       class="auto-align auto-align__block auto-align__column auto-align__a-center"
     >
-      <h6>DMD Task Failed!</h6>
+      <h6>Metadata Upload Failed!</h6>
       <NotificationBar {message} status="fail" />
       <DmdTaskTimeInfoTable {dmdTask} />
       <a href="/dmd/new" class="dmd-task-try-again">

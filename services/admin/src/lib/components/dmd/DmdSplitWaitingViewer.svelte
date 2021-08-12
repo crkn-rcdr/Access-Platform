@@ -44,7 +44,7 @@ Displays a dmd task in an waiting state.
     <div
       class="auto-align auto-align__block auto-align__column auto-align__a-center"
     >
-      <h6>Please wait while the DMD Task processes...</h6>
+      <h6>Please wait while the Metadata upload processes...</h6>
       <DmdTaskTimeInfoTable {dmdTask} />
     </div>
   </div>
