@@ -40,8 +40,8 @@
     mdType: "marcooe",
     process: {
       requestDate: "1628785101",
-      //succeeded: true,
-      //message: "Bippidy Boppidy Boop",
+      succeeded: false,
+      message: "The process.message from the backend",
     },
     //items: [{}],
   };
