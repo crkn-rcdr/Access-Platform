@@ -10,7 +10,7 @@ Displays a dmd task in an waiting state.
 
 ### Usage
 ```
-  <DmdSplitWaitingViewer {dmdTask} />
+<DmdSplitWaitingViewer {dmdTask} />
 ```
 -->
 <script lang="ts">
