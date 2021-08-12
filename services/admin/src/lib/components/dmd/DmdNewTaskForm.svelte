@@ -16,6 +16,7 @@ none
   import FileSelector from "$lib/components/shared/FileSelector.svelte";
   import { getStores } from "$app/stores";
   import NotificationBar from "../shared/NotificationBar.svelte";
+  import { goto } from "$app/navigation";
 
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
@@ -71,6 +72,7 @@ none
       file: b64EncodedMetadataFileText,
     };
     console.log(bodyObj);
+    goto("/dmd/123");
   }
 </script>
 
