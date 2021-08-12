@@ -9,6 +9,9 @@
   import type { ObjectList } from "@crkn-rcdr/access-data";
   import type { Collection } from "@crkn-rcdr/access-data/src/access/Collection";
   import { createEventDispatcher } from "svelte";
+  import TiArrowBack from "svelte-icons/ti/TiArrowBack.svelte";
+  import FaPlus from "svelte-icons/fa/FaPlus.svelte";
+  import ResolveMany from "$lib/components/access-objects/ResolveMany.svelte";
 
   /**
    * @type {Manifest} The manifest to add selected canvases to.
@@ -24,7 +27,7 @@
    * @type {boolean} If the user is allowed to select multiple canvases to add.
    */
   export let multiple = true;
-
+  export let showAddButton = true;
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
    */
@@ -38,7 +41,7 @@
   /**
    * @type {Collection} The manifest to select canvases from.
    */
-  let selectedMember: Collection;
+  let selectedMember: AccessObject;
 
   /**
    * @type {ObjectList} The canvases the user selects.
@@ -49,6 +52,7 @@
    * @type {string} If a manifest is selected.
    */
   let isMemberSelected = false;
+  let addedMember = false;
 
   /**
    * @type {string} If the select all button is activated.
@@ -65,6 +69,9 @@
    * @param event
    * @returns void
    */
+  function addClicked() {
+    addedMember = true;
+  }
   async function handleSelect(event: any) {
     try {
       let prefixedNoid = event.detail;
@@ -72,12 +79,12 @@
         "accessObject.get",
         prefixedNoid
       );
+      console.log("Print the member response", response);
       if (response) {
         const object = AccessObject.parse(response);
-        if (isCollection(object)) {
-          error = "Error: Object is a collection, please select another.";
-        } else if (isManifest(object)) {
+        if (object) {
           selectedMember = object;
+          console.log("selected Member", selectedMember);
           isMemberSelected = true;
         }
       } else {
@@ -103,3 +110,80 @@
     dispatch("done");
   }
 </script>
+
+<div class="canvas-selector-wrap add-menu">
+  {#if !isMemberSelected}
+    {#if showAddButton}
+      <button class="primary lg" on:click={addClicked}>Add Member</button>
+    {/if}
+    {#if addedMember}
+      <div>
+        <!-- <TypeAhead
+          placeholder="Search for a Collection Or Manifest to add from..."
+          on:selected={handleSelect}
+          on:keypress={() => (error = "")}
+        /> -->
+        <ResolveMany bind:slugList={AccessObject["slug"]} />
+      </div>
+      <div class="add-menu-title">
+        <button
+          class="secondary cancel-button auto-align auto-align__a-center"
+          on:click={handleCancelPressed}
+        >
+          <div class="icon">
+            <TiArrowBack />
+          </div>
+          Exit
+        </button>
+      </div>
+      <br />
+      {#if error}
+        <br />
+        <div class="alert alert-danger">
+          {error}
+        </div>
+      {/if}
+    {/if}
+  {:else}
+    {#if multiple}
+      <div class="manifest-controls auto-align auto-align__a-center">
+        <div
+          class="icon"
+          on:click={() => {
+            error = "";
+            isMemberSelected = false;
+          }}
+          data-tooltip="Go back to manifest search"
+          data-tooltip-flow="bottom"
+        >
+          <TiArrowBack />
+        </div>
+      </div>
+    {/if}
+    {#if selectedMembers.length}
+      <div
+        class="icon add-all-button"
+        on:click={handleAddPressed}
+        data-tooltip="Add selected canvases"
+        data-tooltip-flow="bottom"
+      >
+        <FaPlus />
+      </div>
+    {/if}
+    <div
+      data-tooltip={`${isAllSelected ? "Deselect" : "Select"} all`}
+      data-tooltip-flow="bottom"
+    />
+    <!--  <img
+      class="icon select-all"
+      src={`/static/icons/${isAllSelected ? "deselect.png" : "select.svg"}`}
+      alt="select all"
+      on:click={() => (isAllSelected = !isAllSelected)}
+    /> -->
+    {#if selectedMembers.length}
+      <div class="selected-canvas-list">
+        {selectedMembers.length}/{selectedMember?.["members"]?.length}
+      </div>
+    {/if}
+  {/if}
+</div>

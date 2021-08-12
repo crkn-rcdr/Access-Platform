@@ -30,7 +30,7 @@ Allows the user to modify the member list for a collection.
   import TiTrash from "svelte-icons/ti/TiTrash.svelte";
   import type { ObjectList } from "@crkn-rcdr/access-data";
   import CollectionMembersAddition from "./CollectionMembersAddition.svelte";
-
+  
   export let collection: Collection;
   export let showAddButton = true;
 
@@ -40,6 +40,7 @@ Allows the user to modify the member list for a collection.
   let addedMember = false;
   let selectedCollection: ObjectList = [];
   let error = "";
+  let state = "view";
   const LEFT_ARROW_CODE: number = 37;
   const UP_ARROW_CODE: number = 38;
   const RIGHT_ARROW_CODE: number = 39;
@@ -104,6 +105,7 @@ Allows the user to modify the member list for a collection.
       selectNext();
     }
   }
+
   function addClicked() {
     addedMember = true;
   }
@@ -239,7 +241,14 @@ Allows the user to modify the member list for a collection.
     </div>
   </div>
 {/if}
-<CollectionMembersAddition bind:destinationMember={collection} />
+<CollectionMembersAddition
+  bind:destinationMember={collection}
+  on:done={() => {
+    state = "view";
+    setActiveIndex(0);
+  }}
+/>
+
 
 <style>
   .list {
