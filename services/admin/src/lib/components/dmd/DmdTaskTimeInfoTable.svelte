@@ -1,32 +1,5 @@
-<!--
-@component
-### Overview
-Displays a dmd task's time based information in a table, the user sees the task request date and the process last updated date.
-
-### Properties
-|    |    |    |
-| -- | -- | -- |
-| dmdTask: WaitingDMDTask or FailedDMDTask or SucceededDMDTask  | required | The dmd task to be displayed. |
-
-### Usage
-```
-<DmdTaskTimeInfoTable {dmdTask} />
-```
--->
-<script lang="ts">
-  import type {
-    WaitingDMDTask,
-    FailedDMDTask,
-    SucceededDMDTask,
-  } from "@crkn-rcdr/access-data";
-  /**
-   * @type {WaitingDMDTask | FailedDMDTask | SucceededDMDTask | undefined} The dmdtask being displayed.
-   */
-  export let dmdTask:
-    | WaitingDMDTask
-    | FailedDMDTask
-    | SucceededDMDTask
-    | undefined;
+<script>
+  export let dmdTask;
 </script>
 
 <div class="dmd-request-info">

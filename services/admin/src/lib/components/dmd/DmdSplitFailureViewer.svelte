@@ -1,44 +1,9 @@
-<!--
-@component
-### Overview
-Displays a dmd task in an error state.
-
-### Properties
-|    |    |    |
-| -- | -- | -- |
-| dmdTask: WaitingDMDTask or FailedDMDTask or SucceededDMDTask  | required | The dmd task to be displayed. |
-| message: string | required | The message to be displayed in the error notification bar. |
-
-### Usage
-```  
-<DmdSplitFailureViewer
-  {dmdTask}
-  message="Something went wrong!"
-/>
-```
--->
-<script lang="ts">
-  import type {
-    WaitingDMDTask,
-    FailedDMDTask,
-    SucceededDMDTask,
-  } from "@crkn-rcdr/access-data";
+<script>
   import DmdTaskTimeInfoTable from "$lib/components/dmd/DmdTaskTimeInfoTable.svelte";
   import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
 
-  /**
-   * @type {WaitingDMDTask | FailedDMDTask | SucceededDMDTask | undefined} The dmdtask being displayed.
-   */
-  export let dmdTask:
-    | WaitingDMDTask
-    | FailedDMDTask
-    | SucceededDMDTask
-    | undefined;
-
-  /**
-   * @type {string} The message to be displayed in the error notification bar.
-   */
-  export let message: string | undefined;
+  export let dmdTask;
+  export let message;
 </script>
 
 <div class="hero hero__gradient full-page failure">
@@ -46,7 +11,7 @@ Displays a dmd task in an error state.
     <div
       class="auto-align auto-align__block auto-align__column auto-align__a-center"
     >
-      <h6>Metadata Upload Failed!</h6>
+      <h6>DMD Task Failed!</h6>
       <NotificationBar {message} status="fail" />
       <DmdTaskTimeInfoTable {dmdTask} />
       <a href="/dmd/new" class="dmd-task-try-again">
