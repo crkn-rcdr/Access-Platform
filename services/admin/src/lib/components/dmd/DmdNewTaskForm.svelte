@@ -8,7 +8,7 @@ none
 
 ### Usage
 ```  
- <DmdNewTaskForm />
+<DmdNewTaskForm />
 ```
 -->
 <script lang="ts">
