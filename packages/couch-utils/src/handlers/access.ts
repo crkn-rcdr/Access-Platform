@@ -14,7 +14,7 @@ import {
 
 import { DatabaseHandler } from "../DatabaseHandler.js";
 
-// Use this essentially so that `slug` is defined
+// TODO: define a Zod parser that is aware of all possible fields.
 const AccessDatabaseObject = z.union([Alias, Manifest, Collection]);
 
 type AccessDatabaseObject = z.infer<typeof AccessDatabaseObject>;

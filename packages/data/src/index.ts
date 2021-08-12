@@ -23,6 +23,7 @@ export { LegacyPackage } from "./deposit/LegacyPackage.js";
 export {
   DMDTask,
   MDTYPES,
+  MDType,
   WaitingDMDTask,
   FailedDMDTask,
   SucceededDMDTask,

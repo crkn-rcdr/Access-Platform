@@ -6,6 +6,7 @@ import { Env } from "@crkn-rcdr/access-env";
 import {} from "@crkn-rcdr/access-data";
 
 import { AccessHandler } from "./handlers/access.js";
+import { DMDTaskHandler } from "./handlers/dmdtask.js";
 
 export { CouchAttachmentRecord } from "./DatabaseHandler.js";
 
@@ -36,5 +37,6 @@ export function connect() {
 
   return {
     access: new AccessHandler(c),
+    dmdtask: new DMDTaskHandler(c),
   };
 }
