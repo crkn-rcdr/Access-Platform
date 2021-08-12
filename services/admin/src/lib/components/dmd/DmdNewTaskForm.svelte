@@ -80,7 +80,6 @@ none
 <div class="new-task-wrapper">
   <h6>Create a new DMD Task</h6>
   <NotificationBar message={errorText} status="fail" />
-  <br />
   <fieldset class="new-task-fields">
     <label for="metadata-type">Metadata Type:</label>
     <select name="metadata-type" bind:value={metadataType}>
@@ -95,7 +94,6 @@ none
     <FileSelector on:change={handleFileSelected} />
     <!--/fieldset-->
   </fieldset>
-  <br />
   <br />
   {#if metadataType && b64EncodedMetadataFileText}
     <button class="primary new-task-button" on:click={handleCreateTask}
