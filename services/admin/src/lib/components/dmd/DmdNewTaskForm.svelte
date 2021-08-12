@@ -15,6 +15,7 @@ none
   import type { Session } from "$lib/types";
   import FileSelector from "$lib/components/shared/FileSelector.svelte";
   import { getStores } from "$app/stores";
+  import NotificationBar from "../shared/NotificationBar.svelte";
 
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
@@ -37,14 +38,25 @@ none
   let b64EncodedMetadataFileText: string | undefined = undefined;
 
   /**
+   * @type {string } Thiis variable is used to show any error with the user's selections to them.
+   */
+  let errorText: string = "";
+
+  /**
    * Converts the selected file into a base 64 encoded string and stores it in the @var b64EncodedMetadataFileText
    * @returns void
    */
   async function handleFileSelected(event: any) {
     const file: File = event.detail;
     const metadataFileText = await file.text();
-    if (metadataFileText) {
-      b64EncodedMetadataFileText = btoa(metadataFileText);
+    try {
+      if (metadataFileText) {
+        b64EncodedMetadataFileText = btoa(metadataFileText);
+      }
+    } catch (e) {
+      console.log(e);
+      errorText =
+        "There was a formatting problem with your file. Please fix it or choose another file.";
     }
   }
 
@@ -67,6 +79,8 @@ none
 
 <div class="new-task-wrapper">
   <h6>Create a new DMD Task</h6>
+  <NotificationBar message={errorText} status="fail" />
+  <br />
   <fieldset class="new-task-fields">
     <label for="metadata-type">Metadata Type:</label>
     <select name="metadata-type" bind:value={metadataType}>

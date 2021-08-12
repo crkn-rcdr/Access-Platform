@@ -66,7 +66,7 @@ This component allows a user to select a file, or multiple files, from their com
     <label for="file" class="button secondary">Choose File</label>
   </span>
   {#if fileName}
-    <div class="auto-align auto-align__a-center">
+    <div class="file-name auto-align auto-align__a-center">
       <div class="icon"><FaCheckCircle /></div>
       {fileName}
     </div>
@@ -87,5 +87,9 @@ This component allows a user to select a file, or multiple files, from their com
     margin-left: var(--margin-lg);
     margin-right: var(--margin-sm);
     color: var(--success);
+  }
+
+  .file-name {
+    max-width: 30rem;
   }
 </style>
