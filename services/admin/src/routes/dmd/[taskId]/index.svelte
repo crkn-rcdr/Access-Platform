@@ -1,4 +1,15 @@
+<script context="module" lang="ts">
+  /**
+   * @module
+   * @description loads in the dmdtask from the backend using the params in the route of the page
+   */
+</script>
+
 <script lang="ts">
+  /**
+   * @file
+   * @description This page displays the various states of and information about a dmdtask
+   */
   import { getStores } from "$app/stores";
   import type { Session } from "$lib/types";
   import Loading from "$lib/components/shared/Loading.svelte";
