@@ -12,13 +12,14 @@
    */
   import { getStores } from "$app/stores";
   import type { Session } from "$lib/types";
-  import Loading from "$lib/components/shared/Loading.svelte";
   import type {
     WaitingDMDTask,
     FailedDMDTask,
     SucceededDMDTask,
   } from "@crkn-rcdr/access-data";
-  import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
+  import DmdSplitWaitingViewer from "$lib/components/dmd/DmdSplitWaitingViewer.svelte";
+  import DmdSplitFailureViewer from "$lib/components/dmd/DmdSplitFailureViewer.svelte";
+  import DmdSplitSuccessStoreForm from "$lib/components/dmd/DmdSplitSuccessStoreForm.svelte";
 
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
@@ -39,7 +40,7 @@
     mdType: "marcooe",
     process: {
       requestDate: "1628785101",
-      // succeeded: true,
+      //succeeded: true,
       //message: "Bippidy Boppidy Boop",
     },
     //items: [{}],
@@ -48,98 +49,27 @@
 
 <div class="dmd-task-page-wrap">
   {#if !("succeeded" in dmdTask?.["process"])}
-    <!-- TODO: move to own component -->
-    <div class="hero hero__gradient full-page">
-      <div class="wrapper">
-        <br />
-        <br />
-        <br />
-        <div class="auto-align auto-align__block auto-align__j-center">
-          <Loading />
-        </div>
-        <br />
-        <div
-          class="auto-align auto-align__block auto-align__column auto-align__a-center"
-        >
-          <h6>Please wait while your DMD Task is processing...</h6>
-          <div class="dmd-request-info">
-            <span>Request inititated:</span>
-            <span>{dmdTask?.["updated"]}</span>
-            <span>Request updated:</span>
-            <span>{dmdTask?.["process"]?.["requestDate"]}</span>
-          </div>
-        </div>
-      </div>
-    </div>
+    <DmdSplitWaitingViewer {dmdTask} />
   {:else if !dmdTask?.["process"]?.["succeeded"]}
-    <div class="hero hero__gradient full-page failure">
-      <div class="wrapper">
-        <div
-          class="auto-align auto-align__block auto-align__column auto-align__a-center"
-        >
-          <h6>DMD Task Failed!</h6>
-          <NotificationBar
-            message={dmdTask?.["process"]?.["message"]}
-            status="fail"
-          />
-          <div class="dmd-request-info">
-            <span>Request inititated:</span>
-            <span>{dmdTask?.["updated"]}</span>
-            <span>Request updated:</span>
-            <span>{dmdTask?.["process"]?.["requestDate"]}</span>
-          </div>
-          <a href="/dmd/new" class="dmd-task-try-again">
-            <button class="danger">Try Again</button>
-          </a>
-        </div>
-      </div>
-    </div>
-  {:else if dmdTask?.["items"]}
-    success!
+    <DmdSplitFailureViewer
+      {dmdTask}
+      message={dmdTask?.["process"]?.["message"]}
+    />
+  {:else if dmdTask?.["items"]?.length}
+    <DmdSplitSuccessStoreForm />
   {:else}
-    <div class="hero hero__gradient full-page failure">
-      <div class="wrapper">
-        <div
-          class="auto-align auto-align__block auto-align__column auto-align__a-center"
-        >
-          <h6>Oops!</h6>
-          <NotificationBar
-            message="We couldn't find any items to add metadata to from your file."
-            status="fail"
-          />
-          <a href="/dmd/new" class="dmd-task-try-again">
-            <button class="danger">Try Again</button>
-          </a>
-        </div>
-      </div>
-    </div>
+    <!--JUUUST In Case-->
+    <DmdSplitFailureViewer
+      {dmdTask}
+      message="No objects were split from the metadata file."
+    />
   {/if}
 </div>
 
 <style>
-  h6 {
+  :global(.dmd-task-page-wrap h6) {
     text-align: center;
     font-weight: bold;
-  }
-  .dmd-request-info {
-    width: fit-content;
-    display: inline-grid;
-    display: grid;
-    grid-template-areas: "a a";
-    gap: 2rem;
-    align-items: center;
-    margin-top: var(--perfect-fourth-4);
-    margin-bottom: var(--perfect-fourth-4);
-  }
-  .dmd-task-try-again {
-    margin-top: var(--perfect-fourth-4);
-    margin-bottom: var(--perfect-fourth-4);
-  }
-  .failure {
-    filter: hue-rotate(207deg);
-  }
-  .failure > * {
-    filter: hue-rotate(-207deg);
   }
   :global(.dmd-task-page-wrap .notification-bar) {
     width: 30rem;
