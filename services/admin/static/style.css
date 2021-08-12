@@ -744,3 +744,20 @@ fieldset {
   padding: 2rem;
   border-radius: var(--border-radius);
 }
+
+/* Pulse animation */
+.pulsate {
+  animation: pulsate 3s ease-out infinite;
+  opacity: 0.5;
+}
+@keyframes pulsate {
+  0% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.5;
+  }
+}
