@@ -15,6 +15,7 @@ export class DMDTaskHandler extends DatabaseHandler<DMDTask> {
 
   /**
    * Creates a DMDTask and renders it available for processing.
+   * Accepts the metadata file as a base64-encoded string.
    * @returns The auto-generated id of the DMDTask.
    */
   async create(args: {

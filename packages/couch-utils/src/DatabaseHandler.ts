@@ -374,13 +374,23 @@ export class DatabaseHandler<T extends Document> {
     }
 
     try {
-      await this.db.attachment.insert(
-        document,
-        attachmentName,
-        attachment,
-        contentType,
-        { rev: headers.etag }
-      );
+      // await this.db.attachment.insert(
+      //   document,
+      //   attachmentName,
+      //   attachment,
+      //   contentType,
+      //   { rev: headers.etag }
+      // );
+      await this.client.relax({
+        db: this.name,
+        method: "put",
+        path: `${document}/${attachmentName}`,
+        headers: {
+          "Content-Type": contentType,
+          "If-Match": headers.etag,
+        },
+        body: attachment,
+      });
     } catch (e) {
       throw createHttpError(e.statusCode, e.error);
     }
