@@ -80,7 +80,7 @@ none
 <br />
 
 <div class="new-task-wrapper">
-  <h6>Start a new Metadata upload</h6>
+  <h6>Start a new Metadata Upload</h6>
   <NotificationBar message={errorText} status="fail" />
   <fieldset class="new-task-fields">
     <label for="metadata-type">Metadata Type:</label>
@@ -99,7 +99,7 @@ none
   <br />
   {#if metadataType && b64EncodedMetadataFileText}
     <button class="primary new-task-button" on:click={handleCreateTask}
-      >Create Task</button
+      >Start Upload</button
     >
   {/if}
 </div>
