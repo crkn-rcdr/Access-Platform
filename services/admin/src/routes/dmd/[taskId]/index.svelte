@@ -24,7 +24,10 @@
    */
   const { session } = getStores<Session>();
 
-  /* Later grab from backend. */
+  /* TODO: Later grab from backend. */
+  /**
+   * @type {WaitingDMDTask | FailedDMDTask | SucceededDMDTask} The dmdtask being displayed by the page.
+   */
   const dmdTask: WaitingDMDTask | FailedDMDTask | SucceededDMDTask = {
     id: "123",
     updated: "1628785112",
@@ -40,7 +43,7 @@
 </script>
 
 {#if !dmdTask["split"]}
-  <!-- TODO: move to component -->
+  <!-- TODO: move to own component -->
   <div class="hero hero__gradient full-page">
     <div class="wrapper">
       <br />
