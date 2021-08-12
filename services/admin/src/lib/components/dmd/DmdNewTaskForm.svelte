@@ -57,7 +57,7 @@ none
     } catch (e) {
       console.log(e);
       errorText =
-        "There was a formatting problem with your file. Please fix it or choose another file.";
+        "There was a formatting problem with the metadata file. Please fix it or choose another file.";
     }
   }
 
