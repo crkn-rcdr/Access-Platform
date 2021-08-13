@@ -6,7 +6,7 @@ Displays a dmd task in an error state.
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| dmdTask: FailedDMDTask | required | The dmd task to be displayed. |
+| dmdTask: FailedDMDTask or undefined | optional | The dmd task to be displayed. |
 | message: string | required | The message to be displayed in the error notification bar. |
 
 ### Usage
@@ -23,9 +23,9 @@ Displays a dmd task in an error state.
   import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
 
   /**
-   * @type {FailedDMDTask} The dmdtask being displayed.
+   * @type {FailedDMDTask | undefined} The dmdtask being displayed.
    */
-  export let dmdTask: FailedDMDTask;
+  export let dmdTask: FailedDMDTask | undefined = undefined;
 
   /**
    * @type {string} The message to be displayed in the error notification bar.

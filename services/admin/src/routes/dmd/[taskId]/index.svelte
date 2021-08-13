@@ -75,14 +75,13 @@
   {:else if FailedDMDTask.safeParse(dmdTask).success}
     <DmdSplitFailureViewer
       dmdTask={getAsFailedTask()}
-      message={dmdTask?.["process"]?.["message"]}
+      message={dmdTask.process["message"]}
     />
   {:else if WaitingDMDTask.safeParse(dmdTask).success}
     <DmdSplitWaitingViewer dmdTask={getAsWaitingTask()} />
   {:else}
     <!--JUST In Case All Else Fails-->
     <DmdSplitFailureViewer
-      dmdTask={getAsFailedTask()}
       message="No objects were split from the metadata file."
     />
   {/if}

@@ -72,7 +72,7 @@ none
         try {
           const bodyObj = {
             user: $session.user,
-            mdType: metadataType,
+            format: metadataType,
             file: b64EncodedMetadataFileText,
           };
           const response = await $session.lapin.mutation(

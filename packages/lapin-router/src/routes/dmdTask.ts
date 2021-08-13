@@ -1,11 +1,11 @@
 import { z } from "zod";
-import { MDTYPES, User, Slug } from "@crkn-rcdr/access-data";
+import { DMDFORMATS, User, Slug } from "@crkn-rcdr/access-data";
 import { TRPCError } from "@trpc/server";
 import { createRouter, httpErrorToTRPC } from "../router.js";
 
 const NewInput = z.object({
   user: User,
-  mdType: z.enum(MDTYPES),
+  format: z.enum(DMDFORMATS),
   file: z.string(), // any othervalidation needed?
 });
 
