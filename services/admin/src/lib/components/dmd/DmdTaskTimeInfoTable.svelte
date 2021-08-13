@@ -22,17 +22,17 @@ Displays a dmd task's time based information in a table, the user sees the task 
 </script>
 
 <div class="dmd-request-info">
-  {#if dmdTask?.["updated"]}
+  {#if dmdTask?.updated}
     <span>Request inititated:</span>
     <span>
-      {`${new Date(parseInt(`${dmdTask["updated"]}`) * 1000).toLocaleString()}`}
+      {`${new Date(parseInt(`${dmdTask.updated}`) * 1000).toLocaleString()}`}
     </span>
   {/if}
-  {#if dmdTask?.["process"]?.["requestDate"]}
+  {#if dmdTask?.process?.["requestDate"]}
     <span>Request updated:</span>
     <span>
       {`${new Date(
-        parseInt(`${dmdTask["process"]["requestDate"]}`) * 1000
+        parseInt(`${dmdTask.process["requestDate"]}`) * 1000
       ).toLocaleString()}`}
     </span>
   {/if}
