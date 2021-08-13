@@ -76,3 +76,19 @@ exports.updateObject = (doc, user) => {
   doc.updateInternalmeta = { requestDate: now };
   doc.updated = now;
 };
+
+/**
+ * Returns a completed ProcessUpdate.
+ * @param {update} update The pending ProcessUpdate.
+ * @param {boolean} succeeded Whether the process succeeded.
+ * @param {string} message The message the process provided.
+ */
+exports.processUpdate = (update, succeeded, message) => {
+  const now = Date.now() / 1000;
+  return {
+    requestDate: update ? update.requestDate : now,
+    processDate: now,
+    succeeded: !!succeeded,
+    message: message,
+  };
+};
