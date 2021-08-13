@@ -37,6 +37,12 @@ test.serial("Can create new DMDTasks", async (t) => {
   });
 
   t.is(serverfile.toString(), contents);
+
+  // Ensure that the new task appears in processQueue
+  const response = await t.context.dmdtask.view("access", "processQueue", {
+    reduce: false,
+  });
+  t.is(response.rows[0]?.id, taskId);
 });
 
 test.after.always(async (t) => {
