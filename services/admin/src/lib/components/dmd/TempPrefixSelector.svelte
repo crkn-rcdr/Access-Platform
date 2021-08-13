@@ -80,5 +80,6 @@ Allows the user to select one of many pre-defined depositors.
 <style>
   select {
     width: 100%;
+    max-width: 30rem;
   }
 </style>

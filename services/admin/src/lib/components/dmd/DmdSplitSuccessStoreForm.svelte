@@ -99,82 +99,84 @@
   };
 </script>
 
+<!--
+  Todo: hide access selector if has run = until user click edit icon on found in access
+  pass actual access name to table
+  cleanup
+  document
+-->
 <div class="wrapper">
-  <br />
   <NotificationBar message="Metadata uploaded sucessfully!" />
-  <ScrollStepper bind:activeStepIndex displayPrevious={true}>
-    <ScrollStepperStep
-      title={`${
-        hasLookupRan ? "Re-select" : "Select"
-      } the Access Platform of the Items`}
-    >
-      <div slot="icon">1</div>
-      <div class="depositor-grid grid grid__col_2">
-        <TempPrefixSelector bind:prefix />
-        {#if prefix?.length}
-          <button
-            class="primary"
-            on:click={() => {
-              showLoader = true;
-              for (const item of dmdTask["items"]) {
-                item["access"] = true;
-                item["preservation"] = true;
-              }
-              dmdTask = dmdTask;
-              setTimeout(() => {
-                activeStepIndex = 1;
-                hasLookupRan = true;
-                showLoader = false;
-              }, 2000);
-            }}
+
+  <div class="depositor-grid grid grid__col_2">
+    <TempPrefixSelector bind:prefix />
+    {#if prefix?.length}
+      <button
+        class="primary"
+        on:click={() => {
+          for (const item of dmdTask["items"]) {
+            delete item["access"];
+            delete item["preservation"];
+          }
+          dmdTask = dmdTask;
+          showLoader = true;
+          setTimeout(() => {
+            for (const item of dmdTask["items"]) {
+              item["access"] = true;
+              item["preservation"] = true;
+            }
+            dmdTask = dmdTask;
+            hasLookupRan = true;
+            showLoader = false;
+          }, 12000);
+        }}
+      >
+        <span
+          class="auto-align  auto-align__a-center"
+          class:loading-button={showLoader}
+        >
+          {#if showLoader}
+            <Loading size="sm" />
+          {/if}
+          <span class="text"
+            >{!showLoader
+              ? hasLookupRan
+                ? "Look-up Again"
+                : "Look-up"
+              : "Looking-up..."}</span
           >
-            Look-up
-          </button>
+        </span>
+      </button>
+    {/if}
+  </div>
+
+  {#if hasLookupRan}
+    <div>
+      <div class="update-grid grid grid__col_3">
+        <span>
+          <label for="access">Update in access</label>
+          <input
+            name="access"
+            type="checkbox"
+            bind:checked={shouldUpdateInAccess}
+          />
+        </span>
+        <span>
+          <label for="preservation">Update in preservation</label>
+          <input
+            name="preservation"
+            type="checkbox"
+            bind:checked={shouldUpdateInPreservation}
+          />
+        </span>
+        {#if shouldUpdateInAccess || shouldUpdateInPreservation}
+          <button class="primary">Update Descriptive Metadata Records</button>
         {/if}
       </div>
       <br />
-      <br />
-      {#if showLoader}
-        <div class="loading-wrap">
-          <Loading backgroundType="secondary" />
-        </div>
-      {:else if !hasLookupRan}
-        <DmdItemsTable bind:dmdTask />
-      {/if}
-    </ScrollStepperStep>
-    <ScrollStepperStep
-      title="Update the Descriptive Metadata Records of the Items"
-      isLastStep={true}
-    >
-      <div slot="icon">2</div>
-
-      <div class="update-wrap">
-        <div class="update-grid grid grid__col_3">
-          <span>
-            <label for="access">Update in access</label>
-            <input
-              name="access"
-              type="checkbox"
-              bind:checked={shouldUpdateInAccess}
-            />
-          </span>
-          <span>
-            <label for="preservation">Update in preservation</label>
-            <input
-              name="preservation"
-              type="checkbox"
-              bind:checked={shouldUpdateInPreservation}
-            />
-          </span>
-          {#if shouldUpdateInAccess || shouldUpdateInPreservation}
-            <button class="primary">Update Descriptive Metadata Records</button>
-          {/if}
-        </div>
-        <br />
-        <DmdItemsTable bind:dmdTask />
-      </div>
-    </ScrollStepperStep>
-  </ScrollStepper>
+    </div>
+  {/if}
+  <DmdItemsTable bind:dmdTask />
 </div>
 
 <style>
@@ -189,5 +191,8 @@
   }
   .update-wrap {
     min-height: 70rem;
+  }
+  .loading-button .text {
+    margin-left: var(--margin-sm);
   }
 </style>
