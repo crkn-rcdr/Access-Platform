@@ -30,7 +30,7 @@ A component tha tis used to highlight important messages to the user
   export let message = "";
 
   /**
-   * @type {"success" | "fail" | "warn" = "success"} The state of the notification, determines the colour displayed and options available.
+   * @type {"success" | "fail" | "warn"} The state of the notification, determines the colour displayed and options available.
    */
   export let status: "success" | "fail" | "warn" = "success";
 
