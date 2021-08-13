@@ -6,7 +6,7 @@ import { Slug } from "../util/Slug.js";
 import { Timestamp } from "../util/Timestamp.js";
 import { User } from "../util/User.js";
 
-import { MDTYPES } from "./types.js";
+import { DMDFORMATS, DMDOUTPUTS } from "./types.js";
 
 /**
  * The result of attempting to parse an individual metadata
@@ -18,6 +18,12 @@ const ParseRecord = z
      * Whether this record's metadata has been parsed successfully.
      */
     parsed: z.boolean(),
+
+    /**
+     * The type of output parsed for this record. Required when the record's
+     * metadata has been parsed successfully.
+     */
+    output: z.enum(DMDOUTPUTS).optional(),
 
     /**
      * The id extracted for this record. When the record's metadata has been
@@ -37,8 +43,8 @@ const ParseRecord = z
     message: z.string().optional(),
   })
   .refine(
-    (record) => !record.parsed || (record.id && record.label),
-    "A successfully parsed record must provide an id and label"
+    (record) => !record.parsed || (record.id && record.output && record.label),
+    "A successfully parsed record must provide: output, id, label"
   );
 
 export type ParseRecord = z.infer<typeof ParseRecord>;
@@ -63,9 +69,9 @@ export const WaitingDMDTask = z.object({
   user: User,
 
   /**
-   * Type of attached descriptive metadata file.
+   * Specified format of the attached descriptive metadata file.
    */
-  mdType: z.enum(MDTYPES),
+  format: z.enum(DMDFORMATS),
 
   /**
    * The request to split, validate, and flatten the metadata in the attached file.

@@ -20,7 +20,7 @@ module.exports = function (doc, req) {
 
   const newDoc = {
     _id: id,
-    mdType: input.mdType,
+    format: input.format,
     user: input.user,
   };
 

@@ -38,7 +38,7 @@ const goodWaiting: WaitingDMDTask = {
     metadata: metadataAttachment,
   },
   user: USER,
-  mdType: "csvissueinfo",
+  format: "csvissueinfo",
   process: { requestDate: then },
   updated: then,
 };
@@ -80,6 +80,7 @@ const goodSucceeded: SucceededDMDTask = {
   items: [
     {
       parsed: true,
+      output: "issueinfo",
       id: "good.id",
       label: "nice label",
       message: "Figured this one out",
@@ -94,40 +95,39 @@ test(
   goodSucceeded
 );
 
-const parsedWithoutId = {
-  ...goodSucceeded,
-  items: [
-    {
-      parsed: true,
-      id: "good.id",
-      label: "nice label",
-      message: "Figured this one out",
-    },
-    { parsed: true, label: "nice label", message: "No id, though!" },
-  ],
+const itemWithout = (field: "id" | "output" | "label") => {
+  const goodItem = {
+    parsed: true,
+    output: "issueinfo",
+    id: "good.id",
+    label: "nice label",
+    message: "Figured this one out",
+  };
+
+  const badItem = Object.assign({}, goodItem);
+  delete badItem[field];
+  badItem.message = `No ${field}, though!`;
+
+  return {
+    ...goodSucceeded,
+    items: [goodItem, badItem],
+  };
 };
 
 test(
   "SucceededDMDTask schema does not parse when a parsed item lacks an id",
   isInvalidSucceeded,
-  parsedWithoutId
+  itemWithout("id")
 );
 
-const parsedWithoutLabel = {
-  ...goodSucceeded,
-  items: [
-    {
-      parsed: true,
-      id: "good.id",
-      label: "nice label",
-      message: "Figured this one out",
-    },
-    { parsed: true, id: "good.id", message: "No label, though!" },
-  ],
-};
+test(
+  "SucceededDMDTask schema does not parse when a parsed item lacks an output",
+  isInvalidSucceeded,
+  itemWithout("output")
+);
 
 test(
   "SucceededDMDTask schema does not parse when a parsed item lacks a label",
   isInvalidSucceeded,
-  parsedWithoutLabel
+  itemWithout("label")
 );

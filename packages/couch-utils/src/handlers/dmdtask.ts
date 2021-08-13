@@ -1,4 +1,4 @@
-import { DMDTask, MDType, User } from "@crkn-rcdr/access-data";
+import { DMDFormat, DMDTask, User } from "@crkn-rcdr/access-data";
 import { ServerScope } from "nano";
 
 import { DatabaseHandler } from "../DatabaseHandler.js";
@@ -22,15 +22,15 @@ export class DMDTaskHandler extends DatabaseHandler<DMDTask> {
     /** User who uploaded the file */
     user: User;
     /** Descriptive metadata type of the file's contents */
-    mdType: MDType;
+    format: DMDFormat;
     /** The file as a base64-encoded string */
     file: string;
   }) {
-    const { user, mdType, file } = args;
+    const { user, format, file } = args;
     const { message: taskId } = await this.nullUpdate({
       ddoc: "access",
       name: "create",
-      body: { user, mdType },
+      body: { user, format },
     });
 
     await this.uploadBase64Attachment({
