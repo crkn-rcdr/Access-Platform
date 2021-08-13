@@ -10,6 +10,7 @@ import {
   EditableCollection,
   EditableManifest,
   User,
+  ObjectList,
 } from "@crkn-rcdr/access-data";
 
 import { DatabaseHandler } from "../DatabaseHandler.js";
@@ -120,17 +121,15 @@ export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
     data: EditableCollection;
   }): Promise<Collection> {
     const data = EditableCollection.parse(args.data);
-    let membersArray: string[] = [];
+    let filteredMembers: ObjectList = [];
+
     if (data.members) {
       const currentMembers = Collection.parse(await this.get(args.id)).members;
 
       const filteredMembers = xorWith(data.members, currentMembers, isEqual);
 
-      console.log("data in accesshandler", filteredMembers);
-      //filteredMembers.map((members) => members.id);
       for (let members of filteredMembers) {
-        if (members.id != undefined) {
-          membersArray.push(members.id);
+        if (members.id !== undefined) {
           await this.forceUpdate(members.id);
         }
       }
@@ -142,8 +141,10 @@ export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
       data,
       type: "collection",
     });
-    for (let members of membersArray) {
-      await this.forceUpdate(members);
+    for (let members of filteredMembers) {
+      if (members.id !== undefined) {
+        await this.forceUpdate(members.id);
+      }
     }
     const collection = await this.get(args.id);
     return Collection.parse(collection);
