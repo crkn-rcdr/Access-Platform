@@ -5,8 +5,11 @@
   import NotificationBar from "../shared/NotificationBar.svelte";
   import TempPrefixSelector from "./TempPrefixSelector.svelte";
 
-  let activeStepIndex = 0;
+  let prefix;
+  let shouldUpdateInAccess = true;
+  let shouldUpdateInPreservation = true;
 
+  let activeStepIndex = 0;
   let hasLookupRan = false;
   let showLoader = false;
 </script>
@@ -22,20 +25,22 @@
     >
       <div slot="icon">1</div>
       <div class="depositor-grid grid grid__col_2">
-        <TempPrefixSelector />
-        <button
-          class="primary"
-          on:click={() => {
-            showLoader = true;
-            setTimeout(() => {
-              activeStepIndex = 1;
-              hasLookupRan = true;
-              showLoader = false;
-            }, 2000);
-          }}
-        >
-          Look-up
-        </button>
+        <TempPrefixSelector bind:prefix />
+        {#if prefix?.length}
+          <button
+            class="primary"
+            on:click={() => {
+              showLoader = true;
+              setTimeout(() => {
+                activeStepIndex = 1;
+                hasLookupRan = true;
+                showLoader = false;
+              }, 2000);
+            }}
+          >
+            Look-up
+          </button>
+        {/if}
       </div>
       <br />
       <br />
@@ -107,13 +112,23 @@
         <div class="update-grid grid grid__col_3">
           <span>
             <label for="access">Update in access</label>
-            <input name="access" type="checkbox" checked />
+            <input
+              name="access"
+              type="checkbox"
+              bind:checked={shouldUpdateInAccess}
+            />
           </span>
           <span>
             <label for="preservation">Update in preservation</label>
-            <input name="preservation" type="checkbox" checked />
+            <input
+              name="preservation"
+              type="checkbox"
+              bind:checked={shouldUpdateInPreservation}
+            />
           </span>
-          <button class="primary">Update Descriptive Metadata Records</button>
+          {#if shouldUpdateInAccess || shouldUpdateInPreservation}
+            <button class="primary">Update Descriptive Metadata Records</button>
+          {/if}
         </div>
         <br />
         <table>
@@ -122,8 +137,8 @@
               <th>Id</th>
               <th>Label</th>
               <th>Value</th>
-              <th>In Access?</th>
-              <th>In Preservation?</th>
+              <th>Access</th>
+              <th>Preservation</th>
             </tr>
           </thead>
           <tbody>
