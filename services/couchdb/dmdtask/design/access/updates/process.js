@@ -29,6 +29,8 @@ module.exports = function (doc, req) {
         return errorReturn(
           `Parsed items missing required fields: ${errors.join(", ")}`
         );
+      } else {
+        doc.items = items;
       }
     } else {
       return errorReturn(`Process succeeded, but is missing items array`);
