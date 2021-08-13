@@ -155,6 +155,21 @@ Source: https://github.com/twbs/bootstrap/blob/main/scss/mixins/_visually-hidden
   grid-gap: var(--auto-grid-gap);
 }
 
+/* Commonly used grids */
+.grid {
+  display: grid;
+  gap: 2rem;
+  align-items: center;
+}
+
+.grid__col_2 {
+  grid-template-areas: "a a";
+}
+
+.grid__col_3 {
+  grid-template-areas: "a a a";
+}
+
 /* Flexbox alignment */
 .auto-align {
   display: inline-flex;

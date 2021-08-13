@@ -40,10 +40,10 @@
     mdType: "marcooe",
     process: {
       requestDate: "1628785101",
-      //succeeded: false,
-      //message: "The process.message from the backend",
+      succeeded: true,
+      message: "The process.message from the backend",
     },
-    //items: [{}],
+    items: [{}],
   };
 </script>
 
@@ -71,7 +71,7 @@
     text-align: center;
     font-weight: bold;
   }
-  :global(.dmd-task-page-wrap .notification-bar) {
+  :global(.dmd-task-page-wrap .failure .notification-bar) {
     width: 30rem;
   }
 </style>
