@@ -80,7 +80,7 @@
   {:else if dmdTask?.["items"]?.length}
     <DmdSplitSuccessStoreForm /> <!--dmdTask={getAsSucceededTask()} -->
   {:else}
-    <!--JUUUST In Case-->
+    <!--JUST In Case All Else Fails-->
     <DmdSplitFailureViewer
       dmdTask={getAsFailedTask()}
       message="No objects were split from the metadata file."
