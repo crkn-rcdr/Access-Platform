@@ -398,6 +398,11 @@ button,
   cursor: pointer;
 }
 
+button.sm,
+.button.sm {
+  padding: var(--perfect-fourth-8) var(--perfect-fourth-6);
+}
+
 button.lg,
 .button.lg {
   padding: var(--perfect-fourth-7) var(--perfect-fourth-3);
@@ -775,4 +780,14 @@ fieldset {
   100% {
     opacity: 0.5;
   }
+}
+
+/* To be used surrounding code like the JsonTree*/
+.code-block {
+  border: 1px solid var(--border-color);
+  padding: var(--perfect-fourth-6) var(--perfect-fourth-8);
+  margin: var(--margin-sm);
+  white-space: pre-line;
+  border-radius: var(--border-radius);
+  background-color: var(--base-bg);
 }

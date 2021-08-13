@@ -79,7 +79,7 @@ A step (section) of a ScrollStepper. Generally used to isolate a group of requir
   .scroll-stepper-step {
     position: relative;
     padding: var(--perfect-fourth-2) 0;
-    z-index: 1;
+    /*z-index: 1;*/
   }
   :global(.scroll-stepper-step.show .scroll-stepper-step-body) {
     display: block;
