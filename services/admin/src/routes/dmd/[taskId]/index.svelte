@@ -7,7 +7,7 @@
   import type { RootLoadOutput } from "$lib/types";
   export const load: Load<RootLoadOutput> = async ({ page, context }) => {
     try {
-      if (page.params["taskId"]) {
+      if (page?.params?.["taskId"]) {
         const response = await context.lapin.query(
           "dmdTask.get",
           page.params["taskId"]
@@ -70,15 +70,15 @@
 <div class="dmd-task-page-wrap">
   {#if !dmdTask}
     Loading...
-  {:else if !dmdTask?.["process"] || !("succeeded" in dmdTask?.["process"])}
-    <DmdSplitWaitingViewer dmdTask={getAsWaitingTask()} />
-  {:else if !dmdTask?.["process"]?.["succeeded"]}
+  {:else if SucceededDMDTask.safeParse(dmdTask).success}
+    <DmdSplitSuccessStoreForm /> <!--dmdTask={getAsSucceededTask()} -->
+  {:else if FailedDMDTask.safeParse(dmdTask).success}
     <DmdSplitFailureViewer
       dmdTask={getAsFailedTask()}
       message={dmdTask?.["process"]?.["message"]}
     />
-  {:else if dmdTask?.["items"]?.length}
-    <DmdSplitSuccessStoreForm /> <!--dmdTask={getAsSucceededTask()} -->
+  {:else if WaitingDMDTask.safeParse(dmdTask).success}
+    <DmdSplitWaitingViewer dmdTask={getAsWaitingTask()} />
   {:else}
     <!--JUST In Case All Else Fails-->
     <DmdSplitFailureViewer
