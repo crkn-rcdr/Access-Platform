@@ -46,6 +46,16 @@ services:
     networks:
       access-platform:
         ipv4_address: 172.30.0.53
+  swift:
+    profiles:
+      - dev
+    container_name: access-swift
+    depends_on:
+      - haproxy
+    image: swiftstack/picoswiftstack:7.3.0.1
+    networks:
+      access-platform:
+        ipv4_address: 172.30.0.54
   packages:
     profiles:
       - dev
