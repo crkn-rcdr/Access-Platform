@@ -11,7 +11,6 @@ module.exports = function (doc, req) {
 
   updateObject(doc);
 
-    const id = doc.slug || doc._id;
-    const label = doc.label;s
+  const id = doc.slug || doc._id;
   return successReturn(doc, `Hammer update forced for ${id}`);
 };
