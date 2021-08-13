@@ -5,4 +5,4 @@ export {
   SucceededDMDTask,
 } from "./Task.js";
 
-export { MDTYPES, MDType } from "./types.js";
+export { DMDFORMATS, DMDFormat, DMDOUTPUTS, DMDOutput } from "./types.js";
