@@ -5,7 +5,7 @@ import { createRouter, httpErrorToTRPC } from "../router.js";
 
 const NewInput = z.object({
   user: User,
-  mdType: z.enum(MDTYPES), //"csvissueinfo" | "csvdc" | "marc490" | "marcoocihm" | "marcooe";
+  mdType: z.enum(MDTYPES),
   file: z.string(), // any othervalidation needed?
 });
 

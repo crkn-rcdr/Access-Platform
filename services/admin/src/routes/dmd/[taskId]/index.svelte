@@ -27,12 +27,10 @@
    * @file
    * @description This page displays the various states of and information about a dmdtask
    */
-  //import { getStores } from "$app/stores";
-  //import type { Session } from "$lib/types";
   import {
-    //WaitingDMDTask,
-    //FailedDMDTask,
-    //SucceededDMDTask,
+    WaitingDMDTask,
+    FailedDMDTask,
+    SucceededDMDTask,
     DMDTask,
   } from "@crkn-rcdr/access-data";
   import DmdSplitWaitingViewer from "$lib/components/dmd/DmdSplitWaitingViewer.svelte";
@@ -45,44 +43,46 @@
   export let dmdTask: DMDTask; //WaitingDMDTask | FailedDMDTask | SucceededDMDTask;
 
   /**
-   * @type {Session} The session store that contains the module for sending requests to lapin.
+   * Casts @var dmdTask to type WaitingDMDTask for use in components that expect a WaitingDMDTask
+   * @returns void
    */
-  //const { session } = getStores<Session>();
+  function getAsWaitingTask(): WaitingDMDTask {
+    return <WaitingDMDTask>dmdTask;
+  }
 
-  /* TODO: Later grab from backend. */
-  /* = {
-    id: "123",
-    updated: "1628785112",
-    attachments: {
-      // ...metadata file info
-    },
-    user: $session.user, //for now
-    mdType: "marcooe",
-    process: {
-      requestDate: "1628785101",
-      //succeeded: false,
-      //message: "The process.message from the backend",
-    },
-    //items: [{}],
-  };*/
+  /**
+   * Casts @var dmdTask to type FailedDMDTask for use in components that expect a FailedDMDTask
+   * @returns void
+   */
+  function getAsFailedTask(): FailedDMDTask {
+    return <FailedDMDTask>dmdTask;
+  }
+
+  /**
+   * Casts @var dmdTask to type SucceededDMDTask for use in components that expect a SucceededDMDTask
+   * @returns void
+   */
+  function getAsSucceededTask(): SucceededDMDTask {
+    return <SucceededDMDTask>dmdTask;
+  }
 </script>
 
 <div class="dmd-task-page-wrap">
   {#if !dmdTask}
     Loading...
   {:else if !dmdTask?.["process"] || !("succeeded" in dmdTask?.["process"])}
-    <DmdSplitWaitingViewer {dmdTask} />
+    <DmdSplitWaitingViewer dmdTask={getAsWaitingTask()} />
   {:else if !dmdTask?.["process"]?.["succeeded"]}
     <DmdSplitFailureViewer
-      {dmdTask}
+      dmdTask={getAsFailedTask()}
       message={dmdTask?.["process"]?.["message"]}
     />
   {:else if dmdTask?.["items"]?.length}
-    <DmdSplitSuccessStoreForm />
+    <DmdSplitSuccessStoreForm /> <!--dmdTask={getAsSucceededTask()} -->
   {:else}
     <!--JUUUST In Case-->
     <DmdSplitFailureViewer
-      {dmdTask}
+      dmdTask={getAsFailedTask()}
       message="No objects were split from the metadata file."
     />
   {/if}
