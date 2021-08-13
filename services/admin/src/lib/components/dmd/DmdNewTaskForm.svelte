@@ -35,9 +35,9 @@ none
     | "marcooe";
 
   /**
-   * @type {string | undefined} This is the base 64 encoded string for the metadata file that will be stored in the couch attachment.
+   * @type {string} This is the base 64 encoded string for the metadata file that will be stored in the couch attachment.
    */
-  let b64EncodedMetadataFileText: string | undefined = undefined;
+  let b64EncodedMetadataFileText: string;
 
   /**
    * @type {string } Thiis variable is used to show any error with the user's selections to them.
@@ -75,12 +75,10 @@ none
             mdType: metadataType,
             file: b64EncodedMetadataFileText,
           };
-          console.log(bodyObj);
           const response = await $session.lapin.mutation(
             `dmdTask.create`,
             bodyObj
           );
-          console.log("response", response);
           if (response) {
             goto(`/dmd/${response}`);
             return {
