@@ -17,6 +17,7 @@ none
   import { getStores } from "$app/stores";
   import NotificationBar from "../shared/NotificationBar.svelte";
   import { goto } from "$app/navigation";
+  import { showConfirmation } from "$lib/confirmation";
 
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
@@ -62,17 +63,46 @@ none
   }
 
   /**
-   * TODO: will send the create request to lapin
+   * Sends the create request to lapin. Uses @function showConfirmation to show a notification at the bottom right of the screen saying if the request was sucessful or not. If it is a success, it uses the @function goto ith the DMD task id passed as the response from the request in the url.
    * @returns void
    */
   async function handleCreateTask() {
-    const bodyObj = {
-      user: $session.user,
-      mdType: metadataType,
-      file: b64EncodedMetadataFileText,
-    };
-    console.log(bodyObj);
-    goto("/dmd/123");
+    await showConfirmation(
+      async () => {
+        try {
+          const bodyObj = {
+            user: $session.user,
+            mdType: metadataType,
+            file: b64EncodedMetadataFileText,
+          };
+          console.log(bodyObj);
+          const response = await $session.lapin.mutation(
+            `dmdTask.create`,
+            bodyObj
+          );
+          console.log("response", response);
+          if (response) {
+            goto(`/dmd/${response}`);
+            return {
+              success: true,
+              details: response,
+            };
+          } else {
+            return {
+              success: false,
+              details: response,
+            };
+          }
+        } catch (e) {
+          return {
+            success: false,
+            details: e.message,
+          };
+        }
+      },
+      "Success! Metadata upload request created.",
+      "Error: Metadata upload request failed."
+    );
   }
 </script>
 

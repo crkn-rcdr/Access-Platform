@@ -6,6 +6,7 @@ import { accessObjectRouter } from "./routes/accessObject.js";
 import { collectionRouter } from "./routes/collection.js";
 import { manifestRouter } from "./routes/manifest.js";
 import { slugRouter } from "./routes/slug.js";
+import { dmdTaskRouter } from "./routes/dmdTask.js";
 
 /**
  * Converts an HTTP Error (i.e. one with `status` as its 3-digit code) to
@@ -32,6 +33,7 @@ export const router = createRouter()
   .merge("slug.", slugRouter)
   .merge("accessObject.", accessObjectRouter)
   .merge("manifest.", manifestRouter)
-  .merge("collection.", collectionRouter);
+  .merge("collection.", collectionRouter)
+  .merge("dmdTask.", dmdTaskRouter);
 
 export type LapinRouter = typeof router;
