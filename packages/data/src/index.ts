@@ -21,9 +21,11 @@ export {
 export { LegacyPackage } from "./deposit/LegacyPackage.js";
 
 export {
+  DMDFORMATS,
+  DMDFormat,
+  DMDOUTPUTS,
+  DMDOutput,
   DMDTask,
-  MDTYPES,
-  MDType,
   WaitingDMDTask,
   FailedDMDTask,
   SucceededDMDTask,

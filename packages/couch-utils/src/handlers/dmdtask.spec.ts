@@ -23,7 +23,7 @@ test.serial("Can create new DMDTasks", async (t) => {
   const file = Buffer.from(contents).toString("base64");
   const taskId = await t.context.dmdtask.create({
     user: USER,
-    mdType: "csvissueinfo",
+    format: "csvissueinfo",
     file,
   });
 
