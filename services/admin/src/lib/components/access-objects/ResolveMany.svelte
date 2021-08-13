@@ -137,14 +137,18 @@ The resolver component allows the user to enter a slug, and then a request is se
       status = "READY";
     } */
     const response = await $session.lapin.query("slug.resolveMany", slugList);
+    let test = [];
+    Object.values(response).forEach((exists) => {
+      if (exists.found == true) {
+        test.push(exists.result.id);
+      }
+    });
+
     console.log(slugList, "Test:", response);
+    console.log("TEST", test);
   }
 </script>
 
-<!-- <Modal
-  bind:open={showModal}
-  title={`Paste in your SlugList after picking a Depositor`}
-> -->
 <div>
   <PrefixSelector bind:prefix={depositorPrefix} /><br />
 </div>
@@ -152,18 +156,12 @@ The resolver component allows the user to enter a slug, and then a request is se
 <textarea bind:value={depositor} />
 <div class="buttons">
   <!--  <button on:click={cancel}>Cancel</button> -->
-  <button on:click={slugSelector}>Lookup</button>
+  <button class="primary lg" on:click={slugSelector}>Lookup</button> <br />
 </div>
-<input
-  type="text"
-  placeholder="Type in a slug..."
-  bind:value={slugList}
-  on:input={resolveMany}
-/>
 
-<!-- </Modal> -->
 <style>
-  input {
+  textarea {
     width: 100%;
+    height: 100%;
   }
 </style>

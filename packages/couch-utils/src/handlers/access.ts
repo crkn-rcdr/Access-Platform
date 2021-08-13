@@ -113,30 +113,38 @@ export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
    * Update the staff-editable fields of a Collection.
    * @returns The updated Collection.
    */
+
   async editCollection(args: {
     id: Noid;
     user: User;
     data: EditableCollection;
   }): Promise<Collection> {
     const data = EditableCollection.parse(args.data);
+    let membersArray: string[] = [];
     if (data.members) {
       const currentMembers = Collection.parse(await this.get(args.id)).members;
 
       const filteredMembers = xorWith(data.members, currentMembers, isEqual);
 
       console.log("data in accesshandler", filteredMembers);
-      for (const members of filteredMembers) {
-        await this.forceUpdate(args.id);
+      //filteredMembers.map((members) => members.id);
+      for (let members of filteredMembers) {
+        if (members.id != undefined) {
+          membersArray.push(members.id);
+          await this.forceUpdate(members.id);
+        }
       }
     }
 
-    /*Return the Collection Object here? after forceUpdate?*/
     await this.editObject({
       id: args.id,
       user: args.user,
       data,
       type: "collection",
     });
+    for (let members of membersArray) {
+      await this.forceUpdate(members);
+    }
     const collection = await this.get(args.id);
     return Collection.parse(collection);
   }
