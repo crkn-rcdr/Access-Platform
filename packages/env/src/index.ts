@@ -21,6 +21,9 @@ export const Env = z
     COUCHDB_PASSWORD: z.string().min(1),
     LAPIN_URL: Url,
     NOID_URL: Url,
+    SWIFT_URL: Url,
+    SWIFT_USER: z.string().min(1),
+    SWIFT_PASSWORD: z.string().min(1),
     /**
      * OPTIONAL: Also defined, but with defaults. You may need to override these.
      */
@@ -61,6 +64,11 @@ export const Env = z
       },
       noid: {
         url: env.NOID_URL,
+      },
+      swift: {
+        server: env.SWIFT_URL,
+        user: env.SWIFT_USER,
+        password: env.SWIFT_PASSWORD,
       },
     };
   });
