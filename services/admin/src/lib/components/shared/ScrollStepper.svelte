@@ -47,6 +47,11 @@ The scroll stepper component is a component that breaks down a long task into sm
   export let displayPrevious: boolean = false;
 
   /**
+   * @type {boolean} If the stepper should scroll to the new active index automatically
+   */
+  export let enableAutoScrolling: boolean = true;
+
+  /**
    * @type {HTMLDivElement} This container element holds the drop down menu items
    */
   let container: HTMLDivElement;
@@ -124,14 +129,14 @@ The scroll stepper component is a component that breaks down a long task into sm
     let steps = container.getElementsByClassName("scroll-stepper-step");
     for (let i = 0; i < steps.length; i++) {
       if (displayPrevious ? i <= activeStepIndex : i === activeStepIndex) {
-        steps[i].classList.remove("hide");
+        steps[i].classList.add("show");
       } else {
-        steps[i].classList.add("hide");
+        steps[i].classList.remove("show");
       }
 
       if (i === activeStepIndex) {
         steps[i].classList.add("scroll-stepper-step-active");
-        if (window && i !== 0) {
+        if (enableAutoScrolling && window && i !== 0) {
           setTimeout(() => {
             const offset = getOffset(steps[i]);
             const y = offset.top - 20;
