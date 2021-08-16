@@ -66,9 +66,3 @@
     <JsonTree value={{ object: JSON.parse(previewItem["message"]) }} />
   </div>
 </Modal>
-
-<style>
-  thead {
-    background: var(--backdrop-bg);
-  }
-</style>

@@ -873,7 +873,7 @@
 <!--OPTION B-->
 <div class="wrapper">
   <br />
-  <NotificationBar message="Metadata uploaded successfully!" />
+  <!--NotificationBar message="Metadata uploaded successfully!" /-->
   <br />
 
   <div class="auto-align">

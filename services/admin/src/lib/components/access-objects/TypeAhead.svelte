@@ -105,13 +105,7 @@ This componenet allows the user to search the backend for any access object that
   />
 
   {#if query && lookupList}
-    <br />
     <table>
-      <thead>
-        <tr>
-          <th>Search Results</th>
-        </tr>
-      </thead>
       <tbody>
         {#each lookupList as item}
           <tr class="clickable" on:click={() => selectItem(item)}>

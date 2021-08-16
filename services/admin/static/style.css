@@ -39,6 +39,8 @@
   --border-color: #ccc;
   /* Change this to set the font colour for the app */
   --base-font-color: var(--dark-font);
+  /* Change this to set the bg color for items of high contrast*/
+  --darkest-bg: #222;
   /* Change this to set the interactive element colors, ex: alert, buttons */
   /* Primary */
   --primary: var(--teal);
@@ -514,12 +516,17 @@ table {
   text-align: left;
   border-collapse: collapse;
   border-spacing: 0;
-  border-radius: var(--border-radius);
+  /*border-radius: var(--border-radius);
+  border: solid var(--border-color) 1px;*/
 }
 
 caption {
   text-align: left;
   padding: 1rem;
+}
+
+thead {
+  background: var(--backdrop-bg);
 }
 
 tbody {
@@ -530,8 +537,14 @@ tbody tr.clickable:hover {
   background-color: rgba(0, 0, 0, 0.04);
 }
 
+/*
+tr:nth-child(even) {
+  background-color: rgba(0, 0, 0, 0.02);
+}*/
+
 thead th {
   padding: 1rem;
+  font-weight: bold;
 }
 
 th {
