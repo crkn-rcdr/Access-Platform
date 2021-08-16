@@ -124,22 +124,21 @@ The scroll stepper component is a component that breaks down a long task into sm
     let steps = container.getElementsByClassName("scroll-stepper-step");
     for (let i = 0; i < steps.length; i++) {
       if (displayPrevious ? i <= activeStepIndex : i === activeStepIndex) {
-        steps[i].classList.add("show");
         steps[i].classList.remove("hide");
       } else {
         steps[i].classList.add("hide");
-        steps[i].classList.remove("show");
       }
 
       if (i === activeStepIndex) {
         steps[i].classList.add("scroll-stepper-step-active");
-        if (i !== 0 && window) {
-          const offset = getOffset(steps[i]);
-          const y =
-            i === steps.length - 1
-              ? offset.top + steps[i].clientHeight
-              : offset.top - 20;
-          window.scrollTo({ top: y, behavior: "smooth" });
+        if (window && i !== 0) {
+          setTimeout(() => {
+            const offset = getOffset(steps[i]);
+            const y = offset.top - 20;
+            console.log(i === steps.length - 1, activeStepIndex, "SCROOLLL", y);
+            window.history.scrollRestoration = "manual";
+            window.scrollTo({ top: y, behavior: "smooth" });
+          }, 10);
         }
       } else {
         steps[i].classList.remove("scroll-stepper-step-active");

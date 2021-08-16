@@ -81,7 +81,7 @@ A step (section) of a ScrollStepper. Generally used to isolate a group of requir
     padding: var(--perfect-fourth-2) 0;
     /*z-index: 1;*/
   }
-  :global(.scroll-stepper-step.show .scroll-stepper-step-body) {
+  :global(.scroll-stepper-step .scroll-stepper-step-body) {
     display: block;
   }
   :global(.scroll-stepper-step.hide .scroll-stepper-step-body) {

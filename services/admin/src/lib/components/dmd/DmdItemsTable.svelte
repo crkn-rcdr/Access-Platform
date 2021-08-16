@@ -20,10 +20,10 @@
         <th>Label</th>
         <th>Value</th>
         {#if "access" in dmdTask["items"][0]}
-          <th>Access</th>
+          <th>Found in Access</th>
         {/if}
         {#if "preservation" in dmdTask["items"][0]}
-          <th>Preservation</th>
+          <th>Found in Preservation</th>
         {/if}
       </tr>
     </thead>
