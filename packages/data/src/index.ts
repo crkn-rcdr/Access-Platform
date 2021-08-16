@@ -29,6 +29,9 @@ export {
   WaitingDMDTask,
   FailedDMDTask,
   SucceededDMDTask,
+  isWaitingDMDTask,
+  isFailedDMDTask,
+  isSucceededDMDTask,
 } from "./dmd/index.js";
 
 export {

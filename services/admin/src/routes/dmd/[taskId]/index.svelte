@@ -32,6 +32,9 @@
     FailedDMDTask,
     SucceededDMDTask,
     DMDTask,
+    isWaitingDMDTask,
+    isFailedDMDTask,
+    isSucceededDMDTask,
   } from "@crkn-rcdr/access-data";
   import DmdSplitWaitingViewer from "$lib/components/dmd/DmdSplitWaitingViewer.svelte";
   import DmdSplitFailureViewer from "$lib/components/dmd/DmdSplitFailureViewer.svelte";
@@ -41,44 +44,17 @@
    * @type {DMDTask} The dmdtask being displayed by the page.
    */
   export let dmdTask: DMDTask; //WaitingDMDTask | FailedDMDTask | SucceededDMDTask;
-
-  /**
-   * Casts @var dmdTask to type WaitingDMDTask for use in components that expect a WaitingDMDTask
-   * @returns void
-   */
-  function getAsWaitingTask(): WaitingDMDTask {
-    return <WaitingDMDTask>dmdTask;
-  }
-
-  /**
-   * Casts @var dmdTask to type FailedDMDTask for use in components that expect a FailedDMDTask
-   * @returns void
-   */
-  function getAsFailedTask(): FailedDMDTask {
-    return <FailedDMDTask>dmdTask;
-  }
-
-  /**
-   * Casts @var dmdTask to type SucceededDMDTask for use in components that expect a SucceededDMDTask
-   * @returns void
-   */
-  function getAsSucceededTask(): SucceededDMDTask {
-    return <SucceededDMDTask>dmdTask;
-  }
 </script>
 
 <div class="dmd-task-page-wrap">
   {#if !dmdTask}
     Loading...
-  {:else if SucceededDMDTask.safeParse(dmdTask).success}
+  {:else if isSucceededDMDTask(dmdTask)}
     <DmdSplitSuccessStoreForm /> <!--dmdTask={getAsSucceededTask()} -->
-  {:else if FailedDMDTask.safeParse(dmdTask).success}
-    <DmdSplitFailureViewer
-      dmdTask={getAsFailedTask()}
-      message={dmdTask.process["message"]}
-    />
-  {:else if WaitingDMDTask.safeParse(dmdTask).success}
-    <DmdSplitWaitingViewer dmdTask={getAsWaitingTask()} />
+  {:else if isFailedDMDTask(dmdTask)}
+    <DmdSplitFailureViewer {dmdTask} message={dmdTask.process["message"]} />
+  {:else if isWaitingDMDTask(dmdTask)}
+    <DmdSplitWaitingViewer {dmdTask} />
   {:else}
     <!--JUST In Case All Else Fails-->
     <DmdSplitFailureViewer
