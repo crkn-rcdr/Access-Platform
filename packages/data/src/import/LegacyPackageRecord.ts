@@ -6,7 +6,11 @@ import { StaffUpdate } from "../util/StaffUpdate.js";
 import { Timestamp } from "../util/Timestamp.js";
 import { UnixFilePath } from "../util/UnixFilePath.js";
 
-export const LegacyPackage = z.object({
+/**
+ * A record of a package in the legacy preservation platform
+ * that the Access Platform can import.
+ */
+export const LegacyPackageRecord = z.object({
   /**
    * The package's AIP id.
    */
@@ -76,4 +80,4 @@ export const LegacyPackage = z.object({
   staff: StaffUpdate.optional(),
 });
 
-export type LegacyPackage = z.infer<typeof LegacyPackage>;
+export type LegacyPackageRecord = z.infer<typeof LegacyPackageRecord>;
