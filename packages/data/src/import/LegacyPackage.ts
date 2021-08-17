@@ -125,7 +125,7 @@ export type ImportStatus =
 /**
  * Determines the status of a LegacyPackage object.
  * @param lp The LegacyPackage object.
- * @param noid The result of a Noid lookup for `lp`'s `id`.
+ * @param noid The result of a Noid lookup for `lp`'s `id` or `slug`.
  */
 export const importStatus = (
   lp: LegacyPackage | undefined,
