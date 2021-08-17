@@ -6,7 +6,7 @@ Displays a dmd task's time based information in a table, the user sees the task 
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| dmdTask: WaitingDMDTask or FailedDMDTask or SucceededDMDTask  | required | The dmd task to be displayed. |
+| dmdTask: DMDTask | required | The dmd task to be displayed. |
 
 ### Usage
 ```
@@ -14,26 +14,28 @@ Displays a dmd task's time based information in a table, the user sees the task 
 ```
 -->
 <script lang="ts">
-  import type {
-    WaitingDMDTask,
-    FailedDMDTask,
-    SucceededDMDTask,
-  } from "@crkn-rcdr/access-data";
+  import type { DMDTask } from "@crkn-rcdr/access-data";
   /**
-   * @type {WaitingDMDTask | FailedDMDTask | SucceededDMDTask | undefined} The dmdtask being displayed.
+   * @type {DMDTask} The dmdtask being displayed.
    */
-  export let dmdTask:
-    | WaitingDMDTask
-    | FailedDMDTask
-    | SucceededDMDTask
-    | undefined;
+  export let dmdTask: DMDTask;
 </script>
 
 <div class="dmd-request-info">
-  <span>Request inititated:</span>
-  <span>{dmdTask?.["updated"]}</span>
-  <span>Request updated:</span>
-  <span>{dmdTask?.["process"]?.["requestDate"]}</span>
+  {#if dmdTask?.updated}
+    <span>Request inititated:</span>
+    <span>
+      {`${new Date(parseInt(`${dmdTask.updated}`) * 1000).toLocaleString()}`}
+    </span>
+  {/if}
+  {#if dmdTask?.process?.["requestDate"]}
+    <span>Request updated:</span>
+    <span>
+      {`${new Date(
+        parseInt(`${dmdTask.process["requestDate"]}`) * 1000
+      ).toLocaleString()}`}
+    </span>
+  {/if}
 </div>
 
 <style>

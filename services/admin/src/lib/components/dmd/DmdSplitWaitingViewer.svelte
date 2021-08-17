@@ -6,7 +6,7 @@ Displays a dmd task in an waiting state.
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| dmdTask: WaitingDMDTask or FailedDMDTask or SucceededDMDTask  | required | The dmd task to be displayed. |
+| dmdTask: WaitingDMDTask | required | The dmd task to be displayed. |
 
 ### Usage
 ```
@@ -14,22 +14,14 @@ Displays a dmd task in an waiting state.
 ```
 -->
 <script lang="ts">
-  import type {
-    WaitingDMDTask,
-    FailedDMDTask,
-    SucceededDMDTask,
-  } from "@crkn-rcdr/access-data";
+  import type { WaitingDMDTask } from "@crkn-rcdr/access-data";
   import DmdTaskTimeInfoTable from "$lib/components/dmd/DmdTaskTimeInfoTable.svelte";
   import Loading from "$lib/components/shared/Loading.svelte";
 
   /**
-   * @type {WaitingDMDTask | FailedDMDTask | SucceededDMDTask | undefined} The dmdtask being displayed.
+   * @type {WaitingDMDTask} The dmdtask being displayed.
    */
-  export let dmdTask:
-    | WaitingDMDTask
-    | FailedDMDTask
-    | SucceededDMDTask
-    | undefined;
+  export let dmdTask: WaitingDMDTask;
 </script>
 
 <div class="hero hero__gradient full-page">
