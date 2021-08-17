@@ -26,6 +26,10 @@ Wrapper around [nano](https://github.com/apache/couchdb-nano) that exposes funct
 
 Router and context for the [lapin](#lapin) service. Defined here so that the router's type definition can be used in multiple services.
 
+#### [swift](packages/swift)
+
+[OpenStack Swift API](https://docs.openstack.org/api-ref/object-store/) client.
+
 ### Services
 
 #### [haproxy](services/haproxy) (dev-only)
@@ -70,6 +74,7 @@ The development environment runs the services defined in [docker-compose.yaml](d
 - `haproxy`: proxy between host connections and services
 - `couchdb`: a fresh CouchDB instance
 - `noid`: an ephemeral [noid](https://github.com/crkn-rcdr/noid) service for minting unique access object identifiers
+- `swift`: a [picoswiftstack](https://hub.docker.com/r/swiftstack/picoswiftstack) container for testing Swift functionality
 - `packages`: watches for changes in all `packages` directories, runs tests, and rebuilds the packages
 - `kivik`: service that initializes the CouchDB instance, deploys our CouchDB configuration to it, and then watches for changes to that configuration
 - `lapin`: API server, which reloads if its dependencies have changed
