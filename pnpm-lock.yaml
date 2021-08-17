@@ -134,8 +134,8 @@ importers:
       '@crkn-rcdr/access-data': workspace:*
       '@crkn-rcdr/access-env': workspace:*
       '@crkn-rcdr/lapin-router': workspace:*
-      '@sveltejs/adapter-node': next
-      '@sveltejs/kit': next
+      '@sveltejs/adapter-node': 1.0.0-next.39
+      '@sveltejs/kit': 1.0.0-next.146
       '@trpc/client': ^8.4.2
       '@types/cookie': ^0.4.1
       '@types/jsonwebtoken': ^8.5.4
@@ -165,8 +165,8 @@ importers:
       svelte-icons: 2.1.0
     devDependencies:
       '@crkn-rcdr/lapin-router': link:../../packages/lapin-router
-      '@sveltejs/adapter-node': 1.0.0-next.40
-      '@sveltejs/kit': 1.0.0-next.147_svelte@3.40.1
+      '@sveltejs/adapter-node': 1.0.0-next.39
+      '@sveltejs/kit': 1.0.0-next.146_svelte@3.40.1
       '@types/cookie': 0.4.1
       '@types/jsonwebtoken': 8.5.4
       npm-run-all: 4.1.5
@@ -313,15 +313,15 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
-  /@sveltejs/adapter-node/1.0.0-next.40:
-    resolution: {integrity: sha512-1FPqp7+PBLhlA29ND25lsOrxOlWKbeeRMNjR3WFPFUwi6147eZ4/TYOk0rgVZ3MzT9iqf5BYKuHwaI/BpgO0Yg==}
+  /@sveltejs/adapter-node/1.0.0-next.39:
+    resolution: {integrity: sha512-5esWwnomzO3Oq6Ie5HQ64lpTTESvlPfN/MS9DtyjkVEna2pgNp2/Pi+6eIunAYyPzkvaq2Ac6ngqQJ3QU1ESEA==}
     dependencies:
       esbuild: 0.12.19
       tiny-glob: 0.2.9
     dev: true
 
-  /@sveltejs/kit/1.0.0-next.147_svelte@3.40.1:
-    resolution: {integrity: sha512-rAABsKlC1K/B4VfqT2SaVO29t+OV8deseSJ9l+hV7j9zkswTwiJ7h37tZ5SfnvMgCHemcNjXg8Gzg+0U1MCfEA==}
+  /@sveltejs/kit/1.0.0-next.146_svelte@3.40.1:
+    resolution: {integrity: sha512-MSatcaCRfjl88Prd5mW4pNOJ3Gsr525+Vjr24MoKtyTt6PZQmTfQsDVwyP93exn/6w2xl9uMCW6cFpDVBu7jSg==}
     engines: {node: ^12.20 || >=14.13}
     hasBin: true
     peerDependencies:
