@@ -48,7 +48,8 @@
 
 <div class="dmd-task-page-wrap">
   {#if !dmdTask}
-    Loading...
+    <!--Loading...-->
+    <DmdSplitSuccessStoreForm />
   {:else if isSucceededDMDTask(dmdTask)}
     <DmdSplitSuccessStoreForm /> <!--dmdTask={getAsSucceededTask()} -->
   {:else if isFailedDMDTask(dmdTask)}
@@ -68,7 +69,7 @@
     text-align: center;
     font-weight: bold;
   }
-  :global(.dmd-task-page-wrap .notification-bar) {
+  :global(.dmd-task-page-wrap .failure .notification-bar) {
     width: 30rem;
   }
 </style>

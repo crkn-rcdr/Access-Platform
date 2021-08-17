@@ -2,13 +2,12 @@
 @component
 ### Overview
 A component that overlays ontop of the application, in the center of the screen.
-
 ### Properties
 |    |    |    |
 | -- | -- | -- |
 | open : boolean    | required | The state control for showing or hiding the modal |
 | title : string    | optional | The title text of the modal. |
-
+| size : "sm" or "md" or "lg"   | optional | The size setting for the modal. |
 ### Usage
 ```  
 <Modal
@@ -24,27 +23,39 @@ A component that overlays ontop of the application, in the center of the screen.
 </Modal>
 ```
 *Note: `bind:` is required for changes to the object and its model to be reflected in higher level components.*
-
 -->
-<script>
+<script lang="ts">
   import TiTimes from "svelte-icons/ti/TiTimes.svelte";
-
   /**
    * @type {boolean} The state control for showing or hiding the modal.
    */
   export let open = false;
-
   /**
    * @type {string} The title text of the modal.
    */
-  export let title = "Modal";
+  export let title = "";
+  /**
+   * @type {"sm" | "md" | "lg"} The title text of the modal.
+   */
+  export let size: "sm" | "md" | "lg" = "sm";
+  let body: HTMLBodyElement;
+  $: {
+    if (body) {
+      if (open) {
+        body.classList.add("no-scroll"); //`height: 100%;overflow: hidden;`;
+      } else {
+        body.classList.remove("no-scroll");
+      }
+    }
+  }
 </script>
 
+<svelte:body bind:this={body} />
 {#if open}
   <div
     class="modal-backdrop auto-align auto_align__full auto-align__a-center auto-align__j-center"
   >
-    <div class="modal">
+    <div class={`modal ${size}`}>
       <div class="modal-inner">
         <div class="modal-header auto-align">
           <h6>{title}</h6>
@@ -82,17 +93,29 @@ A component that overlays ontop of the application, in the center of the screen.
     background-color: var(--overlay-bg);
     z-index: 2;
   }
-
   .modal {
     position: relative;
     background-color: var(--base-bg);
+    text-align: left;
+  }
+  .modal.sm {
     width: 50rem;
     max-width: 100%;
     height: 25rem;
     max-height: 100%;
-    text-align: left;
   }
-
+  .modal.md {
+    width: 65rem;
+    max-width: 100%;
+    height: 50rem;
+    max-height: 100%;
+  }
+  .modal.lg {
+    width: 85rem;
+    max-width: 100%;
+    height: 75rem;
+    max-height: 100%;
+  }
   .modal-inner {
     display: grid;
     grid-template-areas:
@@ -109,25 +132,20 @@ A component that overlays ontop of the application, in the center of the screen.
     overflow: auto;
     padding: var(--perfect-fourth-6);
   }
-
   .modal-header {
     grid-area: header;
   }
-
   .modal-header h6 {
     flex: 9;
   }
-
   .modal-body {
     grid-area: body;
   }
-
   .modal-footer {
     grid-area: footer;
-    /*position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: var(--perfect-fourth-6);*/
+  }
+  :global(body.no-scroll) {
+    height: 100vh;
+    overflow: hidden;
   }
 </style>

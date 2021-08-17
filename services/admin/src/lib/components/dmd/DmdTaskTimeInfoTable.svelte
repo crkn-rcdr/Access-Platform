@@ -21,7 +21,7 @@ Displays a dmd task's time based information in a table, the user sees the task 
   export let dmdTask: DMDTask;
 </script>
 
-<div class="dmd-request-info">
+<div class="dmd-request-info grid grid__col_2">
   {#if dmdTask?.updated}
     <span>Request inititated:</span>
     <span>
@@ -41,11 +41,6 @@ Displays a dmd task's time based information in a table, the user sees the task 
 <style>
   .dmd-request-info {
     width: fit-content;
-    display: inline-grid;
-    display: grid;
-    grid-template-areas: "a a";
-    gap: 2rem;
-    align-items: center;
     margin-top: var(--perfect-fourth-4);
     margin-bottom: var(--perfect-fourth-4);
   }
