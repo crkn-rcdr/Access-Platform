@@ -74,22 +74,8 @@
   }
   async function handleSelect(event: any) {
     try {
-      let prefixedNoid = event.detail;
-      const response = await $session.lapin.query(
-        "accessObject.get",
-        prefixedNoid
-      );
-      console.log("Print the member response", response);
-      if (response) {
-        const object = AccessObject.parse(response);
-        if (object) {
-          selectedMember = object;
-          console.log("selected Member", selectedMember);
-          isMemberSelected = true;
-        }
-      } else {
-        error = response.toString();
-      }
+      let test = event.detail;
+      console.log("test", test);
     } catch (e) {
       error = e;
     }
@@ -123,7 +109,11 @@
           on:selected={handleSelect}
           on:keypress={() => (error = "")}
         /> -->
-        <ResolveMany bind:slugList={AccessObject["slug"]} />
+        <ResolveMany
+          bind:slugList={AccessObject["slug"]}
+          hideInitial={false}
+          on:found={handleSelect}
+        />
       </div>
       <div class="add-menu-title">
         <button

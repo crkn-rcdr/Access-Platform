@@ -28,17 +28,17 @@ The resolver component allows the user to enter a slug, and then a request is se
   import { getStores } from "$app/stores";
   import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
   import PrefixSelector from "../collections/PrefixSelector.svelte";
-  import Modal from "$lib/components/shared/Modal.svelte";
+  import type { ObjectList } from "@crkn-rcdr/access-data";
+  import Grid from "svelte-grid-responsive";
 
   /**
    * @type {string} Slug being resolved.
    */
 
-  export let slugList: string[] = [];
+  export let slugList: ObjectList = [];
 
   let depositorPrefix = "";
   let depositor = "undefined";
-  let showModal = false;
 
   /**
    * @type {boolean}
@@ -58,6 +58,8 @@ The resolver component allows the user to enter a slug, and then a request is se
    * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.
    */
   const dispatch = createEventDispatcher();
+
+  let cancelselector = false;
 
   /**
    * @type {RegExp} A regular expression that will validate strings as slugs.
@@ -90,7 +92,11 @@ The resolver component allows the user to enter a slug, and then a request is se
   async function slugSelector() {
     let slugToFind = depositor.split(/[,|\s]/);
     for (var index in slugToFind) {
-      if (depositor !== "" && slugToFind[index].indexOf(".") === -1) {
+      if (
+        depositor !== "" &&
+        depositor !== undefined &&
+        slugToFind[index].indexOf(".") === -1
+      ) {
         var prefixedSlug = depositorPrefix + "." + slugToFind[index];
       } else if (
         depositorPrefix == "" &&
@@ -102,66 +108,56 @@ The resolver component allows the user to enter a slug, and then a request is se
     }
     await resolveMany();
   }
+  let test: ObjectList = [];
+  let unfound: string[] = [];
+  let resolved;
   async function resolveMany() {
-    /* if (shouldQuery) {
-      if (timer) clearTimeout(timer);
-      timer = setTimeout(async () => {
-        status = "LOADING";
-        if (regex.test(slug)) {
-          try {
-            const response = await $session.lapin.query(
-              "slug.resolveMany",
-              slug
-            );
-            console.log(slug, "Testi in many:", response);
-            if (response === null) {
-              dispatch("available", { slug: initial, status: false });
-              status = "ERROR";
-            } else if (!response.found) {
-              dispatch("available", { slug: slug, status: true });
-              isFound = false;
-              status = "READY";
-            } else {
-              dispatch("available", { slug: initial, status: false });
-              isFound = true;
-              status = "READY";
-            }
-          } catch (e) {
-            status = "ERROR";
-          }
-        } else {
-          status = "MALFORMED";
-        }
-      }, 50);
-    } else if (slug === initial) {
-      status = "READY";
-    } */
     const response = await $session.lapin.query("slug.resolveMany", slugList);
-    let test = [];
+
     Object.values(response).forEach((exists) => {
       if (exists.found == true) {
-        test.push(exists.result.id);
+        test.push(exists.result);
+      } else if (exists.found == false) {
+        unfound.push(exists);
+        console.log("unfound", unfound);
       }
+      for (let resolve of test) {
+        resolved = resolve.id;
+        dispatch("found", resolved);
+        console.log("TEST", resolved);
+      }
+      hideInitial = true;
     });
-
-    console.log(slugList, "Test:", response);
-    console.log("TEST", test);
+  }
+  function cancel() {
+    cancelselector = true;
+    depositor = "";
+    depositorPrefix = "No prefix";
   }
 </script>
 
 <div>
-  <PrefixSelector bind:prefix={depositorPrefix} /><br />
-</div>
-{#if depositorPrefix !== ""}({depositorPrefix}){/if}
-<textarea bind:value={depositor} />
-<div class="buttons">
-  <!--  <button on:click={cancel}>Cancel</button> -->
+  <PrefixSelector bind:prefix={depositorPrefix} /><br /><br />
+  {#if depositorPrefix !== ""}({depositorPrefix}){/if}
+  <div class="grid">
+    <textarea bind:value={depositor} />
+    <textarea class="grid" bind:value={resolved} />
+  </div>
+  <br />
+  <button class="primary lg" on:click={cancel}>Cancel</button>
   <button class="primary lg" on:click={slugSelector}>Lookup</button> <br />
 </div>
 
 <style>
   textarea {
+    display: grid;
+    background-color: var(--primary);
     width: 100%;
     height: 100%;
+    grid-column: 1/2;
+  }
+  .grid {
+    display: grid;
+    grid-column: 2/2;
   }
 </style>
