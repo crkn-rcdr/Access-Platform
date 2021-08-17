@@ -76,8 +76,9 @@ importers:
   packages/lapin-router:
     specifiers:
       '@crkn-rcdr/access-data': workspace:*
-      '@crkn-rcdr/access-env': workspace:^0.0.1
+      '@crkn-rcdr/access-env': workspace:*
       '@crkn-rcdr/couch-utils': workspace:*
+      '@crkn-rcdr/swift': workspace:*
       '@trpc/server': ^8.4.2
       '@types/node': ^16.4.13
       '@types/node-fetch': ^2.5.12
@@ -92,6 +93,7 @@ importers:
       '@crkn-rcdr/access-data': link:../data
       '@crkn-rcdr/access-env': link:../env
       '@crkn-rcdr/couch-utils': link:../couch-utils
+      '@crkn-rcdr/swift': link:../swift
       '@trpc/server': 8.4.2
       deep-object-diff: 1.1.0
       node-fetch: 2.6.1
