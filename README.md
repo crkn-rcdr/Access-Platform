@@ -26,6 +26,10 @@ Wrapper around [nano](https://github.com/apache/couchdb-nano) that exposes funct
 
 Router and context for the [lapin](#lapin) service. Defined here so that the router's type definition can be used in multiple services.
 
+#### [swift](packages/swift)
+
+[OpenStack Swift API](https://docs.openstack.org/api-ref/object-store/) client.
+
 ### Services
 
 #### [haproxy](services/haproxy) (dev-only)
