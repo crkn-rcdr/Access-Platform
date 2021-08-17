@@ -9,6 +9,7 @@ import { UnixFilePath } from "../util/UnixFilePath.js";
 /**
  * A record of a package in the legacy preservation platform
  * that the Access Platform can import.
+ * This package has never been imported.
  */
 export const UnsmeltedLegacyPackage = z.object({
   /**
@@ -67,6 +68,11 @@ export const UnsmeltedLegacyPackage = z.object({
 
 export type UnsmeltedLegacyPackage = z.infer<typeof UnsmeltedLegacyPackage>;
 
+/**
+ * A record of a package in the legacy preservation platform
+ * that the Access Platform can import.
+ * This package is in the process of being imported.
+ */
 export const SmeltingLegacyPackage = UnsmeltedLegacyPackage.merge(
   z.object({
     /**
@@ -88,6 +94,11 @@ export const SmeltingLegacyPackage = UnsmeltedLegacyPackage.merge(
 
 export type SmeltingLegacyPackage = z.infer<typeof SmeltingLegacyPackage>;
 
+/**
+ * A record of a package in the legacy preservation platform
+ * that the Access Platform can import.
+ * This package has either been imported or the import process for it has failed.
+ */
 export const SmeltedLegacyPackage = SmeltingLegacyPackage.merge(
   z.object({
     /**
@@ -99,6 +110,10 @@ export const SmeltedLegacyPackage = SmeltingLegacyPackage.merge(
 
 export type SmeltedLegacyPackage = z.infer<typeof SmeltedLegacyPackage>;
 
+/**
+ * A record of a package in the legacy preservation platform
+ * that the Access Platform can import.
+ */
 export const LegacyPackage = z.union([
   UnsmeltedLegacyPackage,
   SmeltingLegacyPackage,
