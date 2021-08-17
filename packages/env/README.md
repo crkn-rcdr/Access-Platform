@@ -13,6 +13,9 @@ You will need to set these yourself:
 - `COUCHDB_PASSWORD`: the CouchDB admin user's password
 - `LAPIN_URL`: network-internal URL serving lapin (i.e., something the admin tools has access to)
 - `NOID_URL`: URL pointing to the Noid minting service (e.g. `http://noid.c7a.ca`)
+- `SWIFT_URL`: URL pointing to a Swift endpoint (e.g. `http://swift-tor.canadiana.ca`)
+- `SWIFT_USER`: Swift username
+- `SWIFT_PASSWORD`: Swift password
 
 ## Optional variables
 
