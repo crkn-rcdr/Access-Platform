@@ -1,3 +1,5 @@
+import { BodyInit } from "node-fetch";
+
 /**
  * Options accepted by the Swift.Client constructor.
  */
@@ -45,33 +47,51 @@ export interface ListOptions {
   delimiter?: string;
 }
 
-export interface AccountInterface {
+export interface ClientInterface {
+  /**
+   * @link https://docs.openstack.org/api-ref/object-store/#list-activated-capabilities
+   * List the activated capabilities of this version of the OpenStack Object Storage API.
+   * @returns An object containing the requested information.
+   */
+  info: () => Promise<Record<string, unknown>>;
   /**
    * Lists containers, sorted by name, in the account.
    * @link https://docs.openstack.org/api-ref/object-store/?expanded=#show-account-details-and-list-containers
    * @param options Options that govern how the container list is generated.
    */
-  get: (options?: ListOptions) => Promise<JSONResponse<ContainerListing[]>>;
+  listContainers: (
+    options?: ListOptions
+  ) => Promise<JSONResponse<ContainerListing[]>>;
   /**
    * Creates, updates, or deletes account metadata.
    * @link https://docs.openstack.org/api-ref/object-store/?expanded=#create-update-or-delete-account-metadata
    * @param metadata Metadata keys and values. Metadata key-value pairs will
    * be sent as headers with `X-Account-Meta-` prepended to the key.
    */
-  post: (metadata: Record<string, string>) => Promise<Response>;
+  postMetadata: (metadata: Record<string, string>) => Promise<Response>;
   /**
    * Shows metadata for an account.
    * @link https://docs.openstack.org/api-ref/object-store/?expanded=#show-account-metadata
    */
-  head: () => Promise<Response>;
+  getMetadata: () => Promise<Response>;
+  /**
+   * Creates a container. Does not support setting headers outside of `X-Container-Meta`.
+   * @link https://docs.openstack.org/api-ref/object-store/?expanded=#create-container
+   * @param metadata Container metadata. Keys will have `X-Container-Meta-` prepended.
+   */
+  createContainer: (
+    container: string,
+    metadata?: Record<string, string>
+  ) => Promise<Response>;
+  /**
+   * Deletes an empty container. This operation fails unless the container is empty. An empty container has no objects.
+   * @link https://docs.openstack.org/api-ref/object-store/?expanded=#delete-container
+   */
+  deleteContainer: (container: string) => Promise<Response>;
   /**
    * Returns an interface to `container`.
    */
   container: (container: string) => ContainerInterface;
-  /**
-   * Returns an interface to `object` in `container`.
-   */
-  object: (container: string, object: string) => ObjectInterface;
 }
 
 export interface ContainerInterface {
@@ -80,33 +100,88 @@ export interface ContainerInterface {
    * @link https://docs.openstack.org/api-ref/object-store/?expanded=#show-container-details-and-list-objects
    * @param options Options that govern how the object list is generated.
    */
-  get: (options?: ListOptions) => Promise<JSONResponse<ObjectListing[]>>;
-  /**
-   * Creates a container. Does not support setting headers outside of `X-Container-Meta`.
-   * @link https://docs.openstack.org/api-ref/object-store/?expanded=#create-container
-   * @param metadata Container metadata. Keys will have `X-Container-Meta-` prepended.
-   */
-  put: (metadata?: Record<string, string>) => Promise<Response>;
+  listObjects: (
+    options?: ListOptions
+  ) => Promise<JSONResponse<ObjectListing[]>>;
   /**
    * Creates, updates, or deletes custom metadata for a container.
    * @link https://docs.openstack.org/api-ref/object-store/?expanded=#create-update-or-delete-container-metadata
    * @param metadata Container metadata. Keys will have `X-Container-Meta-` prepended.
    */
-  post: (metadata: Record<string, string>) => Promise<Response>;
+  postMetadata: (metadata: Record<string, string>) => Promise<Response>;
   /**
    * Shows container metadata, including the number of objects and the total bytes of all objects stored in the container.
    * @link https://docs.openstack.org/api-ref/object-store/?expanded=#show-container-metadata
    */
-  head: () => Promise<Response>;
+  getMetadata: () => Promise<Response>;
   /**
-   * Deletes an empty container. This operation fails unless the container is empty. An empty container has no objects.
-   * @link https://docs.openstack.org/api-ref/object-store/?expanded=#delete-container
+   * Downloads the object content and gets the object metadata.
+   * The object content is made available as a NodeJS ReadableStream.
+   * @link https://docs.openstack.org/api-ref/object-store/?expanded=#get-object-content-and-metadata
+   * @param object The unique name for the object.
    */
-  delete: () => Promise<Response>;
+  getObject: (object: string) => Promise<StreamResponse>;
   /**
-   * Returns an interface to `object`.
+   * Downloads the object content and gets the object metadata.
+   * The object content is parsed as JSON into type T.
+   * @link https://docs.openstack.org/api-ref/object-store/?expanded=#get-object-content-and-metadata
+   * @param object The unique name for the object.
    */
-  object: (object: string) => ObjectInterface;
+  getObjectAsJSON: <T>(object: string) => Promise<JSONResponse<T>>;
+  /**
+   * Creates an object with data content and metadata, or replaces an existing object with data content and metadata.
+   * @link https://docs.openstack.org/api-ref/object-store/?expanded=#create-or-replace-object
+   * @param object The unique name for the object.
+   * @param args Object arguments.
+   */
+  putObject: (
+    object: string,
+    args: {
+      /** Object contents. */
+      data: BodyInit;
+      /** Object content type. */
+      contentType?: string;
+      /** MD5 checksum asserted for the object. */
+      etag?: string;
+      /** Object metadata, sent as headers with `x-object-meta-` prepended to its keys. */
+      metadata?: Record<string, string>;
+    }
+  ) => Promise<Response>;
+  /**
+   * Copies an object to another object in the object store.
+   * Does not yet support fresh metadata, symlinks, or multipart-manifest.
+   * @link https://docs.openstack.org/api-ref/object-store/?expanded=#copy-object
+   * @param object The unique name for the object.
+   * @param destContainer The container containing the destination object.
+   * @param destObject The name of the destination object.
+   */
+  copyObject: (
+    object: string,
+    destContainer: string,
+    destObject: string
+  ) => Promise<Response>;
+  /**
+   * Permanently deletes an object from the object store.
+   * @link https://docs.openstack.org/api-ref/object-store/?expanded=#delete-object
+   * @param object The unique name for the object.
+   */
+  deleteObject: (object: string) => Promise<Response>;
+  /**
+   * Shows object metadata.
+   * @link https://docs.openstack.org/api-ref/object-store/?expanded=#show-object-metadata
+   * @param object The unique name for the object.
+   */
+  getObjectMetadata: (object: string) => Promise<Response>;
+  /**
+   * Creates or updates object metadata.
+   * @link https://docs.openstack.org/api-ref/object-store/?expanded=#create-or-update-object-metadata
+   * @param object The unique name for the object.
+   * @param metadata Object metadata. Keys will have `X-Object-Meta-` prepended.
+   */
+  postObjectMetadata: (
+    object: string,
+    metadata: Record<string, string>
+  ) => Promise<Response>;
 }
 
 /**
@@ -115,70 +190,27 @@ export interface ContainerInterface {
 export interface ContainerListing {
   /** The number of objects in the container. */
   count: number;
-  /** The total number of bytes that are stored in Object Storage for the account. */
+  /** The total number of bytes that are stored in Object Storage for the container. */
   bytes: number;
   /** The name of the container. */
   name: string;
-  /** When the container was last modified. */
+  /** The ISO 8601 timestamp of when the container was last modified. */
   last_modified: string;
-}
-
-export interface ObjectInterface {
-  /**
-   * Downloads the object content and gets the object metadata.
-   * The object content is made available as a NodeJS ReadableStream.
-   * @link https://docs.openstack.org/api-ref/object-store/?expanded=#get-object-content-and-metadata
-   */
-  get: () => Promise<StreamResponse>;
-  /**
-   * Downloads the object content and gets the object metadata.
-   * The object content is parsed as JSON into type T.
-   * @link https://docs.openstack.org/api-ref/object-store/?expanded=#get-object-content-and-metadata
-   */
-  getAsJSON: <T>() => Promise<JSONResponse<T>>;
-  //getAsXML: <T>() => Promise<XMLResponse<T>>
-  /**
-   * Creates an object with data content and metadata, or replaces an existing object with data content and metadata.
-   * @link https://docs.openstack.org/api-ref/object-store/?expanded=#create-or-replace-object
-   * @param data Object data.
-   * @param metadata Object metadata. Keys will have `X-Object-Meta-` prepended.
-   */
-  put: (
-    data: NodeJS.ReadableStream,
-    metadata?: Record<string, string>
-  ) => Promise<Response>;
-  /**
-   * Copies an object to another object in the object store.
-   * Does not yet support fresh metadata, symlinks, or multipart-manifest.
-   * @link https://docs.openstack.org/api-ref/object-store/?expanded=#copy-object
-   * @param destContainer The container containing the destination object.
-   * @param destObject The name of the destination object.
-   */
-  copy: (destContainer: string, destObject: string) => Promise<Response>;
-  /**
-   * Permanently deletes an object from the object store.
-   * @link https://docs.openstack.org/api-ref/object-store/?expanded=#delete-object
-   */
-  delete: () => Promise<Response>;
-  /**
-   * Shows object metadata.
-   * @link https://docs.openstack.org/api-ref/object-store/?expanded=#show-object-metadata
-   */
-  head: () => Promise<Response>;
-  /**
-   * Creates or updates object metadata.
-   * @link https://docs.openstack.org/api-ref/object-store/?expanded=#create-or-update-object-metadata
-   * @param metadata Object metadata. Keys will have `X-Object-Meta-` prepended.
-   */
-  post: (metadata: Record<string, string>) => Promise<Response>;
 }
 
 export interface ObjectListing {
+  /** The MD5 checksum value of the object content. */
   hash: string;
+  /** The ISO8601 timestamp of when the object was last modified. */
   last_modified: string;
+  /** The total number of bytes that are stored in Object Storage for the object. */
   bytes: number;
+  /** The name of the object. */
   name: string;
+  /** The content type of the object. */
   content_type: string;
+  /** This field exists only when the object is symlink. This is the target path of the symlink object. */
+  symlink_path?: string;
 }
 
 export type Entity = "account" | "container" | "object";
@@ -197,6 +229,8 @@ export type Response = {
   etag: string;
   /** Last-Modified header. Will be empty for non-objects. */
   lastModified: Date;
+  /** Content-Type header. */
+  contentType: string;
   /** Returns the given entity header value (e.g `x-account-${name}`) */
   header: (name: string) => string | null;
   /** Returns the given entity meta header (e.g. `x-account-meta-${name}`) */

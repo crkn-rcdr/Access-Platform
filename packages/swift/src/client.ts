@@ -7,7 +7,18 @@ import fetch, {
 } from "node-fetch";
 import pRetry from "p-retry";
 import { getStreamResponse, getJSONResponse, getResponse } from "./response.js";
-import * as Swift from "./types.js";
+import {
+  ClientInterface,
+  ClientOptions,
+  ContainerInterface,
+  ContainerListing,
+  Entity,
+  JSONResponse,
+  ListOptions,
+  Response,
+} from "./types.js";
+import { listQuery, metadataHeaders } from "./util.js";
+import { makeContainerInterface } from "./container.js";
 
 type HTTPMethod = "head" | "get" | "post" | "put" | "delete" | "copy";
 
@@ -23,7 +34,7 @@ type RequestOptions = {
   body?: BodyInit;
 };
 
-export class Client {
+export class Client implements ClientInterface {
   private readonly server: string;
   private readonly authHeaders: {
     "X-Auth-User": string;
@@ -33,7 +44,7 @@ export class Client {
 
   private token?: string;
 
-  constructor(options: Swift.ClientOptions) {
+  constructor(options: ClientOptions) {
     this.server = options.server;
     this.authHeaders = {
       "X-Auth-User": options.user,
@@ -41,6 +52,7 @@ export class Client {
     };
     this.accountName = options.account ?? `AUTH_${options.user}`;
   }
+
   private url(...args: string[]) {
     return [this.server, ...args].join("/");
   }
@@ -85,11 +97,6 @@ export class Client {
     return this.token;
   }
 
-  /**
-   * @link https://docs.openstack.org/api-ref/object-store/#list-activated-capabilities
-   * List the activated capabilities of this version of the OpenStack Object Storage API.
-   * @returns An object containing the requested information.
-   */
   async info(): Promise<Record<string, unknown>> {
     const token = await this.authorize();
     const response = await fetch(this.url("info"), {
@@ -107,7 +114,7 @@ export class Client {
     container: string | null,
     object: string | null,
     options: RequestOptions = {}
-  ): Promise<{ entity: Swift.Entity; fetchResponse: FetchResponse }> {
+  ): Promise<{ entity: Entity; fetchResponse: FetchResponse }> {
     const path = ["v1", this.accountName, container, object].filter(
       (val): val is string => val !== null
     );
@@ -124,7 +131,7 @@ export class Client {
     });
 
     if (response.ok) {
-      const entity: Swift.Entity = container
+      const entity: Entity = container
         ? object
           ? "object"
           : "container"
@@ -139,11 +146,13 @@ export class Client {
         const message = hasContent
           ? await response.text()
           : response.statusText;
-        throw { code: response.status, message };
+        throw { code: response.status, request: `${method} ${url}`, message };
       }
     }
   }
 
+  // TODO: come up with a way to clean these up
+  // TODO: re-order args to put options second (or combine them and method)
   async request(
     method: HTTPMethod,
     container: string | null,
@@ -187,5 +196,38 @@ export class Client {
       options
     );
     return getStreamResponse(entity, fetchResponse);
+  }
+
+  async listContainers(
+    options: ListOptions = {}
+  ): Promise<JSONResponse<ContainerListing[]>> {
+    return this.jsonRequest("get", null, null, listQuery(options));
+  }
+
+  async getMetadata(): Promise<Response> {
+    return this.request("head", null, null);
+  }
+
+  async postMetadata(metadata: Record<string, string>): Promise<Response> {
+    return this.request("post", null, null, {
+      headers: metadataHeaders("account", metadata),
+    });
+  }
+
+  async createContainer(
+    container: string,
+    metadata: Record<string, string> = {}
+  ): Promise<Response> {
+    return this.request("put", container, null, {
+      headers: metadataHeaders("container", metadata),
+    });
+  }
+
+  async deleteContainer(container: string): Promise<Response> {
+    return this.request("delete", container, null);
+  }
+
+  container(name: string): ContainerInterface {
+    return makeContainerInterface(this, name);
   }
 }

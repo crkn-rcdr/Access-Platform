@@ -1,10 +1,7 @@
 import { Response as FetchResponse } from "node-fetch";
-import * as Swift from "./types.js";
+import { Entity, JSONResponse, Response, StreamResponse } from "./types.js";
 
-export function getResponse(
-  entity: Swift.Entity,
-  response: FetchResponse
-): Swift.Response {
+export function getResponse(entity: Entity, response: FetchResponse): Response {
   return {
     code: response.status,
     date: new Date(response.headers.get("Date") || ""),
@@ -14,6 +11,7 @@ export function getResponse(
     transactionId: response.headers.get("X-Trans-Id") || "",
     etag: response.headers.get("ETag") || "",
     lastModified: new Date(response.headers.get("Last-Modified") || ""),
+    contentType: response.headers.get("content-type") || "",
     header: (name: string) => response.headers.get(`x-${entity}-${name}`),
     metaHeader: (name: string) =>
       response.headers.get(`x-${entity}-meta-${name}`),
@@ -21,9 +19,9 @@ export function getResponse(
 }
 
 export async function getJSONResponse<T>(
-  entity: Swift.Entity,
+  entity: Entity,
   response: FetchResponse
-): Promise<Swift.JSONResponse<T>> {
+): Promise<JSONResponse<T>> {
   const swiftResponse = getResponse(entity, response);
   const text = await response.text();
   try {
@@ -38,9 +36,9 @@ export async function getJSONResponse<T>(
 }
 
 export function getStreamResponse(
-  entity: Swift.Entity,
+  entity: Entity,
   response: FetchResponse
-): Swift.StreamResponse {
+): StreamResponse {
   const swiftResponse = getResponse(entity, response);
   return {
     ...swiftResponse,
