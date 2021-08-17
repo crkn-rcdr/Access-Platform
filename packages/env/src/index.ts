@@ -29,6 +29,7 @@ export const Env = z
      */
     AUTH_URL: Url.default("https://auth.canadiana.ca"),
     COUCHDB_USER: z.string().min(1).default("admin"),
+    SWIFT_ACCOUNT: z.string().min(1).default("AUTH_crkn"),
     /**
      * ADDITIONAL: You likely won't need to set these.
      */
@@ -69,6 +70,7 @@ export const Env = z
         server: env.SWIFT_URL,
         user: env.SWIFT_USER,
         password: env.SWIFT_PASSWORD,
+        account: env.SWIFT_ACCOUNT,
       },
     };
   });

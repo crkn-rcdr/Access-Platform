@@ -23,6 +23,7 @@ You may not need to change these, and they have default values.
 
 - `AUTH_URL`: URL serving the the platform authentication service (default: `https://auth.canadiana.ca`)
 - `COUCHDB_USER`: name of the CouchDB admin user (default: `admin`)
+- `SWIFT_ACCOUNT`: name of the Swift account in which content is stored (default: `AUTH_crkn`)
 
 ## Default ports
 
