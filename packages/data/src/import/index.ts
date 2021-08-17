@@ -1,1 +1,6 @@
-export { LegacyPackageRecord } from "./LegacyPackageRecord.js";
+export {
+  LegacyPackage,
+  SmeltedLegacyPackage,
+  SmeltingLegacyPackage,
+  UnsmeltedLegacyPackage,
+} from "./LegacyPackage.js";

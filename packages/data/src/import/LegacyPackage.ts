@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { MD5 } from "../util/MD5.js";
-import { ProcessUpdate } from "../util/ProcessUpdate.js";
+import { ProcessRequest, ProcessResult } from "../util/ProcessUpdate.js";
 import { Slug } from "../util/Slug.js";
 import { StaffUpdate } from "../util/StaffUpdate.js";
 import { Timestamp } from "../util/Timestamp.js";
@@ -10,16 +10,11 @@ import { UnixFilePath } from "../util/UnixFilePath.js";
  * A record of a package in the legacy preservation platform
  * that the Access Platform can import.
  */
-export const LegacyPackageRecord = z.object({
+export const UnsmeltedLegacyPackage = z.object({
   /**
    * The package's AIP id.
    */
   id: Slug,
-
-  /**
-   * The Slug chosen by staff for the associated Manifest.
-   */
-  slug: Slug.optional(),
 
   /**
    * A list of repository servers this package can be found on.
@@ -68,16 +63,46 @@ export const LegacyPackageRecord = z.object({
    * Date when this record was last updated.
    */
   updated: Timestamp,
-
-  /**
-   * Request for and result of a Smelter operation on this package.
-   */
-  smelt: ProcessUpdate.optional(),
-
-  /**
-   * A record of the staff member who caused this record to be updated.
-   */
-  staff: StaffUpdate.optional(),
 });
 
-export type LegacyPackageRecord = z.infer<typeof LegacyPackageRecord>;
+export type UnsmeltedLegacyPackage = z.infer<typeof UnsmeltedLegacyPackage>;
+
+export const SmeltingLegacyPackage = UnsmeltedLegacyPackage.merge(
+  z.object({
+    /**
+     * The Slug chosen by staff for the associated Manifest.
+     */
+    slug: Slug,
+
+    /**
+     * Request for a Smelter operation on this package.
+     */
+    smelt: ProcessRequest,
+
+    /**
+     * A record of the staff member who caused this record to be updated.
+     */
+    staff: StaffUpdate.optional(),
+  })
+);
+
+export type SmeltingLegacyPackage = z.infer<typeof SmeltingLegacyPackage>;
+
+export const SmeltedLegacyPackage = SmeltingLegacyPackage.merge(
+  z.object({
+    /**
+     * Result of a Smelter operation on this package.
+     */
+    smelt: ProcessResult,
+  })
+);
+
+export type SmeltedLegacyPackage = z.infer<typeof SmeltedLegacyPackage>;
+
+export const LegacyPackage = z.union([
+  UnsmeltedLegacyPackage,
+  SmeltingLegacyPackage,
+  SmeltedLegacyPackage,
+]);
+
+export type LegacyPackage = z.infer<typeof LegacyPackage>;
