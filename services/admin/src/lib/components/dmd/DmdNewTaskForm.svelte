@@ -105,13 +105,13 @@ none
 </script>
 
 <div class="new-task-wrapper">
-  <br />
+  <!--br />
   <h6>Select a metadata file to process:</h6>
-  <br />
+  <br /-->
 
   <NotificationBar message={errorText} status="fail" />
   <fieldset class="new-task-fields">
-    <span>Metadata File:</span>
+    <span><!--Metadata File:--></span>
     <FileSelector on:change={handleFileSelected} />
     <!--/fieldset-->
     {#if b64EncodedMetadataFileText}

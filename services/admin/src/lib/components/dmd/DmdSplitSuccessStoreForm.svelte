@@ -875,9 +875,9 @@
   message="Success: Metadata file processing complete! In the table below, you can  preview the metadata to be applied to each item."
 /-->
 
-<br />
+<!--br />
 <h6>Look-up and Update Items</h6>
-<br />
+<br /-->
 
 <div class="metadata-form">
   <ScrollStepper
@@ -969,7 +969,7 @@
   </ScrollStepper>
 </div>
 
-<div class="metadata-table ">
+<div class="metadata-table">
   <DmdItemsTable
     bind:dmdTask
     bind:accessLabel={depositor["label"]}
@@ -979,13 +979,6 @@
 </div>
 
 <style>
-  h6 {
-    text-align: center;
-  }
-  .metadata-form {
-    width: fit-content;
-    margin: auto;
-  }
   .loading-button .text {
     margin-left: var(--margin-sm);
   }

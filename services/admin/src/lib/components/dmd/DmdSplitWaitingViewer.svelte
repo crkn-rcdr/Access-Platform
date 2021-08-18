@@ -28,13 +28,13 @@ Displays a dmd task in an waiting state.
 <div
   class="auto-align auto-align__block auto-align__column auto-align__a-center"
 >
-  <h6>Please wait while the metadata file processes...</h6>
-  <br />
-
   <div class="auto-align auto-align__block auto-align__j-center">
     <Loading backgroundType="gradient" />
   </div>
   <br />
+  <h6>Please wait while the metadata file processes...</h6>
+  <br />
+
   <DmdTaskInfoTable {dmdTask} />
 </div>
 

@@ -24,5 +24,6 @@
   }
   p {
     color: var(--secondary);
+    margin-bottom: var(--margin-sm) !important;
   }
 </style>
