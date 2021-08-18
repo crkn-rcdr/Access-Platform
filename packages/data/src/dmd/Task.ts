@@ -41,16 +41,6 @@ const ParseRecord = z
      * Any message returned by the metadata processor.
      */
     message: z.string().optional(),
-
-    /**
-     * If the item was found on an access platform.
-     */
-    access: z.boolean().optional(),
-
-    /**
-     * If the item was found on preservation.
-     */
-    preservation: z.boolean().optional(),
   })
   .refine(
     (record) => !record.parsed || (record.id && record.output && record.label),

@@ -3,31 +3,48 @@
   import ScrollStepper from "$lib/components/shared/ScrollStepper.svelte";
   import ScrollStepperStep from "$lib/components/shared/ScrollStepperStep.svelte";
   import Loading from "$lib/components/shared/Loading.svelte";
-  import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
   import DmdItemsTable from "$lib/components/dmd/DmdItemsTable.svelte";
   import DmdDepositorSelector from "$lib/components/dmd/DmdDepositorSelector.svelte";
-  import DmdTaskInfoTable from "./DmdTaskInfoTable.svelte";
-  import ExpansionTile from "../shared/ExpansionTile.svelte";
+  import { getStores } from "$app/stores";
+  import type { Session } from "$lib/types";
+
+  /**
+   * @type {Session} The session store that contains the module for sending requests to lapin.
+   */
+  const { session } = getStores<Session>();
+
   let depositor = {
     string: "oocihm",
     label: "Canadiana.org",
   };
+
+  let activeStepIndex = 0;
+
+  let hasLookupRan = false;
+  let showLookupLoader = false;
+  let showLookupResults = false;
+
+  let lookupResults = {};
+
   let shouldUpdateInAccess = true;
   let shouldUpdateInPreservation = true;
-  let activeStepIndex = 0;
-  let hasLookupRan = false;
-  let showLookupResults = false;
-  let showLookupLoader = false;
+
   export let dmdTask: SucceededDMDTask = {
     id: "123",
     updated: "1628785112",
     attachments: {
-      // ...metadata file info
+      metadata: {
+        content_type: "application/json",
+        revpos: 2,
+        digest: "md5-QpoRn3RBQEAl8wBet0RVmw==",
+        length: 646,
+        stub: true,
+      },
     },
     user: {
-      email: "email",
-      name: "name",
-    }, //for now
+      email: "lapierre@crkn.ca",
+      name: "Brittny Lapierre",
+    },
     format: "marcooe",
     process: {
       requestDate: "1628785101",
@@ -37,832 +54,39 @@
     },
     items: [
       {
-        message: `{
-    "_id": "6116ba28948421e08ac27da1",
-    "index": 0,
-    "guid": "3ed1c087-e10b-4fae-b160-295a6c4ebab2",
-    "isActive": false,
-    "balance": "$3,247.23",
-    "picture": "http://placehold.it/32x32",
-    "age": 39,
-    "eyeColor": "blue",
-    "name": "Tasha Vazquez",
-    "gender": "female",
-    "company": "LIQUICOM",
-    "email": "tashavazquez@liquicom.com",
-    "phone": "+1 (926) 519-2616",
-    "address": "149 Hampton Avenue, Convent, Wyoming, 9623",
-    "about": "Cupidatat culpa officia proident sint irure pariatur eiusmod magna do ullamco commodo. Ut nostrud sunt aliqua anim et deserunt ut sit eiusmod aute. Lorem proident sint anim anim officia dolore ut officia mollit ullamco ex veniam. Veniam qui aliquip nulla deserunt do. Nostrud dolore sit dolore velit.",
-    "registered": "2021-04-13T05:35:59 +04:00",
-    "latitude": -62.302263,
-    "longitude": 93.035148,
-    "tags": [
-      "proident",
-      "laboris",
-      "aliqua",
-      "id",
-      "nisi",
-      "nostrud",
-      "qui"
-    ],
-    "friends": [
-      {
-        "id": 0,
-        "name": "Herminia Cobb"
-      },
-      {
-        "id": 1,
-        "name": "Maldonado Pitts"
-      },
-      {
-        "id": 2,
-        "name": "Hardy Branch"
-      },
-      [
-      {
-        "id": 1234,
-        "name": "moo"
-      }]
-    ],
-    "greeting": "Hello, Tasha Vazquez! You have 7 unread messages.",
-    "favoriteFruit": "banana"
-  }`,
+        message: `{"test":"json"}`,
         id: "8_06941_1",
-        label: "Vol. I, No. 1 (October 17, 1891)",
-        parsed: true,
-      },
-      {
-        message: `{
-    "_id": "6116ba28948421e08ac27da1",
-    "index": 0,
-    "guid": "3ed1c087-e10b-4fae-b160-295a6c4ebab2",
-    "isActive": false,
-    "balance": "$3,247.23",
-    "picture": "http://placehold.it/32x32",
-    "age": 39,
-    "eyeColor": "blue",
-    "name": "Tasha Vazquez",
-    "gender": "female",
-    "company": "LIQUICOM",
-    "email": "tashavazquez@liquicom.com",
-    "phone": "+1 (926) 519-2616",
-    "address": "149 Hampton Avenue, Convent, Wyoming, 9623",
-    "about": "Cupidatat culpa officia proident sint irure pariatur eiusmod magna do ullamco commodo. Ut nostrud sunt aliqua anim et deserunt ut sit eiusmod aute. Lorem proident sint anim anim officia dolore ut officia mollit ullamco ex veniam. Veniam qui aliquip nulla deserunt do. Nostrud dolore sit dolore velit.",
-    "registered": "2021-04-13T05:35:59 +04:00",
-    "latitude": -62.302263,
-    "longitude": 93.035148,
-    "tags": [
-      "proident",
-      "laboris",
-      "aliqua",
-      "id",
-      "nisi",
-      "nostrud",
-      "qui"
-    ],
-    "friends": [
-      {
-        "id": 0,
-        "name": "Herminia Cobb"
-      },
-      {
-        "id": 1,
-        "name": "Maldonado Pitts"
-      },
-      {
-        "id": 2,
-        "name": "Hardy Branch"
-      },
-      [
-      {
-        "id": 1234,
-        "name": "moo"
-      }]
-    ],
-    "greeting": "Hello, Tasha Vazquez! You have 7 unread messages.",
-    "favoriteFruit": "banana"
-  }`,
-        id: "8_06941_1",
-        label: "Vol. I, No. 1 (October 17, 1891)",
-        parsed: true,
-      },
-      {
-        message: `{
-    "_id": "6116ba28948421e08ac27da1",
-    "index": 0,
-    "guid": "3ed1c087-e10b-4fae-b160-295a6c4ebab2",
-    "isActive": false,
-    "balance": "$3,247.23",
-    "picture": "http://placehold.it/32x32",
-    "age": 39,
-    "eyeColor": "blue",
-    "name": "Tasha Vazquez",
-    "gender": "female",
-    "company": "LIQUICOM",
-    "email": "tashavazquez@liquicom.com",
-    "phone": "+1 (926) 519-2616",
-    "address": "149 Hampton Avenue, Convent, Wyoming, 9623",
-    "about": "Cupidatat culpa officia proident sint irure pariatur eiusmod magna do ullamco commodo. Ut nostrud sunt aliqua anim et deserunt ut sit eiusmod aute. Lorem proident sint anim anim officia dolore ut officia mollit ullamco ex veniam. Veniam qui aliquip nulla deserunt do. Nostrud dolore sit dolore velit.",
-    "registered": "2021-04-13T05:35:59 +04:00",
-    "latitude": -62.302263,
-    "longitude": 93.035148,
-    "tags": [
-      "proident",
-      "laboris",
-      "aliqua",
-      "id",
-      "nisi",
-      "nostrud",
-      "qui"
-    ],
-    "friends": [
-      {
-        "id": 0,
-        "name": "Herminia Cobb"
-      },
-      {
-        "id": 1,
-        "name": "Maldonado Pitts"
-      },
-      {
-        "id": 2,
-        "name": "Hardy Branch"
-      },
-      [
-      {
-        "id": 1234,
-        "name": "moo"
-      }]
-    ],
-    "greeting": "Hello, Tasha Vazquez! You have 7 unread messages.",
-    "favoriteFruit": "banana"
-  }`,
-        id: "8_06941_1",
-        label: "Vol. I, No. 1 (October 17, 1891)",
-        parsed: true,
-      },
-      {
-        message: `{
-    "_id": "6116ba28948421e08ac27da1",
-    "index": 0,
-    "guid": "3ed1c087-e10b-4fae-b160-295a6c4ebab2",
-    "isActive": false,
-    "balance": "$3,247.23",
-    "picture": "http://placehold.it/32x32",
-    "age": 39,
-    "eyeColor": "blue",
-    "name": "Tasha Vazquez",
-    "gender": "female",
-    "company": "LIQUICOM",
-    "email": "tashavazquez@liquicom.com",
-    "phone": "+1 (926) 519-2616",
-    "address": "149 Hampton Avenue, Convent, Wyoming, 9623",
-    "about": "Cupidatat culpa officia proident sint irure pariatur eiusmod magna do ullamco commodo. Ut nostrud sunt aliqua anim et deserunt ut sit eiusmod aute. Lorem proident sint anim anim officia dolore ut officia mollit ullamco ex veniam. Veniam qui aliquip nulla deserunt do. Nostrud dolore sit dolore velit.",
-    "registered": "2021-04-13T05:35:59 +04:00",
-    "latitude": -62.302263,
-    "longitude": 93.035148,
-    "tags": [
-      "proident",
-      "laboris",
-      "aliqua",
-      "id",
-      "nisi",
-      "nostrud",
-      "qui"
-    ],
-    "friends": [
-      {
-        "id": 0,
-        "name": "Herminia Cobb"
-      },
-      {
-        "id": 1,
-        "name": "Maldonado Pitts"
-      },
-      {
-        "id": 2,
-        "name": "Hardy Branch"
-      },
-      [
-      {
-        "id": 1234,
-        "name": "moo"
-      }]
-    ],
-    "greeting": "Hello, Tasha Vazquez! You have 7 unread messages.",
-    "favoriteFruit": "banana"
-  }`,
-        id: "8_06941_1",
-        label: "Vol. I, No. 1 (October 17, 1891)",
-        parsed: true,
-      },
-      {
-        message: `{
-    "_id": "6116ba28948421e08ac27da1",
-    "index": 0,
-    "guid": "3ed1c087-e10b-4fae-b160-295a6c4ebab2",
-    "isActive": false,
-    "balance": "$3,247.23",
-    "picture": "http://placehold.it/32x32",
-    "age": 39,
-    "eyeColor": "blue",
-    "name": "Tasha Vazquez",
-    "gender": "female",
-    "company": "LIQUICOM",
-    "email": "tashavazquez@liquicom.com",
-    "phone": "+1 (926) 519-2616",
-    "address": "149 Hampton Avenue, Convent, Wyoming, 9623",
-    "about": "Cupidatat culpa officia proident sint irure pariatur eiusmod magna do ullamco commodo. Ut nostrud sunt aliqua anim et deserunt ut sit eiusmod aute. Lorem proident sint anim anim officia dolore ut officia mollit ullamco ex veniam. Veniam qui aliquip nulla deserunt do. Nostrud dolore sit dolore velit.",
-    "registered": "2021-04-13T05:35:59 +04:00",
-    "latitude": -62.302263,
-    "longitude": 93.035148,
-    "tags": [
-      "proident",
-      "laboris",
-      "aliqua",
-      "id",
-      "nisi",
-      "nostrud",
-      "qui"
-    ],
-    "friends": [
-      {
-        "id": 0,
-        "name": "Herminia Cobb"
-      },
-      {
-        "id": 1,
-        "name": "Maldonado Pitts"
-      },
-      {
-        "id": 2,
-        "name": "Hardy Branch"
-      },
-      [
-      {
-        "id": 1234,
-        "name": "moo"
-      }]
-    ],
-    "greeting": "Hello, Tasha Vazquez! You have 7 unread messages.",
-    "favoriteFruit": "banana"
-  }`,
-        id: "8_06941_1",
-        label: "Vol. I, No. 1 (October 17, 1891)",
-        parsed: true,
-      },
-      {
-        message: `{
-    "_id": "6116ba28948421e08ac27da1",
-    "index": 0,
-    "guid": "3ed1c087-e10b-4fae-b160-295a6c4ebab2",
-    "isActive": false,
-    "balance": "$3,247.23",
-    "picture": "http://placehold.it/32x32",
-    "age": 39,
-    "eyeColor": "blue",
-    "name": "Tasha Vazquez",
-    "gender": "female",
-    "company": "LIQUICOM",
-    "email": "tashavazquez@liquicom.com",
-    "phone": "+1 (926) 519-2616",
-    "address": "149 Hampton Avenue, Convent, Wyoming, 9623",
-    "about": "Cupidatat culpa officia proident sint irure pariatur eiusmod magna do ullamco commodo. Ut nostrud sunt aliqua anim et deserunt ut sit eiusmod aute. Lorem proident sint anim anim officia dolore ut officia mollit ullamco ex veniam. Veniam qui aliquip nulla deserunt do. Nostrud dolore sit dolore velit.",
-    "registered": "2021-04-13T05:35:59 +04:00",
-    "latitude": -62.302263,
-    "longitude": 93.035148,
-    "tags": [
-      "proident",
-      "laboris",
-      "aliqua",
-      "id",
-      "nisi",
-      "nostrud",
-      "qui"
-    ],
-    "friends": [
-      {
-        "id": 0,
-        "name": "Herminia Cobb"
-      },
-      {
-        "id": 1,
-        "name": "Maldonado Pitts"
-      },
-      {
-        "id": 2,
-        "name": "Hardy Branch"
-      },
-      [
-      {
-        "id": 1234,
-        "name": "moo"
-      }]
-    ],
-    "greeting": "Hello, Tasha Vazquez! You have 7 unread messages.",
-    "favoriteFruit": "banana"
-  }`,
-        id: "8_06941_1",
-        label: "Vol. I, No. 1 (October 17, 1891)",
-        parsed: true,
-      },
-      {
-        message: `{
-    "_id": "6116ba28948421e08ac27da1",
-    "index": 0,
-    "guid": "3ed1c087-e10b-4fae-b160-295a6c4ebab2",
-    "isActive": false,
-    "balance": "$3,247.23",
-    "picture": "http://placehold.it/32x32",
-    "age": 39,
-    "eyeColor": "blue",
-    "name": "Tasha Vazquez",
-    "gender": "female",
-    "company": "LIQUICOM",
-    "email": "tashavazquez@liquicom.com",
-    "phone": "+1 (926) 519-2616",
-    "address": "149 Hampton Avenue, Convent, Wyoming, 9623",
-    "about": "Cupidatat culpa officia proident sint irure pariatur eiusmod magna do ullamco commodo. Ut nostrud sunt aliqua anim et deserunt ut sit eiusmod aute. Lorem proident sint anim anim officia dolore ut officia mollit ullamco ex veniam. Veniam qui aliquip nulla deserunt do. Nostrud dolore sit dolore velit.",
-    "registered": "2021-04-13T05:35:59 +04:00",
-    "latitude": -62.302263,
-    "longitude": 93.035148,
-    "tags": [
-      "proident",
-      "laboris",
-      "aliqua",
-      "id",
-      "nisi",
-      "nostrud",
-      "qui"
-    ],
-    "friends": [
-      {
-        "id": 0,
-        "name": "Herminia Cobb"
-      },
-      {
-        "id": 1,
-        "name": "Maldonado Pitts"
-      },
-      {
-        "id": 2,
-        "name": "Hardy Branch"
-      },
-      [
-      {
-        "id": 1234,
-        "name": "moo"
-      }]
-    ],
-    "greeting": "Hello, Tasha Vazquez! You have 7 unread messages.",
-    "favoriteFruit": "banana"
-  }`,
-        id: "8_06941_1",
-        label: "Vol. I, No. 1 (October 17, 1891)",
-        parsed: true,
-      },
-      {
-        message: `{
-    "_id": "6116ba28948421e08ac27da1",
-    "index": 0,
-    "guid": "3ed1c087-e10b-4fae-b160-295a6c4ebab2",
-    "isActive": false,
-    "balance": "$3,247.23",
-    "picture": "http://placehold.it/32x32",
-    "age": 39,
-    "eyeColor": "blue",
-    "name": "Tasha Vazquez",
-    "gender": "female",
-    "company": "LIQUICOM",
-    "email": "tashavazquez@liquicom.com",
-    "phone": "+1 (926) 519-2616",
-    "address": "149 Hampton Avenue, Convent, Wyoming, 9623",
-    "about": "Cupidatat culpa officia proident sint irure pariatur eiusmod magna do ullamco commodo. Ut nostrud sunt aliqua anim et deserunt ut sit eiusmod aute. Lorem proident sint anim anim officia dolore ut officia mollit ullamco ex veniam. Veniam qui aliquip nulla deserunt do. Nostrud dolore sit dolore velit.",
-    "registered": "2021-04-13T05:35:59 +04:00",
-    "latitude": -62.302263,
-    "longitude": 93.035148,
-    "tags": [
-      "proident",
-      "laboris",
-      "aliqua",
-      "id",
-      "nisi",
-      "nostrud",
-      "qui"
-    ],
-    "friends": [
-      {
-        "id": 0,
-        "name": "Herminia Cobb"
-      },
-      {
-        "id": 1,
-        "name": "Maldonado Pitts"
-      },
-      {
-        "id": 2,
-        "name": "Hardy Branch"
-      },
-      [
-      {
-        "id": 1234,
-        "name": "moo"
-      }]
-    ],
-    "greeting": "Hello, Tasha Vazquez! You have 7 unread messages.",
-    "favoriteFruit": "banana"
-  }`,
-        id: "8_06941_1",
-        label: "Vol. I, No. 1 (October 17, 1891)",
-        parsed: true,
-      },
-      {
-        message: `{
-    "_id": "6116ba28948421e08ac27da1",
-    "index": 0,
-    "guid": "3ed1c087-e10b-4fae-b160-295a6c4ebab2",
-    "isActive": false,
-    "balance": "$3,247.23",
-    "picture": "http://placehold.it/32x32",
-    "age": 39,
-    "eyeColor": "blue",
-    "name": "Tasha Vazquez",
-    "gender": "female",
-    "company": "LIQUICOM",
-    "email": "tashavazquez@liquicom.com",
-    "phone": "+1 (926) 519-2616",
-    "address": "149 Hampton Avenue, Convent, Wyoming, 9623",
-    "about": "Cupidatat culpa officia proident sint irure pariatur eiusmod magna do ullamco commodo. Ut nostrud sunt aliqua anim et deserunt ut sit eiusmod aute. Lorem proident sint anim anim officia dolore ut officia mollit ullamco ex veniam. Veniam qui aliquip nulla deserunt do. Nostrud dolore sit dolore velit.",
-    "registered": "2021-04-13T05:35:59 +04:00",
-    "latitude": -62.302263,
-    "longitude": 93.035148,
-    "tags": [
-      "proident",
-      "laboris",
-      "aliqua",
-      "id",
-      "nisi",
-      "nostrud",
-      "qui"
-    ],
-    "friends": [
-      {
-        "id": 0,
-        "name": "Herminia Cobb"
-      },
-      {
-        "id": 1,
-        "name": "Maldonado Pitts"
-      },
-      {
-        "id": 2,
-        "name": "Hardy Branch"
-      },
-      [
-      {
-        "id": 1234,
-        "name": "moo"
-      }]
-    ],
-    "greeting": "Hello, Tasha Vazquez! You have 7 unread messages.",
-    "favoriteFruit": "banana"
-  }`,
-        id: "8_06941_1",
-        label: "Vol. I, No. 1 (October 17, 1891)",
-        parsed: true,
-      },
-      {
-        message: `{
-    "_id": "6116ba28948421e08ac27da1",
-    "index": 0,
-    "guid": "3ed1c087-e10b-4fae-b160-295a6c4ebab2",
-    "isActive": false,
-    "balance": "$3,247.23",
-    "picture": "http://placehold.it/32x32",
-    "age": 39,
-    "eyeColor": "blue",
-    "name": "Tasha Vazquez",
-    "gender": "female",
-    "company": "LIQUICOM",
-    "email": "tashavazquez@liquicom.com",
-    "phone": "+1 (926) 519-2616",
-    "address": "149 Hampton Avenue, Convent, Wyoming, 9623",
-    "about": "Cupidatat culpa officia proident sint irure pariatur eiusmod magna do ullamco commodo. Ut nostrud sunt aliqua anim et deserunt ut sit eiusmod aute. Lorem proident sint anim anim officia dolore ut officia mollit ullamco ex veniam. Veniam qui aliquip nulla deserunt do. Nostrud dolore sit dolore velit.",
-    "registered": "2021-04-13T05:35:59 +04:00",
-    "latitude": -62.302263,
-    "longitude": 93.035148,
-    "tags": [
-      "proident",
-      "laboris",
-      "aliqua",
-      "id",
-      "nisi",
-      "nostrud",
-      "qui"
-    ],
-    "friends": [
-      {
-        "id": 0,
-        "name": "Herminia Cobb"
-      },
-      {
-        "id": 1,
-        "name": "Maldonado Pitts"
-      },
-      {
-        "id": 2,
-        "name": "Hardy Branch"
-      },
-      [
-      {
-        "id": 1234,
-        "name": "moo"
-      }]
-    ],
-    "greeting": "Hello, Tasha Vazquez! You have 7 unread messages.",
-    "favoriteFruit": "banana"
-  }`,
-        id: "8_06941_1",
-        label: "Vol. I, No. 1 (October 17, 1891)",
-        parsed: true,
-      },
-      {
-        message: `{
-    "_id": "6116ba28948421e08ac27da1",
-    "index": 0,
-    "guid": "3ed1c087-e10b-4fae-b160-295a6c4ebab2",
-    "isActive": false,
-    "balance": "$3,247.23",
-    "picture": "http://placehold.it/32x32",
-    "age": 39,
-    "eyeColor": "blue",
-    "name": "Tasha Vazquez",
-    "gender": "female",
-    "company": "LIQUICOM",
-    "email": "tashavazquez@liquicom.com",
-    "phone": "+1 (926) 519-2616",
-    "address": "149 Hampton Avenue, Convent, Wyoming, 9623",
-    "about": "Cupidatat culpa officia proident sint irure pariatur eiusmod magna do ullamco commodo. Ut nostrud sunt aliqua anim et deserunt ut sit eiusmod aute. Lorem proident sint anim anim officia dolore ut officia mollit ullamco ex veniam. Veniam qui aliquip nulla deserunt do. Nostrud dolore sit dolore velit.",
-    "registered": "2021-04-13T05:35:59 +04:00",
-    "latitude": -62.302263,
-    "longitude": 93.035148,
-    "tags": [
-      "proident",
-      "laboris",
-      "aliqua",
-      "id",
-      "nisi",
-      "nostrud",
-      "qui"
-    ],
-    "friends": [
-      {
-        "id": 0,
-        "name": "Herminia Cobb"
-      },
-      {
-        "id": 1,
-        "name": "Maldonado Pitts"
-      },
-      {
-        "id": 2,
-        "name": "Hardy Branch"
-      },
-      [
-      {
-        "id": 1234,
-        "name": "moo"
-      }]
-    ],
-    "greeting": "Hello, Tasha Vazquez! You have 7 unread messages.",
-    "favoriteFruit": "banana"
-  }`,
-        id: "8_06941_1",
-        label: "Vol. I, No. 1 (October 17, 1891)",
-        parsed: true,
-      },
-      {
-        message: `{
-    "_id": "6116ba28948421e08ac27da1",
-    "index": 0,
-    "guid": "3ed1c087-e10b-4fae-b160-295a6c4ebab2",
-    "isActive": false,
-    "balance": "$3,247.23",
-    "picture": "http://placehold.it/32x32",
-    "age": 39,
-    "eyeColor": "blue",
-    "name": "Tasha Vazquez",
-    "gender": "female",
-    "company": "LIQUICOM",
-    "email": "tashavazquez@liquicom.com",
-    "phone": "+1 (926) 519-2616",
-    "address": "149 Hampton Avenue, Convent, Wyoming, 9623",
-    "about": "Cupidatat culpa officia proident sint irure pariatur eiusmod magna do ullamco commodo. Ut nostrud sunt aliqua anim et deserunt ut sit eiusmod aute. Lorem proident sint anim anim officia dolore ut officia mollit ullamco ex veniam. Veniam qui aliquip nulla deserunt do. Nostrud dolore sit dolore velit.",
-    "registered": "2021-04-13T05:35:59 +04:00",
-    "latitude": -62.302263,
-    "longitude": 93.035148,
-    "tags": [
-      "proident",
-      "laboris",
-      "aliqua",
-      "id",
-      "nisi",
-      "nostrud",
-      "qui"
-    ],
-    "friends": [
-      {
-        "id": 0,
-        "name": "Herminia Cobb"
-      },
-      {
-        "id": 1,
-        "name": "Maldonado Pitts"
-      },
-      {
-        "id": 2,
-        "name": "Hardy Branch"
-      },
-      [
-      {
-        "id": 1234,
-        "name": "moo"
-      }]
-    ],
-    "greeting": "Hello, Tasha Vazquez! You have 7 unread messages.",
-    "favoriteFruit": "banana"
-  }`,
-        id: "8_06941_1",
-        label: "Vol. I, No. 1 (October 17, 1891)",
-        parsed: true,
-      },
-      {
-        message: `{
-    "_id": "6116ba28948421e08ac27da1",
-    "index": 0,
-    "guid": "3ed1c087-e10b-4fae-b160-295a6c4ebab2",
-    "isActive": false,
-    "balance": "$3,247.23",
-    "picture": "http://placehold.it/32x32",
-    "age": 39,
-    "eyeColor": "blue",
-    "name": "Tasha Vazquez",
-    "gender": "female",
-    "company": "LIQUICOM",
-    "email": "tashavazquez@liquicom.com",
-    "phone": "+1 (926) 519-2616",
-    "address": "149 Hampton Avenue, Convent, Wyoming, 9623",
-    "about": "Cupidatat culpa officia proident sint irure pariatur eiusmod magna do ullamco commodo. Ut nostrud sunt aliqua anim et deserunt ut sit eiusmod aute. Lorem proident sint anim anim officia dolore ut officia mollit ullamco ex veniam. Veniam qui aliquip nulla deserunt do. Nostrud dolore sit dolore velit.",
-    "registered": "2021-04-13T05:35:59 +04:00",
-    "latitude": -62.302263,
-    "longitude": 93.035148,
-    "tags": [
-      "proident",
-      "laboris",
-      "aliqua",
-      "id",
-      "nisi",
-      "nostrud",
-      "qui"
-    ],
-    "friends": [
-      {
-        "id": 0,
-        "name": "Herminia Cobb"
-      },
-      {
-        "id": 1,
-        "name": "Maldonado Pitts"
-      },
-      {
-        "id": 2,
-        "name": "Hardy Branch"
-      },
-      [
-      {
-        "id": 1234,
-        "name": "moo"
-      }]
-    ],
-    "greeting": "Hello, Tasha Vazquez! You have 7 unread messages.",
-    "favoriteFruit": "banana"
-  }`,
-        id: "8_06941_1",
-        label: "Vol. I, No. 1 (October 17, 1891)",
-        parsed: true,
-      },
-      {
-        message: `{
-    "_id": "6116ba28948421e08ac27da1",
-    "index": 0,
-    "guid": "3ed1c087-e10b-4fae-b160-295a6c4ebab2",
-    "isActive": false,
-    "balance": "$3,247.23",
-    "picture": "http://placehold.it/32x32",
-    "age": 39,
-    "eyeColor": "blue",
-    "name": "Tasha Vazquez",
-    "gender": "female",
-    "company": "LIQUICOM",
-    "email": "tashavazquez@liquicom.com",
-    "phone": "+1 (926) 519-2616",
-    "address": "149 Hampton Avenue, Convent, Wyoming, 9623",
-    "about": "Cupidatat culpa officia proident sint irure pariatur eiusmod magna do ullamco commodo. Ut nostrud sunt aliqua anim et deserunt ut sit eiusmod aute. Lorem proident sint anim anim officia dolore ut officia mollit ullamco ex veniam. Veniam qui aliquip nulla deserunt do. Nostrud dolore sit dolore velit.",
-    "registered": "2021-04-13T05:35:59 +04:00",
-    "latitude": -62.302263,
-    "longitude": 93.035148,
-    "tags": [
-      "proident",
-      "laboris",
-      "aliqua",
-      "id",
-      "nisi",
-      "nostrud",
-      "qui"
-    ],
-    "friends": [
-      {
-        "id": 0,
-        "name": "Herminia Cobb"
-      },
-      {
-        "id": 1,
-        "name": "Maldonado Pitts"
-      },
-      {
-        "id": 2,
-        "name": "Hardy Branch"
-      },
-      [
-      {
-        "id": 1234,
-        "name": "moo"
-      }]
-    ],
-    "greeting": "Hello, Tasha Vazquez! You have 7 unread messages.",
-    "favoriteFruit": "banana"
-  }`,
-        id: "8_06941_1",
-        label: "Vol. I, No. 1 (October 17, 1891)",
-        parsed: true,
-      },
-      {
-        message: `{
-    "_id": "6116ba28948421e08ac27da1",
-    "index": 0,
-    "guid": "3ed1c087-e10b-4fae-b160-295a6c4ebab2",
-    "isActive": false,
-    "balance": "$3,247.23",
-    "picture": "http://placehold.it/32x32",
-    "age": 39,
-    "eyeColor": "blue",
-    "name": "Tasha Vazquez",
-    "gender": "female",
-    "company": "LIQUICOM",
-    "email": "tashavazquez@liquicom.com",
-    "phone": "+1 (926) 519-2616",
-    "address": "149 Hampton Avenue, Convent, Wyoming, 9623",
-    "about": "Cupidatat culpa officia proident sint irure pariatur eiusmod magna do ullamco commodo. Ut nostrud sunt aliqua anim et deserunt ut sit eiusmod aute. Lorem proident sint anim anim officia dolore ut officia mollit ullamco ex veniam. Veniam qui aliquip nulla deserunt do. Nostrud dolore sit dolore velit.",
-    "registered": "2021-04-13T05:35:59 +04:00",
-    "latitude": -62.302263,
-    "longitude": 93.035148,
-    "tags": [
-      "proident",
-      "laboris",
-      "aliqua",
-      "id",
-      "nisi",
-      "nostrud",
-      "qui"
-    ],
-    "friends": [
-      {
-        "id": 0,
-        "name": "Herminia Cobb"
-      },
-      {
-        "id": 1,
-        "name": "Maldonado Pitts"
-      },
-      {
-        "id": 2,
-        "name": "Hardy Branch"
-      },
-      [
-      {
-        "id": 1234,
-        "name": "moo"
-      }]
-    ],
-    "greeting": "Hello, Tasha Vazquez! You have 7 unread messages.",
-    "favoriteFruit": "banana"
-  }`,
-        id: "8_06941_1",
-        label: "Vol. I, No. 1 (October 17, 1891)",
+        label: "volume 1",
+        output: "marc",
         parsed: true,
       },
     ],
   };
+
+  async function handleLookupPressed() {
+    activeStepIndex = 0;
+    lookupResults = {};
+    showLookupLoader = true;
+    showLookupResults = false;
+    //slug.resolveMany
+
+    const response = await $session.lapin.query(
+      "slug.resolveMany",
+      dmdTask.items.map((item) => `${depositor.string}.${item.id}`)
+    );
+    if (response) {
+      console.log(response);
+      lookupResults["access"] = response;
+      lookupResults["preservation"] = {};
+      activeStepIndex = 1;
+      hasLookupRan = true;
+      showLookupLoader = false;
+      showLookupResults = true;
+      //console.log("lookupList", lookupList);
+    } else {
+      //error = response.toString();
+    }
+  }
 
   $: {
     depositor;
@@ -895,27 +119,7 @@
           <button
             class="lookup-button primary"
             class:secondary={activeStepIndex === 1}
-            on:click={() => {
-              activeStepIndex = 0;
-              for (const item of dmdTask["items"]) {
-                delete item["access"];
-                delete item["preservation"];
-              }
-              dmdTask = dmdTask;
-              showLookupLoader = true;
-              showLookupResults = false;
-              setTimeout(() => {
-                activeStepIndex = 1;
-                for (const item of dmdTask["items"]) {
-                  item["access"] = Math.random() > 0.5;
-                  item["preservation"] = Math.random() > 0.5;
-                }
-                dmdTask = dmdTask;
-                hasLookupRan = true;
-                showLookupLoader = false;
-                showLookupResults = true;
-              }, 12000);
-            }}
+            on:click={handleLookupPressed}
           >
             <span
               class="auto-align auto-align__a-center"
@@ -937,7 +141,7 @@
       </div>
     </ScrollStepperStep>
     <ScrollStepperStep
-      title={`Start updating descriptive metadata for items found`}
+      title={`Update descriptive metadata for items found`}
       isLastStep={true}
     >
       <div slot="icon">2</div>
@@ -973,7 +177,8 @@
 <div class="metadata-table">
   <DmdItemsTable
     bind:dmdTask
-    bind:accessLabel={depositor["label"]}
+    bind:lookupResults
+    bind:depositor
     showAccessColumn={shouldUpdateInAccess && showLookupResults}
     showPreservationColumn={shouldUpdateInPreservation && showLookupResults}
   />
@@ -994,14 +199,4 @@
   .loading-button .text {
     margin-left: var(--margin-sm);
   }
-  /*@keyframes fadeout {
-    from {
-      opacity: 1;
-      height: initial;
-    }
-    to {
-      opacity: 0;
-      height: 0;
-    }
-  }*/
 </style>

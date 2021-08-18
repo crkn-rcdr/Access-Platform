@@ -5,7 +5,8 @@
   export let dmdTask: SucceededDMDTask;
   export let showAccessColumn: boolean = false;
   export let showPreservationColumn: boolean = false;
-  export let accessLabel: string = "Access";
+  export let depositor: { string: string; label: string };
+  export let lookupResults: any = {};
 
   let showJSONPreview = false;
   let previewItem;
@@ -18,10 +19,10 @@
         <th>Id</th>
         <th>Label</th>
         <th>Value</th>
-        {#if showAccessColumn && "access" in dmdTask["items"][0]}
-          <th>Found in {accessLabel}?</th>
+        {#if showAccessColumn}
+          <th>Found in {depositor.label}?</th>
         {/if}
-        {#if showPreservationColumn && "preservation" in dmdTask["items"][0]}
+        {#if showPreservationColumn}
           <th>Found in Preservation?</th>
         {/if}
       </tr>
@@ -45,17 +46,29 @@
                 {item["message"]}
               {/if}
             </td>
-            {#if showAccessColumn && "access" in item}
-              <td class:found={item["access"]} class:not-found={!item["access"]}
-                >{item["access"] ? "Yes" : "No"}</td
-              >
+
+            {#if showAccessColumn}
+              {#if lookupResults.access[`${depositor.string}.${item.id}`]?.found}
+                <td class="found">
+                  <a
+                    href={`/object/${
+                      lookupResults.access[`${depositor.string}.${item.id}`]
+                        .result.id
+                    }`}
+                    target="_blank">Yes</a
+                  >
+                </td>
+              {:else}
+                <td class="not-found"> No </td>
+              {/if}
             {/if}
-            {#if showPreservationColumn && "preservation" in item}
-              <td
-                class:found={item["preservation"]}
-                class:not-found={!item["preservation"]}
-                >{item["preservation"] ? "Yes" : "No"}</td
-              >
+
+            {#if showPreservationColumn}
+              {#if lookupResults.preservation[`${depositor.string}.${item.id}`]?.found}
+                <td class="found">Yes</td>
+              {:else}
+                <td class="not-found">No</td>
+              {/if}
             {/if}
           </tr>
         {/if}

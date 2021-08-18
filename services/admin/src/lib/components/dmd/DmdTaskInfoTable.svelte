@@ -72,7 +72,7 @@ Displays a dmd task's time based information in a table, the user sees the task 
 
     <div class="grid grid__col_2">
       {#if dmdTask.process["requestDate"]}
-        <span>inititated:</span>
+        <span>Inititated at:</span>
         <span class="value">
           {`${new Date(
             parseInt(`${dmdTask.process["requestDate"]}`) * 1000
@@ -80,7 +80,7 @@ Displays a dmd task's time based information in a table, the user sees the task 
         </span>
       {/if}
       {#if dmdTask.updated}
-        <span>updated:</span>
+        <span>Updated at:</span>
         <span class="value">
           {`${new Date(
             parseInt(`${dmdTask.updated}`) * 1000
