@@ -1,12 +1,13 @@
 <script lang="ts">
   export let progress = 0;
+  export let progressText = "";
 </script>
 
 <div class="progress-wrap auto-align auto-align__a-center">
   <div class="backdrop">
     <div class="progress-bar" style={`width:${progress}%`} />
   </div>
-  <span>{progress}%</span>
+  <span>{progress}% {progressText}</span>
 </div>
 
 <style>

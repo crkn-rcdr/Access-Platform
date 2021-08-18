@@ -63,7 +63,7 @@
       {
         message: `{"test":"json"}`,
         id: "8_06941",
-        label: "volume 1",
+        label: "collection",
         output: "marc",
         parsed: true,
       },
@@ -77,7 +77,7 @@
       {
         message: `{"test":"json"}`,
         id: "8_06941_2",
-        label: "volume 1",
+        label: "volume 2",
         output: "marc",
         parsed: true,
       },
@@ -118,7 +118,6 @@
 
   function setStateToUpdated() {
     showUpdateResults = true;
-    showUpdateProgress = false;
   }
 
   async function handleLookupPressed() {
@@ -133,7 +132,7 @@
       lookupResults["access"] = response;
       lookupResults["preservation"] = {}; // TODO: Ask how to implement this
 
-      setTimeout(setStateToUpdate, 5000);
+      setStateToUpdate();
       //setStateToUploadEnabled();
     } else {
       //error = response.toString();
@@ -176,7 +175,7 @@
 
         index++;
       }
-      setTimeout(setStateToUpdated, 5000);
+      setStateToUpdated();
     }
   }
 
@@ -186,70 +185,74 @@
   }
 </script>
 
-<div class="metadata-form">
-  <ScrollStepper
-    bind:activeStepIndex
-    displayPrevious={true}
-    enableAutoScrolling={false}
-  >
-    <ScrollStepperStep
-      title={`Select an access platform and look-up items${
-        hasLookupRan ? " again" : ""
-      }`}
+{#if !showUpdateProgress}
+  <div class="metadata-form">
+    <ScrollStepper
+      bind:activeStepIndex
+      displayPrevious={true}
+      enableAutoScrolling={false}
     >
-      <div slot="icon">1</div>
-
-      <div
-        class="look-up-wrap auto-align auto-align__a-center auto-align__j-between "
+      <ScrollStepperStep
+        title={`Select an access platform and look-up items${
+          hasLookupRan ? " again" : ""
+        }`}
       >
-        <div class="depositor-select-wrap">
-          <DmdDepositorSelector bind:depositor />
-        </div>
+        <div slot="icon">1</div>
 
-        {#if depositor?.string?.length}
-          <LoadingButton
-            buttonClass={`${activeStepIndex === 0 ? "primary" : "secondary"}`}
-            showLoader={showLookupLoader}
-            on:clicked={handleLookupPressed}
-          >
-            <span slot="content">
-              {!showLookupLoader
-                ? hasLookupRan
-                  ? "Look-up Again"
-                  : "Look-up"
-                : "Looking-up..."}
-            </span>
-          </LoadingButton>
-        {/if}
-      </div>
-    </ScrollStepperStep>
-    <ScrollStepperStep
-      title={`Update descriptive metadata for items found`}
-      isLastStep={true}
-    >
-      <div slot="icon">2</div>
-      {#if !showLookupLoader}
         <div
-          class="update-wrap auto-align auto-align__a-center auto-align__j-between "
+          class="look-up-wrap auto-align auto-align__a-center auto-align__j-between "
         >
-          <span>
-            <input
-              name="access"
-              type="checkbox"
-              bind:checked={shouldUpdateInAccess}
-            />
-            <label for="access">in {depositor["label"]}</label>
-          </span>
-          <span>
-            <input
-              name="preservation"
-              type="checkbox"
-              bind:checked={shouldUpdateInPreservation}
-            />
-            <label for="preservation">in Preservation</label>
-          </span>
-          {#if shouldUpdateInAccess || shouldUpdateInPreservation}
+          <div class="depositor-select-wrap">
+            <DmdDepositorSelector bind:depositor />
+          </div>
+
+          {#if depositor?.string?.length}
             <LoadingButton
+              buttonClass={`${activeStepIndex === 0 ? "primary" : "secondary"}`}
+              showLoader={showLookupLoader}
+              on:clicked={handleLookupPressed}
+            >
+              <span slot="content">
+                {!showLookupLoader
+                  ? hasLookupRan
+                    ? "Look-up Again"
+                    : "Look-up"
+                  : "Looking-up..."}
+              </span>
+            </LoadingButton>
+          {/if}
+        </div>
+      </ScrollStepperStep>
+      <ScrollStepperStep
+        title={`Update descriptive metadata for items found`}
+        isLastStep={true}
+      >
+        <div slot="icon">2</div>
+        {#if !showLookupLoader}
+          <div
+            class="update-wrap auto-align auto-align__a-center auto-align__j-between "
+          >
+            <span>
+              <input
+                name="access"
+                type="checkbox"
+                bind:checked={shouldUpdateInAccess}
+              />
+              <label for="access">in {depositor["label"]}</label>
+            </span>
+            <span>
+              <input
+                name="preservation"
+                type="checkbox"
+                bind:checked={shouldUpdateInPreservation}
+              />
+              <label for="preservation">in Preservation</label>
+            </span>
+            {#if shouldUpdateInAccess || shouldUpdateInPreservation}
+              <button class="primary" on:click={handleUpdatePressed}>
+                Update Descriptive Metadata Records
+              </button>
+              <!--LoadingButton
               buttonClass="primary"
               showLoader={showUpdateProgress}
               on:clicked={handleUpdatePressed}
@@ -261,17 +264,23 @@
                     : "Update Descriptive Metadata Records"
                   : "Updating..."}
               </span>
-            </LoadingButton>
-          {/if}
-        </div>
-      {/if}
-    </ScrollStepperStep>
-  </ScrollStepper>
-</div>
+            </LoadingButton-->
+            {/if}
+          </div>
+        {/if}
+      </ScrollStepperStep>
+    </ScrollStepper>
+  </div>
+{/if}
 
 <div class="metadata-table">
   {#if showUpdateProgress}
-    <ProgressBar progress={updateAccessProgress} />
+    <ProgressBar
+      progress={updateAccessProgress}
+      progressText={updateAccessProgress === 100
+        ? "updated!"
+        : "updating items..."}
+    />
     <br />
     <br />
   {/if}
