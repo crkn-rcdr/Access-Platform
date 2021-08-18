@@ -111,20 +111,20 @@ none
 
   <NotificationBar message={errorText} status="fail" />
   <fieldset class="new-task-fields">
-    <span>Drop file</span>
-    <FileSelector on:change={handleFileSelected} />
     <!--/fieldset-->
-    {#if b64EncodedMetadataFileText}
-      <label for="metadata-type">Metadata File Type:</label>
-      <select name="metadata-type" bind:value={metadataType}>
-        <option value="" />
-        <option value="csvissueinfo">Issueinfo CSV</option>
-        <option value="csvdc">Dublin Core CSV</option>
-        <option value="marc490">MARC - ID in 490</option>
-        <option value="marcoocihm">MARC - ID in oocihm interpretation</option>
-        <option value="marcooe">MARC - ID in ooe interpretation</option>
-      </select>
-    {/if}
+    <!--{#if b64EncodedMetadataFileText}-->
+    <label for="metadata-type">Metadata File Type:</label>
+    <select name="metadata-type" bind:value={metadataType}>
+      <option value="" />
+      <option value="csvissueinfo">Issueinfo CSV</option>
+      <option value="csvdc">Dublin Core CSV</option>
+      <option value="marc490">MARC - ID in 490</option>
+      <option value="marcoocihm">MARC - ID in oocihm interpretation</option>
+      <option value="marcooe">MARC - ID in ooe interpretation</option>
+    </select>
+    <span>Metadata File:</span>
+    <FileSelector on:change={handleFileSelected} />
+    <!--{/if}-->
   </fieldset>
   <br />
   {#if metadataType && b64EncodedMetadataFileText}
