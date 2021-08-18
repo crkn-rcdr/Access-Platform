@@ -85,8 +85,8 @@
   }
   .site-nav {
     padding: 0 1rem;
-    background-color: var(--structural-div-bg);
-    filter: brightness(1.1);
+    background-color: var(--base-bg);
+    /*filter: brightness(1.1);*/
     z-index: 0;
   }
   .icon {
