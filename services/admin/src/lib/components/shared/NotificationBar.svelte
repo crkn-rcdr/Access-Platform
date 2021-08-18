@@ -7,7 +7,7 @@ A component tha tis used to highlight important messages to the user
 |    |    |    |
 | -- | -- | -- |
 | message : string                                | required | The message to be displayed on the notification bar, must be a non-empty string |
-| status: string, "success" or "fail" or "warn"   | optional | The state of the notification, determines the colour displayed and options available. |
+| status: string, "success" or "fail" or "warn" or "secondary"   | optional | The state of the notification, determines the colour displayed and options available. |
 | detail : string                                 | optional | Any detailed information that will be shown in the expandable portion |
 | expandable : boolean                            | optional| If there will be an expandible portion or not |
 | float : boolean                                 | optional | If the notification bar should be drawn independant of the rest of the dom, floating on the bottom right, or if it should be drawn in-place |
@@ -30,9 +30,10 @@ A component tha tis used to highlight important messages to the user
   export let message = "";
 
   /**
-   * @type {"success" | "fail" | "warn"} The state of the notification, determines the colour displayed and options available.
+   * @type {"success" | "fail" | "warn" | "secondary" | "primary" } The state of the notification, determines the colour displayed and options available.
    */
-  export let status: "success" | "fail" | "warn" = "success";
+  export let status: "success" | "fail" | "warn" | "secondary" | "primary" =
+    "success";
 
   /**
    * @type {string} Any detailed information that will be shown in the expandable portion.
@@ -113,6 +114,18 @@ A component tha tis used to highlight important messages to the user
     min-width: 20rem;
     max-width: 36rem;
     display: inline-block;
+  }
+
+  .notification-bar-secondary {
+    background-color: var(--secondary-light);
+    border: 1px solid var(--secondary);
+    color: var(--secondary);
+  }
+
+  .notification-bar-primary {
+    background-color: var(--primary-light);
+    border: 1px solid var(--primary);
+    color: var(--primary);
   }
 
   .notification-bar-success {

@@ -66,7 +66,7 @@ A step (section) of a ScrollStepper. Generally used to isolate a group of requir
     /*top: 8.7rem;
     bottom: -5rem;*/
     top: 4.7rem;
-    bottom: 0rem;
+    bottom: 2rem;
     width: 1px;
     background-color: rgba(0, 0, 0, 0.2);
     left: 1.4rem;

@@ -3,6 +3,10 @@
   import JsonTree from "$lib/components/shared/JsonTree.svelte";
   import Modal from "$lib/components/shared/Modal.svelte";
   export let dmdTask: SucceededDMDTask;
+  export let showAccessColumn: boolean = false;
+  export let showPreservationColumn: boolean = false;
+  export let accessLabel: string = "Access";
+
   let showJSONPreview = false;
   let previewItem;
 </script>
@@ -14,11 +18,11 @@
         <th>Id</th>
         <th>Label</th>
         <th>Value</th>
-        {#if "access" in dmdTask["items"][0]}
-          <th>Found in Access</th>
+        {#if showAccessColumn && "access" in dmdTask["items"][0]}
+          <th>Found in {accessLabel}?</th>
         {/if}
-        {#if "preservation" in dmdTask["items"][0]}
-          <th>Found in Preservation</th>
+        {#if showPreservationColumn && "preservation" in dmdTask["items"][0]}
+          <th>Found in Preservation?</th>
         {/if}
       </tr>
     </thead>
@@ -31,7 +35,7 @@
             <td>
               {#if item["parsed"]}
                 <button
-                  class="button secondary sm"
+                  class="button ghost dark sm"
                   on:click={() => {
                     previewItem = item;
                     showJSONPreview = true;
@@ -41,11 +45,17 @@
                 {item["message"]}
               {/if}
             </td>
-            {#if "access" in item}
-              <td>{item["access"]}</td>
+            {#if showAccessColumn && "access" in item}
+              <td class:found={item["access"]} class:not-found={!item["access"]}
+                >{item["access"] ? "Yes" : "No"}</td
+              >
             {/if}
-            {#if "preservation" in item}
-              <td>{item["preservation"]}</td>
+            {#if showPreservationColumn && "preservation" in item}
+              <td
+                class:found={item["preservation"]}
+                class:not-found={!item["preservation"]}
+                >{item["preservation"] ? "Yes" : "No"}</td
+              >
             {/if}
           </tr>
         {/if}
@@ -61,3 +71,12 @@
     <JsonTree value={{ object: JSON.parse(previewItem["message"]) }} />
   </div>
 </Modal>
+
+<style>
+  .found {
+    background-color: var(--success-light);
+  }
+  .not-found {
+    background-color: var(--danger-light);
+  }
+</style>

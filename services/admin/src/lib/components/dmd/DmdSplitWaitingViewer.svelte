@@ -15,7 +15,7 @@ Displays a dmd task in an waiting state.
 -->
 <script lang="ts">
   import type { WaitingDMDTask } from "@crkn-rcdr/access-data";
-  import DmdTaskTimeInfoTable from "$lib/components/dmd/DmdTaskTimeInfoTable.svelte";
+  import DmdTaskInfoTable from "$lib/components/dmd/DmdTaskInfoTable.svelte";
   import Loading from "$lib/components/shared/Loading.svelte";
 
   /**
@@ -24,20 +24,22 @@ Displays a dmd task in an waiting state.
   export let dmdTask: WaitingDMDTask;
 </script>
 
-<div class="hero hero__gradient full-page">
-  <div class="wrapper">
-    <br />
-    <br />
-    <br />
-    <div class="auto-align auto-align__block auto-align__j-center">
-      <Loading />
-    </div>
-    <br />
-    <div
-      class="auto-align auto-align__block auto-align__column auto-align__a-center"
-    >
-      <h6>Please wait while the metadata upload processes...</h6>
-      <DmdTaskTimeInfoTable {dmdTask} />
-    </div>
+<br />
+<div
+  class="auto-align auto-align__block auto-align__column auto-align__a-center"
+>
+  <h6>Please wait while the metadata file processes...</h6>
+  <br />
+
+  <div class="auto-align auto-align__block auto-align__j-center">
+    <Loading backgroundType="gradient" />
   </div>
+  <br />
+  <DmdTaskInfoTable {dmdTask} />
 </div>
+
+<style>
+  h6 {
+    text-align: center;
+  }
+</style>

@@ -65,10 +65,6 @@
 </div>
 
 <style>
-  :global(.dmd-task-page-wrap h6) {
-    text-align: center;
-    font-weight: bold;
-  }
   :global(.dmd-task-page-wrap .failure .notification-bar) {
     width: 30rem;
   }
