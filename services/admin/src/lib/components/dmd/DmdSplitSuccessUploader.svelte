@@ -7,6 +7,8 @@
   import DmdDepositorSelector from "$lib/components/dmd/DmdDepositorSelector.svelte";
   import { getStores } from "$app/stores";
   import type { Session } from "$lib/types";
+  import ProgressBar from "../shared/ProgressBar.svelte";
+  import LoadingButton from "../shared/LoadingButton.svelte";
 
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
@@ -25,6 +27,11 @@
   let showLookupResults = false;
 
   let lookupResults = {};
+
+  let updateResults = {};
+  let showUpdateProgress = false;
+  let showUpdateResults = false;
+  let updateAccessProgress = 0;
 
   let shouldUpdateInAccess = true;
   let shouldUpdateInPreservation = true;
@@ -55,7 +62,21 @@
     items: [
       {
         message: `{"test":"json"}`,
+        id: "8_06941",
+        label: "volume 1",
+        output: "marc",
+        parsed: true,
+      },
+      {
+        message: `{"test":"json"}`,
         id: "8_06941_1",
+        label: "volume 1",
+        output: "marc",
+        parsed: true,
+      },
+      {
+        message: `{"test":"json"}`,
+        id: "8_06941_2",
         label: "volume 1",
         output: "marc",
         parsed: true,
@@ -63,27 +84,44 @@
     ],
   };
 
+  function setStateToLookup() {
+    showLookupResults = false;
+    showUpdateProgress = false;
+    showUpdateResults = false;
+    updateAccessProgress = 0;
+    activeStepIndex = 0;
+  }
+
   function setStateToLookingUp() {
     activeStepIndex = 0;
     lookupResults = {};
     showLookupLoader = true;
     showLookupResults = false;
+    showUpdateProgress = false;
+    showUpdateResults = false;
   }
 
-  function setStateToUploadEnabled() {
+  function setStateToUpdate() {
     activeStepIndex = 1;
     hasLookupRan = true;
     showLookupLoader = false;
     showLookupResults = true;
   }
 
-  function setStateToUploadDisabled() {
-    showLookupResults = false;
-    activeStepIndex = 0;
+  function setStateToUpdating() {
+    updateAccessProgress = 0;
+    showUpdateResults = false;
+    showUpdateProgress = false;
+    updateResults["access"] = {};
+    updateResults["preservation"] = {};
+  }
+
+  function setStateToUpdated() {
+    showUpdateResults = true;
+    showUpdateProgress = false;
   }
 
   async function handleLookupPressed() {
-    //slug.resolveMany
     setStateToLookingUp();
 
     const response = await $session.lapin.query(
@@ -94,20 +132,57 @@
       console.log(response);
       lookupResults["access"] = response;
       lookupResults["preservation"] = {}; // TODO: Ask how to implement this
-      setStateToUploadEnabled();
+
+      setTimeout(setStateToUpdate, 5000);
+      //setStateToUploadEnabled();
     } else {
       //error = response.toString();
     }
   }
 
   async function handleUpdatePressed() {
-    for (const slug in lookupResults["access"]) {
+    setStateToUpdating();
+
+    let itemsFoundInAccess = Object.keys(lookupResults["access"])
+      .filter((key) => lookupResults["access"][key].found)
+      .map((slug) => {
+        return {
+          slug,
+          id: lookupResults["access"][slug].result.id,
+        };
+      });
+
+    if (itemsFoundInAccess.length > 0) {
+      showUpdateProgress = true;
+      let index = 0;
+      for (const item of itemsFoundInAccess) {
+        const response = await $session.lapin.mutation("dmdTask.storeAccess", {
+          task: dmdTask.id, // dmdtask uuid
+          index, // array index of item whose metadata is being stored
+          slug: item["slug"], // prefix + id (we might not need this if we send the resolved noid)
+          noid: item["id"], // result of slug lookup
+        });
+        if (response) {
+          console.log(response);
+          updateResults["access"][item["slug"]] = response;
+          console.log(updateResults);
+        } else {
+          //error = response.toString();
+        }
+        updateAccessProgress =
+          (Object.keys(updateResults["access"]).length /
+            itemsFoundInAccess.length) *
+          100;
+
+        index++;
+      }
+      setTimeout(setStateToUpdated, 5000);
     }
   }
 
   $: {
     depositor;
-    setStateToUploadDisabled();
+    setStateToLookup();
   }
 </script>
 
@@ -132,27 +207,19 @@
         </div>
 
         {#if depositor?.string?.length}
-          <button
-            class="lookup-button primary"
-            class:secondary={activeStepIndex === 1}
-            on:click={handleLookupPressed}
+          <LoadingButton
+            buttonClass={`${activeStepIndex === 0 ? "primary" : "secondary"}`}
+            showLoader={showLookupLoader}
+            on:clicked={handleLookupPressed}
           >
-            <span
-              class="auto-align auto-align__a-center"
-              class:loading-button={showLookupLoader}
-            >
-              {#if showLookupLoader}
-                <Loading size="sm" />
-              {/if}
-              <span class="text"
-                >{!showLookupLoader
-                  ? hasLookupRan
-                    ? "Look-up Again"
-                    : "Look-up"
-                  : "Looking-up..."}</span
-              >
+            <span slot="content">
+              {!showLookupLoader
+                ? hasLookupRan
+                  ? "Look-up Again"
+                  : "Look-up"
+                : "Looking-up..."}
             </span>
-          </button>
+          </LoadingButton>
         {/if}
       </div>
     </ScrollStepperStep>
@@ -182,7 +249,19 @@
             <label for="preservation">in Preservation</label>
           </span>
           {#if shouldUpdateInAccess || shouldUpdateInPreservation}
-            <button class="primary">Update Descriptive Metadata Records</button>
+            <LoadingButton
+              buttonClass="primary"
+              showLoader={showUpdateProgress}
+              on:clicked={handleUpdatePressed}
+            >
+              <span slot="content">
+                {!showUpdateProgress
+                  ? showUpdateResults
+                    ? "Update Descriptive Metadata Records Again"
+                    : "Update Descriptive Metadata Records"
+                  : "Updating..."}
+              </span>
+            </LoadingButton>
           {/if}
         </div>
       {/if}
@@ -191,12 +270,23 @@
 </div>
 
 <div class="metadata-table">
+  {#if showUpdateProgress}
+    <ProgressBar progress={updateAccessProgress} />
+    <br />
+    <br />
+  {/if}
+
   <DmdItemsTable
     bind:dmdTask
-    bind:lookupResults
     bind:depositor
-    showAccessColumn={shouldUpdateInAccess && showLookupResults}
-    showPreservationColumn={shouldUpdateInPreservation && showLookupResults}
+    bind:lookupResults
+    bind:updateResults
+    showAccessLookupColumn={shouldUpdateInAccess && showLookupResults}
+    showPreservationLookupColumn={shouldUpdateInPreservation &&
+      showLookupResults}
+    showAccessUpdateColumn={shouldUpdateInAccess && showUpdateResults}
+    showPreservationUpdateColumn={shouldUpdateInPreservation &&
+      showUpdateResults}
   />
 </div>
 
@@ -211,8 +301,5 @@
   }
   .lookup-button {
     flex: 2;
-  }
-  .loading-button .text {
-    margin-left: var(--margin-sm);
   }
 </style>

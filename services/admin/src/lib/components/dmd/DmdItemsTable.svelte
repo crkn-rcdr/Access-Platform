@@ -3,10 +3,13 @@
   import JsonTree from "$lib/components/shared/JsonTree.svelte";
   import Modal from "$lib/components/shared/Modal.svelte";
   export let dmdTask: SucceededDMDTask;
-  export let showAccessColumn: boolean = false;
-  export let showPreservationColumn: boolean = false;
+  export let showAccessLookupColumn: boolean = false;
+  export let showPreservationLookupColumn: boolean = false;
+  export let showAccessUpdateColumn: boolean = false;
+  export let showPreservationUpdateColumn: boolean = false;
   export let depositor: { string: string; label: string };
   export let lookupResults: any = {};
+  export let updateResults: any = {};
 
   let showJSONPreview = false;
   let previewItem;
@@ -19,11 +22,19 @@
         <th>Id</th>
         <th>Label</th>
         <th>Value</th>
-        {#if showAccessColumn}
+
+        {#if showAccessLookupColumn}
           <th>Found in {depositor.label}?</th>
         {/if}
-        {#if showPreservationColumn}
+        {#if showAccessUpdateColumn}
+          <th>Updated in {depositor.label}?</th>
+        {/if}
+
+        {#if showPreservationLookupColumn}
           <th>Found in Preservation?</th>
+        {/if}
+        {#if showPreservationUpdateColumn}
+          <th>Updated in Preservation?</th>
         {/if}
       </tr>
     </thead>
@@ -47,9 +58,9 @@
               {/if}
             </td>
 
-            {#if showAccessColumn}
+            {#if showAccessLookupColumn}
               {#if lookupResults.access[`${depositor.string}.${item.id}`]?.found}
-                <td class="found">
+                <td class="success">
                   <a
                     href={`/object/${
                       lookupResults.access[`${depositor.string}.${item.id}`]
@@ -59,16 +70,27 @@
                   >
                 </td>
               {:else}
-                <td class="not-found"> No </td>
+                <td class="not-success"> No </td>
               {/if}
             {/if}
 
-            {#if showPreservationColumn}
-              {#if lookupResults.preservation[`${depositor.string}.${item.id}`]?.found}
-                <td class="found">Yes</td>
+            {#if showAccessUpdateColumn}
+              {#if updateResults.access[`${depositor.string}.${item.id}`]}
+                <td class="success">Yes</td>
               {:else}
-                <td class="not-found">No</td>
+                <td class="not-success">No</td>
               {/if}
+            {/if}
+
+            {#if showPreservationLookupColumn}
+              {#if lookupResults.preservation[`${depositor.string}.${item.id}`]?.found}
+                <td class="success">Yes</td>
+              {:else}
+                <td class="not-success">No</td>
+              {/if}
+            {/if}
+            {#if showPreservationUpdateColumn}
+              <td class="not-success">No</td>
             {/if}
           </tr>
         {/if}
@@ -86,10 +108,10 @@
 </Modal>
 
 <style>
-  .found {
+  .success {
     background-color: var(--success-light);
   }
-  .not-found {
+  .not-success {
     background-color: var(--danger-light);
   }
 </style>
