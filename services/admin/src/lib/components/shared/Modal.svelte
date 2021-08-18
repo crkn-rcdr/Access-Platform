@@ -38,21 +38,31 @@ A component that overlays ontop of the application, in the center of the screen.
    * @type {"sm" | "md" | "lg"} The title text of the modal.
    */
   export let size: "sm" | "md" | "lg" = "sm";
-  let body: HTMLBodyElement;
-  $: {
-    if (body) {
+
+  let container: HTMLDivElement;
+  function disableScrollingOnParents() {
+    let parent = container.parentElement;
+    while (parent) {
       if (open) {
-        body.classList.add("no-scroll"); //`height: 100%;overflow: hidden;`;
+        parent.classList.add("no-scroll"); //`height: 100%;overflow: hidden;`;
       } else {
-        body.classList.remove("no-scroll");
+        parent.classList.remove("no-scroll");
       }
+      parent = parent.parentElement;
+    }
+  }
+  $: {
+    open;
+    if (container) {
+      disableScrollingOnParents();
     }
   }
 </script>
 
-<svelte:body bind:this={body} />
+<svelte:body />
 {#if open}
   <div
+    bind:this={container}
     class="modal-backdrop auto-align auto_align__full auto-align__a-center auto-align__j-center"
   >
     <div class={`modal ${size}`}>
