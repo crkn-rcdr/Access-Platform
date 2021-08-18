@@ -871,14 +871,6 @@
   }
 </script>
 
-<!--NotificationBar
-  message="Success: Metadata file processing complete! In the table below, you can  preview the metadata to be applied to each item."
-/-->
-
-<!--br />
-<h6>Look-up and Update Items</h6>
-<br /-->
-
 <div class="metadata-form">
   <ScrollStepper
     bind:activeStepIndex
@@ -958,7 +950,7 @@
               type="checkbox"
               bind:checked={shouldUpdateInPreservation}
             />
-            <label for="preservation">in preservation</label>
+            <label for="preservation">in Preservation</label>
           </span>
           {#if shouldUpdateInAccess || shouldUpdateInPreservation}
             <button class="primary">Update Descriptive Metadata Records</button>
