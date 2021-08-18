@@ -142,7 +142,7 @@ export type ImportStatus =
  * @param lp The LegacyPackage object.
  * @param noid The result of a Noid lookup for `lp`'s `id` or `slug`.
  */
-export const importStatus = (
+export const getImportStatus = (
   id: Slug,
   lp: LegacyPackage | undefined,
   noid?: Noid
