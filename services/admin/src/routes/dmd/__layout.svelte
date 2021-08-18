@@ -18,7 +18,7 @@
   }
   .form {
     background: var(--base-bg);
-    min-height: 54rem;
+    min-height: 52rem;
     border-radius: var(--border-radius);
     padding: var(--perfect-fourth-4);
   }
