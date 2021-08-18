@@ -40,12 +40,14 @@ export const dmdTaskRouter = createRouter()
       });
     },
   })
-  .query("get", {
+  .query("fetchResult", {
     input: FetchInput.parse,
     async resolve() {
       //{ input: id, ctx }) {
       /*
-       Fetches the attachment in the dmdtask document and returns its contents. Will likely need to be base64 encoded in lapin and the results should be decoded in the browser.
+       Fetches the attachment in the dmdtask document 
+       and returns its contents. 
+       Results should be decoded in the browser.
       */
       return true;
     },
@@ -84,7 +86,6 @@ export const dmdTaskRouter = createRouter()
       }
     },
   })
-
   .mutation("storePreservation", {
     input: StorePreservationInput.parse,
     async resolve() {
