@@ -111,7 +111,7 @@ none
 
   <NotificationBar message={errorText} status="fail" />
   <fieldset class="new-task-fields">
-    <span><!--Metadata File:--></span>
+    <span>Drop file</span>
     <FileSelector on:change={handleFileSelected} />
     <!--/fieldset-->
     {#if b64EncodedMetadataFileText}
