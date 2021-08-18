@@ -84,24 +84,38 @@ export const LegacyPackage = z.object({
 export type LegacyPackage = z.infer<typeof LegacyPackage>;
 
 interface WithId {
+  /** The id used to look up the LegacyPackage. */
   id: Slug;
-  repos: string[];
-  ingestDate: Timestamp;
-  noid: Noid | null;
 }
-interface WithRequest extends WithId {
+
+interface WithDip extends WithId {
+  /** The list of preservation repositories the package can be found at. */
+  repos: string[];
+  /** The time the package was most recently ingested into the preservation platform. */
+  ingestDate: Timestamp;
+  /** The result of checking if `id` resolves to a Noid. */
+  noid: Noid | null;
+  /** The staff member who made the last update, and when it took place. */
+  staff?: StaffUpdate;
+}
+
+interface WithRequest extends WithDip {
+  /** The slug of the Manifest that the package is imported to. */
   slug: Slug;
+  /** The time the package was requested to be processed. */
   requestDate: Timestamp;
 }
+
 interface WithProcess extends WithRequest {
+  /** The time the package was processed. */
   processDate: Timestamp;
+  /** The message returned by the import processor. */
   message: string;
 }
 
-interface NotFoundStatus {
+interface NotFoundStatus extends WithId {
   status: "not-found";
 }
-
 interface NewStatus extends WithId {
   status: "new";
 }
@@ -124,16 +138,18 @@ export type ImportStatus =
 
 /**
  * Determines the status of a LegacyPackage object.
+ * @param id The id used to find the LegacyPackage object.
  * @param lp The LegacyPackage object.
  * @param noid The result of a Noid lookup for `lp`'s `id` or `slug`.
  */
 export const importStatus = (
+  id: Slug,
   lp: LegacyPackage | undefined,
   noid?: Noid
 ): ImportStatus => {
-  if (!lp) return { status: "not-found" };
-  const { id, repos, reposManifestDate: ingestDate, slug, smelt } = lp;
-  const response = { id, repos, ingestDate, noid: noid || null };
+  if (!lp) return { status: "not-found", id };
+  const { repos, reposManifestDate: ingestDate, slug, smelt, staff } = lp;
+  const response = { id, repos, ingestDate, noid: noid || null, staff };
   if (smelt) {
     const processResponse = {
       ...response,
