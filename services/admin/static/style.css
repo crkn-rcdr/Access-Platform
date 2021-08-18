@@ -32,6 +32,8 @@
   --structural-div-bg: var(--grey-light);
   /* Change this to set the bg color for components that need a darker backgrop, ex: canvas viewer */
   --backdrop-bg: #ddd;
+  /* Change this to set the bg color for items of high contrast*/
+  --darkest-bg: #222;
   /* Change this to set the bg color for overlays, ex: modal dimmer */
   --overlay-bg: rgba(0, 0, 0, 0.75);
   /* Change this to set the colour of inputs, text areas, and selects */
@@ -40,9 +42,8 @@
   --border-color: #ccc;
   /* Change this to set the font colour for the app */
   --base-font-color: var(--dark-font);
-  /* Change this to set the bg color for items of high contrast*/
-  --darkest-bg: #222;
-  /* Change this to set the interactive element colors, ex: alert, buttons */
+
+  /* Change these to set the interactive element colors, ex: alert, buttons */
   /* Primary */
   --primary: var(--teal);
   --primary-light: var(--teal-light);
