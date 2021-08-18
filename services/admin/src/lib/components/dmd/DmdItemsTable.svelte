@@ -21,7 +21,7 @@
       <tr>
         <th>Id</th>
         <th>Label</th>
-        <th>Value</th>
+        <th>Valid</th>
 
         {#if showAccessLookupColumn}
           <th>Found in {depositor.label}?</th>

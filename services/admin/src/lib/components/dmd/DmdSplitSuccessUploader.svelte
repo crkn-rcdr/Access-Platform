@@ -118,6 +118,11 @@
 
   function setStateToUpdated() {
     showUpdateResults = true;
+    showUpdateProgress = false;
+  }
+
+  function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   async function handleLookupPressed() {
@@ -132,6 +137,7 @@
       lookupResults["access"] = response;
       lookupResults["preservation"] = {}; // TODO: Ask how to implement this
 
+      await sleep(5000);
       setStateToUpdate();
       //setStateToUploadEnabled();
     } else {
@@ -168,12 +174,14 @@
         } else {
           //error = response.toString();
         }
-        updateAccessProgress =
+        updateAccessProgress = Math.round(
           (Object.keys(updateResults["access"]).length /
             itemsFoundInAccess.length) *
-          100;
+            100
+        );
 
         index++;
+        await sleep(1000);
       }
       setStateToUpdated();
     }
@@ -185,74 +193,75 @@
   }
 </script>
 
-{#if !showUpdateProgress}
-  <div class="metadata-form">
-    <ScrollStepper
-      bind:activeStepIndex
-      displayPrevious={true}
-      enableAutoScrolling={false}
+<div class="metadata-form" class:disabled={showUpdateProgress}>
+  <ScrollStepper
+    bind:activeStepIndex
+    displayPrevious={true}
+    enableAutoScrolling={false}
+  >
+    <ScrollStepperStep
+      title={`Select an access platform and look-up items${
+        hasLookupRan ? " again" : ""
+      }`}
     >
-      <ScrollStepperStep
-        title={`Select an access platform and look-up items${
-          hasLookupRan ? " again" : ""
-        }`}
+      <div slot="icon">1</div>
+
+      <div
+        class="look-up-wrap auto-align auto-align__a-center auto-align__j-between "
       >
-        <div slot="icon">1</div>
-
-        <div
-          class="look-up-wrap auto-align auto-align__a-center auto-align__j-between "
-        >
-          <div class="depositor-select-wrap">
-            <DmdDepositorSelector bind:depositor />
-          </div>
-
-          {#if depositor?.string?.length}
-            <LoadingButton
-              buttonClass={`${activeStepIndex === 0 ? "primary" : "secondary"}`}
-              showLoader={showLookupLoader}
-              on:clicked={handleLookupPressed}
-            >
-              <span slot="content">
-                {!showLookupLoader
-                  ? hasLookupRan
-                    ? "Look-up Again"
-                    : "Look-up"
-                  : "Looking-up..."}
-              </span>
-            </LoadingButton>
-          {/if}
+        <div class="depositor-select-wrap">
+          <DmdDepositorSelector bind:depositor />
         </div>
-      </ScrollStepperStep>
-      <ScrollStepperStep
-        title={`Update descriptive metadata for items found`}
-        isLastStep={true}
-      >
-        <div slot="icon">2</div>
-        {#if !showLookupLoader}
-          <div
-            class="update-wrap auto-align auto-align__a-center auto-align__j-between "
+
+        {#if depositor?.string?.length}
+          <LoadingButton
+            buttonClass={`${activeStepIndex === 0 ? "primary" : "secondary"}`}
+            showLoader={showLookupLoader}
+            on:clicked={handleLookupPressed}
           >
-            <span>
-              <input
-                name="access"
-                type="checkbox"
-                bind:checked={shouldUpdateInAccess}
-              />
-              <label for="access">in {depositor["label"]}</label>
+            <span slot="content">
+              {!showLookupLoader
+                ? hasLookupRan
+                  ? "Look-up Again"
+                  : "Look-up"
+                : "Looking-up..."}
             </span>
-            <span>
-              <input
-                name="preservation"
-                type="checkbox"
-                bind:checked={shouldUpdateInPreservation}
-              />
-              <label for="preservation">in Preservation</label>
-            </span>
-            {#if shouldUpdateInAccess || shouldUpdateInPreservation}
-              <button class="primary" on:click={handleUpdatePressed}>
-                Update Descriptive Metadata Records
-              </button>
-              <!--LoadingButton
+          </LoadingButton>
+        {/if}
+      </div>
+    </ScrollStepperStep>
+    <ScrollStepperStep
+      title={`Update descriptive metadata for items found`}
+      isLastStep={true}
+    >
+      <div slot="icon">2</div>
+      {#if !showLookupLoader}
+        <div
+          class="update-wrap auto-align auto-align__a-center auto-align__j-between "
+        >
+          <span>
+            <input
+              name="access"
+              type="checkbox"
+              bind:checked={shouldUpdateInAccess}
+            />
+            <label for="access">in {depositor["label"]}</label>
+          </span>
+          <span>
+            <input
+              name="preservation"
+              type="checkbox"
+              bind:checked={shouldUpdateInPreservation}
+            />
+            <label for="preservation">in Preservation</label>
+          </span>
+          {#if shouldUpdateInAccess || shouldUpdateInPreservation}
+            <button class="primary" on:click={handleUpdatePressed}>
+              {showUpdateResults
+                ? "Update Descriptive Metadata Records Again"
+                : "Update Descriptive Metadata Records"}
+            </button>
+            <!--LoadingButton
               buttonClass="primary"
               showLoader={showUpdateProgress}
               on:clicked={handleUpdatePressed}
@@ -265,13 +274,12 @@
                   : "Updating..."}
               </span>
             </LoadingButton-->
-            {/if}
-          </div>
-        {/if}
-      </ScrollStepperStep>
-    </ScrollStepper>
-  </div>
-{/if}
+          {/if}
+        </div>
+      {/if}
+    </ScrollStepperStep>
+  </ScrollStepper>
+</div>
 
 <div class="metadata-table">
   {#if showUpdateProgress}
@@ -308,7 +316,8 @@
     flex: 8;
     margin-right: 1rem;
   }
-  .lookup-button {
-    flex: 2;
+  .disabled {
+    opacity: 0.2;
+    pointer-events: none;
   }
 </style>
