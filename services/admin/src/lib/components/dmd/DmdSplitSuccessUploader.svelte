@@ -110,7 +110,7 @@
 
   function setStateToUpdating() {
     updateAccessProgress = 0;
-    showUpdateResults = false;
+    showUpdateResults = true;
     showUpdateProgress = false;
     updateResults["access"] = {};
     updateResults["preservation"] = {};

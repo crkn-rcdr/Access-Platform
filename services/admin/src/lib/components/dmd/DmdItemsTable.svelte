@@ -75,10 +75,14 @@
             {/if}
 
             {#if showAccessUpdateColumn}
-              {#if updateResults.access[`${depositor.string}.${item.id}`]}
-                <td class="success">Yes</td>
+              {#if `${depositor.string}.${item.id}` in updateResults.access}
+                {#if updateResults.access[`${depositor.string}.${item.id}`]}
+                  <td class="success">Yes</td>
+                {:else}
+                  <td class="not-success">No</td>
+                {/if}
               {:else}
-                <td class="not-success">No</td>
+                <td class="">Updating...</td>
               {/if}
             {/if}
 
@@ -89,6 +93,7 @@
                 <td class="not-success">No</td>
               {/if}
             {/if}
+
             {#if showPreservationUpdateColumn}
               <td class="not-success">No</td>
             {/if}
