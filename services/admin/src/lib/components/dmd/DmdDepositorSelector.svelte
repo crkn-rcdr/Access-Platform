@@ -55,3 +55,9 @@ Allows the user to select one of many pre-defined depositors.
     >
   {/each}
 </select>
+
+<style>
+  select {
+    width: 100%;
+  }
+</style>

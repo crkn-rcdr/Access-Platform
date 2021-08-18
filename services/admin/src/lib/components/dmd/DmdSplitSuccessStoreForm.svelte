@@ -884,51 +884,57 @@
     >
       <div slot="icon">1</div>
 
-      <DmdDepositorSelector bind:depositor />
+      <div
+        class="look-up-wrap auto-align auto-align__a-center auto-align__j-between "
+      >
+        <div class="depositor-select-wrap">
+          <DmdDepositorSelector bind:depositor />
+        </div>
 
-      {#if depositor?.string?.length}
-        <button
-          class="primary"
-          class:secondary={activeStepIndex === 1}
-          on:click={() => {
-            activeStepIndex = 0;
-            for (const item of dmdTask["items"]) {
-              delete item["access"];
-              delete item["preservation"];
-            }
-            dmdTask = dmdTask;
-            showLookupLoader = true;
-            showLookupResults = false;
-            setTimeout(() => {
-              activeStepIndex = 1;
+        {#if depositor?.string?.length}
+          <button
+            class="lookup-button primary"
+            class:secondary={activeStepIndex === 1}
+            on:click={() => {
+              activeStepIndex = 0;
               for (const item of dmdTask["items"]) {
-                item["access"] = Math.random() > 0.5;
-                item["preservation"] = Math.random() > 0.5;
+                delete item["access"];
+                delete item["preservation"];
               }
               dmdTask = dmdTask;
-              hasLookupRan = true;
-              showLookupLoader = false;
-              showLookupResults = true;
-            }, 12000);
-          }}
-        >
-          <span
-            class="auto-align auto-align__a-center"
-            class:loading-button={showLookupLoader}
+              showLookupLoader = true;
+              showLookupResults = false;
+              setTimeout(() => {
+                activeStepIndex = 1;
+                for (const item of dmdTask["items"]) {
+                  item["access"] = Math.random() > 0.5;
+                  item["preservation"] = Math.random() > 0.5;
+                }
+                dmdTask = dmdTask;
+                hasLookupRan = true;
+                showLookupLoader = false;
+                showLookupResults = true;
+              }, 12000);
+            }}
           >
-            {#if showLookupLoader}
-              <Loading size="sm" />
-            {/if}
-            <span class="text"
-              >{!showLookupLoader
-                ? hasLookupRan
-                  ? "Look-up Again"
-                  : "Look-up"
-                : "Looking-up..."}</span
+            <span
+              class="auto-align auto-align__a-center"
+              class:loading-button={showLookupLoader}
             >
-          </span>
-        </button>
-      {/if}
+              {#if showLookupLoader}
+                <Loading size="sm" />
+              {/if}
+              <span class="text"
+                >{!showLookupLoader
+                  ? hasLookupRan
+                    ? "Look-up Again"
+                    : "Look-up"
+                  : "Looking-up..."}</span
+              >
+            </span>
+          </button>
+        {/if}
+      </div>
     </ScrollStepperStep>
     <ScrollStepperStep title={`Start updating`} isLastStep={true}>
       <div slot="icon">2</div>
@@ -971,13 +977,20 @@
 </div>
 
 <style>
-  .loading-button .text {
-    margin-left: var(--margin-sm);
-  }
+  .look-up-wrap,
   .update-wrap {
     width: 100%;
   }
-
+  .depositor-select-wrap {
+    flex: 8;
+    margin-right: 1rem;
+  }
+  .lookup-button {
+    flex: 2;
+  }
+  .loading-button .text {
+    margin-left: var(--margin-sm);
+  }
   /*@keyframes fadeout {
     from {
       opacity: 1;
