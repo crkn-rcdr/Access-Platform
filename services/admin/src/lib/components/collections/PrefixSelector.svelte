@@ -49,10 +49,6 @@
       string: "qmma",
       label: "McGill University Archives",
     },
-    {
-      string: "490",
-      label: "MARC File",
-    },
   ];
 </script>
 
@@ -60,7 +56,9 @@
 <select name="depositor" bind:value={prefix}>
   <option value="">No prefix</option>
   {#each prefixes as prefix}
-    <option value={prefix.string}>{prefix.label} ({prefix.string})</option>
+    <option value={prefix.string + "."}
+      >{prefix.label} ({prefix.string + "."})</option
+    >
   {/each}
 </select>
 

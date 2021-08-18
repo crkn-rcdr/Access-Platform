@@ -28,16 +28,9 @@ The resolver component allows the user to enter a slug, and then a request is se
   import { getStores } from "$app/stores";
 
   import PrefixSelector from "../collections/PrefixSelector.svelte";
-  import type { ObjectList } from "@crkn-rcdr/access-data";
 
-  /**
-   * @type {string} Slug being resolved.
-   */
-
-  export let slugList: ObjectList = [];
-
-  let depositorPrefix = "";
-  let depositor = "undefined";
+  let prefix = "";
+  let input = "";
 
   /**
    * @type {boolean}
@@ -46,7 +39,6 @@ The resolver component allows the user to enter a slug, and then a request is se
    * same as the initial slug provided.
    */
   let hideInitial = false;
-  // https://github.com/crkn-rcdr/Access-Platform/blob/main/data/src/format/slug.ts
 
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
@@ -85,46 +77,33 @@ The resolver component allows the user to enter a slug, and then a request is se
    */
 
   async function slugSelector() {
-    let slugToFind = depositor.split(/[,|\s]/);
-    for (var index in slugToFind) {
-      if (
-        depositor !== "" &&
-        depositor !== undefined &&
-        slugToFind[index].indexOf(".") === -1
-      ) {
-        var prefixedSlug = depositorPrefix + "." + slugToFind[index];
-      } else if (
-        depositorPrefix == "" &&
-        slugToFind[index].indexOf(".") === -1
-      ) {
-        prefixedSlug = slugToFind[index];
-      }
-      slugList.push(prefixedSlug);
+    let slugs = input.split(/[,|\s]/);
+    if (prefix.length > 0) {
+      slugs = slugs.map((slug) => prefix + slug);
     }
-    await resolveMany();
-  }
 
-  async function resolveMany() {
-    const response = await $session.lapin.query("slug.resolveMany", slugList);
-    dispatch("found", Object.values(response));
+    const response = await $session.lapin.query("slug.resolveMany", slugs);
+    
+    dispatch("found", response);
     hideInitial = true;
   }
-  function cancel() {
+
+  function clear() {
     cancelselector = true;
-    depositor = "";
-    depositorPrefix = "No prefix";
+    input = "";
+    prefix = "";
   }
 </script>
 
 <div>
   {#if !hideInitial}
-    <PrefixSelector bind:prefix={depositorPrefix} /><br /><br />
-    {#if depositorPrefix !== ""}({depositorPrefix}){/if}
+    <PrefixSelector bind:prefix /><br /><br />
+
     <div class="grid">
-      <textarea bind:value={depositor} />
+      <textarea bind:value={input} />
     </div>
     <br />
-    <button class="primary lg" on:click={cancel}>Cancel</button>
+    <button class="primary lg" on:click={clear}>Clear</button>
     <button class="primary lg" on:click={slugSelector}>Lookup</button> <br />
   {/if}
 </div>

@@ -11,6 +11,22 @@
 
   import ResolveMany from "$lib/components/access-objects/ResolveMany.svelte";
 
+  type ResolveManyReturn = [
+    string,
+    (
+      | {
+          found: false;
+        }
+      | {
+          found: true;
+          result: {
+            type: "alias" | "manifest" | "collection";
+            id: string;
+          };
+        }
+    )
+  ][];
+
   /**
    * @type {Manifest} The manifest to add selected canvases to.
    */
@@ -44,7 +60,6 @@
   /**
    * @type {ObjectList} The members the user selects.
    */
-  let selectedMembers: ObjectList = [];
 
   /**
    * @type {string} If a manifest is selected.
@@ -70,29 +85,14 @@
   function addClicked() {
     addedMember = true;
   }
-  let resolvedObject,
-    test: ObjectList = [];
-  async function handleSelect(event: any) {
-    try {
-      resolvedObject = event.detail;
-      console.log("test", resolvedObject);
-      resolvedObject.forEach((exists) => {
-        if (exists.found == true) {
-          selectedMembers.push(exists.result);
-        }
-        for (test of selectedMembers) {
-          let result = test.id;
-          console.log(result);
-        }
-      });
-    } catch (e) {
-      error = e;
-    }
-    console.log("Resolved pushed", selectedMembers);
+  let resolveManyReturn: ResolveManyReturn = [];
+
+  async function handleSelect(event: { detail: ResolveManyReturn }) {
+    resolveManyReturn = event.detail;
+    console.log("test", resolveManyReturn);
   }
 
   function handleCancelPressed() {
-    selectedMembers = [];
     addedMember = false;
   }
 
@@ -100,7 +100,7 @@
    * When add is pressed, add the selected members to the begining of the destination collection's members list, and signify to the parent through the @event done that the user is done adding canvases
    * @returns void
    */
-  function handleAddPressed() {
+  /*  async function handleAddPressed() {
     console.log("destination.members", destinationMember.members);
     destinationMember?.members?.splice(destinationIndex, 0, selectedMembers);
     destinationMember = destinationMember;
@@ -108,7 +108,7 @@
     addedMember = false;
     isMemberSelected = true;
     dispatch("done");
-  }
+  } */
 </script>
 
 <div class="canvas-selector-wrap add-menu">
@@ -119,20 +119,15 @@
 
     {#if addedMember}
       <div>
-        <ResolveMany
-          bind:slugList={AccessObject["slug"]}
-          on:found={handleSelect}
-        />
+        <ResolveMany on:found={handleSelect} />
         <br />
       </div>
-      {#each selectedMembers as result}
-        {#if selectedMembers !== undefined}
-          <textarea class="grid" bind:value={selectedMembers.id} />
+      <!-- {#each selectedMembers as result}
+        <textarea class="grid" bind:value={result.id} />
 
-          <br />
-          <button class="primary lg" on:click={handleAddPressed}>Add</button>
-        {/if}
-      {/each}
+        <br />
+        <button class="primary lg" on:click={handleAddPressed}>Add</button>
+      {/each} -->
       <div class="add-menu-title">
         <button
           class="secondary cancel-button auto-align auto-align__a-center"
