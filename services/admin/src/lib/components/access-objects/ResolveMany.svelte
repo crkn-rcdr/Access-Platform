@@ -23,13 +23,12 @@ The resolver component allows the user to enter a slug, and then a request is se
 *Note: `bind:` is required for changes to the properties to be reflected in higher level components.*
 -->
 <script lang="ts">
-  import { onMount, createEventDispatcher } from "svelte";
+  import { createEventDispatcher } from "svelte";
   import type { Session } from "$lib/types";
   import { getStores } from "$app/stores";
-  import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
+
   import PrefixSelector from "../collections/PrefixSelector.svelte";
   import type { ObjectList } from "@crkn-rcdr/access-data";
-  import Grid from "svelte-grid-responsive";
 
   /**
    * @type {string} Slug being resolved.
@@ -46,7 +45,7 @@ The resolver component allows the user to enter a slug, and then a request is se
    * Whether to hide the display when the current slug is the
    * same as the initial slug provided.
    */
-  export let hideInitial = false;
+  let hideInitial = false;
   // https://github.com/crkn-rcdr/Access-Platform/blob/main/data/src/format/slug.ts
 
   /**
@@ -64,10 +63,6 @@ The resolver component allows the user to enter a slug, and then a request is se
   /**
    * @type {RegExp} A regular expression that will validate strings as slugs.
    */
-  const regex = /^[\p{L}\p{Nl}\p{Nd}\-_\.]+$/u;
-  /** @type {"READY" | "LOADING" | "MALFORMED" | "ERROR"} */
-  /* let status: "READY" | "LOADING" | "MALFORMED" | "ERROR" =
-    slug === undefined ? "LOADING" : "READY"; */
 
   /**
    * @type {NodeJS.Timeout | null} Used to debounce the searching of slugs.
@@ -108,26 +103,11 @@ The resolver component allows the user to enter a slug, and then a request is se
     }
     await resolveMany();
   }
-  let test: ObjectList = [];
-  let unfound: string[] = [];
-  let resolved;
+
   async function resolveMany() {
     const response = await $session.lapin.query("slug.resolveMany", slugList);
-
-    Object.values(response).forEach((exists) => {
-      if (exists.found == true) {
-        test.push(exists.result);
-      } else if (exists.found == false) {
-        unfound.push(exists);
-        console.log("unfound", unfound);
-      }
-      for (let resolve of test) {
-        resolved = resolve.id;
-        dispatch("found", resolved);
-        console.log("TEST", resolved);
-      }
-      hideInitial = true;
-    });
+    dispatch("found", Object.values(response));
+    hideInitial = true;
   }
   function cancel() {
     cancelselector = true;
@@ -137,27 +117,28 @@ The resolver component allows the user to enter a slug, and then a request is se
 </script>
 
 <div>
-  <PrefixSelector bind:prefix={depositorPrefix} /><br /><br />
-  {#if depositorPrefix !== ""}({depositorPrefix}){/if}
-  <div class="grid">
-    <textarea bind:value={depositor} />
-    <textarea class="grid" bind:value={resolved} />
-  </div>
-  <br />
-  <button class="primary lg" on:click={cancel}>Cancel</button>
-  <button class="primary lg" on:click={slugSelector}>Lookup</button> <br />
+  {#if !hideInitial}
+    <PrefixSelector bind:prefix={depositorPrefix} /><br /><br />
+    {#if depositorPrefix !== ""}({depositorPrefix}){/if}
+    <div class="grid">
+      <textarea bind:value={depositor} />
+    </div>
+    <br />
+    <button class="primary lg" on:click={cancel}>Cancel</button>
+    <button class="primary lg" on:click={slugSelector}>Lookup</button> <br />
+  {/if}
 </div>
 
 <style>
   textarea {
     display: grid;
-    background-color: var(--primary);
+    background-color: var(--primary-light);
     width: 100%;
     height: 100%;
     grid-column: 1/2;
   }
   .grid {
     display: grid;
-    grid-column: 2/2;
+    grid-column: 1/1;
   }
 </style>

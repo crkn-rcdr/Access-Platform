@@ -1,16 +1,14 @@
 <!--Skeleton for Bulk addition-->
 <script lang="ts">
-  import CollectionContentEditor from "./CollectionContentEditor.svelte";
   import type { Session } from "$lib/types";
   import { getStores } from "$app/stores";
   import { AccessObject } from "@crkn-rcdr/access-data";
-  import { isManifest, isCollection } from "@crkn-rcdr/access-data";
-  import TypeAhead from "$lib/components/access-objects/TypeAhead.svelte";
+
   import type { ObjectList } from "@crkn-rcdr/access-data";
   import type { Collection } from "@crkn-rcdr/access-data/src/access/Collection";
   import { createEventDispatcher } from "svelte";
   import TiArrowBack from "svelte-icons/ti/TiArrowBack.svelte";
-  import FaPlus from "svelte-icons/fa/FaPlus.svelte";
+
   import ResolveMany from "$lib/components/access-objects/ResolveMany.svelte";
 
   /**
@@ -26,7 +24,7 @@
   /**
    * @type {boolean} If the user is allowed to select multiple canvases to add.
    */
-  export let multiple = true;
+
   export let showAddButton = true;
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
@@ -39,12 +37,12 @@
   const dispatch = createEventDispatcher();
 
   /**
-   * @type {Collection} The manifest to select canvases from.
+   * @type {Collection} The Collection to select members from.
    */
   let selectedMember: AccessObject;
 
   /**
-   * @type {ObjectList} The canvases the user selects.
+   * @type {ObjectList} The members the user selects.
    */
   let selectedMembers: ObjectList = [];
 
@@ -65,34 +63,50 @@
   let error = "";
 
   /**
-   * When a manifest is selected from the table of search results, grab its details from the backend.
+   * When a collection is selected from the table of search results, grab its details from the backend.
    * @param event
    * @returns void
    */
   function addClicked() {
     addedMember = true;
   }
+  let resolvedObject,
+    test: ObjectList = [];
   async function handleSelect(event: any) {
     try {
-      let test = event.detail;
-      console.log("test", test);
+      resolvedObject = event.detail;
+      console.log("test", resolvedObject);
+      resolvedObject.forEach((exists) => {
+        if (exists.found == true) {
+          selectedMembers.push(exists.result);
+        }
+        for (test of selectedMembers) {
+          let result = test.id;
+          console.log(result);
+        }
+      });
     } catch (e) {
       error = e;
     }
+    console.log("Resolved pushed", selectedMembers);
   }
+
   function handleCancelPressed() {
     selectedMembers = [];
-    dispatch("done");
+    addedMember = false;
   }
 
   /**
-   * When add is pressed, add the selected canvases to the begining of the destination manifest's canvases list, and signify to the parent through the @event done that the user is done adding canvases
+   * When add is pressed, add the selected members to the begining of the destination collection's members list, and signify to the parent through the @event done that the user is done adding canvases
    * @returns void
    */
   function handleAddPressed() {
-    destinationMember?.members?.splice(destinationIndex, 0, ...selectedMembers);
+    console.log("destination.members", destinationMember.members);
+    destinationMember?.members?.splice(destinationIndex, 0, selectedMembers);
     destinationMember = destinationMember;
-    selectedMembers = [];
+    selectedMember = [];
+    addedMember = false;
+    isMemberSelected = true;
     dispatch("done");
   }
 </script>
@@ -100,21 +114,25 @@
 <div class="canvas-selector-wrap add-menu">
   {#if !isMemberSelected}
     {#if showAddButton}
-      <button class="primary lg" on:click={addClicked}>Add Member</button>
+      <button class="primary lg" on:click={addClicked}>Member LookUp</button>
     {/if}
+
     {#if addedMember}
       <div>
-        <!-- <TypeAhead
-          placeholder="Search for a Collection Or Manifest to add from..."
-          on:selected={handleSelect}
-          on:keypress={() => (error = "")}
-        /> -->
         <ResolveMany
           bind:slugList={AccessObject["slug"]}
-          hideInitial={false}
           on:found={handleSelect}
         />
+        <br />
       </div>
+      {#each selectedMembers as result}
+        {#if selectedMembers !== undefined}
+          <textarea class="grid" bind:value={selectedMembers.id} />
+
+          <br />
+          <button class="primary lg" on:click={handleAddPressed}>Add</button>
+        {/if}
+      {/each}
       <div class="add-menu-title">
         <button
           class="secondary cancel-button auto-align auto-align__a-center"
@@ -134,46 +152,14 @@
         </div>
       {/if}
     {/if}
-  {:else}
-    {#if multiple}
-      <div class="manifest-controls auto-align auto-align__a-center">
-        <div
-          class="icon"
-          on:click={() => {
-            error = "";
-            isMemberSelected = false;
-          }}
-          data-tooltip="Go back to manifest search"
-          data-tooltip-flow="bottom"
-        >
-          <TiArrowBack />
-        </div>
-      </div>
-    {/if}
-    {#if selectedMembers.length}
-      <div
-        class="icon add-all-button"
-        on:click={handleAddPressed}
-        data-tooltip="Add selected canvases"
-        data-tooltip-flow="bottom"
-      >
-        <FaPlus />
-      </div>
-    {/if}
-    <div
-      data-tooltip={`${isAllSelected ? "Deselect" : "Select"} all`}
-      data-tooltip-flow="bottom"
-    />
-    <!--  <img
-      class="icon select-all"
-      src={`/static/icons/${isAllSelected ? "deselect.png" : "select.svg"}`}
-      alt="select all"
-      on:click={() => (isAllSelected = !isAllSelected)}
-    /> -->
-    {#if selectedMembers.length}
-      <div class="selected-canvas-list">
-        {selectedMembers.length}/{selectedMember?.["members"]?.length}
-      </div>
-    {/if}
   {/if}
 </div>
+
+<style>
+  .grid {
+    display: grid;
+    background-color: var(--primary-light);
+    grid-column: 1/1;
+    width: 100%;
+  }
+</style>
