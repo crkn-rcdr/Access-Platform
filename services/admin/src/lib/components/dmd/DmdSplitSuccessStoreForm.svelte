@@ -936,7 +936,10 @@
         {/if}
       </div>
     </ScrollStepperStep>
-    <ScrollStepperStep title={`Start updating`} isLastStep={true}>
+    <ScrollStepperStep
+      title={`Start updating descriptive metadata for items found`}
+      isLastStep={true}
+    >
       <div slot="icon">2</div>
       {#if !showLookupLoader}
         <div
