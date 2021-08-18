@@ -75,6 +75,23 @@ type UniqueFindResult<
   Fields extends readonly (keyof T & string)[]
 > = { found: false } | { found: true; result: FindResult<T, Fields> };
 
+type ViewResponse<T extends Document, V = unknown> = {
+  total_rows: number;
+  offset: number;
+  update_seq?: number | string;
+  rows: (
+    | {
+        id: string;
+        key: string;
+        value: V;
+        doc?: T;
+      }
+    | { key: string; error: string }
+  )[];
+};
+
+type BulkGetResponse<T extends Document> = ViewResponse<T, { rev: string }>;
+
 /**
  * Handler for interactions with a CouchDB database.
  *
@@ -114,6 +131,31 @@ export class DatabaseHandler<T extends Document> {
     }
 
     return this.parser.parse(fromCouch(doc));
+  }
+
+  /**
+   * Queries the `_all_docs` view for this database.
+   * @param options View query options.
+   * @returns the view output. Check `docs`.
+   */
+  async list(options: DocumentViewParams): Promise<BulkGetResponse<T>> {
+    try {
+      const response = await this.db.list(options);
+      return {
+        total_rows: response.total_rows,
+        offset: response.offset,
+        update_seq: response.update_seq,
+        rows: response.rows.map((row) => {
+          if (row.error) return { error: row.error, key: row.key };
+          const doc = row.doc
+            ? this.parser.parse(fromCouch(row.doc as CouchDocument))
+            : undefined;
+          return { ...row, doc };
+        }),
+      };
+    } catch (e) {
+      throw createHttpError(e.statusCode, e.error);
+    }
   }
 
   /**
