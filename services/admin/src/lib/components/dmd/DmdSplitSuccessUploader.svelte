@@ -63,12 +63,28 @@
     ],
   };
 
-  async function handleLookupPressed() {
+  function setStateToLookingUp() {
     activeStepIndex = 0;
     lookupResults = {};
     showLookupLoader = true;
     showLookupResults = false;
+  }
+
+  function setStateToUploadEnabled() {
+    activeStepIndex = 1;
+    hasLookupRan = true;
+    showLookupLoader = false;
+    showLookupResults = true;
+  }
+
+  function setStateToUploadDisabled() {
+    showLookupResults = false;
+    activeStepIndex = 0;
+  }
+
+  async function handleLookupPressed() {
     //slug.resolveMany
+    setStateToLookingUp();
 
     const response = await $session.lapin.query(
       "slug.resolveMany",
@@ -77,21 +93,21 @@
     if (response) {
       console.log(response);
       lookupResults["access"] = response;
-      lookupResults["preservation"] = {};
-      activeStepIndex = 1;
-      hasLookupRan = true;
-      showLookupLoader = false;
-      showLookupResults = true;
-      //console.log("lookupList", lookupList);
+      lookupResults["preservation"] = {}; // TODO: Ask how to implement this
+      setStateToUploadEnabled();
     } else {
       //error = response.toString();
     }
   }
 
+  async function handleUpdatePressed() {
+    for (const slug in lookupResults["access"]) {
+    }
+  }
+
   $: {
     depositor;
-    showLookupResults = false;
-    activeStepIndex = 0;
+    setStateToUploadDisabled();
   }
 </script>
 

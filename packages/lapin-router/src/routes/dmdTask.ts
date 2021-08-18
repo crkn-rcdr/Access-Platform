@@ -9,6 +9,13 @@ const NewInput = z.object({
   file: z.string(), // any othervalidation needed?
 });
 
+const StoreAccessInput = z.object({
+  task: z.string(), // dmdtask uuid
+  index: z.number(), // array index of item whose metadata is being stored
+  slug: z.string(), // prefix + id (we might not need this if we send the resolved noid)
+  noid: z.string(), // result of slug lookup
+});
+
 export const dmdTaskRouter = createRouter()
   .query("get", {
     input: Slug.parse,
@@ -26,6 +33,17 @@ export const dmdTaskRouter = createRouter()
     async resolve({ input, ctx }) {
       try {
         return await ctx.couch.dmdtask.create(input);
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .mutation("storeAccess", {
+    input: StoreAccessInput.parse,
+    async resolve() {
+      //{ input, ctx }) {
+      try {
+        return true; //await ctx.couch;
       } catch (e) {
         throw httpErrorToTRPC(e);
       }
