@@ -105,14 +105,8 @@ none
 </script>
 
 <div class="new-task-wrapper">
-  <!--br />
-  <h6>Select a metadata file to process:</h6>
-  <br /-->
-
   <NotificationBar message={errorText} status="fail" />
   <fieldset class="new-task-fields">
-    <!--/fieldset-->
-    <!--{#if b64EncodedMetadataFileText}-->
     <label for="metadata-type">Metadata File Type:</label>
     <select name="metadata-type" bind:value={metadataType}>
       <option value="" />
@@ -124,13 +118,12 @@ none
     </select>
     <span>Metadata File:</span>
     <FileSelector on:change={handleFileSelected} />
-    <!--{/if}-->
   </fieldset>
   <br />
   {#if metadataType && b64EncodedMetadataFileText}
-    <button class="primary new-task-button" on:click={handleCreateTask}
-      >Process File</button
-    >
+    <button class="primary new-task-button" on:click={handleCreateTask}>
+      Process File
+    </button>
   {/if}
 </div>
 

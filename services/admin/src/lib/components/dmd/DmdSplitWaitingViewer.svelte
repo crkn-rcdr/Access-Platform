@@ -34,7 +34,6 @@ Displays a dmd task in an waiting state.
   <br />
   <h6>Please wait while the metadata file processes...</h6>
   <br />
-
   <DmdTaskInfoTable {dmdTask} />
 </div>
 

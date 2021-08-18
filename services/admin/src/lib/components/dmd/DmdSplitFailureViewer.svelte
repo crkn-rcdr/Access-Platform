@@ -50,12 +50,6 @@ Displays a dmd task in an error state.
     margin-top: var(--perfect-fourth-4);
     margin-bottom: var(--perfect-fourth-4);
   }
-  /*.failure {
-    filter: hue-rotate(207deg);
-  }
-  .failure > * {
-    filter: hue-rotate(-207deg);
-  }*/
   h6 {
     text-align: center;
   }

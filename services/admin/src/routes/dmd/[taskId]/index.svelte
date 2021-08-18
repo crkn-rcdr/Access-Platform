@@ -38,7 +38,7 @@
   } from "@crkn-rcdr/access-data";
   import DmdSplitWaitingViewer from "$lib/components/dmd/DmdSplitWaitingViewer.svelte";
   import DmdSplitFailureViewer from "$lib/components/dmd/DmdSplitFailureViewer.svelte";
-  import DmdSplitSuccessStoreForm from "$lib/components/dmd/DmdSplitSuccessStoreForm.svelte";
+  import DmdSplitSuccessUpl$lib/components/dmd/DmdSplitSuccessUploader.svelteitSuccessUploader.svelte";
 
   /**
    * @type {DMDTask} The dmdtask being displayed by the page.
@@ -49,9 +49,9 @@
 <div class="dmd-task-page-wrap">
   {#if !dmdTask}
     <!--Loading...-->
-    <DmdSplitSuccessStoreForm />
+    <DmdSplitSuccessUploader />
   {:else if isSucceededDMDTask(dmdTask)}
-    <DmdSplitSuccessStoreForm /> <!--dmdTask={getAsSucceededTask()} -->
+    <DmdSplitSuccessUploader /> <!--dmdTask={getAsSucceededTask()} -->
   {:else if isFailedDMDTask(dmdTask)}
     <DmdSplitFailureViewer {dmdTask} message={dmdTask.process["message"]} />
   {:else if isWaitingDMDTask(dmdTask)}

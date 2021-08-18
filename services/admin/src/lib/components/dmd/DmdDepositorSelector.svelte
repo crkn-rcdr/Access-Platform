@@ -50,9 +50,9 @@ Allows the user to select one of many pre-defined depositors.
 >
   <option value="">Select an access platform:</option>
   {#each Object.keys(depositors) as depositorCode}
-    <option value={depositorCode}
-      >{depositors[depositorCode]} ({depositorCode})</option
-    >
+    <option value={depositorCode}>
+      {depositors[depositorCode]} ({depositorCode})
+    </option>
   {/each}
 </select>
 
