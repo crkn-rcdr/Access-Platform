@@ -199,11 +199,7 @@
     displayPrevious={true}
     enableAutoScrolling={false}
   >
-    <ScrollStepperStep
-      title={`Select an access platform and look-up items${
-        hasLookupRan ? " again" : ""
-      }`}
-    >
+    <ScrollStepperStep title="Select an access platform and look-up items">
       <div slot="icon">1</div>
 
       <div
