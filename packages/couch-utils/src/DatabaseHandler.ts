@@ -8,6 +8,7 @@ import {
   ServerScope,
   MangoQuery,
   MangoSelector,
+  RequestError,
 } from "nano";
 
 import { mangoEqualSelector } from "./util.js";
@@ -62,17 +63,6 @@ const fromCouch = (doc: CouchDocument): Document => {
   return result;
 };
 
-type UpdateArgs<Body extends unknown> = {
-  /** Design document name */
-  ddoc: string;
-  /** Update function name */
-  name: string;
-  /** Document ID */
-  docId: string;
-  /** Update function payload */
-  body?: Body;
-};
-
 type MangoOptions = Omit<MangoQuery, "selector" | "fields">;
 
 type FindResult<
@@ -91,7 +81,10 @@ type UniqueFindResult<
  * Also handles translating `_id` and `_attachments` to non-underscored versions.
  */
 export class DatabaseHandler<T extends Document> {
+  private name: string;
   private parser: z.Schema<T>;
+  // useful to `relax` with
+  private client: ServerScope;
   private db: DocumentScope<unknown>;
 
   /**
@@ -101,7 +94,9 @@ export class DatabaseHandler<T extends Document> {
    * @param client A `couchdb-nano` instance pointing to a CouchDB endpoint that provides access to the database.
    */
   constructor(db: string, parser: z.Schema<T>, client: ServerScope) {
+    this.name = db;
     this.parser = parser;
+    this.client = client;
     this.db = client.use(db);
   }
 
@@ -141,21 +136,53 @@ export class DatabaseHandler<T extends Document> {
   }
 
   /**
-   * Calls one of this database's design document update functions.
-   *
-   * By creating methods that set the `Body` type parameter, you can assert
-   * that the update function payload is typed correctly.
-   *
-   * @param args Arguments to the underlying call.
+   * Calls one of this database's design document update functions,
+   * to update a particular document.
+   * @returns The message returned by the update function upon success.
    */
-  async update<Body = unknown>(args: UpdateArgs<Body>) {
+  async update<Body = unknown>(args: {
+    /** Design document name */
+    ddoc: string;
+    /** Update function name */
+    name: string;
+    /** Document ID */
+    docId: string;
+    /** Update function payload */
+    body?: Body;
+  }) {
     try {
-      await this.db.updateWithHandler(
+      const response = await this.db.atomic<{ message: string }>(
         args.ddoc,
         args.name,
         args.docId,
         args.body
       );
+      return response.message;
+    } catch (e) {
+      throw createHttpError(e.statusCode, e.error);
+    }
+  }
+
+  /**
+   * Calls one of this database's design document update functions,
+   * without specifying a document.
+   * @returns The message returned by the update function upon success.
+   */
+  async nullUpdate<Body = unknown>(args: {
+    /** Design document name */
+    ddoc: string;
+    /** Update function name */
+    name: string;
+    /** Update function payload */
+    body?: Body;
+  }) {
+    try {
+      return (await this.client.relax({
+        db: this.name,
+        method: "post",
+        path: `_design/${args.ddoc}/_update/${args.name}`,
+        body: args.body,
+      })) as { message: string };
     } catch (e) {
       throw createHttpError(e.statusCode, e.error);
     }
@@ -264,5 +291,123 @@ export class DatabaseHandler<T extends Document> {
     }
 
     return [...results.entries()];
+  }
+
+  /**
+   * Gets an attachment from a CouchDB document.
+   * Throws if the document or attachment do not exist.
+   * @returns A `Buffer` containing the attachment.
+   */
+  async getAttachment(args: {
+    /** Document id */
+    document: string;
+    /** Attachment name */
+    attachment: string;
+  }): Promise<Buffer> {
+    const { document, attachment } = args;
+    try {
+      return await this.db.attachment.get(document, attachment);
+    } catch (e) {
+      const error = e as RequestError;
+      if (error.statusCode === 404) {
+        if (error.reason === "Document is missing attachment")
+          throw createHttpError(
+            404,
+            `Document ${document} does not have an attachment named ${attachment}`
+          );
+        if (error.reason === "missing")
+          throw createHttpError(404, `Document ${document} does not exist`);
+      }
+      throw createHttpError(error.statusCode || 500, error.message);
+    }
+  }
+
+  /**
+   * Gets an attachment from a CouchDB document and then parses it as JSON.
+   * Throws if the document or attachment do not exist, or if the
+   * attachment cannot be parsed.
+   * @returns Whatever the file was parsed as.
+   */
+  async getAttachmentAsJSON(args: {
+    /** Document id */
+    document: string;
+    /** Attachment name */
+    attachment: string;
+  }): Promise<unknown> {
+    const attachment = await this.getAttachment(args);
+    try {
+      return JSON.parse(attachment.toString("utf-8"));
+    } catch (e) {
+      throw createHttpError(
+        400,
+        `Could not parse attachment ${args.attachment} as JSON: ${e.message}`
+      );
+    }
+  }
+
+  /**
+   * Uploads an attachment to a CouchDB document.
+   * Throws if there is an error uploading, or if the document does not exist.
+   */
+  async uploadAttachment(args: {
+    /** Document id */
+    document: string;
+    /** Attachment name */
+    attachmentName: string;
+    /** Attachment (as a Buffer) */
+    attachment: Buffer;
+    /** Attachment content type. Default: application/octet-stream */
+    contentType?: string;
+  }) {
+    const { document, attachmentName, attachment } = args;
+    const contentType = args.contentType || "application/octet-stream";
+
+    let headers: { etag: string };
+    try {
+      // Get the current document revision (headers.etag)
+      headers = await this.db.head(document);
+    } catch (e) {
+      const error = e as RequestError;
+      if (error.statusCode === 404)
+        throw createHttpError(404, `Document ${document} does not exist.`);
+      throw createHttpError(error.statusCode || 500, error.message);
+    }
+
+    try {
+      // Apparently this.db.attachment.insert gets very confused by the `rev` qs param
+      await this.client.relax({
+        db: this.name,
+        method: "put",
+        path: `${document}/${attachmentName}`,
+        headers: {
+          "Content-Type": contentType,
+          "If-Match": headers.etag,
+        },
+        body: attachment,
+      });
+    } catch (e) {
+      throw createHttpError(e.statusCode, e.error);
+    }
+  }
+
+  /**
+   * Uploads a base64-encoded string as an attachment to a CouchDB document.
+   * Throws if there is an error uploading, or if the document does not exist.
+   */
+  async uploadBase64Attachment(args: {
+    /** Document id */
+    document: string;
+    /** Attachment name */
+    attachmentName: string;
+    /** Attachment (as a base64-encoded string) */
+    attachment: string;
+    /** Attachment content type. Default: applicaton/octet-stream */
+    contentType?: string;
+  }) {
+    const buffer = Buffer.from(args.attachment, "base64");
+    await this.uploadAttachment({
+      ...args,
+      attachment: buffer,
+    });
   }
 }

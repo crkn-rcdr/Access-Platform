@@ -6,36 +6,35 @@ The editor actions component holds functionality that is responsible for perform
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| object: AccessObject        | required | This is the 'original' object of type AccessObject pulled from the backend, to be edited only once an action is successfully performed  |
-| objectModel: AccessObject   | required | This is a deep copy of the original object, it gets edited as the user makes changes in the editor. It's purpose is to contain the form state for the editors. |
+| serverObject: AccessObject        | required | This is the 'original' serverObject of type AccessObject pulled from the backend, to be edited only once an action is successfully performed  |
+| editorObject: AccessObject   | required | This is a deep copy of the original serverObject, it gets edited as the user makes changes in the editor. It's purpose is to contain the form state for the editors. |
 
 ### Usage
 ```  
-<EditorActions bind:object bind:objectModel />
+<EditorActions bind:serverObject bind:editorObject />
 ```
-*Note: `bind:` is required for changes to the object and its model to be reflected in higher level components.*
+*Note: `bind:` is required for changes to the serverObject and its model to be reflected in higher level components.*
 -->
 <script lang="ts">
   import { onMount } from "svelte";
   import type { Session } from "$lib/types";
   import FaArchive from "svelte-icons/fa/FaArchive.svelte";
-  import type { AccessObject } from "@crkn-rcdr/access-data";
+  import { AccessObject } from "@crkn-rcdr/access-data";
   import { detailedDiff } from "deep-object-diff";
   import { getStores } from "$app/stores";
-  import { goto } from "$app/navigation";
   import { showConfirmation } from "$lib/confirmation";
   import { checkValidDiff, checkModelChanged } from "$lib/validation";
   import Modal from "$lib/components/shared/Modal.svelte";
 
   /**
-   * @type {AccessObject} This is the 'original' object of type AccessObject pulled from the backend, to be edited only once an action is successfully performed.
+   * @type {AccessObject} This is the 'original' serverObject of type AccessObject pulled from the backend, to be edited only once an action is successfully performed.
    */
-  export let object: AccessObject;
+  export let serverObject: AccessObject;
 
   /**
-   * @type {AccessObject} This is a deep copy of the original object, it gets edited as the user makes changes in the editor. It's purpose is to contain the form state for the editors..
+   * @type {AccessObject} This is a deep copy of the original serverObject, it gets edited as the user makes changes in the editor. It's purpose is to contain the form state for the editors..
    */
-  export let objectModel: AccessObject;
+  export let editorObject: AccessObject;
 
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
@@ -43,7 +42,7 @@ The editor actions component holds functionality that is responsible for perform
   const { session } = getStores<Session>();
 
   /**
-   * @type {any} A module that quickly deep copies (clones) an object.
+   * @type {any} A module that quickly deep copies (clones) an serverObject.
    */
   let clone: any;
 
@@ -55,18 +54,18 @@ The editor actions component holds functionality that is responsible for perform
   /**
    * @type {boolean} Controls if the move to storage modal is being displayed or not.
    */
-  let showMovetoStorageModal = false;
+  let showUnassignSlugModal = false;
 
   /**
-   * Sets @var isSaveEnabled depending on if the objectModel is valid.
+   * Sets @var isSaveEnabled depending on if the editorObject is valid.
    * @returns void
    */
   function checkEnableSave() {
-    isSaveEnabled = checkValidDiff(object, objectModel);
+    isSaveEnabled = checkValidDiff(serverObject, editorObject);
   }
 
   $: {
-    objectModel;
+    editorObject;
     checkEnableSave();
   }
 
@@ -75,14 +74,20 @@ The editor actions component holds functionality that is responsible for perform
     return await showConfirmation(
       async () => {
         try {
-          //if(response) goto(`/object/${objectModel["id"]}`);
-          return true;
+          //if(response) goto(`/serverObject/${editorObject["id"]}`);
+          return {
+            success: true,
+            details: "done",
+          };
         } catch (e) {
-          return e;
+          return {
+            success: false,
+            details: e.message,
+          };
         }
       },
-      `${objectModel.type} created!`,
-      `Failed to create ${objectModel.type}.`
+      `Success! Created ${editorObject.type}.`,
+      `Error: could not create ${editorObject.type}.`
     );
   }
 
@@ -96,54 +101,57 @@ The editor actions component holds functionality that is responsible for perform
       async () => {
         try {
           if (
-            objectModel.type === "manifest" ||
-            objectModel.type === "collection"
+            editorObject.type === "manifest" ||
+            editorObject.type === "collection"
           ) {
             const bodyObj = {
-              id: objectModel.id,
+              id: editorObject.id,
               user: $session.user,
               data,
             };
-            console.log("bodyObj", bodyObj);
             const response = await $session.lapin.mutation(
-              `${objectModel.type}.edit`,
+              `${editorObject.type}.edit`,
               bodyObj
             );
-            console.log("res", response);
-            return response?.id;
+            return {
+              success: true,
+              details: JSON.stringify(bodyObj),
+            };
           }
-          return false;
+          return {
+            success: false,
+            details: "Object not of type canvas or manifest",
+          };
         } catch (e) {
-          return false;
+          return {
+            success: false,
+            details: e.message,
+          };
         }
       },
-      "Changes saved!",
-      "Failed to save changes."
+      "Success! Changes saved.",
+      "Error: failed to save changes."
     );
   }
 
   async function handleSave() {
-    const diff: any = detailedDiff(object, objectModel);
+    const diff: any = detailedDiff(serverObject, editorObject);
 
     let bodyObj = {
       ...diff["added"],
       ...diff["updated"],
     };
 
-    // Arrays are handled a bit strange in the diff module. Instead, just assign the entire array to the body data object
+    // Arrays are handled a bit strange in the diff module. Instead, just assign the entire array to the body data serverObject
     if (bodyObj["canvases"]) {
-      bodyObj["canvases"] = objectModel["canvases"];
+      bodyObj["canvases"] = editorObject["canvases"];
     }
 
-    /* const data = objectModel?.id?.length
-      ? await sendSaveRequest(bodyObj)
-      : await sendCreateRequest(bodyObj); */
     const data = await sendSaveRequest(bodyObj);
     if (data) {
       try {
-        clone = (await import("rfdc")).default();
-        object = clone(objectModel) as AccessObject; // todo: get this done with zod
-        checkModelChanged(object, objectModel);
+        await pullServerObject();
+        checkModelChanged(serverObject, editorObject);
       } catch (e) {
         //error = e;
         console.log(e);
@@ -152,55 +160,111 @@ The editor actions component holds functionality that is responsible for perform
   }
 
   /**
-   * Sends the request to the backend to unnasign a slug from the access object. If it is successful, the object model is deep cloned into the object, and the editor state is updated to reflect the object being a 'Slugless' access object.
+   * Sends the request to the backend to unnasign a slug from the access serverObject. If it is successful, the serverObject model is deep cloned into the serverObject, and the editor state is updated to reflect the serverObject being a 'Slugless' access serverObject.
    * @returns response
    */
-  /* TODO: ask what the best way to set this to undefined is, because it seems like undefined params get trimmed from the data object */
-  async function handlePlaceInStorage() {
-    showMovetoStorageModal = false;
+  async function handleUnassignSlug() {
+    showUnassignSlugModal = false;
     return await showConfirmation(
       async () => {
         if (
-          objectModel.type === "manifest" ||
-          objectModel.type === "collection"
+          editorObject.type === "manifest" ||
+          editorObject.type === "collection"
         ) {
           try {
             const response = await $session.lapin.mutation(
-              `${objectModel.type}.edit`,
+              `accessObject.unassignSlug`,
               {
-                id: objectModel.id,
+                id: editorObject.id,
                 user: $session.user,
-                data: {
-                  slug: "",
-                },
               }
             );
-            console.log("res", response);
-            if (response) {
-              objectModel["slug"] = undefined;
-              object = clone(objectModel) as AccessObject; // todo: get this done with zod
-            }
-            return true;
+            await pullServerObject();
+            return { success: true, details: "" };
           } catch (e) {
-            //error = e;
             console.log(e);
+            return { success: false, details: e.message };
           }
         }
-        return false;
+        return {
+          success: false,
+          details: "Object not of type canvas or manifest",
+        };
       },
-      "success",
-      "fail"
+      `Success! Unassigned the slug '${editorObject["slug"]}.'`,
+      `Error unassigning slug '${editorObject["slug"]}.'`
     );
   }
 
   /**
-   * TODO
+   * This method sends the request to the backend to publish or unpublish an object from the platform.
    * @param arr
    * @param currentIndex
    * @param destinationIndex
-   * @returns
+   * @returns response
    */
-  function handlePublishStatusChange() {}
+  async function handlePublishStatusChange() {
+    return await showConfirmation(
+      async () => {
+        if (
+          editorObject.type === "manifest" ||
+          editorObject.type === "collection"
+        ) {
+          try {
+            if (editorObject["public"]) {
+              const response = await $session.lapin.mutation(
+                `accessObject.unpublish`,
+                {
+                  id: editorObject.id,
+                  user: $session.user,
+                }
+              );
+            } else {
+              const response = await $session.lapin.mutation(
+                `accessObject.publish`,
+                {
+                  id: editorObject.id,
+                  user: $session.user,
+                }
+              );
+            }
+            await pullServerObject();
+            return {
+              success: true,
+              details: JSON.stringify(serverObject),
+            };
+          } catch (e) {
+            console.log(e);
+            return { success: false, details: e.message };
+          }
+        }
+        return {
+          success: false,
+          details: "Object not of type canvas or manifest",
+        };
+      },
+      `Success! ${editorObject["public"] ? "Unublish" : "Publish"}ed ${
+        editorObject["type"]
+      }.`,
+      `Error: could not publish ${editorObject["type"]}.`
+    );
+  }
+
+  /**
+   * This method pulls the 'serverObject' from the backend. This resets the form and ensures that any problems saving changes are caught.
+   * @returns void
+   */
+  async function pullServerObject() {
+    try {
+      const response = await $session.lapin.query(
+        "accessObject.get",
+        serverObject["id"]
+      );
+      serverObject = AccessObject.parse(response);
+    } catch (e) {
+      console.log(e);
+    }
+  }
 
   /**
    * @event onMount
@@ -211,11 +275,11 @@ The editor actions component holds functionality that is responsible for perform
   });
 
   /**
-   * @listens objectModel
-   * @description A reactive code block that is executed any time the @var objectModel changes. It calls @function checkEnableSave, to hide or show the save button depending on the validity of the objectModel (if nothing has been changed, the save button also gets hidden.)
+   * @listens editorObject
+   * @description A reactive code block that is executed any time the @var editorObject changes. It calls @function checkEnableSave, to hide or show the save button depending on the validity of the editorObject (if nothing has been changed, the save button also gets hidden.)
    */
   $: {
-    objectModel;
+    editorObject;
     checkEnableSave();
   }
 </script>
@@ -225,15 +289,15 @@ The editor actions component holds functionality that is responsible for perform
     <button class="save" on:click={handleSave}>Save</button>
   {/if}
   <button class="secondary" on:click={handlePublishStatusChange}
-    >{object["public"] ? "Unpublish" : "Publish"}</button
+    >{serverObject["public"] ? "Unpublish" : "Publish"}</button
   >
 
-  {#if object["slug"]}
+  {#if serverObject["slug"]}
     <button
       class="danger icon-button"
-      data-tooltip="Place in storage"
+      data-tooltip="Unassign Slug"
       data-tooltip-flow="bottom"
-      on:click={() => (showMovetoStorageModal = true)}
+      on:click={() => (showUnassignSlugModal = true)}
     >
       <div class="button-icon">
         <FaArchive />
@@ -243,27 +307,24 @@ The editor actions component holds functionality that is responsible for perform
 </span>
 
 <Modal
-  bind:open={showMovetoStorageModal}
-  title={`Are you sure you want to place this object in storage?`}
+  bind:open={showUnassignSlugModal}
+  title={`Are you sure you want to unassign this slug?`}
 >
   <p slot="body">
-    By placing this object in storage you will be taking it out of all the
-    collections it belongs to. You will be unassigning its slug, '{object[
+    By unassigning this serverObject's slug, you will be taking it out of all
+    the collections it belongs to. You can then use the slug, '{serverObject[
       "slug"
-    ]}.' You can then use that slug for other objects. Objects that do not have
-    a slug assigned to them are effectively undiscoverable. You can bookmark
-    this page to access this object again in the future. You can assign it a new
-    slug to make it discoverable in the platform again.
-    <!--You'll be able to view
-    {object["slug"]} in storage and add it back into the platform
-    <a href="/storage" target="_blank">here.</a-->
+    ]}' for other serverObjects. Objects that do not have a slug assigned to
+    them are effectively undiscoverable. You can bookmark this page to access
+    this serverObject again in the future. You can assign it a new slug to make
+    it discoverable in the platform again.
   </p>
   <div slot="footer">
-    <button class="secondary" on:click={() => (showMovetoStorageModal = false)}>
+    <button class="secondary" on:click={() => (showUnassignSlugModal = false)}>
       Cancel
     </button>
-    <button class="danger" on:click={handlePlaceInStorage}>
-      Place in storage
+    <button class="danger" on:click={handleUnassignSlug}>
+      Unassign Slug
     </button>
   </div>
 </Modal>

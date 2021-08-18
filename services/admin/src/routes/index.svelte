@@ -5,9 +5,10 @@
    */
   import { goto } from "$app/navigation";
   import TypeAhead from "$lib/components/access-objects/TypeAhead.svelte";
+  import { Noid } from "@crkn-rcdr/access-data";
 
   import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
-  
+
   /**
    * Routes to the object the user clicks from the TypeAhead component
    * @param event
@@ -15,7 +16,11 @@
    */
   function slugSelected(event: CustomEvent<string>) {
     const noid = event.detail;
-    goto(`/object/${noid}`);
+    try {
+      if (Noid.parse(noid)) goto(`/object/${noid}`);
+    } catch (e) {
+      console.log(e);
+    }
   }
 </script>
 
@@ -31,7 +36,7 @@
   <div class="center">
     <div class="title">
       <img
-        width="520"
+        class="logo"
         src="/static/canadiana-pa-tag-color.png"
         alt="Canadiana by CRKN, par RCDR"
       />
@@ -58,11 +63,24 @@
     position: relative;
     margin: auto;
   }
+
+  .logo {
+    width: 22rem;
+  }
   .search {
     position: relative;
     margin: auto;
     width: 65%;
     margin-top: var(--perfect-fourth-2);
-    padding-left: 5.5rem;
+    min-width: 25rem;
+  }
+
+  @media (min-width: 1025px) {
+    .logo {
+      width: 34rem;
+    }
+    .search {
+      padding-left: 5.5rem;
+    }
   }
 </style>

@@ -1,7 +1,7 @@
 /**
  * @module validation
  * @description
- * This module contains methods that are used to validate that varianbles and objects are like Collections and Manifests are in a valid state.
+ * This module contains methods that are used to validate that varianbles and serverObjects are like Collections and Manifests are in a valid state.
  */
 
 import {
@@ -16,12 +16,12 @@ import isEqual from "lodash-es/isEqual";
 
 /**
  * Checks to see if the parameter bassed in is a valid collection
- * @param objectModel
+ * @param editorObject
  * @returns boolean
  */
-function checkValidCollection(objectModel: AccessObject) {
+function checkValidCollection(editorObject: AccessObject) {
   try {
-    const res = EditableCollection.parse(objectModel);
+    const res = EditableCollection.parse(editorObject);
     return true;
   } catch (e) {
     return false;
@@ -30,12 +30,12 @@ function checkValidCollection(objectModel: AccessObject) {
 
 /**
  * Checks to see if the parameter bassed in is a valid manifest
- * @param objectModel
+ * @param editorObject
  * @returns boolean
  */
-function checkValidManifest(objectModel: AccessObject) {
+function checkValidManifest(editorObject: AccessObject) {
   try {
-    const res = EditableManifest.parse(objectModel);
+    const res = EditableManifest.parse(editorObject);
     return true;
   } catch (e) {
     return false;
@@ -43,39 +43,44 @@ function checkValidManifest(objectModel: AccessObject) {
 }
 
 /**
- * Checks to see if the object passed in is valid based on its type
- * @param objectModel
+ * Checks to see if the serverObject passed in is valid based on its type
+ * @param editorObject
  * @returns boolean
  */
-function checkChangeIsValid(objectModel: AccessObject) {
-  if (objectModel["type"] === "manifest") {
-    return checkValidManifest(objectModel);
-  } else if (objectModel["type"] === "collection") {
-    return checkValidCollection(objectModel);
+function checkChangeIsValid(editorObject: AccessObject) {
+  if (editorObject["type"] === "manifest") {
+    return checkValidManifest(editorObject);
+  } else if (editorObject["type"] === "collection") {
+    return checkValidCollection(editorObject);
   }
 }
 
 /**
- * Checks to see if the object param is different form the object model param.
+ * Checks to see if the serverObject param is different form the serverObject model param.
  * @see (fast-deep-equal)[https://www.npmjs.com/package/fast-deep-equal]
- * @param object
- * @param objectModel
+ * @param serverObject
+ * @param editorObject
  * @returns boolean
  */
-function checkModelChanged(object: AccessObject, objectModel: AccessObject) {
-  return !isEqual(object, objectModel);
+function checkModelChanged(
+  serverObject: AccessObject,
+  editorObject: AccessObject) {
+  return !isEqual(serverObject, editorObject);
 }
 
 /**
- * Checks to see if anything is different between the object and object model by calling @function checkModelChanged then calls @function checkChangeIsValid to see if the change was valid.
- * @param object
- * @param objectModel
+ * Checks to see if anything is different between the serverObject and serverObject model by calling @function checkModelChanged then calls @function checkChangeIsValid to see if the change was valid.
+ * @param serverObject
+ * @param editorObject
  * @returns boolean
  */
-function checkValidDiff(object: AccessObject, objectModel: AccessObject) {
-  const hasModelChanged = checkModelChanged(object, objectModel);
+function checkValidDiff(
+  serverObject: AccessObject,
+  editorObject: AccessObject
+) {
+  const hasModelChanged = checkModelChanged(serverObject, editorObject);
   if (hasModelChanged) {
-    const isModelValid = checkChangeIsValid(objectModel);
+    const isModelValid = checkChangeIsValid(editorObject);
     if (isModelValid) return true;
     return false;
   }
@@ -97,7 +102,7 @@ function getSlugValidationMsg(slug: string) {
 }
 
 /**
- * @object
+ * @serverObject
  * @description wrapper around the validation functions specifically for the manifest type
  */
 const manifest = {
@@ -130,7 +135,7 @@ const manifest = {
 };
 
 /**
- * @object
+ * @serverObject
  * @description wrapper around the validation functions specifically for the collection type
  */
 const collection = {
@@ -150,8 +155,8 @@ const collection = {
 };
 
 /**
- * @object
- * @description Wrapper around the manifest and collection objects
+ * @serverObject
+ * @description Wrapper around the manifest and collection serverObjects
  */
 const typedChecks = { manifest, collection };
 

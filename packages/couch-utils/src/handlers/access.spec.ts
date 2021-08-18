@@ -1,6 +1,6 @@
 import { Collection, Manifest, Timestamp } from "@crkn-rcdr/access-data";
 import anyTest, { TestInterface } from "ava";
-import { BaseContext, getTestContext } from "../index.spec.js";
+import { BaseContext, getTestContext } from "../test.js";
 import { AccessHandler } from "./access.js";
 
 type AccessHandlerContext = BaseContext & { access: AccessHandler };
@@ -148,6 +148,6 @@ test.serial("Can unassign a slug", async (t) => {
 
 // n.b MANIFEST_TWO is no longer a member of COLLECTION
 
-test.after(async (t) => {
+test.after.always(async (t) => {
   await t.context.testDestroy("access", "handler");
 });

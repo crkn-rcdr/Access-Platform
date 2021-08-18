@@ -7,6 +7,7 @@ import { createRouter } from "../router.js";
 type SlugResult = {
   id: Noid;
   slug: Slug;
+  type: "manifest" | "collection";
 };
 
 const SlugArray = z.array(Slug);

@@ -54,7 +54,7 @@
 
   <nav class="auto-align auto-align__wrap">
     <a href="/import">Import from Preservation</a>
-    <a href="/dmd/new">DMD Processing</a>
+    <a href="/dmd/new">Start New Metadata Upload</a>
     <a href="/object/new">Create New Object</a>
   </nav>
   

@@ -80,8 +80,9 @@ importers:
   packages/lapin-router:
     specifiers:
       '@crkn-rcdr/access-data': workspace:*
-      '@crkn-rcdr/access-env': workspace:^0.0.1
+      '@crkn-rcdr/access-env': workspace:*
       '@crkn-rcdr/couch-utils': workspace:*
+      '@crkn-rcdr/swift': workspace:*
       '@trpc/server': ^8.4.2
       '@types/node': ^16.4.13
       '@types/node-fetch': ^2.5.12
@@ -96,6 +97,7 @@ importers:
       '@crkn-rcdr/access-data': link:../data
       '@crkn-rcdr/access-env': link:../env
       '@crkn-rcdr/couch-utils': link:../couch-utils
+      '@crkn-rcdr/swift': link:../swift
       '@trpc/server': 8.4.2
       deep-object-diff: 1.1.0
       node-fetch: 2.6.1
@@ -108,13 +110,36 @@ importers:
       ts-node: 10.2.0_dea0625f6d31b223e93dc3dc354b8b43
       typescript: 4.3.5
 
+  packages/swift:
+    specifiers:
+      '@crkn-rcdr/access-env': workspace:^0.0.1
+      '@types/node': ^16.4.13
+      '@types/node-fetch': ^2.5.12
+      ava: ^3.15.0
+      node-fetch: ^2.6.1
+      npm-run-all: ^4.1.5
+      p-retry: ^4.6.1
+      ts-node: ^10.2.0
+      typescript: ^4.3.5
+    dependencies:
+      node-fetch: 2.6.1
+      p-retry: 4.6.1
+    devDependencies:
+      '@crkn-rcdr/access-env': link:../env
+      '@types/node': 16.4.13
+      '@types/node-fetch': 2.5.12
+      ava: 3.15.0
+      npm-run-all: 4.1.5
+      ts-node: 10.2.0_dea0625f6d31b223e93dc3dc354b8b43
+      typescript: 4.3.5
+
   services/admin:
     specifiers:
       '@crkn-rcdr/access-data': workspace:*
       '@crkn-rcdr/access-env': workspace:*
       '@crkn-rcdr/lapin-router': workspace:*
-      '@sveltejs/adapter-node': next
-      '@sveltejs/kit': next
+      '@sveltejs/adapter-node': 1.0.0-next.39
+      '@sveltejs/kit': 1.0.0-next.146
       '@trpc/client': ^8.4.2
       '@types/cookie': ^0.4.1
       '@types/jsonwebtoken': ^8.5.4
@@ -308,7 +333,7 @@ packages:
     peerDependencies:
       svelte: ^3.39.0
     dependencies:
-      '@sveltejs/vite-plugin-svelte': 1.0.0-next.17_svelte@3.40.1+vite@2.5.0
+      '@sveltejs/vite-plugin-svelte': 1.0.0-next.17_svelte@3.40.1+vite@2.4.4
       cheap-watch: 1.0.3
       sade: 1.7.4
       svelte: 3.40.1
@@ -318,7 +343,7 @@ packages:
       - supports-color
     dev: true
 
-  /@sveltejs/vite-plugin-svelte/1.0.0-next.17_svelte@3.40.1+vite@2.5.0:
+  /@sveltejs/vite-plugin-svelte/1.0.0-next.17_svelte@3.40.1+vite@2.4.4:
     resolution: {integrity: sha512-Xh/YYqBMDJnDheutnGHk/I5TO6w9gZ2GMgvG+qQm/gpIRkaTLts6Mw5xDe6cac/nH/aVPPVPibhq2pf26d44fA==}
     engines: {node: ^12.20 || ^14.13.1 || >= 16}
     peerDependencies:
@@ -422,7 +447,6 @@ packages:
 
   /@types/retry/0.12.1:
     resolution: {integrity: sha512-xoDlM2S4ortawSWORYqsdU+2rxdh4LRW9ytc3zmT37RIKQh6IHyKwwtKhKis9ah8ol07DCkZxPt8BBvPjC6v4g==}
-    dev: true
 
   /@types/sass/1.16.1:
     resolution: {integrity: sha512-iZUcRrGuz/Tbg3loODpW7vrQJkUtpY2fFSf4ELqqkApcS2TkZ1msk7ie8iZPB86lDOP8QOTTmuvWjc5S0R9OjQ==}
@@ -2370,7 +2394,6 @@ packages:
     dependencies:
       '@types/retry': 0.12.1
       retry: 0.13.1
-    dev: true
 
   /p-timeout/3.2.0:
     resolution: {integrity: sha512-rhIwUycgwwKcP9yTOOFK/AKsAopjjCakVqLHePO3CC6Mir1Z99xT+R63jZxAT5lFZLa2inS5h+ZS2GvR99/FBg==}
@@ -2692,7 +2715,6 @@ packages:
   /retry/0.13.1:
     resolution: {integrity: sha512-XQBQ3I8W1Cge0Seh+6gjj03LbmRFWuoszgK9ooCpwYIrhhoO80pfq4cUkU5DkknwfOfFteRwlZ56PYOGYyFWdg==}
     engines: {node: '>= 4'}
-    dev: true
 
   /reusify/1.0.4:
     resolution: {integrity: sha512-U9nH88a3fc/ekCF1l0/UP1IosiuIjyTh7hBvXVMHYgVcfGvt897Xguj2UOLDeI5BG2m7/uwyaLVT6fbtCwTyzw==}

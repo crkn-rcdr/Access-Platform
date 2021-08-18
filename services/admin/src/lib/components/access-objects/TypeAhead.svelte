@@ -8,6 +8,7 @@ This componenet allows the user to search the backend for any access object that
 | -- | -- | -- |
 | label : string       | optional | The label for the search input. |
 | placeholder : string | optional | The placeholder for the search input. |
+| type : string | undefined | optional | he type of object you would like to search for. |
 
 ### Usage
 ```  
@@ -31,6 +32,11 @@ This componenet allows the user to search the backend for any access object that
   export let placeholder = "Placeholder...";
 
   /**
+   * @type {string | undefined} The type of object you would like to search for.
+   */
+  export let type: string | undefined = undefined;
+
+  /**
    * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.
    */
   const dispatch = createEventDispatcher();
@@ -46,9 +52,9 @@ This componenet allows the user to search the backend for any access object that
   let query = "";
 
   /**
-   * @type {string} The list of slugs that contain the search term
+   * @type {{id: string; slug: string; type: string}} The list of slugs that contain the search term
    */
-  let lookupList: string[];
+  let lookupList: { id: string; slug: string; type: string }[];
 
   /**
    * @type {string} An error message to be displayed.
@@ -64,8 +70,11 @@ This componenet allows the user to search the backend for any access object that
 
     if (query && query.length) {
       const response = await $session.lapin.query("slug.search", query);
-      if (response) {
-        lookupList = response;
+      if (response && Array.isArray(response)) {
+        lookupList = type
+          ? response.filter((res) => type === res["type"])
+          : response;
+        //console.log("lookupList", lookupList);
       } else {
         error = response.toString();
       }

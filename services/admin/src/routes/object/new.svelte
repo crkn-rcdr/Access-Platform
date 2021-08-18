@@ -1,7 +1,7 @@
 <script lang="ts">
   /**
    * @file
-   * @description This page shows the editor for creating a new object.
+   * @description This page shows the editor for creating a new serverObject.
    */
   import type { AccessObject } from "@crkn-rcdr/access-data";
   import type { Manifest, Collection } from "@crkn-rcdr/access-data";
@@ -10,12 +10,12 @@
   /**
    * @type {AccessObject} Object being created.
    */
-  let object: AccessObject;
+  let serverObject: AccessObject;
 
   //TODO: call niod service to generate id in the backend
 
   /**
-   * Sets the @var object to a new Collection type object
+   * Sets the @var serverObject to a new Collection type serverObject
    * @returns void
    */
   function handleNewCollectionPressed() {
@@ -29,11 +29,11 @@
       behavior: "unordered",
       members: [],
     };
-    object = newCollection;
+    serverObject = newCollection;
   }
 
   /**
-   * Sets the @var object to a new Manifest type object
+   * Sets the @var serverObject to a new Manifest type serverObject
    * @returns void
    */
   function handleNewManifestPressed() {
@@ -47,16 +47,16 @@
       from: "canvases",
       canvases: [],
     };
-    object = newManifest;
+    serverObject = newManifest;
   }
 </script>
 
-{#if object}
-  <Editor bind:object />
+{#if serverObject}
+  <Editor bind:serverObject />
 {:else}
   <div class="wrapper">
     <div
-      class="object-type-select auto-align auto-align__column auto-align__j-center  auto-align__a-center"
+      class="obect-type-select auto-align auto-align__column auto-align__j-center  auto-align__a-center"
     >
       <h6>Create a new:</h6>
       <button class="primary" on:click={handleNewCollectionPressed}
@@ -70,10 +70,10 @@
 {/if}
 
 <style>
-  .object-type-select {
+  .obect-type-select {
     width: 100%;
   }
-  .object-type-select > * {
+  .obect-type-select > * {
     margin-bottom: 1rem;
   }
 </style>
