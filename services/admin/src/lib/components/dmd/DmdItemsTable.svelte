@@ -106,6 +106,7 @@
   No items.
 {/if}
 
+<!--dmdtask.fetchResult-->
 <Modal bind:open={showJSONPreview} title={`Preview JSON`} size="lg">
   <div slot="body" class="code-block">
     <JsonTree value={{ object: JSON.parse(previewItem["message"]) }} />

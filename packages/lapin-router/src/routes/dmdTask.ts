@@ -9,11 +9,23 @@ const NewInput = z.object({
   file: z.string(), // any othervalidation needed?
 });
 
+const FetchInput = z.object({
+  task: z.string(), // dmdtask uuid
+  index: z.number(), // array index of the item you want to fetch
+  type: z.enum(["xml", "json"]), // type of attachment to return
+});
+
 const StoreAccessInput = z.object({
   task: z.string(), // dmdtask uuid
   index: z.number(), // array index of item whose metadata is being stored
   slug: z.string(), // prefix + id (we might not need this if we send the resolved noid)
   noid: z.string(), // result of slug lookup
+});
+
+const StorePreservationInput = z.object({
+  task: z.string(), // dmdtask uuid
+  index: z.number(),
+  slug: z.string(),
 });
 
 export const dmdTaskRouter = createRouter()
@@ -26,6 +38,16 @@ export const dmdTaskRouter = createRouter()
         code: "PATH_NOT_FOUND",
         message: `No dmd task with id ${id} found.`,
       });
+    },
+  })
+  .query("get", {
+    input: FetchInput.parse,
+    async resolve() {
+      //{ input: id, ctx }) {
+      /*
+       Fetches the attachment in the dmdtask document and returns its contents. Will likely need to be base64 encoded in lapin and the results should be decoded in the browser.
+      */
+      return true;
     },
   })
   .mutation("create", {
@@ -43,6 +65,32 @@ export const dmdTaskRouter = createRouter()
     async resolve() {
       //{ input, ctx }) {
       try {
+        /* 
+
+        task: z.string(), // dmdtask uuid
+        index: z.number(), // array index of item whose metadata is being stored
+        slug: z.string(), // prefix + id (we might not need this if we send the resolved noid)
+        noid: z.string(), // result of slug lookup
+
+        Looks up the task's mdType 
+        fetches the attachment and the label corresponding to index. 
+        Determines the correct filename of the attachment using mdType and noid. 
+        Stores the attachment in Swift. 
+        Replaces the label of the object identified by noid. 
+        Returns void, I think. */
+        return true; //await ctx.couch;
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+
+  .mutation("storePreservation", {
+    input: StorePreservationInput.parse,
+    async resolve() {
+      //{ input, ctx }) {
+      try {
+        /* ask others */
         return true; //await ctx.couch;
       } catch (e) {
         throw httpErrorToTRPC(e);
