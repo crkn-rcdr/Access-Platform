@@ -38,7 +38,7 @@
   } from "@crkn-rcdr/access-data";
   import DmdSplitWaitingViewer from "$lib/components/dmd/DmdSplitWaitingViewer.svelte";
   import DmdSplitFailureViewer from "$lib/components/dmd/DmdSplitFailureViewer.svelte";
-  import DmdSplitSuccessUpl$lib/components/dmd/DmdSplitSuccessUploader.svelteitSuccessUploader.svelte";
+  import DmdSplitSuccessUploader from "$lib/components/dmd/DmdSplitSuccessUploader.svelte";
 
   /**
    * @type {DMDTask} The dmdtask being displayed by the page.
