@@ -30,7 +30,7 @@ Allows the user to modify the member list for a collection.
   import TiTrash from "svelte-icons/ti/TiTrash.svelte";
   import type { ObjectList } from "@crkn-rcdr/access-data";
   import CollectionMembersAddition from "./CollectionMembersAddition.svelte";
-  
+
   export let collection: Collection;
   export let showAddButton = true;
 
@@ -118,7 +118,7 @@ Allows the user to modify the member list for a collection.
     }
   }
   let noid;
-  async function handleSelect(event: any) {
+  /* async function handleSelect(event: any) {
     try {
       noid = event.detail;
       const response = await $session.lapin.query("accessObject.get", noid);
@@ -136,7 +136,7 @@ Allows the user to modify the member list for a collection.
     console.log("selected Collection", selectedCollection);
     selectedCollection = [];
     addedMember = false;
-  }
+  } */
   onMount(() => {
     if (collection.members.length) activeMemberIndex = 0;
     setIndexModel();
@@ -150,10 +150,17 @@ Allows the user to modify the member list for a collection.
 <svelte:window on:keydown={handleKeydown} />
 {#if indexModel.length && collection}
   <div class="auto-align auto-align__column">
-    {#if showAddButton}
+    <CollectionMembersAddition
+      bind:destinationMember={collection}
+      on:done={() => {
+        state = "view";
+        setActiveIndex(0);
+      }}
+    />
+    <!-- {#if showAddButton}
       <button class="primary lg" on:click={addClicked}>Add Member</button>
-    {/if}
-    {#if addedMember}
+    {/if} -->
+    <!-- {#if addedMember}
       <div>
         <TypeAhead
           placeholder="Search for a Collection Or Manifest to add from..."
@@ -179,7 +186,7 @@ Allows the user to modify the member list for a collection.
           {error}
         </div>
       {/if}
-    {/if}
+    {/if} -->
     <div
       bind:this={container}
       tabindex="0"
@@ -241,14 +248,6 @@ Allows the user to modify the member list for a collection.
     </div>
   </div>
 {/if}
-<CollectionMembersAddition
-  bind:destinationMember={collection}
-  on:done={() => {
-    state = "view";
-    setActiveIndex(0);
-  }}
-/>
-
 
 <style>
   .list {
