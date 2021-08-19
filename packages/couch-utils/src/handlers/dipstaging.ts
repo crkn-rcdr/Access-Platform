@@ -2,12 +2,11 @@ import { z } from "zod";
 import { LegacyPackage, Slug } from "@crkn-rcdr/access-data";
 import { ServerScope } from "nano";
 import { DatabaseHandler } from "../DatabaseHandler.js";
-import { stringRangeEnd } from "../util.js";
 
 const DateString = z
   .string()
   .regex(/^\d{4}-\d{2}-\d{2}$/)
-  .transform((str) => str.split("-"));
+  .transform((str) => str.split("-").map((s) => parseInt(s, 10)));
 
 type DateString = z.infer<typeof DateString>;
 
@@ -35,7 +34,7 @@ export class LegacyPackageHandler extends DatabaseHandler<LegacyPackage> {
   async listFromDates(start: string, end: string) {
     const startArray = DateString.parse(start);
     const endArray = DateString.parse(end);
-    endArray[2] = stringRangeEnd(endArray[2] as string);
+    endArray[2] = (endArray[2] as number) + 0.1;
 
     return await this.view("access", "byManifestDate", {
       startkey: startArray,

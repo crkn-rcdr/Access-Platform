@@ -32,9 +32,9 @@ export const CouchAttachmentRecord = z.record(
 
 export type CouchAttachmentRecord = z.infer<typeof CouchAttachmentRecord>;
 
-type CouchDocument = {
+export type CouchDocument = {
   _id: string;
-  _rev: string;
+  _rev?: string;
   _attachments?: CouchAttachmentRecord;
   [k: string]: unknown;
 };
@@ -85,8 +85,15 @@ type ViewResponse<T extends Document, V = unknown> = {
         key: string;
         value: V;
         doc?: T;
+        error: undefined;
       }
-    | { key: string; error: string }
+    | {
+        id: undefined;
+        key: string;
+        value: undefined;
+        doc: undefined;
+        error: string;
+      }
   )[];
 };
 
@@ -134,31 +141,6 @@ export class DatabaseHandler<T extends Document> {
   }
 
   /**
-   * Queries the `_all_docs` view for this database.
-   * @param options View query options.
-   * @returns the view output. Check `docs`.
-   */
-  async list(options: DocumentViewParams): Promise<BulkGetResponse<T>> {
-    try {
-      const response = await this.db.list(options);
-      return {
-        total_rows: response.total_rows,
-        offset: response.offset,
-        update_seq: response.update_seq,
-        rows: response.rows.map((row) => {
-          if (row.error) return { error: row.error, key: row.key };
-          const doc = row.doc
-            ? this.parser.parse(fromCouch(row.doc as CouchDocument))
-            : undefined;
-          return { ...row, doc };
-        }),
-      };
-    } catch (e) {
-      throw createHttpError(e.statusCode, e.error);
-    }
-  }
-
-  /**
    * Gets a document from a database. Does not throw an error if the document isn't found.
    * Returns a wrapper object with a `found` property that you can use to check that
    * the `doc` property contains the document.
@@ -174,6 +156,62 @@ export class DatabaseHandler<T extends Document> {
         return { found: false };
       }
       throw error;
+    }
+  }
+
+  /**
+   * Queries the `_all_docs` view for this database.
+   * @param options View query options.
+   * @returns the view output. Check `docs`.
+   */
+  async list(options: DocumentViewParams): Promise<BulkGetResponse<T>> {
+    try {
+      const response = await this.db.list(options);
+      return {
+        total_rows: response.total_rows,
+        offset: response.offset,
+        update_seq: response.update_seq,
+        rows: response.rows.map((row) => {
+          if (row.error !== undefined)
+            return {
+              id: undefined,
+              value: undefined,
+              doc: undefined,
+              error: row.error,
+              key: row.key,
+            };
+          else {
+            const doc = row.doc
+              ? this.parser.parse(fromCouch(row.doc as CouchDocument))
+              : undefined;
+            return { ...row, doc, error: undefined };
+          }
+        }),
+      };
+    } catch (e) {
+      throw createHttpError(e.statusCode, e.error);
+    }
+  }
+
+  /** Don't use this unless you're testing something. */
+  async insert(obj: T): Promise<void> {
+    const doc: CouchDocument = {
+      _id: obj.id,
+      _attachments: obj.attachments,
+      ...obj,
+    };
+    delete doc["id"];
+    delete doc["attachments"];
+
+    try {
+      const headers = (await this.db.head(obj.id)) as { etag: string };
+      doc._rev = headers.etag;
+    } catch (ignore) {}
+
+    try {
+      await this.db.insert(doc);
+    } catch (e) {
+      throw createHttpError(e.statusCode, e.error);
     }
   }
 
