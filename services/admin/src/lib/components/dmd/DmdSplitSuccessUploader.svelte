@@ -9,6 +9,7 @@
   import type { Session } from "$lib/types";
   import ProgressBar from "../shared/ProgressBar.svelte";
   import LoadingButton from "../shared/LoadingButton.svelte";
+  import NotificationBar from "../shared/NotificationBar.svelte";
 
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
@@ -25,6 +26,7 @@
   let hasLookupRan = false;
   let showLookupLoader = false;
   let showLookupResults = false;
+  let lookupFailure = false;
 
   let lookupResults = {};
 
@@ -104,7 +106,6 @@
   function setStateToUpdate() {
     activeStepIndex = 1;
     hasLookupRan = true;
-    showLookupLoader = false;
     showLookupResults = true;
   }
 
@@ -137,8 +138,19 @@
       lookupResults["access"] = response;
       lookupResults["preservation"] = {}; // TODO: Ask how to implement this
 
-      await sleep(5000);
-      setStateToUpdate();
+      lookupFailure =
+        Object.keys(lookupResults["access"]).filter(
+          (key) => lookupResults["access"][key].found
+        ).length +
+          Object.keys(lookupResults["preservation"]).filter(
+            (key) => lookupResults["preservation"][key].found
+          ).length ===
+        0;
+      showLookupLoader = false;
+      if (!lookupFailure) {
+        await sleep(5000);
+        setStateToUpdate();
+      }
       //setStateToUploadEnabled();
     } else {
       //error = response.toString();
@@ -225,6 +237,13 @@
           </LoadingButton>
         {/if}
       </div>
+
+      {#if lookupFailure}
+        <NotificationBar
+          message={`No items were found in ${depositor["label"]} or in Preservation. Please select another access platform, or <a href="/dmd/new">process a new metadata file</a> to try again.`}
+          status="fail"
+        />
+      {/if}
     </ScrollStepperStep>
     <ScrollStepperStep
       title={`Update descriptive metadata for items found`}

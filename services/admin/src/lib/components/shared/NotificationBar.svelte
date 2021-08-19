@@ -84,7 +84,7 @@ A component tha tis used to highlight important messages to the user
     {#if expandable && detail && detail.length}
       <ExpansionTile useInfoIcon={true}>
         <div slot="top">
-          {message}
+          {@html message}
           {#if dissmissFunction}
             <button class="dismiss sm ghost dark" on:click={dissmissFunction}
               >dismiss</button
@@ -94,7 +94,7 @@ A component tha tis used to highlight important messages to the user
         <div slot="bottom">{detail}</div>
       </ExpansionTile>
     {:else}
-      {message}
+      {@html message}
     {/if}
   </div>
 {/if}
