@@ -15,9 +15,9 @@ Allows the user to select one of many pre-defined depositors.
 <script lang="ts">
   import type { Depositor } from "$lib/types";
   /**
-   * @type {{string: string; label: label}} The depositor that is selected in the selection element |
+   * @type {{prefix: string; label: label}} The depositor that is selected in the selection element |
    */
-  export let depositor: { string: string; label: string };
+  export let depositor: { prefix: string; label: string };
 
   // TODO: add period to end of each prefix?
   /**
@@ -42,11 +42,11 @@ Allows the user to select one of many pre-defined depositors.
   name="depositor"
   on:change={(e) => {
     depositor = {
-      string: e.target["value"],
+      prefix: e.target["value"],
       label: depositors[e.target["value"]],
     };
   }}
-  value={depositor["string"]}
+  value={depositor["prefix"]}
 >
   <option value="">Select an access platform:</option>
   {#each Object.keys(depositors) as depositorCode}

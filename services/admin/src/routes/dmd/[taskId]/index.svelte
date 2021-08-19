@@ -28,17 +28,14 @@
    * @description This page displays the various states of and information about a dmdtask
    */
   import {
-    WaitingDMDTask,
-    FailedDMDTask,
-    SucceededDMDTask,
     DMDTask,
     isWaitingDMDTask,
     isFailedDMDTask,
     isSucceededDMDTask,
   } from "@crkn-rcdr/access-data";
-  import DmdSplitWaitingViewer from "$lib/components/dmd/DmdSplitWaitingViewer.svelte";
-  import DmdSplitFailureViewer from "$lib/components/dmd/DmdSplitFailureViewer.svelte";
-  import DmdSplitSuccessUploader from "$lib/components/dmd/DmdSplitSuccessUploader.svelte";
+  import DmdSplitWaitingView from "$lib/components/dmd/DmdSplitWaitingView.svelte";
+  import DmdSplitFailureView from "$lib/components/dmd/DmdSplitFailureView.svelte";
+  import DmdSplitSuccessView from "$lib/components/dmd/DmdSplitSuccessView.svelte";
 
   /**
    * @type {DMDTask} The dmdtask being displayed by the page.
@@ -49,16 +46,16 @@
 <div class="dmd-task-page-wrap">
   {#if !dmdTask}
     <!--Loading...-->
-    <DmdSplitSuccessUploader />
+    <DmdSplitSuccessView />
   {:else if isSucceededDMDTask(dmdTask)}
-    <DmdSplitSuccessUploader /> <!--dmdTask={getAsSucceededTask()} -->
+    <DmdSplitSuccessView /> <!--dmdTask={getAsSucceededTask()} -->
   {:else if isFailedDMDTask(dmdTask)}
-    <DmdSplitFailureViewer {dmdTask} message={dmdTask.process["message"]} />
+    <DmdSplitFailureView {dmdTask} message={dmdTask.process["message"]} />
   {:else if isWaitingDMDTask(dmdTask)}
-    <DmdSplitWaitingViewer {dmdTask} />
+    <DmdSplitWaitingView {dmdTask} />
   {:else}
     <!--JUST In Case All Else Fails-->
-    <DmdSplitFailureViewer
+    <DmdSplitFailureView
       message="No objects were split from the metadata file."
     />
   {/if}

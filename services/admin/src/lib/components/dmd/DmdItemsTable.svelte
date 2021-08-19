@@ -7,9 +7,8 @@
   export let showPreservationLookupColumn: boolean = false;
   export let showAccessUpdateColumn: boolean = false;
   export let showPreservationUpdateColumn: boolean = false;
-  export let depositor: { string: string; label: string };
-  export let lookupResults: any = {};
-  export let updateResults: any = {};
+  export let accessPlatform: { prefix: string; label: string };
+  export let itemsResults = [];
 
   let showJSONPreview = false;
   let previewItem;
@@ -24,10 +23,10 @@
         <th>Valid</th>
 
         {#if showAccessLookupColumn}
-          <th>Found in {depositor.label}?</th>
+          <th>Found in {accessPlatform.label}?</th>
         {/if}
         {#if showAccessUpdateColumn}
-          <th>Updated in {depositor.label}?</th>
+          <th>Updated in {accessPlatform.label}?</th>
         {/if}
 
         {#if showPreservationLookupColumn}
@@ -39,7 +38,7 @@
       </tr>
     </thead>
     <tbody>
-      {#each dmdTask["items"] as item}
+      {#each dmdTask["items"] as item, i}
         {#if typeof item === "object"}
           <tr>
             <td>{item["id"]}</td>
@@ -58,15 +57,11 @@
               {/if}
             </td>
 
-            {#if showAccessLookupColumn}
-              {#if lookupResults.access[`${depositor.string}.${item.id}`]?.found}
+            {#if showAccessLookupColumn && i < itemsResults.length}
+              {#if itemsResults[i].foundInAccess}
                 <td class="success">
-                  <a
-                    href={`/object/${
-                      lookupResults.access[`${depositor.string}.${item.id}`]
-                        .result.id
-                    }`}
-                    target="_blank">Yes</a
+                  <a href={`/object/${itemsResults[i].noid}`} target="_blank"
+                    >Yes</a
                   >
                 </td>
               {:else}
@@ -75,8 +70,8 @@
             {/if}
 
             {#if showAccessUpdateColumn}
-              {#if `${depositor.string}.${item.id}` in updateResults.access}
-                {#if updateResults.access[`${depositor.string}.${item.id}`]}
+              {#if "updatedInAccess" in itemsResults[i]}
+                {#if itemsResults[i].updatedInAccess}
                   <td class="success">Yes</td>
                 {:else}
                   <td class="not-success">No</td>
@@ -87,7 +82,7 @@
             {/if}
 
             {#if showPreservationLookupColumn}
-              {#if lookupResults.preservation[`${depositor.string}.${item.id}`]?.found}
+              {#if itemsResults[i].foundInPreservation}
                 <td class="success">Yes</td>
               {:else}
                 <td class="not-success">No</td>
