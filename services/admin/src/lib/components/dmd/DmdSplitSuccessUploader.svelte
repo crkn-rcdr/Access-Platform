@@ -87,6 +87,7 @@
   };
 
   function setStateToLookup() {
+    lookupFailure = false;
     showLookupResults = false;
     showUpdateProgress = false;
     showUpdateResults = false;
@@ -105,7 +106,6 @@
 
   function setStateToUpdate() {
     activeStepIndex = 1;
-    hasLookupRan = true;
     showLookupResults = true;
   }
 
@@ -146,11 +146,12 @@
             (key) => lookupResults["preservation"][key].found
           ).length ===
         0;
-      showLookupLoader = false;
       if (!lookupFailure) {
         await sleep(5000);
         setStateToUpdate();
       }
+      showLookupLoader = false;
+      hasLookupRan = true;
       //setStateToUploadEnabled();
     } else {
       //error = response.toString();
@@ -239,6 +240,8 @@
       </div>
 
       {#if lookupFailure}
+        <br />
+        <br />
         <NotificationBar
           message={`No items were found in ${depositor["label"]} or in Preservation. Please select another access platform, or <a href="/dmd/new">process a new metadata file</a> to try again.`}
           status="fail"
