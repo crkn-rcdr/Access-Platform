@@ -2,15 +2,12 @@
 @component
 ### Overview
 A step (section) of a ScrollStepper. Generally used to isolate a group of required inputs or actions for a larger task. When the step is active, the page will scroll nicely to it.
-
 ### Properties
 |    |    |    |
 | -- | -- | -- |
 | title: string  | optional | The title to be displayed for the step |
 | status: "success" or "fail" or "warn" or "neutral"  | optional | The status of the step, used to display the icon in an appropriate color |
 : isLastStep: boolean | optional | If the step is the last step or not. Set this to hide the line to the next step. (TODO: remove the need for this) |
-
-
 ### Usage
 ```  
 <ScrollStepper bind:activeIndex>
@@ -25,7 +22,6 @@ A step (section) of a ScrollStepper. Generally used to isolate a group of requir
     ... step body
   </ScrollStepperStep>
 </ScrollStepper>
-
 ```
 *Note: `bind:` is required for changes to the parameters to be reflected in higher level components.*
 -->
@@ -34,12 +30,10 @@ A step (section) of a ScrollStepper. Generally used to isolate a group of requir
    * @type {string} The title to be displayed for the step
    */
   export let title: string = "";
-
   /**
    * @type {"success" | "fail" | "warn" | "neutral"} The status of the step, used to display the icon in an appropriate color
    */
   export let status: "success" | "fail" | "warn" | "neutral" = "neutral";
-
   /**
    * @type {boolean} If the step is the last step or not. Set this to hide the line to the next step. (TODO: remove the need for this)
    */
@@ -50,7 +44,7 @@ A step (section) of a ScrollStepper. Generally used to isolate a group of requir
   class="scroll-stepper-step"
   class:scroll-stepper-step-not-last={!isLastStep}
 >
-  <h6
+  <span
     class="scroll-stepper-step-title auto-align auto-align__block auto-align__a-center"
   >
     <div
@@ -59,7 +53,7 @@ A step (section) of a ScrollStepper. Generally used to isolate a group of requir
       <slot name="icon" />
     </div>
     {title}
-  </h6>
+  </span>
   <div class="scroll-stepper-step-body">
     <slot />
   </div>
@@ -69,8 +63,10 @@ A step (section) of a ScrollStepper. Generally used to isolate a group of requir
   .scroll-stepper-step-not-last::before {
     content: "";
     position: absolute;
-    top: 8.7rem;
-    bottom: -5rem;
+    /*top: 8.7rem;
+    bottom: -5rem;*/
+    top: 4.7rem;
+    bottom: 2rem;
     width: 1px;
     background-color: rgba(0, 0, 0, 0.2);
     left: 1.4rem;
@@ -78,13 +74,13 @@ A step (section) of a ScrollStepper. Generally used to isolate a group of requir
   }
   .scroll-stepper-step {
     position: relative;
-    padding: var(--perfect-fourth-2) 0;
-    z-index: 1;
+    padding: 0 0 var(--perfect-fourth-2) 0; /*var(--perfect-fourth-2) 0;*/
+    /*z-index: 1;*/
   }
   :global(.scroll-stepper-step.show .scroll-stepper-step-body) {
     display: block;
   }
-  :global(.scroll-stepper-step.hide .scroll-stepper-step-body) {
+  :global(.scroll-stepper-step .scroll-stepper-step-body) {
     display: none;
   }
   h6 {

@@ -7,6 +7,7 @@
   /* Colours */
   --teal: #1f8591;
   --teal-light: #c0d1d3;
+  --grey-light: #eee;
   --green: #368d00;
   --green-light: #dbf1cd;
   --grey: #686868;
@@ -28,9 +29,11 @@
   /* Change this to set the app bg color */
   --base-bg: white;
   /* Change this to set the toolbar, tables, menus etc. colour */
-  --structural-div-bg: #eee;
+  --structural-div-bg: var(--grey-light);
   /* Change this to set the bg color for components that need a darker backgrop, ex: canvas viewer */
   --backdrop-bg: #ddd;
+  /* Change this to set the bg color for items of high contrast*/
+  --darkest-bg: #222;
   /* Change this to set the bg color for overlays, ex: modal dimmer */
   --overlay-bg: rgba(0, 0, 0, 0.75);
   /* Change this to set the colour of inputs, text areas, and selects */
@@ -39,7 +42,8 @@
   --border-color: #ccc;
   /* Change this to set the font colour for the app */
   --base-font-color: var(--dark-font);
-  /* Change this to set the interactive element colors, ex: alert, buttons */
+
+  /* Change these to set the interactive element colors, ex: alert, buttons */
   /* Primary */
   --primary: var(--teal);
   --primary-light: var(--teal-light);
@@ -155,6 +159,35 @@ Source: https://github.com/twbs/bootstrap/blob/main/scss/mixins/_visually-hidden
   grid-gap: var(--auto-grid-gap);
 }
 
+/* Commonly used grids */
+.grid {
+  display: grid;
+  gap: 2rem;
+  align-items: center;
+}
+
+.grid__col_1 {
+  grid-template-areas: "a";
+}
+
+.grid__col_2 {
+  grid-template-areas: "a a";
+}
+
+.grid__col_3 {
+  grid-template-areas: "a a a";
+}
+
+.grid__space-evenly {
+  align-content: space-around;
+  justify-content: space-between;
+}
+
+.grid__space-end {
+  align-content: space-around;
+  justify-content: end;
+}
+
 /* Flexbox alignment */
 .auto-align {
   display: inline-flex;
@@ -204,11 +237,12 @@ Source: https://github.com/twbs/bootstrap/blob/main/scss/mixins/_visually-hidden
 /* Hero element defaults. */
 .hero {
   padding: var(--perfect-fourth-1) 0;
+  background-color: var(--structural-div-bg);
 }
 
 .hero.hero__gradient {
   background: var(--color-gradient);
-  color: var(--primary-font);
+  /*color: var(--primary-font);*/
 }
 
 /* Wrapper util - default page margins */
@@ -383,6 +417,11 @@ button,
   cursor: pointer;
 }
 
+button.sm,
+.button.sm {
+  padding: var(--perfect-fourth-8) var(--perfect-fourth-6);
+}
+
 button.lg,
 .button.lg {
   padding: var(--perfect-fourth-7) var(--perfect-fourth-3);
@@ -494,12 +533,17 @@ table {
   text-align: left;
   border-collapse: collapse;
   border-spacing: 0;
-  border-radius: var(--border-radius);
+  /*border-radius: var(--border-radius);
+  border: solid var(--border-color) 1px;*/
 }
 
 caption {
   text-align: left;
   padding: 1rem;
+}
+
+thead {
+  background: var(--backdrop-bg);
 }
 
 tbody {
@@ -510,8 +554,14 @@ tbody tr.clickable:hover {
   background-color: rgba(0, 0, 0, 0.04);
 }
 
+/*
+tr:nth-child(even) {
+  background-color: rgba(0, 0, 0, 0.02);
+}*/
+
 thead th {
   padding: 1rem;
+  font-weight: bold;
 }
 
 th {
@@ -760,4 +810,14 @@ fieldset {
   100% {
     opacity: 0.5;
   }
+}
+
+/* To be used surrounding code like the JsonTree*/
+.code-block {
+  border: 1px solid var(--border-color);
+  padding: var(--perfect-fourth-6) var(--perfect-fourth-8);
+  margin: var(--margin-sm);
+  white-space: pre-line;
+  border-radius: var(--border-radius);
+  background-color: var(--base-bg);
 }

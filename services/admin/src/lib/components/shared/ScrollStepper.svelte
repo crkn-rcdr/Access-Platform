@@ -2,15 +2,12 @@
 @component
 ### Overview
 The scroll stepper component is a component that breaks down a long task into smaller, more digestible, steps for the user. You can either hide the previous steps, or keep them visible. When they are visible, the component will scroll nicely to the next step as the user progresses.
-
 ### Properties
 |    |    |    |
 | -- | -- | -- |
 | activeStepIndex: number   | optional | Used to control which step is the active step in the stepper |
 | furthestStepVisitedIndex: number  | optional | Used to control which step is the furthest step visited in the stepper. |
 | displayPrevious: boolean | optional | If the previous steps to the active step should be 'collapsed' or 'expanded'
-
-
 ### Usage
 ```  
 <ScrollStepper bind:activeIndex>
@@ -30,27 +27,26 @@ The scroll stepper component is a component that breaks down a long task into sm
 -->
 <script lang="ts">
   import { onMount } from "svelte";
-
   /**
    * @type {number} Used to control which step is the active step in the stepper
    */
   export let activeStepIndex: number = 0;
-
   /**
    * @type {number} Used to control which step is the furthest step visited in the stepper. It is reset upon cancelation of a task.
    */
   export let furthestStepVisitedIndex: number = 0;
-
   /**
    * @type {boolean} If the previous steps to the active step should be 'collapsed' or 'expanded'
    */
   export let displayPrevious: boolean = false;
-
+  /**
+   * @type {boolean} If the stepper should scroll to the new active index automatically
+   */
+  export let enableAutoScrolling: boolean = true;
   /**
    * @type {HTMLDivElement} This container element holds the drop down menu items
    */
   let container: HTMLDivElement;
-
   /**
    * This function taked the step titles and makes them clickable if they are the furthest visited step or one of its predecessors.
    * @returns void
@@ -66,7 +62,6 @@ The scroll stepper component is a component that breaks down a long task into sm
       else stepTitles[i].classList.remove("clickable");
     }
   }
-
   /**
    * This function sets the furthest visitied step if needed when the active step changes.
    * @returns void
@@ -75,7 +70,6 @@ The scroll stepper component is a component that breaks down a long task into sm
     if (activeStepIndex >= furthestStepVisitedIndex)
       furthestStepVisitedIndex = activeStepIndex;
   }
-
   /**
    * This method enabled changing the active step if a step title is clicked by creating a clicked event handler on all of the step titles.
    * @returns void
@@ -94,7 +88,6 @@ The scroll stepper component is a component that breaks down a long task into sm
       });
     }
   }
-
   /**
    * This method is a helpful method for getting the true offset of an element from the top of the page.
    * @see https://stackoverflow.com/questions/13716786/getoffset-function-in-chrome-and-safari
@@ -110,7 +103,6 @@ The scroll stepper component is a component that breaks down a long task into sm
     }
     return { top: _y, left: _x };
   }
-
   /**
    * This method does the following when the active step is changed:
    * 1. Expands the active step, and hides the other steps as indicated by the @var displayPrevious
@@ -125,28 +117,25 @@ The scroll stepper component is a component that breaks down a long task into sm
     for (let i = 0; i < steps.length; i++) {
       if (displayPrevious ? i <= activeStepIndex : i === activeStepIndex) {
         steps[i].classList.add("show");
-        steps[i].classList.remove("hide");
       } else {
-        steps[i].classList.add("hide");
         steps[i].classList.remove("show");
       }
-
       if (i === activeStepIndex) {
         steps[i].classList.add("scroll-stepper-step-active");
-        if (i !== 0 && window) {
-          const offset = getOffset(steps[i]);
-          const y =
-            i === steps.length - 1
-              ? offset.top + steps[i].clientHeight
-              : offset.top - 20;
-          window.scrollTo({ top: y, behavior: "smooth" });
+        if (enableAutoScrolling && window && i !== 0) {
+          setTimeout(() => {
+            const offset = getOffset(steps[i]);
+            const y = offset.top - 20;
+            console.log(i === steps.length - 1, activeStepIndex, "SCROOLLL", y);
+            window.history.scrollRestoration = "manual";
+            window.scrollTo({ top: y, behavior: "smooth" });
+          }, 10);
         }
       } else {
         steps[i].classList.remove("scroll-stepper-step-active");
       }
     }
   }
-
   /**
    * This method wraps the various methods that are required to run when the active index changes. It calls @function trackFurthestStepVisited, @function makeVisitedStepsClickable, and @function handleStepChange
    * @returns void
@@ -156,7 +145,6 @@ The scroll stepper component is a component that breaks down a long task into sm
     makeVisitedStepsClickable();
     handleStepChange();
   }
-
   /**
    * @listens activeStepIndex
    * @description Watches for changes in the @var activeStepIndex, and calls @function handleActiveStepChange to preform the appropriate actions
@@ -165,7 +153,6 @@ The scroll stepper component is a component that breaks down a long task into sm
     activeStepIndex;
     handleActiveStepChange();
   }
-
   /**
    * @event onMount
    * @description When the component instance is mounted onto the dom, the @function handleStepChange is called to render the stepper, and the @function changeStepOnTitleClick is called if @var displayPrevious is false.

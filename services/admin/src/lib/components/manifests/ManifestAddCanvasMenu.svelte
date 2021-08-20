@@ -253,6 +253,7 @@ This component allows the user to search through other manifests and select canv
   .canvas-selector-wrap {
     position: relative;
     height: 100%;
+    background-color: var(--backdrop-bg);
   }
 
   .add-menu-title {
@@ -267,7 +268,7 @@ This component allows the user to search through other manifests and select canv
     width: 100%;
     height: fit-content;
     padding-top: 0.5rem;
-    background: #222;
+    background: var(--darkest-bg);
     z-index: 1;
     color: var(--light-font);
     padding: 0.7rem;
@@ -324,6 +325,6 @@ This component allows the user to search through other manifests and select canv
 
   :global(.openseadragon-canvas) {
     padding-left: 60px;
-    background: #222;
+    background: var(--darkest-bg);
   }
 </style>
