@@ -32,9 +32,9 @@ export const CouchAttachmentRecord = z.record(
 
 export type CouchAttachmentRecord = z.infer<typeof CouchAttachmentRecord>;
 
-type CouchDocument = {
+export type CouchDocument = {
   _id: string;
-  _rev: string;
+  _rev?: string;
   _attachments?: CouchAttachmentRecord;
   [k: string]: unknown;
 };
@@ -74,6 +74,35 @@ type UniqueFindResult<
   T extends Document,
   Fields extends readonly (keyof T & string)[]
 > = { found: false } | { found: true; result: FindResult<T, Fields> };
+
+type ViewResponse<T extends Document, V = unknown> = {
+  total_rows: number;
+  offset: number;
+  update_seq?: number | string;
+  rows: { id: string; key: string; doc?: T; value: V }[];
+};
+
+type BulkGetResponse<T extends Document> = {
+  total_rows: number;
+  offset: number;
+  update_seq?: number | string;
+  rows: (
+    | {
+        id: string;
+        key: string;
+        value: { rev: string };
+        doc?: T;
+        error: undefined;
+      }
+    | {
+        id: undefined;
+        key: string;
+        value: undefined;
+        doc: undefined;
+        error: string;
+      }
+  )[];
+};
 
 /**
  * Handler for interactions with a CouchDB database.
@@ -132,6 +161,62 @@ export class DatabaseHandler<T extends Document> {
         return { found: false };
       }
       throw error;
+    }
+  }
+
+  /**
+   * Queries the `_all_docs` view for this database.
+   * @param options View query options.
+   * @returns the view output. Check `docs`.
+   */
+  async list(options: DocumentViewParams): Promise<BulkGetResponse<T>> {
+    try {
+      const response = await this.db.list(options);
+      return {
+        total_rows: response.total_rows,
+        offset: response.offset,
+        update_seq: response.update_seq,
+        rows: response.rows.map((row) => {
+          if (row.error !== undefined)
+            return {
+              id: undefined,
+              value: undefined,
+              doc: undefined,
+              error: row.error,
+              key: row.key,
+            };
+          else {
+            const doc = row.doc
+              ? this.parser.parse(fromCouch(row.doc as CouchDocument))
+              : undefined;
+            return { ...row, doc, error: undefined };
+          }
+        }),
+      };
+    } catch (e) {
+      throw createHttpError(e.statusCode, e.error);
+    }
+  }
+
+  /** Don't use this unless you're testing something. */
+  async insert(obj: T): Promise<void> {
+    const doc: CouchDocument = {
+      _id: obj.id,
+      _attachments: obj.attachments,
+      ...obj,
+    };
+    delete doc["id"];
+    delete doc["attachments"];
+
+    try {
+      const headers = (await this.db.head(obj.id)) as { etag: string };
+      doc._rev = headers.etag;
+    } catch (ignore) {}
+
+    try {
+      await this.db.insert(doc);
+    } catch (e) {
+      throw createHttpError(e.statusCode, e.error);
     }
   }
 
@@ -196,13 +281,24 @@ export class DatabaseHandler<T extends Document> {
    * @param options View query options.
    * @returns the view output. Check `docs`.
    */
-  async view(
+  async view<V = unknown>(
     designName: string,
     viewName: string,
     options: DocumentViewParams
-  ) {
+  ): Promise<ViewResponse<T, V>> {
     try {
-      return await this.db.view(designName, viewName, options);
+      const response = await this.db.view(designName, viewName, options);
+      return {
+        total_rows: response.total_rows,
+        offset: response.offset,
+        update_seq: response.update_seq,
+        rows: response.rows.map((row) => {
+          const doc = row.doc
+            ? this.parser.parse(fromCouch(row.doc as CouchDocument))
+            : undefined;
+          return { ...row, doc, value: row.value as V, error: undefined };
+        }),
+      };
     } catch (e) {
       throw createHttpError(e.statusCode, e.error);
     }

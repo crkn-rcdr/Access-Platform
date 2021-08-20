@@ -3,10 +3,10 @@ import { Agent as HttpAgent } from "http";
 import { Agent as HttpsAgent } from "https";
 
 import { Env } from "@crkn-rcdr/access-env";
-import {} from "@crkn-rcdr/access-data";
 
 import { AccessHandler } from "./handlers/access.js";
 import { DMDTaskHandler } from "./handlers/dmdtask.js";
+import { LegacyPackageHandler } from "./handlers/dipstaging.js";
 
 export { CouchAttachmentRecord } from "./DatabaseHandler.js";
 
@@ -37,6 +37,7 @@ export function connect() {
 
   return {
     access: new AccessHandler(c),
+    dipstaging: new LegacyPackageHandler(c),
     dmdtask: new DMDTaskHandler(c),
   };
 }
