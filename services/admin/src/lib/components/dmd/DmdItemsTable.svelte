@@ -1,20 +1,69 @@
 <script lang="ts">
-  import type { SucceededDMDTask } from "@crkn-rcdr/access-data";
+  import type { AccessPlatform } from "$lib/types";
+  import type { ParseRecord } from "@crkn-rcdr/access-data/dist/esm/dmd/Task";
   import JsonTree from "$lib/components/shared/JsonTree.svelte";
   import Modal from "$lib/components/shared/Modal.svelte";
-  export let dmdTask: SucceededDMDTask;
-  export let showAccessLookupColumn: boolean = false;
-  export let showPreservationLookupColumn: boolean = false;
-  export let showAccessUpdateColumn: boolean = false;
-  export let showPreservationUpdateColumn: boolean = false;
-  export let accessPlatform: { prefix: string; label: string };
-  export let itemsResults = [];
 
-  let showJSONPreview = false;
-  let previewItem;
+  /**
+   *  @type { ParseRecord[]  } The dmdtask items to be displayed.
+   */
+  export let itemsToShow: ParseRecord[] = [];
+
+  /**
+   *  @type { (
+    | DmdLoadedParseRecord
+    | DmdUpdatedParseRecord
+  )[] } The dmdtask items lookup and update results. Indexing exactly matches the @var itemsToShow
+   */
+  export let itemsLookupAndUpdateResults = [];
+
+  /**
+   *  @type { AccessPlatform } The access platform to look for the items in.
+   */
+  export let accessPlatform: AccessPlatform;
+
+  /**
+   * @type { boolean } If the access lookup column should be displayed of not. The displaying of the column depends on user selections in parent and sibling components.
+   */
+  export let showAccessLookupColumn: boolean = false;
+
+  /**
+   * @type { boolean } If the preservation lookup column should be displayed of not. The displaying of the column depends on user selections in parent and sibling components.
+   */
+  export let showPreservationLookupColumn: boolean = false;
+
+  /**
+   * @type { boolean } If the access update column should be displayed of not. The displaying of the column depends on user selections in parent and sibling components.
+   */
+  export let showAccessUpdateColumn: boolean = false;
+
+  /**
+   * @type { boolean } If the preservation update column should be displayed of not. The displaying of the column depends on user selections in parent and sibling components.
+   */
+  export let showPreservationUpdateColumn: boolean = false;
+
+  /**
+   * @type { boolean } if the json preview modal should be displayed for an item in the table.
+   */
+  let showItemJsonPreview: boolean = false;
+
+  /**
+   * @type { ParseRecord } the item with json in the preview modal.
+   */
+  let itemBeingPreviewed: ParseRecord;
+
+  /**
+   * Handles showing the json preview modal for the item passed in
+   * @param item
+   * @returns void
+   */
+  function handlePreviewItemPressed(item: ParseRecord) {
+    itemBeingPreviewed = item;
+    showItemJsonPreview = true;
+  }
 </script>
 
-{#if dmdTask?.["items"]?.length}
+{#if itemsToShow.length}
   <table>
     <thead>
       <tr>
@@ -38,7 +87,7 @@
       </tr>
     </thead>
     <tbody>
-      {#each dmdTask["items"] as item, i}
+      {#each itemsToShow as item, i}
         {#if typeof item === "object"}
           <tr>
             <td>{item["id"]}</td>
@@ -47,21 +96,20 @@
               {#if item["parsed"]}
                 <button
                   class="button ghost dark sm"
-                  on:click={() => {
-                    previewItem = item;
-                    showJSONPreview = true;
-                  }}>Preview</button
+                  on:click={() => handlePreviewItemPressed(item)}
+                  >Preview</button
                 >
               {:else}
                 {item["message"]}
               {/if}
             </td>
 
-            {#if showAccessLookupColumn && i < itemsResults.length}
-              {#if itemsResults[i].foundInAccess}
+            {#if showAccessLookupColumn && i < itemsLookupAndUpdateResults.length}
+              {#if itemsLookupAndUpdateResults[i].foundInAccess}
                 <td class="success">
-                  <a href={`/object/${itemsResults[i].noid}`} target="_blank"
-                    >Yes</a
+                  <a
+                    href={`/object/${itemsLookupAndUpdateResults[i].noid}`}
+                    target="_blank">Yes</a
                   >
                 </td>
               {:else}
@@ -70,8 +118,8 @@
             {/if}
 
             {#if showAccessUpdateColumn}
-              {#if "updatedInAccess" in itemsResults[i]}
-                {#if itemsResults[i].updatedInAccess}
+              {#if "updatedInAccess" in itemsLookupAndUpdateResults[i]}
+                {#if itemsLookupAndUpdateResults[i].updatedInAccess}
                   <td class="success">Yes</td>
                 {:else}
                   <td class="not-success">No</td>
@@ -82,7 +130,7 @@
             {/if}
 
             {#if showPreservationLookupColumn}
-              {#if itemsResults[i].foundInPreservation}
+              {#if itemsLookupAndUpdateResults[i].foundInPreservation}
                 <td class="success">Yes</td>
               {:else}
                 <td class="not-success">No</td>
@@ -102,9 +150,9 @@
 {/if}
 
 <!--dmdtask.fetchResult-->
-<Modal bind:open={showJSONPreview} title={`Preview JSON`} size="lg">
+<Modal bind:open={showItemJsonPreview} title={`Preview JSON`} size="lg">
   <div slot="body" class="code-block">
-    <JsonTree value={{ object: JSON.parse(previewItem["message"]) }} />
+    <JsonTree value={{ object: JSON.parse(itemBeingPreviewed["message"]) }} />
   </div>
 </Modal>
 

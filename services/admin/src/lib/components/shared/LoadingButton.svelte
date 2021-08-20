@@ -2,7 +2,14 @@
   import Loading from "$lib/components/shared/Loading.svelte";
   import { createEventDispatcher } from "svelte";
 
-  export let buttonClass = "primary";
+  /**
+   * @type { string } The html class attribute for the button
+   */
+  export let buttonClass: string = "primary";
+
+  /**
+   * @type { boolean } The state of the button, either to show the loading indicator or not.
+   */
   export let showLoader = false;
 
   /**
@@ -10,6 +17,11 @@
    */
   const dispatch = createEventDispatcher();
 
+  /**
+   * Sends the clicked event of the button to the parent components using @var dispatcher.
+   * @param event
+   * @returns void
+   */
   function handleClicked(event) {
     dispatch("clicked", event);
   }

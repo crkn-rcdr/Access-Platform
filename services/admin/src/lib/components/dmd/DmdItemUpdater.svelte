@@ -1,18 +1,43 @@
 <script lang="ts">
   import { getStores } from "$app/stores";
-  import type { Session } from "$lib/types";
+  import type { AccessPlatform, Session } from "$lib/types";
 
-  export let shouldUpdateInPreservation: boolean = true;
-  export let shouldUpdateInAccess: boolean = true;
+  /**
+   * @type {"ready" | "updating" | "updated" | "error"} This vaiable keeps track of the state of the component, to show relevant messages to the user.
+   */
   export let state: "ready" | "updating" | "updated" | "error" = "ready";
-  export let itemsResults = [];
 
+  /**
+   *  @type { AccessPlatform } The access platform to look for the items in.
+   */
+  export let accessPlatform: AccessPlatform;
+
+  /**
+   *  @type { string } The 'id' of the DMDTask being processed.
+   */
   export let dmdTaskId: string;
-  export let accessPlatform: {
-    prefix: string;
-    label: string;
-  };
 
+  /**
+   *  @type { (
+    | DmdLoadedParseRecord
+    | DmdUpdatedParseRecord
+  )[] } The dmdtask items to update (holds both results of the lookup and update.)
+   */
+  export let itemsLookupAndUpdateResults = [];
+
+  /**
+   * @type { boolean } If the request to update should be sent to the selected access platform
+   */
+  export let shouldUpdateInAccess: boolean = true;
+
+  /**
+   * @type { boolean } If the request to update should be sent to preservation
+   */
+  export let shouldUpdateInPreservation: boolean = true;
+
+  /**
+   * @type { number } The completion percentage of the updating process
+   */
   export let updatedProgressPercentage = 0;
 
   /**
@@ -20,23 +45,40 @@
    */
   const { session } = getStores<Session>();
 
+  /**
+   * TODO: Delete
+   * Helper method to simulate backend processing time
+   * */
   function sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
-  async function handleUpdatePressed() {
-    for (let i = 0; i < itemsResults.length; i++) {
-      if ("updatedInAccess" in itemsResults[i])
-        delete itemsResults[i]["updatedInAccess"];
-      if ("updatedInPreservation" in itemsResults[i])
-        delete itemsResults[i]["updatedInPreservation"];
+  /**
+   * Removes any previous update results from @var itemsLookupAndUpdateResults
+   * @returns void
+   */
+  function clearResults() {
+    for (let i = 0; i < itemsLookupAndUpdateResults.length; i++) {
+      if ("updatedInAccess" in itemsLookupAndUpdateResults[i])
+        delete itemsLookupAndUpdateResults[i]["updatedInAccess"];
+      if ("updatedInPreservation" in itemsLookupAndUpdateResults[i])
+        delete itemsLookupAndUpdateResults[i]["updatedInPreservation"];
     }
+  }
 
-    if (itemsResults.length > 0) {
+  /**
+   * Calls @function clearResults then sends a request using @var $session.lapin to update the items in @var itemsLookupAndUpdateResults metadata. It stores the new update results in @var itemsLookupAndUpdateResults. It sets the @var updatedProgressPercentage as each item's store request is sent. It also sets @var state as needed to show the user relevant information.
+   * @returns void
+   */
+  async function handleUpdatePressed() {
+    clearResults();
+
+    if (itemsLookupAndUpdateResults.length > 0) {
       state = "updating";
       updatedProgressPercentage = 0;
       let index = 0;
-      for (const item of itemsResults) {
+
+      for (const item of itemsLookupAndUpdateResults) {
         if (item.foundInAccess) {
           const response = await $session.lapin.mutation(
             "dmdTask.storeAccess",
@@ -48,20 +90,20 @@
             }
           );
           if (response) {
-            itemsResults[index] = {
+            itemsLookupAndUpdateResults[index] = {
               ...item,
               updatedInAccess: true,
               updatedInPreservation: false,
             };
           } else {
-            itemsResults[index] = {
+            itemsLookupAndUpdateResults[index] = {
               ...item,
               updatedInAccess: false,
               updatedInPreservation: false,
             };
           }
         } else {
-          itemsResults[index] = {
+          itemsLookupAndUpdateResults[index] = {
             ...item,
             updatedInAccess: false,
             updatedInPreservation: false,
@@ -69,10 +111,10 @@
         }
 
         updatedProgressPercentage = Math.round(
-          ((index + 1) / itemsResults.length) * 100
+          ((index + 1) / itemsLookupAndUpdateResults.length) * 100
         );
 
-        itemsResults = itemsResults;
+        itemsLookupAndUpdateResults = itemsLookupAndUpdateResults;
         index++;
         await sleep(1000);
       }

@@ -34,12 +34,21 @@ A component that overlays ontop of the application, in the center of the screen.
    * @type {string} The title text of the modal.
    */
   export let title = "";
+
   /**
    * @type {"sm" | "md" | "lg"} The title text of the modal.
    */
   export let size: "sm" | "md" | "lg" = "sm";
 
+  /**
+   * @type {HTMLDivElement} The container of the modal.
+   */
   let container: HTMLDivElement;
+
+  /**
+   * Disables scrolling on all of the parent components when the modal is open. re-enables scrolling when the modal is shut.
+   * @returns void
+   */
   function disableScrollingOnParents() {
     let parent = container.parentElement;
     while (parent) {
@@ -51,6 +60,12 @@ A component that overlays ontop of the application, in the center of the screen.
       parent = parent.parentElement;
     }
   }
+
+  /**
+   * @listens open
+   * @listens container
+   * @description Calls @function disableScrollingOnParents when @var open or @var container are updated.
+   */
   $: {
     open;
     if (container) {

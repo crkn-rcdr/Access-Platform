@@ -6,7 +6,7 @@
 
 import type { TRPCClient } from "@trpc/client";
 import type { LapinRouter } from "@crkn-rcdr/lapin-router";
-import type { User } from "@crkn-rcdr/access-data";
+import type { Noid, Slug, User } from "@crkn-rcdr/access-data";
 
 /**
  * Session exported by the `getSession` hook.
@@ -62,9 +62,21 @@ export type SideMenuPageData = {
 };
 
 /**
- * Used to creatre a pull-down of available depositors to prepend to identifiers in the CSV or MarcXML files.
+ * Used to creatre a pull-down of available access platforms to prepend to identifiers in the CSV or MarcXML files.
  */
-export type Depositor = {
-  string: string;
+export type AccessPlatform = {
+  prefix: string;
   label: string;
+};
+
+export type DmdLoadedParseRecord = {
+  slug: Slug;
+  noid: Noid;
+  foundInAccess: boolean;
+  foundInPreservation: boolean;
+};
+
+export type DmdUpdatedParseRecord = DmdLoadedParseRecord & {
+  updatedInAccess: boolean;
+  updatedInPreservation: boolean;
 };

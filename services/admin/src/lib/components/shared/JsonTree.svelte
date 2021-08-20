@@ -1,13 +1,34 @@
 <script lang="ts">
-  import IoMdArrowDropright from "svelte-icons/io/IoMdArrowDropright.svelte";
-  import IoMdArrowDropdown from "svelte-icons/io/IoMdArrowDropdown.svelte";
   /**
    * @see https://svelte.dev/repl/347b37e18b5d4a65bbacfd097536db02?version=3.24.0
    */
+  import IoMdArrowDropright from "svelte-icons/io/IoMdArrowDropright.svelte";
+  import IoMdArrowDropdown from "svelte-icons/io/IoMdArrowDropdown.svelte";
+
+  /**
+   * @type { any } The value of the current JSON item being displayed
+   */
   export let value: any;
-  export let key = "";
-  export let indent = 0;
+
+  /**
+   * @type { string }  The valkeyue of the current JSON item being displayed
+   */
+  export let key: string = "";
+
+  /**
+   * @type { number }  The indentation in 'rem' to set for this key vakue pair. Determines the margin-left of the information in the interface.
+   */
+  export let indent: number = 0;
+
+  /**
+   * @type { boolean } a state tracker for if the interface for this key value pair is expanded or not.
+   */
   export let open = true;
+
+  /**
+   * Toggles the interface for the key-value pair.
+   * @returns void
+   */
   function toggleOpen() {
     open = !open;
   }

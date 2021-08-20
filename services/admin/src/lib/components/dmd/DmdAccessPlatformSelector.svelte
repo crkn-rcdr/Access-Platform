@@ -13,13 +13,12 @@ Allows the user to select one of many pre-defined depositors.
 *Note: `bind:` is required for changes to the parameters to be reflected in higher level components.*
 -->
 <script lang="ts">
-  import type { Depositor } from "$lib/types";
+  import type { AccessPlatform } from "$lib/types";
   /**
-   * @type {{prefix: string; label: label}} The depositor that is selected in the selection element |
+   * @type {AccessPlatform} The access platform information that is selected in the selection element
    */
-  export let depositor: { prefix: string; label: string };
+  export let depositor: AccessPlatform;
 
-  // TODO: add period to end of each prefix?
   /**
    * @type { object} The object of prefix options for the selection element.
    */

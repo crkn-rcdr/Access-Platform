@@ -1,7 +1,7 @@
 <!--
 @component
 ### Overview
-Displays a dmd task's time based information in a table, the user sees the task date and the process last updated date.
+Displays a dmd task's information in a table.
 
 ### Properties
 |    |    |    |
@@ -20,6 +20,9 @@ Displays a dmd task's time based information in a table, the user sees the task 
    */
   export let dmdTask: DMDTask;
 
+  /**
+   * @type {"column" | "row"} If the information should be row or column based. If column is selected, all information will be displayed in one column. Otherwise, a 3x3 grid will be used.
+   */
   export let direction: "column" | "row" = "column";
 </script>
 

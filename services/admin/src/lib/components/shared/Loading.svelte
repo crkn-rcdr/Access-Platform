@@ -6,6 +6,7 @@ This component shows a CRKN-esque loader to be used when an action is being perf
 |    |    |    |
 | -- | -- | -- |
 | backgroundType: "light" or "dark" or "primary" or "secondary" or "gradient"    | optional | Sets the background colour of the lines in the loader. |
+| size: "sm" or "md" or "lg"   | optional | The size of the loader to be displayed. |
 ### Usage
 ```  
 <Loader/>
@@ -21,6 +22,10 @@ This component shows a CRKN-esque loader to be used when an action is being perf
     | "primary"
     | "secondary"
     | "gradient" = "light";
+
+  /**
+   * @type { "sm" | "md" | "lg" } tThe size of the loader to be displayed.
+   */
   export let size: "sm" | "md" | "lg" = "md";
 </script>
 

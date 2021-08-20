@@ -1,5 +1,8 @@
-<script>
-  import Toolbar from "$lib/components/shared/Toolbar.svelte";
+<script lang="ts">
+  /**
+   * @template
+   * @description This is the common layout for the dmd task updater pages
+   */
 </script>
 
 <div class="backdrop">

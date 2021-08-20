@@ -1,5 +1,12 @@
 <script lang="ts">
+  /**
+   * @type { number } The current progress in percentage of the progress bar
+   */
   export let progress = 0;
+
+  /**
+   * @type { string } The text to be displayed beside the procress percentage after the progress bar
+   */
   export let progressText = "";
 </script>
 

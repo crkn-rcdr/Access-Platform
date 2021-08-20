@@ -3,14 +3,6 @@
 ### Overview
 This component allows the user to create new DMD tasks to attach metadata to objects. The metadata and objects are specified by a file that is selected from their computer.
 
-Import metadata 
-Operator should be able to go to the page for an existing Object, and import into the metadata from a file that was exported from other tools (List of import formats will grow): 
-CSV files (where specific format chosen in pull-down for pre-defined formats) 
-DB/TExt XML dump 
-MARC xml file 
-
-Similar to adding processing requests to an object, but would be applied to all objects whose directory of files are placed in the group directory prior to the group directory being moved to the wip/Inbox directory. Processing requests would be appended to the processing requests that already existed for each object. 7
-
 ### Properties
 none
 
@@ -33,6 +25,9 @@ none
    */
   const { session } = getStores<Session>();
 
+  /**
+   * @type {"ready" | "uploading" | "uploaded" | "error" } This vaiable keeps track of the state of the component, to show relevant messages to the user.
+   */
   let state: "ready" | "uploading" | "uploaded" | "error" = "ready";
 
   /**
