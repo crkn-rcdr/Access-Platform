@@ -43,7 +43,7 @@
     </div>
     <div class="search">
       <TypeAhead
-        placeholder="Search collections and manifests..."
+        placeholder="Search for existing collections and manifests to edit..."
         on:selected={slugSelected}
       />
     </div>
