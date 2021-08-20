@@ -51,6 +51,21 @@ none
   let errorText: string = "";
 
   /**
+   * TODO: Probably want to move this to a helper module, or stright into the file select component itself.
+   * This method takes a file and returns a promise with the file contents as a string.
+   * @param blob
+   */
+  const convertBlobToBase64 = (blob) =>
+    new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onerror = reject;
+      reader.onload = () => {
+        resolve(reader.result.toString());
+      };
+      reader.readAsDataURL(blob);
+    });
+
+  /**
    * Converts the selected file into a base 64 encoded string and stores it in the @var b64EncodedMetadataFileText
    * @returns void
    */
@@ -59,17 +74,7 @@ none
     const metadataFileText = await file.text();
     try {
       if (metadataFileText) {
-        b64EncodedMetadataFileText = btoa(
-          unescape(encodeURIComponent(metadataFileText))
-        );
-        /** 
-        * @see https://stackoverflow.com/questions/23223718/failed-to-execute-btoa-on-window-the-string-to-be-encoded-contains-characte
-        * 
-        * to decode: function b64_to_utf8( str ) {
-                str = str.replace(/\s/g, '');    
-                return decodeURIComponent(escape(window.atob( str )));
-            }
-          */
+        b64EncodedMetadataFileText = await convertBlobToBase64(file);
       }
     } catch (e) {
       console.log(e);
