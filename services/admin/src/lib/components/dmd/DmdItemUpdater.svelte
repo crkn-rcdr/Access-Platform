@@ -1,11 +1,36 @@
+<!--
+@component
+### Overview
+This component allows the user to update the dmd tasks items in an access platform and/or in presercvation. 
+
+### Properties
+|    |    |    |
+| -- | -- | -- |
+| accessPlatform: AccessPlatform | required | The access platform to look for the items in. |
+| dmdTaskId: string | required | The 'id' of the DMDTask being processed. |
+| state: "ready" or "updating" or "updated" or "error" | optional | This variable keeps track of the state of the component, to show relevant messages to the user. |
+| itemsLookupAndUpdateResults: (DmdLoadedParseRecord or DmdUpdatedParseRecord)[] | optional | The dmdtask items to update (holds both results of the lookup and update.) |
+| shouldUpdateInAccess: boolean | optional | If the request to update should be sent to the selected access platform. |
+| shouldUpdateInPreservation: boolean | optional | If the request to update should be sent to preservation. |
+| updatedProgressPercentage: number | optional | The completion percentage of the updating process |
+
+### Usage
+```
+<DmdItemUpdater
+  dmdTaskId={dmdTask.id}
+  bind:state={updateState}
+  bind:accessPlatform
+  bind:shouldUpdateInPreservation
+  bind:shouldUpdateInAccess
+  bind:itemsLookupAndUpdateResults
+  bind:updatedProgressPercentage
+/>
+```
+*Note: `bind:` is required for changes to the parameters to be reflected in higher level components.*
+-->
 <script lang="ts">
   import { getStores } from "$app/stores";
   import type { AccessPlatform, Session } from "$lib/types";
-
-  /**
-   * @type {"ready" | "updating" | "updated" | "error"} This vaiable keeps track of the state of the component, to show relevant messages to the user.
-   */
-  export let state: "ready" | "updating" | "updated" | "error" = "ready";
 
   /**
    *  @type { AccessPlatform } The access platform to look for the items in.
@@ -16,6 +41,11 @@
    *  @type { string } The 'id' of the DMDTask being processed.
    */
   export let dmdTaskId: string;
+
+  /**
+   * @type {"ready" | "updating" | "updated" | "error"} This variable keeps track of the state of the component, to show relevant messages to the user.
+   */
+  export let state: "ready" | "updating" | "updated" | "error" = "ready";
 
   /**
    *  @type { (
@@ -38,7 +68,7 @@
   /**
    * @type { number } The completion percentage of the updating process
    */
-  export let updatedProgressPercentage = 0;
+  export let updatedProgressPercentage: number = 0;
 
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.

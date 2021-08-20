@@ -1,8 +1,47 @@
+<!--
+@component
+### Overview
+This component displays the items in the dmd task throughout the various stages of completing the dmd task process in a table view.
+
+### Properties
+|    |    |    |
+| -- | -- | -- |
+| accessPlatform: AccessPlatform | required | The access platform the items are in. |
+| itemsToShow: ParseRecord[] | optional | The dmdtask items to be displayed. |
+| itemsLookupAndUpdateResults: (DmdLoadedParseRecord or DmdUpdatedParseRecord)[] | optional | The dmdtask items lookup and update results. Indexing exactly matches the itemsToShow |
+| showAccessLookupColumn: boolean | optional | If the access lookup column should be displayed of not. The displaying of the column depends on user selections in parent and sibling components. |
+| showPreservationLookupColumn: boolean | optional | If the preservation lookup column should be displayed of not. The displaying of the column depends on user selections in parent and sibling components. |
+| showAccessUpdateColumn: boolean | optional | If the access update column should be displayed of not. The displaying of the column depends on user selections in parent and sibling components. |
+| showPreservationUpdateColumn: boolean | optional | If the preservation update column should be displayed of not. The displaying of the column depends on user selections in parent and sibling components. |
+
+### Usage
+```
+<DmdItemsTable
+    bind:itemsToShow={dmdTask.items}
+    bind:accessPlatform
+    bind:itemsLookupAndUpdateResults
+    bind:showAccessLookupColumn
+    bind:showPreservationLookupColumn
+    bind:showAccessUpdateColumn
+    bind:showPreservationUpdateColumn
+  />
+```
+*Note: `bind:` is required for changes to the parameters to be reflected in higher level components.*
+-->
 <script lang="ts">
-  import type { AccessPlatform } from "$lib/types";
+  import type {
+    AccessPlatform,
+    DmdLoadedParseRecord,
+    DmdUpdatedParseRecord,
+  } from "$lib/types";
   import type { ParseRecord } from "@crkn-rcdr/access-data/dist/esm/dmd/Task";
   import JsonTree from "$lib/components/shared/JsonTree.svelte";
   import Modal from "$lib/components/shared/Modal.svelte";
+
+  /**
+   *  @type { AccessPlatform } The access platform the items are in.
+   */
+  export let accessPlatform: AccessPlatform;
 
   /**
    *  @type { ParseRecord[]  } The dmdtask items to be displayed.
@@ -10,17 +49,12 @@
   export let itemsToShow: ParseRecord[] = [];
 
   /**
-   *  @type { (
+   *  @type { (DmdLoadedParseRecord| DmdUpdatedParseRecord)[] } The dmdtask items lookup and update results. Indexing exactly matches the @var itemsToShow
+   */
+  export let itemsLookupAndUpdateResults: (
     | DmdLoadedParseRecord
     | DmdUpdatedParseRecord
-  )[] } The dmdtask items lookup and update results. Indexing exactly matches the @var itemsToShow
-   */
-  export let itemsLookupAndUpdateResults = [];
-
-  /**
-   *  @type { AccessPlatform } The access platform to look for the items in.
-   */
-  export let accessPlatform: AccessPlatform;
+  )[] = [];
 
   /**
    * @type { boolean } If the access lookup column should be displayed of not. The displaying of the column depends on user selections in parent and sibling components.
@@ -119,7 +153,7 @@
 
             {#if showAccessUpdateColumn}
               {#if "updatedInAccess" in itemsLookupAndUpdateResults[i]}
-                {#if itemsLookupAndUpdateResults[i].updatedInAccess}
+                {#if itemsLookupAndUpdateResults[i]["updatedInAccess"]}
                   <td class="success">Yes</td>
                 {:else}
                   <td class="not-success">No</td>

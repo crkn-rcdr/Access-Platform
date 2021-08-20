@@ -1,3 +1,21 @@
+<!--
+@component
+### Overview
+This components recursively draws an object in a json viewer format.
+
+### Properties
+|    |    |    |
+| -- | -- | -- |
+| value: any | required | The value of the current JSON item being displayed |
+| key: string | optional | The key of the current JSON item being displayed |
+| indent: number | optional | The indentation in 'rem' to set for this key vakue pair. Determines the margin-left of the information in the interface. |
+| open : boolean | optional | A state tracker for if the interface for this key value pair is expanded or not. |
+
+### Usage
+```
+<JsonTree value={{ object: JSON.parse( A json string! ) }} />
+```
+-->
 <script lang="ts">
   /**
    * @see https://svelte.dev/repl/347b37e18b5d4a65bbacfd097536db02?version=3.24.0
@@ -11,19 +29,19 @@
   export let value: any;
 
   /**
-   * @type { string }  The valkeyue of the current JSON item being displayed
+   * @type { string } The key of the current JSON item being displayed
    */
   export let key: string = "";
 
   /**
-   * @type { number }  The indentation in 'rem' to set for this key vakue pair. Determines the margin-left of the information in the interface.
+   * @type { number } The indentation in 'rem' to set for this key vakue pair. Determines the margin-left of the information in the interface.
    */
   export let indent: number = 0;
 
   /**
-   * @type { boolean } a state tracker for if the interface for this key value pair is expanded or not.
+   * @type { boolean } A state tracker for if the interface for this key value pair is expanded or not.
    */
-  export let open = true;
+  export let open: boolean = true;
 
   /**
    * Toggles the interface for the key-value pair.

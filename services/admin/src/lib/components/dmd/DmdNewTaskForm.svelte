@@ -125,7 +125,8 @@ none
 
 <p class="new-task-instructions">
   Please select the type of file you would like to use to perform the
-  descriptive metadata update with, and attach the file from your computer.
+  descriptive metadata update with, and attach the file from your computer to
+  the form. Then, upload the file for processing.
 </p>
 <br />
 <div class="new-task-wrapper">
@@ -165,13 +166,13 @@ none
 
 <style>
   .new-task-instructions {
-    max-width: 45rem;
+    max-width: 42rem;
     margin: auto;
   }
   .new-task-wrapper {
     width: fit-content;
     margin: auto;
-    min-width: 45rem;
+    min-width: 42rem;
   }
   .new-task-fields {
     display: grid;

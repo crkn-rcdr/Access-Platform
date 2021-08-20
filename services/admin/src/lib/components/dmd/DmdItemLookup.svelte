@@ -1,3 +1,27 @@
+<!--
+@component
+### Overview
+This components takes the items in a successfull dmd task and looks them up in a selected access platform and in preservation. it adds the lookup results to itemsLookupAndUpdateResults.
+
+### Properties
+|    |    |    |
+| -- | -- | -- |
+| accessPlatform: AccessPlatform | required | The access platform to look for the items in. |
+| state: "ready" or "loading" or "loaded" or "error" | optional | This variable keeps track of the state of the component, to show relevant messages to the user. |
+| itemsToLookup: ParseRecord[] | optional | The items to search for. |
+| itemsLookupAndUpdateResults: (DmdLoadedParseRecord or DmdUpdatedParseRecord)[] | optional | The dmdtask items lookup and update results. Indexing exactly matches the itemsToLookup. |
+
+### Usage
+```
+<DmdItemLookup
+  bind:state={lookupState}
+  bind:accessPlatform
+  bind:itemsLookupAndUpdateResults
+  itemsToLookup={dmdTask.items}
+/>
+```
+*Note: `bind:` is required for changes to the parameters to be reflected in higher level components.*
+-->
 <script lang="ts">
   import { getStores } from "$app/stores";
   import type {
@@ -12,19 +36,14 @@
   import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
 
   /**
-   * @type {Session} The session store that contains the module for sending requests to lapin.
-   */
-  const { session } = getStores<Session>();
-
-  /**
-   * @type {"ready" | "loading" | "loaded" | "error"} This vaiable keeps track of the state of the component, to show relevant messages to the user.
-   */
-  export let state: "ready" | "loading" | "loaded" | "error" = "ready";
-
-  /**
    *  @type { AccessPlatform } The access platform to look for the items in.
    */
   export let accessPlatform: AccessPlatform;
+
+  /**
+   * @type {"ready" | "loading" | "loaded" | "error"} This variable keeps track of the state of the component, to show relevant messages to the user.
+   */
+  export let state: "ready" | "loading" | "loaded" | "error" = "ready";
 
   /**
    *  @type { ParseRecord[]  } The items to search for.
@@ -41,6 +60,11 @@
     | DmdLoadedParseRecord
     | DmdUpdatedParseRecord
   )[] = [];
+
+  /**
+   * @type {Session} The session store that contains the module for sending requests to lapin.
+   */
+  const { session } = getStores<Session>();
 
   /**
    *  @type { string } Used to show the user relevant information when the load errors.

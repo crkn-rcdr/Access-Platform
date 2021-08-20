@@ -1,3 +1,19 @@
+<!--
+@component
+### Overview
+This component shows the view for a dmd task that had its metadata successfully process by smelter. It allows the user to finish the processing of the descriptive metadata update by lookin up the items specified in the file, then updating their metadata and watching the progress of the update operation.
+
+### Properties
+|    |    |    |
+| -- | -- | -- |
+| dmdTask: SucceededDMDTask | required | The dmd task being displayed |
+
+### Usage
+```
+<DmdSplitSuccessView {dmdTask} />
+```
+*Note: `bind:` is required for changes to the parameters to be reflected in higher level components.*
+-->
 <script lang="ts">
   import type { SucceededDMDTask } from "@crkn-rcdr/access-data";
   import type {

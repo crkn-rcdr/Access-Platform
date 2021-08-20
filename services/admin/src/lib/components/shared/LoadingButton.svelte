@@ -1,6 +1,30 @@
+<!--
+@component
+### Overview
+This component is a button that shows a loading indicator when its property, showLoader, is true
+
+### Properties
+|    |    |    |
+| -- | -- | -- |
+| buttonClass: string  | optional | The html class attribute for the button. |
+| showLoader: boolean | optional | The state of the button, either to show the loading indicator or not. |
+
+### Usage
+```
+<LoadingButton
+  buttonClass="primary"
+  showLoader={true}
+  on:clicked={(event) => data = event.detail )}
+>
+  <span slot="content">
+    click me!
+  </span>
+</LoadingButton>
+```
+-->
 <script lang="ts">
-  import Loading from "$lib/components/shared/Loading.svelte";
   import { createEventDispatcher } from "svelte";
+  import Loading from "$lib/components/shared/Loading.svelte";
 
   /**
    * @type { string } The html class attribute for the button
@@ -10,7 +34,7 @@
   /**
    * @type { boolean } The state of the button, either to show the loading indicator or not.
    */
-  export let showLoader = false;
+  export let showLoader: boolean = false;
 
   /**
    * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.

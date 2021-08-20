@@ -7,6 +7,7 @@ Displays a dmd task's information in a table.
 |    |    |    |
 | -- | -- | -- |
 | dmdTask: DMDTask | required | The dmd task to be displayed. |
+| direction: "column" or "row" | optional | If the information should be row or column based. If column is selected, all information will be displayed in one column. Otherwise, a 3x3 grid will be used. |
 
 ### Usage
 ```
