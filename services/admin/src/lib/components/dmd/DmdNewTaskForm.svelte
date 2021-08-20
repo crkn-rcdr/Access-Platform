@@ -54,6 +54,7 @@ none
    * TODO: Probably want to move this to a helper module, or stright into the file select component itself.
    * This method takes a file and returns a promise with the file contents as a string.
    * @param blob
+   * @returns Promise<string>
    */
   const convertBlobToBase64 = (blob) =>
     new Promise<string>((resolve, reject) => {
