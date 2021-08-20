@@ -79,11 +79,18 @@ type ViewResponse<T extends Document, V = unknown> = {
   total_rows: number;
   offset: number;
   update_seq?: number | string;
+  rows: { id: string; key: string; doc?: T; value: V }[];
+};
+
+type BulkGetResponse<T extends Document> = {
+  total_rows: number;
+  offset: number;
+  update_seq?: number | string;
   rows: (
     | {
         id: string;
         key: string;
-        value: V;
+        value: { rev: string };
         doc?: T;
         error: undefined;
       }
@@ -96,8 +103,6 @@ type ViewResponse<T extends Document, V = unknown> = {
       }
   )[];
 };
-
-type BulkGetResponse<T extends Document> = ViewResponse<T, { rev: string }>;
 
 /**
  * Handler for interactions with a CouchDB database.
@@ -276,13 +281,24 @@ export class DatabaseHandler<T extends Document> {
    * @param options View query options.
    * @returns the view output. Check `docs`.
    */
-  async view(
+  async view<V = unknown>(
     designName: string,
     viewName: string,
     options: DocumentViewParams
-  ) {
+  ): Promise<ViewResponse<T, V>> {
     try {
-      return await this.db.view(designName, viewName, options);
+      const response = await this.db.view(designName, viewName, options);
+      return {
+        total_rows: response.total_rows,
+        offset: response.offset,
+        update_seq: response.update_seq,
+        rows: response.rows.map((row) => {
+          const doc = row.doc
+            ? this.parser.parse(fromCouch(row.doc as CouchDocument))
+            : undefined;
+          return { ...row, doc, value: row.value as V, error: undefined };
+        }),
+      };
     } catch (e) {
       throw createHttpError(e.statusCode, e.error);
     }

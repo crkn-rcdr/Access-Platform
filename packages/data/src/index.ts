@@ -18,7 +18,11 @@ export {
   isManifest,
 } from "./access/index.js";
 
-export { LegacyPackage } from "./import/index.js";
+export {
+  LegacyPackage,
+  ImportStatus,
+  getImportStatus,
+} from "./import/index.js";
 
 export {
   DMDFORMATS,

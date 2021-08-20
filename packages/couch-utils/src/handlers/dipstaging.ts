@@ -1,7 +1,13 @@
 import { z } from "zod";
-import { LegacyPackage, Slug } from "@crkn-rcdr/access-data";
+import {
+  getImportStatus,
+  ImportStatus,
+  LegacyPackage,
+  Slug,
+} from "@crkn-rcdr/access-data";
 import { ServerScope } from "nano";
 import { DatabaseHandler } from "../DatabaseHandler.js";
+import { AccessHandler } from "./access.js";
 
 const DateString = z
   .string()
@@ -27,20 +33,40 @@ export class LegacyPackageHandler extends DatabaseHandler<LegacyPackage> {
     );
   }
 
-  async listFromKeys(keys: Slug[]) {
-    return await this.list({ include_docs: true, keys });
+  async listFromKeys(keys: Slug[], access: AccessHandler) {
+    const resolutions = await access.resolveSlugs(keys);
+    const list = await this.list({ include_docs: true, keys });
+    return list.rows.map((row): ImportStatus => {
+      return getImportStatus(
+        row.key,
+        row.doc,
+        resolutions[row.key] ? resolutions[row.key]?.id : undefined
+      );
+    });
   }
 
-  async listFromDates(start: string, end: string) {
+  async listFromDates(start: string, end: string, access: AccessHandler) {
     const startArray = DateString.parse(start);
     const endArray = DateString.parse(end);
     endArray[2] = (endArray[2] as number) + 0.1;
 
-    return await this.view("access", "byManifestDate", {
+    const list = await this.view("access", "byManifestDate", {
       startkey: startArray,
       endkey: endArray,
       reduce: false,
       include_docs: true,
+    });
+
+    const resolutions = await access.resolveSlugs(
+      list.rows.map((row) => row.id)
+    );
+
+    return list.rows.map((row): ImportStatus => {
+      return getImportStatus(
+        row.id,
+        row.doc,
+        resolutions[row.id] ? resolutions[row.id]?.id : undefined
+      );
     });
   }
 }

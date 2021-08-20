@@ -10,6 +10,7 @@ import {
   EditableCollection,
   EditableManifest,
   User,
+  Slug,
 } from "@crkn-rcdr/access-data";
 
 import { DatabaseHandler } from "../DatabaseHandler.js";
@@ -18,6 +19,8 @@ import { DatabaseHandler } from "../DatabaseHandler.js";
 const AccessDatabaseObject = z.union([Alias, Manifest, Collection]);
 
 type AccessDatabaseObject = z.infer<typeof AccessDatabaseObject>;
+
+type SlugResolution = { id: Noid; type: "manifest" | "collection" | "alias" };
 
 /**
  * Interact with Access Objects in their database.
@@ -38,6 +41,25 @@ export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
   async isMemberOf(id: Noid): Promise<Noid[]> {
     const response = await this.view("access", "members", { key: id });
     return response.rows.map((row) => row.id);
+  }
+
+  /**
+   * Resolves slugs.
+   */
+  async resolveSlugs(
+    slugs: Slug[]
+  ): Promise<Record<Slug, SlugResolution | null>> {
+    const response: Record<Slug, SlugResolution | null> = {};
+
+    for await (const slug of slugs) {
+      const resolution = await this.findUnique("slug", slug, [
+        "id",
+        "type",
+      ] as const);
+      response[slug] = resolution.found ? resolution.result : null;
+    }
+
+    return response;
   }
 
   /**

@@ -1,1 +1,5 @@
-export { LegacyPackage } from "./LegacyPackage.js";
+export {
+  LegacyPackage,
+  ImportStatus,
+  getImportStatus,
+} from "./LegacyPackage.js";
