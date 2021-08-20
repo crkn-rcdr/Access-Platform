@@ -2,7 +2,6 @@ import { z } from "zod";
 import { DMDFORMATS, User, Slug } from "@crkn-rcdr/access-data";
 import { TRPCError } from "@trpc/server";
 import { createRouter, httpErrorToTRPC } from "../router.js";
-import { createContext } from "../context.js";
 
 const NewInput = z.object({
   user: User,

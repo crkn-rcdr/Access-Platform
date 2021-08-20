@@ -19,6 +19,7 @@ none
   import { goto } from "$app/navigation";
   import { showConfirmation } from "$lib/confirmation";
   import LoadingButton from "$lib/components/shared/LoadingButton.svelte";
+  import { base64encode } from "nodejs-base64";
 
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
@@ -41,7 +42,7 @@ none
     | "marcooe";
 
   /**
-   * @type {string} This is the base 64 encoded string for the metadata file that will be stored in the couch attachment.
+   * @type {string } This is the base 64 encoded string for the metadata file that will be stored in the couch attachment.
    */
   let b64EncodedMetadataFileText: string;
 
@@ -58,17 +59,19 @@ none
     const file: File = event.detail;
     const metadataFileText = await file.text();
     try {
-      /**
+      if (metadataFileText) {
+        b64EncodedMetadataFileText = <string>base64encode(metadataFileText);
+
+        /** OR:
        * @see https://stackoverflow.com/questions/23223718/failed-to-execute-btoa-on-window-the-string-to-be-encoded-contains-characte
+       * btoa(
+          unescape(encodeURIComponent(metadataFileText))
+        );
        * to decode: function b64_to_utf8( str ) {
               str = str.replace(/\s/g, '');    
               return decodeURIComponent(escape(window.atob( str )));
           }
-      */
-      if (metadataFileText) {
-        b64EncodedMetadataFileText = btoa(
-          unescape(encodeURIComponent(metadataFileText))
-        );
+        */
       }
     } catch (e) {
       console.log(e);
