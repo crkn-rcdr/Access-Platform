@@ -83,7 +83,8 @@ The resolver component allows the user to enter a slug, and then a request is se
     }
 
     const response = await $session.lapin.query("slug.resolveMany", slugs);
-    
+    console.log("response", response);
+
     dispatch("found", response);
     hideInitial = true;
   }

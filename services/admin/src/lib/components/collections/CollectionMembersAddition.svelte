@@ -8,7 +8,8 @@
   import type { Collection } from "@crkn-rcdr/access-data/src/access/Collection";
   import { createEventDispatcher } from "svelte";
   import TiArrowBack from "svelte-icons/ti/TiArrowBack.svelte";
-
+  import FaCheckCircle from "svelte-icons/fa/FaCheckCircle.svelte";
+  import IoIosAddCircleOutline from "svelte-icons/io/IoIosAddCircleOutline.svelte";
   import ResolveMany from "$lib/components/access-objects/ResolveMany.svelte";
 
   type ResolveManyReturn = [
@@ -66,6 +67,7 @@
    */
   let isMemberSelected = false;
   let addedMember = false;
+  let foundSlugs: string[] = [];
 
   /**
    * @type {string} If the select all button is activated.
@@ -90,7 +92,18 @@
   async function handleSelect(event: { detail: ResolveManyReturn }) {
     resolveManyReturn = event.detail;
     console.log("test", resolveManyReturn);
+    // let testArray: [] = [];
+    for (let detail in resolveManyReturn) {
+      let test = resolveManyReturn[detail][1];
+      if (test.found == true) {
+        foundSlugs.push(test.result.id);
+      } else {
+        console.log("false");
+      }
+      foundSlugs = foundSlugs;
+    }
   }
+  console.log("found", foundSlugs);
 
   function handleCancelPressed() {
     addedMember = false;
@@ -100,15 +113,20 @@
    * When add is pressed, add the selected members to the begining of the destination collection's members list, and signify to the parent through the @event done that the user is done adding canvases
    * @returns void
    */
-  /*  async function handleAddPressed() {
-    console.log("destination.members", destinationMember.members);
-    destinationMember?.members?.splice(destinationIndex, 0, selectedMembers);
+  let test: ObjectList = [];
+  async function handleAddPressed() {
+    console.log("destination.members", foundSlugs);
+   
+    destinationMember.members[destinationMember.members.length] = {
+      id: foundSlugs,
+    };
+
     destinationMember = destinationMember;
-    selectedMember = [];
+
     addedMember = false;
     isMemberSelected = true;
     dispatch("done");
-  } */
+  }
 </script>
 
 <div class="canvas-selector-wrap add-menu">
@@ -122,12 +140,22 @@
         <ResolveMany on:found={handleSelect} />
         <br />
       </div>
-      <!-- {#each selectedMembers as result}
-        <textarea class="grid" bind:value={result.id} />
+      <div>
+        {#each foundSlugs as foundMember}
+          <div
+            class="checkmember"
+            on:click={handleAddPressed}
+            data-tooltip="Add Selected Member"
+            data-tooltip-flow="bottom"
+          >
+            <FaCheckCircle />
+            {foundMember}
+          </div>
+        {/each}
+      </div>
+      <br />
+      <button class="primary lg" on:click={handleAddPressed}>Add</button>
 
-        <br />
-        <button class="primary lg" on:click={handleAddPressed}>Add</button>
-      {/each} -->
       <div class="add-menu-title">
         <button
           class="secondary cancel-button auto-align auto-align__a-center"
@@ -156,5 +184,16 @@
     background-color: var(--primary-light);
     grid-column: 1/1;
     width: 100%;
+  }
+  .checkmember {
+    display: flex;
+    width: 100%;
+    height: 50px;
+
+    border-radius: var(--border-radius);
+    padding: 0.2rem;
+  }
+  .checkmember {
+    cursor: pointer;
   }
 </style>
