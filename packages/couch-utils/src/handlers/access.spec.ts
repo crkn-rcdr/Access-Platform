@@ -35,6 +35,18 @@ test.serial("Collections are parseable", async (t) => {
   t.true(Collection.safeParse(doc).success);
 });
 
+test.serial("Can resolve slugs", async (t) => {
+  const result = await t.context.access.resolveSlugs([
+    MANIFEST_TWO_SLUG,
+    "notaslug",
+  ]);
+  t.deepEqual(result[MANIFEST_TWO_SLUG], {
+    id: MANIFEST_TWO,
+    type: "manifest",
+  });
+  t.is(result["notaslug"], null);
+});
+
 test.serial("Objects can be published and unpublished", async (t) => {
   await t.context.access.unpublish({ id: MANIFEST_TWO, user: USER });
 
