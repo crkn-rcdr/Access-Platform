@@ -3,6 +3,14 @@
 ### Overview
 This component allows the user to create new DMD tasks to attach metadata to objects. The metadata and objects are specified by a file that is selected from their computer.
 
+Import metadata 
+Operator should be able to go to the page for an existing Object, and import into the metadata from a file that was exported from other tools (List of import formats will grow): 
+CSV files (where specific format chosen in pull-down for pre-defined formats) 
+DB/TExt XML dump 
+MARC xml file 
+
+Similar to adding processing requests to an object, but would be applied to all objects whose directory of files are placed in the group directory prior to the group directory being moved to the wip/Inbox directory. Processing requests would be appended to the processing requests that already existed for each object. 7
+
 ### Properties
 none
 
@@ -18,11 +26,14 @@ none
   import NotificationBar from "../shared/NotificationBar.svelte";
   import { goto } from "$app/navigation";
   import { showConfirmation } from "$lib/confirmation";
+  import LoadingButton from "$lib/components/shared/LoadingButton.svelte";
 
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
    */
   const { session } = getStores<Session>();
+
+  let state: "ready" | "uploading" | "uploaded" | "error" = "ready";
 
   /**
    * @type {"csvissueinfo" | "csvdc" | "marc490" | "marcoocihm" | "marcooe"} Used to tell the dmdtask deamons what kind of metadata format the metadata being processed is in.
@@ -52,8 +63,17 @@ none
     const file: File = event.detail;
     const metadataFileText = await file.text();
     try {
+      /**
+       * @see https://stackoverflow.com/questions/23223718/failed-to-execute-btoa-on-window-the-string-to-be-encoded-contains-characte
+       * to decode: function b64_to_utf8( str ) {
+              str = str.replace(/\s/g, '');    
+              return decodeURIComponent(escape(window.atob( str )));
+          }
+      */
       if (metadataFileText) {
-        b64EncodedMetadataFileText = btoa(metadataFileText);
+        b64EncodedMetadataFileText = btoa(
+          unescape(encodeURIComponent(metadataFileText))
+        );
       }
     } catch (e) {
       console.log(e);
@@ -67,6 +87,7 @@ none
    * @returns void
    */
   async function handleCreateTask() {
+    state = "uploading";
     await showConfirmation(
       async () => {
         try {
@@ -80,18 +101,21 @@ none
             bodyObj
           );
           if (response) {
+            state = "uploaded";
             goto(`/dmd/${response}`);
             return {
               success: true,
               details: response,
             };
           } else {
+            state = "error";
             return {
               success: false,
               details: response,
             };
           }
         } catch (e) {
+          state = "error";
           return {
             success: false,
             details: e.message,
@@ -104,6 +128,11 @@ none
   }
 </script>
 
+<p class="new-task-instructions">
+  Please select the type of file you would like to use to perform the
+  descriptive metadata update with, and attach the file from your computer.
+</p>
+<br />
 <div class="new-task-wrapper">
   <NotificationBar message={errorText} status="fail" />
   <fieldset class="new-task-fields">
@@ -121,16 +150,33 @@ none
   </fieldset>
   <br />
   {#if metadataType && b64EncodedMetadataFileText}
-    <button class="primary new-task-button" on:click={handleCreateTask}>
-      Process File
-    </button>
+    <div class="new-task-button">
+      <LoadingButton
+        buttonClass="primary"
+        showLoader={state === "uploading"}
+        on:clicked={handleCreateTask}
+      >
+        <span slot="content">
+          {state !== "ready"
+            ? state === "uploading"
+              ? "Uploading..."
+              : "Uploaded!"
+            : "Upload File for Processing"}
+        </span>
+      </LoadingButton>
+    </div>
   {/if}
 </div>
 
 <style>
+  .new-task-instructions {
+    max-width: 45rem;
+    margin: auto;
+  }
   .new-task-wrapper {
     width: fit-content;
     margin: auto;
+    min-width: 45rem;
   }
   .new-task-fields {
     display: grid;
@@ -140,8 +186,5 @@ none
   }
   .new-task-button {
     float: right;
-  }
-  h6 {
-    text-align: center;
   }
 </style>

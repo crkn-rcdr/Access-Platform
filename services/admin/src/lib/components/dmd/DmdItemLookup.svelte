@@ -3,8 +3,8 @@
   import type { Session } from "$lib/types";
 
   import DmdDepositorSelector from "$lib/components/dmd/DmdDepositorSelector.svelte";
-  import LoadingButton from "../shared/LoadingButton.svelte";
-  import NotificationBar from "../shared/NotificationBar.svelte";
+  import LoadingButton from "$lib/components/shared/LoadingButton.svelte";
+  import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
 
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.

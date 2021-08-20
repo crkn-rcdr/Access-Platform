@@ -91,6 +91,8 @@
     lookupState = "ready";
     showAccessLookupColumn = false;
     showPreservationLookupColumn = false;
+    showAccessUpdateColumn = false;
+    showPreservationUpdateColumn = false;
   }
 
   $: {

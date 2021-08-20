@@ -6,8 +6,6 @@
   export let shouldUpdateInAccess: boolean = true;
   export let state: "ready" | "updating" | "updated" | "error" = "ready";
   export let itemsResults = [];
-  //export let accessItemsUpdateResults = [];
-  //export let preservationItemsUpdateResults = [];
 
   export let dmdTaskId: string;
   export let accessPlatform: {
@@ -43,10 +41,10 @@
           const response = await $session.lapin.mutation(
             "dmdTask.storeAccess",
             {
-              task: dmdTaskId, // dmdtask uuid
-              index, // array index of item whose metadata is being stored
-              slug: item["slug"], // prefix + id (we might not need this if we send the resolved noid)
-              noid: item["noid"], // result of slug lookup
+              task: dmdTaskId,
+              index,
+              slug: item["slug"],
+              noid: item["noid"],
             }
           );
           if (response) {
