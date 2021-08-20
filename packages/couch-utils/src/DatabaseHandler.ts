@@ -386,7 +386,7 @@ export class DatabaseHandler<T extends Document> {
       );
     }
 
-    return Object.fromEntries(results.entries());
+    return [...results.entries()];
   }
 
   /**

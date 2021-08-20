@@ -108,6 +108,40 @@ test.serial("Cannot edit something if it's the wrong type", async (t) => {
   t.true(error.message.includes("has type: manifest"));
 });
 
+test.serial("Can add and remove members", async (t) => {
+  // Get the time at the start of the test. We'll use this to ensure that
+  // `updateInternalmeta` has been updated.
+  const teststart = Date.now() / 1000;
+
+  let collection = Collection.parse(await t.context.access.get(COLLECTION));
+  const oldMembers = collection.members;
+
+  const newMembers = [{ id: MANIFEST_ONE }];
+  // Remove MANIFEST_TWO from COLLECTION
+  collection = await t.context.access.editCollection({
+    id: COLLECTION,
+    user: USER,
+    data: { members: newMembers },
+  });
+
+  // Test that MANIFEST_TWO is no longer in COLLECTION
+  t.deepEqual(collection.members, newMembers);
+
+  // Test whether MANIFEST_TWO has been updated
+  const manifestTwo = await t.context.access.get(MANIFEST_TWO);
+  t.true(
+    (manifestTwo.updateInternalmeta?.requestDate || 0) > teststart,
+    "Has MANIFEST_TWO been updated?"
+  );
+
+  // Add MANIFEST_TWO back
+  await t.context.access.editCollection({
+    id: COLLECTION,
+    user: USER,
+    data: { members: oldMembers },
+  });
+});
+
 test.serial("Can unassign a slug", async (t) => {
   await t.context.access.unassignSlug({ id: MANIFEST_TWO, user: USER });
 

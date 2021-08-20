@@ -4,13 +4,16 @@
 TODO
 
 ### Overview
-
+Allows the user to modify the member list for a collection.
 ### Properties
-
+|    |    |    |
+| -- | -- | -- |
+| collection : Collection    | required | The collection thats contents should be edited. |
 ### Usage
 ```  
-
+<CollectionContentEditor bind:collection />
 ```
+*Note: `bind:` is required for changes to the object to be reflected in higher level components.*
 -->
 <script lang="ts">
   import { onMount, createEventDispatcher } from "svelte";
@@ -26,6 +29,8 @@ TODO
   import TiArrowBack from "svelte-icons/ti/TiArrowBack.svelte";
   import TiTrash from "svelte-icons/ti/TiTrash.svelte";
   import type { ObjectList } from "@crkn-rcdr/access-data";
+  import CollectionMembersAddition from "./CollectionMembersAddition.svelte";
+
   export let collection: Collection;
   export let showAddButton = true;
 
@@ -35,6 +40,7 @@ TODO
   let addedMember = false;
   let selectedCollection: ObjectList = [];
   let error = "";
+  let state = "view";
   const LEFT_ARROW_CODE: number = 37;
   const UP_ARROW_CODE: number = 38;
   const RIGHT_ARROW_CODE: number = 39;
@@ -98,6 +104,7 @@ TODO
       selectNext();
     }
   }
+
   function addClicked() {
     addedMember = true;
   }
@@ -110,7 +117,7 @@ TODO
     }
   }
   let noid;
-  async function handleSelect(event: any) {
+  /* async function handleSelect(event: any) {
     try {
       noid = event.detail;
       const response = await $session.lapin.query("accessObject.get", noid);
@@ -126,7 +133,7 @@ TODO
   function handleCancelPressed() {
     selectedCollection = [];
     addedMember = false;
-  }
+  } */
   onMount(() => {
     if (collection.members.length) activeMemberIndex = 0;
     setIndexModel();
@@ -140,10 +147,17 @@ TODO
 <svelte:window on:keydown={handleKeydown} />
 {#if indexModel.length && collection}
   <div class="auto-align auto-align__column">
-    {#if showAddButton}
+    <CollectionMembersAddition
+      bind:destinationMember={collection}
+      on:done={() => {
+        state = "view";
+        setActiveIndex(0);
+      }}
+    />
+    <!-- {#if showAddButton}
       <button class="primary lg" on:click={addClicked}>Add Member</button>
-    {/if}
-    {#if addedMember}
+    {/if} -->
+    <!-- {#if addedMember}
       <div>
         <TypeAhead
           placeholder="Search for a Collection Or Manifest to add from..."
@@ -169,7 +183,7 @@ TODO
           {error}
         </div>
       {/if}
-    {/if}
+    {/if} -->
     <div
       bind:this={container}
       tabindex="0"

@@ -24,12 +24,18 @@ export const slugRouter = createRouter()
   .query("resolve", {
     input: Slug.parse,
     async resolve({ input: q, ctx }) {
-      return await ctx.couch.access.findUnique("slug", q, ["id", "type"]);
+      return await ctx.couch.access.findUnique("slug", q, [
+        "id",
+        "type",
+      ] as const);
     },
   })
   .query("resolveMany", {
     input: SlugArray.parse,
     async resolve({ input: q, ctx }) {
-      return await ctx.couch.access.findUniqueArray("slug", q, ["id", "type"]);
+      return await ctx.couch.access.findUniqueArray("slug", q, [
+        "id",
+        "type",
+      ] as const);
     },
   });

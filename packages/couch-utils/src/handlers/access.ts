@@ -10,11 +10,15 @@ import {
   EditableCollection,
   EditableManifest,
   User,
+  ObjectList,
   Slug,
 } from "@crkn-rcdr/access-data";
 
 import { DatabaseHandler } from "../DatabaseHandler.js";
 
+import { xorWith, isEqual } from "lodash-es";
+
+// Use this essentially so that `slug` is defined
 // TODO: define a Zod parser that is aware of all possible fields.
 const AccessDatabaseObject = z.union([Alias, Manifest, Collection]);
 
@@ -85,7 +89,19 @@ export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
       body: args.user,
     });
   }
-
+  /**
+   * forceUpdate an Access Object.
+   */
+  async forceUpdate(id: Noid): Promise<void> {
+    await this.update({
+      ddoc: "access",
+      name: "forceUpdate",
+      docId: id,
+    });
+  }
+  /**
+   * Edit an Access Object.
+   */
   private async editObject<T extends { slug?: string }>(args: {
     id: Noid;
     user: User;
@@ -121,18 +137,38 @@ export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
    * Update the staff-editable fields of a Collection.
    * @returns The updated Collection.
    */
+
   async editCollection(args: {
     id: Noid;
     user: User;
     data: EditableCollection;
   }): Promise<Collection> {
     const data = EditableCollection.parse(args.data);
+    let filteredMembers: ObjectList = [];
+
+    if (data.members) {
+      const currentMembers = Collection.parse(await this.get(args.id)).members;
+
+      const filteredMembers = xorWith(data.members, currentMembers, isEqual);
+
+      for (let members of filteredMembers) {
+        if (members.id !== undefined) {
+          await this.forceUpdate(members.id);
+        }
+      }
+    }
+
     await this.editObject({
       id: args.id,
       user: args.user,
       data,
       type: "collection",
     });
+    for (let members of filteredMembers) {
+      if (members.id !== undefined) {
+        await this.forceUpdate(members.id);
+      }
+    }
     const collection = await this.get(args.id);
     return Collection.parse(collection);
   }
