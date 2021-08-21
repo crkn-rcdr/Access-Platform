@@ -38,7 +38,7 @@
    * @type {boolean} If the user is allowed to select multiple canvases to add.
    */
 
-  export let showAddButton = true;
+  let showAddButton = false;
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
    */
@@ -88,21 +88,16 @@
   async function handleSelect(event: any) {
     resolveManyReturn = event.detail;
     console.log("test", resolveManyReturn);
-    // let testArray: [] = [];
-    foundSlugs = [];
     for (let detail in resolveManyReturn) {
-      //let test = resolveManyReturn[detail][1];
-
       if (resolveManyReturn[detail].found == true) {
         foundSlugs.push(resolveManyReturn[detail].result.id);
       } else {
         console.log("false");
       }
       foundSlugs = foundSlugs;
-      console.log("false");
+      showAddButton = true;
     }
   }
-  console.log("found", foundSlugs);
 
   function handleCancelPressed() {
     addedMember = false;
@@ -112,26 +107,32 @@
    * When add is pressed, add the selected members to the begining of the destination collection's members list, and signify to the parent through the @event done that the user is done adding canvases
    * @returns void
    */
-  let test: ObjectList = [];
 
   async function handleAddPressed() {
-    console.log("destination.members", foundSlugs);
-
-    destinationMember?.members?.splice(destinationIndex, 0, { id: foundSlugs });
-    destinationMember = destinationMember;
-
+    for (let index in foundSlugs) {
+      destinationMember?.members?.splice(destinationIndex, 0, {
+        id: foundSlugs[index],
+      });
+      destinationMember = destinationMember;
+    }
     addedMember = false;
     isMemberSelected = true;
-    dispatch("done");
   }
 </script>
 
 <div class="canvas-selector-wrap add-menu">
   {#if !isMemberSelected}
-    {#if showAddButton}
-      <button class="primary lg" on:click={addClicked}>Member LookUp</button>
-    {/if}
-
+    <button class="primary lg" on:click={addClicked}>Member LookUp</button>
+    <br />
+    <button
+      class="secondary cancel-button auto-align auto-align__a-center"
+      on:click={handleCancelPressed}
+    >
+      <div class="icon">
+        <TiArrowBack />
+      </div>
+      Exit
+    </button>
     {#if addedMember}
       <div>
         <ResolveMany on:found={handleSelect} />
@@ -149,21 +150,13 @@
             {foundMember}
           </div>
         {/each}
+        {#if showAddButton}
+          <button class="primary lg" on:click={handleAddPressed}>Add</button>
+        {/if}
       </div>
       <br />
-      <button class="primary lg" on:click={handleAddPressed}>Add</button>
 
-      <div class="add-menu-title">
-        <button
-          class="secondary cancel-button auto-align auto-align__a-center"
-          on:click={handleCancelPressed}
-        >
-          <div class="icon">
-            <TiArrowBack />
-          </div>
-          Exit
-        </button>
-      </div>
+      <div class="add-menu-title" />
       <br />
       {#if error}
         <br />
