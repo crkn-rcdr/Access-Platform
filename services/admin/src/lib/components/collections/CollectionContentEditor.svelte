@@ -117,7 +117,7 @@ Allows the user to modify the member list for a collection.
     }
   }
   let noid;
-  /* async function handleSelect(event: any) {
+  async function handleSelect(event: any) {
     try {
       noid = event.detail;
       const response = await $session.lapin.query("accessObject.get", noid);
@@ -133,7 +133,7 @@ Allows the user to modify the member list for a collection.
   function handleCancelPressed() {
     selectedCollection = [];
     addedMember = false;
-  } */
+  }
   onMount(() => {
     if (collection.members.length) activeMemberIndex = 0;
     setIndexModel();
@@ -154,10 +154,12 @@ Allows the user to modify the member list for a collection.
         setActiveIndex(0);
       }}
     />
-    <!-- {#if showAddButton}
+    <br />
+
+    {#if showAddButton}
       <button class="primary lg" on:click={addClicked}>Add Member</button>
-    {/if} -->
-    <!-- {#if addedMember}
+    {/if}
+    {#if addedMember}
       <div>
         <TypeAhead
           placeholder="Search for a Collection Or Manifest to add from..."
@@ -183,7 +185,7 @@ Allows the user to modify the member list for a collection.
           {error}
         </div>
       {/if}
-    {/if} -->
+    {/if}
     <div
       bind:this={container}
       tabindex="0"

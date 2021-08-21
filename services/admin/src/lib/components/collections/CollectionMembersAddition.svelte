@@ -12,10 +12,7 @@
   import IoIosAddCircleOutline from "svelte-icons/io/IoIosAddCircleOutline.svelte";
   import ResolveMany from "$lib/components/access-objects/ResolveMany.svelte";
 
-  type ResolveManyReturn = [
-    string,
-    (
-      | {
+  /*  type ResolveManyReturn =[{
           found: false;
         }
       | {
@@ -25,8 +22,7 @@
             id: string;
           };
         }
-    )
-  ][];
+      ][]; */
 
   /**
    * @type {Manifest} The manifest to add selected canvases to.
@@ -87,20 +83,23 @@
   function addClicked() {
     addedMember = true;
   }
-  let resolveManyReturn: ResolveManyReturn = [];
+  let resolveManyReturn: {} = [];
 
-  async function handleSelect(event: { detail: ResolveManyReturn }) {
+  async function handleSelect(event: any) {
     resolveManyReturn = event.detail;
     console.log("test", resolveManyReturn);
     // let testArray: [] = [];
+    foundSlugs = [];
     for (let detail in resolveManyReturn) {
-      let test = resolveManyReturn[detail][1];
-      if (test.found == true) {
-        foundSlugs.push(test.result.id);
+      //let test = resolveManyReturn[detail][1];
+
+      if (resolveManyReturn[detail].found == true) {
+        foundSlugs.push(resolveManyReturn[detail].result.id);
       } else {
         console.log("false");
       }
       foundSlugs = foundSlugs;
+      console.log("false");
     }
   }
   console.log("found", foundSlugs);
@@ -114,13 +113,11 @@
    * @returns void
    */
   let test: ObjectList = [];
+
   async function handleAddPressed() {
     console.log("destination.members", foundSlugs);
-   
-    destinationMember.members[destinationMember.members.length] = {
-      id: foundSlugs,
-    };
 
+    destinationMember?.members?.splice(destinationIndex, 0, { id: foundSlugs });
     destinationMember = destinationMember;
 
     addedMember = false;
