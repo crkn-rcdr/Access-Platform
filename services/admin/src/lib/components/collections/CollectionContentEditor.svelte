@@ -116,7 +116,7 @@ Allows the user to modify the member list for a collection.
       setActiveIndex(activeMemberIndex);
     }
   }
-  let noid;
+  /* let noid;
   async function handleSelect(event: any) {
     try {
       noid = event.detail;
@@ -133,7 +133,7 @@ Allows the user to modify the member list for a collection.
   function handleCancelPressed() {
     selectedCollection = [];
     addedMember = false;
-  }
+  } */
   onMount(() => {
     if (collection.members.length) activeMemberIndex = 0;
     setIndexModel();
@@ -156,7 +156,7 @@ Allows the user to modify the member list for a collection.
     />
     <br />
 
-    {#if showAddButton}
+    <!-- {#if showAddButton}
       <button class="primary lg" on:click={addClicked}>Add Member</button>
     {/if}
     {#if addedMember}
@@ -185,7 +185,7 @@ Allows the user to modify the member list for a collection.
           {error}
         </div>
       {/if}
-    {/if}
+    {/if} -->
     <div
       bind:this={container}
       tabindex="0"

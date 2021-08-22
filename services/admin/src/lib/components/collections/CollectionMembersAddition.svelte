@@ -122,17 +122,20 @@
 
 <div class="canvas-selector-wrap add-menu">
   {#if !isMemberSelected}
-    <button class="primary lg" on:click={addClicked}>Member LookUp</button>
-    <br />
-    <button
-      class="secondary cancel-button auto-align auto-align__a-center"
-      on:click={handleCancelPressed}
-    >
-      <div class="icon">
-        <TiArrowBack />
-      </div>
-      Exit
-    </button>
+    <div class="move-button">
+      <button class="primary lg" on:click={addClicked}>Member LookUp</button>
+      {#if addedMember}
+        <button
+          class="secondary cancel-button auto-align auto-align__a-center"
+          on:click={handleCancelPressed}
+        >
+          <div class="icon">
+            <TiArrowBack />
+          </div>
+          Exit
+        </button>
+      {/if}
+    </div>
     {#if addedMember}
       <div>
         <ResolveMany on:found={handleSelect} />
@@ -185,5 +188,8 @@
   }
   .checkmember {
     cursor: pointer;
+  }
+  .move-button {
+    display: flex;
   }
 </style>
