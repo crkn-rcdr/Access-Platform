@@ -92,14 +92,16 @@ This components takes the items in a successfull dmd task and looks them up in a
     );
 
     if (response) {
-      itemsLookupAndUpdateResults = Object.keys(response).map((id) => {
-        return <DmdLoadedParseRecord>{
-          slug: id,
-          noid: response[id]["result"]?.id,
-          foundInAccess: response[id].found,
-          foundInPreservation: false, // TODO: Ask how to implement this
-        };
-      });
+      itemsLookupAndUpdateResults = response
+        .filter((itemArray) => itemArray.length === 2)
+        .map((itemArray) => {
+          return <DmdLoadedParseRecord>{
+            slug: itemArray[0],
+            noid: itemArray[1]["result"]?.id,
+            foundInAccess: itemArray[1].found,
+            foundInPreservation: false, // TODO: Ask how to implement this
+          };
+        });
 
       const lookupFailure =
         itemsLookupAndUpdateResults.filter(
