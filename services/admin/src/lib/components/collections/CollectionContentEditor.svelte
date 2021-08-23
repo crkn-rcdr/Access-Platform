@@ -116,8 +116,8 @@ Allows the user to modify the member list for a collection.
       setActiveIndex(activeMemberIndex);
     }
   }
-  let noid;
-  /* async function handleSelect(event: any) {
+  /* let noid;
+  async function handleSelect(event: any) {
     try {
       noid = event.detail;
       const response = await $session.lapin.query("accessObject.get", noid);
@@ -154,10 +154,12 @@ Allows the user to modify the member list for a collection.
         setActiveIndex(0);
       }}
     />
+    <br />
+
     <!-- {#if showAddButton}
       <button class="primary lg" on:click={addClicked}>Add Member</button>
-    {/if} -->
-    <!-- {#if addedMember}
+    {/if}
+    {#if addedMember}
       <div>
         <TypeAhead
           placeholder="Search for a Collection Or Manifest to add from..."
