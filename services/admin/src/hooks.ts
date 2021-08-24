@@ -42,7 +42,7 @@ export const handle: Handle<Locals> = async ({ request, resolve }) => {
       return {
         status: 403,
         headers: {},
-        body: `Could not verify authorization token: ${e.message}`,
+        body: `Could not verify authorization token: ${e?.message}`,
       };
     }
   } else {
@@ -74,14 +74,21 @@ export const handle: Handle<Locals> = async ({ request, resolve }) => {
     if (request.method !== "HEAD" && request.method !== "GET")
       fetchOptions["body"] = request.rawBody;
 
-    const response = await fetch(url, fetchOptions);
-
-    return {
-      status: response.status,
-      // @ts-ignore: TypeScript's DOM library doesn't have Headers.entries()
-      headers: Object.fromEntries(response.headers.entries()),
-      body: await response.text(),
-    };
+    try {
+      const response = await fetch(url, fetchOptions);
+      return {
+        status: response.status,
+        // @ts-ignore: TypeScript's DOM library doesn't have Headers.entries()
+        headers: Object.fromEntries(response.headers.entries()),
+        body: await response.text(),
+      };
+    } catch (e) {
+      return {
+        status: 500,
+        headers: {},
+        body: "error",
+      };
+    }
   }
 
   // Set up `locals`
