@@ -470,17 +470,15 @@ export class DatabaseHandler<T extends Document> {
     }
 
     try {
-      // Apparently this.db.attachment.insert gets very confused by the `rev` qs param
-      await this.client.relax({
-        db: this.name,
-        method: "put",
-        path: `${document}/${attachmentName}`,
-        headers: {
-          "Content-Type": contentType,
-          "If-Match": headers.etag,
-        },
-        body: attachment,
-      });
+      await this.db.attachment.insert(
+        document,
+        attachmentName,
+        attachment,
+        contentType,
+        {
+          rev: headers.etag.toString().replace(/"/g, ""),
+        }
+      );
     } catch (e) {
       throw createHttpError(e.statusCode, e.error);
     }
