@@ -96,7 +96,7 @@ This component displays the items in the dmd task throughout the various stages 
   /**
    * @type { any } the item with json in the preview modal.
    */
-  let itemBeingPreviewed: any;
+  let itemPreviewMetadataJSON: any;
 
   /**
    * Handles showing the json preview modal for the item passed in
@@ -105,28 +105,16 @@ This component displays the items in the dmd task throughout the various stages 
    */
   async function handlePreviewItemPressed(index: number) {
     try {
-      const response = await $session.lapin.mutation(`dmdTask.fetchResult`, {
-        type: "json",
-        index,
-        task: dmdTaskId,
-      });
-
-      console.log("response", response);
-
-      const fileName = `${index}.json`;
-      //dmdTaskId
-      //JSON.parse(decodeURIComponent(escape(atob(""))))
-      const res = {};
-      /*if (fileName in taskAttachments) {
-        const attachment = taskAttachments[fileName];
-
-        if ("digest" in attachment) {
-          itemBeingPreviewed = JSON.parse(
-            decodeURIComponent(escape(atob(attachment["digest"])))
-          );
-          showItemJsonPreview = true;
+      itemPreviewMetadataJSON = await $session.lapin.mutation(
+        `dmdTask.fetchResult`,
+        {
+          type: "json",
+          index,
+          task: dmdTaskId,
         }
-      }*/
+      );
+      console.log(itemPreviewMetadataJSON);
+      showItemJsonPreview = true;
     } catch (e) {
       console.log(e?.message);
     }
@@ -221,7 +209,7 @@ This component displays the items in the dmd task throughout the various stages 
 <!--dmdtask.fetchResult-->
 <Modal bind:open={showItemJsonPreview} title={`Preview JSON`} size="lg">
   <div slot="body" class="code-block">
-    <JsonTree value={{ object: itemBeingPreviewed }} />
+    <JsonTree value={{ object: itemPreviewMetadataJSON }} />
   </div>
 </Modal>
 
