@@ -89,8 +89,8 @@
     resolveManyReturn = event.detail;
     console.log("test", resolveManyReturn);
     for (let detail in resolveManyReturn) {
-      if (resolveManyReturn[detail].found == true) {
-        foundSlugs.push(resolveManyReturn[detail].result.id);
+      if (resolveManyReturn[detail][1].found == true) {
+        foundSlugs.push(resolveManyReturn[detail][1].result.id);
       } else {
         console.log("false");
       }
@@ -149,7 +149,7 @@
             data-tooltip="Add Selected Member"
             data-tooltip-flow="bottom"
           >
-            <FaCheckCircle />
+            <!--  <FaCheckCircle /> -->
             {foundMember}
           </div>
         {/each}
