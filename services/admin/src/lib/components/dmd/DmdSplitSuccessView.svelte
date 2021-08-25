@@ -32,7 +32,7 @@ This component shows the view for a dmd task that had its metadata successfully 
    * TODO: Delete test data
    * @type { SucceededDMDTask } The dmd task being displayed
    */
-  export let dmdTask: SucceededDMDTask = {
+  export let dmdTask: SucceededDMDTask; /* = {
     id: "123",
     updated: "1628785112",
     attachments: {
@@ -78,7 +78,7 @@ This component shows the view for a dmd task that had its metadata successfully 
         parsed: true,
       },
     ],
-  };
+  }; */
 
   /**
    * @type { number } The control for the stepper that lets the user either lookup or update the items in the @var dmdTask
@@ -279,6 +279,7 @@ This component shows the view for a dmd task that had its metadata successfully 
   {/if}
   <DmdItemsTable
     bind:itemsToShow={dmdTask.items}
+    bind:dmdTaskId={dmdTask.id}
     bind:accessPlatform
     bind:itemsLookupAndUpdateResults
     bind:showAccessLookupColumn

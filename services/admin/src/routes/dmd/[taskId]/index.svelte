@@ -12,7 +12,8 @@
           "dmdTask.get",
           page.params["taskId"]
         );
-        const dmdTask = DMDTask.parse(response);
+        console.log("response", response);
+        const dmdTask: DMDTask = response;
         return { props: { dmdTask } };
       }
       return { props: {} };
@@ -45,10 +46,9 @@
 
 <div class="dmd-task-page-wrap">
   {#if !dmdTask}
-    <!--Loading...-->
-    <DmdSplitSuccessView />
+    Loading...
   {:else if isSucceededDMDTask(dmdTask)}
-    <DmdSplitSuccessView /> <!--dmdTask={getAsSucceededTask()} -->
+    <DmdSplitSuccessView {dmdTask} />
   {:else if isFailedDMDTask(dmdTask)}
     <DmdSplitFailureView {dmdTask} message={dmdTask.process["message"]} />
   {:else if isWaitingDMDTask(dmdTask)}

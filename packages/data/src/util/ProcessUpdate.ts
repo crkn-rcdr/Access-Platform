@@ -19,7 +19,7 @@ export type ProcessRequest = z.infer<typeof ProcessRequest>;
 /**
  * The result of a background process.
  */
-export const ProcessResult = ProcessRequest.merge(
+export const FailedProcessResult = ProcessRequest.merge(
   z.object({
     /**
      * Most recent time the process update took place.
@@ -29,7 +29,7 @@ export const ProcessResult = ProcessRequest.merge(
     /**
      * Whether the last process was run successfully on this object.
      */
-    succeeded: z.boolean(),
+    succeeded: z.literal(false),
 
     /**
      * Error message supplied by the process.
@@ -38,12 +38,72 @@ export const ProcessResult = ProcessRequest.merge(
   })
 ).strict();
 
+export type FailedProcessResult = z.infer<typeof FailedProcessResult>;
+
+/**
+ * The result of a background process.
+ */
+export const SucceededProcessResult = ProcessRequest.merge(
+  z.object({
+    /**
+     * Most recent time the process update took place.
+     */
+    processDate: Timestamp,
+
+    /**
+     * Whether the last process was run successfully on this object.
+     */
+    succeeded: z.literal(true),
+
+    /**
+     * Error message supplied by the process.
+     */
+    message: z.string(),
+  })
+).strict();
+
+export type SucceededProcessResult = z.infer<typeof SucceededProcessResult>;
+
+/**
+ * An object that describes a request for and the output of an automated
+ * process that is applied to the parent object.
+ */
+export const ProcessResult = z.union([
+  SucceededProcessResult,
+  FailedProcessResult,
+]);
+
 export type ProcessResult = z.infer<typeof ProcessResult>;
 
 /**
  * An object that describes a request for and the output of an automated
  * process that is applied to the parent object.
  */
-export const ProcessUpdate = z.union([ProcessRequest, ProcessResult]);
+export const FailedProcessUpdate = z.union([
+  ProcessRequest,
+  FailedProcessResult,
+]);
+
+export type FailedProcessUpdate = z.infer<typeof FailedProcessUpdate>;
+
+/**
+ * An object that describes a request for and the output of an automated
+ * process that is applied to the parent object.
+ */
+export const SucceededProcessUpdate = z.union([
+  ProcessRequest,
+  SucceededProcessResult,
+]);
+
+export type SucceededProcessUpdate = z.infer<typeof SucceededProcessUpdate>;
+
+/**
+ * An object that describes a request for and the output of an automated
+ * process that is applied to the parent object.
+ */
+export const ProcessUpdate = z.union([
+  SucceededProcessUpdate,
+  FailedProcessUpdate,
+]);
 
 export type ProcessUpdate = z.infer<typeof ProcessUpdate>;

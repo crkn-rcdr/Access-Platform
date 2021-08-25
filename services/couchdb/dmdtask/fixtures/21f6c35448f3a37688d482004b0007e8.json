@@ -1,0 +1,48 @@
+{
+  "_id": "21f6c35448f3a37688d482004b0007e8",
+  "_rev": "4-3d9ee183e62211110235e4429b46e661",
+  "format": "marc490",
+  "user": {
+    "name": "Brittny Lapierre",
+    "email": "blapierre@crkn.ca"
+  },
+  "updated": 1629908746.611,
+  "process": {
+    "requestDate": 1629908746.611,
+    "processDate": 1629908857.611,
+    "succeeded": true,
+    "message": ""
+  },
+  "items": [
+    {
+      "message": "bueno",
+      "id": "8_06941",
+      "output": "marc",
+      "label": "I am a bueno label",
+      "parsed": true
+    },
+    {
+      "message": "sehr gut",
+      "id": "8_06941_1",
+      "output": "marc",
+      "label": "I am a sehr gut label",
+      "parsed": true
+    },
+    {
+      "message": "good",
+      "id": "8_06941_2",
+      "output": "marc",
+      "label": "I am a good label",
+      "parsed": true
+    }
+  ],
+  "_attachments": {
+    "metadata": {
+      "content_type": "application/octet-stream",
+      "revpos": 2,
+      "digest": "md5-TtujNLOPhBUBvOxXo5+cTg==",
+      "length": 5102086,
+      "stub": true
+    }
+  }
+}

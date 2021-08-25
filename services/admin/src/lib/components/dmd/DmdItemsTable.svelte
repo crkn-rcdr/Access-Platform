@@ -33,10 +33,17 @@ This component displays the items in the dmd task throughout the various stages 
     AccessPlatform,
     DmdLoadedParseRecord,
     DmdUpdatedParseRecord,
+    Session,
   } from "$lib/types";
   import type { ParseRecord } from "@crkn-rcdr/access-data/dist/esm/dmd/Task";
   import JsonTree from "$lib/components/shared/JsonTree.svelte";
   import Modal from "$lib/components/shared/Modal.svelte";
+  import { getStores } from "$app/stores";
+
+  /**
+   *  @type { string } The 'id' of the DMDTask being shown.
+   */
+  export let dmdTaskId: string;
 
   /**
    *  @type { AccessPlatform } The access platform the items are in.
@@ -77,23 +84,52 @@ This component displays the items in the dmd task throughout the various stages 
   export let showPreservationUpdateColumn: boolean = false;
 
   /**
+   * @type {Session} The session store that contains the module for sending requests to lapin.
+   */
+  const { session } = getStores<Session>();
+
+  /**
    * @type { boolean } if the json preview modal should be displayed for an item in the table.
    */
   let showItemJsonPreview: boolean = false;
 
   /**
-   * @type { ParseRecord } the item with json in the preview modal.
+   * @type { any } the item with json in the preview modal.
    */
-  let itemBeingPreviewed: ParseRecord;
+  let itemBeingPreviewed: any;
 
   /**
    * Handles showing the json preview modal for the item passed in
    * @param item
    * @returns void
    */
-  function handlePreviewItemPressed(item: ParseRecord) {
-    itemBeingPreviewed = item;
-    showItemJsonPreview = true;
+  async function handlePreviewItemPressed(index: number) {
+    try {
+      const response = await $session.lapin.mutation(`dmdTask.fetchResult`, {
+        type: "json",
+        index,
+        task: dmdTaskId,
+      });
+
+      console.log("response", response);
+
+      const fileName = `${index}.json`;
+      //dmdTaskId
+      //JSON.parse(decodeURIComponent(escape(atob(""))))
+      const res = {};
+      /*if (fileName in taskAttachments) {
+        const attachment = taskAttachments[fileName];
+
+        if ("digest" in attachment) {
+          itemBeingPreviewed = JSON.parse(
+            decodeURIComponent(escape(atob(attachment["digest"])))
+          );
+          showItemJsonPreview = true;
+        }
+      }*/
+    } catch (e) {
+      console.log(e?.message);
+    }
   }
 </script>
 
@@ -130,8 +166,7 @@ This component displays the items in the dmd task throughout the various stages 
               {#if item["parsed"]}
                 <button
                   class="button ghost dark sm"
-                  on:click={() => handlePreviewItemPressed(item)}
-                  >Preview</button
+                  on:click={() => handlePreviewItemPressed(i)}>Preview</button
                 >
               {:else}
                 {item["message"]}
@@ -186,7 +221,7 @@ This component displays the items in the dmd task throughout the various stages 
 <!--dmdtask.fetchResult-->
 <Modal bind:open={showItemJsonPreview} title={`Preview JSON`} size="lg">
   <div slot="body" class="code-block">
-    <JsonTree value={{ object: JSON.parse(itemBeingPreviewed["message"]) }} />
+    <JsonTree value={{ object: itemBeingPreviewed }} />
   </div>
 </Modal>
 

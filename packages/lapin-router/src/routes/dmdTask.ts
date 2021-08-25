@@ -40,16 +40,24 @@ export const dmdTaskRouter = createRouter()
       });
     },
   })
-  .query("fetchResult", {
+  .mutation("fetchResult", {
     input: FetchInput.parse,
-    async resolve() {
-      //{ input: id, ctx }) {
+    async resolve({ input, ctx }) {
       /*
        Fetches the attachment in the dmdtask document 
        and returns its contents. 
        Results should be decoded in the browser.
       */
-      return true;
+      try {
+        const response = await ctx.couch.dmdtask.getAttachment({
+          document: input.task,
+          attachment: `${input.index}.${input.type}`,
+        });
+        return response;
+      } catch (e) {
+        console.log(e?.message);
+        throw httpErrorToTRPC(e);
+      }
     },
   })
   .mutation("create", {
