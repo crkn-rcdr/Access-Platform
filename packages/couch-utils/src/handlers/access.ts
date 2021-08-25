@@ -213,4 +213,20 @@ export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
       body: user,
     });
   }
+  async addMembers(args: {
+    id: Noid;
+    slug: string;
+    canAdd: boolean;
+  }): Promise<void> {
+    const { id, slug, canAdd } = args;
+    const collections = await this.isMemberOf(id);
+    for (const collection of collections) {
+      await this.update({
+        ddoc: "access",
+        name: "addMembers",
+        docId: collection,
+        body: { id, slug, canAdd },
+      });
+    }
+  }
 }

@@ -80,3 +80,13 @@ export type DmdUpdatedParseRecord = DmdLoadedParseRecord & {
   updatedInAccess: boolean;
   updatedInPreservation: boolean;
 };
+
+export type AddMemberRecord = {
+  slug: Slug;
+  canAdd: boolean;
+  id: Noid;
+} | {
+  slug: Slug;
+  canAdd: boolean;
+  reason: string;
+};
