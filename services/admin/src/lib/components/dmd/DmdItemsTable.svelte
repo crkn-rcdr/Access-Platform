@@ -94,7 +94,7 @@ This component displays the items in the dmd task throughout the various stages 
   let showItemJsonPreview: boolean = false;
 
   /**
-   * @type { any } the item with json in the preview modal.
+   * @type { any } the json of the item that will show in the preview modal.
    */
   let itemPreviewMetadataJSON: any;
 
@@ -113,7 +113,6 @@ This component displays the items in the dmd task throughout the various stages 
           task: dmdTaskId,
         }
       );
-      console.log(itemPreviewMetadataJSON);
       showItemJsonPreview = true;
     } catch (e) {
       console.log(e?.message);
