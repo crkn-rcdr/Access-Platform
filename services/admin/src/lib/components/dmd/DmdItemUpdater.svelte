@@ -76,14 +76,6 @@ This component allows the user to update the dmd tasks items in an access platfo
   const { session } = getStores<Session>();
 
   /**
-   * TODO: Delete
-   * Helper method to simulate backend processing time
-   * */
-  function sleep(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
-
-  /**
    * Removes any previous update results from @var itemsLookupAndUpdateResults
    * @returns void
    */
@@ -111,6 +103,7 @@ This component allows the user to update the dmd tasks items in an access platfo
       for (const item of itemsLookupAndUpdateResults) {
         if (item.foundInAccess) {
           try {
+            // Response will be void, error thrown if bad
             const response = await $session.lapin.mutation(
               "dmdTask.storeAccess",
               {
@@ -121,10 +114,9 @@ This component allows the user to update the dmd tasks items in an access platfo
                 user: $session.user,
               }
             );
-            console.log(response);
             itemsLookupAndUpdateResults[index] = {
               ...item,
-              updatedInAccess: response,
+              updatedInAccess: true,
               updatedInPreservation: false,
             };
 
@@ -133,9 +125,8 @@ This component allows the user to update the dmd tasks items in an access platfo
             );
 
             itemsLookupAndUpdateResults = itemsLookupAndUpdateResults;
-            index++;
-            await sleep(1000);
           } catch (e) {
+            console.log(e?.message);
             itemsLookupAndUpdateResults[index] = {
               ...item,
               updatedInAccess: false,
@@ -149,6 +140,8 @@ This component allows the user to update the dmd tasks items in an access platfo
             updatedInPreservation: false,
           };
         }
+        index++;
+        //await sleep(1000);
       }
 
       state = "updated";
