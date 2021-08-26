@@ -110,22 +110,32 @@ This component allows the user to update the dmd tasks items in an access platfo
 
       for (const item of itemsLookupAndUpdateResults) {
         if (item.foundInAccess) {
-          const response = await $session.lapin.mutation(
-            "dmdTask.storeAccess",
-            {
-              task: dmdTaskId,
-              index,
-              slug: item["slug"],
-              noid: item["noid"],
-            }
-          );
-          if (response) {
+          try {
+            const response = await $session.lapin.mutation(
+              "dmdTask.storeAccess",
+              {
+                task: dmdTaskId,
+                index,
+                slug: item["slug"],
+                noid: item["noid"],
+                user: $session.user,
+              }
+            );
+            console.log(response);
             itemsLookupAndUpdateResults[index] = {
               ...item,
-              updatedInAccess: true,
+              updatedInAccess: response,
               updatedInPreservation: false,
             };
-          } else {
+
+            updatedProgressPercentage = Math.round(
+              ((index + 1) / itemsLookupAndUpdateResults.length) * 100
+            );
+
+            itemsLookupAndUpdateResults = itemsLookupAndUpdateResults;
+            index++;
+            await sleep(1000);
+          } catch (e) {
             itemsLookupAndUpdateResults[index] = {
               ...item,
               updatedInAccess: false,
@@ -139,15 +149,8 @@ This component allows the user to update the dmd tasks items in an access platfo
             updatedInPreservation: false,
           };
         }
-
-        updatedProgressPercentage = Math.round(
-          ((index + 1) / itemsLookupAndUpdateResults.length) * 100
-        );
-
-        itemsLookupAndUpdateResults = itemsLookupAndUpdateResults;
-        index++;
-        await sleep(1000);
       }
+
       state = "updated";
     }
   }

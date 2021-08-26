@@ -2,7 +2,7 @@ import { z } from "zod";
 import { DMDFORMATS, User, Slug } from "@crkn-rcdr/access-data";
 import { TRPCError } from "@trpc/server";
 import { createRouter, httpErrorToTRPC } from "../router.js";
-
+import { isSucceededDMDTask } from "@crkn-rcdr/access-data";
 const NewInput = z.object({
   user: User,
   format: z.enum(DMDFORMATS),
@@ -20,12 +20,14 @@ const StoreAccessInput = z.object({
   index: z.number(), // array index of item whose metadata is being stored
   slug: z.string(), // prefix + id (we might not need this if we send the resolved noid)
   noid: z.string(), // result of slug lookup
+  user: User,
 });
 
 const StorePreservationInput = z.object({
   task: z.string(), // dmdtask uuid
   index: z.number(),
   slug: z.string(),
+  user: User,
 });
 
 export const dmdTaskRouter = createRouter()
@@ -73,32 +75,104 @@ export const dmdTaskRouter = createRouter()
     input: StoreAccessInput.parse,
     async resolve({ input, ctx }) {
       try {
-        /* 
-        Yeah, the idea in lapin is that you'll be able to interact with objects in a particular container, but not do any of the scarier container management stuff.
-
-        accessFiles: client.container("access-files"),
-        accessMetadata: client.container("access-metadata"),
-        The code above isn't in tests; it's in the context that lapin routers have access to.
-
-
-        task: z.string(), // dmdtask uuid
-        index: z.number(), // array index of item whose metadata is being stored
-        slug: z.string(), // prefix + id (we might not need this if we send the resolved noid)
-        noid: z.string(), // result of slug lookup
-
-        Looks up the task's mdType & fetches the attachment and the label corresponding to index. 
-
-        PUT
-        /v1/{account}/{container}/{object}
-        Create or replace object
-        Determines the correct filename of the attachment using mdType and noid. 
-        Stores the attachment in Swift. (Is this the right thing to call? ctx.swift.accessFiles.putObject("filename of the attachment using mdType and noid", attachment))
-
-        Replaces the label of the object identified by noid.  (What should I update this to?)*/
         console.log(ctx.swift.accessFiles, input);
+        /* 
+          - Looks up the task
+        */
+        const dmdTaskLookup = await ctx.couch.dmdtask.getSafe(input.task);
 
-        return true; //await ctx.couch; Returns void, I think.
+        if (dmdTaskLookup.found) {
+          const dmdTask = dmdTaskLookup.doc;
+
+          if (isSucceededDMDTask(dmdTask)) {
+            /* 
+              - Get the attachment [index].xml from the dmdtask document (using the dmdtask handler's getAttachment method) and;
+            */
+            const itemXMLFile = await ctx.couch.dmdtask.getAttachment({
+              document: input.task,
+              attachment: `${input.index}.xml`,
+            });
+
+            const item = dmdTask?.items?.[input.index];
+
+            if (item) {
+              /* 
+                - Get the [noid] and [type] of the access object using the [slug] paramter.
+              */
+              const accessObjectLookup = await ctx.couch.access.findUnique(
+                "slug",
+                input.slug,
+                ["id", "type"] as const
+              );
+
+              if (accessObjectLookup.found) {
+                const accesObject = accessObjectLookup.result;
+                /* 
+                - Successfully parsed items will have a field called item[output] which can have the values marc, dc, or issueinfo. Determine the correct filename of the attachment using [output] and [noid]. The relevant possible filenames here are dmdMARC.xml, dmdDC.xml, and dmdISSUEINFO.xml. (ex: 69429/[noid]/dmdMARC.xml)
+                */
+                const itemXMLFileName =
+                  accesObject.id +
+                  (item.output === "marc"
+                    ? "/dmdMARC.xml"
+                    : item.output === "dc"
+                    ? "/dmdDC.xml"
+                    : item.output === "issueinfo"
+                    ? "/dmdISSUEINFO.xml"
+                    : ""); // TODO: clean
+
+                /* 
+                - Then, use swift.accessMetadata.putObject to send it to Swift with the object name and content-type .
+                */
+                console.log(
+                  { data: itemXMLFile, contentType: "application/xml" },
+                  itemXMLFileName
+                );
+
+                const storeResult = await ctx.swift.accessMetadata.putObject(
+                  itemXMLFileName,
+                  { data: itemXMLFile, contentType: "application/xml" }
+                );
+
+                if (storeResult.code === 201) {
+                  /* 
+                  - Then, update the access objects label to the label corresponding to item[index]. Use access.editCollection or access.editManifest depending on [type] to update the object with the following:
+                  { "label": { "none": items[index][labe] } }
+                  */
+                  /* 
+                    - Get the [label] corresponding to item[index],
+                  */
+                  if (item.label) {
+                    const itemLabel: Record<string, string> = {
+                      none: item.label,
+                    };
+
+                    const labelUpdateObject = {
+                      id: accesObject.id,
+                      user: input.user,
+                      data: {
+                        label: itemLabel,
+                      },
+                    };
+
+                    const labelUpdateResult =
+                      accesObject.type === "manifest"
+                        ? await ctx.couch.access.editManifest(labelUpdateObject)
+                        : await ctx.couch.access.editCollection(
+                            labelUpdateObject
+                          );
+
+                    if (labelUpdateResult.label["none"] === itemLabel["none"]) {
+                      return true;
+                    } else throw "Label not updated successfully.";
+                  }
+                } else throw "Problem storing XML file";
+              } else throw "Could not find object in access";
+            } else throw "Could not retrieve item from dmd task.";
+          } else throw "Dmd task has not completed successfully yet.";
+        } else throw "Could not find dmd task";
+        return false;
       } catch (e) {
+        console.log("DMD Task error:", e);
         throw httpErrorToTRPC(e);
       }
     },
