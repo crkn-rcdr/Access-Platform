@@ -23,8 +23,6 @@
    */
   let serverObject: AccessObject;
 
-  //TODO: call niod service to generate id in the backend
-
   /**
    * Sets the @var serverObject to a new Collection type serverObject
    * @returns void

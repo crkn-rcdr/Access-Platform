@@ -268,10 +268,4 @@ export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
     const manifest = await this.get(args.id);
     return Manifest.parse(manifest);
   }
-  /**
-   * In fact, we probably need to do the same sort of checks in these methods as we do in the edit methods; it's possible that we can refactor those checks out.
-   */
-  /**
-   * To test these methods out, we might need to incorporate the dev noid minter into the couch-utils test context.
-   */
 }
