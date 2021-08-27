@@ -207,11 +207,11 @@ test.serial("Collections can be created", async (t) => {
     data: {
       slug: "definitely_available_2",
       label: {
-        none: "I will fail",
+        none: "I will succeed",
       },
       type: "collection",
       summary: {
-        none: "Fail I will",
+        none: "Succeed I will",
       },
       behavior: "individuals",
       members: [],
@@ -271,11 +271,11 @@ test.serial("Manifest can be created", async (t) => {
     data: {
       slug: "definitely_available_3",
       label: {
-        none: "I will fail",
+        none: "I will succeed",
       },
       type: "manifest",
       summary: {
-        none: "Fail I will",
+        none: "Succeed I will",
       },
       behavior: "individuals",
       viewingDirection: "bottom-to-top",
