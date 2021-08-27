@@ -29,16 +29,18 @@ export const collectionRouter = createRouter()
       }
     },
   })
-  .mutation("create", {
+  .mutation("new", {
     input: NewInput.parse,
     async resolve({ input, ctx }) {
       try {
         const id: Noid = await ctx.noid.mintOne();
-        return await ctx.couch.access.createCollection({
+        await ctx.couch.access.createCollection({
           id,
           ...input,
         });
+        return id;
       } catch (e) {
+        console.log(e?.message);
         throw httpErrorToTRPC(e);
       }
     },

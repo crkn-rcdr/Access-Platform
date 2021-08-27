@@ -37,7 +37,7 @@
       behavior: "unordered",
       members: [],
     };
-    const res = await $session.lapin.mutation("collection.create", {
+    const res = await $session.lapin.mutation("collection.new", {
       user: $session.user,
       data: newCollection,
     });
@@ -58,7 +58,7 @@
       from: "canvases",
       canvases: [],
     };
-    const res = await $session.lapin.mutation("manifest.create", {
+    const res = await $session.lapin.mutation("manifest.new", {
       user: $session.user,
       data: newManifest,
     });
