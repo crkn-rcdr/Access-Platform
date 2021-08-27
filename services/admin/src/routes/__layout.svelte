@@ -55,7 +55,18 @@
   <nav class="auto-align auto-align__wrap">
     <a href="/import">Import from Preservation</a>
     <a href="/dmd/new">Update Descriptive Metadata</a>
-    <a href="/object/new">Create New Object</a>
+
+    <DropdownMenu direction="right">
+      <div slot="dropdown-button" class="disabled">
+        <a href="/">Create New Object</a>
+      </div>
+      <a href="/object/new">
+        Collection
+      </a>
+      <a href="/object/new">
+        Manifest
+      </a>
+    </DropdownMenu>
   </nav>
   
   <div class="right-menu auto-align auto-align__a-center">
