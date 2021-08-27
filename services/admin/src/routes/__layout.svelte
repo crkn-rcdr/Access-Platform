@@ -57,8 +57,8 @@
     <a href="/dmd/new">Update Descriptive Metadata</a>
 
     <DropdownMenu direction="right">
-      <div slot="dropdown-button" class="disabled">
-        <a href="/">Create New Object</a>
+      <div slot="dropdown-button" class="  create-object-menu-button">
+        Create New Object
       </div>
       <a href="/object/new">
         Collection
@@ -111,5 +111,9 @@
   }
   .right-menu > * {
     margin-right: 1rem;
+  }
+  .create-object-menu-button {
+    text-decoration: underline;
+    color: var(--primary) !important;
   }
 </style>
