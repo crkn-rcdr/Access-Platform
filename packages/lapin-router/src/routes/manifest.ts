@@ -1,6 +1,7 @@
 import { z } from "zod";
 import {
   EditableManifest,
+  Manifest,
   NewManifest,
   Noid,
   User,
@@ -29,16 +30,18 @@ export const manifestRouter = createRouter()
       }
     },
   })
-  .mutation("create", {
+  .mutation("new", {
     input: NewInput.parse,
     async resolve({ input, ctx }) {
       try {
         const id: Noid = await ctx.noid.mintOne();
-        return await ctx.couch.access.createManifest({
+        await ctx.couch.access.createManifest({
           id,
           ...input,
         });
+        return id;
       } catch (e) {
+        console.log(e?.message);
         throw httpErrorToTRPC(e);
       }
     },
