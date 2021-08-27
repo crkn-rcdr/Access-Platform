@@ -12,6 +12,8 @@ import {
   User,
   ObjectList,
   Slug,
+  NewCollection,
+  NewManifest,
 } from "@crkn-rcdr/access-data";
 
 import { DatabaseHandler } from "../DatabaseHandler.js";
@@ -213,4 +215,63 @@ export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
       body: user,
     });
   }
+
+  /**
+   * Creates a new Collection.
+   * @returns The created Collection.
+   */
+
+  async createCollection(args: {
+    id: Noid;
+    user: User;
+    data: NewCollection;
+  }): Promise<Collection> {
+    const data = NewCollection.parse(args.data);
+    await this.insert({
+      id: args.id,
+      staff: {
+        by: args.user,
+        date: Date.now(),
+      },
+      ...data,
+    });
+    // Is this required?
+    if (data.members) {
+      for (let members of data.members) {
+        if (members.id !== undefined) {
+          await this.forceUpdate(members.id);
+        }
+      }
+    }
+    const collection = await this.get(args.id);
+    return Collection.parse(collection);
+  }
+
+  /**
+   * Creates a new Manifest.
+   * @returns The created Manifest.
+   */
+  async createManifest(args: {
+    id: Noid;
+    user: User;
+    data: NewManifest;
+  }): Promise<Manifest> {
+    const data = NewManifest.parse(args.data);
+    await this.insert({
+      id: args.id,
+      staff: {
+        by: args.user,
+        date: Date.now(),
+      },
+      ...data,
+    });
+    const manifest = await this.get(args.id);
+    return Manifest.parse(manifest);
+  }
+  /**
+   * In fact, we probably need to do the same sort of checks in these methods as we do in the edit methods; it's possible that we can refactor those checks out.
+   */
+  /**
+   * To test these methods out, we might need to incorporate the dev noid minter into the couch-utils test context.
+   */
 }

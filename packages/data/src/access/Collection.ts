@@ -46,3 +46,20 @@ export const EditableCollection = Collection.pick({
   );
 
 export type EditableCollection = z.infer<typeof EditableCollection>;
+
+/**
+ * The properties of a newly created Collection.
+ */
+export const NewCollection = Collection.pick({
+  slug: true,
+  label: true,
+  behavior: true,
+  members: true,
+  summary: true,
+  type: true,
+}).refine(
+  (obj) => Object.keys(obj).length > 0,
+  "Cannot edit a collection with an empty object"
+);
+
+export type NewCollection = z.infer<typeof NewCollection>;
