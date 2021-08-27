@@ -1,7 +1,6 @@
 import { z } from "zod";
 import {
   EditableManifest,
-  Manifest,
   NewManifest,
   Noid,
   User,
