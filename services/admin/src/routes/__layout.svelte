@@ -60,10 +60,10 @@
       <div slot="dropdown-button" class="  create-object-menu-button">
         Create New Object
       </div>
-      <a href="/object/new">
+      <a href="/object/new/collection">
         Collection
       </a>
-      <a href="/object/new">
+      <a href="/object/new/manifest">
         Manifest
       </a>
     </DropdownMenu>
@@ -98,7 +98,7 @@
     padding: 0 1rem;
     background-color: var(--base-bg);
     /*filter: brightness(1.1);*/
-    z-index: 0;
+    z-index: 1;
   }
   .icon {
     padding: 0.1rem;

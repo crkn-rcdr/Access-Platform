@@ -19,12 +19,18 @@ The editor actions component holds functionality that is responsible for perform
   import { onMount } from "svelte";
   import type { Session } from "$lib/types";
   import FaArchive from "svelte-icons/fa/FaArchive.svelte";
-  import { AccessObject } from "@crkn-rcdr/access-data";
+  import {
+    AccessObject,
+    EditableManifest,
+    NewCollection,
+    NewManifest,
+  } from "@crkn-rcdr/access-data";
   import { detailedDiff } from "deep-object-diff";
   import { getStores } from "$app/stores";
   import { showConfirmation } from "$lib/confirmation";
   import { checkValidDiff, checkModelChanged } from "$lib/validation";
   import Modal from "$lib/components/shared/Modal.svelte";
+  import { goto } from "$app/navigation";
 
   /**
    * @type {AccessObject} This is the 'original' serverObject of type AccessObject pulled from the backend, to be edited only once an action is successfully performed.
@@ -40,6 +46,11 @@ The editor actions component holds functionality that is responsible for perform
    * @type {Session} The session store that contains the module for sending requests to lapin.
    */
   const { session } = getStores<Session>();
+
+  /**
+   * @type {"create" | "edit"} An indicator variable if the editor is in create mode or edit mode.
+   */
+  let mode: "create" | "edit";
 
   /**
    * @type {any} A module that quickly deep copies (clones) an serverObject.
@@ -62,11 +73,16 @@ The editor actions component holds functionality that is responsible for perform
    */
   function checkEnableSave() {
     isSaveEnabled = checkValidDiff(serverObject, editorObject);
+    console.log("isSaveEnabled", isSaveEnabled, serverObject, editorObject);
   }
 
   $: {
     editorObject;
     checkEnableSave();
+  }
+
+  $: {
+    mode = serverObject?.id ? "edit" : "create";
   }
 
   /* TODO: ask how to set up an insert request */
@@ -117,11 +133,11 @@ The editor actions component holds functionality that is responsible for perform
               success: true,
               details: JSON.stringify(bodyObj),
             };
-          }
-          return {
-            success: false,
-            details: "Object not of type canvas or manifest",
-          };
+          } else
+            return {
+              success: false,
+              details: "Object not of type canvas or manifest",
+            };
         } catch (e) {
           return {
             success: false,
@@ -134,7 +150,7 @@ The editor actions component holds functionality that is responsible for perform
     );
   }
 
-  async function handleSave() {
+  async function handleSaveEdit() {
     const diff: any = detailedDiff(serverObject, editorObject);
 
     let bodyObj = {
@@ -157,6 +173,52 @@ The editor actions component holds functionality that is responsible for perform
         console.log(e);
       }
     }
+  }
+
+  async function handleSaveCreate() {
+    await showConfirmation(
+      async () => {
+        try {
+          if (editorObject.type === "manifest") {
+            const response = await $session.lapin.mutation(`manifest.new`, {
+              user: $session.user,
+              data: editorObject as NewManifest,
+            });
+            goto(`/object/${response}`);
+            return {
+              success: true,
+              details: response,
+            };
+          } else if (editorObject.type === "collection") {
+            const response = await $session.lapin.mutation(`collection.new`, {
+              user: $session.user,
+              data: editorObject as NewCollection,
+            });
+            goto(`/object/${response}`);
+            return {
+              success: true,
+              details: response,
+            };
+          } else
+            return {
+              success: false,
+              details: "Object not of type canvas or manifest",
+            };
+        } catch (e) {
+          return {
+            success: false,
+            details: e.message,
+          };
+        }
+      },
+      "Success! Changes saved.",
+      "Error: failed to save changes."
+    );
+  }
+
+  async function handleSave() {
+    if (mode === "create") await handleSaveCreate();
+    else if (mode === "edit") await handleSaveEdit();
   }
 
   /**

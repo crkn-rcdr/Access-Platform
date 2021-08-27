@@ -24,6 +24,7 @@ function checkValidCollection(editorObject: AccessObject) {
     const res = EditableCollection.parse(editorObject);
     return true;
   } catch (e) {
+    console.log(e?.message);
     return false;
   }
 }
@@ -38,6 +39,7 @@ function checkValidManifest(editorObject: AccessObject) {
     const res = EditableManifest.parse(editorObject);
     return true;
   } catch (e) {
+    console.log(e?.message);
     return false;
   }
 }
@@ -48,6 +50,7 @@ function checkValidManifest(editorObject: AccessObject) {
  * @returns boolean
  */
 function checkChangeIsValid(editorObject: AccessObject) {
+  console.log(editorObject["type"]);
   if (editorObject["type"] === "manifest") {
     return checkValidManifest(editorObject);
   } else if (editorObject["type"] === "collection") {
@@ -64,7 +67,8 @@ function checkChangeIsValid(editorObject: AccessObject) {
  */
 function checkModelChanged(
   serverObject: AccessObject,
-  editorObject: AccessObject) {
+  editorObject: AccessObject
+) {
   return !isEqual(serverObject, editorObject);
 }
 
@@ -126,9 +130,11 @@ const manifest = {
    */
   getCanvasesValidationMsg: function (canvases: ObjectList) {
     try {
+      console.log(JSON.stringify(canvases));
       EditableManifest.parse({ canvases });
       return "";
     } catch (e) {
+      console.log(e);
       return e["issues"][0]["message"];
     }
   },
