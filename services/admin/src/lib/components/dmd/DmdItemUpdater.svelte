@@ -76,14 +76,6 @@ This component allows the user to update the dmd tasks items in an access platfo
   const { session } = getStores<Session>();
 
   /**
-   * TODO: Delete
-   * Helper method to simulate backend processing time
-   * */
-  function sleep(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
-
-  /**
    * Removes any previous update results from @var itemsLookupAndUpdateResults
    * @returns void
    */
@@ -110,22 +102,31 @@ This component allows the user to update the dmd tasks items in an access platfo
 
       for (const item of itemsLookupAndUpdateResults) {
         if (item.foundInAccess) {
-          const response = await $session.lapin.mutation(
-            "dmdTask.storeAccess",
-            {
-              task: dmdTaskId,
-              index,
-              slug: item["slug"],
-              noid: item["noid"],
-            }
-          );
-          if (response) {
+          try {
+            // Response will be void, error thrown if bad
+            const response = await $session.lapin.mutation(
+              "dmdTask.storeAccess",
+              {
+                task: dmdTaskId,
+                index,
+                slug: item["slug"],
+                noid: item["noid"],
+                user: $session.user,
+              }
+            );
             itemsLookupAndUpdateResults[index] = {
               ...item,
               updatedInAccess: true,
               updatedInPreservation: false,
             };
-          } else {
+
+            updatedProgressPercentage = Math.round(
+              ((index + 1) / itemsLookupAndUpdateResults.length) * 100
+            );
+
+            itemsLookupAndUpdateResults = itemsLookupAndUpdateResults;
+          } catch (e) {
+            console.log(e?.message);
             itemsLookupAndUpdateResults[index] = {
               ...item,
               updatedInAccess: false,
@@ -139,15 +140,10 @@ This component allows the user to update the dmd tasks items in an access platfo
             updatedInPreservation: false,
           };
         }
-
-        updatedProgressPercentage = Math.round(
-          ((index + 1) / itemsLookupAndUpdateResults.length) * 100
-        );
-
-        itemsLookupAndUpdateResults = itemsLookupAndUpdateResults;
         index++;
-        await sleep(1000);
+        //await sleep(1000);
       }
+
       state = "updated";
     }
   }
