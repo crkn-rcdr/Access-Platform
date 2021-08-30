@@ -19,7 +19,8 @@ none
   import { goto } from "$app/navigation";
   import { showConfirmation } from "$lib/confirmation";
   import LoadingButton from "$lib/components/shared/LoadingButton.svelte";
-  import { onMount } from "svelte";
+  //import { onMount } from "svelte";
+  import { blobToBase64 } from "base64-blob"; // base64ToBlob
 
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
@@ -73,14 +74,13 @@ none
    */
   async function handleFileSelected(event: any) {
     const file: File = event.detail;
-    const metadataFileText = await file.text();
     try {
-      if (metadataFileText) {
-        b64EncodedMetadataFileText = btoa(
-          unescape(encodeURIComponent(metadataFileText))
-        ); //await convertBlobToBase64(file); The new way corrupts the file :-(
-      }
+      b64EncodedMetadataFileText = (await convertBlobToBase64(file)).replace(
+        "data:application/octet-stream;base64,",
+        ""
+      );
     } catch (e) {
+      console.log(e?.message);
       errorText =
         "There was a formatting problem with the metadata file. Please fix it or choose another file.";
     }

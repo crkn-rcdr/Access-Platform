@@ -12,7 +12,7 @@
           "dmdTask.get",
           page.params["taskId"]
         );
-        console.log("response", response);
+        //console.log("response", response);
         const dmdTask: DMDTask = response;
         return { props: { dmdTask } };
       }
