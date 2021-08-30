@@ -30,13 +30,16 @@ export class DMDTaskHandler extends DatabaseHandler<DMDTask> {
     const { message: taskId } = await this.nullUpdate({
       ddoc: "access",
       name: "create",
-      body: { user, format },
-    });
-
-    await this.uploadBase64Attachment({
-      document: taskId,
-      attachmentName: "metadata",
-      attachment: file,
+      body: {
+        user,
+        format,
+        _attachments: {
+          metadata: {
+            content_type: "application/octet-stream",
+            data: file,
+          },
+        },
+      },
     });
 
     await this.update({
