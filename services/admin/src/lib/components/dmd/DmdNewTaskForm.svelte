@@ -19,8 +19,6 @@ none
   import { goto } from "$app/navigation";
   import { showConfirmation } from "$lib/confirmation";
   import LoadingButton from "$lib/components/shared/LoadingButton.svelte";
-  //import { onMount } from "svelte";
-  import { blobToBase64 } from "base64-blob"; // base64ToBlob
 
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
