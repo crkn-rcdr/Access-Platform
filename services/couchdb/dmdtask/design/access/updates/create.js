@@ -24,5 +24,7 @@ module.exports = function (doc, req) {
     user: input.user,
   };
 
+  if ("_attachments" in input) newDoc["_attachments"] = input._attachments;
+
   return successReturn(newDoc, id);
 };
