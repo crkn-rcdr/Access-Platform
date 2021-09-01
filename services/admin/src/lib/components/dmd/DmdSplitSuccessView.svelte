@@ -72,6 +72,9 @@ This component shows the view for a dmd task that had its metadata successfully 
   $: {
     if (dmdTask && dmdTasksStore) inititalizeDmdTaskState();
   }
+
+  $: activeStepIndex =
+    $dmdTasksStore[dmdTask.id]?.lookupState === "loaded" ? 1 : 0;
 </script>
 
 {#if $dmdTasksStore && $dmdTasksStore[dmdTask.id]}
