@@ -40,7 +40,7 @@ This components takes the items in a successfull dmd task and looks them up in a
   export let accessPlatform: AccessPlatform;
 
   function handleLookupPressed() {
-    dmdTasksStore.lookupItems(dmdTaskId, accessPlatform.prefix);
+    dmdTasksStore.lookupTaskItems(dmdTaskId, accessPlatform.prefix);
   }
 </script>
 

@@ -45,7 +45,7 @@ This component shows the view for a dmd task that had its metadata successfully 
   };
 
   function inititalizeDmdTaskState() {
-    if (!(dmdTasksStore?.value(dmdTask.id)?.itemStates?.size > 0)) {
+    if (!(dmdTasksStore?.getTask(dmdTask.id)?.itemStates?.size > 0)) {
       let items: DmdItemStates = new Map();
       for (const item of dmdTask.items) {
         items[item.id] = <DmdItemState>{
@@ -57,7 +57,7 @@ This component shows the view for a dmd task that had its metadata successfully 
           updatedInPreservation: "Updating...",
         };
       }
-      dmdTasksStore.initialize(dmdTask.id, {
+      dmdTasksStore.initializeTask(dmdTask.id, {
         lookupState: "ready",
         updateState: "ready",
         itemStates: items,
