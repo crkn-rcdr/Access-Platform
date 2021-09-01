@@ -30,8 +30,14 @@ This component allows the user to update the dmd tasks items in an access platfo
 -->
 <script lang="ts">
   import type { AccessPlatform } from "$lib/types";
-
+  import type { Session } from "$lib/types";
+  import { getStores } from "$app/stores";
   import { dmdTasksStore } from "$lib/stores/dmdTasksStore";
+
+  /**
+   * @type {Session} The session store that contains the module for sending requests to lapin.
+   */
+  const { session } = getStores<Session>();
 
   /**
    *  @type { AccessPlatform } The access platform to look for the items in.
@@ -44,7 +50,7 @@ This component allows the user to update the dmd tasks items in an access platfo
   export let dmdTaskId: string;
 
   function handleUpdatePressed() {
-    dmdTasksStore.storeTaskItemsToSwift(dmdTaskId);
+    dmdTasksStore.storeTaskItemsToSwift(dmdTaskId, $session.lapin);
   }
 </script>
 

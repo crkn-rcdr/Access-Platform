@@ -52,26 +52,6 @@ This component displays the items in the dmd task throughout the various stages 
   export let itemsToShow: ParseRecord[] = [];
 
   /**
-   * @type { boolean } If the access lookup column should be displayed of not. The displaying of the column depends on user selections in parent and sibling components.
-   */
-  let showAccessLookupColumn: boolean = false;
-
-  /**
-   * @type { boolean } If the preservation lookup column should be displayed of not. The displaying of the column depends on user selections in parent and sibling components.
-   */
-  let showPreservationLookupColumn: boolean = false;
-
-  /**
-   * @type { boolean } If the access update column should be displayed of not. The displaying of the column depends on user selections in parent and sibling components.
-   */
-  let showAccessUpdateColumn: boolean = false;
-
-  /**
-   * @type { boolean } If the preservation update column should be displayed of not. The displaying of the column depends on user selections in parent and sibling components.
-   */
-  let showPreservationUpdateColumn: boolean = false;
-
-  /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
    */
   const { session } = getStores<Session>();
@@ -116,17 +96,17 @@ This component displays the items in the dmd task throughout the various stages 
         <th>Label</th>
         <th>Valid</th>
 
-        {#if showAccessLookupColumn}
+        {#if $dmdTasksStore[dmdTaskId].lookupState !== "ready" && $dmdTasksStore[dmdTaskId].shouldUpdateInAccess}
           <th>Found in {accessPlatform.label}?</th>
         {/if}
-        {#if showAccessUpdateColumn}
+        {#if $dmdTasksStore[dmdTaskId].updateState !== "ready" && $dmdTasksStore[dmdTaskId].shouldUpdateInAccess}
           <th>Updated in {accessPlatform.label}?</th>
         {/if}
 
-        {#if showPreservationLookupColumn}
+        {#if $dmdTasksStore[dmdTaskId].lookupState !== "ready" && $dmdTasksStore[dmdTaskId].shouldUpdateInPreservation}
           <th>Found in Preservation?</th>
         {/if}
-        {#if showPreservationUpdateColumn}
+        {#if $dmdTasksStore[dmdTaskId].updateState !== "ready" && $dmdTasksStore[dmdTaskId].shouldUpdateInPreservation}
           <th>Updated in Preservation?</th>
         {/if}
       </tr>
@@ -149,8 +129,15 @@ This component displays the items in the dmd task throughout the various stages 
             </td>
 
             {#if $dmdTasksStore[dmdTaskId].itemStates[item["id"]]}
-              {#if showAccessLookupColumn}
-                <td class="">
+              {#if $dmdTasksStore[dmdTaskId].lookupState !== "ready" && $dmdTasksStore[dmdTaskId].shouldUpdateInAccess}
+                <td
+                  class:success={$dmdTasksStore[dmdTaskId].itemStates[
+                    item["id"]
+                  ].foundInAccess === "Yes"}
+                  class:not-success={$dmdTasksStore[dmdTaskId].itemStates[
+                    item["id"]
+                  ].foundInAccess === "No"}
+                >
                   {#if $dmdTasksStore[dmdTaskId].itemStates[item["id"]].noid}
                     <a
                       href={`/object/${
@@ -168,22 +155,46 @@ This component displays the items in the dmd task throughout the various stages 
                 </td>
               {/if}
 
-              {#if showAccessUpdateColumn}
-                <td class="">
+              {#if $dmdTasksStore[dmdTaskId].updateState !== "ready" && $dmdTasksStore[dmdTaskId].shouldUpdateInAccess}
+                <td
+                  class:success={$dmdTasksStore[dmdTaskId].itemStates[
+                    item["id"]
+                  ].updatedInAccess === "Yes"}
+                  class:not-success={$dmdTasksStore[dmdTaskId].itemStates[
+                    item["id"]
+                  ].updatedInAccess === "No"}
+                >
                   {$dmdTasksStore[dmdTaskId].itemStates[item["id"]]
                     .updatedInAccess}
                 </td>
               {/if}
 
-              {#if showPreservationLookupColumn}
-                <td class="">
+              {#if $dmdTasksStore[dmdTaskId].lookupState !== "ready" && $dmdTasksStore[dmdTaskId].shouldUpdateInPreservation}
+                <td
+                  class:success={$dmdTasksStore[dmdTaskId].itemStates[
+                    item["id"]
+                  ].foundInPreservation === "Yes"}
+                  class:not-success={$dmdTasksStore[dmdTaskId].itemStates[
+                    item["id"]
+                  ].foundInPreservation === "No"}
+                >
                   {$dmdTasksStore[dmdTaskId].itemStates[item["id"]]
                     .foundInPreservation}
                 </td>
               {/if}
 
-              {#if showPreservationUpdateColumn}
-                <td class="not-success">No</td>
+              {#if $dmdTasksStore[dmdTaskId].updateState !== "ready" && $dmdTasksStore[dmdTaskId].shouldUpdateInPreservation}
+                <td
+                  class:success={$dmdTasksStore[dmdTaskId].itemStates[
+                    item["id"]
+                  ].updatedInPreservation === "Yes"}
+                  class:not-success={$dmdTasksStore[dmdTaskId].itemStates[
+                    item["id"]
+                  ].updatedInPreservation === "No"}
+                >
+                  {$dmdTasksStore[dmdTaskId].itemStates[item["id"]]
+                    .updatedInPreservation}
+                </td>
               {/if}
             {/if}
           </tr>
