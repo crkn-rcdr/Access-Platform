@@ -51,10 +51,10 @@ This component shows the view for a dmd task that had its metadata successfully 
         items[item.id] = <DmdItemState>{
           slug: item.id,
           noid: null,
-          foundInAccess: "Searching...",
-          foundInPreservation: "Searching...",
-          updatedInAccess: "Updating...",
-          updatedInPreservation: "Updating...",
+          foundInAccess: "No",
+          foundInPreservation: "No",
+          updatedInAccess: "No",
+          updatedInPreservation: "No",
         };
       }
       dmdTasksStore.initializeTask(dmdTask.id, {

@@ -23,11 +23,17 @@ This components takes the items in a successfull dmd task and looks them up in a
 *Note: `bind:` is required for changes to the parameters to be reflected in higher level components.*
 -->
 <script lang="ts">
+  import type { Session } from "$lib/types";
+  import { getStores } from "$app/stores";
   import type { AccessPlatform } from "$lib/types";
   import DmdAccessPlatformSelector from "$lib/components/dmd/DmdAccessPlatformSelector.svelte";
   import LoadingButton from "$lib/components/shared/LoadingButton.svelte";
-
   import { dmdTasksStore } from "$lib/stores/dmdTasksStore";
+
+  /**
+   * @type {Session} The session store that contains the module for sending requests to lapin.
+   */
+  const { session } = getStores<Session>();
 
   /**
    *  @type { string } The 'id' of the DMDTask being processed.
@@ -40,7 +46,11 @@ This components takes the items in a successfull dmd task and looks them up in a
   export let accessPlatform: AccessPlatform;
 
   function handleLookupPressed() {
-    dmdTasksStore.lookupTaskItems(dmdTaskId, accessPlatform.prefix);
+    dmdTasksStore.lookupTaskItems(
+      dmdTaskId,
+      accessPlatform.prefix,
+      $session.lapin
+    );
   }
 </script>
 
