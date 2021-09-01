@@ -26,8 +26,8 @@ export const isManifest = (obj: AccessObject): obj is Manifest => {
 
 export { Alias, EditableAlias } from "./Alias.js";
 export { Canvas, EditableCanvas } from "./Canvas.js";
-export { Collection, EditableCollection } from "./Collection.js";
-export { Manifest, EditableManifest } from "./Manifest.js";
+export { Collection, EditableCollection, NewCollection } from "./Collection.js";
+export { Manifest, EditableManifest, NewManifest } from "./Manifest.js";
 
 export { FileRef } from "./util/FileRef.js";
 export { ImageRef } from "./util/ImageRef.js";
