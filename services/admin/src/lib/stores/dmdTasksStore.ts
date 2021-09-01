@@ -10,6 +10,7 @@ import type {
   LapinContext,
   LapinRouter,
 } from "../../../../../packages/lapin-router/dist/esm";
+import type { User } from "../../../../../packages/data/dist/esm";
 
 const initialDmdTaskMap: DmdTasksCache = new Map();
 const store = writable(initialDmdTaskMap);
@@ -52,7 +53,7 @@ function getTaskItemLength(
   return numItems;
 }
 
-function evaluateLookupTaskItemResult(
+function setLookupTaskItemResult(
   dmdTaskId: string,
   slug: string,
   items: DmdItemStates,
@@ -61,6 +62,7 @@ function evaluateLookupTaskItemResult(
   const itemFound = result[1].found;
   if (itemFound && result.length === 2 && "result" in result[1]) {
     const itemData = result[1].result;
+    items[slug].slug = itemData.slug;
     items[slug].noid = itemData.id;
     items[slug].foundInAccess = "Yes";
     updateTask(dmdTaskId, "itemStates", items);
@@ -77,24 +79,24 @@ async function lookupTaskItemsSubset(
   slugs: string[],
   lapin: TRPCClient<LapinRouter>
 ) {
-  const response = await lapin.query(
-    "slug.lookupMany",
-    slugs.map((slug) => `${prefix}.${slug}`)
-  );
+  try {
+    const response = await lapin.query(
+      "slug.lookupMany",
+      slugs.map((slug) => `${prefix}.${slug}`)
+    );
 
-  let resultIndex = 0;
-  for (let slug of slugs) {
-    if (resultIndex < response.length) {
-      evaluateLookupTaskItemResult(
-        dmdTaskId,
-        slug,
-        items,
-        response[resultIndex]
-      );
-    } else {
-      throw "Not every item was searched.";
+    let resultIndex = 0;
+    for (let slug of slugs) {
+      if (resultIndex < response.length) {
+        setLookupTaskItemResult(dmdTaskId, slug, items, response[resultIndex]);
+      } else {
+        throw "Not every item was searched.";
+      }
+      resultIndex++;
     }
-    resultIndex++;
+  } catch (e) {
+    console.log(e?.message);
+    for (let slug of slugs) items[slug].foundInAccess = "No";
   }
 }
 
@@ -139,13 +141,13 @@ export const dmdTasksStore = {
   },
   storeTaskItemsToSwift: async (
     dmdTaskId: string,
+    user: User,
     lapin: TRPCClient<LapinRouter>
   ) => {
     updateTask(dmdTaskId, "updateState", "updating");
 
     let items = getTask(dmdTaskId).itemStates;
     let index = 0;
-    let itemSubset: DmdItemState[] = [];
 
     let numItems = getTaskItemLength(
       dmdTaskId,
@@ -156,13 +158,31 @@ export const dmdTasksStore = {
       }
     );
 
-    console.log("update", items);
-    for (var item in items) {
-      itemSubset.push(items[item]);
-      if ((index !== 0 && index % 100 === 0) || index === numItems - 1) {
-        //await store
-        itemSubset = [];
+    for (var itemSlug in items) {
+      if (items[itemSlug].foundInAccess === "Yes") {
+        try {
+          await lapin.mutation("dmdTask.storeAccess", {
+            task: dmdTaskId,
+            index,
+            slug: items[itemSlug]["slug"],
+            noid: items[itemSlug]["noid"],
+            user: user,
+          });
+          items[itemSlug].updatedInAccess = "Yes";
+          updateTask(dmdTaskId, "itemStates", items);
+          updateTask(dmdTaskId, "itemStates", items);
+        } catch (e) {
+          console.log(e?.message);
+          items[itemSlug].updatedInAccess = "No";
+          updateTask(dmdTaskId, "itemStates", items);
+        }
+      } else {
+        items[itemSlug].updatedInAccess = "No";
+        updateTask(dmdTaskId, "itemStates", items);
       }
+
+      updateTask(dmdTaskId, "updatedProgressPercentage", index + 1 / numItems);
+
       index++;
     }
 
