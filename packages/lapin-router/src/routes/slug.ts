@@ -10,7 +10,7 @@ type SlugResult = {
   type: "manifest" | "collection";
 };
 
-const SlugArray = z.array(Slug);
+const SlugArray = z.array(z.string()); //Slug);
 
 export const slugRouter = createRouter()
   .query("search", {
@@ -32,8 +32,8 @@ export const slugRouter = createRouter()
   })
   .query("resolveMany", {
     input: SlugArray.parse,
-    async resolve({ input: q, ctx }) {
-      return await ctx.couch.access.findUniqueArray("slug", q, [
+    async resolve({ input, ctx }) {
+      return await ctx.couch.access.findUniqueArray("slug", input, [
         "id",
         "type",
       ] as const);

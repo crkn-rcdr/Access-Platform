@@ -18,7 +18,7 @@
       }
       return { props: {} };
     } catch (e) {
-      return e;
+      return { props: { error: e } };
     }
   };
 </script>
@@ -42,10 +42,14 @@
    * @type {DMDTask} The dmdtask being displayed by the page.
    */
   export let dmdTask: DMDTask; //WaitingDMDTask | FailedDMDTask | SucceededDMDTask;
+
+  export let error: any;
 </script>
 
 <div class="dmd-task-page-wrap">
-  {#if !dmdTask}
+  {#if error}
+    {error?.message}
+  {:else if !dmdTask}
     Loading...
   {:else if isSucceededDMDTask(dmdTask)}
     <DmdSplitSuccessView {dmdTask} />

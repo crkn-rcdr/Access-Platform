@@ -29,8 +29,9 @@ This component allows the user to update the dmd tasks items in an access platfo
 *Note: `bind:` is required for changes to the parameters to be reflected in higher level components.*
 -->
 <script lang="ts">
-  import { getStores } from "$app/stores";
-  import type { AccessPlatform, Session } from "$lib/types";
+  import type { AccessPlatform } from "$lib/types";
+
+  import { dmdTasksStore } from "$lib/stores/dmdTasksStore";
 
   /**
    *  @type { AccessPlatform } The access platform to look for the items in.
@@ -42,134 +43,40 @@ This component allows the user to update the dmd tasks items in an access platfo
    */
   export let dmdTaskId: string;
 
-  /**
-   * @type {"ready" | "updating" | "updated" | "error"} This variable keeps track of the state of the component, to show relevant messages to the user.
-   */
-  export let state: "ready" | "updating" | "updated" | "error" = "ready";
-
-  /**
-   *  @type { (
-    | DmdLoadedParseRecord
-    | DmdUpdatedParseRecord
-  )[] } The dmdtask items to update (holds both results of the lookup and update.)
-   */
-  export let itemsLookupAndUpdateResults = [];
-
-  /**
-   * @type { boolean } If the request to update should be sent to the selected access platform
-   */
-  export let shouldUpdateInAccess: boolean = true;
-
-  /**
-   * @type { boolean } If the request to update should be sent to preservation
-   */
-  export let shouldUpdateInPreservation: boolean = true;
-
-  /**
-   * @type { number } The completion percentage of the updating process
-   */
-  export let updatedProgressPercentage: number = 0;
-
-  /**
-   * @type {Session} The session store that contains the module for sending requests to lapin.
-   */
-  const { session } = getStores<Session>();
-
-  /**
-   * Removes any previous update results from @var itemsLookupAndUpdateResults
-   * @returns void
-   */
-  function clearResults() {
-    for (let i = 0; i < itemsLookupAndUpdateResults.length; i++) {
-      if ("updatedInAccess" in itemsLookupAndUpdateResults[i])
-        delete itemsLookupAndUpdateResults[i]["updatedInAccess"];
-      if ("updatedInPreservation" in itemsLookupAndUpdateResults[i])
-        delete itemsLookupAndUpdateResults[i]["updatedInPreservation"];
-    }
-  }
-
-  /**
-   * Calls @function clearResults then sends a request using @var $session.lapin to update the items in @var itemsLookupAndUpdateResults metadata. It stores the new update results in @var itemsLookupAndUpdateResults. It sets the @var updatedProgressPercentage as each item's store request is sent. It also sets @var state as needed to show the user relevant information.
-   * @returns void
-   */
-  async function handleUpdatePressed() {
-    clearResults();
-
-    if (itemsLookupAndUpdateResults.length > 0) {
-      state = "updating";
-      updatedProgressPercentage = 0;
-      let index = 0;
-
-      for (const item of itemsLookupAndUpdateResults) {
-        if (item.foundInAccess) {
-          try {
-            // Response will be void, error thrown if bad
-            const response = await $session.lapin.mutation(
-              "dmdTask.storeAccess",
-              {
-                task: dmdTaskId,
-                index,
-                slug: item["slug"],
-                noid: item["noid"],
-                user: $session.user,
-              }
-            );
-            itemsLookupAndUpdateResults[index] = {
-              ...item,
-              updatedInAccess: true,
-              updatedInPreservation: false,
-            };
-
-            updatedProgressPercentage = Math.round(
-              ((index + 1) / itemsLookupAndUpdateResults.length) * 100
-            );
-
-            itemsLookupAndUpdateResults = itemsLookupAndUpdateResults;
-          } catch (e) {
-            console.log(e?.message);
-            itemsLookupAndUpdateResults[index] = {
-              ...item,
-              updatedInAccess: false,
-              updatedInPreservation: false,
-            };
-          }
-        } else {
-          itemsLookupAndUpdateResults[index] = {
-            ...item,
-            updatedInAccess: false,
-            updatedInPreservation: false,
-          };
-        }
-        index++;
-        //await sleep(1000);
-      }
-
-      state = "updated";
-    }
+  function handleUpdatePressed() {
+    dmdTasksStore.storeItemsToSwift(dmdTaskId);
   }
 </script>
 
-<div class="update-wrap auto-align auto-align__a-center auto-align__j-between ">
-  <span>
-    <input name="access" type="checkbox" bind:checked={shouldUpdateInAccess} />
-    <label for="access">in {accessPlatform["label"]}</label>
-  </span>
-  <span>
-    <input
-      name="preservation"
-      type="checkbox"
-      bind:checked={shouldUpdateInPreservation}
-    />
-    <label for="preservation">in Preservation</label>
-  </span>
-  {#if shouldUpdateInAccess || shouldUpdateInPreservation}
-    <button class="primary" on:click={handleUpdatePressed}>
-      {state === "updated"
-        ? "Update Descriptive Metadata Records Again"
-        : "Update Descriptive Metadata Records"}
-    </button>
-  {/if}
-</div>
+{#if $dmdTasksStore[dmdTaskId]}
+  <div
+    class="update-wrap auto-align auto-align__a-center auto-align__j-between "
+  >
+    <span>
+      <input
+        name="access"
+        type="checkbox"
+        bind:checked={$dmdTasksStore[dmdTaskId].shouldUpdateInAccess}
+      />
+      <label for="access">in {accessPlatform["label"]}</label>
+    </span>
+    <span>
+      <input
+        name="preservation"
+        type="checkbox"
+        bind:checked={$dmdTasksStore[dmdTaskId].shouldUpdateInPreservation}
+      />
+      <label for="preservation">in Preservation</label>
+    </span>
+    {#if $dmdTasksStore[dmdTaskId].shouldUpdateInAccess || $dmdTasksStore[dmdTaskId].shouldUpdateInPreservation}
+      <button class="primary" on:click={handleUpdatePressed}>
+        {$dmdTasksStore[dmdTaskId].updateState === "updated"
+          ? "Update Descriptive Metadata Records Again"
+          : "Update Descriptive Metadata Records"}
+      </button>
+    {/if}
+  </div>
+{/if}
 
 <style>
   .update-wrap {

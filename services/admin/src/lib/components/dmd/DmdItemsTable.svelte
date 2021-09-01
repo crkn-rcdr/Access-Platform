@@ -8,7 +8,7 @@ This component displays the items in the dmd task throughout the various stages 
 | -- | -- | -- |
 | accessPlatform: AccessPlatform | required | The access platform the items are in. |
 | itemsToShow: ParseRecord[] | optional | The dmdtask items to be displayed. |
-| itemsLookupAndUpdateResults: (DmdLoadedParseRecord or DmdUpdatedParseRecord)[] | optional | The dmdtask items lookup and update results. Indexing exactly matches the itemsToShow |
+| $dmdTasksStore[dmdTaskId].itemStates: (DmdLoadedParseRecord or DmdUpdatedParseRecord)[] | optional | The dmdtask items lookup and update results. Indexing exactly matches the itemsToShow |
 | showAccessLookupColumn: boolean | optional | If the access lookup column should be displayed of not. The displaying of the column depends on user selections in parent and sibling components. |
 | showPreservationLookupColumn: boolean | optional | If the preservation lookup column should be displayed of not. The displaying of the column depends on user selections in parent and sibling components. |
 | showAccessUpdateColumn: boolean | optional | If the access update column should be displayed of not. The displaying of the column depends on user selections in parent and sibling components. |
@@ -19,7 +19,7 @@ This component displays the items in the dmd task throughout the various stages 
 <DmdItemsTable
     bind:itemsToShow={dmdTask.items}
     bind:accessPlatform
-    bind:itemsLookupAndUpdateResults
+    bind:$dmdTasksStore[dmdTaskId].itemStates
     bind:showAccessLookupColumn
     bind:showPreservationLookupColumn
     bind:showAccessUpdateColumn
@@ -29,16 +29,12 @@ This component displays the items in the dmd task throughout the various stages 
 *Note: `bind:` is required for changes to the parameters to be reflected in higher level components.*
 -->
 <script lang="ts">
-  import type {
-    AccessPlatform,
-    DmdLoadedParseRecord,
-    DmdUpdatedParseRecord,
-    Session,
-  } from "$lib/types";
+  import type { AccessPlatform, Session } from "$lib/types";
   import type { ParseRecord } from "@crkn-rcdr/access-data/dist/esm/dmd/Task";
   import JsonTree from "$lib/components/shared/JsonTree.svelte";
   import Modal from "$lib/components/shared/Modal.svelte";
   import { getStores } from "$app/stores";
+  import { dmdTasksStore } from "$lib/stores/dmdTasksStore";
 
   /**
    *  @type { string } The 'id' of the DMDTask being shown.
@@ -56,32 +52,24 @@ This component displays the items in the dmd task throughout the various stages 
   export let itemsToShow: ParseRecord[] = [];
 
   /**
-   *  @type { (DmdLoadedParseRecord| DmdUpdatedParseRecord)[] } The dmdtask items lookup and update results. Indexing exactly matches the @var itemsToShow
-   */
-  export let itemsLookupAndUpdateResults: (
-    | DmdLoadedParseRecord
-    | DmdUpdatedParseRecord
-  )[] = [];
-
-  /**
    * @type { boolean } If the access lookup column should be displayed of not. The displaying of the column depends on user selections in parent and sibling components.
    */
-  export let showAccessLookupColumn: boolean = false;
+  let showAccessLookupColumn: boolean = false;
 
   /**
    * @type { boolean } If the preservation lookup column should be displayed of not. The displaying of the column depends on user selections in parent and sibling components.
    */
-  export let showPreservationLookupColumn: boolean = false;
+  let showPreservationLookupColumn: boolean = false;
 
   /**
    * @type { boolean } If the access update column should be displayed of not. The displaying of the column depends on user selections in parent and sibling components.
    */
-  export let showAccessUpdateColumn: boolean = false;
+  let showAccessUpdateColumn: boolean = false;
 
   /**
    * @type { boolean } If the preservation update column should be displayed of not. The displaying of the column depends on user selections in parent and sibling components.
    */
-  export let showPreservationUpdateColumn: boolean = false;
+  let showPreservationUpdateColumn: boolean = false;
 
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
@@ -120,7 +108,7 @@ This component displays the items in the dmd task throughout the various stages 
   }
 </script>
 
-{#if itemsToShow.length}
+{#if itemsToShow.length && dmdTasksStore && $dmdTasksStore[dmdTaskId]}
   <table>
     <thead>
       <tr>
@@ -160,41 +148,43 @@ This component displays the items in the dmd task throughout the various stages 
               {/if}
             </td>
 
-            {#if showAccessLookupColumn && i < itemsLookupAndUpdateResults.length}
-              {#if itemsLookupAndUpdateResults[i].foundInAccess}
-                <td class="success">
-                  <a
-                    href={`/object/${itemsLookupAndUpdateResults[i].noid}`}
-                    target="_blank">Yes</a
-                  >
+            {#if $dmdTasksStore[dmdTaskId].itemStates[item["id"]]}
+              {#if showAccessLookupColumn}
+                <td class="">
+                  {#if $dmdTasksStore[dmdTaskId].itemStates[item["id"]].noid}
+                    <a
+                      href={`/object/${
+                        $dmdTasksStore[dmdTaskId].itemStates[item["id"]].noid
+                      }`}
+                      target="_blank"
+                    >
+                      {$dmdTasksStore[dmdTaskId].itemStates[item["id"]]
+                        .foundInAccess}
+                    </a>
+                  {:else}
+                    {$dmdTasksStore[dmdTaskId].itemStates[item["id"]]
+                      .foundInAccess}
+                  {/if}
                 </td>
-              {:else}
-                <td class="not-success"> No </td>
               {/if}
-            {/if}
 
-            {#if showAccessUpdateColumn}
-              {#if "updatedInAccess" in itemsLookupAndUpdateResults[i]}
-                {#if itemsLookupAndUpdateResults[i]["updatedInAccess"]}
-                  <td class="success">Yes</td>
-                {:else}
-                  <td class="not-success">No</td>
-                {/if}
-              {:else}
-                <td class="">Updating...</td>
+              {#if showAccessUpdateColumn}
+                <td class="">
+                  {$dmdTasksStore[dmdTaskId].itemStates[item["id"]]
+                    .updatedInAccess}
+                </td>
               {/if}
-            {/if}
 
-            {#if showPreservationLookupColumn}
-              {#if itemsLookupAndUpdateResults[i].foundInPreservation}
-                <td class="success">Yes</td>
-              {:else}
+              {#if showPreservationLookupColumn}
+                <td class="">
+                  {$dmdTasksStore[dmdTaskId].itemStates[item["id"]]
+                    .foundInPreservation}
+                </td>
+              {/if}
+
+              {#if showPreservationUpdateColumn}
                 <td class="not-success">No</td>
               {/if}
-            {/if}
-
-            {#if showPreservationUpdateColumn}
-              <td class="not-success">No</td>
             {/if}
           </tr>
         {/if}

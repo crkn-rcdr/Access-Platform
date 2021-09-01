@@ -22,12 +22,12 @@ The editor actions component holds functionality that is responsible for perform
   import { AccessObject } from "@crkn-rcdr/access-data";
   import { detailedDiff } from "deep-object-diff";
   import { getStores } from "$app/stores";
-  import { showConfirmation } from "$lib/confirmation";
-  import { checkValidDiff, checkModelChanged } from "$lib/validation";
+  import { showConfirmation } from "$lib/utils/confirmation";
+  import { checkValidDiff, checkModelChanged } from "$lib/utils/validation";
   import Modal from "$lib/components/shared/Modal.svelte";
 
   /**
-   * @type {AccessObject} This is the 'original' serverObject of type AccessObject pulled from the backend, to be edited only once an action is successfully performed.
+   * @type {AccessObject} This is th$lib/utils/confirmationerObject of type AccessObject pulled from the backend, to be edited only once an action is successfully performed.
    */
   export let serverObject: AccessObject;
 

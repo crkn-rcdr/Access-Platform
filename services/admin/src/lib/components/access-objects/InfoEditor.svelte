@@ -17,7 +17,7 @@ This component displays the non content properties for an access editorObject an
 <script lang="ts">
   import { isManifest, isCollection } from "@crkn-rcdr/access-data";
   import type { AccessObject } from "@crkn-rcdr/access-data";
-  import { getSlugValidationMsg, typedChecks } from "$lib/validation";
+  import { getSlugValidationMsg, typedChecks } from "$lib/utils/validation";
   import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
   import Resolver from "$lib/components/access-objects/Resolver.svelte";
 

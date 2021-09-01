@@ -69,14 +69,25 @@ export type AccessPlatform = {
   label: string;
 };
 
-export type DmdLoadedParseRecord = {
+export type DmdItemState = {
   slug: Slug;
   noid: Noid;
-  foundInAccess: boolean;
-  foundInPreservation: boolean;
+  foundInAccess: "Yes" | "No" | "Searching...";
+  foundInPreservation: "Yes" | "No" | "Searching...";
+  updatedInAccess: "Yes" | "No" | "Updating...";
+  updatedInPreservation: "Yes" | "No" | "Updating...";
 };
 
-export type DmdUpdatedParseRecord = DmdLoadedParseRecord & {
-  updatedInAccess: boolean;
-  updatedInPreservation: boolean;
+export type DmdItemStates = Map<string, DmdItemState>;
+
+export type DmdTaskState = {
+  lookupState: "ready" | "loading" | "loaded" | "error";
+  updateState: "ready" | "updarting" | "updated" | "error";
+  itemStates: DmdItemStates;
+  errorMsg: string;
+  shouldUpdateInPreservation: boolean;
+  shouldUpdateInAccess: boolean;
+  updatedProgressPercentage: number;
 };
+
+export type DmdTasksCache = Map<string, DmdTaskState>;
