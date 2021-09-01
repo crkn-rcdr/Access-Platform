@@ -44,7 +44,7 @@ This component allows the user to update the dmd tasks items in an access platfo
   export let dmdTaskId: string;
 
   function handleUpdatePressed() {
-    dmdTasksStore.storeItemsToSwift(dmdTaskId);
+    dmdTasksStore.storeTaskItemsToSwift(dmdTaskId);
   }
 </script>
 
