@@ -51,10 +51,17 @@ export const dmdTaskRouter = createRouter()
        Results should be decoded in the browser.
       */
       try {
-        return await ctx.couch.dmdtask.getAttachmentAsJSON({
-          document: input.task,
-          attachment: `${input.index}.${input.type}`,
-        });
+        return input.type === "json"
+          ? await ctx.couch.dmdtask.getAttachmentAsJSON({
+              document: input.task,
+              attachment: `${input.index}.${input.type}`,
+            })
+          : (
+              await ctx.couch.dmdtask.getAttachment({
+                document: input.task,
+                attachment: `${input.index}.${input.type}`,
+              })
+            ).toString();
       } catch (e) {
         console.log(e?.message);
         throw httpErrorToTRPC(e);
