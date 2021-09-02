@@ -20,9 +20,9 @@ This component shows the view for a dmd task that had its metadata successfully 
   import ProgressBar from "$lib/components/shared/ProgressBar.svelte";
   import ScrollStepper from "$lib/components/shared/ScrollStepper.svelte";
   import ScrollStepperStep from "$lib/components/shared/ScrollStepperStep.svelte";
-  import DmdItemsTable from "$lib/components/dmd/DmdItemsTable.svelte";
-  import DmdItemLookup from "$lib/components/dmd/DmdItemLookup.svelte";
-  import DmdItemUpdater from "$lib/components/dmd/DmdItemUpdater.svelte";
+  import DmdSuccessItemsTable from "$lib/components/dmd/DmdSuccessItemsTable.svelte";
+  import DmdSuccessItemLookup from "$lib/components/dmd/DmdSuccessItemLookup.svelte";
+  import DmdSuccessItemUpdater from "$lib/components/dmd/DmdSuccessItemUpdater.svelte";
   import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
   import { dmdTasksStore } from "$lib/stores/dmdTasksStore";
   /**
@@ -96,7 +96,7 @@ This component shows the view for a dmd task that had its metadata successfully 
     >
       <ScrollStepperStep title="Select a prefix and look-up items">
         <div slot="icon">1</div>
-        <DmdItemLookup dmdTaskId={dmdTask.id} bind:accessPlatform />
+        <DmdSuccessItemLookup dmdTaskId={dmdTask.id} bind:accessPlatform />
       </ScrollStepperStep>
       <ScrollStepperStep
         title={`Update descriptive metadata for items found`}
@@ -104,7 +104,7 @@ This component shows the view for a dmd task that had its metadata successfully 
       >
         <div slot="icon">2</div>
         {#if $dmdTasksStore[dmdTask.id].lookupState !== "loading"}
-          <DmdItemUpdater dmdTaskId={dmdTask.id} bind:accessPlatform />
+          <DmdSuccessItemUpdater dmdTaskId={dmdTask.id} bind:accessPlatform />
         {/if}
       </ScrollStepperStep>
     </ScrollStepper>
@@ -122,7 +122,7 @@ This component shows the view for a dmd task that had its metadata successfully 
       <br />
       <br />
     {/if}
-    <DmdItemsTable
+    <DmdSuccessItemsTable
       bind:itemsToShow={dmdTask.items}
       bind:dmdTaskId={dmdTask.id}
       bind:accessPlatform
