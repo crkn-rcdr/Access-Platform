@@ -72,7 +72,7 @@ This component displays the items in the dmd task throughout the various stages 
   <table>
     <thead>
       <tr>
-        {#if $dmdTasksStore[dmdTaskId].lookupState !== "ready" && ($dmdTasksStore[dmdTaskId].shouldUpdateInAccess || $dmdTasksStore[dmdTaskId].shouldUpdateInPreservation)}
+        {#if $dmdTasksStore[dmdTaskId].lookupState === "loaded" && ($dmdTasksStore[dmdTaskId].shouldUpdateInAccess || $dmdTasksStore[dmdTaskId].shouldUpdateInPreservation)}
           <th />
         {/if}
         <th>Id</th>
@@ -99,7 +99,7 @@ This component displays the items in the dmd task throughout the various stages 
       {#each itemsToShow as item, i}
         {#if typeof item === "object"}
           <tr>
-            {#if $dmdTasksStore[dmdTaskId].lookupState !== "ready" && ($dmdTasksStore[dmdTaskId].shouldUpdateInAccess || $dmdTasksStore[dmdTaskId].shouldUpdateInPreservation)}
+            {#if $dmdTasksStore[dmdTaskId].lookupState === "loaded" && ($dmdTasksStore[dmdTaskId].shouldUpdateInAccess || $dmdTasksStore[dmdTaskId].shouldUpdateInPreservation)}
               <td>
                 <input
                   type="checkbox"
