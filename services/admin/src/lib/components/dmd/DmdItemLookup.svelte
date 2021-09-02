@@ -72,14 +72,6 @@ This components takes the items in a successfull dmd task and looks them up in a
   let errorMsg: string;
 
   /**
-   * TODO: Delete
-   * Helper method to simulate backend processing time
-   * */
-  function sleep(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
-
-  /**
    * Calls @var $session.lapin and looks for the @var itemsToLookup in the @var accessPlatform and in preservation. It then saves the results of the lookup into @var itemsLookupAndUpdateResults, to be displayed and manipulated by parent components. If errors occure, @errorMsg is set to alert the user.
    * @returns void
    */
@@ -109,7 +101,6 @@ This components takes the items in a successfull dmd task and looks them up in a
         ).length === 0;
 
       if (!lookupFailure) {
-        await sleep(5000);
         state = "loaded";
       } else {
         state = "error";

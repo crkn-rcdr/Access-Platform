@@ -32,53 +32,7 @@ This component shows the view for a dmd task that had its metadata successfully 
    * TODO: Delete test data
    * @type { SucceededDMDTask } The dmd task being displayed
    */
-  export let dmdTask: SucceededDMDTask = {
-    id: "123",
-    updated: "1628785112",
-    attachments: {
-      metadata: {
-        content_type: "application/json",
-        revpos: 2,
-        digest: "md5-QpoRn3RBQEAl8wBet0RVmw==",
-        length: 646,
-        stub: true,
-      },
-    },
-    user: {
-      email: "lapierre@crkn.ca",
-      name: "Brittny Lapierre",
-    },
-    format: "marcooe",
-    process: {
-      requestDate: "1628785101",
-      processDate: "1628785101",
-      succeeded: true,
-      message: "The process.message from the backend",
-    },
-    items: [
-      {
-        message: `{"test":"json"}`,
-        id: "8_06941",
-        label: "collection",
-        output: "marc",
-        parsed: true,
-      },
-      {
-        message: `{"test":"json"}`,
-        id: "8_06941_1",
-        label: "volume 1",
-        output: "marc",
-        parsed: true,
-      },
-      {
-        message: `{"test":"json"}`,
-        id: "8_06941_2",
-        label: "volume 2",
-        output: "marc",
-        parsed: true,
-      },
-    ],
-  };
+  export let dmdTask: SucceededDMDTask;
 
   /**
    * @type { number } The control for the stepper that lets the user either lookup or update the items in the @var dmdTask
@@ -177,6 +131,14 @@ This component shows the view for a dmd task that had its metadata successfully 
   }
 
   /**
+   * Resets the state of the updater component if lookup is pressed again.
+   * @returns void
+   */
+  function resetUpdaterState(lookupState) {
+    return lookupState === "loading" ? "ready" : updateState;
+  }
+
+  /**
    * @listens accessPlatform
    * @description if the user has selected a new @var accessPlatform, reset the state of the table and stepper
    */
@@ -228,6 +190,12 @@ This component shows the view for a dmd task that had its metadata successfully 
   $: showPreservationUpdateColumn =
     shouldUpdateInPreservation &&
     (updateState === "updating" || updateState === "updated");
+
+  /**
+   * @listens lookupState
+   * Calls the @function resetUpdaterState when the @var lookupState changes to hide the updated result columns.
+   */
+  $: updateState = resetUpdaterState(lookupState);
 </script>
 
 <div class="metadata-form" class:disabled={updateState === "updating"}>
@@ -279,6 +247,7 @@ This component shows the view for a dmd task that had its metadata successfully 
   {/if}
   <DmdItemsTable
     bind:itemsToShow={dmdTask.items}
+    bind:dmdTaskId={dmdTask.id}
     bind:accessPlatform
     bind:itemsLookupAndUpdateResults
     bind:showAccessLookupColumn

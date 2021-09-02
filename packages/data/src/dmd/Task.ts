@@ -1,7 +1,11 @@
 import { z } from "zod";
 
 import { CouchAttachmentRecord } from "../util/CouchAttachmentRecord.js";
-import { ProcessRequest, ProcessResult } from "../util/ProcessUpdate.js";
+import {
+  ProcessRequest,
+  SucceededProcessResult,
+  FailedProcessResult,
+} from "../util/ProcessUpdate.js";
 import { Slug } from "../util/Slug.js";
 import { Timestamp } from "../util/Timestamp.js";
 import { User } from "../util/User.js";
@@ -94,7 +98,14 @@ export const FailedDMDTask = WaitingDMDTask.merge(
     /**
      * The request has been processed.
      */
-    process: ProcessResult,
+    process: FailedProcessResult,
+
+    /**
+     * List of individual items found in the metadata file.
+     * Successfully parsed records will be attached to the document,
+     * referenceable by the record's index in this array.
+     */
+    items: z.array(ParseRecord).optional(),
   })
 );
 
@@ -105,12 +116,7 @@ export type FailedDMDTask = z.infer<typeof FailedDMDTask>;
  */
 export const SucceededDMDTask = FailedDMDTask.merge(
   z.object({
-    /**
-     * List of individual items found in the metadata file.
-     * Successfully parsed records will be attached to the document,
-     * referenceable by the record's index in this array.
-     */
-    items: z.array(ParseRecord),
+    process: SucceededProcessResult,
   })
 );
 

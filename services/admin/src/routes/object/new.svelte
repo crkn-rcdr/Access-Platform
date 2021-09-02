@@ -3,51 +3,66 @@
    * @file
    * @description This page shows the editor for creating a new serverObject.
    */
-  import type { AccessObject } from "@crkn-rcdr/access-data";
-  import type { Manifest, Collection } from "@crkn-rcdr/access-data";
+  import type {
+    AccessObject,
+    NewCollection,
+    NewManifest,
+  } from "@crkn-rcdr/access-data";
+  //import type { Manifest, Collection } from "@crkn-rcdr/access-data";
   import Editor from "$lib/components/access-objects/Editor.svelte";
+
+  import { getStores } from "$app/stores";
+  import type { Session } from "$lib/types";
+  /**
+   * @type {Session} The session store that contains the module for sending requests to lapin.
+   */
+  const { session } = getStores<Session>();
 
   /**
    * @type {AccessObject} Object being created.
    */
   let serverObject: AccessObject;
 
-  //TODO: call niod service to generate id in the backend
-
   /**
    * Sets the @var serverObject to a new Collection type serverObject
    * @returns void
    */
-  function handleNewCollectionPressed() {
-    let newCollection: Collection = {
-      id: "",
-      slug: "",
+  async function handleNewCollectionPressed() {
+    let newCollection: NewCollection = {
+      slug: "2132",
       label: {
-        value: "",
+        value: "nothing 1",
       },
       type: "collection",
       behavior: "unordered",
       members: [],
     };
-    serverObject = newCollection;
+    const res = await $session.lapin.mutation("collection.new", {
+      user: $session.user,
+      data: newCollection,
+    });
+    console.log("Test Collection Create: ", res);
   }
 
   /**
    * Sets the @var serverObject to a new Manifest type serverObject
    * @returns void
    */
-  function handleNewManifestPressed() {
-    let newManifest: Manifest = {
-      id: "",
-      slug: "",
+  async function handleNewManifestPressed() {
+    let newManifest: NewManifest = {
+      slug: "12354",
       label: {
-        value: "",
+        value: "nothing 2",
       },
       type: "manifest",
       from: "canvases",
       canvases: [],
     };
-    serverObject = newManifest;
+    const res = await $session.lapin.mutation("manifest.new", {
+      user: $session.user,
+      data: newManifest,
+    });
+    console.log("Test Manifest Create: ", res);
   }
 </script>
 

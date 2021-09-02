@@ -80,11 +80,28 @@ export const EditableManifest = Manifest.pick({
   viewingDirection: true,
   canvases: true,
   pageLabels: true,
-})
-  .partial()
-  .refine(
-    (obj) => Object.keys(obj).length > 0,
-    "Cannot edit a manifest with an empty object"
-  );
+}).refine(
+  (obj) => Object.keys(obj).length > 0,
+  "Cannot edit a manifest with an empty object"
+);
 
 export type EditableManifest = z.infer<typeof EditableManifest>;
+
+/**
+ * The properties of a new Manifest.
+ */
+export const NewManifest = Manifest.pick({
+  slug: true,
+  label: true,
+  behavior: true,
+  viewingDirection: true,
+  canvases: true,
+  summary: true,
+  from: true,
+  type: true,
+}).refine(
+  (obj) => Object.keys(obj).length > 0,
+  "Cannot edit a manifest with an empty object"
+);
+
+export type NewManifest = z.infer<typeof NewManifest>;

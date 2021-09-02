@@ -12,6 +12,8 @@ import {
   User,
   ObjectList,
   Slug,
+  NewCollection,
+  NewManifest,
 } from "@crkn-rcdr/access-data";
 
 import { DatabaseHandler } from "../DatabaseHandler.js";
@@ -213,20 +215,57 @@ export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
       body: user,
     });
   }
-  async addMembers(args: {
+
+  /**
+   * Creates a new Collection.
+   * @returns The created Collection.
+   */
+
+  async createCollection(args: {
     id: Noid;
-    slug: string;
-    canAdd: boolean;
-  }): Promise<void> {
-    const { id, slug, canAdd } = args;
-    const collections = await this.isMemberOf(id);
-    for (const collection of collections) {
-      await this.update({
-        ddoc: "access",
-        name: "addMembers",
-        docId: collection,
-        body: { id, slug, canAdd },
-      });
+    user: User;
+    data: NewCollection;
+  }): Promise<Collection> {
+    const data = NewCollection.parse(args.data);
+    await this.insert({
+      id: args.id,
+      staff: {
+        by: args.user,
+        date: Date.now(),
+      },
+      ...data,
+    });
+    // Is this required?
+    if (data.members) {
+      for (let members of data.members) {
+        if (members.id !== undefined) {
+          await this.forceUpdate(members.id);
+        }
+      }
     }
+    const collection = await this.get(args.id);
+    return Collection.parse(collection);
+  }
+
+  /**
+   * Creates a new Manifest.
+   * @returns The created Manifest.
+   */
+  async createManifest(args: {
+    id: Noid;
+    user: User;
+    data: NewManifest;
+  }): Promise<Manifest> {
+    const data = NewManifest.parse(args.data);
+    await this.insert({
+      id: args.id,
+      staff: {
+        by: args.user,
+        date: Date.now(),
+      },
+      ...data,
+    });
+    const manifest = await this.get(args.id);
+    return Manifest.parse(manifest);
   }
 }

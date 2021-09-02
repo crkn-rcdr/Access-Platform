@@ -1,4 +1,4 @@
-import { Collection, Manifest, Timestamp } from "@crkn-rcdr/access-data";
+import { Collection, Manifest, Noid, Timestamp } from "@crkn-rcdr/access-data";
 import anyTest, { TestInterface } from "ava";
 import { BaseContext, getTestContext } from "../test.js";
 import { AccessHandler } from "./access.js";
@@ -11,8 +11,10 @@ const test = anyTest as TestInterface<AccessHandlerContext>;
 const MANIFEST_ONE = "69429/m0696zw19t6s";
 const MANIFEST_TWO = "69429/m02n4zg6h671";
 const MANIFEST_TWO_SLUG = "oocihm.8_06941_2";
+const NEW_MANIFEST_NOID = "69429/g04x54f1mk14";
 const COLLECTION = "69429/s0vq2s46j98h";
 const COLLECTION_SLUG = "oocihm.8_06941";
+const NEW_COLLECTION_NOID = "69429/g0154dn3zs9c";
 
 const USER = { name: "User McGee", email: "mcgee@crkn.ca" };
 
@@ -156,6 +158,133 @@ test.serial("Can unassign a slug", async (t) => {
   const manifest = Manifest.parse(await t.context.access.get(MANIFEST_TWO));
 
   t.is(manifest.slug, undefined);
+});
+
+test.serial("Collections can be created", async (t) => {
+  const noidError = await t.throwsAsync(
+    t.context.access.createCollection({
+      id: "", // should fail
+      user: USER,
+      data: {
+        slug: "definitely_available_2",
+        label: {
+          none: "I will fail",
+        },
+        type: "collection",
+        summary: {
+          none: "Fail I will",
+        },
+        behavior: "individuals",
+        members: [],
+      },
+    })
+  );
+  t.true(noidError.message.includes("illegal_docid"));
+
+  const slugError = await t.throwsAsync(
+    t.context.access.createCollection({
+      id: NEW_COLLECTION_NOID,
+      user: USER,
+      data: {
+        slug: MANIFEST_TWO_SLUG, // should fail
+        label: {
+          none: "I will fail",
+        },
+        type: "collection",
+        summary: {
+          none: "Fail I will",
+        },
+        behavior: "individuals",
+        members: [],
+      },
+    })
+  );
+  t.true(slugError.message.includes("already in use"));
+
+  const doc = await t.context.access.createCollection({
+    id: NEW_COLLECTION_NOID,
+    user: USER,
+    data: {
+      slug: "definitely_available_2",
+      label: {
+        none: "I will succeed",
+      },
+      type: "collection",
+      summary: {
+        none: "Succeed I will",
+      },
+      behavior: "individuals",
+      members: [],
+    },
+  });
+
+  t.is(doc.slug, "definitely_available_2");
+});
+
+test.serial("Manifest can be created", async (t) => {
+  const noidError = await t.throwsAsync(
+    t.context.access.createManifest({
+      id: "", // should fail
+      user: USER,
+      data: {
+        slug: "definitely_available_3",
+        label: {
+          none: "I will fail",
+        },
+        type: "manifest",
+        summary: {
+          none: "Fail I will",
+        },
+        behavior: "individuals",
+        viewingDirection: "bottom-to-top",
+        canvases: [],
+        from: "canvases",
+      },
+    })
+  );
+  t.true(noidError.message.includes("illegal_docid"));
+
+  const slugError = await t.throwsAsync(
+    t.context.access.createManifest({
+      id: NEW_MANIFEST_NOID,
+      user: USER,
+      data: {
+        slug: MANIFEST_TWO_SLUG, // should fail
+        label: {
+          none: "I will fail",
+        },
+        type: "manifest",
+        summary: {
+          none: "Fail I will",
+        },
+        behavior: "individuals",
+        viewingDirection: "bottom-to-top",
+        canvases: [],
+        from: "canvases",
+      },
+    })
+  );
+  t.true(slugError.message.includes("already in use"));
+  const doc = await t.context.access.createManifest({
+    id: NEW_MANIFEST_NOID,
+    user: USER,
+    data: {
+      slug: "definitely_available_3",
+      label: {
+        none: "I will succeed",
+      },
+      type: "manifest",
+      summary: {
+        none: "Succeed I will",
+      },
+      behavior: "individuals",
+      viewingDirection: "bottom-to-top",
+      canvases: [],
+      from: "canvases",
+    },
+  });
+
+  t.is(doc.slug, "definitely_available_3");
 });
 
 // n.b MANIFEST_TWO is no longer a member of COLLECTION
