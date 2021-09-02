@@ -44,6 +44,16 @@ This component shows the view for a dmd task that had its metadata successfully 
     label: "Canadiana.org",
   };
 
+  let prevPrefix = "oocihm";
+
+  function resetView() {
+    if (accessPlatform.prefix !== prevPrefix) {
+      $dmdTasksStore[dmdTask.id].lookupState = "ready";
+      $dmdTasksStore[dmdTask.id].updateState = "ready";
+    }
+    prevPrefix = accessPlatform.prefix;
+  }
+
   function inititalizeDmdTaskState() {
     if (!(dmdTasksStore?.getTask(dmdTask.id)?.itemStates?.size > 0)) {
       let items: DmdItemStates = new Map();
@@ -77,6 +87,11 @@ This component shows the view for a dmd task that had its metadata successfully 
 
   $: activeStepIndex =
     $dmdTasksStore[dmdTask.id]?.lookupState === "loaded" ? 1 : 0;
+
+  $: {
+    accessPlatform;
+    resetView();
+  }
 </script>
 
 {#if $dmdTasksStore && $dmdTasksStore[dmdTask.id]}
