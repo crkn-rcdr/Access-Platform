@@ -22,6 +22,7 @@ module.exports = function (doc, req) {
     _id: id,
     format: input.format,
     user: input.user,
+    fileName: input.fileName,
   };
 
   if ("_attachments" in input) newDoc["_attachments"] = input._attachments;

@@ -95,6 +95,7 @@ This component displays the items in the dmd task throughout the various stages 
         <th>Id</th>
         <th>Label</th>
         <th>Valid</th>
+        <th>Preview XML/JSON</th>
 
         {#if $dmdTasksStore[dmdTaskId].lookupState !== "ready" && $dmdTasksStore[dmdTaskId].shouldUpdateInAccess}
           <th>Found in {accessPlatform.label}?</th>
@@ -117,6 +118,9 @@ This component displays the items in the dmd task throughout the various stages 
           <tr>
             <td>{item["id"]}</td>
             <td>{item["label"]}</td>
+            <td>
+              {item["parsed"] && item["message"] === "" ? "Yes" : "No"}
+            </td>
             <td>
               {#if item["parsed"]}
                 <button

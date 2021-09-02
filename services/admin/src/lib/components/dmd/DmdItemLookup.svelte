@@ -26,7 +26,7 @@ This components takes the items in a successfull dmd task and looks them up in a
   import type { Session } from "$lib/types";
   import { getStores } from "$app/stores";
   import type { AccessPlatform } from "$lib/types";
-  import DmdAccessPlatformSelector from "$lib/components/dmd/DmdAccessPlatformSelector.svelte";
+  import DmdPrefixSelector from "$lib/components/dmd/DmdPrefixSelector.svelte";
   import LoadingButton from "$lib/components/shared/LoadingButton.svelte";
   import { dmdTasksStore } from "$lib/stores/dmdTasksStore";
 
@@ -59,7 +59,7 @@ This components takes the items in a successfull dmd task and looks them up in a
     class="look-up-wrap auto-align auto-align__a-center auto-align__j-between "
   >
     <div class="select-wrap">
-      <DmdAccessPlatformSelector bind:depositor={accessPlatform} />
+      <DmdPrefixSelector bind:depositor={accessPlatform} />
     </div>
 
     {#if accessPlatform?.prefix?.length}

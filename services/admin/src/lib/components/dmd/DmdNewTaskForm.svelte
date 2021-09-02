@@ -45,6 +45,8 @@ none
    */
   let b64EncodedMetadataFileText: string;
 
+  let fileName: string = "";
+
   /**
    * @type {string } Thiis variable is used to show any error with the user's selections to them.
    */
@@ -77,6 +79,7 @@ none
         "data:application/octet-stream;base64,",
         ""
       );
+      fileName = file.name;
     } catch (e) {
       console.log(e?.message);
       errorText =
@@ -97,6 +100,7 @@ none
             user: $session.user,
             format: metadataType,
             file: b64EncodedMetadataFileText,
+            fileName,
           };
           const response = await $session.lapin.mutation(
             `dmdTask.create`,
