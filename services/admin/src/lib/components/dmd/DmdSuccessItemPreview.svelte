@@ -45,7 +45,6 @@
             task: dmdTaskId,
           }
         );
-        console.log("itemPreviewMetadataJSON", itemPreviewMetadataJSON);
       }
     } catch (e) {
       console.log(e?.message);
@@ -57,7 +56,6 @@
    * @returns void
    */
   async function getXml() {
-    console.log(previewItemIndex);
     try {
       if (previewItemIndex !== undefined) {
         itemPreviewMetadataXML = <string>await $session.lapin.mutation(
@@ -68,7 +66,6 @@
             task: dmdTaskId,
           }
         );
-        console.log("itemPreviewMetadataXML", itemPreviewMetadataXML);
       }
     } catch (e) {
       console.log(e?.message);

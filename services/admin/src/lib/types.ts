@@ -72,10 +72,12 @@ export type AccessPlatform = {
 export type DmdItemState = {
   slug: Slug;
   noid: Noid;
+  parseSuccess: boolean;
   foundInAccess: "Yes" | "No" | "Searching...";
   foundInPreservation: "Yes" | "No" | "Searching...";
   updatedInAccess: "Yes" | "No" | "Updating...";
   updatedInPreservation: "Yes" | "No" | "Updating...";
+  shouldUpdate: boolean;
 };
 
 export type DmdItemStates = Map<string, DmdItemState>;

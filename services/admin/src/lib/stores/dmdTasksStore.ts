@@ -159,7 +159,11 @@ export const dmdTasksStore = {
     );
 
     for (var itemSlug in items) {
-      if (items[itemSlug].foundInAccess === "Yes") {
+      if (
+        items[itemSlug].foundInAccess === "Yes" &&
+        items[itemSlug].shouldUpdate &&
+        items[itemSlug].parseSuccess
+      ) {
         try {
           await lapin.mutation("dmdTask.storeAccess", {
             task: dmdTaskId,
