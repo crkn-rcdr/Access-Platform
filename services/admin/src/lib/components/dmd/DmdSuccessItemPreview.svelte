@@ -82,7 +82,7 @@
   }
 </script>
 
-<Modal bind:open={openPreviewModal} title={`Preview JSON`} size="lg">
+<Modal bind:open={openPreviewModal} title={`Preview Metadata`} size="lg">
   <div slot="body" class="code-block">
     <SideMenuContainer fullPage={false}>
       <SideMenuPageList>
