@@ -25,14 +25,17 @@ export class DMDTaskHandler extends DatabaseHandler<DMDTask> {
     format: DMDFormat;
     /** The file as a base64-encoded string */
     file: string;
+    /** The name of the file */
+    fileName: string;
   }) {
-    const { user, format, file } = args;
+    const { user, format, file, fileName } = args;
     const { message: taskId } = await this.nullUpdate({
       ddoc: "access",
       name: "create",
       body: {
         user,
         format,
+        fileName,
         _attachments: {
           metadata: {
             content_type: "application/octet-stream",

@@ -94,7 +94,7 @@ This component shows the view for a dmd task that had its metadata successfully 
       displayPrevious={true}
       enableAutoScrolling={false}
     >
-      <ScrollStepperStep title="Select an access platform and look-up items">
+      <ScrollStepperStep title="Select a prefix and look-up items">
         <div slot="icon">1</div>
         <DmdItemLookup dmdTaskId={dmdTask.id} bind:accessPlatform />
       </ScrollStepperStep>

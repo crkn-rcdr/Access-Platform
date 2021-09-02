@@ -82,7 +82,7 @@ async function lookupTaskItemsSubset(
   try {
     const response = await lapin.query(
       "slug.lookupMany",
-      slugs.map((slug) => `${prefix}.${slug}`)
+      prefix !== "none" ? slugs.map((slug) => `${prefix}.${slug}`) : slugs
     );
 
     let resultIndex = 0;

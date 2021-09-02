@@ -65,7 +65,7 @@ export const WaitingDMDTask = z.object({
   /**
    * CouchDB `_attachments` object.
    */
-  attachments: CouchAttachmentRecord,
+  attachments: CouchAttachmentRecord.optional(),
 
   /**
    * Record of the user who created this task.
@@ -76,6 +76,11 @@ export const WaitingDMDTask = z.object({
    * Specified format of the attached descriptive metadata file.
    */
   format: z.enum(DMDFORMATS),
+
+  /**
+   * The original name of the attached descriptive metadata file.
+   */
+  fileName: z.string(),
 
   /**
    * The request to split, validate, and flatten the metadata in the attached file.

@@ -9,12 +9,12 @@
     try {
       if (page?.params?.["taskId"]) {
         const response = await context.lapin.query(
-          "dmdTask.get",
+          "dmdTask.find",
           page.params["taskId"]
         );
-        //console.log("response", response);
-        const dmdTask: DMDTask = response;
-        return { props: { dmdTask } };
+        if (response && "result" in response)
+          return { props: { dmdTask: response.result } };
+        else return { props: {} };
       }
       return { props: {} };
     } catch (e) {
