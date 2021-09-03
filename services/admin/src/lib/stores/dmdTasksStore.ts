@@ -1,15 +1,7 @@
-import type {
-  DmdItemState,
-  DmdItemStates,
-  DmdTasksCache,
-  DmdTaskState,
-} from "$lib/types";
+import type { DmdItemStates, DmdTasksCache, DmdTaskState } from "$lib/types";
 import { get, writable } from "svelte/store";
 import type { TRPCClient } from "@trpc/client";
-import type {
-  LapinContext,
-  LapinRouter,
-} from "../../../../../packages/lapin-router/dist/esm";
+import type { LapinRouter } from "../../../../../packages/lapin-router/dist/esm";
 import type { User } from "../../../../../packages/data/dist/esm";
 
 const initialDmdTaskMap: DmdTasksCache = new Map();
@@ -127,7 +119,7 @@ export const dmdTasksStore = {
       }
     );
 
-    for (var itemSlug in items) {
+    for (const itemSlug in items) {
       slugs.push(itemSlug);
       if ((index !== 0 && index % 100 === 0) || index === numItems - 1) {
         await lookupTaskItemsSubset(prefix, dmdTaskId, items, slugs, lapin);
@@ -145,6 +137,7 @@ export const dmdTasksStore = {
     lapin: TRPCClient<LapinRouter>
   ) => {
     updateTask(dmdTaskId, "updateState", "updating");
+    updateTask(dmdTaskId, "updatedProgressPercentage", 0);
 
     let items = getTask(dmdTaskId).itemStates;
     let index = 0;
@@ -158,7 +151,7 @@ export const dmdTasksStore = {
       }
     );
 
-    for (var itemSlug in items) {
+    for (const itemSlug in items) {
       if (
         items[itemSlug].foundInAccess === "Yes" &&
         items[itemSlug].shouldUpdate &&
@@ -185,12 +178,25 @@ export const dmdTasksStore = {
         updateTask(dmdTaskId, "itemStates", items);
       }
 
-      updateTask(dmdTaskId, "updatedProgressPercentage", index + 1 / numItems);
+      const percentage = Math.round(((index + 1) / numItems) * 100);
+      console.log("percentage", percentage);
+      updateTask(dmdTaskId, "updatedProgressPercentage", percentage);
 
       index++;
     }
 
     updateTask(dmdTaskId, "itemStates", items);
     updateTask(dmdTaskId, "updateState", "updated");
+  },
+  toggleAllItemsSelected: (
+    dmdTaskId: string,
+    shouldUpdateAllItems: boolean
+  ) => {
+    let items = getTask(dmdTaskId).itemStates;
+
+    for (const itemSlug in items) {
+      items[itemSlug].shouldUpdate = shouldUpdateAllItems;
+    }
+    updateTask(dmdTaskId, "itemStates", items);
   },
 };

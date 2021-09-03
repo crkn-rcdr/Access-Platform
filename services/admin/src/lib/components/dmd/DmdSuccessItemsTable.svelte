@@ -56,6 +56,8 @@ This component displays the items in the dmd task throughout the various stages 
 
   let previewItemIndex: number | undefined = undefined;
 
+  let shouldUpdateAllItems: boolean = true;
+
   /**
    * Handles showing the json preview modal for the item passed in
    * @param item
@@ -66,6 +68,16 @@ This component displays the items in the dmd task throughout the various stages 
     previewItemIndex = index;
     console.log(openPreviewModal, previewItemIndex);
   }
+
+  function toggleAllItemsSelected() {
+    console.log("shouldUpdateAllItems", shouldUpdateAllItems);
+    dmdTasksStore.toggleAllItemsSelected(dmdTaskId, shouldUpdateAllItems);
+  }
+
+  $: {
+    shouldUpdateAllItems;
+    toggleAllItemsSelected();
+  }
 </script>
 
 {#if itemsToShow.length && dmdTasksStore && $dmdTasksStore[dmdTaskId]}
@@ -73,7 +85,9 @@ This component displays the items in the dmd task throughout the various stages 
     <thead>
       <tr>
         {#if $dmdTasksStore[dmdTaskId].lookupState === "loaded" && ($dmdTasksStore[dmdTaskId].shouldUpdateInAccess || $dmdTasksStore[dmdTaskId].shouldUpdateInPreservation)}
-          <th />
+          <th>
+            <input type="checkbox" bind:checked={shouldUpdateAllItems} />
+          </th>
         {/if}
         <th>Id</th>
         <th>Label</th>
