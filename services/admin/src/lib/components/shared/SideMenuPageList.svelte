@@ -29,7 +29,7 @@ None
   .sidemenu {
     background: var(--structural-div-bg);
     filter: brightness(0.95);
-    height: 100%;
+    min-height: 100%;
     flex: 1.5;
   }
   .sidemenu ul {

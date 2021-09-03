@@ -31,7 +31,7 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
   import TiTrash from "svelte-icons/ti/TiTrash.svelte";
   import AutomaticResizeNumberInput from "$lib/components/shared/AutomaticResizeNumberInput.svelte";
   import DynamicDragAndDropList from "$lib/components/shared/DynamicDragAndDropList.svelte";
-  import { moveArrayElement } from "$lib/arrayUtil";
+  import { moveArrayElement } from "$lib/utils/arrayUtil";
 
   /**
    * @type {ObjectList} An ObjectList containing canvases to be listed.

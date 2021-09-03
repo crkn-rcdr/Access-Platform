@@ -147,7 +147,7 @@ A component that overlays ontop of the application, in the center of the screen.
       "header"
       "body"
       "footer";
-    grid-template-rows: 0.5fr 2fr 0.5fr;
+    grid-template-rows: var(--perfect-fourth-3) 2fr 0.5fr;
     position: absolute;
     top: 0;
     left: 0;

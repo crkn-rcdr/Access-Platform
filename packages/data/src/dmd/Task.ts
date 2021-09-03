@@ -6,7 +6,7 @@ import {
   SucceededProcessResult,
   FailedProcessResult,
 } from "../util/ProcessUpdate.js";
-import { Slug } from "../util/Slug.js";
+//import { Slug } from "../util/Slug.js";
 import { Timestamp } from "../util/Timestamp.js";
 import { User } from "../util/User.js";
 
@@ -33,7 +33,7 @@ const ParseRecord = z
      * The id extracted for this record. When the record's metadata has been
      * parsed successfully, this must be provided.
      */
-    id: Slug.optional(),
+    id: z.string().optional(), //Slug
 
     /**
      * The label extracted for this record. Also required for a successfully
@@ -65,7 +65,7 @@ export const WaitingDMDTask = z.object({
   /**
    * CouchDB `_attachments` object.
    */
-  attachments: CouchAttachmentRecord,
+  attachments: CouchAttachmentRecord.optional(),
 
   /**
    * Record of the user who created this task.
@@ -76,6 +76,11 @@ export const WaitingDMDTask = z.object({
    * Specified format of the attached descriptive metadata file.
    */
   format: z.enum(DMDFORMATS),
+
+  /**
+   * The original name of the attached descriptive metadata file.
+   */
+  fileName: z.string(),
 
   /**
    * The request to split, validate, and flatten the metadata in the attached file.
@@ -99,13 +104,6 @@ export const FailedDMDTask = WaitingDMDTask.merge(
      * The request has been processed.
      */
     process: FailedProcessResult,
-
-    /**
-     * List of individual items found in the metadata file.
-     * Successfully parsed records will be attached to the document,
-     * referenceable by the record's index in this array.
-     */
-    items: z.array(ParseRecord).optional(),
   })
 );
 
@@ -117,6 +115,12 @@ export type FailedDMDTask = z.infer<typeof FailedDMDTask>;
 export const SucceededDMDTask = FailedDMDTask.merge(
   z.object({
     process: SucceededProcessResult,
+    /**
+     * List of individual items found in the metadata file.
+     * Successfully parsed records will be attached to the document,
+     * referenceable by the record's index in this array.
+     */
+    items: z.array(ParseRecord).optional(),
   })
 );
 
@@ -130,9 +134,9 @@ export type SucceededDMDTask = z.infer<typeof SucceededDMDTask>;
  * 3. Reporting that background processing could split or validate the metadata file. The processor attempted to parse each individual item it extracted from the file; those items that parsed successfully have their own attachments added to the document.
  */
 export const DMDTask = z.union([
-  WaitingDMDTask,
-  FailedDMDTask,
   SucceededDMDTask,
+  FailedDMDTask,
+  WaitingDMDTask,
 ]);
 
 export type DMDTask = z.infer<typeof DMDTask>;

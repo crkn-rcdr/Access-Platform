@@ -1,4 +1,4 @@
-import { Slug } from "@crkn-rcdr/access-data";
+import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { createRouter, httpErrorToTRPC } from "../router.js";
 import {
@@ -17,7 +17,7 @@ import {
 
 export const dmdTaskRouter = createRouter()
   .query("get", {
-    input: Slug.parse,
+    input: z.string(),
     async resolve({ input: id, ctx }) {
       const response = await ctx.couch.dmdtask.getSafe(id);
       if (response.found) return response.doc;
@@ -25,6 +25,21 @@ export const dmdTaskRouter = createRouter()
         code: "PATH_NOT_FOUND",
         message: `No dmd task with id ${id} found.`,
       });
+    },
+  })
+  .query("find", {
+    input: z.string(),
+    async resolve({ input: id, ctx }) {
+      const fields = [
+        "id",
+        "user",
+        "format",
+        "process",
+        "updated",
+        "items",
+        "fileName",
+      ] as const;
+      return await ctx.couch.dmdtask.findUnique("id", id, fields);
     },
   })
   .mutation("fetchResult", {
@@ -36,10 +51,17 @@ export const dmdTaskRouter = createRouter()
        Results should be decoded in the browser.
       */
       try {
-        return await ctx.couch.dmdtask.getAttachmentAsJSON({
-          document: input.task,
-          attachment: `${input.index}.${input.type}`,
-        });
+        return input.type === "json"
+          ? await ctx.couch.dmdtask.getAttachmentAsJSON({
+              document: input.task,
+              attachment: `${input.index}.${input.type}`,
+            })
+          : (
+              await ctx.couch.dmdtask.getAttachment({
+                document: input.task,
+                attachment: `${input.index}.${input.type}`,
+              })
+            ).toString();
       } catch (e) {
         console.log(e?.message);
         throw httpErrorToTRPC(e);

@@ -9,16 +9,16 @@
     try {
       if (page?.params?.["taskId"]) {
         const response = await context.lapin.query(
-          "dmdTask.get",
+          "dmdTask.find",
           page.params["taskId"]
         );
-        console.log("response", response);
-        const dmdTask: DMDTask = response;
-        return { props: { dmdTask } };
+        if (response && "result" in response)
+          return { props: { dmdTask: response.result } };
+        else return { props: {} };
       }
       return { props: {} };
     } catch (e) {
-      return e;
+      return { props: { error: e } };
     }
   };
 </script>
@@ -34,28 +34,32 @@
     isFailedDMDTask,
     isSucceededDMDTask,
   } from "@crkn-rcdr/access-data";
-  import DmdSplitWaitingView from "$lib/components/dmd/DmdSplitWaitingView.svelte";
-  import DmdSplitFailureView from "$lib/components/dmd/DmdSplitFailureView.svelte";
-  import DmdSplitSuccessView from "$lib/components/dmd/DmdSplitSuccessView.svelte";
+  import DmdWaitingView from "$lib/components/dmd/DmdWaitingView.svelte";
+  import DmdFailureView from "$lib/components/dmd/DmdFailureView.svelte";
+  import DmdSuccessView from "$lib/components/dmd/DmdSuccessView.svelte";
 
   /**
    * @type {DMDTask} The dmdtask being displayed by the page.
    */
   export let dmdTask: DMDTask; //WaitingDMDTask | FailedDMDTask | SucceededDMDTask;
+
+  export let error: any;
 </script>
 
 <div class="dmd-task-page-wrap">
-  {#if !dmdTask}
+  {#if error}
+    {error?.message}
+  {:else if !dmdTask}
     Loading...
   {:else if isSucceededDMDTask(dmdTask)}
-    <DmdSplitSuccessView {dmdTask} />
+    <DmdSuccessView {dmdTask} />
   {:else if isFailedDMDTask(dmdTask)}
-    <DmdSplitFailureView {dmdTask} message={dmdTask.process["message"]} />
+    <DmdFailureView {dmdTask} message={dmdTask.process["message"]} />
   {:else if isWaitingDMDTask(dmdTask)}
-    <DmdSplitWaitingView {dmdTask} />
+    <DmdWaitingView {dmdTask} />
   {:else}
     <!--JUST In Case All Else Fails-->
-    <DmdSplitFailureView
+    <DmdFailureView
       message="No objects were split from the metadata file."
     />
   {/if}
