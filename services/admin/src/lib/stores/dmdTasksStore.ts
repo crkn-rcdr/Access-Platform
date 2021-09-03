@@ -193,10 +193,20 @@ export const dmdTasksStore = {
     shouldUpdateAllItems: boolean
   ) => {
     let items = getTask(dmdTaskId).itemStates;
-
     for (const itemSlug in items) {
       items[itemSlug].shouldUpdate = shouldUpdateAllItems;
     }
     updateTask(dmdTaskId, "itemStates", items);
+  },
+  checkIfAllTaskItemsSelected: (dmdTaskId: string): boolean => {
+    let items = getTask(dmdTaskId).itemStates;
+    let areAllItemsSelected = true;
+    for (const itemId in items) {
+      console.log("areAllItemsSelected", areAllItemsSelected);
+      console.log(itemId, items[itemId].shouldUpdate);
+      areAllItemsSelected = areAllItemsSelected && items[itemId].shouldUpdate;
+    }
+    console.log("areAllItemsSelected", areAllItemsSelected);
+    return areAllItemsSelected;
   },
 };
