@@ -73,7 +73,7 @@ The editor actions component holds functionality that is responsible for perform
    */
   function checkEnableSave() {
     isSaveEnabled = checkValidDiff(serverObject, editorObject);
-    console.log("isSaveEnabled", isSaveEnabled, serverObject, editorObject);
+    //console.log("isSaveEnabled", isSaveEnabled, serverObject, editorObject);
   }
 
   $: {
@@ -83,28 +83,6 @@ The editor actions component holds functionality that is responsible for perform
 
   $: {
     mode = serverObject?.id ? "edit" : "create";
-  }
-
-  /* TODO: ask how to set up an insert request */
-  async function sendCreateRequest(data: any) {
-    return await showConfirmation(
-      async () => {
-        try {
-          //if(response) goto(`/serverObject/${editorObject["id"]}`);
-          return {
-            success: true,
-            details: "done",
-          };
-        } catch (e) {
-          return {
-            success: false,
-            details: e.message,
-          };
-        }
-      },
-      `Success! Created ${editorObject.type}.`,
-      `Error: could not create ${editorObject.type}.`
-    );
   }
 
   /**
@@ -356,14 +334,12 @@ The editor actions component holds functionality that is responsible for perform
 
   {#if serverObject["slug"]}
     <button
-      class="danger icon-button"
+      class="danger"
       data-tooltip="Unassign Slug"
       data-tooltip-flow="bottom"
       on:click={() => (showUnassignSlugModal = true)}
     >
-      <div class="button-icon">
-        <FaArchive />
-      </div>
+      Unassign Slug
     </button>
   {/if}
 </span>
@@ -373,13 +349,13 @@ The editor actions component holds functionality that is responsible for perform
   title={`Are you sure you want to unassign this slug?`}
 >
   <p slot="body">
-    By unassigning this serverObject's slug, you will be taking it out of all
-    the collections it belongs to. You can then use the slug, '{serverObject[
-      "slug"
-    ]}' for other serverObjects. Objects that do not have a slug assigned to
-    them are effectively undiscoverable. You can bookmark this page to access
-    this serverObject again in the future. You can assign it a new slug to make
-    it discoverable in the platform again.
+    By unassigning this {serverObject.type}'s slug, you will be taking it out of
+    all the collections it belongs to. You will also be unpublishing the {serverObject.type}.
+    You can then use the slug, '{serverObject["slug"]}' for other manifests or
+    collections. Manifests and collections that do not have a slug assigned to
+    them are undiscoverable. You can bookmark this page to access this {serverObject.type}
+    again in the future. You can assign it a new slug, and publish it, to make it
+    discoverable on the platform again.
   </p>
   <div slot="footer">
     <button class="secondary" on:click={() => (showUnassignSlugModal = false)}>

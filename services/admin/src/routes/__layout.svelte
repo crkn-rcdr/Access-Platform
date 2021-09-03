@@ -92,13 +92,13 @@
   }
   pre {
     position: relative;
-    z-index: 1;
+    /*z-index: 1;*/
   }
   .site-nav {
     padding: 0 1rem;
     background-color: var(--base-bg);
-    /*filter: brightness(1.1);*/
-    z-index: 1;
+    /*filter: brightness(1.1);
+    z-index: 1;*/
   }
   .icon {
     padding: 0.1rem;

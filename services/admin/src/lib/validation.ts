@@ -50,7 +50,6 @@ function checkValidManifest(editorObject: AccessObject) {
  * @returns boolean
  */
 function checkChangeIsValid(editorObject: AccessObject) {
-  console.log(editorObject["type"]);
   if (editorObject["type"] === "manifest") {
     return checkValidManifest(editorObject);
   } else if (editorObject["type"] === "collection") {
@@ -130,11 +129,10 @@ const manifest = {
    */
   getCanvasesValidationMsg: function (canvases: ObjectList) {
     try {
-      console.log(JSON.stringify(canvases));
       EditableManifest.parse({ canvases });
       return "";
     } catch (e) {
-      console.log(e);
+      console.log(e?.message);
       return e["issues"][0]["message"];
     }
   },

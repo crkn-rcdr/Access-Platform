@@ -7,7 +7,6 @@
   import type { RootLoadOutput } from "$lib/types";
   export const load: Load<RootLoadOutput> = async ({ page, context }) => {
     try {
-      console.log(page.params);
       if (page.params["type"]) {
         if (page.params["type"] === "collection")
           return {

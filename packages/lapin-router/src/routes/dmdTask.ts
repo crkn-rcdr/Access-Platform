@@ -1,32 +1,19 @@
-import { z } from "zod";
-import { DMDFORMATS, User, Slug } from "@crkn-rcdr/access-data";
+import { Slug } from "@crkn-rcdr/access-data";
 import { TRPCError } from "@trpc/server";
 import { createRouter, httpErrorToTRPC } from "../router.js";
-
-const NewInput = z.object({
-  user: User,
-  format: z.enum(DMDFORMATS),
-  file: z.string(), // any othervalidation needed?
-});
-
-const FetchInput = z.object({
-  task: z.string(), // dmdtask uuid
-  index: z.number(), // array index of the item you want to fetch
-  type: z.enum(["xml", "json"]), // type of attachment to return
-});
-
-const StoreAccessInput = z.object({
-  task: z.string(), // dmdtask uuid
-  index: z.number(), // array index of item whose metadata is being stored
-  slug: z.string(), // prefix + id (we might not need this if we send the resolved noid)
-  noid: z.string(), // result of slug lookup
-});
-
-const StorePreservationInput = z.object({
-  task: z.string(), // dmdtask uuid
-  index: z.number(),
-  slug: z.string(),
-});
+import {
+  FetchInput,
+  getAccessObjectForDmdTaskItem,
+  getDmdItemXML,
+  getDmdTaskItemByIndex,
+  getDmdTaskItemXMLFileName,
+  lookupDmdTaskForStorage,
+  NewInput,
+  StoreAccessInput,
+  storeDmdTaskItemXmlFile,
+  StorePreservationInput,
+  updateLabelForDmdTaskItemAccessObject,
+} from "../util/dmdTask.js";
 
 export const dmdTaskRouter = createRouter()
   .query("get", {
@@ -40,16 +27,23 @@ export const dmdTaskRouter = createRouter()
       });
     },
   })
-  .query("fetchResult", {
+  .mutation("fetchResult", {
     input: FetchInput.parse,
-    async resolve() {
-      //{ input: id, ctx }) {
+    async resolve({ input, ctx }) {
       /*
        Fetches the attachment in the dmdtask document 
        and returns its contents. 
        Results should be decoded in the browser.
       */
-      return true;
+      try {
+        return await ctx.couch.dmdtask.getAttachmentAsJSON({
+          document: input.task,
+          attachment: `${input.index}.${input.type}`,
+        });
+      } catch (e) {
+        console.log(e?.message);
+        throw httpErrorToTRPC(e);
+      }
     },
   })
   .mutation("create", {
@@ -66,32 +60,37 @@ export const dmdTaskRouter = createRouter()
     input: StoreAccessInput.parse,
     async resolve({ input, ctx }) {
       try {
-        /* 
-        Yeah, the idea in lapin is that you'll be able to interact with objects in a particular container, but not do any of the scarier container management stuff.
+        // Each of these methods throws an error if the results arent what is expected.
+        const dmdTask = await lookupDmdTaskForStorage(ctx, input.task);
 
-        accessFiles: client.container("access-files"),
-        accessMetadata: client.container("access-metadata"),
-        The code above isn't in tests; it's in the context that lapin routers have access to.
+        const itemXmlFile = await getDmdItemXML(ctx, input.task, input.index);
 
+        const item = await getDmdTaskItemByIndex(dmdTask, input.index);
 
-        task: z.string(), // dmdtask uuid
-        index: z.number(), // array index of item whose metadata is being stored
-        slug: z.string(), // prefix + id (we might not need this if we send the resolved noid)
-        noid: z.string(), // result of slug lookup
+        const accessObject = await getAccessObjectForDmdTaskItem(
+          ctx,
+          input.slug
+        );
 
-        Looks up the task's mdType & fetches the attachment and the label corresponding to index. 
+        const itemXMLFileName = getDmdTaskItemXMLFileName(
+          accessObject.id,
+          item.output
+        );
 
-        PUT
-        /v1/{account}/{container}/{object}
-        Create or replace object
-        Determines the correct filename of the attachment using mdType and noid. 
-        Stores the attachment in Swift. (Is this the right thing to call? ctx.swift.accessFiles.putObject("filename of the attachment using mdType and noid", attachment))
+        await storeDmdTaskItemXmlFile(ctx, itemXMLFileName, itemXmlFile);
 
-        Replaces the label of the object identified by noid.  (What should I update this to?)*/
-        console.log(ctx.swift.accessFiles, input);
-
-        return true; //await ctx.couch; Returns void, I think.
+        // Should I add a length check?
+        if (typeof item.label === "string") {
+          await updateLabelForDmdTaskItemAccessObject(
+            ctx,
+            item.label,
+            accessObject.id,
+            input.user,
+            accessObject.type
+          );
+        }
       } catch (e) {
+        console.log(e?.message);
         throw httpErrorToTRPC(e);
       }
     },
@@ -101,8 +100,7 @@ export const dmdTaskRouter = createRouter()
     async resolve() {
       //{ input, ctx }) {
       try {
-        /* ask others what to do here */
-        return true; //await ctx.couch;
+        return true;
       } catch (e) {
         throw httpErrorToTRPC(e);
       }
