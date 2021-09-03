@@ -32,7 +32,9 @@ Displays a dmd task in an waiting state.
     <Loading backgroundType="gradient" />
   </div>
   <br />
-  <h5>{dmdTask?.fileName}</h5>
+  {#if dmdTask?.fileName}
+    <h5>{dmdTask.fileName}</h5>
+  {/if}
   <!--br /-->
   <h6>Please wait while the metadata file processes...</h6>
   <br />

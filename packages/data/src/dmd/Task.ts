@@ -80,7 +80,7 @@ export const WaitingDMDTask = z.object({
   /**
    * The original name of the attached descriptive metadata file.
    */
-  fileName: z.string(),
+  fileName: z.string().optional(),
 
   /**
    * The request to split, validate, and flatten the metadata in the attached file.

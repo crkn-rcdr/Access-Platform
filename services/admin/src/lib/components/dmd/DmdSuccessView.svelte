@@ -100,7 +100,9 @@ This component shows the view for a dmd task that had its metadata successfully 
     class:disabled={$dmdTasksStore[dmdTask.id].updateState === "updating"}
   >
     <br />
-    <h5>{dmdTask?.fileName}</h5>
+    {#if dmdTask?.fileName}
+      <h5>{dmdTask.fileName}</h5>
+    {/if}
     <br />
     <NotificationBar
       message={$dmdTasksStore[dmdTask.id].errorMsg}

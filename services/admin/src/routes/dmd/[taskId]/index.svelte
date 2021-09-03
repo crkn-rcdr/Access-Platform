@@ -14,7 +14,14 @@
         );
         if (response && "result" in response)
           return { props: { dmdTask: response.result } };
-        else return { props: {} };
+        else
+          return {
+            props: {
+              error: {
+                message: "Descriptive metadata updating task not found",
+              },
+            },
+          };
       }
       return { props: {} };
     } catch (e) {
@@ -59,9 +66,7 @@
     <DmdWaitingView {dmdTask} />
   {:else}
     <!--JUST In Case All Else Fails-->
-    <DmdFailureView
-      message="No objects were split from the metadata file."
-    />
+    <DmdFailureView message="Something went wrong." />
   {/if}
 </div>
 

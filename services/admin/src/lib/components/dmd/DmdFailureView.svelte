@@ -37,7 +37,9 @@ Displays a dmd task in an error state.
   class="auto-align auto-align__block auto-align__column auto-align__a-center"
 >
   <br />
-  <h5>{dmdTask?.fileName}</h5>
+  {#if dmdTask?.fileName}
+    <h5>{dmdTask.fileName}</h5>
+  {/if}
   <h6>Metadata Upload Failed!</h6>
   <br />
   <NotificationBar {message} status="fail" />
