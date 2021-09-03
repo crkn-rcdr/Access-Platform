@@ -36,8 +36,10 @@ Displays a dmd task in an error state.
 <div
   class="auto-align auto-align__block auto-align__column auto-align__a-center"
 >
-  <h5>Update Descriptive Metadata</h5>
+  <br />
+  <h5>{dmdTask?.fileName}</h5>
   <h6>Metadata Upload Failed!</h6>
+  <br />
   <NotificationBar {message} status="fail" />
   <DmdTaskInfoTable {dmdTask} />
   <a href="/dmd/new" class="dmd-task-try-again">
