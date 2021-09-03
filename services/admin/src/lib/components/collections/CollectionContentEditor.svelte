@@ -145,7 +145,7 @@ Allows the user to modify the member list for a collection.
 </script>
 
 <svelte:window on:keydown={handleKeydown} />
-{#if indexModel.length && collection}
+{#if indexModel && collection}
   <div class="auto-align auto-align__column">
     <CollectionMembersAddition
       bind:destinationMember={collection}
