@@ -29,6 +29,8 @@ This component displays the items in the dmd task throughout the various stages 
 *Note: `bind:` is required for changes to the parameters to be reflected in higher level components.*
 -->
 <script lang="ts">
+  import TiWarning from "svelte-icons/ti/TiWarning.svelte";
+  import TiDelete from "svelte-icons/ti/TiDelete.svelte";
   import type { AccessPlatform } from "$lib/types";
   import type { ParseRecord } from "@crkn-rcdr/access-data/dist/esm/dmd/Task";
   import { dmdTasksStore } from "$lib/stores/dmdTasksStore";
@@ -58,15 +60,19 @@ This component displays the items in the dmd task throughout the various stages 
 
   let shouldUpdateAllItems: boolean = true;
 
+  let previewNotificationMsg: string = "";
+  let previewNotificationStatus: "warn" | "fail" = "warn";
+
   /**
    * Handles showing the json preview modal for the item passed in
    * @param item
    * @returns void
    */
-  async function handlePreviewItemPressed(index: number) {
+  async function handlePreviewItemPressed(index: number, item: ParseRecord) {
     openPreviewModal = true;
     previewItemIndex = index;
-    console.log(openPreviewModal, previewItemIndex);
+    if (item.message) previewNotificationMsg = item.message;
+    previewNotificationStatus = item.parsed ? "warn" : "fail";
   }
 
   function toggleAllItemsSelected() {
@@ -118,57 +124,65 @@ This component displays the items in the dmd task throughout the various stages 
     <tbody>
       {#each itemsToShow as item, i}
         {#if typeof item === "object"}
-          <tr>
+          <tr
+            class:not-success={!item.parsed}
+            class:warning={item.parsed && item.message?.length}
+          >
             {#if $dmdTasksStore[dmdTaskId].lookupState === "loaded" && ($dmdTasksStore[dmdTaskId].shouldUpdateInAccess || $dmdTasksStore[dmdTaskId].shouldUpdateInPreservation)}
               <td>
                 <input
                   type="checkbox"
-                  bind:checked={$dmdTasksStore[dmdTaskId].itemStates[item["id"]]
+                  bind:checked={$dmdTasksStore[dmdTaskId].itemStates[item.id]
                     .shouldUpdate}
                   on:change={checkIfAllItemsSelected}
                 />
               </td>
             {/if}
-            <td>{item["id"]}</td>
-            <td>{item["label"]}</td>
             <td>
-              {$dmdTasksStore[dmdTaskId].itemStates[item["id"]].parseSuccess
-                ? "Yes"
-                : "No"}
+              {item.id}
             </td>
-            <td>
-              {#if item["parsed"]}
-                <button
-                  class="button ghost dark sm"
-                  on:click={() => handlePreviewItemPressed(i)}>Preview</button
-                >
-              {:else}
-                {item["message"]}
+            <td>{item.label}</td>
+            <td class="auto-align auto-align__a-center">
+              {#if item.message?.length}
+                <span class="icon" data-tooltip={item["message"]}>
+                  {#if item.parsed}
+                    <TiWarning />
+                  {:else}
+                    <TiDelete />
+                  {/if}
+                </span>
+                {item.parsed ? "Yes" : "No"}
               {/if}
             </td>
+            <td>
+              <button
+                class="button ghost dark sm"
+                on:click={() => handlePreviewItemPressed(i, item)}
+                >Preview</button
+              >
+            </td>
 
-            {#if $dmdTasksStore[dmdTaskId].itemStates[item["id"]]}
+            {#if $dmdTasksStore[dmdTaskId].itemStates[item.id]}
               {#if $dmdTasksStore[dmdTaskId].lookupState !== "ready" && $dmdTasksStore[dmdTaskId].shouldUpdateInAccess}
                 <td
-                  class:success={$dmdTasksStore[dmdTaskId].itemStates[
-                    item["id"]
-                  ].foundInAccess === "Yes"}
+                  class:success={$dmdTasksStore[dmdTaskId].itemStates[item.id]
+                    .foundInAccess === "Yes"}
                   class:not-success={$dmdTasksStore[dmdTaskId].itemStates[
-                    item["id"]
+                    item.id
                   ].foundInAccess === "No"}
                 >
-                  {#if $dmdTasksStore[dmdTaskId].itemStates[item["id"]].noid}
+                  {#if $dmdTasksStore[dmdTaskId].itemStates[item.id].noid}
                     <a
                       href={`/object/${
-                        $dmdTasksStore[dmdTaskId].itemStates[item["id"]].noid
+                        $dmdTasksStore[dmdTaskId].itemStates[item.id].noid
                       }`}
                       target="_blank"
                     >
-                      {$dmdTasksStore[dmdTaskId].itemStates[item["id"]]
+                      {$dmdTasksStore[dmdTaskId].itemStates[item.id]
                         .foundInAccess}
                     </a>
                   {:else}
-                    {$dmdTasksStore[dmdTaskId].itemStates[item["id"]]
+                    {$dmdTasksStore[dmdTaskId].itemStates[item.id]
                       .foundInAccess}
                   {/if}
                 </td>
@@ -176,42 +190,39 @@ This component displays the items in the dmd task throughout the various stages 
 
               {#if $dmdTasksStore[dmdTaskId].updateState !== "ready" && $dmdTasksStore[dmdTaskId].shouldUpdateInAccess}
                 <td
-                  class:success={$dmdTasksStore[dmdTaskId].itemStates[
-                    item["id"]
-                  ].updatedInAccess === "Yes"}
+                  class:success={$dmdTasksStore[dmdTaskId].itemStates[item.id]
+                    .updatedInAccess === "Yes"}
                   class:not-success={$dmdTasksStore[dmdTaskId].itemStates[
-                    item["id"]
+                    item.id
                   ].updatedInAccess === "No"}
                 >
-                  {$dmdTasksStore[dmdTaskId].itemStates[item["id"]]
+                  {$dmdTasksStore[dmdTaskId].itemStates[item.id]
                     .updatedInAccess}
                 </td>
               {/if}
 
               {#if $dmdTasksStore[dmdTaskId].lookupState !== "ready" && $dmdTasksStore[dmdTaskId].shouldUpdateInPreservation}
                 <td
-                  class:success={$dmdTasksStore[dmdTaskId].itemStates[
-                    item["id"]
-                  ].foundInPreservation === "Yes"}
+                  class:success={$dmdTasksStore[dmdTaskId].itemStates[item.id]
+                    .foundInPreservation === "Yes"}
                   class:not-success={$dmdTasksStore[dmdTaskId].itemStates[
-                    item["id"]
+                    item.id
                   ].foundInPreservation === "No"}
                 >
-                  {$dmdTasksStore[dmdTaskId].itemStates[item["id"]]
+                  {$dmdTasksStore[dmdTaskId].itemStates[item.id]
                     .foundInPreservation}
                 </td>
               {/if}
 
               {#if $dmdTasksStore[dmdTaskId].updateState !== "ready" && $dmdTasksStore[dmdTaskId].shouldUpdateInPreservation}
                 <td
-                  class:success={$dmdTasksStore[dmdTaskId].itemStates[
-                    item["id"]
-                  ].updatedInPreservation === "Yes"}
+                  class:success={$dmdTasksStore[dmdTaskId].itemStates[item.id]
+                    .updatedInPreservation === "Yes"}
                   class:not-success={$dmdTasksStore[dmdTaskId].itemStates[
-                    item["id"]
+                    item.id
                   ].updatedInPreservation === "No"}
                 >
-                  {$dmdTasksStore[dmdTaskId].itemStates[item["id"]]
+                  {$dmdTasksStore[dmdTaskId].itemStates[item.id]
                     .updatedInPreservation}
                 </td>
               {/if}
@@ -229,13 +240,28 @@ This component displays the items in the dmd task throughout the various stages 
   {dmdTaskId}
   bind:openPreviewModal
   bind:previewItemIndex
+  bind:previewNotificationMsg
+  bind:previewNotificationStatus
 />
 
 <style>
   .success {
     background-color: var(--success-light);
+    color: var(--success);
   }
   .not-success {
     background-color: var(--danger-light);
+    /*color: var(--danger);*/
+  }
+  .not-success .icon {
+    color: var(--danger);
+  }
+  .warning {
+    background-color: var(--warn-light);
+    /*color: var(--warn);*/
+  }
+
+  .warning .icon {
+    color: var(--warn);
   }
 </style>

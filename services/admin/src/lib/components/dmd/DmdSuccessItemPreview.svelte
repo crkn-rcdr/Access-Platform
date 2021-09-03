@@ -10,6 +10,7 @@
   import SideMenuBody from "../shared/SideMenuBody.svelte";
   import SideMenuPage from "../shared/SideMenuPage.svelte";
   import { onMount } from "svelte";
+  import NotificationBar from "../shared/NotificationBar.svelte";
 
   /**
    *  @type { string } The 'id' of the DMDTask being shown.
@@ -17,6 +18,8 @@
   export let dmdTaskId: string;
   export let previewItemIndex: number | undefined = undefined;
   export let openPreviewModal: boolean = false;
+  export let previewNotificationMsg: string = "";
+  export let previewNotificationStatus: "warn" | "fail" = "warn";
 
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
@@ -92,9 +95,17 @@
       </SideMenuPageList>
       <SideMenuBody>
         <SideMenuPage>
+          <NotificationBar
+            status={previewNotificationStatus}
+            message={previewNotificationMsg}
+          />
           <XmlViewer bind:xml={itemPreviewMetadataXML} />
         </SideMenuPage>
         <SideMenuPage>
+          <NotificationBar
+            status={previewNotificationStatus}
+            message={previewNotificationMsg}
+          />
           <JsonTree value={{ object: itemPreviewMetadataJSON }} />
         </SideMenuPage>
       </SideMenuBody>

@@ -24,7 +24,7 @@
 
       var padding = "";
       for (var i = 0; i < pad; i++) {
-        padding += "&nbsp;";
+        padding += "&nbsp;&nbsp;&nbsp;&nbsp;";
       }
 
       formatted += padding + node + "\r\n";
@@ -37,10 +37,12 @@
   $: xml = formatXml(xml);
 </script>
 
-<pre>{xml}</pre>
+<code>{xml}</code>
 
 <style>
-  pre {
+  code {
     padding: 0 1rem;
+    display: block;
+    white-space: pre-wrap;
   }
 </style>
