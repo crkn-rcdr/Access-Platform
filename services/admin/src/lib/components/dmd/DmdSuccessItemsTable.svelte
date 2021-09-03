@@ -70,13 +70,15 @@ This component displays the items in the dmd task throughout the various stages 
   }
 
   function toggleAllItemsSelected() {
-    console.log("shouldUpdateAllItems", shouldUpdateAllItems);
+    shouldUpdateAllItems = !shouldUpdateAllItems;
     dmdTasksStore.toggleAllItemsSelected(dmdTaskId, shouldUpdateAllItems);
   }
 
-  $: {
-    shouldUpdateAllItems;
-    toggleAllItemsSelected();
+  function checkIfAllItemsSelected(event) {
+    if (event.target.checked) {
+      shouldUpdateAllItems =
+        dmdTasksStore.checkIfAllTaskItemsSelected(dmdTaskId);
+    } else shouldUpdateAllItems = false;
   }
 </script>
 
@@ -86,7 +88,11 @@ This component displays the items in the dmd task throughout the various stages 
       <tr>
         {#if $dmdTasksStore[dmdTaskId].lookupState === "loaded" && ($dmdTasksStore[dmdTaskId].shouldUpdateInAccess || $dmdTasksStore[dmdTaskId].shouldUpdateInPreservation)}
           <th>
-            <input type="checkbox" bind:checked={shouldUpdateAllItems} />
+            <input
+              type="checkbox"
+              on:click={toggleAllItemsSelected}
+              bind:checked={shouldUpdateAllItems}
+            />
           </th>
         {/if}
         <th>Id</th>
@@ -119,6 +125,7 @@ This component displays the items in the dmd task throughout the various stages 
                   type="checkbox"
                   bind:checked={$dmdTasksStore[dmdTaskId].itemStates[item["id"]]
                     .shouldUpdate}
+                  on:change={checkIfAllItemsSelected}
                 />
               </td>
             {/if}
