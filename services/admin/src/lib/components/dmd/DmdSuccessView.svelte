@@ -110,10 +110,12 @@ This component shows the view for a dmd task that had its metadata successfully 
     {/if}
     <br />
     <NotificationBar
-      message={$dmdTasksStore[dmdTask.id].errorMsg}
-      status="fail"
+      message={`File parsing ${
+        dmdTask.process.succeeded ? "warning" : "error"
+      }: ${dmdTask.process.message}`}
+      status={dmdTask.process.succeeded ? "warn" : "fail"}
     />
-
+    <br />
     {#if !showAllInvalidError}
       <ScrollStepper
         bind:activeStepIndex

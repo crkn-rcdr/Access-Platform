@@ -61,7 +61,7 @@
   {:else if isSucceededDMDTask(dmdTask)}
     <DmdSuccessView {dmdTask} />
   {:else if isFailedDMDTask(dmdTask)}
-    <DmdFailureView {dmdTask} message={dmdTask.process["message"]} />
+    <DmdFailureView {dmdTask} message={dmdTask.process.message} />
   {:else if isWaitingDMDTask(dmdTask)}
     <DmdWaitingView {dmdTask} />
   {:else}
