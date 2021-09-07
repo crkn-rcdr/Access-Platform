@@ -24,6 +24,7 @@ function checkValidCollection(editorObject: AccessObject) {
     const res = EditableCollection.parse(editorObject);
     return true;
   } catch (e) {
+    console.log(e?.message);
     return false;
   }
 }
@@ -38,6 +39,7 @@ function checkValidManifest(editorObject: AccessObject) {
     const res = EditableManifest.parse(editorObject);
     return true;
   } catch (e) {
+    console.log(e?.message);
     return false;
   }
 }
@@ -64,7 +66,8 @@ function checkChangeIsValid(editorObject: AccessObject) {
  */
 function checkModelChanged(
   serverObject: AccessObject,
-  editorObject: AccessObject) {
+  editorObject: AccessObject
+) {
   return !isEqual(serverObject, editorObject);
 }
 
@@ -129,6 +132,7 @@ const manifest = {
       EditableManifest.parse({ canvases });
       return "";
     } catch (e) {
+      console.log(e?.message);
       return e["issues"][0]["message"];
     }
   },

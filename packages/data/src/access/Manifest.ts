@@ -80,10 +80,12 @@ export const EditableManifest = Manifest.pick({
   viewingDirection: true,
   canvases: true,
   pageLabels: true,
-}).refine(
-  (obj) => Object.keys(obj).length > 0,
-  "Cannot edit a manifest with an empty object"
-);
+})
+  .partial()
+  .refine(
+    (obj) => Object.keys(obj).length > 0,
+    "Cannot edit a manifest with an empty object"
+  );
 
 export type EditableManifest = z.infer<typeof EditableManifest>;
 

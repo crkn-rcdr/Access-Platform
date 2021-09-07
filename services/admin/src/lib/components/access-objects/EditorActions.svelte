@@ -19,12 +19,18 @@ The editor actions component holds functionality that is responsible for perform
   import { onMount } from "svelte";
   import type { Session } from "$lib/types";
   import FaArchive from "svelte-icons/fa/FaArchive.svelte";
-  import { AccessObject } from "@crkn-rcdr/access-data";
+  import {
+    AccessObject,
+    EditableManifest,
+    NewCollection,
+    NewManifest,
+  } from "@crkn-rcdr/access-data";
   import { detailedDiff } from "deep-object-diff";
   import { getStores } from "$app/stores";
   import { showConfirmation } from "$lib/confirmation";
   import { checkValidDiff, checkModelChanged } from "$lib/validation";
   import Modal from "$lib/components/shared/Modal.svelte";
+  import { goto } from "$app/navigation";
 
   /**
    * @type {AccessObject} This is the 'original' serverObject of type AccessObject pulled from the backend, to be edited only once an action is successfully performed.
@@ -40,6 +46,11 @@ The editor actions component holds functionality that is responsible for perform
    * @type {Session} The session store that contains the module for sending requests to lapin.
    */
   const { session } = getStores<Session>();
+
+  /**
+   * @type {"create" | "edit"} An indicator variable if the editor is in create mode or edit mode.
+   */
+  let mode: "create" | "edit";
 
   /**
    * @type {any} A module that quickly deep copies (clones) an serverObject.
@@ -62,6 +73,7 @@ The editor actions component holds functionality that is responsible for perform
    */
   function checkEnableSave() {
     isSaveEnabled = checkValidDiff(serverObject, editorObject);
+    //console.log("isSaveEnabled", isSaveEnabled, serverObject, editorObject);
   }
 
   $: {
@@ -69,26 +81,8 @@ The editor actions component holds functionality that is responsible for perform
     checkEnableSave();
   }
 
-  /* TODO: ask how to set up an insert request */
-  async function sendCreateRequest(data: any) {
-    return await showConfirmation(
-      async () => {
-        try {
-          //if(response) goto(`/serverObject/${editorObject["id"]}`);
-          return {
-            success: true,
-            details: "done",
-          };
-        } catch (e) {
-          return {
-            success: false,
-            details: e.message,
-          };
-        }
-      },
-      `Success! Created ${editorObject.type}.`,
-      `Error: could not create ${editorObject.type}.`
-    );
+  $: {
+    mode = serverObject?.id ? "edit" : "create";
   }
 
   /**
@@ -117,11 +111,11 @@ The editor actions component holds functionality that is responsible for perform
               success: true,
               details: JSON.stringify(bodyObj),
             };
-          }
-          return {
-            success: false,
-            details: "Object not of type canvas or manifest",
-          };
+          } else
+            return {
+              success: false,
+              details: "Object not of type canvas or manifest",
+            };
         } catch (e) {
           return {
             success: false,
@@ -134,7 +128,7 @@ The editor actions component holds functionality that is responsible for perform
     );
   }
 
-  async function handleSave() {
+  async function handleSaveEdit() {
     const diff: any = detailedDiff(serverObject, editorObject);
 
     let bodyObj = {
@@ -157,6 +151,52 @@ The editor actions component holds functionality that is responsible for perform
         console.log(e);
       }
     }
+  }
+
+  async function handleSaveCreate() {
+    await showConfirmation(
+      async () => {
+        try {
+          if (editorObject.type === "manifest") {
+            const response = await $session.lapin.mutation(`manifest.new`, {
+              user: $session.user,
+              data: editorObject as NewManifest,
+            });
+            goto(`/object/${response}`);
+            return {
+              success: true,
+              details: response,
+            };
+          } else if (editorObject.type === "collection") {
+            const response = await $session.lapin.mutation(`collection.new`, {
+              user: $session.user,
+              data: editorObject as NewCollection,
+            });
+            goto(`/object/${response}`);
+            return {
+              success: true,
+              details: response,
+            };
+          } else
+            return {
+              success: false,
+              details: "Object not of type canvas or manifest",
+            };
+        } catch (e) {
+          return {
+            success: false,
+            details: e.message,
+          };
+        }
+      },
+      "Success! Changes saved.",
+      "Error: failed to save changes."
+    );
+  }
+
+  async function handleSave() {
+    if (mode === "create") await handleSaveCreate();
+    else if (mode === "edit") await handleSaveEdit();
   }
 
   /**
@@ -294,14 +334,12 @@ The editor actions component holds functionality that is responsible for perform
 
   {#if serverObject["slug"]}
     <button
-      class="danger icon-button"
+      class="danger"
       data-tooltip="Unassign Slug"
       data-tooltip-flow="bottom"
       on:click={() => (showUnassignSlugModal = true)}
     >
-      <div class="button-icon">
-        <FaArchive />
-      </div>
+      Unassign Slug
     </button>
   {/if}
 </span>
@@ -311,13 +349,13 @@ The editor actions component holds functionality that is responsible for perform
   title={`Are you sure you want to unassign this slug?`}
 >
   <p slot="body">
-    By unassigning this serverObject's slug, you will be taking it out of all
-    the collections it belongs to. You can then use the slug, '{serverObject[
-      "slug"
-    ]}' for other serverObjects. Objects that do not have a slug assigned to
-    them are effectively undiscoverable. You can bookmark this page to access
-    this serverObject again in the future. You can assign it a new slug to make
-    it discoverable in the platform again.
+    By unassigning this {serverObject.type}'s slug, you will be taking it out of
+    all the collections it belongs to. You will also be unpublishing the {serverObject.type}.
+    You can then use the slug, '{serverObject["slug"]}' for other manifests or
+    collections. Manifests and collections that do not have a slug assigned to
+    them are undiscoverable. You can bookmark this page to access this {serverObject.type}
+    again in the future. You can assign it a new slug, and publish it, to make it
+    discoverable on the platform again.
   </p>
   <div slot="footer">
     <button class="secondary" on:click={() => (showUnassignSlugModal = false)}>

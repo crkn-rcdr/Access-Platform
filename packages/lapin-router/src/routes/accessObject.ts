@@ -41,10 +41,22 @@ export const accessObjectRouter = createRouter()
     },
   })
   .mutation("unassignSlug", {
-    input: NoidWithUser,
+    input: NoidWithUser.parse,
     async resolve({ input, ctx }) {
       try {
-        return await ctx.couch.access.unassignSlug(input);
+        await ctx.couch.access.unassignSlug({
+          id: input.id,
+          user: input.user,
+        });
+        const response = await ctx.couch.access.getSafe(input.id);
+        if (response.found) {
+          if (response.doc.public) {
+            await ctx.couch.access.unpublish({
+              id: input.id,
+              user: input.user,
+            });
+          }
+        }
       } catch (e) {
         throw httpErrorToTRPC(e);
       }

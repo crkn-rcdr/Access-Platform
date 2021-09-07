@@ -45,14 +45,16 @@ none
    * @description When the component instance is mounted onto the dom, add an @event to the window that will close the dropdown menu if the user clicks outside of it
    */
   onMount(() => {
-    window.onclick = function (event) {
-      const target: Element = event.target;
-      if (dropdownWrapper !== target && !dropdownWrapper.contains(target)) {
+    window.addEventListener("click", function (event) {
+      if (
+        dropdownWrapper !== event.target &&
+        !dropdownWrapper.contains(event.target as Node)
+      ) {
         if (dropdownMenu.classList.contains("show")) {
           dropdownMenu.classList.remove("show");
         }
       }
-    };
+    });
   });
 </script>
 

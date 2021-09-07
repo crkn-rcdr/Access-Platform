@@ -97,10 +97,10 @@ Allows the user to modify the canvas list for a manifest.
 </script>
 
 {#if manifest}
-  <NotificationBar
+  <!--NotificationBar
     message={typedChecks.manifest.getCanvasesValidationMsg(manifest.canvases)}
     status="fail"
-  />
+  /-->
   <div class="auto-align auto-align__full">
     <div class="list-wrapper">
       <!--button

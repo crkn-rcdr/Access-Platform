@@ -57,13 +57,13 @@
     <a href="/dmd/new">Update Descriptive Metadata</a>
 
     <DropdownMenu direction="right">
-      <div slot="dropdown-button" class="disabled">
-        <a href="/">Create New Object</a>
+      <div slot="dropdown-button" class="  create-object-menu-button">
+        Create New Object
       </div>
-      <a href="/object/new">
+      <a href="/object/new/collection">
         Collection
       </a>
-      <a href="/object/new">
+      <a href="/object/new/manifest">
         Manifest
       </a>
     </DropdownMenu>
@@ -92,13 +92,13 @@
   }
   pre {
     position: relative;
-    z-index: 1;
+    /*z-index: 1;*/
   }
   .site-nav {
     padding: 0 1rem;
     background-color: var(--base-bg);
-    /*filter: brightness(1.1);*/
-    z-index: 0;
+    /*filter: brightness(1.1);
+    z-index: 1;*/
   }
   .icon {
     padding: 0.1rem;
@@ -111,5 +111,9 @@
   }
   .right-menu > * {
     margin-right: 1rem;
+  }
+  .create-object-menu-button {
+    text-decoration: underline;
+    color: var(--primary) !important;
   }
 </style>
