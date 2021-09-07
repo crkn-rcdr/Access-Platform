@@ -394,11 +394,6 @@ button,
   filter: var(--shadow);
 }
 
-button.sm {
-  padding: 0 var(--perfect-fourth-8);
-  height: var(--perfect-fourth-5);
-}
-
 button,
 .button {
   padding: 0 var(--perfect-fourth-4);
@@ -419,7 +414,9 @@ button,
 
 button.sm,
 .button.sm {
-  padding: var(--perfect-fourth-8) var(--perfect-fourth-6);
+  /*padding: var(--perfect-fourth-8) var(--perfect-fourth-6);*/
+  padding: 0 0.5rem;
+  height: 2.2rem;
 }
 
 button.lg,

@@ -17,9 +17,8 @@ none
   import { getStores } from "$app/stores";
   import NotificationBar from "../shared/NotificationBar.svelte";
   import { goto } from "$app/navigation";
-  import { showConfirmation } from "$lib/confirmation";
+  import { showConfirmation } from "$lib/utils/confirmation";
   import LoadingButton from "$lib/components/shared/LoadingButton.svelte";
-  import { onMount } from "svelte";
 
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
@@ -45,6 +44,8 @@ none
    * @type {string } This is the base 64 encoded string for the metadata file that will be stored in the couch attachment.
    */
   let b64EncodedMetadataFileText: string;
+
+  let fileName: string = "";
 
   /**
    * @type {string } Thiis variable is used to show any error with the user's selections to them.
@@ -73,14 +74,14 @@ none
    */
   async function handleFileSelected(event: any) {
     const file: File = event.detail;
-    const metadataFileText = await file.text();
     try {
-      if (metadataFileText) {
-        b64EncodedMetadataFileText = btoa(
-          unescape(encodeURIComponent(metadataFileText))
-        ); //await convertBlobToBase64(file); The new way corrupts the file :-(
-      }
+      b64EncodedMetadataFileText = (await convertBlobToBase64(file)).replace(
+        "data:application/octet-stream;base64,",
+        ""
+      );
+      fileName = file.name;
     } catch (e) {
+      console.log(e?.message);
       errorText =
         "There was a formatting problem with the metadata file. Please fix it or choose another file.";
     }
@@ -99,6 +100,7 @@ none
             user: $session.user,
             format: metadataType,
             file: b64EncodedMetadataFileText,
+            fileName,
           };
           const response = await $session.lapin.mutation(
             `dmdTask.create`,

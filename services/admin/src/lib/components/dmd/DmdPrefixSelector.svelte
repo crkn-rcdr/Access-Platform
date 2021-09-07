@@ -34,6 +34,7 @@ Allows the user to select one of many pre-defined depositors.
     ooga: "Canadian Hazards Information Service",
     qmma: "McGill University Archives",
     "490": "MARC File",
+    none: "No prefix",
   };
 </script>
 
@@ -47,10 +48,11 @@ Allows the user to select one of many pre-defined depositors.
   }}
   value={depositor["prefix"]}
 >
-  <option value="">Select an access platform:</option>
+  <option value="">Select the depositor/prefix:</option>
   {#each Object.keys(depositors) as depositorCode}
     <option value={depositorCode}>
-      {depositors[depositorCode]} ({depositorCode})
+      {depositors[depositorCode]}
+      {depositorCode !== "none" ? `(${depositorCode})` : ""}
     </option>
   {/each}
 </select>

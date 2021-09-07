@@ -70,7 +70,7 @@ This components recursively draws an object in a json viewer format.
           <IoMdArrowDropright />
         </span>
       {/if}
-      <span class="key">{key}:</span>
+      <code class="key">{key}:</code>
     </span>
   {/if}
   {#if open}
@@ -94,7 +94,7 @@ This components recursively draws an object in a json viewer format.
         {/each}
       {/if}
     {:else}
-      <span class={typeof value}>&nbsp;{value}</span>
+      <code class={typeof value}>&nbsp;{value}</code>
     {/if}
   {/if}
 </div>

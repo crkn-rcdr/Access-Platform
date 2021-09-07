@@ -29,7 +29,7 @@ A container that enables the dragging and dropping of it's childen elements.
 -->
 <script lang="ts">
   import { createEventDispatcher, onMount } from "svelte";
-  import { moveArrayElement } from "$lib/arrayUtil";
+  import { moveArrayElement } from "$lib/utils/arrayUtil";
 
   /**
    * @type {string} A list of anything that has the exact same number of elements as the number of children directly under the DynamicDragAndDropList component. It is updated as the elements under DynamicDragAndDropList are dragged around, meaning that if child element of DynamicDragAndDropList at position 'i' is drragged and dropped to position 'j', the draglist item at position 'i' is also moved to position 'j'.
