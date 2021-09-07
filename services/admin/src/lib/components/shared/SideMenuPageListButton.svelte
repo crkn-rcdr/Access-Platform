@@ -25,8 +25,11 @@ None
 
 <style>
   li {
-    padding: var(--perfect-fourth-7) var(--perfect-fourth-4);
+    padding: var(--perfect-fourth-8) var(--perfect-fourth-4);
     font-weight: 500;
+    color: var(--secondary);
+    margin-bottom: var(--margin-sm);
+    border-radius: var(--border-radius);
   }
   li:not(.active):hover {
     background: rgba(255, 255, 255, 0.45);
