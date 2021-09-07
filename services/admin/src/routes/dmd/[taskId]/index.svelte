@@ -18,7 +18,7 @@
           return {
             props: {
               error: {
-                message: "Descriptive metadata updating task not found",
+                message: "DMD task not found",
               },
             },
           };
