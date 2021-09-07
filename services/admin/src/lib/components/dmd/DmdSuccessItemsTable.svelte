@@ -103,8 +103,8 @@ This component displays the items in the dmd task throughout the various stages 
         {/if}
         <th>Id</th>
         <th>Label</th>
-        <th>Valid</th>
-        <th>Preview Metadata</th>
+        <th>Validity</th>
+        <th>Preview</th>
 
         {#if $dmdTasksStore[dmdTaskId].lookupState !== "ready" && $dmdTasksStore[dmdTaskId].shouldUpdateInAccess}
           <th>Found in {accessPlatform.label}?</th>
@@ -124,10 +124,7 @@ This component displays the items in the dmd task throughout the various stages 
     <tbody>
       {#each itemsToShow as item, i}
         {#if typeof item === "object"}
-          <tr
-            class:not-success={!item.parsed}
-            class:warning={item.parsed && item.message?.length}
-          >
+          <tr>
             {#if $dmdTasksStore[dmdTaskId].lookupState === "loaded" && ($dmdTasksStore[dmdTaskId].shouldUpdateInAccess || $dmdTasksStore[dmdTaskId].shouldUpdateInPreservation)}
               <td>
                 <input
@@ -144,15 +141,24 @@ This component displays the items in the dmd task throughout the various stages 
             <td>{item.label}</td>
             <td class="auto-align auto-align__a-center">
               {#if item.message?.length}
-                <span class="icon" data-tooltip={item["message"]}>
+                <span
+                  class="icon"
+                  class:not-success={!item.parsed}
+                  class:warning={item.parsed && item.message?.length}
+                  data-tooltip={item["message"]}
+                >
                   {#if item.parsed}
                     <TiWarning />
                   {:else}
                     <TiDelete />
                   {/if}
                 </span>
-                {item.parsed ? "Yes" : "No"}
               {/if}
+              {item.parsed && item.message?.length === 0
+                ? "Valid"
+                : item.parsed
+                ? "Warning"
+                : "Invalid"}
             </td>
             <td>
               <button
@@ -253,15 +259,15 @@ This component displays the items in the dmd task throughout the various stages 
     background-color: var(--danger-light);
     /*color: var(--danger);*/
   }
-  .not-success .icon {
+  .not-success.icon {
     color: var(--danger);
+    background-color: transparent;
   }
   .warning {
     background-color: var(--warn-light);
-    /*color: var(--warn);*/
   }
-
-  .warning .icon {
+  .warning.icon {
     color: var(--warn);
+    background-color: transparent;
   }
 </style>

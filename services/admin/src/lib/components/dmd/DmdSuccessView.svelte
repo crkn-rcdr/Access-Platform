@@ -46,6 +46,8 @@ This component shows the view for a dmd task that had its metadata successfully 
 
   let prevPrefix = "oocihm";
 
+  let showAllInvalidError: boolean = false;
+
   function resetView() {
     if (accessPlatform.prefix !== prevPrefix) {
       $dmdTasksStore[dmdTask.id].lookupState = "ready";
@@ -57,7 +59,9 @@ This component shows the view for a dmd task that had its metadata successfully 
   function inititalizeDmdTaskState() {
     if (!(dmdTasksStore?.getTask(dmdTask.id)?.itemStates?.size > 0)) {
       let items: DmdItemStates = new Map();
+      let allInvalidCheck = true;
       for (const item of dmdTask.items) {
+        allInvalidCheck = allInvalidCheck && !item.parsed;
         items[item.id] = <DmdItemState>{
           slug: item.id,
           noid: null,
@@ -78,6 +82,7 @@ This component shows the view for a dmd task that had its metadata successfully 
         shouldUpdateInAccess: true,
         updatedProgressPercentage: 0,
       });
+      showAllInvalidError = allInvalidCheck;
     }
   }
 
@@ -109,25 +114,40 @@ This component shows the view for a dmd task that had its metadata successfully 
       status="fail"
     />
 
-    <ScrollStepper
-      bind:activeStepIndex
-      displayPrevious={true}
-      enableAutoScrolling={false}
-    >
-      <ScrollStepperStep title="Select a prefix and look-up items">
-        <div slot="icon">1</div>
-        <DmdSuccessItemLookup dmdTaskId={dmdTask.id} bind:accessPlatform />
-      </ScrollStepperStep>
-      <ScrollStepperStep
-        title={`Update descriptive metadata for items found`}
-        isLastStep={true}
+    {#if !showAllInvalidError}
+      <ScrollStepper
+        bind:activeStepIndex
+        displayPrevious={true}
+        enableAutoScrolling={false}
       >
-        <div slot="icon">2</div>
-        {#if $dmdTasksStore[dmdTask.id].lookupState !== "loading"}
-          <DmdSuccessItemUpdater dmdTaskId={dmdTask.id} bind:accessPlatform />
-        {/if}
-      </ScrollStepperStep>
-    </ScrollStepper>
+        <ScrollStepperStep title="Select a prefix and look-up items">
+          <div slot="icon">1</div>
+          <DmdSuccessItemLookup dmdTaskId={dmdTask.id} bind:accessPlatform />
+        </ScrollStepperStep>
+        <ScrollStepperStep
+          title={`Update descriptive metadata for items found`}
+          isLastStep={true}
+        >
+          <div slot="icon">2</div>
+          {#if $dmdTasksStore[dmdTask.id].lookupState !== "loading"}
+            <DmdSuccessItemUpdater dmdTaskId={dmdTask.id} bind:accessPlatform />
+          {/if}
+        </ScrollStepperStep>
+      </ScrollStepper>
+    {:else}
+      <NotificationBar
+        status="fail"
+        message={`Every item's metadata is invalid. To get an idea of what went wrong for each item, press their preview button. You can use this information to make changes to ${
+          dmdTask?.fileName?.length ? dmdTask?.fileName : "the file"
+        }, then try again by uploading the corrected file.`}
+      />
+      <br />
+      <a href="/dmd/new" class="dmd-task-try-again">
+        <button class="danger">Try Again</button>
+      </a>
+      <br />
+      <br />
+    {/if}
   </div>
 
   <div class="metadata-table">
