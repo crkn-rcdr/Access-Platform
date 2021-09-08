@@ -25,7 +25,7 @@ Allows the user to modify the member list for a collection.
   import { getStores } from "$app/stores";
   import AutomaticResizeNumberInput from "$lib/components/shared/AutomaticResizeNumberInput.svelte";
   import DynamicDragAndDropList from "$lib/components/shared/DynamicDragAndDropList.svelte";
-  import { moveArrayElement } from "$lib/arrayUtil";
+  import { moveArrayElement } from "$lib/utils/arrayUtil";
   import TiArrowBack from "svelte-icons/ti/TiArrowBack.svelte";
   import TiTrash from "svelte-icons/ti/TiTrash.svelte";
   import type { ObjectList } from "@crkn-rcdr/access-data";
@@ -145,7 +145,7 @@ Allows the user to modify the member list for a collection.
 </script>
 
 <svelte:window on:keydown={handleKeydown} />
-{#if indexModel.length && collection}
+{#if indexModel && collection}
   <div class="auto-align auto-align__column">
     <CollectionMembersAddition
       bind:destinationMember={collection}

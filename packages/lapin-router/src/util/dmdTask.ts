@@ -13,6 +13,7 @@ export const NewInput = z.object({
   user: User,
   format: z.enum(DMDFORMATS),
   file: z.string(), // any othervalidation needed?
+  fileName: z.string(), // any othervalidation needed?
 });
 
 export const FetchInput = z.object({

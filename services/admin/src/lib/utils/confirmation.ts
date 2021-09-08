@@ -31,7 +31,7 @@ async function showConfirmation(call, successMsg, failMsg) {
     const notification = new NotificationBar({
       target: document.body,
       props: {
-        message: res ? successMsg : failMsg,
+        message: res["success"] ? successMsg : failMsg,
         detail: res["details"],
         status: res["success"] ? "success" : "fail",
         expandable: true,
