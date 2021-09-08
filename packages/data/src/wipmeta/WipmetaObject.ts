@@ -64,7 +64,7 @@ export const WipmetaObject = z.object({
   classify: Classify.optional(),
   repos: z.array(z.string()).optional() /* Todo: enum*/,
   reposManifestDate: Timestamp.optional(),
-  METS: z.array(MetsItem),
+  METS: z.array(MetsItem).optional(),
   METSManifestDate: Timestamp.optional(),
   METSDate: Timestamp.optional(),
 });

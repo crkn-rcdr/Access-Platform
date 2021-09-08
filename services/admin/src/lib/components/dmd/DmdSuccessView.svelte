@@ -110,9 +110,11 @@ This component shows the view for a dmd task that had its metadata successfully 
     {/if}
     <br />
     <NotificationBar
-      message={`File parsing ${
-        dmdTask.process.succeeded ? "warning" : "error"
-      }: ${dmdTask.process.message}`}
+      message={dmdTask.process.message?.length
+        ? `File parsing ${dmdTask.process.succeeded ? "warning" : "error"}: ${
+            dmdTask.process.message
+          }`
+        : ""}
       status={dmdTask.process.succeeded ? "warn" : "fail"}
     />
     <br />

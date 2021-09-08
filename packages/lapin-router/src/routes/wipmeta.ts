@@ -29,13 +29,16 @@ export const wipmetaRouter = createRouter()
       try {
         const itemXmlFile = await getDmdItemXML(ctx, input.task, input.index);
 
+        const file = itemXmlFile.toString("base64");
+        console.log(file);
         const response = await ctx.couch.wipmeta.store({
           id: input.slug,
-          file: itemXmlFile.toString("base64"),
+          file,
         });
-
+        console.log(response);
         return response;
       } catch (e) {
+        console.log(e?.message);
         throw httpErrorToTRPC(e);
       }
     },

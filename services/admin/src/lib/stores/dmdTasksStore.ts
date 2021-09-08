@@ -96,25 +96,23 @@ async function lookupTaskItemsInPreservation(
   prefix: string,
   dmdTaskId: string,
   items: DmdItemStates,
-  slugs: string[],
   lapin: TRPCClient<LapinRouter>
 ) {
-  try {
-    for (let slug of slugs) {
-      const response = await lapin.query(
-        "wipmeta.get",
-        prefix !== "none" ? `${prefix}.${slug}` : slug
-      );
+  const slugs = Object.keys(items);
+  for (const slug of slugs) {
+    try {
+      const id = prefix !== "none" ? `${prefix}.${slug}` : slug;
+      const response = await lapin.query("wipmeta.get", id);
       if (response) {
         items[slug].foundInPreservation = "Yes";
       } else {
         items[slug].foundInPreservation = "No";
       }
       updateTask(dmdTaskId, "itemStates", items);
+    } catch (e) {
+      console.log(e?.message);
+      items[slug].foundInPreservation = "No";
     }
-  } catch (e) {
-    console.log(e?.message);
-    for (let slug of slugs) items[slug].foundInPreservation = "No";
   }
 }
 
@@ -165,7 +163,8 @@ async function updateItemsInPreservation(
   dmdTaskId: string,
   items: DmdItemStates,
   lapin: TRPCClient<LapinRouter>,
-  numItems: number
+  numItems: number,
+  isUpdatingInAccessToo: boolean
 ) {
   let index = 0;
   for (const itemSlug in items) {
@@ -193,7 +192,9 @@ async function updateItemsInPreservation(
       updateTask(dmdTaskId, "itemStates", items);
     }
 
-    const percentage = Math.round(((index + 1) / numItems) * 100);
+    const percentage = Math.round(
+      (((index + 1) * (isUpdatingInAccessToo ? 2 : 1)) / numItems) * 100
+    );
 
     updateTask(dmdTaskId, "updatedProgressPercentage", percentage);
 
@@ -224,6 +225,7 @@ export const dmdTasksStore = {
       items,
       (dmdTaskId, itemSlug, items) => {
         items[itemSlug].foundInAccess = "Searching...";
+        items[itemSlug].foundInPreservation = "Searching...";
         updateTask(dmdTaskId, "itemStates", items);
       }
     );
@@ -243,7 +245,7 @@ export const dmdTasksStore = {
       index++;
     }
 
-    await lookupTaskItemsInPreservation(prefix, dmdTaskId, items, slugs, lapin);
+    await lookupTaskItemsInPreservation(prefix, dmdTaskId, items, lapin);
 
     updateTask(dmdTaskId, "itemStates", items);
     updateTask(dmdTaskId, "lookupState", "loaded");
@@ -264,7 +266,10 @@ export const dmdTasksStore = {
       dmdTaskId,
       items,
       (dmdTaskId, itemSlug, items) => {
-        items[itemSlug].updatedInAccess = "Updating...";
+        if (dmdTask.shouldUpdateInAccess)
+          items[itemSlug].updatedInAccess = "Updating...";
+        if (dmdTask.shouldUpdateInPreservation)
+          items[itemSlug].updatedInPreservation = "Updating...";
         updateTask(dmdTaskId, "itemStates", items);
       }
     );
@@ -288,7 +293,8 @@ export const dmdTasksStore = {
         dmdTaskId,
         items,
         lapin,
-        totalNumRequests
+        totalNumRequests,
+        dmdTask.shouldUpdateInAccess
       );
 
     updateTask(dmdTaskId, "itemStates", items);
@@ -311,5 +317,21 @@ export const dmdTasksStore = {
       areAllItemsSelected = areAllItemsSelected && items[itemId].shouldUpdate;
     }
     return areAllItemsSelected;
+  },
+  toggleDmdTaskItemAccessState: (dmdTaskId: string) => {
+    let items = getTask(dmdTaskId).itemStates;
+    for (const itemSlug in items) {
+      items[itemSlug].foundInAccess = "No";
+      items[itemSlug].updatedInAccess = "No";
+    }
+    updateTask(dmdTaskId, "itemStates", items);
+  },
+  toggleDmdTaskItemPreservationState: (dmdTaskId: string) => {
+    let items = getTask(dmdTaskId).itemStates;
+    for (const itemSlug in items) {
+      items[itemSlug].foundInPreservation = "No";
+      items[itemSlug].updatedInPreservation = "No";
+    }
+    updateTask(dmdTaskId, "itemStates", items);
   },
 };
