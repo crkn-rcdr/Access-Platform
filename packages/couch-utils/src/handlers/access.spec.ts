@@ -1,4 +1,4 @@
-import { Collection, Manifest, Noid, Timestamp } from "@crkn-rcdr/access-data";
+import { Collection, Manifest, Noid, Slug, Timestamp } from "@crkn-rcdr/access-data";
 import anyTest, { TestInterface } from "ava";
 import { BaseContext, getTestContext } from "../test.js";
 import { AccessHandler } from "./access.js";
@@ -159,6 +159,10 @@ test.serial("Can unassign a slug", async (t) => {
 
   t.is(manifest.slug, undefined);
 });
+
+/* test.serial("check validations to add member", async (t) => {
+  await t.context.access.checkAdditions({ id: COLLECTION, slug: Slug })
+}); */
 
 test.serial("Collections can be created", async (t) => {
   const noidError = await t.throwsAsync(

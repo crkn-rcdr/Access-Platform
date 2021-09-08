@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { boolean, string, z } from "zod";
 import createHttpError from "http-errors";
 import { ServerScope } from "nano";
 
@@ -27,6 +27,22 @@ const AccessDatabaseObject = z.union([Alias, Manifest, Collection]);
 type AccessDatabaseObject = z.infer<typeof AccessDatabaseObject>;
 
 type SlugResolution = { id: Noid; type: "manifest" | "collection" | "alias" };
+type AddMemberError =
+  | "not-found" // the slug didn't resolve
+  | "is-self" // the slug resolved to the collection being edited
+  | "already-member"; // the slug resolved to an existing member of the collection
+
+type AddMemberRecord =
+  | {
+      slug: Slug;
+      canAdd: true | false;
+      reason: AddMemberError;
+    }
+  | {
+      slug: Slug;
+      canAdd: true | false;
+      id: Noid;
+    };
 
 /**
  * Interact with Access Objects in their database.
@@ -267,5 +283,52 @@ export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
     });
     const manifest = await this.get(args.id);
     return Manifest.parse(manifest);
+  }
+  async checkAdditions(
+    id: Noid,
+    args: { slug: Slug[] }
+  ): Promise<AddMemberRecord> {
+    console.log("Entry Into checkAdditions", id);
+
+    const data = EditableCollection.parse(id);
+
+    let foundSlug;
+    const response: AddMemberRecord = {
+      id: id,
+      slug: "",
+      canAdd: true || false,
+    };
+    const negResponse: AddMemberRecord = {
+      slug: "",
+      canAdd: true || false,
+      reason: "not-found" || "is-self" || "already-member",
+    };
+
+    for await (const slugs of args.slug) {
+      const resolution = await this.findUnique("slug", slugs, [
+        "id",
+        "type",
+      ] as const);
+
+      foundSlug = resolution.found ? resolution.result : null;
+
+      const currentMembers = Collection.parse(await this.get(id)).members;
+      console.log("Members", currentMembers);
+      for (let members of currentMembers) {
+        if (members.id === foundSlug?.id) {
+          negResponse.canAdd = false;
+          negResponse.reason = "already-member";
+        }
+      }
+
+      if (!resolution.found) {
+        negResponse.canAdd = false;
+        negResponse.reason = "not-found";
+      } else if (foundSlug?.id === data.slug) {
+        negResponse.canAdd = false;
+        negResponse.reason = "is-self";
+      }
+    }
+    return negResponse;
   }
 }

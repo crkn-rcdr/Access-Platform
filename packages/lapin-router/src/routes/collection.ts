@@ -4,25 +4,24 @@ import {
   NewCollection,
   Noid,
   User,
+  Slug,
 } from "@crkn-rcdr/access-data";
 import { createRouter, httpErrorToTRPC } from "../router.js";
-
 
 const EditInput = z.object({
   id: Noid,
   user: User,
   data: EditableCollection,
 });
-const CheckAdditions = z.object({
-  id: Noid,
-  slug: z.string(),
-  canAdd: z.boolean(),
 
 const NewInput = z.object({
   user: User,
   data: NewCollection,
 });
-
+//const SlugArray = z.array(Slug);
+const checkAdditions = z.object({
+  slug: z.array(Slug),
+});
 export const collectionRouter = createRouter()
   .mutation("edit", {
     input: EditInput.parse,
@@ -46,6 +45,17 @@ export const collectionRouter = createRouter()
         return id;
       } catch (e) {
         console.log(e?.message);
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .query("checkAdditions", {
+    input: checkAdditions.parse,
+    async resolve({ input, ctx }): Promise<void> {
+      try {
+        const resolutions = ctx.couch.access.checkAdditions(input);
+        console.log("resolution", resolutions);
+      } catch (e) {
         throw httpErrorToTRPC(e);
       }
     },
