@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { CouchAttachmentRecord } from "../util/CouchAttachmentRecord.js";
-import { Timestamp } from "../util/Timestamp.js";
+import { Timestamp, StringTimestamp } from "../util/Timestamp.js";
 
 /**
  * TODO: document what each object is, do stricter checks, determine what's optional or not.
@@ -46,18 +46,26 @@ const Classify = z.object({
  */
 export const WipmetaObject = z.object({
   /**
-   * Unique ID.
+   * Unique ID. This matches the prefix.slug format
    */
   id: z.string(),
+
+  /**
+   * A string label that describes the object in more detail
+   */
+  label: z.string().optional(),
+
+  /**
+   * A string timestamp used to denote the last time the object was updated.
+   */
+  updated: StringTimestamp.optional(),
 
   /**
    * CouchDB `_attachments` object.
    */
   attachments: CouchAttachmentRecord.optional(),
-
+  // Unimportant fields
   created: Timestamp.optional(),
-  label: z.string().optional(),
-  updated: Timestamp.optional(),
   processReq: z.array(z.any()).optional(), // todo: what does this look like
   filesystem: FileSystem.optional(),
   processHistory: z.array(ProcessItem).optional(),
