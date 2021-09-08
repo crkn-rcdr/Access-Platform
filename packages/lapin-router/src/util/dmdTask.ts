@@ -30,13 +30,6 @@ export const StoreAccessInput = z.object({
   user: User,
 });
 
-export const StorePreservationInput = z.object({
-  task: z.string(), // dmdtask uuid
-  index: z.number(),
-  slug: Slug,
-  user: User,
-});
-
 // Not sure if I should move these somewhere else
 export const lookupDmdTaskForStorage = async function (
   ctx: LapinContext,
@@ -87,6 +80,15 @@ export const getAccessObjectForDmdTaskItem = async function (
   else throw "Could not find access object for dmd task item.";
 };
 
+export const getWipmetaObjectForDmdTaskItem = async function (
+  ctx: LapinContext,
+  id: string
+) {
+  const wipmetaObjectLookup = await ctx.couch.wipmeta.getSafe(id);
+  if (wipmetaObjectLookup.found) return wipmetaObjectLookup.doc;
+  else throw "Could not find wipmeta (preservation) object for dmd task item.";
+};
+
 export const getDmdTaskItemXMLFileName = function (
   noid: Noid,
   output: "dc" | "marc" | "issueinfo" | undefined
@@ -94,7 +96,7 @@ export const getDmdTaskItemXMLFileName = function (
   if (output === "marc") return noid + "/dmdMARC.xml";
   else if (output === "dc") return noid + "/dmdDC.xml";
   else if (output === "issueinfo") return noid + "/dmdISSUEINFO.xml";
-  else throw "Could not assemble metdata XML file name for dmd task item.";
+  else throw "Could not assemble metadata XML file name for dmd task item.";
 };
 
 export const storeDmdTaskItemXmlFile = async function (
@@ -108,7 +110,7 @@ export const storeDmdTaskItemXmlFile = async function (
   );
 
   if (storeResult.code === 201) return true;
-  else throw "Could notstore dmd task item xml file in swift.";
+  else throw "Could not store dmd task item xml file in swift.";
 };
 
 export const updateLabelForDmdTaskItemAccessObject = async function (
