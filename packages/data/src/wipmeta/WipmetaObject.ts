@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { CouchAttachmentRecord } from "../util/CouchAttachmentRecord.js";
-import { Timestamp, StringTimestamp } from "../util/Timestamp.js";
+import { WipmetaTimestamp } from "./WipmetaTimestamp.js";
 
 /**
  * TODO: document what each object is, do stricter checks, determine what's optional or not.
@@ -13,28 +13,28 @@ const MetsItem = z.object({
 
 const ProcessItemReq = z.object({
   request: z.string().optional(), // todo - enum
-  date: Timestamp.optional(),
+  date: WipmetaTimestamp.optional(),
   processhost: z.string().optional(), //todo - regex
-  processdate: Timestamp.optional(),
+  processdate: WipmetaTimestamp.optional(),
 });
 
 const ProcessItem = z.object({
-  "manifest date": Timestamp.optional(),
+  "manifest date": WipmetaTimestamp.optional(),
   message: z.string().optional(),
-  reqdate: Timestamp.optional(),
+  reqdate: WipmetaTimestamp.optional(),
   request: z.string().optional(), // todo - enum
   host: z.string().optional(), //todo - regex
   status: z.boolean().optional(),
   "manifest md5": z.string().optional(), // todo, md5
-  date: Timestamp.optional(),
+  date: WipmetaTimestamp.optional(),
   req: z.array(ProcessItemReq).optional(), // todo
 });
 
 const FileSystem = z.object({
   configid: z.string().optional(),
   identifier: z.string().optional(),
-  foundDate: Timestamp.optional(),
-  moveDate: Timestamp.optional(),
+  foundDate: WipmetaTimestamp.optional(),
+  moveDate: WipmetaTimestamp.optional(),
 });
 
 const Classify = z.object({
@@ -56,25 +56,25 @@ export const WipmetaObject = z.object({
   label: z.string().optional(),
 
   /**
-   * A string timestamp used to denote the last time the object was updated.
+   * A string WipmetaTimestamp used to denote the last time the object was updated.
    */
-  updated: StringTimestamp.optional(),
+  updated: WipmetaTimestamp.optional(),
 
   /**
    * CouchDB `_attachments` object.
    */
   attachments: CouchAttachmentRecord.optional(),
   // Unimportant fields
-  created: Timestamp.optional(),
+  created: WipmetaTimestamp.optional(),
   processReq: z.array(z.any()).optional(), // todo: what does this look like
   filesystem: FileSystem.optional(),
   processHistory: z.array(ProcessItem).optional(),
   classify: Classify.optional(),
   repos: z.array(z.string()).optional() /* Todo: enum*/,
-  reposManifestDate: Timestamp.optional(),
+  reposManifestDate: WipmetaTimestamp.optional(),
   METS: z.array(MetsItem).optional(),
-  METSManifestDate: Timestamp.optional(),
-  METSDate: Timestamp.optional(),
+  METSManifestDate: WipmetaTimestamp.optional(),
+  METSDate: WipmetaTimestamp.optional(),
 });
 
 export type WipmetaObject = z.infer<typeof WipmetaObject>;

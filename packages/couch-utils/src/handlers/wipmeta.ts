@@ -17,10 +17,9 @@ export class WipmetaHandler extends DatabaseHandler<WipmetaObject> {
    * Stores the metadata results form a DMDTask item.
    * Accepts the metadata file as a base64-encoded string.
    * @returns The Wipmeta object.
-   */
+  
   async store(args: {
     id: string;
-    /** The file as a base64-encoded string */
     file: string;
   }) {
     const { file, id } = args;
@@ -38,7 +37,7 @@ export class WipmetaHandler extends DatabaseHandler<WipmetaObject> {
       },
     });
     return wipmeta;
-  }
+  } */
 
   /**
    * Updates the label of a Wipmeta object.

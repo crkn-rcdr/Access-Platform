@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { createRouter, httpErrorToTRPC } from "../router.js";
-import { TRPCError } from "@trpc/server";
 import {
   getDmdItemXML,
   getDmdTaskItemByIndex,
@@ -10,42 +9,46 @@ import {
 export const StorePreservationInput = z.object({
   task: z.string(), // dmdtask uuid
   index: z.number(),
-  //slug: Slug,
-  slug: z.string(), // = prefix.slug
+  id: z.string(), // = prefix.slug
 });
 
 export const wipmetaRouter = createRouter()
-  .query("get", {
+  .query("find", {
     input: z.string(), //Slug.parse,
     async resolve({ input: id, ctx }) {
-      const response = await ctx.couch.wipmeta.getSafe(id);
-      if (response.found) return response.doc;
-      throw new TRPCError({
-        code: "PATH_NOT_FOUND",
-        message: `No object with id ${id} found.`,
-      });
+      try {
+        const response = await ctx.couch.wipmeta.list({
+          key: id,
+          limit: 1,
+        });
+        return response.rows.length === 1;
+      } catch (e) {
+        console.log(e?.message);
+        throw httpErrorToTRPC(e);
+      }
     },
   })
   .mutation("storePreservation", {
     input: StorePreservationInput.parse,
     async resolve({ input, ctx }) {
       try {
-        const itemXmlFile = await getDmdItemXML(ctx, input.task, input.index);
+        const { id, index, task } = input;
+        const itemXmlFile = await getDmdItemXML(ctx, task, index);
 
         const file = itemXmlFile.toString("base64");
 
         const response = await ctx.couch.wipmeta.uploadBase64Attachment({
-          document: input.slug,
+          document: id,
           attachmentName: "dmd.xml",
           attachment: file,
           contentType: "application/octet-stream",
         });
 
-        const dmdTask = await lookupDmdTaskForStorage(ctx, input.task);
-        const { label } = await getDmdTaskItemByIndex(dmdTask, input.index);
+        const dmdTask = await lookupDmdTaskForStorage(ctx, task);
+        const { label } = await getDmdTaskItemByIndex(dmdTask, index);
         if (typeof label === "string") {
           await ctx.couch.wipmeta.updateLabel({
-            id: input.slug,
+            id,
             label,
           });
         }

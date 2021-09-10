@@ -63,7 +63,7 @@ none
       const reader = new FileReader();
       reader.onerror = reject;
       reader.onload = () => {
-        resolve(reader.result.toString());
+        resolve(reader.result.toString().split(",")[1]); // This makes sure we get the context of the file without the mime type. The comma will cause an error in the couchdb.
       };
       reader.readAsDataURL(blob);
     });
@@ -75,11 +75,12 @@ none
   async function handleFileSelected(event: any) {
     const file: File = event.detail;
     try {
-      b64EncodedMetadataFileText = (await convertBlobToBase64(file)).replace(
+      b64EncodedMetadataFileText = await convertBlobToBase64(file);
+      /*.replace(
         //data:application/octet-stream;base64,
         /^data:.*;base64,/g,
         ""
-      );
+      );*/
       fileName = file.name;
     } catch (e) {
       console.log(e?.message);

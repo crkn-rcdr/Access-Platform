@@ -102,7 +102,7 @@ async function lookupTaskItemsInPreservation(
   for (const slug of slugs) {
     try {
       const id = prefix !== "none" ? `${prefix}.${slug}` : slug;
-      const response = await lapin.query("wipmeta.get", id);
+      const response = await lapin.query("wipmeta.find", id);
       if (response) {
         items[slug].foundInPreservation = "Yes";
       } else {
@@ -177,7 +177,7 @@ async function updateItemsInPreservation(
         await lapin.mutation("wipmeta.storePreservation", {
           task: dmdTaskId,
           index,
-          slug: items[itemSlug]["slug"],
+          id: items[itemSlug]["slug"],
         });
         items[itemSlug].updatedInPreservation = "Yes";
         updateTask(dmdTaskId, "itemStates", items);
