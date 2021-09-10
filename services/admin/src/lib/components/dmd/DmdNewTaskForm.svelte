@@ -53,7 +53,7 @@ none
   let errorText: string = "";
 
   /**
-   * TODO: Probably want to move this to a helper module, or stright into the file select component itself.
+   * TODO: Probably want to move this to a helper module, or straight into the file select component itself.
    * This method takes a file and returns a promise with the file contents as a string.
    * @param blob
    * @returns Promise<string>
@@ -76,7 +76,8 @@ none
     const file: File = event.detail;
     try {
       b64EncodedMetadataFileText = (await convertBlobToBase64(file)).replace(
-        /^data:\w+\/\w+;base64,/g,
+        //data:application/octet-stream;base64,
+        /^data:.*;base64,/g,
         ""
       );
       fileName = file.name;

@@ -2,7 +2,11 @@
 import { z } from "zod";
 import { createRouter, httpErrorToTRPC } from "../router.js";
 import { TRPCError } from "@trpc/server";
-import { getDmdItemXML } from "../util/dmdTask.js";
+import {
+  getDmdItemXML,
+  getDmdTaskItemByIndex,
+  lookupDmdTaskForStorage,
+} from "../util/dmdTask.js";
 
 export const StorePreservationInput = z.object({
   task: z.string(), // dmdtask uuid
@@ -31,11 +35,28 @@ export const wipmetaRouter = createRouter()
 
         const file = itemXmlFile.toString("base64");
         console.log(file);
-        const response = await ctx.couch.wipmeta.store({
+
+        const response = await ctx.couch.wipmeta.uploadBase64Attachment({
+          document: input.slug,
+          attachmentName: "dmd.xml",
+          attachment: file,
+          contentType: "application/octet-stream",
+        });
+        /*.store({
           id: input.slug,
           file,
-        });
-        console.log(response);
+        });*/
+
+        const dmdTask = await lookupDmdTaskForStorage(ctx, input.task);
+        const { label } = await getDmdTaskItemByIndex(dmdTask, input.index);
+
+        if (typeof label === "string") {
+          await ctx.couch.wipmeta.updateLabel({
+            id: input.slug,
+            label,
+          });
+        }
+
         return response;
       } catch (e) {
         console.log(e?.message);

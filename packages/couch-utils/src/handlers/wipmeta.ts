@@ -39,4 +39,25 @@ export class WipmetaHandler extends DatabaseHandler<WipmetaObject> {
     });
     return wipmeta;
   }
+
+  /**
+   * Updates the label of a Wipmeta object.
+   * @returns The Wipmeta object.
+   */
+  async updateLabel(args: {
+    id: string;
+    /** The file as a base64-encoded string */
+    label: string;
+  }) {
+    const { id, label } = args;
+    const wipmeta = await this.update({
+      ddoc: "access",
+      name: "updateLabel",
+      docId: id,
+      body: {
+        label,
+      },
+    });
+    return wipmeta;
+  }
 }
