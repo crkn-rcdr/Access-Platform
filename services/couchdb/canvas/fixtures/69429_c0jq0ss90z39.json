@@ -7,7 +7,7 @@
   "ocrType": "txtmap",
   "master": {
     "size": 62825,
-    "extension": "tif"
+    "extension": "tif",
     "width": 2402,
     "mime": "image/tiff",
     "height": 3776
