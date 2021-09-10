@@ -76,7 +76,7 @@ none
     const file: File = event.detail;
     try {
       b64EncodedMetadataFileText = (await convertBlobToBase64(file)).replace(
-        "data:application/octet-stream;base64,",
+        /^data:\w+\/\w+;base64,/g,
         ""
       );
       fileName = file.name;
