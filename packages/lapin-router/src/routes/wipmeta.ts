@@ -1,4 +1,3 @@
-//import { Slug } from "@crkn-rcdr/access-data";
 import { z } from "zod";
 import { createRouter, httpErrorToTRPC } from "../router.js";
 import { TRPCError } from "@trpc/server";
@@ -34,7 +33,6 @@ export const wipmetaRouter = createRouter()
         const itemXmlFile = await getDmdItemXML(ctx, input.task, input.index);
 
         const file = itemXmlFile.toString("base64");
-        console.log(file);
 
         const response = await ctx.couch.wipmeta.uploadBase64Attachment({
           document: input.slug,
@@ -42,14 +40,9 @@ export const wipmetaRouter = createRouter()
           attachment: file,
           contentType: "application/octet-stream",
         });
-        /*.store({
-          id: input.slug,
-          file,
-        });*/
 
         const dmdTask = await lookupDmdTaskForStorage(ctx, input.task);
         const { label } = await getDmdTaskItemByIndex(dmdTask, input.index);
-
         if (typeof label === "string") {
           await ctx.couch.wipmeta.updateLabel({
             id: input.slug,

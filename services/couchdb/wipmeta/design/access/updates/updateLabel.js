@@ -3,7 +3,6 @@ module.exports = function (doc, req) {
     successReturn,
     errorReturn,
     extractJSONFromBody,
-    updateObject,
   } = require("views/lib/prelude");
 
   if (!doc) {
@@ -16,8 +15,6 @@ module.exports = function (doc, req) {
   }
 
   if ("label" in input) doc.label = input.label;
-
-  updateObject(doc);
 
   return successReturn(doc, `Label updated for ${doc.id}`);
 };
