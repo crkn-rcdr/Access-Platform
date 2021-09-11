@@ -221,12 +221,12 @@ This component allows the user to search through other manifests and select canv
     {#if selectedManifest}
       {#if selectedManifest["canvases"] && selectedManifest["canvases"].length}
         <div class="results full-page">
+          <h6
+            class="auto-align auto-align__a-center auto-align__j-center title"
+          >
+            {destinationManifest.slug}
+          </h6>
           <div class="canvas-list-item-viewer">
-            <h6
-              class="auto-align auto-align__a-center auto-align__j-center title"
-            >
-              {destinationManifest.slug}
-            </h6>
             <CanvasesSelector
               bind:selectedCanvases
               bind:multiple
@@ -242,7 +242,6 @@ This component allows the user to search through other manifests and select canv
                 showSequenceControl: false,
                 referenceStripScroll: "vertical",
                 autoHideControls: false,
-                homeFillsViewer: true,
               }}
             />
           </div>
@@ -322,6 +321,7 @@ This component allows the user to search through other manifests and select canv
     height: 100%;
     width: 100%;
     position: relative;
+    background: var(--darkest-bg);
   }
 
   .title {
