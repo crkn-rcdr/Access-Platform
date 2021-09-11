@@ -440,6 +440,16 @@ button.ghost.light,
   color: rgba(255, 255, 255, 0.7) !important;
 }
 
+button.ghost.warn,
+.button.ghost.warn {
+  background-color: rgba(190, 140, 46, 0.2) !important;
+}
+
+button.ghost.danger,
+.button.ghost.danger {
+  background-color: rgba(146, 0, 0, 0.2) !important;
+}
+
 button.secondary,
 .button.secondary {
   background-color: var(--secondary);

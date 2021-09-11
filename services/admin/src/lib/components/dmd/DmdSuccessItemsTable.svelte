@@ -176,6 +176,8 @@ This component displays the items in the dmd task throughout the various stages 
             <td>
               <button
                 class="button ghost dark sm"
+                class:danger={!item.parsed}
+                class:warn={item.parsed && item.message?.length !== 0}
                 on:click={() => handlePreviewItemPressed(i, item)}
                 >Preview</button
               >
