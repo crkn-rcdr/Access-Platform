@@ -8,6 +8,7 @@ import { manifestRouter } from "./routes/manifest.js";
 import { slugRouter } from "./routes/slug.js";
 import { dmdTaskRouter } from "./routes/dmdTask.js";
 import { wipmetaRouter } from "./routes/wipmeta.js";
+import { dipstagingRouter } from "./routes/dipstaging.js";
 
 /**
  * Converts an HTTP Error (i.e. one with `status` as its 3-digit code) to
@@ -37,5 +38,6 @@ export const router = createRouter()
   .merge("collection.", collectionRouter)
   .merge("dmdTask.", dmdTaskRouter)
   .merge("wipmeta.", wipmetaRouter);
+  .merge("dipstaging", dipstagingRouter);
 
 export type LapinRouter = typeof router;
