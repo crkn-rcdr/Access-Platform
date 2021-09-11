@@ -45,6 +45,9 @@ none
    */
   let b64EncodedMetadataFileText: string;
 
+  /**
+   * @type {string } The name of the file being used to create the dmd task.
+   */
   let fileName: string = "";
 
   /**
@@ -76,11 +79,6 @@ none
     const file: File = event.detail;
     try {
       b64EncodedMetadataFileText = await convertBlobToBase64(file);
-      /*.replace(
-        //data:application/octet-stream;base64,
-        /^data:.*;base64,/g,
-        ""
-      );*/
       fileName = file.name;
     } catch (e) {
       console.log(e?.message);

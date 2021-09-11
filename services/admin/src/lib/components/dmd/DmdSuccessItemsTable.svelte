@@ -6,24 +6,16 @@ This component displays the items in the dmd task throughout the various stages 
 ### Properties
 |    |    |    |
 | -- | -- | -- |
+| dmdTaskId: string | required | The id of the dmd task. |
 | accessPlatform: AccessPlatform | required | The access platform the items are in. |
 | itemsToShow: ParseRecord[] | optional | The dmdtask items to be displayed. |
-| $dmdTasksStore[dmdTaskId].itemStates: (DmdLoadedParseRecord or DmdUpdatedParseRecord)[] | optional | The dmdtask items lookup and update results. Indexing exactly matches the itemsToShow |
-| showAccessLookupColumn: boolean | optional | If the access lookup column should be displayed of not. The displaying of the column depends on user selections in parent and sibling components. |
-| showPreservationLookupColumn: boolean | optional | If the preservation lookup column should be displayed of not. The displaying of the column depends on user selections in parent and sibling components. |
-| showAccessUpdateColumn: boolean | optional | If the access update column should be displayed of not. The displaying of the column depends on user selections in parent and sibling components. |
-| showPreservationUpdateColumn: boolean | optional | If the preservation update column should be displayed of not. The displaying of the column depends on user selections in parent and sibling components. |
 
 ### Usage
 ```
 <DmdItemsTable
-    bind:itemsToShow={dmdTask.items}
+    dmdTaskId={dmdTask.id}
     bind:accessPlatform
-    bind:$dmdTasksStore[dmdTaskId].itemStates
-    bind:showAccessLookupColumn
-    bind:showPreservationLookupColumn
-    bind:showAccessUpdateColumn
-    bind:showPreservationUpdateColumn
+    bind:itemsToShow={dmdTask.items}
   />
 ```
 *Note: `bind:` is required for changes to the parameters to be reflected in higher level components.*
@@ -56,11 +48,24 @@ This component displays the items in the dmd task throughout the various stages 
    */
   let openPreviewModal: boolean = false;
 
+  /**
+   *  @type { number | undefined } The index of the item being previewed, in the dmd tasks item array.
+   */
   let previewItemIndex: number | undefined = undefined;
 
+  /**
+   *  @type { boolean } A control for the select all items checkbox
+   */
   let shouldUpdateAllItems: boolean = true;
 
+  /**
+   *  @type { string } The contents of the notification displayed for the preview, if any.
+   */
   let previewNotificationMsg: string = "";
+
+  /**
+   *  @type { string } A control for the styling of the notification displayed for the preview, if any.
+   */
   let previewNotificationStatus: "warn" | "fail" = "warn";
 
   /**
@@ -75,11 +80,19 @@ This component displays the items in the dmd task throughout the various stages 
     previewNotificationStatus = item.parsed ? "warn" : "fail";
   }
 
+  /**
+   * Handles setting the selected for updating value for all items in the dmd task based on @var shouldUpdateAllItems.
+   * @returns void
+   */
   function toggleAllItemsSelected() {
     shouldUpdateAllItems = !shouldUpdateAllItems;
     dmdTasksStore.toggleAllItemsSelected(dmdTaskId, shouldUpdateAllItems);
   }
 
+  /**
+   * Sets @var shouldUpdateAllItems based on if all items are selected, when an item's checkbox is pressed.
+   * @returns void
+   */
   function checkIfAllItemsSelected(event) {
     if (event.target.checked) {
       shouldUpdateAllItems =
