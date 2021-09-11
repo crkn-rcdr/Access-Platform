@@ -224,7 +224,9 @@ This component allows the user to search through other manifests and select canv
           <h6
             class="auto-align auto-align__a-center auto-align__j-center title"
           >
-            {destinationManifest.slug}
+            {destinationManifest.slug}{destinationManifest.label?.none?.length
+              ? `: ${destinationManifest.label.none}`
+              : ""}
           </h6>
           <div class="canvas-list-item-viewer">
             <CanvasesSelector
