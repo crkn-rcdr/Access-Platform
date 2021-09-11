@@ -52,7 +52,7 @@ none
   onMount(() => {
     window.addEventListener("click", function (event) {
       const target = event.target as Node;
-      if (!dropdownButton.contains(target)) {
+      if (!dropdownButton?.contains(target)) {
         if (dropdownMenu?.classList.contains("show")) {
           dropdownMenu.classList.remove("show");
         }
