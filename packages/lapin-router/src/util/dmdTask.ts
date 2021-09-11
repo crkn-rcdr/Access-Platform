@@ -1,3 +1,9 @@
+/**
+ * @module dmdTasksStore
+ * @description
+ * This file contains utility methods that keeps the dmdTask router more readable. The store in access request has many steps which are isolated into separate methods below.
+ */
+
 import { z } from "zod";
 import {
   DMDFORMATS,
