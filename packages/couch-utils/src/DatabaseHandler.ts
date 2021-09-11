@@ -504,4 +504,29 @@ export class DatabaseHandler<T extends Document> {
       attachment: buffer,
     });
   }
+
+  /**
+   * Destroys an attachment to a CouchDB document.
+   * Throws if there is an error destorying the attachment, or if the document does not exist.
+   */
+  async destroyAttachment(args: {
+    /** Document id */
+    document: string;
+    /** Attachment name */
+    attachmentName: string;
+  }) {
+    const { document, attachmentName } = args;
+
+    try {
+      const documentObj = await this.db.get(document);
+      if (documentObj) {
+        await this.db.attachment.destroy(document, attachmentName);
+      }
+    } catch (e) {
+      const error = e as RequestError;
+      if (error.statusCode === 404)
+        throw createHttpError(404, `Document ${document} does not exist.`);
+      throw createHttpError(error.statusCode || 500, error.message);
+    }
+  }
 }
