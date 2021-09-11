@@ -28,6 +28,11 @@ none
   let dropdownWrapper: HTMLDivElement;
 
   /**
+   * @type {HTMLDivElement} This container element holds triggers the drawing of the menu
+   */
+  let dropdownButton: HTMLDivElement;
+
+  /**
    * @type {HTMLDivElement} This container element holds the drop down menu items
    */
   let dropdownMenu: HTMLDivElement;
@@ -46,11 +51,9 @@ none
    */
   onMount(() => {
     window.addEventListener("click", function (event) {
-      if (
-        dropdownWrapper !== event.target &&
-        !dropdownWrapper.contains(event.target as Node)
-      ) {
-        if (dropdownMenu.classList.contains("show")) {
+      const target = event.target as Node;
+      if (!dropdownButton.contains(target)) {
+        if (dropdownMenu?.classList.contains("show")) {
           dropdownMenu.classList.remove("show");
         }
       }
@@ -59,7 +62,11 @@ none
 </script>
 
 <div class="dropdown auto-align" bind:this={dropdownWrapper}>
-  <div on:click={handleDropdownButtonClick} class="dropbtn">
+  <div
+    bind:this={dropdownButton}
+    on:click={handleDropdownButtonClick}
+    class="dropbtn"
+  >
     <slot name="dropdown-button" />
   </div>
   <div
