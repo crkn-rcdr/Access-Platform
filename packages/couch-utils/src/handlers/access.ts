@@ -307,17 +307,28 @@ export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
       console.log("Members", currentMembers);
       for (let members of currentMembers) {
         if (members.id === foundSlug?.id) {
-          showMemberRecord.push(slugs, false, "already-member");
+          showMemberRecord.push({
+            slug: slugs,
+            canAdd: false,
+            reason: "already-member",
+          });
         }
       }
 
       if (!resolution.found) {
-        showMemberRecord.push(slugs, false, "not-found");
-       
+        showMemberRecord.push({
+          slug: slugs,
+          canAdd: false,
+          reason: "not-found",
+        });
       } else if (data.slug === slugs) {
-        showMemberRecord.push(slugs, false, "is-self");
+        showMemberRecord.push({
+          slug: slugs,
+          canAdd: false,
+          reason: "is-self",
+        });
       } else {
-        showMemberRecord.push(slugs, true, foundSlug?.id);
+        showMemberRecord.push({ slug: slugs, canAdd: true, id: foundSlug?.id });
       }
     }
     return showMemberRecord;
