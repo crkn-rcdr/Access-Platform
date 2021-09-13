@@ -3,13 +3,12 @@
    * @file
    * @description This is the main page for the app
    */
-  import { goto, prefetch } from "$app/navigation";
   import TypeAhead from "$lib/components/access-objects/TypeAhead.svelte";
   import { Noid } from "@crkn-rcdr/access-data";
-  import Loading from "$lib/components/shared/Loading.svelte";
-  import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
+  //import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
+  import PrefetchLoader from "$lib/components/shared/PrefetchLoader.svelte";
 
-  let prefetching = false;
+  let objectHref: string;
 
   /**
    * Routes to the object the user clicks from the TypeAhead component
@@ -18,20 +17,15 @@
    */
   async function slugSelected(event: CustomEvent<string>) {
     const noid = event.detail;
-
-    prefetching = true;
-    await prefetch(`/object/${noid}`);
-    prefetching = false;
-
     try {
-      if (Noid.parse(noid)) goto(`/object/${noid}`);
+      if (Noid.parse(noid)) objectHref = `/object/${noid}`;
     } catch (e) {
       console.log(e);
     }
   }
 </script>
 
-<div class="wrapper">
+<PrefetchLoader bind:href={objectHref}>
   <div class="notifications">
     <!--NotificationBar message="New fix pushed!" status="success" />
     <NotificationBar message="There is some error!" status="fail" />
@@ -40,35 +34,24 @@
       status="warn"
     /-->
   </div>
-  <div class="center">
-    {#if !prefetching}
-      <div class="title">
-        <img
-          class="logo"
-          src="/static/canadiana-pa-tag-color.png"
-          alt="Canadiana by CRKN, par RCDR"
-        />
-      </div>
-      <div class="search">
-        <TypeAhead
-          placeholder="Search for existing collections and manifests to edit..."
-          on:selected={slugSelected}
-        />
-      </div>
-    {:else}
-      <Loading backgroundType="gradient" /><br />
-      Loading...
-    {/if}
+  <div class="title">
+    <img
+      class="logo"
+      src="/static/canadiana-pa-tag-color.png"
+      alt="Canadiana by CRKN, par RCDR"
+    />
   </div>
-</div>
+  <div class="search">
+    <TypeAhead
+      placeholder="Search for existing collections and manifests to edit..."
+      on:selected={slugSelected}
+    />
+  </div>
+</PrefetchLoader>
 
 <style>
   .notifications {
     padding-top: var(--perfect-fourth-3);
-  }
-  .center {
-    padding-top: var(--perfect-fourth-1);
-    text-align: center;
   }
   .title,
   .title img {
