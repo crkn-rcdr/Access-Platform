@@ -3,19 +3,26 @@
    * @file
    * @description This is the main page for the app
    */
-  import { goto } from "$app/navigation";
+  import { goto, prefetch } from "$app/navigation";
   import TypeAhead from "$lib/components/access-objects/TypeAhead.svelte";
   import { Noid } from "@crkn-rcdr/access-data";
-
+  import Loading from "$lib/components/shared/Loading.svelte";
   import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
+
+  let prefetching = false;
 
   /**
    * Routes to the object the user clicks from the TypeAhead component
    * @param event
    * @returns void
    */
-  function slugSelected(event: CustomEvent<string>) {
+  async function slugSelected(event: CustomEvent<string>) {
     const noid = event.detail;
+
+    prefetching = true;
+    await prefetch(`/object/${noid}`);
+    prefetching = false;
+
     try {
       if (Noid.parse(noid)) goto(`/object/${noid}`);
     } catch (e) {
@@ -34,19 +41,24 @@
     /-->
   </div>
   <div class="center">
-    <div class="title">
-      <img
-        class="logo"
-        src="/static/canadiana-pa-tag-color.png"
-        alt="Canadiana by CRKN, par RCDR"
-      />
-    </div>
-    <div class="search">
-      <TypeAhead
-        placeholder="Search for existing collections and manifests to edit..."
-        on:selected={slugSelected}
-      />
-    </div>
+    {#if !prefetching}
+      <div class="title">
+        <img
+          class="logo"
+          src="/static/canadiana-pa-tag-color.png"
+          alt="Canadiana by CRKN, par RCDR"
+        />
+      </div>
+      <div class="search">
+        <TypeAhead
+          placeholder="Search for existing collections and manifests to edit..."
+          on:selected={slugSelected}
+        />
+      </div>
+    {:else}
+      <Loading backgroundType="gradient" /><br />
+      Loading...
+    {/if}
   </div>
 </div>
 
