@@ -18,9 +18,9 @@ const NewInput = z.object({
   user: User,
   data: NewCollection,
 });
-//const SlugArray = z.array(Slug);
 const checkAdditions = z.object({
-  slug: z.array(Slug),
+  id: Noid,
+  slugArray: z.array(Slug),
 });
 export const collectionRouter = createRouter()
   .mutation("edit", {
@@ -51,10 +51,9 @@ export const collectionRouter = createRouter()
   })
   .query("checkAdditions", {
     input: checkAdditions.parse,
-    async resolve({ input, ctx }): Promise<void> {
+    async resolve({ input, ctx }) {
       try {
-        const resolutions = ctx.couch.access.checkAdditions(input);
-        console.log("resolution", resolutions);
+        return await ctx.couch.access.checkAdditions(input.id, input.slugArray);
       } catch (e) {
         throw httpErrorToTRPC(e);
       }

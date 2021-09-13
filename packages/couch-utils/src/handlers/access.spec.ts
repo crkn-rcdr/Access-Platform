@@ -1,4 +1,4 @@
-import { Collection, Manifest, Noid, Slug, Timestamp } from "@crkn-rcdr/access-data";
+import { Collection, Manifest, Timestamp } from "@crkn-rcdr/access-data";
 import anyTest, { TestInterface } from "ava";
 import { BaseContext, getTestContext } from "../test.js";
 import { AccessHandler } from "./access.js";
@@ -45,8 +45,9 @@ test.serial("Can resolve slugs", async (t) => {
   t.deepEqual(result[MANIFEST_TWO_SLUG], {
     id: MANIFEST_TWO,
     type: "manifest",
+    resolved: true,
   });
-  t.is(result["notaslug"], null);
+  t.deepEqual(result["notaslug"], { error: "not-found", resolved: false });
 });
 
 test.serial("Objects can be published and unpublished", async (t) => {
@@ -160,9 +161,9 @@ test.serial("Can unassign a slug", async (t) => {
   t.is(manifest.slug, undefined);
 });
 
-/* test.serial("check validations to add member", async (t) => {
-  await t.context.access.checkAdditions({ id: COLLECTION, slug: Slug })
-}); */
+test.serial("check validations to add member", async (t) => {
+  await t.context.access.checkAdditions(COLLECTION, []);
+});
 
 test.serial("Collections can be created", async (t) => {
   const noidError = await t.throwsAsync(

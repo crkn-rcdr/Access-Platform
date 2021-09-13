@@ -26,23 +26,13 @@ const AccessDatabaseObject = z.union([Alias, Manifest, Collection]);
 
 type AccessDatabaseObject = z.infer<typeof AccessDatabaseObject>;
 
-type SlugResolution = { id: Noid; type: "manifest" | "collection" | "alias" };
-type AddMemberError =
+type SlugResolution =
+  | { resolved: true; id: Noid; type: "manifest" | "collection" | "alias" }
+  | { resolved: false; error: SlugResolutionError };
+type SlugResolutionError =
   | "not-found" // the slug didn't resolve
   | "is-self" // the slug resolved to the collection being edited
   | "already-member"; // the slug resolved to an existing member of the collection
-
-type AddMemberRecord =
-  | {
-      slug: Slug;
-      canAdd: false;
-      reason: AddMemberError;
-    }
-  | {
-      slug: Slug;
-      canAdd: true;
-      id: Noid;
-    }[];
 
 /**
  * Interact with Access Objects in their database.
@@ -68,17 +58,17 @@ export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
   /**
    * Resolves slugs.
    */
-  async resolveSlugs(
-    slugs: Slug[]
-  ): Promise<Record<Slug, SlugResolution | null>> {
-    const response: Record<Slug, SlugResolution | null> = {};
+  async resolveSlugs(slugs: Slug[]): Promise<Record<Slug, SlugResolution>> {
+    const response: Record<Slug, SlugResolution> = {};
 
     for await (const slug of slugs) {
       const resolution = await this.findUnique("slug", slug, [
         "id",
         "type",
       ] as const);
-      response[slug] = resolution.found ? resolution.result : null;
+      response[slug] = resolution.found
+        ? { ...resolution.result, resolved: true }
+        : { error: "not-found", resolved: false };
     }
 
     return response;
@@ -284,53 +274,37 @@ export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
     const manifest = await this.get(args.id);
     return Manifest.parse(manifest);
   }
+  
+  /**
+   * This method resolves the slugs and returns the record of resolved and unresolved slugs with the error message
+   * @param id The Collection id
+   * @param slugArray The list of Slugs
+   * @returns Record of resolved slugs and the errors of why the slug cannot be added to the member list
+   */
   async checkAdditions(
     id: Noid,
-    args: { slug: Slug[] }
-  ): Promise<AddMemberRecord[]> {
+    slugArray: Slug[]
+  ): Promise<Record<Slug, SlugResolution>> {
     console.log("Entry Into checkAdditions", id);
 
-    const data = EditableCollection.parse(id);
-    let showMemberRecord: AddMemberRecord = [];
+    const currentMembers = Collection.parse(await this.get(id)).members;
 
-    let foundSlug;
+    const resolution = Object.entries(await this.resolveSlugs(slugArray));
 
-    for await (const slugs of args.slug) {
-      const resolution = await this.findUnique("slug", slugs, [
-        "id",
-        "type",
-      ] as const);
-
-      foundSlug = resolution.found ? resolution.result : null;
-
-      const currentMembers = Collection.parse(await this.get(id)).members;
-      console.log("Members", currentMembers);
-      for (let members of currentMembers) {
-        if (members.id === foundSlug?.id) {
-          showMemberRecord.push({
-            slug: slugs,
-            canAdd: false,
-            reason: "already-member",
-          });
+    return Object.fromEntries(
+      resolution.map(([slug, r]): [string, SlugResolution] => {
+        if (r.resolved) {
+          if (r.id === id) {
+            return [slug, { error: "is-self", resolved: false }];
+          }
+          for (let member of currentMembers) {
+            if (r.id === member.id) {
+              return [slug, { error: "already-member", resolved: false }];
+            }
+          }
         }
-      }
-
-      if (!resolution.found) {
-        showMemberRecord.push({
-          slug: slugs,
-          canAdd: false,
-          reason: "not-found",
-        });
-      } else if (data.slug === slugs) {
-        showMemberRecord.push({
-          slug: slugs,
-          canAdd: false,
-          reason: "is-self",
-        });
-      } else {
-        showMemberRecord.push({ slug: slugs, canAdd: true, id: foundSlug?.id });
-      }
-    }
-    return showMemberRecord;
+        return [slug, r];
+      })
+    );
   }
 }

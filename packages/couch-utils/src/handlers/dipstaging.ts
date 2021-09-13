@@ -37,11 +37,12 @@ export class LegacyPackageHandler extends DatabaseHandler<LegacyPackage> {
     const resolutions = await access.resolveSlugs(keys);
     const list = await this.list({ include_docs: true, keys });
     return list.rows.map((row): ImportStatus => {
-      return getImportStatus(
-        row.key,
-        row.doc,
-        resolutions[row.key] ? resolutions[row.key]?.id : undefined
-      );
+      const r = resolutions[row.key];
+      let id: string | undefined = undefined;
+      if (r && r.resolved) {
+        id = r.id;
+      }
+      return getImportStatus(row.key, row.doc, id);
     });
   }
 
@@ -62,11 +63,12 @@ export class LegacyPackageHandler extends DatabaseHandler<LegacyPackage> {
     );
 
     return list.rows.map((row): ImportStatus => {
-      return getImportStatus(
-        row.id,
-        row.doc,
-        resolutions[row.id] ? resolutions[row.id]?.id : undefined
-      );
+      const r = resolutions[row.key];
+      let id: string | undefined = undefined;
+      if (r && r.resolved) {
+        id = r.id;
+      }
+      return getImportStatus(row.id, row.doc, id);
     });
   }
 }
