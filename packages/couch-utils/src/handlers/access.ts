@@ -1,4 +1,4 @@
-import { boolean, string, z } from "zod";
+import { z } from "zod";
 import createHttpError from "http-errors";
 import { ServerScope } from "nano";
 
@@ -35,14 +35,14 @@ type AddMemberError =
 type AddMemberRecord =
   | {
       slug: Slug;
-      canAdd: true | false;
+      canAdd: false;
       reason: AddMemberError;
     }
   | {
       slug: Slug;
-      canAdd: true | false;
+      canAdd: true;
       id: Noid;
-    };
+    }[];
 
 /**
  * Interact with Access Objects in their database.
@@ -287,22 +287,13 @@ export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
   async checkAdditions(
     id: Noid,
     args: { slug: Slug[] }
-  ): Promise<AddMemberRecord> {
+  ): Promise<AddMemberRecord[]> {
     console.log("Entry Into checkAdditions", id);
 
     const data = EditableCollection.parse(id);
+    let showMemberRecord: AddMemberRecord = [];
 
     let foundSlug;
-    const response: AddMemberRecord = {
-      id: id,
-      slug: "",
-      canAdd: true || false,
-    };
-    const negResponse: AddMemberRecord = {
-      slug: "",
-      canAdd: true || false,
-      reason: "not-found" || "is-self" || "already-member",
-    };
 
     for await (const slugs of args.slug) {
       const resolution = await this.findUnique("slug", slugs, [
@@ -316,19 +307,19 @@ export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
       console.log("Members", currentMembers);
       for (let members of currentMembers) {
         if (members.id === foundSlug?.id) {
-          negResponse.canAdd = false;
-          negResponse.reason = "already-member";
+          showMemberRecord.push(slugs, false, "already-member");
         }
       }
 
       if (!resolution.found) {
-        negResponse.canAdd = false;
-        negResponse.reason = "not-found";
-      } else if (foundSlug?.id === data.slug) {
-        negResponse.canAdd = false;
-        negResponse.reason = "is-self";
+        showMemberRecord.push(slugs, false, "not-found");
+       
+      } else if (data.slug === slugs) {
+        showMemberRecord.push(slugs, false, "is-self");
+      } else {
+        showMemberRecord.push(slugs, true, foundSlug?.id);
       }
     }
-    return negResponse;
+    return showMemberRecord;
   }
 }
