@@ -31,7 +31,9 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
   import TiTrash from "svelte-icons/ti/TiTrash.svelte";
   import AutomaticResizeNumberInput from "$lib/components/shared/AutomaticResizeNumberInput.svelte";
   import DynamicDragAndDropList from "$lib/components/shared/DynamicDragAndDropList.svelte";
+  import VirtualScroll from "svelte-virtual-scroll-list";
   import { moveArrayElement } from "$lib/utils/arrayUtil";
+  import DynamicDragAndDropListItem from "../shared/DynamicDragAndDropListItem.svelte";
 
   /**
    * @type {ObjectList} An ObjectList containing canvases to be listed.
@@ -51,7 +53,13 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
   /**
    * @type {number[]} A utility array that keeps track of the position numbers for the canvases listed in the thumbnail list, allows the user to move the canvases around by various means.
    */
-  let indexModel: number[] = [];
+  /**
+   * Map<
+    string,
+    { pos: number; id: string; label: Record<string, string> }
+  >
+   */
+  let indexModel: any = {};
 
   /**
    * @type {number} The index of the selected, 'active' canvas in the canvases list.
@@ -98,7 +106,7 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
    * @returns void
    */
   function trackNewCanvases() {
-    previousCanvasArrayLength = indexModel.length;
+    previousCanvasArrayLength = indexModelLength;
   }
 
   /**
@@ -106,9 +114,13 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
    * @returns void
    */
   function setIndexModel() {
-    indexModel = [];
+    indexModel = {};
     for (let i = 0; i < canvases.length; i++) {
-      indexModel.push(i + 1);
+      indexModel[canvases[i].id] = {
+        pos: i + 1,
+        id: canvases[i].id,
+        label: canvases[i].label,
+      };
     }
   }
 
@@ -169,7 +181,7 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
 
     // Highlight and move to new position
     activeCanvasIndex = destinationItemIndex;
-    jumpTo(activeCanvasIndex);
+    //jumpTo(activeCanvasIndex);
     setActiveIndex(activeCanvasIndex);
   }
 
@@ -254,6 +266,12 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
     canvases;
     updated();
   }
+
+  let list;
+  let indexModelLength = 0;
+  $: {
+    indexModelLength = Object.keys(indexModel).length;
+  }
 </script>
 
 <svelte:window on:keydown={handleKeydown} />
@@ -268,13 +286,82 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
     class="list"
     class:disabled={!showAddButton}
   >
-    {#if indexModel.length}
+    {#if indexModelLength === canvases.length}
       <DynamicDragAndDropList
         bind:dragList={canvases}
         on:itemDropped={(e) => {
           setActiveIndex(e.detail.destinationItemIndex);
         }}
       >
+        <div class="vs-wrap">
+          <VirtualScroll
+            bind:this={list}
+            data={Object.values(indexModel)}
+            key="id"
+            let:data
+          >
+            <DynamicDragAndDropListItem bind:pos={indexModel[data["id"]].pos}>
+              <div
+                class="thumbnail"
+                class:active={indexModel[data["id"]].pos - 1 ===
+                  activeCanvasIndex}
+                class:new={previousCanvasArrayLength != 0 &&
+                  indexModel[data["id"]].pos - 1 <
+                    canvases.length - previousCanvasArrayLength}
+                on:mousedown={() =>
+                  setActiveIndex(indexModel[data["id"]].pos - 1)}
+              >
+                <div class="auto-align auto-align__full">
+                  <div class="actions-wrap">
+                    <div
+                      class="auto-align auto-align__full auto-align auto-align__column"
+                      class:visibility-hidden={!showAddButton}
+                    >
+                      <div class="action pos">
+                        {indexModel[data["id"]].pos}
+                      </div>
+                      <div
+                        class="action pos-input"
+                        on:click={(e) => {
+                          e.stopPropagation();
+                        }}
+                      >
+                        <AutomaticResizeNumberInput
+                          name="position"
+                          max={canvases.length}
+                          on:changed={(e) => {
+                            moveCanvas(e, indexModel[data["id"]].pos - 1);
+                          }}
+                          bind:value={indexModel[data["id"]].pos}
+                        />
+                      </div>
+                      <div
+                        class="action icon"
+                        on:click={(e) =>
+                          deleteCanvasByIndex(
+                            e,
+                            indexModel[data["id"]].pos - 1
+                          )}
+                      >
+                        <TiTrash />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="image-wrap">
+                    <img
+                      alt={data?.["label"]?.["value"]}
+                      class="thumbnail-img"
+                      src={`https://image-tor.canadiana.ca/iiif/2/${encodeURIComponent(
+                        data["id"]
+                      )}/full/!425,524/0/default.jpg`}
+                    />
+                  </div>
+                </div>
+              </div>
+            </DynamicDragAndDropListItem>
+          </VirtualScroll>
+        </div>
+        <!--
         {#each canvases as canvas, i}
           <div
             class="thumbnail"
@@ -290,7 +377,7 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
                   class:visibility-hidden={!showAddButton}
                 >
                   <div class="action pos">
-                    {indexModel[i]}
+                    {indexModel[i].pos}
                   </div>
                   <div
                     class="action pos-input"
@@ -304,7 +391,7 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
                       on:changed={(e) => {
                         moveCanvas(e, i);
                       }}
-                      bind:value={indexModel[i]}
+                      bind:value={indexModel[i].pos}
                     />
                   </div>
                   <div
@@ -327,6 +414,7 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
             </div>
           </div>
         {/each}
+        -->
       </DynamicDragAndDropList>
     {/if}
   </div>
@@ -427,5 +515,9 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
 
   .thumbnail:hover .pos-input {
     display: inherit;
+  }
+
+  .vs-wrap {
+    height: 72vh;
   }
 </style>
