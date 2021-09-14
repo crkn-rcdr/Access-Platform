@@ -1,0 +1,66 @@
+{
+  "_id": "69429/m0bz6154gh7n",
+  "type": "manifest",
+  "updateInternalmeta": {
+    "requestDate": 1630639028.569,
+    "processDate": 1630639032.311,
+    "succeeded": true,
+    "message": ""
+  },
+  "dmdType": "marc",
+  "ocrPdf": {
+    "size": 1099206,
+    "path": "oocihm.45116/data/sip/data/files/oocihm.45116.pdf"
+  },
+  "label": {
+    "none": "Hudson's Bay Company to Lord Clarendon : Hudson's Bay House, February 28th, 1854."
+  },
+  "public": "2020-08-29T16:27:09Z",
+  "canvases": [
+    {
+      "label": {
+        "none": "technical data sheet"
+      },
+      "id": "69429/c06d5pb4d58z"
+    },
+    {
+      "label": {
+        "none": "blank page"
+      },
+      "id": "69429/c02r3nx9kj8p"
+    },
+    {
+      "id": "69429/c0z02z51z77x",
+      "label": {
+        "none": "p. 1"
+      }
+    },
+    {
+      "label": {
+        "none": "p. 2"
+      },
+      "id": "69429/c0t727c49g60"
+    },
+    {
+      "label": {
+        "none": "p. 3"
+      },
+      "id": "69429/c0pg1hk6nq31"
+    },
+    {
+      "id": "69429/c0jq0ss90z39",
+      "label": {
+        "none": "p. 4"
+      }
+    },
+    {
+      "id": "69429/c0dz0311c62f",
+      "label": {
+        "none": "blank page"
+      }
+    }
+  ],
+  "from": "canvases",
+  "slug": "oocihm.45116",
+  "updated": 1630639028.569
+}

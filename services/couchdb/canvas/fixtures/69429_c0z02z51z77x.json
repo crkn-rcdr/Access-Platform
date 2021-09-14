@@ -1,0 +1,15 @@
+{
+  "_id": "69429/c0z02z51z77x",
+  "master": {
+    "height": 3654,
+    "width": 2243,
+    "mime": "image/tiff",
+    "extension": "tif",
+    "size": 74135
+  },
+  "ocrType": "txtmap",
+  "source": {
+    "from": "cihm",
+    "path": "oocihm.45116/data/sip/data/files/oocihm.45116.0003.tif"
+  }
+}
