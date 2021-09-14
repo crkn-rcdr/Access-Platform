@@ -2,27 +2,22 @@
 <script lang="ts">
   import type { Session } from "$lib/types";
   import { getStores } from "$app/stores";
-  import { AccessObject } from "@crkn-rcdr/access-data";
+  //import { AccessObject } from "@crkn-rcdr/access-data";
 
-  import type { ObjectList } from "@crkn-rcdr/access-data";
+  import type { AccessPlatform } from "$lib/types";
   import type { Collection } from "@crkn-rcdr/access-data/src/access/Collection";
   import { createEventDispatcher } from "svelte";
   import TiArrowBack from "svelte-icons/ti/TiArrowBack.svelte";
   import FaCheckCircle from "svelte-icons/fa/FaCheckCircle.svelte";
   import IoIosAddCircleOutline from "svelte-icons/io/IoIosAddCircleOutline.svelte";
   import ResolveMany from "$lib/components/access-objects/ResolveMany.svelte";
+  import DmdPrefixSelector from "$lib/components/dmd/DmdPrefixSelector.svelte";
+  import PrefixSelector from "./PrefixSelector.svelte";
 
-  /*  type ResolveManyReturn =[{
-          found: false;
-        }
-      | {
-          found: true;
-          result: {
-            type: "alias" | "manifest" | "collection";
-            id: string;
-          };
-        }
-      ][]; */
+  /**
+   *  @type { AccessPlatform } The access platform to look for the items in.
+   */
+  export let accessPlatform: AccessPlatform;
 
   /**
    * @type {Manifest} The manifest to add selected canvases to.
@@ -52,7 +47,7 @@
   /**
    * @type {Collection} The Collection to select members from.
    */
-  let selectedMember: AccessObject;
+  //let selectedMember: AccessObject;
 
   /**
    * @type {ObjectList} The members the user selects.
@@ -74,6 +69,7 @@
    * @type {string} An error message to be displayed.
    */
   let error = "";
+  let prefix = "";
 
   /**
    * When a collection is selected from the table of search results, grab its details from the backend.
@@ -84,7 +80,22 @@
     addedMember = true;
   }
   let resolveManyReturn: {} = [];
+  let id: string = destinationMember.id;
+  let slugArray: string[];
+  let input: "";
 
+  async function resolveMembers() {
+    slugArray = input.split(/[,|\s]/);
+    if (prefix.length > 0) {
+      slugArray = slugArray.map((slug) => prefix + slug);
+    }
+
+    const response = await $session.lapin.query("collection.checkAdditions", {
+      id,
+      slugArray,
+    });
+    console.log("response in check", response);
+  }
   async function handleSelect(event: any) {
     resolveManyReturn = event.detail;
     console.log("test", resolveManyReturn);
@@ -138,7 +149,10 @@
     </div>
     {#if addedMember}
       <div>
-        <ResolveMany on:found={handleSelect} />
+        <!--  <ResolveMany on:found={handleSelect} /> -->
+        <PrefixSelector bind:prefix />
+        <textarea bind:value={input} /><br />
+        <button class="primary lg" on:click={resolveMembers}>Lookup</button>
         <br />
       </div>
       <div>
@@ -169,6 +183,7 @@
       {/if}
     {/if}
   {/if}
+  <div />
 </div>
 
 <style>

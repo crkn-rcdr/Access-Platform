@@ -93,3 +93,8 @@ export type DmdTaskState = {
 };
 
 export type DmdTasksCache = Map<string, DmdTaskState>;
+
+export type Depositor = {
+  string: string;
+  label: string;
+};
