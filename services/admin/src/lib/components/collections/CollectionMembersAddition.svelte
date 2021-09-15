@@ -13,6 +13,7 @@
   import ResolveMany from "$lib/components/access-objects/ResolveMany.svelte";
   import DmdPrefixSelector from "$lib/components/dmd/DmdPrefixSelector.svelte";
   import PrefixSelector from "./PrefixSelector.svelte";
+  import { entries } from "lodash-es";
 
   /**
    *  @type { AccessPlatform } The access platform to look for the items in.
@@ -89,28 +90,26 @@
   let validMember,
     notFoundSlug: string[] = [];
 
+  // https://github.com/sindresorhus/type-fest/blob/main/source/promise-value.d.ts
+  type PromiseValue<PromiseType> = PromiseType extends PromiseLike<infer Value>
+    ? PromiseValue<Value>
+    : PromiseType;
+  let resolutions: PromiseValue<ReturnType<typeof resolveMembers>>;
+
   async function resolveMembers() {
-    slugArray = input.split(/[,|\s]/);
-    if (prefix.length > 0) {
-      slugArray = slugArray.map((slug) => prefix + slug);
-    }
+    const slugArray = input.split(/[,|\s]/).map((slug) => prefix + slug);
 
     const response = await $session.lapin.query("collection.checkAdditions", {
       id,
       slugArray,
     });
 
-    console.log("response in check", Object.values(response));
-    for (let checkSlug in response) {
-      if (!response[checkSlug].resolved) {
-        notFoundSlug.push(checkSlug);
-      }
-      if (response[checkSlug].resolved) {
-        validMember.push(response[checkSlug].resolved);
-      }
-    }
-    console.log("invalidmembers print", notFoundSlug);
+    resolutions = response;
+
+    // I'm returning here so that we can type `resolutions` properly (see above)
+    return response;
   }
+
   async function handleSelect(event: any) {
     resolveManyReturn = event.detail;
     console.log("test", resolveManyReturn);
@@ -170,31 +169,31 @@
         <button class="primary lg" on:click={resolveMembers}>Lookup</button>
         <br />
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th>Valid Slugs</th>
-            <th>Not Found Slugs</th>
-            <!-- <th>Already Member</th>
-            <th>Is Self</th> -->
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            {#if validMember}
-              {#each validMember as valid}
-                <td class:success={valid} />
-              {/each}
-            {/if}
-
-            {#if notFoundSlug}
-              {#each notFoundSlug as invalid}
-                <td class:not-success={invalid} />
-              {/each}
-            {/if}
-          </tr>
-        </tbody>
-      </table>
+      {#if resolutions}
+        <table>
+          <thead>
+            <tr>
+              <th>Slug</th>
+              <th>Status</th>
+              <th>Select</th>
+            </tr>
+          </thead>
+          <tbody>
+            {#each Object.entries(resolutions) as [slug, resolution]}
+              <tr>
+                <td>{slug}</td>
+                <td>
+                  {#if resolution.resolved === true}
+                    found
+                  {:else if resolution.resolved === false}
+                    {resolution.error}
+                  {/if}
+                </td>
+              </tr>
+            {/each}
+          </tbody>
+        </table>
+      {/if}
       <!--  <div>
         {#each foundSlugs as foundMember}
           <div
