@@ -28,7 +28,10 @@
    * @type {number} The starting index to add the selected canvases at.
    */
   export let destinationIndex = 0;
-
+  /**
+   * @type {"column" | "row"} If the information should be row or column based. If column is selected, all information will be displayed in one column. Otherwise, a 3x3 grid will be used.
+   */
+  export let direction: "column" | "row" = "column";
   /**
    * @type {boolean} If the user is allowed to select multiple canvases to add.
    */
@@ -68,7 +71,7 @@
   /**
    * @type {string} An error message to be displayed.
    */
-  let error = "";
+  let issue = "";
   let prefix = "";
 
   /**
@@ -83,6 +86,8 @@
   let id: string = destinationMember.id;
   let slugArray: string[];
   let input: "";
+  let validMember,
+    notFoundSlug: string[] = [];
 
   async function resolveMembers() {
     slugArray = input.split(/[,|\s]/);
@@ -94,7 +99,17 @@
       id,
       slugArray,
     });
-    console.log("response in check", response);
+
+    console.log("response in check", Object.values(response));
+    for (let checkSlug in response) {
+      if (!response[checkSlug].resolved) {
+        notFoundSlug.push(checkSlug);
+      }
+      if (response[checkSlug].resolved) {
+        validMember.push(response[checkSlug].resolved);
+      }
+    }
+    console.log("invalidmembers print", notFoundSlug);
   }
   async function handleSelect(event: any) {
     resolveManyReturn = event.detail;
@@ -155,7 +170,32 @@
         <button class="primary lg" on:click={resolveMembers}>Lookup</button>
         <br />
       </div>
-      <div>
+      <table>
+        <thead>
+          <tr>
+            <th>Valid Slugs</th>
+            <th>Not Found Slugs</th>
+            <!-- <th>Already Member</th>
+            <th>Is Self</th> -->
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            {#if validMember}
+              {#each validMember as valid}
+                <td class:success={valid} />
+              {/each}
+            {/if}
+
+            {#if notFoundSlug}
+              {#each notFoundSlug as invalid}
+                <td class:not-success={invalid} />
+              {/each}
+            {/if}
+          </tr>
+        </tbody>
+      </table>
+      <!--  <div>
         {#each foundSlugs as foundMember}
           <div
             class="checkmember"
@@ -163,7 +203,7 @@
             data-tooltip="Add Selected Member"
             data-tooltip-flow="bottom"
           >
-            <!--  <FaCheckCircle /> -->
+           
             {foundMember}
           </div>
         {/each}
@@ -175,24 +215,17 @@
 
       <div class="add-menu-title" />
       <br />
-      {#if error}
+      {#if issue}
         <br />
         <div class="alert alert-danger">
-          {error}
+          {issue}
         </div>
-      {/if}
+      {/if} -->
     {/if}
   {/if}
-  <div />
 </div>
 
 <style>
-  .grid {
-    display: grid;
-    background-color: var(--primary-light);
-    grid-column: 1/1;
-    width: 100%;
-  }
   .checkmember {
     display: flex;
     width: 100%;
@@ -206,5 +239,19 @@
   }
   .move-button {
     display: flex;
+  }
+  .value {
+    text-align: right;
+  }
+  .restrict-width {
+    max-width: 25rem;
+  }
+  .not-success {
+    background-color: var(--danger-light);
+    /*color: var(--danger);*/
+  }
+  .success {
+    background-color: var(--success-light);
+    color: var(--success);
   }
 </style>
