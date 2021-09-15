@@ -17,18 +17,13 @@ Allows the user to modify the member list for a collection.
 -->
 <script lang="ts">
   import { onMount, createEventDispatcher } from "svelte";
-  import { AccessObject } from "@crkn-rcdr/access-data";
-  //import { isCollection, isManifest } from "@crkn-rcdr/access-data";
   import type { Collection } from "@crkn-rcdr/access-data/src/access/Collection";
-  import TypeAhead from "$lib/components/access-objects/TypeAhead.svelte";
   import type { Session } from "$lib/types";
   import { getStores } from "$app/stores";
   import AutomaticResizeNumberInput from "$lib/components/shared/AutomaticResizeNumberInput.svelte";
   import DynamicDragAndDropList from "$lib/components/shared/DynamicDragAndDropList.svelte";
   import { moveArrayElement } from "$lib/utils/arrayUtil";
-  import TiArrowBack from "svelte-icons/ti/TiArrowBack.svelte";
   import TiTrash from "svelte-icons/ti/TiTrash.svelte";
-  import type { ObjectList } from "@crkn-rcdr/access-data";
   import CollectionMembersAddition from "./CollectionMembersAddition.svelte";
 
   export let collection: Collection;
@@ -37,10 +32,8 @@ Allows the user to modify the member list for a collection.
   let indexModel: number[] = [];
   let activeMemberIndex: number = 0;
   let container: HTMLDivElement;
-  let addedMember = false;
-  let selectedCollection: ObjectList = [];
-  let error = "";
-  let state = "view";
+
+  let state: string;
   const LEFT_ARROW_CODE: number = 37;
   const UP_ARROW_CODE: number = 38;
   const RIGHT_ARROW_CODE: number = 39;
@@ -105,9 +98,6 @@ Allows the user to modify the member list for a collection.
     }
   }
 
-  function addClicked() {
-    addedMember = true;
-  }
   function deleteCanvasByIndex(event: any, index: number) {
     event.stopPropagation();
     if (index >= 0 && index < collection?.members.length) {
@@ -116,24 +106,7 @@ Allows the user to modify the member list for a collection.
       setActiveIndex(activeMemberIndex);
     }
   }
-  /* let noid;
-  async function handleSelect(event: any) {
-    try {
-      noid = event.detail;
-      const response = await $session.lapin.query("accessObject.get", noid);
-      if (response) {
-        const object = AccessObject.parse(response);
-        collection.members[collection.members.length] = object;
-        addedMember = false;
-      }
-    } catch (e) {
-      error = e;
-    }
-  }
-  function handleCancelPressed() {
-    selectedCollection = [];
-    addedMember = false;
-  } */
+
   onMount(() => {
     if (collection.members.length) activeMemberIndex = 0;
     setIndexModel();
@@ -156,36 +129,6 @@ Allows the user to modify the member list for a collection.
     />
     <br />
 
-    <!-- {#if showAddButton}
-      <button class="primary lg" on:click={addClicked}>Add Member</button>
-    {/if}
-    {#if addedMember}
-      <div>
-        <TypeAhead
-          placeholder="Search for a Collection Or Manifest to add from..."
-          on:selected={handleSelect}
-          on:keypress={() => (error = "")}
-        />
-      </div>
-      <div class="add-menu-title">
-        <button
-          class="secondary cancel-button auto-align auto-align__a-center"
-          on:click={handleCancelPressed}
-        >
-          <div class="icon">
-            <TiArrowBack />
-          </div>
-          Exit
-        </button>
-      </div>
-      <br />
-      {#if error}
-        <br />
-        <div class="alert alert-danger">
-          {error}
-        </div>
-      {/if}
-    {/if} -->
     <div
       bind:this={container}
       tabindex="0"
@@ -259,11 +202,7 @@ Allows the user to modify the member list for a collection.
     overflow-y: hidden;
     opacity: 0.5;
   }
-  /*  .actions-wrap {
-  .actions-wrap {
-    flex: 1;
-    margin-left: 1.5rem;
-  } */
+
   .action.icon {
     opacity: 0.6;
     cursor: pointer;
