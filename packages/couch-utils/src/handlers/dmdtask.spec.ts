@@ -25,6 +25,7 @@ test.serial("Can create new DMDTasks", async (t) => {
     user: USER,
     format: "csvissueinfo",
     file,
+    fileName: "test.csv",
   });
 
   const task = await t.context.dmdtask.get(taskId);

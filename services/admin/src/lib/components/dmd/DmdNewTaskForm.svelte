@@ -46,7 +46,7 @@ none
   let b64EncodedMetadataFileText: string;
 
   /**
-   * @type {string } The name of the file selected for the task.
+   * @type {string } The name of the file being used to create the dmd task.
    */
   let fileName: string = "";
 
@@ -56,7 +56,7 @@ none
   let errorText: string = "";
 
   /**
-   * TODO: Probably want to move this to a helper module, or stright into the file select component itself.
+   * TODO: Probably want to move this to a helper module, or straight into the file select component itself.
    * This method takes a file and returns a promise with the file contents as a string.
    * @param blob
    * @returns Promise<string>
@@ -66,7 +66,7 @@ none
       const reader = new FileReader();
       reader.onerror = reject;
       reader.onload = () => {
-        resolve(reader.result.toString());
+        resolve(reader.result.toString().split(",")[1]); // This makes sure we get the context of the file without the mime type. The comma will cause an error in the couchdb.
       };
       reader.readAsDataURL(blob);
     });
@@ -78,10 +78,7 @@ none
   async function handleFileSelected(event: any) {
     const file: File = event.detail;
     try {
-      b64EncodedMetadataFileText = (await convertBlobToBase64(file)).replace(
-        "data:application/octet-stream;base64,",
-        ""
-      );
+      b64EncodedMetadataFileText = await convertBlobToBase64(file);
       fileName = file.name;
     } catch (e) {
       console.log(e?.message);

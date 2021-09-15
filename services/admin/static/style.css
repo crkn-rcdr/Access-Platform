@@ -32,6 +32,8 @@
   --structural-div-bg: var(--grey-light);
   /* Change this to set the bg color for components that need a darker backgrop, ex: canvas viewer */
   --backdrop-bg: #ddd;
+  /* Change this to set the bg color for components of medium contrast */
+  --dark-bg: #333;
   /* Change this to set the bg color for items of high contrast*/
   --darkest-bg: #222;
   /* Change this to set the bg color for overlays, ex: modal dimmer */
@@ -443,6 +445,16 @@ button.ghost.light,
 .button.ghost.light {
   background-color: rgba(255, 255, 255, 0.2) !important;
   color: rgba(255, 255, 255, 0.7) !important;
+}
+
+button.ghost.warn,
+.button.ghost.warn {
+  background-color: rgba(190, 140, 46, 0.2) !important;
+}
+
+button.ghost.danger,
+.button.ghost.danger {
+  background-color: rgba(146, 0, 0, 0.2) !important;
 }
 
 button.secondary,

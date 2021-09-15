@@ -245,6 +245,20 @@ A component that shows a navigable set of pages with a side menu to allow the us
     height: calc(100vh - 6.5rem - var(--viewport-scaling));
   }
 
+  @media (max-width: 997px) {
+    .fixed-full-page {
+      top: calc(9rem + var(--viewport-scaling));
+      height: calc(100vh - 9rem - var(--viewport-scaling));
+    }
+  }
+
+  @media (max-width: 675px) {
+    .fixed-full-page {
+      top: calc(12rem + var(--viewport-scaling));
+      height: calc(100vh - 12rem - var(--viewport-scaling));
+    }
+  }
+
   .fixed-full-page .header {
     height: 12%;
     width: 100%;

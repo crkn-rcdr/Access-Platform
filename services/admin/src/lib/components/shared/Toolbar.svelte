@@ -43,7 +43,7 @@ A solid title/header component to break apart your pages into sections.
   h5 {
     margin: 0 !important;
     display: inline;
-    flex: 9;
+    flex: 6;
   }
   .toolbar-content {
     flex: 3;

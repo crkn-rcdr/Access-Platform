@@ -221,6 +221,23 @@ This component allows the user to search through other manifests and select canv
     {#if selectedManifest}
       {#if selectedManifest["canvases"] && selectedManifest["canvases"].length}
         <div class="results full-page">
+          <p class="title">
+            <i
+              >{selectedManifest.slug}{selectedManifest.label?.none?.length
+                ? `: ${selectedManifest.label.none}`
+                : ""}</i
+            >
+
+            <!--
+            {#if selectedCanvases.length}
+              <button 
+              class="sm primary"
+              on:click={handleAddPressed}>
+                Add Selected
+              </button>
+            {/if}
+            -->
+          </p>
           <div class="canvas-list-item-viewer">
             <CanvasesSelector
               bind:selectedCanvases
@@ -237,7 +254,6 @@ This component allows the user to search through other manifests and select canv
                 showSequenceControl: false,
                 referenceStripScroll: "vertical",
                 autoHideControls: false,
-                homeFillsViewer: true,
               }}
             />
           </div>
@@ -280,7 +296,7 @@ This component allows the user to search through other manifests and select canv
   }
 
   .manifest-controls > * {
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
   }
 
   .add-all-button,
@@ -317,7 +333,23 @@ This component allows the user to search through other manifests and select canv
     height: 100%;
     width: 100%;
     position: relative;
+    background: var(--darkest-bg);
   }
+
+  .title {
+    width: 100%;
+    margin: 0 !important;
+    padding: 0.7rem 5rem 0.7rem;
+    color: var(--secondary-light);
+    background-color: var(--dark-bg);
+  }
+
+  /*.title > h6 {
+    display: inline;
+  }*/
+  /*.title > button {
+    float: right;
+  }*/
 
   :global(.add-menu .referencestrip) {
     left: 60px !important;

@@ -384,6 +384,7 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
     flex: 9;
     width: 100%;
     overflow-y: auto;
+    outline: none !important;
   }
   .list.disabled {
     overflow-y: hidden;

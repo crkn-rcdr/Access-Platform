@@ -25,8 +25,8 @@ This component shows the view for a dmd task that had its metadata successfully 
   import DmdSuccessItemUpdater from "$lib/components/dmd/DmdSuccessItemUpdater.svelte";
   import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
   import { dmdTasksStore } from "$lib/stores/dmdTasksStore";
+
   /**
-   * TODO: Delete test data
    * @type { SucceededDMDTask } The dmd task being displayed
    */
   export let dmdTask: SucceededDMDTask;
@@ -44,10 +44,20 @@ This component shows the view for a dmd task that had its metadata successfully 
     label: "Canadiana.org",
   };
 
-  let prevPrefix = "oocihm";
+  /**
+   *  @type { string } A variable that contains the previously selected prefix of @var accessPlatform, to ensure events are only fired when this value actually changes.
+   */
+  let prevPrefix: string = "oocihm";
 
+  /**
+   *  @type { boolean } A control for if the 'all items XML metadata are invalid' view is showing, or if the table of results per item will show.
+   */
   let showAllInvalidError: boolean = false;
 
+  /**
+   * Sets the state of the dmd task to the initial state on page load.
+   * @returns void
+   */
   function resetView() {
     if (accessPlatform.prefix !== prevPrefix) {
       $dmdTasksStore[dmdTask.id].lookupState = "ready";
@@ -56,12 +66,17 @@ This component shows the view for a dmd task that had its metadata successfully 
     prevPrefix = accessPlatform.prefix;
   }
 
+  /**
+   * Adds the dmd task to the dmd task store on page load. (If it isn't in the store already)
+   * @returns void
+   */
   function inititalizeDmdTaskState() {
     if (!(dmdTasksStore?.getTask(dmdTask.id)?.itemStates?.size > 0)) {
       let items: DmdItemStates = new Map();
       let allInvalidCheck = true;
       for (const item of dmdTask.items) {
         allInvalidCheck = allInvalidCheck && !item.parsed;
+        // This is a helpful object for keeping track of what's been done to the item while the user follows the steps required to update their metadata.
         items[item.id] = <DmdItemState>{
           slug: item.id,
           noid: null,
@@ -86,13 +101,26 @@ This component shows the view for a dmd task that had its metadata successfully 
     }
   }
 
+  /**
+   * @listens dmdTask
+   * @listens dmdTasksStore
+   * @description Adds the dmd task to the dmd task store, when dmdTask and dmdTaskStore are set.
+   */
   $: {
     if (dmdTask && dmdTasksStore) inititalizeDmdTaskState();
   }
 
+  /**
+   * @listens $dmdTasksStore[dmdTask.id]?.lookupState
+   * @description Sets @var activeStepIndex, the control of the stepper, depending on if the user has looked up the items.
+   */
   $: activeStepIndex =
     $dmdTasksStore[dmdTask.id]?.lookupState === "loaded" ? 1 : 0;
 
+  /**
+   * @listens accessPlatform
+   * @description Calls @function resetView when the @var accessPlatform changes.
+   */
   $: {
     accessPlatform;
     resetView();
@@ -110,9 +138,11 @@ This component shows the view for a dmd task that had its metadata successfully 
     {/if}
     <br />
     <NotificationBar
-      message={`File parsing ${
-        dmdTask.process.succeeded ? "warning" : "error"
-      }: ${dmdTask.process.message}`}
+      message={dmdTask.process.message?.length
+        ? `File parsing ${dmdTask.process.succeeded ? "warning" : "error"}: ${
+            dmdTask.process.message
+          }`
+        : ""}
       status={dmdTask.process.succeeded ? "warn" : "fail"}
     />
     <br />

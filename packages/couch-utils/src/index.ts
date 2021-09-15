@@ -7,6 +7,7 @@ import { Env } from "@crkn-rcdr/access-env";
 import { AccessHandler } from "./handlers/access.js";
 import { DMDTaskHandler } from "./handlers/dmdtask.js";
 import { LegacyPackageHandler } from "./handlers/dipstaging.js";
+import { WipmetaHandler } from "./handlers/wipmeta.js";
 
 export { CouchAttachmentRecord } from "./DatabaseHandler.js";
 
@@ -39,5 +40,6 @@ export function connect() {
     access: new AccessHandler(c),
     dipstaging: new LegacyPackageHandler(c),
     dmdtask: new DMDTaskHandler(c),
+    wipmeta: new WipmetaHandler(c),
   };
 }

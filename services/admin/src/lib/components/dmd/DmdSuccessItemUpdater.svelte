@@ -1,29 +1,19 @@
 <!--
 @component
 ### Overview
-This component allows the user to update the dmd tasks items in an access platform and/or in presercvation. 
+This component allows the user to update the dmd tasks items in an access platform and/or in preservation. 
 
 ### Properties
 |    |    |    |
 | -- | -- | -- |
 | accessPlatform: AccessPlatform | required | The access platform to look for the items in. |
 | dmdTaskId: string | required | The 'id' of the DMDTask being processed. |
-| state: "ready" or "updating" or "updated" or "error" | optional | This variable keeps track of the state of the component, to show relevant messages to the user. |
-| itemsLookupAndUpdateResults: (DmdLoadedParseRecord or DmdUpdatedParseRecord)[] | optional | The dmdtask items to update (holds both results of the lookup and update.) |
-| shouldUpdateInAccess: boolean | optional | If the request to update should be sent to the selected access platform. |
-| shouldUpdateInPreservation: boolean | optional | If the request to update should be sent to preservation. |
-| updatedProgressPercentage: number | optional | The completion percentage of the updating process |
 
 ### Usage
 ```
 <DmdItemUpdater
   dmdTaskId={dmdTask.id}
-  bind:state={updateState}
   bind:accessPlatform
-  bind:shouldUpdateInPreservation
-  bind:shouldUpdateInAccess
-  bind:itemsLookupAndUpdateResults
-  bind:updatedProgressPercentage
 />
 ```
 *Note: `bind:` is required for changes to the parameters to be reflected in higher level components.*
@@ -49,6 +39,10 @@ This component allows the user to update the dmd tasks items in an access platfo
    */
   export let dmdTaskId: string;
 
+  /**
+   * Passes on the work of updating the metadata of the items in the task to the dmdTasksStore
+   * @returns void
+   */
   function handleUpdatePressed() {
     dmdTasksStore.storeTaskItemsToSwift(
       dmdTaskId,
