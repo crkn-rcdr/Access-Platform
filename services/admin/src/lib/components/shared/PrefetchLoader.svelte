@@ -1,15 +1,17 @@
 <!--
 @component
 ### Overview
-This component shows a CRKN-esque loader to be used when an action is being performed.
+This component shows a CRKN-esque loader when svelte information is being fetched from the backend.
+
 ### Properties
 |    |    |    |
 | -- | -- | -- |
 | href: string   | required | The link to prefetch. |
+
 ### Usage
 ```  
 <PrefetchLoader {bind:href}>
-  ..content to be loaded
+  ...content to be loaded
 </PrefetchLoader>
 ```
 -->

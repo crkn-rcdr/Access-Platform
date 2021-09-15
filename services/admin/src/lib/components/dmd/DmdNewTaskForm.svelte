@@ -45,6 +45,9 @@ none
    */
   let b64EncodedMetadataFileText: string;
 
+  /**
+   * @type {string } The name of the file selected for the task.
+   */
   let fileName: string = "";
 
   /**

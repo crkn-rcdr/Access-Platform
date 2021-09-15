@@ -102,6 +102,16 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
   const dispatch = createEventDispatcher();
 
   /**
+   * @type {any} A variable that holds the virtual scroll component
+   */
+  let list;
+
+  /**
+   * @type {number} The length of the index model used to control the drag and drop menu
+   */
+  let indexModelLength = 0;
+
+  /**
    * Sets the @var previousCanvasArrayLength
    * @returns void
    */
@@ -267,8 +277,10 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
     updated();
   }
 
-  let list;
-  let indexModelLength = 0;
+  /**
+   * @listens indexModel
+   * @description Sets @var indexModelLength, the canvases positions model, and stores the h any time the indexModel changes.
+   */
   $: {
     indexModelLength = Object.keys(indexModel).length;
   }
@@ -361,60 +373,6 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
             </DynamicDragAndDropListItem>
           </VirtualScroll>
         </div>
-        <!--
-        {#each canvases as canvas, i}
-          <div
-            class="thumbnail"
-            class:active={i === activeCanvasIndex}
-            class:new={previousCanvasArrayLength != 0 &&
-              i < canvases.length - previousCanvasArrayLength}
-            on:mousedown={() => setActiveIndex(i)}
-          >
-            <div class="auto-align auto-align__full">
-              <div class="actions-wrap">
-                <div
-                  class="auto-align auto-align__full auto-align auto-align__column"
-                  class:visibility-hidden={!showAddButton}
-                >
-                  <div class="action pos">
-                    {indexModel[i].pos}
-                  </div>
-                  <div
-                    class="action pos-input"
-                    on:click={(e) => {
-                      e.stopPropagation();
-                    }}
-                  >
-                    <AutomaticResizeNumberInput
-                      name="position"
-                      max={canvases.length}
-                      on:changed={(e) => {
-                        moveCanvas(e, i);
-                      }}
-                      bind:value={indexModel[i].pos}
-                    />
-                  </div>
-                  <div
-                    class="action icon"
-                    on:click={(e) => deleteCanvasByIndex(e, i)}
-                  >
-                    <TiTrash />
-                  </div>
-                </div>
-              </div>
-              <div class="image-wrap">
-                <img
-                  alt={canvas?.["label"]?.["value"]}
-                  class="thumbnail-img"
-                  src={`https://image-tor.canadiana.ca/iiif/2/${encodeURIComponent(
-                    canvas["id"]
-                  )}/full/!425,524/0/default.jpg`}
-                />
-              </div>
-            </div>
-          </div>
-        {/each}
-        -->
       </DynamicDragAndDropList>
     {/if}
   </div>

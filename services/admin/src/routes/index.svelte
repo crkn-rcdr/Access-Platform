@@ -8,6 +8,9 @@
   //import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
   import PrefetchLoader from "$lib/components/shared/PrefetchLoader.svelte";
 
+  /**
+   * @type {string} The link to the object selected form the search bar.
+   */
   let objectHref: string;
 
   /**
