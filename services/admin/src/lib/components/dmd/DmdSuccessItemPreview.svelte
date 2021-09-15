@@ -9,16 +9,31 @@
   import SideMenuPageListButton from "../shared/SideMenuPageListButton.svelte";
   import SideMenuBody from "../shared/SideMenuBody.svelte";
   import SideMenuPage from "../shared/SideMenuPage.svelte";
-  import { onMount } from "svelte";
   import NotificationBar from "../shared/NotificationBar.svelte";
 
   /**
    *  @type { string } The 'id' of the DMDTask being shown.
    */
   export let dmdTaskId: string;
+
+  /**
+   *  @type { number | undefined } The index of the item being previewed, in the dmd tasks item array.
+   */
   export let previewItemIndex: number | undefined = undefined;
+
+  /**
+   *  @type { boolean } A control for if the modal is open or not.
+   */
   export let openPreviewModal: boolean = false;
+
+  /**
+   *  @type { string } The contents of the notification displayed for the preview, if any.
+   */
   export let previewNotificationMsg: string = "";
+
+  /**
+   *  @type { string } A control for the styling of the notification displayed for the preview, if any.
+   */
   export let previewNotificationStatus: "warn" | "fail" = "warn";
 
   /**
@@ -31,6 +46,9 @@
    */
   let itemPreviewMetadataJSON: any;
 
+  /**
+   * @type { string } The string file contents of the XML file generated for the item being previewed.
+   */
   let itemPreviewMetadataXML: string;
 
   /**
@@ -75,6 +93,10 @@
     }
   }
 
+  /**
+   * @listens previewItemIndex
+   * @description Watches for changes to what item is being previewed through @var previewItemIndex, then calls @function getXml and @function getJson to set the contents of the modal.
+   */
   $: {
     previewItemIndex;
     getXml();

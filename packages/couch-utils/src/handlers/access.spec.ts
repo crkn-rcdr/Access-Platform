@@ -1,4 +1,4 @@
-import { Collection, Manifest, Noid, Timestamp } from "@crkn-rcdr/access-data";
+import { Collection, Manifest, Timestamp } from "@crkn-rcdr/access-data";
 import anyTest, { TestInterface } from "ava";
 import { BaseContext, getTestContext } from "../test.js";
 import { AccessHandler } from "./access.js";

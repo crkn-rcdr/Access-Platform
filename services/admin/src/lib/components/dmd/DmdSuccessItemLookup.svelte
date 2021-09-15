@@ -1,23 +1,19 @@
 <!--
 @component
 ### Overview
-This components takes the items in a successfull dmd task and looks them up in a selected access platform and in preservation. it adds the lookup results to itemsLookupAndUpdateResults.
+This components takes the items in a successfull dmd task and looks them up in a selected access platform and in preservation.
 
 ### Properties
 |    |    |    |
 | -- | -- | -- |
 | accessPlatform: AccessPlatform | required | The access platform to look for the items in. |
-| state: "ready" or "loading" or "loaded" or "error" | optional | This variable keeps track of the state of the component, to show relevant messages to the user. |
-| itemsToLookup: ParseRecord[] | optional | The items to search for. |
-| itemsLookupAndUpdateResults: (DmdLoadedParseRecord or DmdUpdatedParseRecord)[] | optional | The dmdtask items lookup and update results. Indexing exactly matches the itemsToLookup. |
+| dmdTaskId: string | required | The id of the dmd task. |
 
 ### Usage
 ```
 <DmdItemLookup
-  bind:state={lookupState}
+  bind:dmdTaskId={dmdTask.id}
   bind:accessPlatform
-  bind:itemsLookupAndUpdateResults
-  itemsToLookup={dmdTask.items}
 />
 ```
 *Note: `bind:` is required for changes to the parameters to be reflected in higher level components.*
@@ -45,6 +41,10 @@ This components takes the items in a successfull dmd task and looks them up in a
    */
   export let accessPlatform: AccessPlatform;
 
+  /**
+   * Passes on the work of looking up the items in the task to the dmdTasksStore
+   * @returns void
+   */
   function handleLookupPressed() {
     dmdTasksStore.lookupTaskItems(
       dmdTaskId,

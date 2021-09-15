@@ -11,7 +11,6 @@ import {
   NewInput,
   StoreAccessInput,
   storeDmdTaskItemXmlFile,
-  StorePreservationInput,
   updateLabelForDmdTaskItemAccessObject,
 } from "../util/dmdTask.js";
 
@@ -113,17 +112,6 @@ export const dmdTaskRouter = createRouter()
         }
       } catch (e) {
         console.log(e?.message);
-        throw httpErrorToTRPC(e);
-      }
-    },
-  })
-  .mutation("storePreservation", {
-    input: StorePreservationInput.parse,
-    async resolve() {
-      //{ input, ctx }) {
-      try {
-        return true;
-      } catch (e) {
         throw httpErrorToTRPC(e);
       }
     },

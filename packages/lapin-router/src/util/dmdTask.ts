@@ -1,3 +1,9 @@
+/**
+ * @module dmdTasksStore
+ * @description
+ * This file contains utility methods that keeps the dmdTask router more readable. The store in access request has many steps which are isolated into separate methods below.
+ */
+
 import { z } from "zod";
 import {
   DMDFORMATS,
@@ -27,13 +33,6 @@ export const StoreAccessInput = z.object({
   index: z.number(), // array index of item whose metadata is being stored
   slug: Slug, // prefix + id (we might not need this if we send the resolved noid)
   noid: z.string(), // result of slug lookup
-  user: User,
-});
-
-export const StorePreservationInput = z.object({
-  task: z.string(), // dmdtask uuid
-  index: z.number(),
-  slug: Slug,
   user: User,
 });
 
@@ -87,6 +86,15 @@ export const getAccessObjectForDmdTaskItem = async function (
   else throw "Could not find access object for dmd task item.";
 };
 
+export const getWipmetaObjectForDmdTaskItem = async function (
+  ctx: LapinContext,
+  id: string
+) {
+  const wipmetaObjectLookup = await ctx.couch.wipmeta.getSafe(id);
+  if (wipmetaObjectLookup.found) return wipmetaObjectLookup.doc;
+  else throw "Could not find wipmeta (preservation) object for dmd task item.";
+};
+
 export const getDmdTaskItemXMLFileName = function (
   noid: Noid,
   output: "dc" | "marc" | "issueinfo" | undefined
@@ -94,7 +102,7 @@ export const getDmdTaskItemXMLFileName = function (
   if (output === "marc") return noid + "/dmdMARC.xml";
   else if (output === "dc") return noid + "/dmdDC.xml";
   else if (output === "issueinfo") return noid + "/dmdISSUEINFO.xml";
-  else throw "Could not assemble metdata XML file name for dmd task item.";
+  else throw "Could not assemble metadata XML file name for dmd task item.";
 };
 
 export const storeDmdTaskItemXmlFile = async function (
@@ -108,7 +116,7 @@ export const storeDmdTaskItemXmlFile = async function (
   );
 
   if (storeResult.code === 201) return true;
-  else throw "Could notstore dmd task item xml file in swift.";
+  else throw "Could not store dmd task item xml file in swift.";
 };
 
 export const updateLabelForDmdTaskItemAccessObject = async function (

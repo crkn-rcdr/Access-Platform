@@ -40,6 +40,8 @@ export {
   isSucceededDMDTask,
 } from "./dmd/index.js";
 
+export { WipmetaObject } from "./wipmeta/index.js";
+
 export {
   CouchAttachmentRecord,
   MD5,
