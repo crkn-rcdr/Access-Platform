@@ -32,6 +32,8 @@
   --structural-div-bg: var(--grey-light);
   /* Change this to set the bg color for components that need a darker backgrop, ex: canvas viewer */
   --backdrop-bg: #ddd;
+  /* Change this to set the bg color for components of medium contrast */
+  --dark-bg: #333;
   /* Change this to set the bg color for items of high contrast*/
   --darkest-bg: #222;
   /* Change this to set the bg color for overlays, ex: modal dimmer */

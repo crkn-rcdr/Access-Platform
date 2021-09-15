@@ -31,6 +31,7 @@ None
     filter: brightness(0.95);
     min-height: 100%;
     flex: 1.5;
+    padding: var(--margin-sm);
   }
   .sidemenu ul {
     list-style-type: none;
