@@ -19,13 +19,5 @@ module.exports = function (doc, req) {
     doc.updated = new Date().toISOString().split(".")[0] + "Z";
   }
 
-  // The tests will run when i say dev
-  // Chances are the samples we were given have already processed.
-  // Kivik service running - if put a file in a fixtures folder it should notice and create it - if no validator it should throw it in.
-  // Restart the service.
-  // updateObject(doc);
-  // Timestamp
-  // get rid of the the .000 seconds and add the Z
-
   return successReturn(doc, `Label updated for ${doc.id}`);
 };
