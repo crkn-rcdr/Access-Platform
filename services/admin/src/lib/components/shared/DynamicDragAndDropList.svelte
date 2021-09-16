@@ -170,8 +170,10 @@ A container that enables the dragging and dropping of it's childen elements.
    * @returns void
    */
   function enableDraggingOnChildren() {
+    console.log("container", container);
     if (container) {
       let children = container.getElementsByClassName("drop-list-item");
+      console.log("children", children);
       for (let i = 0; i < children.length; i++) {
         enableDraggingOnChild(children[i]);
       }
@@ -193,6 +195,7 @@ A container that enables the dragging and dropping of it's childen elements.
   $: {
     dragList;
     enableDraggingOnChildren();
+    console.log("enable drag");
   }
 </script>
 
@@ -203,6 +206,7 @@ A container that enables the dragging and dropping of it's childen elements.
 <style>
   .drag-and-drop-wrap {
     min-width: 100%;
+    height: 100%;
   }
   .x {
     overflow-y: hidden;
