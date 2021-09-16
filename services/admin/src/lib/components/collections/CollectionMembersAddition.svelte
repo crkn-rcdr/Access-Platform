@@ -1,31 +1,15 @@
-<!--Skeleton for Bulk addition-->
 <script lang="ts">
   import type { Session } from "$lib/types";
   import { getStores } from "$app/stores";
-  import { AccessObject } from "@crkn-rcdr/access-data";
 
-  import type { ObjectList } from "@crkn-rcdr/access-data";
   import type { Collection } from "@crkn-rcdr/access-data/src/access/Collection";
   import { createEventDispatcher } from "svelte";
   import TiArrowBack from "svelte-icons/ti/TiArrowBack.svelte";
-  import FaCheckCircle from "svelte-icons/fa/FaCheckCircle.svelte";
-  import IoIosAddCircleOutline from "svelte-icons/io/IoIosAddCircleOutline.svelte";
-  import ResolveMany from "$lib/components/access-objects/ResolveMany.svelte";
 
-  /*  type ResolveManyReturn =[{
-          found: false;
-        }
-      | {
-          found: true;
-          result: {
-            type: "alias" | "manifest" | "collection";
-            id: string;
-          };
-        }
-      ][]; */
+  import PrefixSelector from "./PrefixSelector.svelte";
 
   /**
-   * @type {Manifest} The manifest to add selected canvases to.
+   * @type {Collection} The Collection where the members are added to.
    */
   export let destinationMember: Collection;
 
@@ -35,45 +19,21 @@
   export let destinationIndex = 0;
 
   /**
-   * @type {boolean} If the user is allowed to select multiple canvases to add.
-   */
-
-  let showAddButton = false;
-  /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
    */
   const { session } = getStores<Session>();
 
   /**
-   * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.
-   */
-  const dispatch = createEventDispatcher();
-
-  /**
-   * @type {Collection} The Collection to select members from.
-   */
-  let selectedMember: AccessObject;
-
-  /**
-   * @type {ObjectList} The members the user selects.
-   */
-
-  /**
-   * @type {string} If a manifest is selected.
+   * @type {string} If a Collection is selected.
    */
   let isMemberSelected = false;
   let addedMember = false;
-  let foundSlugs: string[] = [];
 
   /**
-   * @type {string} If the select all button is activated.
+   * @type {string} An prefix to the Depositor.
    */
-  let isAllSelected = false;
 
-  /**
-   * @type {string} An error message to be displayed.
-   */
-  let error = "";
+  let prefix: string = "";
 
   /**
    * When a collection is selected from the table of search results, grab its details from the backend.
@@ -83,20 +43,29 @@
   function addClicked() {
     addedMember = true;
   }
-  let resolveManyReturn: {} = [];
 
-  async function handleSelect(event: any) {
-    resolveManyReturn = event.detail;
-    console.log("test", resolveManyReturn);
-    for (let detail in resolveManyReturn) {
-      if (resolveManyReturn[detail][1].found == true) {
-        foundSlugs.push(resolveManyReturn[detail][1].result.id);
-      } else {
-        console.log("false");
-      }
-      foundSlugs = foundSlugs;
-      showAddButton = true;
-    }
+  let id: string = destinationMember.id;
+  let slugArray: string[];
+  let input: "";
+
+  // https://github.com/sindresorhus/type-fest/blob/main/source/promise-value.d.ts
+  type PromiseValue<PromiseType> = PromiseType extends PromiseLike<infer Value>
+    ? PromiseValue<Value>
+    : PromiseType;
+  let resolutions: PromiseValue<ReturnType<typeof resolveMembers>>;
+
+  async function resolveMembers() {
+    const slugArray = input.split(/[,|\s]/).map((slug) => prefix + slug);
+
+    const response = await $session.lapin.query("collection.checkAdditions", {
+      id,
+      slugArray,
+    });
+
+    resolutions = response;
+
+    // I'm returning here so that we can type `resolutions` properly (see above)
+    return response;
   }
 
   function handleCancelPressed() {
@@ -107,16 +76,26 @@
    * When add is pressed, add the selected members to the begining of the destination collection's members list, and signify to the parent through the @event done that the user is done adding canvases
    * @returns void
    */
+  let resultArray: string[] = [];
+  function checkIfAllItemsSelected(event) {
+    if (event.target) {
+      resultArray.push(event.target.value);
+    }
+  }
 
   async function handleAddPressed() {
-    for (let index in foundSlugs) {
+    for (let index in resultArray) {
       destinationMember?.members?.splice(destinationIndex, 0, {
-        id: foundSlugs[index],
+        id: resultArray[index],
       });
       destinationMember = destinationMember;
     }
     addedMember = false;
     isMemberSelected = true;
+  }
+  function clearText() {
+    input = "";
+    prefix = "";
   }
 </script>
 
@@ -125,71 +104,90 @@
     <div class="move-button">
       <button class="primary lg" on:click={addClicked}>Member LookUp</button>
       {#if addedMember}
-        <button
-          class="secondary cancel-button auto-align auto-align__a-center"
-          on:click={handleCancelPressed}
-        >
-          <div class="icon">
-            <TiArrowBack />
-          </div>
-          Exit
-        </button>
+        <div class="exit-button">
+          <button
+            class="secondary cancel-button auto-align auto-align__a-center"
+            on:click={handleCancelPressed}
+          >
+            <div class="icon">
+              <TiArrowBack />
+            </div>
+            Exit
+          </button>
+        </div>
       {/if}
     </div>
     {#if addedMember}
       <div>
-        <ResolveMany on:found={handleSelect} />
+        <PrefixSelector bind:prefix />
+        <textarea bind:value={input} /><br />
+        <button class="primary lg" on:click={resolveMembers}>Lookup</button>
+        <button class="primary lg" on:click={clearText}>Clear Text</button>
         <br />
       </div>
-      <div>
-        {#each foundSlugs as foundMember}
-          <div
-            class="checkmember"
-            on:click={handleAddPressed}
-            data-tooltip="Add Selected Member"
-            data-tooltip-flow="bottom"
-          >
-            <!--  <FaCheckCircle /> -->
-            {foundMember}
-          </div>
-        {/each}
-        {#if showAddButton}
+      <br />
+      {#if resolutions}
+        <table>
+          <thead>
+            <tr>
+              <th>Slug</th>
+              <th>Status</th>
+              <th>Select</th>
+            </tr>
+          </thead>
+          <tbody>
+            {#each Object.entries(resolutions) as [slug, resolution]}
+              <tr>
+                <td>{slug}</td>
+                <td>
+                  {#if resolution.resolved === true}
+                    found
+                  {:else if resolution.resolved === false}
+                    {resolution.error}
+                  {/if}
+                </td>
+                <td class="success">
+                  {#if resolution.resolved === true}
+                    <input
+                      type="checkbox"
+                      on:change={checkIfAllItemsSelected}
+                      bind:value={resolution.id}
+                    />
+                    {resolution.id}
+                  {:else}
+                    <span>No ID resolved to add</span>
+                  {/if}
+                </td>
+              </tr>
+            {/each}
+          </tbody>
+          <br />
           <button class="primary lg" on:click={handleAddPressed}>Add</button>
-        {/if}
-      </div>
-      <br />
-
-      <div class="add-menu-title" />
-      <br />
-      {#if error}
-        <br />
-        <div class="alert alert-danger">
-          {error}
-        </div>
+          <br />
+          <br />
+        </table>
       {/if}
     {/if}
   {/if}
 </div>
 
 <style>
-  .grid {
-    display: grid;
-    background-color: var(--primary-light);
-    grid-column: 1/1;
-    width: 100%;
-  }
-  .checkmember {
-    display: flex;
-    width: 100%;
-    height: 50px;
-
-    border-radius: var(--border-radius);
-    padding: 0.2rem;
-  }
-  .checkmember {
-    cursor: pointer;
-  }
   .move-button {
     display: flex;
+  }
+  .exit-button {
+    padding-left: 50%;
+  }
+  textarea {
+    display: grid;
+    background-color: var(--primary-light);
+    width: 100%;
+    height: 100%;
+    grid-column: 1/2;
+  }
+
+  .success {
+    background-color: var(--success-light);
+    color: var(--success);
   }
 </style>
