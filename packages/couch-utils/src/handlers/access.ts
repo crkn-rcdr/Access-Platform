@@ -26,7 +26,13 @@ const AccessDatabaseObject = z.union([Alias, Manifest, Collection]);
 
 type AccessDatabaseObject = z.infer<typeof AccessDatabaseObject>;
 
-type SlugResolution = { id: Noid; type: "manifest" | "collection" | "alias" };
+type SlugResolution =
+  | { resolved: true; id: Noid; type: "manifest" | "collection" | "alias" }
+  | { resolved: false; error: SlugResolutionError };
+type SlugResolutionError =
+  | "not-found" // the slug didn't resolve
+  | "is-self" // the slug resolved to the collection being edited
+  | "already-member"; // the slug resolved to an existing member of the collection
 
 /**
  * Interact with Access Objects in their database.
@@ -52,17 +58,17 @@ export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
   /**
    * Resolves slugs.
    */
-  async resolveSlugs(
-    slugs: Slug[]
-  ): Promise<Record<Slug, SlugResolution | null>> {
-    const response: Record<Slug, SlugResolution | null> = {};
+  async resolveSlugs(slugs: Slug[]): Promise<Record<Slug, SlugResolution>> {
+    const response: Record<Slug, SlugResolution> = {};
 
     for await (const slug of slugs) {
       const resolution = await this.findUnique("slug", slug, [
         "id",
         "type",
       ] as const);
-      response[slug] = resolution.found ? resolution.result : null;
+      response[slug] = resolution.found
+        ? { ...resolution.result, resolved: true }
+        : { error: "not-found", resolved: false };
     }
 
     return response;
@@ -267,5 +273,38 @@ export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
     });
     const manifest = await this.get(args.id);
     return Manifest.parse(manifest);
+  }
+  
+  /**
+   * This method resolves the slugs and returns the record of resolved and unresolved slugs with the error message
+   * @param id The Collection id
+   * @param slugArray The list of Slugs
+   * @returns Record of resolved slugs and the errors of why the slug cannot be added to the member list
+   */
+  async checkAdditions(
+    id: Noid,
+    slugArray: Slug[]
+  ): Promise<Record<Slug, SlugResolution>> {
+    console.log("Entry Into checkAdditions", id);
+
+    const currentMembers = Collection.parse(await this.get(id)).members;
+
+    const resolution = Object.entries(await this.resolveSlugs(slugArray));
+
+    return Object.fromEntries(
+      resolution.map(([slug, r]): [string, SlugResolution] => {
+        if (r.resolved) {
+          if (r.id === id) {
+            return [slug, { error: "is-self", resolved: false }];
+          }
+          for (let member of currentMembers) {
+            if (r.id === member.id) {
+              return [slug, { error: "already-member", resolved: false }];
+            }
+          }
+        }
+        return [slug, r];
+      })
+    );
   }
 }

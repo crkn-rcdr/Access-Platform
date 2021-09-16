@@ -45,8 +45,9 @@ test.serial("Can resolve slugs", async (t) => {
   t.deepEqual(result[MANIFEST_TWO_SLUG], {
     id: MANIFEST_TWO,
     type: "manifest",
+    resolved: true,
   });
-  t.is(result["notaslug"], null);
+  t.deepEqual(result["notaslug"], { error: "not-found", resolved: false });
 });
 
 test.serial("Objects can be published and unpublished", async (t) => {
@@ -109,6 +110,23 @@ test.serial("Cannot edit something if it's the wrong type", async (t) => {
 
   t.true(error.message.includes("has type: manifest"));
 });
+
+test.serial(
+  "Can check whether the objects referenced by slugs can be added to a Collection",
+  async (t) => {
+    const result = await t.context.access.checkAdditions(COLLECTION, [
+      MANIFEST_TWO_SLUG,
+      COLLECTION_SLUG,
+      "notaslug",
+    ]);
+    t.deepEqual(result["notaslug"], { error: "not-found", resolved: false });
+    t.deepEqual(result[COLLECTION_SLUG], { error: "is-self", resolved: false });
+    t.deepEqual(result[MANIFEST_TWO_SLUG], {
+      error: "already-member",
+      resolved: false,
+    });
+  }
+);
 
 test.serial("Can add and remove members", async (t) => {
   // Get the time at the start of the test. We'll use this to ensure that
