@@ -26,7 +26,10 @@ Allows the user to modify the member list for a collection.
   import TiTrash from "svelte-icons/ti/TiTrash.svelte";
   import CollectionMembersAddition from "./CollectionMembersAddition.svelte";
   import DynamicDragAndDropListItem from "../shared/DynamicDragAndDropListItem.svelte";
+<<<<<<< HEAD
   import VirtualList from "../shared/VirtualList.svelte";
+=======
+>>>>>>> main
 
   export let collection: Collection;
   export let showAddButton = true;
@@ -137,6 +140,7 @@ Allows the user to modify the member list for a collection.
       class="list"
       class:disabled={!showAddButton}
     >
+<<<<<<< HEAD
       {#if collection?.members}
         <VirtualList
           bind:items={collection.members}
@@ -192,6 +196,62 @@ Allows the user to modify the member list for a collection.
           </div>
         </VirtualList>
       {/if}
+=======
+      <DynamicDragAndDropList
+        bind:dragList={collection.members}
+        on:itemDropped={(e) => {
+          setActiveIndex(e.detail.destinationItemIndex);
+        }}
+      >
+        {#each collection?.members as members, i}
+          <DynamicDragAndDropListItem bind:pos={indexModel[i]}>
+            <div
+              class="members"
+              class:active={i === activeMemberIndex}
+              on:mousedown={() => setActiveIndex(i)}
+            >
+              <div class="auto-align">
+                <div class="actions-wrap">
+                  <div class="auto-align auto-align__column">
+                    <div class="action pos">
+                      {indexModel[i]}
+                    </div>
+                    <div
+                      class="action pos-input"
+                      on:click={(e) => {
+                        e.stopPropagation();
+                      }}
+                    >
+                      <AutomaticResizeNumberInput
+                        name="position"
+                        max={collection?.members.length}
+                        on:changed={(e) => {
+                          moveMember(e, i);
+                        }}
+                        bind:value={indexModel[i]}
+                      />
+                    </div>
+                    <div
+                      class="action icon"
+                      on:click={(e) => deleteCanvasByIndex(e, i)}
+                    >
+                      <TiTrash />
+                    </div>
+                  </div>
+                </div>
+                <div id="grid">
+                  <ul>
+                    <li>
+                      <a href="/object/{members['id']}">{members["id"]}</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </DynamicDragAndDropListItem>
+        {/each}
+      </DynamicDragAndDropList>
+>>>>>>> main
     </div>
   </div>
 {/if}

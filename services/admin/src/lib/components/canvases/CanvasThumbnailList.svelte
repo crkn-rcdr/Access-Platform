@@ -30,8 +30,15 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
   import { createEventDispatcher, onMount } from "svelte";
   import TiTrash from "svelte-icons/ti/TiTrash.svelte";
   import AutomaticResizeNumberInput from "$lib/components/shared/AutomaticResizeNumberInput.svelte";
+<<<<<<< HEAD
   import { moveArrayElement } from "$lib/utils/arrayUtil";
   import VirtualList from "../shared/VirtualList.svelte";
+=======
+  import DynamicDragAndDropList from "$lib/components/shared/DynamicDragAndDropList.svelte";
+  import VirtualScroll from "svelte-virtual-scroll-list";
+  import { moveArrayElement } from "$lib/utils/arrayUtil";
+  import DynamicDragAndDropListItem from "../shared/DynamicDragAndDropListItem.svelte";
+>>>>>>> main
 
   /**
    * @type {ObjectList} An ObjectList containing canvases to be listed.
@@ -99,6 +106,16 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
    */
   const dispatch = createEventDispatcher();
   2;
+  /**
+   * @type {number} The length of the index model used to control the drag and drop menu
+   */
+  let indexModelLength = 0;
+
+  /**
+   * @type {any} A variable that holds the virtual scroll component
+   */
+  let list;
+
   /**
    * @type {number} The length of the index model used to control the drag and drop menu
    */
@@ -292,13 +309,19 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
     class:disabled={!showAddButton}
   >
     {#if indexModelLength === canvases.length}
+<<<<<<< HEAD
       <VirtualList
         bind:items={canvases}
+=======
+      <DynamicDragAndDropList
+        bind:dragList={canvases}
+>>>>>>> main
         on:itemDropped={(e) => {
           setActiveIndex(e.detail.destinationItemIndex);
         }}
         let:item
       >
+<<<<<<< HEAD
         <div
           class="thumbnail"
           class:active={indexModel[item["id"]]["pos"] - 1 === activeCanvasIndex}
@@ -352,6 +375,77 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
           </div>
         </div>
       </VirtualList>
+=======
+        <div class="vs-wrap">
+          <VirtualScroll
+            bind:this={list}
+            data={Object.values(indexModel)}
+            key="id"
+            let:data
+          >
+            <DynamicDragAndDropListItem bind:pos={indexModel[data["id"]].pos}>
+              <div
+                class="thumbnail"
+                class:active={indexModel[data["id"]].pos - 1 ===
+                  activeCanvasIndex}
+                class:new={previousCanvasArrayLength != 0 &&
+                  indexModel[data["id"]].pos - 1 <
+                    canvases.length - previousCanvasArrayLength}
+                on:mousedown={() =>
+                  setActiveIndex(indexModel[data["id"]].pos - 1)}
+              >
+                <div class="auto-align auto-align__full">
+                  <div class="actions-wrap">
+                    <div
+                      class="auto-align auto-align__full auto-align auto-align__column"
+                      class:visibility-hidden={!showAddButton}
+                    >
+                      <div class="action pos">
+                        {indexModel[data["id"]].pos}
+                      </div>
+                      <div
+                        class="action pos-input"
+                        on:click={(e) => {
+                          e.stopPropagation();
+                        }}
+                      >
+                        <AutomaticResizeNumberInput
+                          name="position"
+                          max={canvases.length}
+                          on:changed={(e) => {
+                            moveCanvas(e, indexModel[data["id"]].pos - 1);
+                          }}
+                          bind:value={indexModel[data["id"]].pos}
+                        />
+                      </div>
+                      <div
+                        class="action icon"
+                        on:click={(e) =>
+                          deleteCanvasByIndex(
+                            e,
+                            indexModel[data["id"]].pos - 1
+                          )}
+                      >
+                        <TiTrash />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="image-wrap">
+                    <img
+                      alt={data?.["label"]?.["value"]}
+                      class="thumbnail-img"
+                      src={`https://image-tor.canadiana.ca/iiif/2/${encodeURIComponent(
+                        data["id"]
+                      )}/full/!425,524/0/default.jpg`}
+                    />
+                  </div>
+                </div>
+              </div>
+            </DynamicDragAndDropListItem>
+          </VirtualScroll>
+        </div>
+      </DynamicDragAndDropList>
+>>>>>>> main
     {/if}
   </div>
 </div>
