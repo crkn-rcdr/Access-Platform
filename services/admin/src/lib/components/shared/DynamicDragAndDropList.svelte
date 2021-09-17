@@ -173,10 +173,7 @@ A container that enables the dragging and dropping of it's childen elements.
     console.log("container", container);
     if (container) {
       let children = container.getElementsByClassName("drop-list-item");
-<<<<<<< HEAD
       console.log("children", children);
-=======
->>>>>>> main
       for (let i = 0; i < children.length; i++) {
         enableDraggingOnChild(children[i]);
       }
