@@ -153,7 +153,7 @@ This component displays the items in the dmd task throughout the various stages 
             </td>
             <td>{item.label}</td>
             <td class="auto-align auto-align__a-center">
-              {#if item.message?.length}
+              {#if !item.parsed || item.message?.length}
                 <span
                   class="icon"
                   class:not-success={!item.parsed}
