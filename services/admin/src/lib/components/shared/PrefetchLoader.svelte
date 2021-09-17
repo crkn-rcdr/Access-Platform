@@ -53,6 +53,3 @@ This component shows a CRKN-esque loader when svelte information is being fetche
     Loading...
   {/if}
 </div>
-
-<style>
-</style>

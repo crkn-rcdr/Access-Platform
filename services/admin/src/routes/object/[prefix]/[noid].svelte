@@ -16,9 +16,9 @@
         const serverObject = AccessObject.parse(response);
         return { props: { serverObject } };
       }
-      return { props: {} };
+      return { props: { error: "Could not find prefix or noid in url." } };
     } catch (e) {
-      return e;
+      return { props: { error: e?.message } };
     }
   };
 </script>
@@ -31,15 +31,30 @@
    */
   import { AccessObject } from "@crkn-rcdr/access-data";
   import Editor from "$lib/components/access-objects/Editor.svelte";
+  import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
+  import Loading from "$lib/components/shared/Loading.svelte";
 
   /**
    * @type {AccessObject} Object being edited.
    */
   export let serverObject: AccessObject;
+
+  /**
+   * @type {string} An error message insdicating what went wrong.
+   */
+  export let error: string;
 </script>
 
 {#if serverObject}
   <Editor bind:serverObject />
+{:else if error}
+  <br />
+  <div class="wrapper">
+    <NotificationBar status="fail" message={error} />
+  </div>
 {:else}
-  Loading...
+  <div class="wrapper center">
+    <Loading backgroundType="gradient" /><br />
+    Loading...
+  </div>
 {/if}
