@@ -137,8 +137,8 @@ The editor actions component holds functionality that is responsible for perform
     };
 
     // Arrays are handled a bit strange in the diff module. Instead, just assign the entire array to the body data serverObject
-    if (bodyObj["canvases"]) {
-      bodyObj["canvases"] = editorObject["canvases"];
+    for (const key in bodyObj) {
+      if (Array.isArray(editorObject[key])) bodyObj[key] = editorObject[key];
     }
 
     const data = await sendSaveRequest(bodyObj);

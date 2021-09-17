@@ -114,6 +114,7 @@ Allows the user to modify the member list for a collection.
   });
   $: {
     collection.members;
+    console.log(collection.members);
     setIndexModel();
   }
 </script>
