@@ -7,7 +7,7 @@
   import type { RootLoadOutput } from "$lib/types";
   export const load: Load<RootLoadOutput> = async ({ page, context }) => {
     try {
-      if (page?.params?.["keys"]&& page?.params?.["access"]) {
+      if (page?.params?.["keys"]) {
         const response = await context.lapin.query(
           "dipstagingListFromKeys",
           page.params["keys"]
@@ -29,6 +29,7 @@
     }
   };
 </script>
+
 <script lang="ts">
 /**
  * @file
