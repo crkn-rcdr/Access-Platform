@@ -204,6 +204,14 @@ A component that shows a navigable set of pages with a side menu to allow the us
           </SideMenuPageList>
 
           <SideMenuBody>
+            <!--SideMenuPage {...pageComponents[activeIndex]["sideMenuPageProps"]}>
+              <svelte:component
+                this={pageComponents[activeIndex]["contentComponent"]}
+                {...pageComponents[activeIndex]["contentComponentProps"]}
+                bind:this={instances[activeIndex]}
+              />
+            </SideMenuPage-->
+
             {#each pageComponents as pageComponentData, i}
               <SideMenuPage {...pageComponentData["sideMenuPageProps"]}>
                 <svelte:component

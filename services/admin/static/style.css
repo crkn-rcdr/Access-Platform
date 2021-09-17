@@ -254,6 +254,11 @@ Source: https://github.com/twbs/bootstrap/blob/main/scss/mixins/_visually-hidden
   max-width: 90rem;
 }
 
+.center {
+  padding-top: var(--perfect-fourth-1);
+  text-align: center;
+}
+
 /* Break out of the mould of your fixed-width container to create visual interest - see: https://piccalil.li/tutorial/creating-a-full-bleed-css-utility/ */
 .full-bleed {
   width: 100vw;

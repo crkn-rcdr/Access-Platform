@@ -25,6 +25,7 @@ Allows the user to modify the member list for a collection.
   import { moveArrayElement } from "$lib/utils/arrayUtil";
   import TiTrash from "svelte-icons/ti/TiTrash.svelte";
   import CollectionMembersAddition from "./CollectionMembersAddition.svelte";
+  import DynamicDragAndDropListItem from "../shared/DynamicDragAndDropListItem.svelte";
 
   export let collection: Collection;
   export let showAddButton = true;
@@ -142,49 +143,51 @@ Allows the user to modify the member list for a collection.
         }}
       >
         {#each collection?.members as members, i}
-          <div
-            class="members"
-            class:active={i === activeMemberIndex}
-            on:mousedown={() => setActiveIndex(i)}
-          >
-            <div class="auto-align">
-              <div class="actions-wrap">
-                <div class="auto-align auto-align__column">
-                  <div class="action pos">
-                    {indexModel[i]}
-                  </div>
-                  <div
-                    class="action pos-input"
-                    on:click={(e) => {
-                      e.stopPropagation();
-                    }}
-                  >
-                    <AutomaticResizeNumberInput
-                      name="position"
-                      max={collection?.members.length}
-                      on:changed={(e) => {
-                        moveMember(e, i);
+          <DynamicDragAndDropListItem bind:pos={indexModel[i]}>
+            <div
+              class="members"
+              class:active={i === activeMemberIndex}
+              on:mousedown={() => setActiveIndex(i)}
+            >
+              <div class="auto-align">
+                <div class="actions-wrap">
+                  <div class="auto-align auto-align__column">
+                    <div class="action pos">
+                      {indexModel[i]}
+                    </div>
+                    <div
+                      class="action pos-input"
+                      on:click={(e) => {
+                        e.stopPropagation();
                       }}
-                      bind:value={indexModel[i]}
-                    />
-                  </div>
-                  <div
-                    class="action icon"
-                    on:click={(e) => deleteCanvasByIndex(e, i)}
-                  >
-                    <TiTrash />
+                    >
+                      <AutomaticResizeNumberInput
+                        name="position"
+                        max={collection?.members.length}
+                        on:changed={(e) => {
+                          moveMember(e, i);
+                        }}
+                        bind:value={indexModel[i]}
+                      />
+                    </div>
+                    <div
+                      class="action icon"
+                      on:click={(e) => deleteCanvasByIndex(e, i)}
+                    >
+                      <TiTrash />
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div id="grid">
-                <ul>
-                  <li>
-                    <a href="/object/{members['id']}">{members["id"]}</a>
-                  </li>
-                </ul>
+                <div id="grid">
+                  <ul>
+                    <li>
+                      <a href="/object/{members['id']}">{members["id"]}</a>
+                    </li>
+                  </ul>
+                </div>
               </div>
             </div>
-          </div>
+          </DynamicDragAndDropListItem>
         {/each}
       </DynamicDragAndDropList>
     </div>

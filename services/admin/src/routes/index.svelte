@@ -3,28 +3,32 @@
    * @file
    * @description This is the main page for the app
    */
-  import { goto } from "$app/navigation";
   import TypeAhead from "$lib/components/access-objects/TypeAhead.svelte";
   import { Noid } from "@crkn-rcdr/access-data";
+  //import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
+  import PrefetchLoader from "$lib/components/shared/PrefetchLoader.svelte";
 
-  import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
+  /**
+   * @type {string} The link to the object selected form the search bar.
+   */
+  let objectHref: string;
 
   /**
    * Routes to the object the user clicks from the TypeAhead component
    * @param event
    * @returns void
    */
-  function slugSelected(event: CustomEvent<string>) {
+  async function slugSelected(event: CustomEvent<string>) {
     const noid = event.detail;
     try {
-      if (Noid.parse(noid)) goto(`/object/${noid}`);
+      if (Noid.parse(noid)) objectHref = `/object/${noid}`;
     } catch (e) {
       console.log(e);
     }
   }
 </script>
 
-<div class="wrapper">
+<PrefetchLoader bind:href={objectHref}>
   <div class="notifications">
     <!--NotificationBar message="New fix pushed!" status="success" />
     <NotificationBar message="There is some error!" status="fail" />
@@ -33,30 +37,24 @@
       status="warn"
     /-->
   </div>
-  <div class="center">
-    <div class="title">
-      <img
-        class="logo"
-        src="/static/canadiana-pa-tag-color.png"
-        alt="Canadiana by CRKN, par RCDR"
-      />
-    </div>
-    <div class="search">
-      <TypeAhead
-        placeholder="Search for existing collections and manifests to edit..."
-        on:selected={slugSelected}
-      />
-    </div>
+  <div class="title">
+    <img
+      class="logo"
+      src="/static/canadiana-pa-tag-color.png"
+      alt="Canadiana by CRKN, par RCDR"
+    />
   </div>
-</div>
+  <div class="search">
+    <TypeAhead
+      placeholder="Search for existing collections and manifests to edit..."
+      on:selected={slugSelected}
+    />
+  </div>
+</PrefetchLoader>
 
 <style>
   .notifications {
     padding-top: var(--perfect-fourth-3);
-  }
-  .center {
-    padding-top: var(--perfect-fourth-1);
-    text-align: center;
   }
   .title,
   .title img {

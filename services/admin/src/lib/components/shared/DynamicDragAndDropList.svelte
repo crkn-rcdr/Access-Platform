@@ -72,87 +72,6 @@ A container that enables the dragging and dropping of it's childen elements.
   let success = false;
 
   /**
-   * If the y coordinate of the element being dragged is greater than or equal to the y coordinate of the rectangle return true otherwise return false (because we are iterating through the rects in decreasing order! This simplifies the calculation)
-   * @param rect
-   * @param destinationY
-   * @returns boolean
-   */
-  function checkVerticalList(rect: DOMRect, destinationY: number): boolean {
-    let y = rect.top;
-    return y <= destinationY;
-  }
-
-  /**
-   * If the x coordinate of the element being dragged is greater than or equal to the x coordinate of the rectangle return true otherwise return false (because we are iterating through the rects in decreasing order! This simplifies the calculation)
-   * @param rect
-   * @param destinationX
-   * @returns boolean
-   */
-  function checkHorizontalList(rect: DOMRect, destinationX: number): boolean {
-    let x = rect.left;
-    return x <= destinationX;
-  }
-
-  /**
-   * If the coordinates of the element being dragged are greater than or equal to the coordinates of the rectangle return true otherwise return false (because we are iterating through the rects in decreasing order! This simplifies the calculation)
-   * @param rect
-   * @param destinationX
-   * @param destinationY
-   * @returns boolean
-   */
-  function checkGrid(
-    rect: DOMRect,
-    destinationX: number,
-    destinationY: number
-  ): boolean {
-    let y = rect.top;
-    let x = rect.left;
-    return y <= destinationY && x <= destinationX;
-  }
-
-  /**
-   * Checks a rect's area representing a valid drop zone against the destination coordinates (of the element being dragged) to see if this rect is the one being hovered over by the item being dragged. Calls @function checkVerticalList or @function checkHorizontalList or @function checkGrid depending on the @var direction
-   * @param rect
-   * @param destinationX
-   * @param destinationY
-   * @returns boolean
-   */
-  function checkIfShouldAddAfterIndex(
-    rect: DOMRect | undefined,
-    destinationX: number,
-    destinationY: number
-  ) {
-    if (rect) {
-      if (direction === "y" && checkVerticalList(rect, destinationY)) {
-        return true;
-      } else if (direction === "x" && checkHorizontalList(rect, destinationX)) {
-        return true;
-      } else if (checkGrid(rect, destinationX, destinationY)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /**
-   * When an item enters a valid drop zone, check its coordinates against the coordinates of the other draggable elements to find the index to move the item at @var currentItemIndex in the dragList to
-   * @param destinationX
-   * @param destinationY
-   * @returns number
-   */
-  function getIndexToMoveChildTo(destinationX: number, destinationY: number) {
-    let destinationItemIndex = currentItemIndex;
-    for (let i = container.children.length - 1; i >= 0; i--) {
-      let rect = container?.children?.[i]?.getBoundingClientRect();
-      if (checkIfShouldAddAfterIndex(rect, destinationX, destinationY)) {
-        destinationItemIndex = i;
-        break;
-      }
-    }
-    return destinationItemIndex;
-  }
-
-  /**
    * Takes care of moving the dragged item from @var currentItemIndex to @var destinationItemIndex in @var dragList. Triggers the @event itemDropped that sends out these indexes to the parent in its event.detail
    * @returns void
    */
@@ -173,8 +92,8 @@ A container that enables the dragging and dropping of it's childen elements.
    * @param elementIndex
    * @returns void
    */
-  function dragStart(this: Element, elementIndex: number) {
-    currentItemIndex = elementIndex;
+  function dragStart(this: Element) {
+    currentItemIndex = parseInt(this.getAttribute("data-i"));
     originalList = [...dragList];
   }
 
@@ -183,7 +102,7 @@ A container that enables the dragging and dropping of it's childen elements.
    * @returns void
    */
   function dragenter(event: any) {
-    destinationItemIndex = getIndexToMoveChildTo(event.clientX, event.clientY);
+    destinationItemIndex = parseInt(event.currentTarget.getAttribute("data-i"));
     handleMove();
   }
 
@@ -210,11 +129,8 @@ A container that enables the dragging and dropping of it's childen elements.
    * @param elementIndex
    * @returns void
    */
-  function addEventListeners(element: Element, elementIndex: number) {
-    element.addEventListener(
-      "dragstart",
-      dragStart.bind(element, elementIndex)
-    );
+  function addEventListeners(element: Element) {
+    element.addEventListener("dragstart", dragStart.bind(element));
     element.addEventListener("dragenter", dragenter);
     element.addEventListener("drop", drop);
     element.addEventListener("dragend", dragend);
@@ -226,11 +142,8 @@ A container that enables the dragging and dropping of it's childen elements.
    * @param elementIndex
    * @returns void
    */
-  function removeEventListeners(element: Element, elementIndex: number) {
-    element.removeEventListener(
-      "dragstart",
-      dragStart.bind(element, elementIndex)
-    );
+  function removeEventListeners(element: Element) {
+    element.removeEventListener("dragstart", dragStart.bind(element));
     element.removeEventListener("dragenter", dragenter);
     element.removeEventListener("drop", drop);
     element.removeEventListener("dragend", dragend);
@@ -242,17 +155,14 @@ A container that enables the dragging and dropping of it's childen elements.
    * @param elementIndex
    * @returns void
    */
-  function enableDraggingOnChild(
-    element: Element | undefined,
-    elementIndex: number
-  ) {
+  function enableDraggingOnChild(element: Element | undefined) {
     if (typeof element === "undefined") return;
     element.classList?.add("draggable");
     element.setAttribute("draggable", "true");
     element.setAttribute("ondragover", "return false");
 
-    removeEventListeners(element, elementIndex); // Ensure no duplicates fired
-    addEventListeners(element, elementIndex);
+    removeEventListeners(element); // Ensure no duplicates fired
+    addEventListeners(element);
   }
 
   /**
@@ -261,8 +171,9 @@ A container that enables the dragging and dropping of it's childen elements.
    */
   function enableDraggingOnChildren() {
     if (container) {
-      for (let i = 0; i < container.children.length; i++) {
-        enableDraggingOnChild(container?.children?.[i], i);
+      let children = container.getElementsByClassName("drop-list-item");
+      for (let i = 0; i < children.length; i++) {
+        enableDraggingOnChild(children[i]);
       }
     }
   }
@@ -285,7 +196,7 @@ A container that enables the dragging and dropping of it's childen elements.
   }
 </script>
 
-<div class="drag-and-drop-wrap {direction}" bind:this={container}>
+<div bind:this={container} class="drag-and-drop-wrap {direction}">
   <slot />
 </div>
 
