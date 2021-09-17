@@ -55,6 +55,11 @@ This component shows the view for a dmd task that had its metadata successfully 
   let showAllInvalidError: boolean = false;
 
   /**
+   *  @type { boolean } The message to show if none of the items are found to be valid.
+   */
+  let showAllInvalidErrorMsg: string = "";
+
+  /**
    * Sets the state of the dmd task to the initial state on page load.
    * @returns void
    */
@@ -98,6 +103,13 @@ This component shows the view for a dmd task that had its metadata successfully 
         updatedProgressPercentage: 0,
       });
       showAllInvalidError = allInvalidCheck;
+      showAllInvalidErrorMsg = `${
+        dmdTask?.items?.length
+          ? "Every item's metadata is invalid. To get an idea of what went wrong for each item, press their preview button. You can use this information to m"
+          : "No items found. M"
+      }ake changes to ${
+        dmdTask?.fileName?.length ? dmdTask?.fileName : "the file"
+      }, then try again by uploading the corrected file.`;
     }
   }
 
@@ -167,16 +179,7 @@ This component shows the view for a dmd task that had its metadata successfully 
         </ScrollStepperStep>
       </ScrollStepper>
     {:else}
-      <NotificationBar
-        status="fail"
-        message={`${
-          dmdTask?.items?.length
-            ? "Every item's metadata is invalid. To get an idea of what went wrong for each item, press their preview button. You can use this information to m"
-            : "No items found. M"
-        }ake changes to ${
-          dmdTask?.fileName?.length ? dmdTask?.fileName : "the file"
-        }, then try again by uploading the corrected file.`}
-      />
+      <NotificationBar status="fail" message={showAllInvalidErrorMsg} />
       <br />
       <a href="/dmd/new" class="dmd-task-try-again">
         <button class="danger">Try Again</button>

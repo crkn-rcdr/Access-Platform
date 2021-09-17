@@ -17,7 +17,6 @@ Displays a dmd task in an waiting state.
   import type { Session } from "$lib/types";
   import { getStores } from "$app/stores";
   import type { WaitingDMDTask } from "@crkn-rcdr/access-data";
-  import DmdTaskInfoTable from "$lib/components/dmd/DmdTaskInfoTable.svelte";
   import Loading from "$lib/components/shared/Loading.svelte";
   import { onDestroy } from "svelte";
 
