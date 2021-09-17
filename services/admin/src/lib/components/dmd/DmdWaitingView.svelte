@@ -31,16 +31,29 @@ Displays a dmd task in an waiting state.
    */
   const { session } = getStores<Session>();
 
+  /**
+   * @type {String} A date string for when the last time the request for the DMD task was made to the backend.
+   */
   let lastUpdated: string = new Date().toLocaleString();
+
+  /**
+   * @type {NodeJS.Timeout} A timed interval for sending a request to the backend to get the task.
+   */
   let poller: NodeJS.Timeout;
 
+  /**
+   * Sets up the interval @var poller that calls @function doPoll
+   * @returns void
+   */
   const setupPoller = (id: string) => {
-    if (poller) {
-      clearInterval(poller);
-    }
+    if (poller) clearPoller();
     poller = setInterval(doPoll(id), 30000);
   };
 
+  /**
+   * Sends the request to the backend to update the @var dmdTask with the lates info in the database.
+   * @returns void
+   */
   const doPoll = (id: string) => async () => {
     const response = await $session.lapin.query("dmdTask.find", id);
     if (response && "result" in response) dmdTask = response.result;
@@ -48,8 +61,30 @@ Displays a dmd task in an waiting state.
     lastUpdated = new Date().toLocaleString();
   };
 
-  onDestroy(() => clearInterval(poller));
+  /**
+   * Adds the dmd task to the dmd task store on page load. (If it isn't in the store already)
+   * @returns void
+   */
+  function clearPoller() {
+    try {
+      clearInterval(poller);
+    } catch (e) {
+      console.log(e?.message);
+    }
+  }
 
+  /**
+   * @event onDestroy
+   * @description When the component instance is destroyed from the dom, clear the interval by calling @function clearPoller
+   */
+  onDestroy(() => {
+    clearPoller();
+  });
+
+  /**
+   * @listens dmdTask
+   * @description Calls @function setupPoller when the @var dmdTask changes.
+   */
   $: setupPoller(dmdTask["id"]);
 </script>
 
