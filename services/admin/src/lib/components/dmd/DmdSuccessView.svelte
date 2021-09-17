@@ -169,7 +169,11 @@ This component shows the view for a dmd task that had its metadata successfully 
     {:else}
       <NotificationBar
         status="fail"
-        message={`Every item's metadata is invalid. To get an idea of what went wrong for each item, press their preview button. You can use this information to make changes to ${
+        message={`${
+          dmdTask?.items?.length
+            ? "Every item's metadata is invalid. To get an idea of what went wrong for each item, press their preview button. You can use this information to m"
+            : "No items found. M"
+        }ake changes to ${
           dmdTask?.fileName?.length ? dmdTask?.fileName : "the file"
         }, then try again by uploading the corrected file.`}
       />
