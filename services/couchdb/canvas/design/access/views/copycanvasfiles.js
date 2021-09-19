@@ -1,8 +1,9 @@
 module.exports = {
   map: function (doc) {
     if (
-      ("master" in doc && "path" in doc.master) ||
-      ("ocrPdf" in doc && "path" in doc.ocrPdf)
+      doc.orphan !== true &&
+      (("master" in doc && "path" in doc.master) ||
+        ("ocrPdf" in doc && "path" in doc.ocrPdf))
     ) {
       emit(null, null);
     }
