@@ -89,24 +89,26 @@ Allows the user to modify the member list for a collection.
         <div class="auto-align">
           <div class="actions-wrap">
             <div class="auto-align auto-align__column">
-              <div class="action pos">
-                {item.pos}
-              </div>
-              <div
-                class="action pos-input"
-                on:click={(e) => {
-                  e.stopPropagation();
-                }}
-              >
-                <AutomaticResizeNumberInput
-                  name="position"
-                  max={collection?.members.length}
-                  value={item.pos}
-                  on:changed={(e) => {
-                    moveMember(e, item.pos - 1);
+              {#if collection.behavior !== "unordered"}
+                <div class="action pos">
+                  {item.pos}
+                </div>
+                <div
+                  class="action pos-input"
+                  on:click={(e) => {
+                    e.stopPropagation();
                   }}
-                />
-              </div>
+                >
+                  <AutomaticResizeNumberInput
+                    name="position"
+                    max={collection?.members.length}
+                    value={item.pos}
+                    on:changed={(e) => {
+                      moveMember(e, item.pos - 1);
+                    }}
+                  />
+                </div>
+              {/if}
               <div
                 class="action icon"
                 on:click={(e) => deleteCanvasByIndex(e, item.pos - 1)}
