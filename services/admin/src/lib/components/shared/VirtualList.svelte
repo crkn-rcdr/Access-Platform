@@ -280,4 +280,8 @@ Displays a list that when scrolls veritcally, creates and distoys children eleme
   .vs-wrap {
     height: 72vh;
   }
+
+  :global(.disabled .vs-wrap div) {
+    overflow-y: hidden !important;
+  }
 </style>
