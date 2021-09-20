@@ -70,7 +70,11 @@ exports.dateAsArray = (date) => {
  */
 exports.updateObject = (doc, user) => {
   const now = Date.now() / 1000;
-  if (user) {
+  if (
+    typeof user === "object" &&
+    typeof user.email === "string" &&
+    typeof user.name === "string"
+  ) {
     doc.staff = { by: user, date: now };
   }
   doc.updateInternalmeta = { requestDate: now };
