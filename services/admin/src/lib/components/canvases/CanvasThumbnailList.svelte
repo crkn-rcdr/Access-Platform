@@ -132,10 +132,9 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
   >
     <div
       class="thumbnail auto-align auto-align__full"
-      class:active={activeCanvasIndex === item.id}
-      class:new={item.new}
+      class:active={activeCanvasIndex === item.pos - 1}
       on:click={() => {
-        setActiveIndex(item.id);
+        setActiveIndex(item.pos - 1);
       }}
     >
       <div class="actions-wrap">
@@ -157,13 +156,13 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
               max={canvases.length}
               value={item.pos}
               on:changed={(e) => {
-                moveCanvas(e, item.id);
+                moveCanvas(e, item.pos - 1);
               }}
             />
           </div>
           <div
             class="action icon"
-            on:click={(e) => deleteCanvasByIndex(e, item.id)}
+            on:click={(e) => deleteCanvasByIndex(e, item.pos - 1)}
           >
             <TiTrash />
           </div>
@@ -171,10 +170,10 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
       </div>
       <div class="image-wrap">
         <img
-          alt={item.data?.label?.none}
+          alt={item.label?.none}
           class="thumbnail-img"
           src={`https://image-tor.canadiana.ca/iiif/2/${encodeURIComponent(
-            item.data?.id
+            item.id
           )}/full/!425,524/0/default.jpg`}
         />
       </div>

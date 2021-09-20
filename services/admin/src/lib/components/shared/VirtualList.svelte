@@ -55,22 +55,12 @@ Displays a list that when scrolls veritcally, creates and distoys children eleme
   let isInitialized = false;
 
   /**
-   * @type {{
-        id: number,
-        pos: number,
-        new: boolean,
-        data,
-      }} A utility array that keeps track of the position numbers for the dataList listed in the item list, allows the user to move the dataList around by various means.
+   * @type {any} A utility array that keeps track of the position numbers for the dataList listed in the thumbnail list, allows the user to move the dataList around by various means.
    */
-  let indexModel: {
-    id: number;
-    pos: number;
-    new: boolean;
-    data;
-  }[] = [];
+  let indexModel: any = {};
 
   /**
-   * @type {HTMLDivElement} The html element containing the item list.
+   * @type {HTMLDivElement} The html element containing the thumbnail list.
    */
   let container: HTMLDivElement;
 
@@ -105,6 +95,11 @@ Displays a list that when scrolls veritcally, creates and distoys children eleme
   let list;
 
   /**
+   * @type {number} The length of the index model used to control the drag and drop menu
+   */
+  let indexModelLength = 0;
+
+  /**
    * @type {any} A variable that allows the developer to interact with each individual item in @var dataList in the parent component.
    */
   let item = {};
@@ -114,15 +109,12 @@ Displays a list that when scrolls veritcally, creates and distoys children eleme
    * @returns void
    */
   function setIndexModel() {
-    const prevArrLen = indexModel.length;
-    indexModel = [];
+    indexModel = {};
     for (let i = 0; i < dataList.length; i++) {
-      indexModel.push({
-        id: i,
+      indexModel[dataList[i].id] = {
         pos: i + 1,
-        new: prevArrLen != 0 && i < dataList.length - prevArrLen,
-        data: { ...dataList[i] },
-      });
+        ...dataList[i],
+      };
     }
   }
 
@@ -145,8 +137,8 @@ Displays a list that when scrolls veritcally, creates and distoys children eleme
    * @returns void
    */
   function jumpTo(index: number) {
-    let canvasitems = container.querySelectorAll(".item");
-    canvasitems?.[index]?.scrollIntoView();
+    let canvasThumbnails = container.querySelectorAll(".thumbnail");
+    canvasThumbnails?.[index]?.scrollIntoView();
   }
 
   /**
@@ -221,12 +213,20 @@ Displays a list that when scrolls veritcally, creates and distoys children eleme
     dataList;
     updated();
   }
+
+  /**
+   * @listens indexModel
+   * @description Sets @var indexModelLength, the dataList positions model, and stores the h any time the indexModel changes.
+   */
+  $: {
+    indexModelLength = Object.keys(indexModel).length;
+  }
 </script>
 
 <svelte:window on:keydown={handleKeydown} />
 
 <div bind:this={container} tabindex="0" class="list" class:disabled>
-  {#if indexModel.length === dataList.length}
+  {#if indexModelLength === dataList.length}
     {#if draggable}
       <DynamicDragAndDropList
         bind:dragList={dataList}
@@ -242,9 +242,7 @@ Displays a list that when scrolls veritcally, creates and distoys children eleme
             let:data
           >
             <DynamicDragAndDropListItem bind:pos={indexModel[data["id"]].pos}>
-              <div class="item">
-                <slot item={indexModel[data["id"]]} />
-              </div>
+              <slot item={indexModel[data["id"]]} />
             </DynamicDragAndDropListItem>
           </VirtualScroll>
         </div>
@@ -256,9 +254,7 @@ Displays a list that when scrolls veritcally, creates and distoys children eleme
         key="id"
         let:data
       >
-        <div class="item">
-          <slot item={indexModel[data["index"]]} />
-        </div>
+        <slot item={indexModel[data["id"]]} />
       </VirtualScroll>
     {/if}
   {/if}
@@ -269,9 +265,8 @@ Displays a list that when scrolls veritcally, creates and distoys children eleme
     position: relative;
     flex: 9;
     width: 100%;
-    outline: none !important;
-    height: 77vh;
     overflow-y: auto;
+    outline: none !important;
   }
   .list.disabled {
     overflow-y: hidden;
@@ -280,9 +275,5 @@ Displays a list that when scrolls veritcally, creates and distoys children eleme
 
   .vs-wrap {
     height: 72vh;
-  }
-
-  :global(.disabled .vs-wrap div) {
-    overflow-y: hidden !important;
   }
 </style>

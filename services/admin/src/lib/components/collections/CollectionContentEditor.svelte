@@ -25,7 +25,10 @@ Allows the user to modify the member list for a collection.
   import CollectionMembersAddition from "./CollectionMembersAddition.svelte";
 
   export let collection: Collection;
+  export let showAddButton = true;
   let activeMemberIndex: number = 0;
+  let container: HTMLDivElement;
+
   const dispatch = createEventDispatcher();
 
   function setActiveIndex(index: number) {
@@ -34,6 +37,12 @@ Allows the user to modify the member list for a collection.
     if (index < 0) index = 0;
     activeMemberIndex = index;
     dispatch("membersClicked", { index });
+    collection.members = collection.members;
+  }
+
+  function jumpTo(index: number) {
+    let membersThumbnails = container.querySelectorAll(".thumbnail");
+    membersThumbnails?.[index]?.scrollIntoView();
   }
 
   function moveMember(event: any, originalItemIndex: number) {
@@ -48,7 +57,7 @@ Allows the user to modify the member list for a collection.
     // Highlight and move to new position
     activeMemberIndex = destinationItemIndex;
 
-    //jumpTo(activeMemberIndex);
+    jumpTo(activeMemberIndex);
     setActiveIndex(activeMemberIndex);
   }
 
@@ -67,7 +76,7 @@ Allows the user to modify the member list for a collection.
 </script>
 
 {#if collection}
-  <div>
+  <div class="auto-align auto-align__column">
     <CollectionMembersAddition
       bind:destinationMember={collection}
       on:done={() => {
@@ -79,12 +88,13 @@ Allows the user to modify the member list for a collection.
     <VirtualList
       bind:dataList={collection.members}
       bind:activeIndex={activeMemberIndex}
+      disabled={!showAddButton}
       let:item
     >
       <div
         class="members"
-        class:active={item.id === activeMemberIndex}
-        on:mousedown={() => setActiveIndex(item.id)}
+        class:active={item.pos - 1 === activeMemberIndex}
+        on:mousedown={() => setActiveIndex(item.pos - 1)}
       >
         <div class="auto-align">
           <div class="actions-wrap">
@@ -103,13 +113,13 @@ Allows the user to modify the member list for a collection.
                   max={collection?.members.length}
                   value={item.pos}
                   on:changed={(e) => {
-                    moveMember(e, item.id);
+                    moveMember(e, item.pos - 1);
                   }}
                 />
               </div>
               <div
                 class="action icon"
-                on:click={(e) => deleteCanvasByIndex(e, item.id)}
+                on:click={(e) => deleteCanvasByIndex(e, i)}
               >
                 <TiTrash />
               </div>
@@ -118,7 +128,7 @@ Allows the user to modify the member list for a collection.
           <div id="grid">
             <ul>
               <li>
-                <a href="/object/{item.data?.id}">{item.data?.id}</a>
+                <a href="/object/{item.id}">{item.id}</a>
               </li>
             </ul>
           </div>
