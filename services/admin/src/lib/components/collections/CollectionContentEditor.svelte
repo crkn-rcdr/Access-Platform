@@ -27,8 +27,6 @@ Allows the user to modify the member list for a collection.
   export let collection: Collection;
   export let showAddButton = true;
   let activeMemberIndex: number = 0;
-  let container: HTMLDivElement;
-
   const dispatch = createEventDispatcher();
 
   function setActiveIndex(index: number) {
@@ -37,12 +35,6 @@ Allows the user to modify the member list for a collection.
     if (index < 0) index = 0;
     activeMemberIndex = index;
     dispatch("membersClicked", { index });
-    collection.members = collection.members;
-  }
-
-  function jumpTo(index: number) {
-    let membersThumbnails = container.querySelectorAll(".thumbnail");
-    membersThumbnails?.[index]?.scrollIntoView();
   }
 
   function moveMember(event: any, originalItemIndex: number) {
@@ -57,7 +49,7 @@ Allows the user to modify the member list for a collection.
     // Highlight and move to new position
     activeMemberIndex = destinationItemIndex;
 
-    jumpTo(activeMemberIndex);
+    //jumpTo(activeMemberIndex);
     setActiveIndex(activeMemberIndex);
   }
 
@@ -76,7 +68,7 @@ Allows the user to modify the member list for a collection.
 </script>
 
 {#if collection}
-  <div class="auto-align auto-align__column">
+  <div>
     <CollectionMembersAddition
       bind:destinationMember={collection}
       on:done={() => {
@@ -119,7 +111,7 @@ Allows the user to modify the member list for a collection.
               </div>
               <div
                 class="action icon"
-                on:click={(e) => deleteCanvasByIndex(e, i)}
+                on:click={(e) => deleteCanvasByIndex(e, item.pos - 1)}
               >
                 <TiTrash />
               </div>

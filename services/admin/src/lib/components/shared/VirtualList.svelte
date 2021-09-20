@@ -55,12 +55,12 @@ Displays a list that when scrolls veritcally, creates and distoys children eleme
   let isInitialized = false;
 
   /**
-   * @type {any} A utility array that keeps track of the position numbers for the dataList listed in the thumbnail list, allows the user to move the dataList around by various means.
+   * @type {any} A utility array that keeps track of the position numbers for the dataList listed in the item list, allows the user to move the dataList around by various means.
    */
   let indexModel: any = {};
 
   /**
-   * @type {HTMLDivElement} The html element containing the thumbnail list.
+   * @type {HTMLDivElement} The html element containing the item list.
    */
   let container: HTMLDivElement;
 
@@ -137,8 +137,8 @@ Displays a list that when scrolls veritcally, creates and distoys children eleme
    * @returns void
    */
   function jumpTo(index: number) {
-    let canvasThumbnails = container.querySelectorAll(".thumbnail");
-    canvasThumbnails?.[index]?.scrollIntoView();
+    let canvasitems = container.querySelectorAll(".item");
+    canvasitems?.[index]?.scrollIntoView();
   }
 
   /**
@@ -242,7 +242,9 @@ Displays a list that when scrolls veritcally, creates and distoys children eleme
             let:data
           >
             <DynamicDragAndDropListItem bind:pos={indexModel[data["id"]].pos}>
-              <slot item={indexModel[data["id"]]} />
+              <div class="item">
+                <slot item={indexModel[data["id"]]} />
+              </div>
             </DynamicDragAndDropListItem>
           </VirtualScroll>
         </div>
@@ -254,7 +256,9 @@ Displays a list that when scrolls veritcally, creates and distoys children eleme
         key="id"
         let:data
       >
-        <slot item={indexModel[data["id"]]} />
+        <div class="item">
+          <slot item={indexModel[data["id"]]} />
+        </div>
       </VirtualScroll>
     {/if}
   {/if}
