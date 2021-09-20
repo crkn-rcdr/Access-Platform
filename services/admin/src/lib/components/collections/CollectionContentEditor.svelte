@@ -25,7 +25,6 @@ Allows the user to modify the member list for a collection.
   import CollectionMembersAddition from "./CollectionMembersAddition.svelte";
 
   export let collection: Collection;
-  export let showAddButton = true;
   let activeMemberIndex: number = 0;
   const dispatch = createEventDispatcher();
 
@@ -80,7 +79,6 @@ Allows the user to modify the member list for a collection.
     <VirtualList
       bind:dataList={collection.members}
       bind:activeIndex={activeMemberIndex}
-      disabled={!showAddButton}
       let:item
     >
       <div
