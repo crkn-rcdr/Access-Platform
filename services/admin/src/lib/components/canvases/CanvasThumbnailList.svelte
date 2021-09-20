@@ -227,6 +227,8 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
 
   .image-wrap {
     flex: 4;
+    text-align: right;
+    padding-right: 2rem;
   }
 
   .actions-wrap,
@@ -239,6 +241,7 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
     width: max(13vh, 150px);
     margin: 0 1.25rem;
     pointer-events: none;
+    display: inline;
   }
 
   .pos {
