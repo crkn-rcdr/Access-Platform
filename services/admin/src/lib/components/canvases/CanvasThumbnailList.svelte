@@ -170,10 +170,10 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
       </div>
       <div class="image-wrap">
         <img
-          alt={item.label?.none}
+          alt={item.data?.label?.none}
           class="thumbnail-img"
           src={`https://image-tor.canadiana.ca/iiif/2/${encodeURIComponent(
-            item.id
+            item.data?.id
           )}/full/!425,524/0/default.jpg`}
         />
       </div>

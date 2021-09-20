@@ -118,7 +118,7 @@ Allows the user to modify the member list for a collection.
           <div id="grid">
             <ul>
               <li>
-                <a href="/object/{item.id}">{item.id}</a>
+                <a href="/object/{item.data?.id}">{item.data?.id}</a>
               </li>
             </ul>
           </div>
