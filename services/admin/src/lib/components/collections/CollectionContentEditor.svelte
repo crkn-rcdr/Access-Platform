@@ -79,6 +79,7 @@ Allows the user to modify the member list for a collection.
     <VirtualList
       bind:dataList={collection.members}
       bind:activeIndex={activeMemberIndex}
+      draggable={collection.behavior !== "unordered"}
       let:item
     >
       <div
