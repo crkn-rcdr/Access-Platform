@@ -216,7 +216,7 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
   }
 
   .actions-wrap {
-    flex: 1;
+    flex: 1.8;
     margin-left: 1.5rem;
   }
 
@@ -227,8 +227,6 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
 
   .image-wrap {
     flex: 4;
-    text-align: right;
-    padding-right: 2rem;
   }
 
   .actions-wrap,
