@@ -132,9 +132,10 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
   >
     <div
       class="thumbnail auto-align auto-align__full"
-      class:active={activeCanvasIndex === item.id - 1}
+      class:active={activeCanvasIndex === item.id}
+      class:new={item.new}
       on:click={() => {
-        setActiveIndex(item.id - 1);
+        setActiveIndex(item.id);
       }}
     >
       <div class="actions-wrap">
@@ -143,7 +144,7 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
           class:visibility-hidden={!showAddButton}
         >
           <div class="action pos">
-            {item.id}
+            {item.pos}
           </div>
           <div
             class="action pos-input"
@@ -154,15 +155,15 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
             <AutomaticResizeNumberInput
               name="position"
               max={canvases.length}
-              value={item.id}
+              value={item.pos}
               on:changed={(e) => {
-                moveCanvas(e, item.id - 1);
+                moveCanvas(e, item.id);
               }}
             />
           </div>
           <div
             class="action icon"
-            on:click={(e) => deleteCanvasByIndex(e, item.id - 1)}
+            on:click={(e) => deleteCanvasByIndex(e, item.id)}
           >
             <TiTrash />
           </div>

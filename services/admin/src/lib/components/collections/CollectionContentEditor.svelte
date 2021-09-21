@@ -83,14 +83,14 @@ Allows the user to modify the member list for a collection.
     >
       <div
         class="members"
-        class:active={item.id - 1 === activeMemberIndex}
-        on:mousedown={() => setActiveIndex(item.id - 1)}
+        class:active={item.id === activeMemberIndex}
+        on:mousedown={() => setActiveIndex(item.id)}
       >
         <div class="auto-align">
           <div class="actions-wrap">
             <div class="auto-align auto-align__column">
               <div class="action pos">
-                {item.id}
+                {item.pos}
               </div>
               <div
                 class="action pos-input"
@@ -101,15 +101,15 @@ Allows the user to modify the member list for a collection.
                 <AutomaticResizeNumberInput
                   name="position"
                   max={collection?.members.length}
-                  value={item.id}
+                  value={item.pos}
                   on:changed={(e) => {
-                    moveMember(e, item.id - 1);
+                    moveMember(e, item.id);
                   }}
                 />
               </div>
               <div
                 class="action icon"
-                on:click={(e) => deleteCanvasByIndex(e, item.id - 1)}
+                on:click={(e) => deleteCanvasByIndex(e, item.id)}
               >
                 <TiTrash />
               </div>
