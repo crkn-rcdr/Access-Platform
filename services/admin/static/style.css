@@ -28,6 +28,8 @@
   /* App Theme */
   /* Change this to set the app bg color */
   --base-bg: white;
+  /* Change this to set the app bg color */
+  --light-bg: #f8f8f8;
   /* Change this to set the toolbar, tables, menus etc. colour */
   --structural-div-bg: var(--grey-light);
   /* Change this to set the bg color for components that need a darker backgrop, ex: canvas viewer */
