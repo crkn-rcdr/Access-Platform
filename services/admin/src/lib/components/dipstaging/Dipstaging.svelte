@@ -29,13 +29,17 @@ The resolver component allows the user to enter a slug, and then a request is se
    * @type {Session} The session store that contains the module for sending requests to lapin.
    */
   let prefix = "";
+  export let keys: string[];
   const { session } = getStores<Session>();
   async function showDipstagingRecords() {
     /*  let slugs = input.split(/[,|\s]/);
     if (prefix.length > 0) {
       slugs = slugs.map((slug) => prefix + slug);
     } */
-    const response = await $session.lapin.query("dipstaging.listFromKeys",);
+    const response = await $session.lapin.query(
+      "dipstaging.listFromKeys",
+      keys
+    );
   }
 </script>
 

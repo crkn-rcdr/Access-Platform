@@ -37,7 +37,7 @@ export const router = createRouter()
   .merge("manifest.", manifestRouter)
   .merge("collection.", collectionRouter)
   .merge("dmdTask.", dmdTaskRouter)
+  .merge("dipstaging", dipstagingRouter)
   .merge("wipmeta.", wipmetaRouter);
-  .merge("dipstaging", dipstagingRouter);
 
 export type LapinRouter = typeof router;

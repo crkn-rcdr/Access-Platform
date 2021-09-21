@@ -31,11 +31,14 @@
 </script>
 
 <script lang="ts">
-/**
- * @file
- * @description This page displays the information about the dipstaging process
-*/
-import { Dipstaging} from "$lib/components/dipstaging/Dipstaging.svelte";
-export let views: 
+  /**
+   * @file
+   * @description This page displays the information about the dipstaging process
+   */
+  import Dipstaging  from "$lib/components/dipstaging/Dipstaging.svelte";
+  export let keys: string[];
 
+ 
 </script>
+
+ <Dipstaging {keys} />
