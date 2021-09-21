@@ -112,6 +112,7 @@ Displays a list that when scrolls veritcally, creates and distoys children eleme
         data: { ...dataList[i] },
       });
     }
+    indexModel = indexModel;
   }
 
   /**
@@ -245,7 +246,7 @@ Displays a list that when scrolls veritcally, creates and distoys children eleme
         let:data
       >
         <div class="item">
-          <slot item={indexModel[data["index"]]} />
+          <slot item={indexModel[data["id"]]} />
         </div>
       </VirtualScroll>
     {/if}

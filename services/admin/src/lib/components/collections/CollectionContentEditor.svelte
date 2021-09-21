@@ -52,7 +52,7 @@ Allows the user to modify the member list for a collection.
     setActiveIndex(activeMemberIndex);
   }
 
-  function deleteCanvasByIndex(event: any, index: number) {
+  function deleteMemberByIndex(event: any, index: number) {
     event.stopPropagation();
     if (index >= 0 && index < collection?.members.length) {
       collection?.members.splice(index, 1);
@@ -84,15 +84,15 @@ Allows the user to modify the member list for a collection.
     >
       <div
         class="members"
-        class:active={item.pos - 1 === activeMemberIndex}
-        on:mousedown={() => setActiveIndex(item.pos - 1)}
+        class:active={item?.id === activeMemberIndex}
+        on:mousedown={() => setActiveIndex(item?.id)}
       >
         <div class="auto-align">
           <div class="actions-wrap">
             <div class="auto-align auto-align__column">
               {#if collection.behavior !== "unordered"}
                 <div class="action pos">
-                  {item.pos}
+                  {item?.pos}
                 </div>
                 <div
                   class="action pos-input"
@@ -103,16 +103,16 @@ Allows the user to modify the member list for a collection.
                   <AutomaticResizeNumberInput
                     name="position"
                     max={collection?.members.length}
-                    value={item.pos}
+                    value={item?.pos}
                     on:changed={(e) => {
-                      moveMember(e, item.pos - 1);
+                      moveMember(e, item?.id);
                     }}
                   />
                 </div>
               {/if}
               <div
                 class="action icon"
-                on:click={(e) => deleteCanvasByIndex(e, item.pos - 1)}
+                on:click={(e) => deleteMemberByIndex(e, item?.id)}
               >
                 <TiTrash />
               </div>
@@ -121,7 +121,7 @@ Allows the user to modify the member list for a collection.
           <div id="grid">
             <ul>
               <li>
-                <a href="/object/{item.data?.id}">{item.data?.id}</a>
+                <a href="/object/{item?.data?.id}">{item?.data?.id}</a>
               </li>
             </ul>
           </div>
