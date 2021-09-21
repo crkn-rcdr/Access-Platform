@@ -95,6 +95,19 @@ test.serial(
   }
 );
 
+test.serial("Can remove staff object", async (t) => {
+  await t.context.access.unpublish({ id: MANIFEST_TWO, user: USER });
+  await t.context.access.publish({ id: MANIFEST_TWO, user: USER });
+  await t.context.access.update({
+    ddoc: "access",
+    name: "removeStaff",
+    docId: MANIFEST_TWO,
+  });
+
+  const doc = await t.context.access.get(MANIFEST_TWO);
+  t.is(doc.staff, undefined);
+});
+
 test.serial("Slugs can only change if they aren't taken", async (t) => {
   const error = await t.throwsAsync(
     t.context.access.editCollection({
