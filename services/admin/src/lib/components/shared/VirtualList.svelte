@@ -58,12 +58,14 @@ Displays a list that when scrolls veritcally, creates and distoys children eleme
    * @type {{
         id: number,
         pos: number,
+        new: boolean,
         data,
       }} A utility array that keeps track of the position numbers for the dataList listed in the item list, allows the user to move the dataList around by various means.
    */
   let indexModel: {
     id: number;
     pos: number;
+    new: boolean;
     data;
   }[] = [];
 
@@ -112,11 +114,13 @@ Displays a list that when scrolls veritcally, creates and distoys children eleme
    * @returns void
    */
   function setIndexModel() {
+    const prevArrLen = indexModel.length;
     indexModel = [];
     for (let i = 0; i < dataList.length; i++) {
       indexModel.push({
         id: i,
         pos: i + 1,
+        new: prevArrLen != 0 && i < dataList.length - prevArrLen,
         data: { ...dataList[i] },
       });
     }

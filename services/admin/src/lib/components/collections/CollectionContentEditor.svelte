@@ -84,29 +84,16 @@ Allows the user to modify the member list for a collection.
     >
       <div
         class="members"
-<<<<<<< HEAD
-        class:active={item?.id === activeMemberIndex}
-        on:mousedown={() => setActiveIndex(item?.id)}
-=======
         class:active={item.id - 1 === activeMemberIndex}
         on:mousedown={() => setActiveIndex(item.id - 1)}
->>>>>>> Fix typing of index model
+        class:active={item.id === activeMemberIndex}
+        on:mousedown={() => setActiveIndex(item.id)}
       >
         <div class="auto-align">
           <div class="actions-wrap">
             <div class="auto-align auto-align__column">
-<<<<<<< HEAD
-              {#if collection.behavior !== "unordered"}
-                <div class="action pos">
-                  {item?.pos}
-                </div>
-                <div
-                  class="action pos-input"
-                  on:click={(e) => {
-                    e.stopPropagation();
-=======
               <div class="action pos">
-                {item.id}
+                {item.pos}
               </div>
               <div
                 class="action pos-input"
@@ -117,10 +104,9 @@ Allows the user to modify the member list for a collection.
                 <AutomaticResizeNumberInput
                   name="position"
                   max={collection?.members.length}
-                  value={item.id}
+                  value={item.pos}
                   on:changed={(e) => {
                     moveMember(e, item.id - 1);
->>>>>>> Fix typing of index model
                   }}
                 >
                   <AutomaticResizeNumberInput
@@ -135,11 +121,7 @@ Allows the user to modify the member list for a collection.
               {/if}
               <div
                 class="action icon"
-<<<<<<< HEAD
-                on:click={(e) => deleteMemberByIndex(e, item?.id)}
-=======
                 on:click={(e) => deleteCanvasByIndex(e, item.id - 1)}
->>>>>>> Fix typing of index model
               >
                 <TiTrash />
               </div>
