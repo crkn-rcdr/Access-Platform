@@ -270,8 +270,9 @@ Displays a list that when scrolls veritcally, creates and distoys children eleme
     position: relative;
     flex: 9;
     width: 100%;
-    overflow-y: hidden;
     outline: none !important;
+    height: 77vh;
+    overflow-y: auto;
   }
   .list.disabled {
     overflow-y: hidden;
