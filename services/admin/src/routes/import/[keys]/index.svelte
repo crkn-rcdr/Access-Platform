@@ -7,13 +7,13 @@
   import type { RootLoadOutput } from "$lib/types";
   export const load: Load<RootLoadOutput> = async ({ page, context }) => {
     try {
-      if (page?.params?.["keys"]) {
+      const keys = decodeURIComponent(page.params["keys"]).split(",");
+      if (keys) {
         const response = await context.lapin.query(
-          "dipstagingListFromKeys",
-          page.params["keys"]
+          "dipstaging.listFromKeys",
+          keys
         );
-        if (response && "result" in response)
-          return { props: { dipstaging: response.result } };
+        if (response) return { props: { dipstaging: response, keys } };
         else
           return {
             props: {
@@ -35,10 +35,14 @@
    * @file
    * @description This page displays the information about the dipstaging process
    */
-  import Dipstaging  from "$lib/components/dipstaging/Dipstaging.svelte";
+  import type { ImportStatus } from "@crkn-rcdr/access-data";
+  import Dipstaging from "$lib/components/dipstaging/Dipstaging.svelte";
   export let keys: string[];
-
- 
+  export let dipstaging: ImportStatus[];
 </script>
 
- <Dipstaging {keys} />
+{keys}
+{#if dipstaging}
+  {JSON.stringify(dipstaging)}
+{/if}
+<Dipstaging {keys} />
