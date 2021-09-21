@@ -237,15 +237,19 @@ A component that shows a navigable set of pages with a side menu to allow the us
   }
 
   .fixed-full-page {
-    position: fixed;
+    /*position: fixed;
     top: calc(6.5rem + var(--viewport-scaling));
     bottom: 0;
     right: 0;
     left: 0;
-    height: calc(100vh - 6.5rem - var(--viewport-scaling));
+    margin: auto;
+    max-width: 156rem;
+    */
+
+    height: calc(100vh - 7rem - var(--viewport-scaling));
   }
 
-  @media (max-width: 997px) {
+  /*@media (max-width: 997px) {
     .fixed-full-page {
       top: calc(9rem + var(--viewport-scaling));
       height: calc(100vh - 9rem - var(--viewport-scaling));
@@ -257,7 +261,7 @@ A component that shows a navigable set of pages with a side menu to allow the us
       top: calc(12rem + var(--viewport-scaling));
       height: calc(100vh - 12rem - var(--viewport-scaling));
     }
-  }
+  }*/
 
   .fixed-full-page .header {
     height: 12%;
