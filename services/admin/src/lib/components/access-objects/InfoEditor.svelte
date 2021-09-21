@@ -82,7 +82,7 @@ This component displays the non content properties for an access editorObject an
       /><br /><br />
 
       {#if isCollection(editorObject)}
-        <label for="behavior">Behavior</label><br />
+        <label for="behavior">Behaviour</label><br />
         <select
           id="behavior"
           name="behavior"
