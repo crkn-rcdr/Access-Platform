@@ -27,5 +27,6 @@ None
   .side-menu-body {
     height: 100%;
     flex: 8.5;
+    background: var(--light-bg);
   }
 </style>
