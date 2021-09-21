@@ -77,8 +77,6 @@ test.serial("Can query by dates", async (t) => {
     "2021-07-31",
     t.context.access
   );
-  console.log("ds result", result);
-
   t.is(result.length, 1);
 
   const firstResult = result[0] as ImportStatus;
