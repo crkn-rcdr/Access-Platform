@@ -285,8 +285,6 @@ export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
     id: Noid,
     slugArray: Slug[]
   ): Promise<Record<Slug, SlugResolution>> {
-    console.log("Entry Into checkAdditions", id);
-
     const currentMembers = Collection.parse(await this.get(id)).members;
 
     const resolution = Object.entries(await this.resolveSlugs(slugArray));
