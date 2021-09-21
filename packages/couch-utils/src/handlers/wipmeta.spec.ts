@@ -6,8 +6,8 @@ import { WipmetaHandler } from "./wipmeta.js";
 type WipmetaHandlerContext = BaseContext & { wipmeta: WipmetaHandler };
 const test = anyTest as TestInterface<WipmetaHandlerContext>;
 
-const WIPMETA_OBJECT_ID = "";
-const ATTACHMENT_CONTENT = "<hello>world</hello>";
+const WIPMETA_OBJECT_ID = "test";
+const ATTACHMENT_CONTENT = "<hello>world!</hello>";
 const LABEL = "testing!";
 
 test.before(async (t) => {
@@ -23,18 +23,24 @@ test.serial("Can get wipmeta object by id", async (t) => {
   const dmdObject = await t.context.wipmeta.get(WIPMETA_OBJECT_ID);
   t.is(dmdObject.id, WIPMETA_OBJECT_ID);
 });
-
-test.serial("Can insert, get, and delete attachments", async (t) => {
-  t.notThrowsAsync(async () => {
-    await t.context.wipmeta.uploadAttachment({
-      document: WIPMETA_OBJECT_ID,
-      attachment: new Buffer(ATTACHMENT_CONTENT, "base64"),
-      attachmentName: "test.xml",
-    });
+test.serial("Can update wipmeta object label", async (t) => {
+  await t.context.wipmeta.updateLabel({
+    id: WIPMETA_OBJECT_ID,
+    label: LABEL,
   });
-});
+  const dmdObject = await t.context.wipmeta.get(WIPMETA_OBJECT_ID);
 
-test.serial("Can get attachments", async (t) => {
+  console.log(dmdObject);
+  t.is(dmdObject.label, LABEL);
+});
+test.serial("Can insert, get, and delete attachments", async (t) => {
+  const file = new Buffer(ATTACHMENT_CONTENT).toString("base64");
+  await t.context.wipmeta.uploadBase64Attachment({
+    document: WIPMETA_OBJECT_ID,
+    attachment: file,
+    attachmentName: "test.xml",
+    contentType: "application/octet-stream",
+  });
   const dmdBuffer = await t.context.wipmeta.getAttachment({
     document: WIPMETA_OBJECT_ID,
     attachment: "test.xml",
@@ -44,28 +50,6 @@ test.serial("Can get attachments", async (t) => {
     ATTACHMENT_CONTENT,
     "Attachment contents is correct?"
   );
-});
-
-test.serial("Can delete attachments", async (t) => {
-  await t.context.wipmeta.destroyAttachment({
-    document: WIPMETA_OBJECT_ID,
-    attachmentName: "test.xml",
-  });
-  t.throwsAsync(async () => {
-    await t.context.wipmeta.getAttachment({
-      document: WIPMETA_OBJECT_ID,
-      attachment: "test.xml",
-    });
-  });
-});
-
-test.serial("Can update wipmeta object label", async (t) => {
-  await t.context.wipmeta.updateLabel({
-    id: WIPMETA_OBJECT_ID,
-    label: LABEL,
-  });
-  const dmdObject = await t.context.wipmeta.get(WIPMETA_OBJECT_ID);
-  t.is(dmdObject.label, LABEL);
 });
 
 test.after.always(async (t) => {

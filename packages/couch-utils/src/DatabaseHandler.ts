@@ -470,7 +470,7 @@ export class DatabaseHandler<T extends Document> {
     }
 
     try {
-      await this.db.attachment.insert(
+      return await this.db.attachment.insert(
         document,
         attachmentName,
         attachment,
