@@ -1,8 +1,6 @@
 <!--
 @component
-
 TODO
-
 ### Overview
 Allows the user to modify the member list for a collection.
 ### Properties
@@ -23,11 +21,9 @@ Allows the user to modify the member list for a collection.
   import { moveArrayElement } from "$lib/utils/arrayUtil";
   import TiTrash from "svelte-icons/ti/TiTrash.svelte";
   import CollectionMembersAddition from "./CollectionMembersAddition.svelte";
-
   export let collection: Collection;
   let activeMemberIndex: number = 0;
   const dispatch = createEventDispatcher();
-
   function setActiveIndex(index: number) {
     if (index >= collection.members.length)
       index = collection.members.length - 1;
@@ -35,7 +31,6 @@ Allows the user to modify the member list for a collection.
     activeMemberIndex = index;
     dispatch("membersClicked", { index });
   }
-
   function moveMember(event: any, originalItemIndex: number) {
     // Move the member and trigger saving
     let destinationItemIndex = parseInt(event.detail.value) - 1;
@@ -47,11 +42,9 @@ Allows the user to modify the member list for a collection.
     collection.members = collection.members;
     // Highlight and move to new position
     activeMemberIndex = destinationItemIndex;
-
     //jumpTo(activeMemberIndex);
     setActiveIndex(activeMemberIndex);
   }
-
   function deleteMemberByIndex(event: any, index: number) {
     event.stopPropagation();
     if (index >= 0 && index < collection?.members.length) {
@@ -60,7 +53,6 @@ Allows the user to modify the member list for a collection.
       setActiveIndex(activeMemberIndex);
     }
   }
-
   onMount(() => {
     if (collection.members.length) activeMemberIndex = 0;
   });
@@ -75,7 +67,6 @@ Allows the user to modify the member list for a collection.
       }}
     />
     <br />
-
     <VirtualList
       bind:dataList={collection.members}
       bind:activeIndex={activeMemberIndex}
@@ -84,29 +75,20 @@ Allows the user to modify the member list for a collection.
     >
       <div
         class="members"
-        class:active={item.id - 1 === activeMemberIndex}
-        on:mousedown={() => setActiveIndex(item.id - 1)}
-        class:active={item.id === activeMemberIndex}
-        on:mousedown={() => setActiveIndex(item.id)}
+        class:active={item?.id === activeMemberIndex}
+        on:mousedown={() => setActiveIndex(item?.id)}
       >
         <div class="auto-align">
           <div class="actions-wrap">
             <div class="auto-align auto-align__column">
-              <div class="action pos">
-                {item.pos}
-              </div>
-              <div
-                class="action pos-input"
-                on:click={(e) => {
-                  e.stopPropagation();
-                }}
-              >
-                <AutomaticResizeNumberInput
-                  name="position"
-                  max={collection?.members.length}
-                  value={item.pos}
-                  on:changed={(e) => {
-                    moveMember(e, item.id - 1);
+              {#if collection.behavior !== "unordered"}
+                <div class="action pos">
+                  {item.pos}
+                </div>
+                <div
+                  class="action pos-input"
+                  on:click={(e) => {
+                    e.stopPropagation();
                   }}
                 >
                   <AutomaticResizeNumberInput
@@ -121,7 +103,7 @@ Allows the user to modify the member list for a collection.
               {/if}
               <div
                 class="action icon"
-                on:click={(e) => deleteCanvasByIndex(e, item.id - 1)}
+                on:click={(e) => deleteMemberByIndex(e, item.id)}
               >
                 <TiTrash />
               </div>
