@@ -29,11 +29,9 @@ test.serial("Can update wipmeta object label", async (t) => {
     label: LABEL,
   });
   const dmdObject = await t.context.wipmeta.get(WIPMETA_OBJECT_ID);
-
-  console.log(dmdObject);
   t.is(dmdObject.label, LABEL);
 });
-test.serial("Can insert, get, and delete attachments", async (t) => {
+test.serial("Can insert and get attachments", async (t) => {
   const file = new Buffer(ATTACHMENT_CONTENT).toString("base64");
   await t.context.wipmeta.uploadBase64Attachment({
     document: WIPMETA_OBJECT_ID,
