@@ -25,7 +25,7 @@
       }
       return { props: {} };
     } catch (e) {
-      return { props: { error: e } };
+      return { props: { error: e?.message } };
     }
   };
 </script>
@@ -39,10 +39,14 @@
   import Dipstaging from "$lib/components/dipstaging/Dipstaging.svelte";
   export let keys: string[];
   export let dipstaging: ImportStatus[];
+  export let error: string = "";
 </script>
 
+{error}
 {keys}
 {#if dipstaging}
   {JSON.stringify(dipstaging)}
 {/if}
-<Dipstaging {keys} />
+
+<!--https://access-dev.canadiana.ca/import/keys/oocihm.8_06941_1
+  Dipstaging {keys} /-->
