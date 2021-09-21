@@ -29,7 +29,8 @@
     "prod": "pnpm down && pnpm prod:up",
     "prod:up": "CURRENT_USER=$(id -u):$(id -g) docker-compose --profile prod up --build --remove-orphans --detach",
     "prod:restart": "docker-compose --profile prod restart",
-    "watch": "docker-compose logs -f"
+    "watch": "docker-compose logs -f",
+    "watch-tests": "docker logs access-packages -f"
   },
   "pnpm": {
     "neverBuiltDependencies": [
