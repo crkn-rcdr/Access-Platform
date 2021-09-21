@@ -55,9 +55,17 @@ Displays a list that when scrolls veritcally, creates and distoys children eleme
   let isInitialized = false;
 
   /**
-   * @type {any} A utility array that keeps track of the position numbers for the dataList listed in the item list, allows the user to move the dataList around by various means.
+   * @type {{
+        id: number,
+        pos: number,
+        data,
+      }} A utility array that keeps track of the position numbers for the dataList listed in the item list, allows the user to move the dataList around by various means.
    */
-  let indexModel: any[] = [];
+  let indexModel: {
+    id: number;
+    pos: number;
+    data;
+  }[] = [];
 
   /**
    * @type {HTMLDivElement} The html element containing the item list.
