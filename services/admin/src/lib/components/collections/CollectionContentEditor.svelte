@@ -84,12 +84,18 @@ Allows the user to modify the member list for a collection.
     >
       <div
         class="members"
+<<<<<<< HEAD
         class:active={item?.id === activeMemberIndex}
         on:mousedown={() => setActiveIndex(item?.id)}
+=======
+        class:active={item.id - 1 === activeMemberIndex}
+        on:mousedown={() => setActiveIndex(item.id - 1)}
+>>>>>>> Fix typing of index model
       >
         <div class="auto-align">
           <div class="actions-wrap">
             <div class="auto-align auto-align__column">
+<<<<<<< HEAD
               {#if collection.behavior !== "unordered"}
                 <div class="action pos">
                   {item?.pos}
@@ -98,6 +104,23 @@ Allows the user to modify the member list for a collection.
                   class="action pos-input"
                   on:click={(e) => {
                     e.stopPropagation();
+=======
+              <div class="action pos">
+                {item.id}
+              </div>
+              <div
+                class="action pos-input"
+                on:click={(e) => {
+                  e.stopPropagation();
+                }}
+              >
+                <AutomaticResizeNumberInput
+                  name="position"
+                  max={collection?.members.length}
+                  value={item.id}
+                  on:changed={(e) => {
+                    moveMember(e, item.id - 1);
+>>>>>>> Fix typing of index model
                   }}
                 >
                   <AutomaticResizeNumberInput
@@ -112,7 +135,11 @@ Allows the user to modify the member list for a collection.
               {/if}
               <div
                 class="action icon"
+<<<<<<< HEAD
                 on:click={(e) => deleteMemberByIndex(e, item?.id)}
+=======
+                on:click={(e) => deleteCanvasByIndex(e, item.id - 1)}
+>>>>>>> Fix typing of index model
               >
                 <TiTrash />
               </div>
