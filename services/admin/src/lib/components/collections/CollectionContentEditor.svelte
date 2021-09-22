@@ -1,8 +1,6 @@
 <!--
 @component
-
 TODO
-
 ### Overview
 Allows the user to modify the member list for a collection.
 ### Properties
@@ -18,45 +16,20 @@ Allows the user to modify the member list for a collection.
 <script lang="ts">
   import { onMount, createEventDispatcher } from "svelte";
   import type { Collection } from "@crkn-rcdr/access-data/src/access/Collection";
-  import type { Session } from "$lib/types";
-  import { getStores } from "$app/stores";
   import AutomaticResizeNumberInput from "$lib/components/shared/AutomaticResizeNumberInput.svelte";
-  import DynamicDragAndDropList from "$lib/components/shared/DynamicDragAndDropList.svelte";
+  import VirtualList from "$lib/components/shared/VirtualList.svelte";
   import { moveArrayElement } from "$lib/utils/arrayUtil";
   import TiTrash from "svelte-icons/ti/TiTrash.svelte";
   import CollectionMembersAddition from "./CollectionMembersAddition.svelte";
-  import DynamicDragAndDropListItem from "../shared/DynamicDragAndDropListItem.svelte";
-
   export let collection: Collection;
-  export let showAddButton = true;
-
-  let indexModel: number[] = [];
   let activeMemberIndex: number = 0;
-  let container: HTMLDivElement;
-
-  let state: string;
-  const LEFT_ARROW_CODE: number = 37;
-  const UP_ARROW_CODE: number = 38;
-  const RIGHT_ARROW_CODE: number = 39;
-  const DOWN_ARROW_CODE: number = 40;
   const dispatch = createEventDispatcher();
-  const { session } = getStores<Session>();
-  function setIndexModel() {
-    indexModel = [];
-    for (let i = 0; i < collection.members.length; i++) {
-      indexModel.push(i + 1);
-    }
-  }
   function setActiveIndex(index: number) {
     if (index >= collection.members.length)
       index = collection.members.length - 1;
     if (index < 0) index = 0;
     activeMemberIndex = index;
     dispatch("membersClicked", { index });
-  }
-  function jumpTo(index: number) {
-    let membersThumbnails = container.querySelectorAll(".thumbnail");
-    membersThumbnails?.[index]?.scrollIntoView();
   }
   function moveMember(event: any, originalItemIndex: number) {
     // Move the member and trigger saving
@@ -67,39 +40,12 @@ Allows the user to modify the member list for a collection.
       destinationItemIndex
     );
     collection.members = collection.members;
-    // Update the position inputs
-    setIndexModel();
     // Highlight and move to new position
     activeMemberIndex = destinationItemIndex;
-    jumpTo(activeMemberIndex);
+    //jumpTo(activeMemberIndex);
     setActiveIndex(activeMemberIndex);
   }
-  function selectPrevious() {
-    if (activeMemberIndex > 0) {
-      activeMemberIndex--;
-      jumpTo(activeMemberIndex);
-      setActiveIndex(activeMemberIndex);
-    }
-  }
-  function selectNext() {
-    if (activeMemberIndex < collection.members.length - 1) {
-      activeMemberIndex++;
-      jumpTo(activeMemberIndex);
-      setActiveIndex(activeMemberIndex);
-    }
-  }
-  function handleKeydown(event: any) {
-    if (event.keyCode === LEFT_ARROW_CODE || event.keyCode === UP_ARROW_CODE) {
-      selectPrevious();
-    } else if (
-      event.keyCode === RIGHT_ARROW_CODE ||
-      event.keyCode === DOWN_ARROW_CODE
-    ) {
-      selectNext();
-    }
-  }
-
-  function deleteCanvasByIndex(event: any, index: number) {
+  function deleteMemberByIndex(event: any, index: number) {
     event.stopPropagation();
     if (index >= 0 && index < collection?.members.length) {
       collection?.members.splice(index, 1);
@@ -107,105 +53,76 @@ Allows the user to modify the member list for a collection.
       setActiveIndex(activeMemberIndex);
     }
   }
-
   onMount(() => {
     if (collection.members.length) activeMemberIndex = 0;
-    setIndexModel();
   });
-  $: {
-    collection.members;
-    setIndexModel();
-  }
 </script>
 
-<svelte:window on:keydown={handleKeydown} />
-{#if indexModel && collection}
-  <div class="auto-align auto-align__column">
+{#if collection}
+  <div>
     <CollectionMembersAddition
       bind:destinationMember={collection}
       on:done={() => {
-        state = "view";
         setActiveIndex(0);
       }}
     />
     <br />
-
-    <div
-      bind:this={container}
-      tabindex="0"
-      class="list"
-      class:disabled={!showAddButton}
+    <VirtualList
+      bind:dataList={collection.members}
+      bind:activeIndex={activeMemberIndex}
+      draggable={collection.behavior !== "unordered"}
+      let:item
     >
-      <DynamicDragAndDropList
-        bind:dragList={collection.members}
-        on:itemDropped={(e) => {
-          setActiveIndex(e.detail.destinationItemIndex);
-        }}
+      <div
+        class="members"
+        class:active={item?.id === activeMemberIndex}
+        on:mousedown={() => setActiveIndex(item?.id)}
       >
-        {#each collection?.members as members, i}
-          <DynamicDragAndDropListItem bind:pos={indexModel[i]}>
-            <div
-              class="members"
-              class:active={i === activeMemberIndex}
-              on:mousedown={() => setActiveIndex(i)}
-            >
-              <div class="auto-align">
-                <div class="actions-wrap">
-                  <div class="auto-align auto-align__column">
-                    <div class="action pos">
-                      {indexModel[i]}
-                    </div>
-                    <div
-                      class="action pos-input"
-                      on:click={(e) => {
-                        e.stopPropagation();
-                      }}
-                    >
-                      <AutomaticResizeNumberInput
-                        name="position"
-                        max={collection?.members.length}
-                        on:changed={(e) => {
-                          moveMember(e, i);
-                        }}
-                        bind:value={indexModel[i]}
-                      />
-                    </div>
-                    <div
-                      class="action icon"
-                      on:click={(e) => deleteCanvasByIndex(e, i)}
-                    >
-                      <TiTrash />
-                    </div>
-                  </div>
+        <div class="auto-align">
+          <div class="actions-wrap">
+            <div class="auto-align auto-align__column">
+              {#if collection.behavior !== "unordered"}
+                <div class="action pos">
+                  {item.pos}
                 </div>
-                <div id="grid">
-                  <ul>
-                    <li>
-                      <a href="/object/{members['id']}">{members["id"]}</a>
-                    </li>
-                  </ul>
+                <div
+                  class="action pos-input"
+                  on:click={(e) => {
+                    e.stopPropagation();
+                  }}
+                >
+                  <AutomaticResizeNumberInput
+                    name="position"
+                    max={collection?.members.length}
+                    value={item?.pos}
+                    on:changed={(e) => {
+                      moveMember(e, item?.id);
+                    }}
+                  />
                 </div>
+              {/if}
+              <div
+                class="action icon"
+                on:click={(e) => deleteMemberByIndex(e, item.id)}
+              >
+                <TiTrash />
               </div>
             </div>
-          </DynamicDragAndDropListItem>
-        {/each}
-      </DynamicDragAndDropList>
-    </div>
+          </div>
+          <div id="grid">
+            <ul>
+              <li>
+                <a href="/object/{item?.data?.id}">{item?.data?.id}</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </VirtualList>
   </div>
 {/if}
 
 <style>
-  .list {
-    position: relative;
-    flex: 9;
-    width: 100%;
-    overflow-y: auto;
-  }
-  .list.disabled {
-    overflow-y: hidden;
-    opacity: 0.5;
-  }
-
   .action.icon {
     opacity: 0.6;
     cursor: pointer;

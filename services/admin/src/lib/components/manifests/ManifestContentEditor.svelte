@@ -101,7 +101,7 @@ Allows the user to modify the canvas list for a manifest.
     message={typedChecks.manifest.getCanvasesValidationMsg(manifest.canvases)}
     status="fail"
   /-->
-  <div class="auto-align auto-align__full">
+  <div class="auto-align auto-align__full content-wrapper">
     <div class="list-wrapper">
       <!--button
         on:click={() => {
@@ -169,6 +169,10 @@ Allows the user to modify the canvas list for a manifest.
 {/if}
 
 <style>
+  .content-wrapper {
+    overflow: hidden;
+  }
+
   div {
     height: 100%;
   }

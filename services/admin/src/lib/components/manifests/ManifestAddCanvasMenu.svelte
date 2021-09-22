@@ -293,6 +293,7 @@ This component allows the user to search through other manifests and select canv
     width: 60px;
     display: flex;
     flex-direction: column;
+    z-index: 2;
   }
 
   .manifest-controls > * {
@@ -318,6 +319,7 @@ This component allows the user to search through other manifests and select canv
   .results {
     width: 100%;
     height: 100%;
+    overflow: hidden;
   }
 
   .results.full-page {
@@ -330,7 +332,7 @@ This component allows the user to search through other manifests and select canv
   }
 
   .canvas-list-item-viewer {
-    height: 100%;
+    height: 80vh;
     width: 100%;
     position: relative;
     background: var(--darkest-bg);
@@ -342,6 +344,8 @@ This component allows the user to search through other manifests and select canv
     padding: 0.7rem 5rem 0.7rem;
     color: var(--secondary-light);
     background-color: var(--dark-bg);
+    z-index: 1;
+    position: absolute;
   }
 
   /*.title > h6 {
@@ -353,6 +357,7 @@ This component allows the user to search through other manifests and select canv
 
   :global(.add-menu .referencestrip) {
     left: 60px !important;
+    top: 3rem;
   }
 
   :global(.openseadragon-canvas) {

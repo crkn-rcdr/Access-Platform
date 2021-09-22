@@ -26,6 +26,8 @@ An item to be dragged and dropped in a DynamicDragAndDropList.
    */
   let container: HTMLDivElement;
 
+  //let item = {};
+
   /**
    * @listens container
    * @listens pos

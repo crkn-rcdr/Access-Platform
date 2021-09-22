@@ -81,17 +81,20 @@ This component displays the non content properties for an access editorObject an
         }}
       /><br /><br />
 
+      {#if isCollection(editorObject)}
+        <label for="behavior">Behaviour</label><br />
+        <select
+          id="behavior"
+          name="behavior"
+          bind:value={editorObject["behavior"]}
+        >
+          <option>multi-part</option>
+          <option>unordered</option>
+        </select><br /><br />
+      {/if}
       <!--Fixtures don't have this yet, causes save to be enabled on load-->
 
       <!--span>
-    <label for="behavior">Behavior</label>
-    <select id="behavior" name="behavior" bind:value={manifest["behavior"]}>
-      <option>continuous</option>
-      <option>individuals</option>
-      <option>paged</option>
-      <option>unordered</option>
-    </select>
-  </span>
 
   <span>
     <label for="viewing-direction">Viewing Direction</label>
