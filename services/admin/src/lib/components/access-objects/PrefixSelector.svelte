@@ -14,10 +14,14 @@ Allows the user to select one of many pre-defined depositors.
 -->
 <script lang="ts">
   import type { AccessPlatform } from "$lib/types";
+
   /**
    * @type {AccessPlatform} The access platform information that is selected in the selection element
    */
-  export let depositor: AccessPlatform;
+  export let depositor: AccessPlatform = {
+    prefix: "none",
+    label: "",
+  };
 
   /**
    * @type { object} The object of prefix options for the selection element.

@@ -44,10 +44,6 @@
 
 {error}
 {keys}
-{#if results}
-  {JSON.stringify(results)}
-{/if}
-
-<DipstagingTable />
+<DipstagingTable bind:results />
 <!--https://access-dev.canadiana.ca/smelter/keys/test
   Dipstaging {keys} /-->

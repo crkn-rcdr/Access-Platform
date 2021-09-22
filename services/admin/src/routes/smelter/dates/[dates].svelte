@@ -9,10 +9,13 @@
     try {
       const dates = decodeURIComponent(page.params["dates"]).split(",");
       if (dates && dates.length === 2) {
-        const response = await context.lapin.query("dipstaging.listFromDates", {
-          from: dates[0],
-          to: dates[1],
-        });
+        const response: ImportStatus[] = await context.lapin.query(
+          "dipstaging.listFromDates",
+          {
+            from: dates[0],
+            to: dates[1],
+          }
+        );
         if (response) return { props: { results: response, dates } };
         else
           return {
@@ -44,9 +47,6 @@
 
 {error}
 {dates}
-{#if results}
-  {JSON.stringify(results)}
-{/if}
-<DipstagingTable />
+<DipstagingTable bind:results />
 <!--https://access-dev.canadiana.ca/smelter/dates/2012-01-01,2021-09-09
   Dipstaging {keys} /-->
