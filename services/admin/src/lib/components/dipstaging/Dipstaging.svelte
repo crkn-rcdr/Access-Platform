@@ -62,10 +62,18 @@ The resolver component allows the user to enter a slug, and then a request is se
   bind:activeIndex={activePageIndex}
 >
   <SideMenuPageList>
-    <SideMenuPageListButton>Smelt New</SideMenuPageListButton>
-    <SideMenuPageListButton>Processing</SideMenuPageListButton>
-    <SideMenuPageListButton>Successes</SideMenuPageListButton>
-    <SideMenuPageListButton>Failures</SideMenuPageListButton>
+    <a href="/smelter">
+      <SideMenuPageListButton>Smelt New</SideMenuPageListButton>
+    </a>
+    <a href="/smelter/processing">
+      <SideMenuPageListButton>Processing</SideMenuPageListButton>
+    </a>
+    <a href="/smelter/success">
+      <SideMenuPageListButton>Successes</SideMenuPageListButton>
+    </a>
+    <a href="/smelter/failed">
+      <SideMenuPageListButton>Failed</SideMenuPageListButton>
+    </a>
   </SideMenuPageList>
   <SideMenuBody>
     <SideMenuPage>
@@ -96,3 +104,8 @@ The resolver component allows the user to enter a slug, and then a request is se
 <!--div>
   <PrefixSelector bind:prefix />
 </div-->
+<style>
+  a {
+    text-decoration: none;
+  }
+</style>
