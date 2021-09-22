@@ -50,6 +50,7 @@
 
   function setDateDefaults(dates: string[]) {
     if (dates && dates.length === 2) {
+      console.log("DaTES", dates);
       lookupView = BY_DATE_LABEL;
       startDateStr = dates[0];
       endDateStr = dates[1];
@@ -80,14 +81,20 @@
     }
   }
 
-  $: setDateDefaults($page.params?.dates?.split(","));
-  $: setSlugDefaults($page.params?.keys?.split(","));
+  function setDefaults(params) {
+    console.log("params", params);
+    if (params?.dates) setDateDefaults(params.dates.split(","));
+    else if (params?.keys) setSlugDefaults(params.keys.split(","));
+  }
+
+  $: setDefaults($page.params);
 </script>
 
 <br />
 <ToggleButtons
-  color={!lookupDone ? "primary" : "secondary"}
-  options={["Search by Slug", BY_DATE_LABEL]}
+  activeIndex={lookupView === BY_SLUG_LABEL ? 0 : 1}
+  color={lookupDone ? "secondary" : "primary"}
+  options={[BY_SLUG_LABEL, BY_DATE_LABEL]}
   on:select={changeView}
 /><br />
 <br />

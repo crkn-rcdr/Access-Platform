@@ -24,9 +24,8 @@
    */
   export let label = "";
   export let options: string[] = [];
+  export let activeIndex: number = 0;
   export let color: "primary" | "secondary" = "primary";
-
-  let activeIndex: number = 0;
 
   function itemClicked(index: number, option: string) {
     activeIndex = index;
