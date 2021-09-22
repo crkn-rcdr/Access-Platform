@@ -29,7 +29,13 @@ The resolver component allows the user to enter a slug, and then a request is se
   import ScrollStepperStep from "$lib/components/shared/ScrollStepperStep.svelte";
   import type { Session } from "$lib/types";
   import { getStores } from "$app/stores";
+  import SideMenuContainer from "../shared/SideMenuContainer.svelte";
+  import SideMenuPageList from "../shared/SideMenuPageList.svelte";
+  import SideMenuPageListButton from "../shared/SideMenuPageListButton.svelte";
+  import SideMenuBody from "../shared/SideMenuBody.svelte";
+  import SideMenuPage from "../shared/SideMenuPage.svelte";
 
+  export let activePageIndex: number = 0;
   export let activeStepIndex: number = 0;
 
   /**
@@ -50,24 +56,43 @@ The resolver component allows the user to enter a slug, and then a request is se
   }*/
 </script>
 
+<SideMenuContainer
+  showHeader={false}
+  fullPage={false}
+  bind:activeIndex={activePageIndex}
+>
+  <SideMenuPageList>
+    <SideMenuPageListButton>Smelt New</SideMenuPageListButton>
+    <SideMenuPageListButton>Processing</SideMenuPageListButton>
+    <SideMenuPageListButton>Successes</SideMenuPageListButton>
+    <SideMenuPageListButton>Failures</SideMenuPageListButton>
+  </SideMenuPageList>
+  <SideMenuBody>
+    <SideMenuPage>
+      <ScrollStepper
+        bind:activeStepIndex
+        displayPrevious={true}
+        enableAutoScrolling={false}
+      >
+        <ScrollStepperStep title="Find items in preservation">
+          <div slot="icon">1</div>
+          <DipstagingLookup />
+        </ScrollStepperStep>
+        <ScrollStepperStep title="Add them to access" isLastStep={true}>
+          <div slot="icon">2</div>
+          <slot />
+        </ScrollStepperStep>
+      </ScrollStepper>
+    </SideMenuPage>
+    <SideMenuPage>
+      <slot />
+    </SideMenuPage>
+    <SideMenuPage>
+      <slot />
+    </SideMenuPage>
+  </SideMenuBody>
+</SideMenuContainer>
+
 <!--div>
   <PrefixSelector bind:prefix />
 </div-->
-
-<ScrollStepper
-  bind:activeStepIndex
-  displayPrevious={true}
-  enableAutoScrolling={false}
->
-  <ScrollStepperStep title="Select a prefix and look-up items">
-    <div slot="icon">1</div>
-    <DipstagingLookup />
-  </ScrollStepperStep>
-  <ScrollStepperStep
-    title={`Update descriptive metadata for items found`}
-    isLastStep={true}
-  >
-    <div slot="icon">2</div>
-    <slot />
-  </ScrollStepperStep>
-</ScrollStepper>
