@@ -22,6 +22,10 @@ const checkAdditions = z.object({
   id: Noid,
   slugArray: z.array(Slug),
 });
+const addMemberscontext = z.object({
+  id: z.array(Noid),
+  data: EditableCollection,
+});
 export const collectionRouter = createRouter()
   .mutation("edit", {
     input: EditInput.parse,
@@ -55,6 +59,20 @@ export const collectionRouter = createRouter()
       try {
         return await ctx.couch.access.checkAdditions(input.id, input.slugArray);
       } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .query("viewMembersContext", {
+    input: addMemberscontext.parse,
+    async resolve({ input, ctx }) {
+      try {
+        return await ctx.couch.access.findUniqueArray("id", input.id, [
+          "slug",
+          "label",
+        ]);
+      } catch (e) {
+        console.log(e?.message);
         throw httpErrorToTRPC(e);
       }
     },
