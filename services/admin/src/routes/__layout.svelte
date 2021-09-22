@@ -53,7 +53,7 @@
   <a href="/"><img width="220" src="/static/canadiana-pa-tag-color.png" alt="canadiana by CRKN, par RCDR"/></a>
 
   <nav class="auto-align auto-align__wrap">
-    <a href="/import">Import from Preservation</a>
+    <a href="/smelter">Smelter</a>
     <a href="/dmd/new">Update Descriptive Metadata</a>
 
     <DropdownMenu direction="right">

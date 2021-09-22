@@ -7,13 +7,13 @@
   import type { RootLoadOutput } from "$lib/types";
   export const load: Load<RootLoadOutput> = async ({ page, context }) => {
     try {
-      const dates = decodeURIComponent(page.params["dates"]).split(",");
-      if (dates && dates.length === 2) {
-        const response = await context.lapin.query("dipstaging.listFromDates", {
-          from: dates[0],
-          to: dates[1],
-        });
-        if (response) return { props: { dipstaging: response, dates } };
+      const keys = decodeURIComponent(page.params["keys"]).split(",");
+      if (keys) {
+        const response = await context.lapin.query(
+          "dipstaging.listFromKeys",
+          keys
+        );
+        if (response) return { props: { results: response, keys } };
         else
           return {
             props: {
@@ -36,17 +36,18 @@
    * @description This page displays the information about the dipstaging process
    */
   import type { ImportStatus } from "@crkn-rcdr/access-data";
-  import Dipstaging from "$lib/components/dipstaging/Dipstaging.svelte";
-  export let dates: string[];
-  export let dipstaging: ImportStatus[];
+  import DipstagingTable from "$lib/components/dipstaging/DipstagingTable.svelte";
+  export let keys: string[];
+  export let results: ImportStatus[];
   export let error: string = "";
 </script>
 
 {error}
-{dates}
-{#if dipstaging}
-  {JSON.stringify(dipstaging)}
+{keys}
+{#if results}
+  {JSON.stringify(results)}
 {/if}
 
-<!--https://access-dev.canadiana.ca/import/dates/2012-01-01,2021-09-09
+<DipstagingTable />
+<!--https://access-dev.canadiana.ca/smelter/keys/test
   Dipstaging {keys} /-->
