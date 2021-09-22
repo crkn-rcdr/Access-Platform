@@ -77,7 +77,7 @@ export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
   /**
    * Publish an Access Object.
    */
-  async publish(args: { id: Noid; user: User }) {
+  async publish(args: { id: Noid; user?: User }) {
     await this.update({
       ddoc: "access",
       name: "publish",
@@ -89,7 +89,7 @@ export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
   /**
    * Unpublish an Access Object.
    */
-  async unpublish(args: { id: Noid; user: User }) {
+  async unpublish(args: { id: Noid; user?: User }) {
     await this.update({
       ddoc: "access",
       name: "unpublish",
@@ -274,7 +274,7 @@ export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
     const manifest = await this.get(args.id);
     return Manifest.parse(manifest);
   }
-  
+
   /**
    * This method resolves the slugs and returns the record of resolved and unresolved slugs with the error message
    * @param id The Collection id
@@ -285,8 +285,6 @@ export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
     id: Noid,
     slugArray: Slug[]
   ): Promise<Record<Slug, SlugResolution>> {
-    console.log("Entry Into checkAdditions", id);
-
     const currentMembers = Collection.parse(await this.get(id)).members;
 
     const resolution = Object.entries(await this.resolveSlugs(slugArray));
