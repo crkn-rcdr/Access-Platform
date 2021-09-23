@@ -24,7 +24,7 @@ const checkAdditions = z.object({
 });
 const addMemberscontext = z.object({
   id: z.array(Noid),
-  data: EditableCollection,
+  /*  data: EditableCollection, */
 });
 export const collectionRouter = createRouter()
   .mutation("edit", {
@@ -70,7 +70,7 @@ export const collectionRouter = createRouter()
         return await ctx.couch.access.findUniqueArray("id", input.id, [
           "slug",
           "label",
-        ]);
+        ] as const);
       } catch (e) {
         console.log(e?.message);
         throw httpErrorToTRPC(e);
