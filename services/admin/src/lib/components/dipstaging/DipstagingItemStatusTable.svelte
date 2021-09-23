@@ -55,12 +55,12 @@
                 it must be unassigned before continuing.
               {/if}
             {:else if importStatus["status"] === "processing"}
-              Package already processing
+              Package already processing.
             {:else if importStatus["status"] === "not-found"}
-              Package not found
+              Package not found.
             {:else}
-              {importStatus["status"]}
-              Ready to import
+              <!--{importStatus["status"]}-->
+              Ready to import!
             {/if}
           </td>
         </tr>
