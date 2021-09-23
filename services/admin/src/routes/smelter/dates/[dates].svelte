@@ -39,7 +39,7 @@
    * @description This page displays the information about the dipstaging process
    */
   import type { ImportStatus } from "@crkn-rcdr/access-data";
-  import DipstagingTable from "$lib/components/dipstaging/DipstagingTable.svelte";
+  import DipstagingItemStatusTable from "$lib/components/dipstaging/DipstagingItemStatusTable.svelte";
   export let dates: string[];
   export let results: ImportStatus[];
   export let error: string = "";
@@ -47,6 +47,6 @@
 
 {error}
 {dates}
-<DipstagingTable bind:results />
+<DipstagingItemStatusTable bind:results />
 <!--https://access-dev.canadiana.ca/smelter/dates/2012-01-01,2021-09-09
   Dipstaging {keys} /-->

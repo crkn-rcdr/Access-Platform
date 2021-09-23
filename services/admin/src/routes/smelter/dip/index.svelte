@@ -6,6 +6,7 @@
   import type { Load } from "@sveltejs/kit";
   import type { RootLoadOutput } from "$lib/types";
   import type { LegacyPackage } from "@crkn-rcdr/access-data";
+  import DipstagingLegacyPackageTable from "$lib/components/dipstaging/DipstagingLegacyPackageTable.svelte";
   export const load: Load<RootLoadOutput> = async ({ page, context }) => {
     try {
       //: ImportStatus[]
@@ -40,6 +41,4 @@
 </script>
 
 {error}
-{#if results}
-  {JSON.stringify(results)}
-{/if}
+<DipstagingLegacyPackageTable bind:results />
