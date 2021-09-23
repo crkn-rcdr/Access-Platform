@@ -21,9 +21,12 @@ Allows the user to modify the member list for a collection.
   import { moveArrayElement } from "$lib/utils/arrayUtil";
   import TiTrash from "svelte-icons/ti/TiTrash.svelte";
   import CollectionMembersAddition from "./CollectionMembersAddition.svelte";
+  import { session } from "$app/stores";
+
   export let collection: Collection;
   let activeMemberIndex: number = 0;
   const dispatch = createEventDispatcher();
+
   function setActiveIndex(index: number) {
     if (index >= collection.members.length)
       index = collection.members.length - 1;
@@ -51,6 +54,15 @@ Allows the user to modify the member list for a collection.
       collection?.members.splice(index, 1);
       collection.members = collection?.members;
       setActiveIndex(activeMemberIndex);
+    }
+  }
+  async function getMemberContext() {
+    for (let index of collection.members) {
+      const resolutions = await $session.lapin.query(
+        "collections.viewMembersContext",
+        index.id
+      );
+      console.log("know what it retrieves", resolutions);
     }
   }
   onMount(() => {
@@ -112,9 +124,17 @@ Allows the user to modify the member list for a collection.
           <div id="grid">
             <ul>
               <li>
-                <a href="/object/{item?.data?.id}">{item?.data?.id}</a>
+                <a href="/object/{item?.data?.id}">{item?.data?.id}</a><br />
+                <!--  {#each collection.members as members} -->
+                <!--   <textarea
+                    id="label"
+                    name="label"
+                    bind:value={collection.members["label"]["none"]}
+                  /> -->
+                <!--   {/each} -->
               </li>
             </ul>
+            <button on:click={getMemberContext}>Check</button>
           </div>
         </div>
       </div>
