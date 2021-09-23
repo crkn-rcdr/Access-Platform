@@ -269,6 +269,10 @@ A component that shows a navigable set of pages with a side menu to allow the us
       height: calc(100vh - 12rem - var(--viewport-scaling));
     }
   }*/
+  .menu {
+    border-radius: var(--border-radius);
+    overflow: hidden;
+  }
 
   .fixed-full-page .header {
     height: 12%;

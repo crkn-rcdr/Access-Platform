@@ -61,11 +61,14 @@ The resolver component allows the user to enter a slug, and then a request is se
           displayPrevious={true}
           enableAutoScrolling={false}
         >
-          <ScrollStepperStep title="Find items in preservation">
+          <ScrollStepperStep title="Find packages in preservation">
             <div slot="icon">1</div>
             <DipstagingLookup />
           </ScrollStepperStep>
-          <ScrollStepperStep title="Add them to access" isLastStep={true}>
+          <ScrollStepperStep
+            title="Select packages to import into the access platform as manifests"
+            isLastStep={true}
+          >
             <div slot="icon">2</div>
             <slot />
           </ScrollStepperStep>

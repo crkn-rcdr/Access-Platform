@@ -123,26 +123,27 @@
       />
     {/if}
   </div>
-  <!--uses goto to smelet/keys or smelter/dates array.toString()-->
-
-  {#if lookupView === BY_SLUG_LABEL && slugListString?.length}
-    <button
-      class:primary={!lookupDone}
-      class:secondary={lookupDone}
-      on:click={handleLookupPressedSlugList}
-    >
-      {lookupDone ? "Lookup Again" : "Lookup"}
-    </button>
-  {:else if lookupView === BY_DATE_LABEL && startDateStr?.length && endDateStr?.length}
-    <button
-      class:primary={!lookupDone}
-      class:secondary={lookupDone}
-      on:click={handleLookupPressedDates}
-    >
-      {lookupDone ? "Lookup Again" : "Lookup"}
-    </button>
-  {/if}
 </div>
+
+<br />
+<br />
+{#if lookupView === BY_SLUG_LABEL && slugListString?.length}
+  <button
+    class:primary={!lookupDone}
+    class:secondary={lookupDone}
+    on:click={handleLookupPressedSlugList}
+  >
+    {lookupDone ? "Lookup Again" : "Lookup"}
+  </button>
+{:else if lookupView === BY_DATE_LABEL && startDateStr?.length && endDateStr?.length}
+  <button
+    class:primary={!lookupDone}
+    class:secondary={lookupDone}
+    on:click={handleLookupPressedDates}
+  >
+    {lookupDone ? "Lookup Again" : "Lookup"}
+  </button>
+{/if}
 
 <style>
   .lookup-wrap {
