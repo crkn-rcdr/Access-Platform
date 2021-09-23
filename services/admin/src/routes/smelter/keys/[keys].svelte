@@ -7,7 +7,10 @@
   import type { RootLoadOutput } from "$lib/types";
   export const load: Load<RootLoadOutput> = async ({ page, context }) => {
     try {
-      const keys = decodeURIComponent(page.params["keys"]).split(",");
+      const keys = decodeURIComponent(
+        decodeURIComponent(page.params["keys"])
+      ).split(",");
+      console.log(keys);
       if (keys) {
         const response = await context.lapin.query(
           "dipstaging.listFromKeys",
@@ -43,7 +46,6 @@
 </script>
 
 {error}
-{keys}
 <DipstagingItemStatusTable bind:results />
 <!--https://access-dev.canadiana.ca/smelter/keys/test
   Dipstaging {keys} /-->

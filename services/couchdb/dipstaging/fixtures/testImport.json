@@ -1,0 +1,20 @@
+{
+  "_id": "testImport",
+  "repos": ["eclipse", "swift", "romano"],
+  "reposManifestDate": "2016-03-09T18:12:05Z",
+  "reposDate": "2021-04-01T22:20:02Z",
+  "updated": "2021-04-01T22:20:02Z",
+  "METS": [
+    {
+      "md5": "7d682dcec13c131d72c20c84b2b77fe3",
+      "path": "data/revisions/20160309T174453.partial/metadata.xml"
+    },
+    {
+      "path": "data/sip/data/metadata.xml",
+      "md5": "6ff6b39d66a6493e4073f5909b8ca32c"
+    }
+  ],
+  "METSManifestDate": "2016-03-09T18:12:05Z",
+  "METSDate": "2019-08-29T19:45:32Z",
+  "slug": "testImport"
+}

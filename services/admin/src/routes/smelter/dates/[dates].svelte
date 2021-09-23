@@ -46,7 +46,6 @@
 </script>
 
 {error}
-{dates}
 <DipstagingItemStatusTable bind:results />
 <!--https://access-dev.canadiana.ca/smelter/dates/2012-01-01,2021-09-09
   Dipstaging {keys} /-->

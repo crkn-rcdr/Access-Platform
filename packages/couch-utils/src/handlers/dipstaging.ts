@@ -36,6 +36,7 @@ export class LegacyPackageHandler extends DatabaseHandler<LegacyPackage> {
   async listFromKeys(keys: Slug[], access: AccessHandler) {
     const resolutions = await access.resolveSlugs(keys);
     const list = await this.list({ include_docs: true, keys });
+
     return list.rows.map((row): ImportStatus => {
       const r = resolutions[row.key];
       let id: string | undefined = undefined;
@@ -58,9 +59,10 @@ export class LegacyPackageHandler extends DatabaseHandler<LegacyPackage> {
       include_docs: true,
     });
 
-    const resolutions = await access.resolveSlugs(
-      list.rows.map((row) => row.id)
-    );
+    const slugs = list.rows.map((row) => row.id);
+
+    const resolutions = await access.resolveSlugs(slugs);
+
     return list.rows.map((row): ImportStatus => {
       const r = resolutions[row.id];
       let id: string | undefined = undefined;

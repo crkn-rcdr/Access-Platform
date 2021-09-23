@@ -26,9 +26,17 @@
 
   function handleLookupPressedSlugList() {
     let slugList: string[] = slugListString.split(",");
+
     if (depositor.prefix !== "none")
-      slugList = slugList.map((slug) => `${depositor.prefix}.${slug.trim()}`);
-    else slugList = slugList.map((slug) => slug.trim());
+      slugList = slugList.map((slug) =>
+        encodeURIComponent(
+          encodeURIComponent(`${depositor.prefix}.${slug.trim()}`)
+        )
+      );
+    else
+      slugList = slugList.map((slug) =>
+        encodeURIComponent(encodeURIComponent(slug.trim()))
+      );
     goto(`/smelter/keys/${slugList.toString()}`);
   }
 
@@ -50,7 +58,6 @@
 
   function setDateDefaults(dates: string[]) {
     if (dates && dates.length === 2) {
-      console.log("DaTES", dates);
       lookupView = BY_DATE_LABEL;
       startDateStr = dates[0];
       endDateStr = dates[1];
@@ -66,6 +73,7 @@
       lookupDone = true;
       slugListString = keys
         .map((prefixedSlug) => {
+          prefixedSlug = decodeURIComponent(decodeURIComponent(prefixedSlug));
           const arr = prefixedSlug.split(".");
           if (arr.length > 1) {
             depositor = {
@@ -82,9 +90,14 @@
   }
 
   function setDefaults(params) {
-    console.log("params", params);
     if (params?.dates) setDateDefaults(params.dates.split(","));
-    else if (params?.keys) setSlugDefaults(params.keys.split(","));
+    else if (params?.keys)
+      setSlugDefaults(
+        params.keys
+          .split(",")
+          .map((key) => encodeURIComponent(encodeURIComponent(key)))
+      );
+    else reset();
   }
 
   $: setDefaults($page.params);

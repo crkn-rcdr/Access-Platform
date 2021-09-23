@@ -112,7 +112,9 @@ interface WithProcess extends WithRequest {
   /** The message returned by the import processor. */
   message: string;
 }
-
+interface SlugUnavailableStatus extends WithId {
+  status: "slug-unavailable";
+}
 interface NotFoundStatus extends WithId {
   status: "not-found";
 }
@@ -130,6 +132,7 @@ interface FailureStatus extends WithProcess {
 }
 
 export type ImportStatus =
+  | SlugUnavailableStatus
   | NotFoundStatus
   | NewStatus
   | ProcessingStatus
@@ -150,7 +153,9 @@ export const getImportStatus = (
   if (!lp) return { status: "not-found", id };
   const { repos, reposManifestDate: ingestDate, slug, smelt, staff } = lp;
   const response = { id, repos, ingestDate, noid: noid || null, staff };
-  if (smelt) {
+  if (!smelt && typeof noid !== "undefined") {
+    return { status: "slug-unavailable", ...response };
+  } else if (smelt) {
     const processResponse = {
       ...response,
       slug: slug || "",

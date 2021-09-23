@@ -40,6 +40,7 @@
   <table>
     <thead>
       <tr>
+        <th>Id</th>
         <th>Slug</th>
         {#if view !== "neversmelted" && view !== "dip"}
           <th>Repos Manifest Date</th>
@@ -55,6 +56,9 @@
     <tbody>
       {#each results as legacyPackage}
         <tr>
+          <td>
+            {legacyPackage.id}
+          </td>
           <td>
             {legacyPackage.slug}
           </td>
