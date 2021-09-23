@@ -34,4 +34,44 @@ export const dipstagingRouter = createRouter()
         throw httpErrorToTRPC(e);
       }
     },
+  })
+  .query("listNewDip", {
+    async resolve({ ctx }) {
+      try {
+        return await ctx.couch.dipstaging.listFromView("newDip");
+      } catch (e) {
+        console.log(e?.message);
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .query("listSmeltQueue", {
+    async resolve({ ctx }) {
+      try {
+        return await ctx.couch.dipstaging.listFromView("smeltQueue");
+      } catch (e) {
+        console.log(e?.message);
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .query("listSmeltStatus", {
+    async resolve({ ctx }) {
+      try {
+        return await ctx.couch.dipstaging.listFromView("smeltStatus");
+      } catch (e) {
+        console.log(e?.message);
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .query("listNeverSmelted", {
+    async resolve({ ctx }) {
+      try {
+        return await ctx.couch.dipstaging.listFromView("neverSmelted");
+      } catch (e) {
+        console.log(e?.message);
+        throw httpErrorToTRPC(e);
+      }
+    },
   });

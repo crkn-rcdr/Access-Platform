@@ -14,12 +14,14 @@
         return { props: { activePageIndex: 0, activeStepIndex: 1 } };
       else if (page.path.includes("dates"))
         return { props: { activePageIndex: 0, activeStepIndex: 1 } };
-      else if (page.path.includes("processing"))
+      else if (page.path.includes("queue"))
         return { props: { activePageIndex: 1, activeStepIndex: 1 } };
-      else if (page.path.includes("success"))
+      else if (page.path.includes("dip"))
         return { props: { activePageIndex: 2, activeStepIndex: 1 } };
-      else if (page.path.includes("failed"))
+      else if (page.path.includes("neversmelted"))
         return { props: { activePageIndex: 3, activeStepIndex: 1 } };
+      else if (page.path.includes("status"))
+        return { props: { activePageIndex: 4, activeStepIndex: 1 } };
       else return { props: { error: "Invalid path" } };
     } catch (e) {
       return { props: { error: e?.message } };

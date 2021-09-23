@@ -70,4 +70,25 @@ export class LegacyPackageHandler extends DatabaseHandler<LegacyPackage> {
       return getImportStatus(row.id, row.doc, id);
     });
   }
+
+  // TODO: test
+  async listFromView(viewName: string) {
+    //, access: AccessHandler
+    const list = await this.view("access", viewName, {
+      reduce: false,
+      include_docs: true,
+    });
+
+    /*const resolutions = await access.resolveSlugs(
+      list.rows.map((row) => row.id)
+    );*/
+    return list.rows.map((row) => row.doc); /*.map((row): ImportStatus => {
+      const r = resolutions[row.id];
+      let id: string | undefined = undefined;
+      if (r && r.resolved) {
+        id = r.id;
+      }
+      return getImportStatus(row.id, row.doc, id);
+    });*/
+  }
 }
