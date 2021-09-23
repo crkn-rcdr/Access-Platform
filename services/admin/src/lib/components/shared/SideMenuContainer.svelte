@@ -272,6 +272,7 @@ A component that shows a navigable set of pages with a side menu to allow the us
   .menu {
     border-radius: var(--border-radius);
     overflow: hidden;
+    background: var(--light-bg);
   }
 
   .fixed-full-page .header {

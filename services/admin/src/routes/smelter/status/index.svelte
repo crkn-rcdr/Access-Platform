@@ -41,4 +41,4 @@
 </script>
 
 {error}
-<DipstagingLegacyPackageTable bind:results />
+<DipstagingLegacyPackageTable bind:results view="status" />
