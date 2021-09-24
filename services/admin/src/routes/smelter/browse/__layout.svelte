@@ -34,7 +34,7 @@
   const VIEW_LABELS = [
     "Browse Newly Created Dips",
     "Browse Packages Never Smelted",
-    "Browse All Packages",
+    "Browse Smelted Packages",
   ];
   let activeIndex = 0;
 
