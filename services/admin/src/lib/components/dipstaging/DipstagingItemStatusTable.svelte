@@ -105,7 +105,11 @@
             {/if}
           </td>
           <td>{importStatus.id}</td>
-          <td>{@html importStatus["repos"]?.join("<br/>")}</td>
+          <td
+            >{@html importStatus["repos"]
+              ? importStatus["repos"].join("<br/>")
+              : "N/A"}</td
+          >
           <!--td>{importStatus["ingestDate"]}</td-->
           <!--td>{importStatus["requestDate"]}</td>
           <td>{importStatus["processDate"]}</td-->
