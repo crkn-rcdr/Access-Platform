@@ -61,9 +61,8 @@ export class LegacyPackageHandler extends DatabaseHandler<LegacyPackage> {
     const resolutions = await access.resolveSlugs(
       list.rows.map((row) => row.id)
     );
-
     return list.rows.map((row): ImportStatus => {
-      const r = resolutions[row.key];
+      const r = resolutions[row.id];
       let id: string | undefined = undefined;
       if (r && r.resolved) {
         id = r.id;

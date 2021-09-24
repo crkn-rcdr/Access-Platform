@@ -77,13 +77,11 @@ test.serial("Can query by dates", async (t) => {
     "2021-07-31",
     t.context.access
   );
-  console.log("ds result", result);
-
   t.is(result.length, 1);
-  t.is(result[0]?.id, MANIFEST_ONE_SLUG);
 
-  // TODO: not sure how to make this defined
-  t.is((result[0] as any).noid, MANIFEST_ONE);
+  const firstResult = result[0] as ImportStatus;
+  t.is(firstResult?.id, MANIFEST_ONE_SLUG);
+  t.is((firstResult as any).noid, MANIFEST_ONE);
 });
 
 test.after.always(async (t) => {

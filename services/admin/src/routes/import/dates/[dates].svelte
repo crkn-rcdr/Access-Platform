@@ -1,0 +1,52 @@
+<script context="module" lang="ts">
+  /**
+   * @module
+   * @description loads in the dmdtask from the backend using the params in the route of the page
+   */
+  import type { Load } from "@sveltejs/kit";
+  import type { RootLoadOutput } from "$lib/types";
+  export const load: Load<RootLoadOutput> = async ({ page, context }) => {
+    try {
+      const dates = decodeURIComponent(page.params["dates"]).split(",");
+      if (dates && dates.length === 2) {
+        const response = await context.lapin.query("dipstaging.listFromDates", {
+          from: dates[0],
+          to: dates[1],
+        });
+        if (response) return { props: { dipstaging: response, dates } };
+        else
+          return {
+            props: {
+              error: {
+                message: "No Views found",
+              },
+            },
+          };
+      }
+      return { props: {} };
+    } catch (e) {
+      return { props: { error: e?.message } };
+    }
+  };
+</script>
+
+<script lang="ts">
+  /**
+   * @file
+   * @description This page displays the information about the dipstaging process
+   */
+  import type { ImportStatus } from "@crkn-rcdr/access-data";
+  import Dipstaging from "$lib/components/dipstaging/Dipstaging.svelte";
+  export let dates: string[];
+  export let dipstaging: ImportStatus[];
+  export let error: string = "";
+</script>
+
+{error}
+{dates}
+{#if dipstaging}
+  {JSON.stringify(dipstaging)}
+{/if}
+
+<!--https://access-dev.canadiana.ca/import/dates/2012-01-01,2021-09-09
+  Dipstaging {keys} /-->
