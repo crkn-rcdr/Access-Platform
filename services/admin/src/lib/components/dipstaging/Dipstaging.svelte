@@ -40,14 +40,14 @@ The resolver component allows the user to enter a slug, and then a request is se
   bind:activeIndex={activePageIndex}
 >
   <SideMenuPageList>
+    <a href="/smelter/browse/neversmelted">
+      <SideMenuPageListButton>Browse Packages</SideMenuPageListButton>
+    </a>
     <a href="/smelter">
       <SideMenuPageListButton>Run Smelter</SideMenuPageListButton>
     </a>
     <a href="/smelter/queue">
       <SideMenuPageListButton>View Processing Queue</SideMenuPageListButton>
-    </a>
-    <a href="/smelter/browse/dip">
-      <SideMenuPageListButton>Browse Packages</SideMenuPageListButton>
     </a>
     <!--a href="/smelter/dip">
       <SideMenuPageListButton>New Dips</SideMenuPageListButton>
@@ -60,6 +60,11 @@ The resolver component allows the user to enter a slug, and then a request is se
     </a-->
   </SideMenuPageList>
   <SideMenuBody>
+    <SideMenuPage>
+      <div class="page-wrap">
+        <slot />
+      </div>
+    </SideMenuPage>
     <SideMenuPage>
       <div class="page-wrap">
         <ScrollStepper
@@ -79,11 +84,6 @@ The resolver component allows the user to enter a slug, and then a request is se
             <slot />
           </ScrollStepperStep>
         </ScrollStepper>
-      </div>
-    </SideMenuPage>
-    <SideMenuPage>
-      <div class="page-wrap">
-        <slot />
       </div>
     </SideMenuPage>
     <SideMenuPage>

@@ -253,7 +253,12 @@ Source: https://github.com/twbs/bootstrap/blob/main/scss/mixins/_visually-hidden
 .wrapper {
   margin-inline: auto;
   padding-inline: 1rem;
+}
+.wrapper.md {
   max-width: 90rem;
+}
+.wrapper.lg {
+  max-width: 116rem;
 }
 
 .center {
@@ -577,11 +582,17 @@ tr:nth-child(even) {
 
 thead th {
   padding: 1rem;
-  font-weight: bold;
+  /*font-weight: bold;*/
 }
 
 th {
-  font-weight: normal;
+  font-weight: normal !important;
+}
+th.sm {
+  padding: 0.5rem;
+}
+th.center {
+  text-align: center;
 }
 
 td {
@@ -836,4 +847,13 @@ fieldset {
   white-space: pre-line;
   border-radius: var(--border-radius);
   background-color: var(--base-bg);
+}
+
+.chip {
+  border-radius: var(--border-radius);
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--primary);
+  background-color: var(--primary-light);
+  color: var(--primary);
+  display: inline;
 }

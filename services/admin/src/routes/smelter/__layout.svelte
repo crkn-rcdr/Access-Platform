@@ -10,13 +10,13 @@
       console.log(page.path);
       if (page.path === "/smelter")
         return { props: { activePageIndex: 0, activeStepIndex: 0 } };
-      else if (page.path.includes("keys"))
-        return { props: { activePageIndex: 0, activeStepIndex: 1 } };
-      else if (page.path.includes("dates"))
-        return { props: { activePageIndex: 0, activeStepIndex: 1 } };
-      else if (page.path.includes("queue"))
-        return { props: { activePageIndex: 1, activeStepIndex: 1 } };
       else if (page.path.includes("browse"))
+        return { props: { activePageIndex: 0, activeStepIndex: 1 } };
+      else if (page.path.includes("keys"))
+        return { props: { activePageIndex: 1, activeStepIndex: 1 } };
+      else if (page.path.includes("dates"))
+        return { props: { activePageIndex: 1, activeStepIndex: 1 } };
+      else if (page.path.includes("queue"))
         return { props: { activePageIndex: 2, activeStepIndex: 1 } };
     } catch (e) {
       return { props: { error: e?.message } };
@@ -39,7 +39,7 @@
   export let error: string;
 </script>
 
-<Wizard title="Smelter">
+<Wizard title="Smelter" size="lg">
   {#if error}
     <NotificationBar status="fail" message={error} />
   {/if}

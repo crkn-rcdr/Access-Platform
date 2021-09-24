@@ -5,14 +5,17 @@
    */
 
   export let title: string = "";
+  export let size: "md" | "lg" = "md";
 </script>
 
 <div class="backdrop">
-  <div class="wrapper title">
-    <p>{title}</p>
-  </div>
-  <div class="wrapper form">
-    <slot />
+  <div class={`wrapper ${size}`}>
+    <div class="title">
+      <p>{title}</p>
+    </div>
+    <div class="form">
+      <slot />
+    </div>
   </div>
 </div>
 
