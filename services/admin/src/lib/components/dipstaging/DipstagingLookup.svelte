@@ -146,10 +146,9 @@
   </div>
 </div>
 
-<br />
-<br />
 <div class="extra-spacing">
   {#if lookupView === BY_SLUG_LABEL && slugListString?.length}
+    <br />
     <button
       class:primary={!lookupDone}
       class:secondary={lookupDone}
@@ -165,11 +164,10 @@
     >
       {lookupDone ? "Look-up Packages Again" : "Look-up Packages"}
     </button>
+    <br />
+    <br />
   {/if}
 </div>
-
-<br />
-<br />
 
 <style>
   .lookup-wrap {

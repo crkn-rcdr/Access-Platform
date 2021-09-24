@@ -44,9 +44,12 @@ The resolver component allows the user to enter a slug, and then a request is se
       <SideMenuPageListButton>Run Smelter</SideMenuPageListButton>
     </a>
     <a href="/smelter/queue">
-      <SideMenuPageListButton>Queue</SideMenuPageListButton>
+      <SideMenuPageListButton>Processing Queue</SideMenuPageListButton>
     </a>
-    <a href="/smelter/dip">
+    <a href="/smelter/browse/dip">
+      <SideMenuPageListButton>Browse Packages</SideMenuPageListButton>
+    </a>
+    <!--a href="/smelter/dip">
       <SideMenuPageListButton>New Dips</SideMenuPageListButton>
     </a>
     <a href="/smelter/neversmelted">
@@ -54,7 +57,7 @@ The resolver component allows the user to enter a slug, and then a request is se
     </a>
     <a href="/smelter/status">
       <SideMenuPageListButton>Status</SideMenuPageListButton>
-    </a>
+    </a-->
   </SideMenuPageList>
   <SideMenuBody>
     <SideMenuPage>
@@ -88,7 +91,7 @@ The resolver component allows the user to enter a slug, and then a request is se
         <slot />
       </div>
     </SideMenuPage>
-    <SideMenuPage>
+    <!--SideMenuPage>
       <div class="page-wrap">
         <slot />
       </div>
@@ -97,7 +100,7 @@ The resolver component allows the user to enter a slug, and then a request is se
       <div class="page-wrap">
         <slot />
       </div>
-    </SideMenuPage>
+    </SideMenuPage-->
   </SideMenuBody>
 </SideMenuContainer>
 
