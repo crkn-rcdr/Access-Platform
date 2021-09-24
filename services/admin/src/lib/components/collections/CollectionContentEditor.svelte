@@ -57,13 +57,13 @@ Allows the user to modify the member list for a collection.
     }
   }
   async function getMemberContext() {
-    for (let index of collection.members) {
-      const resolutions = await $session.lapin.query(
-        "collection.viewMembersContext",
-        index.id
-      );
-      console.log("know what it retrieves", resolutions);
-    }
+    let currentMembers = collection.members.map((members) => members.id);
+    
+    const resolutions = await $session.lapin.query(
+      "collection.viewMembersContext",
+      currentMembers
+    );
+    console.log("know what it retrieves", resolutions);
   }
   onMount(() => {
     if (collection.members.length) activeMemberIndex = 0;
