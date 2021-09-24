@@ -9,11 +9,17 @@
 <!--on:click={toggleAllItemsSelected}
             bind:checked={shouldUpdateAllItems}-->
 {#if results}
+  <div class="extra-spacing">
+    <button class="primary">Run Smelter on Selected Packages</button>
+  </div>
+  <br />
+  <br />
+  <br />
   <table>
     <thead>
       <tr>
         <th>
-          <input type="checkbox" />
+          <input type="checkbox" checked />
         </th>
         <th>Id</th>
         <th>Slug</th>
@@ -33,7 +39,7 @@
                   on:change={checkIfAllItemsSelected}-->
           <td>
             {#if importStatus["status"] !== "slug-unavailable" && importStatus["status"] !== "processing" && importStatus["status"] !== "not-found"}
-              <input type="checkbox" />
+              <input type="checkbox" checked />
             {:else}
               <input type="checkbox" disabled />
             {/if}
@@ -70,8 +76,14 @@
 {/if}
 
 <style>
+  .extra-spacing {
+    width: 95%;
+  }
+  button {
+    float: right;
+  }
   table {
-    width: 90%;
+    width: 95%;
     overflow-y: auto;
   }
 </style>

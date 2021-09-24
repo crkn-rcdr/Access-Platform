@@ -41,7 +41,7 @@ The resolver component allows the user to enter a slug, and then a request is se
 >
   <SideMenuPageList>
     <a href="/smelter">
-      <SideMenuPageListButton>Import</SideMenuPageListButton>
+      <SideMenuPageListButton>Run Smelter</SideMenuPageListButton>
     </a>
     <a href="/smelter/queue">
       <SideMenuPageListButton>Queue</SideMenuPageListButton>
@@ -64,7 +64,7 @@ The resolver component allows the user to enter a slug, and then a request is se
           displayPrevious={true}
           enableAutoScrolling={false}
         >
-          <ScrollStepperStep title="Find packages to import">
+          <ScrollStepperStep title="Look-up packages to import">
             <div slot="icon">1</div>
             <DipstagingLookup />
           </ScrollStepperStep>
