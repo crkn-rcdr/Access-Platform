@@ -15,9 +15,6 @@ module.exports = function (doc, req) {
   }
 
   const user = extractJSONFromBody(req);
-  if (!user) {
-    return errorReturn(`Could not parse request body as JSON: ${req.body}`);
-  }
 
   delete doc.public;
 

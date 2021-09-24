@@ -63,3 +63,47 @@ module.exports.pullFixtures = async () => {
     }
   }
 };
+
+module.exports.fixStaff = async () => {
+  const {
+    deployments: {
+      production: {
+        url,
+        auth: { user, password },
+      },
+    },
+  } = await readJson(pathJoin(__dirname, "..", "..", "kivikrc.json"));
+
+  const client = getNano(url, { user, password }).use("access");
+
+  const fetchIds = async () => {
+    const response = await client.find({
+      selector: {
+        $and: [
+          {
+            staff: {
+              $exists: true,
+            },
+          },
+          {
+            "staff.by.name": {
+              $exists: false,
+            },
+          },
+        ],
+      },
+      fields: ["_id"],
+      limit: 1000,
+    });
+    return response.docs.map((doc) => doc._id);
+  };
+
+  while (true) {
+    const ids = await fetchIds();
+    console.log(ids);
+    for (const id of ids) {
+      await client.updateWithHandler("access", "removeStaff", id);
+    }
+    if (ids.length < 1000) break;
+  }
+};

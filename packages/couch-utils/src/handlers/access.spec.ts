@@ -74,6 +74,40 @@ test.serial("Objects can be published and unpublished", async (t) => {
   t.is(error.message, "Trying to publish an object that is already public");
 });
 
+// TODO: dry this
+test.serial(
+  "Objects can be published and unpublished anonymously",
+  async (t) => {
+    await t.context.access.unpublish({ id: MANIFEST_TWO });
+
+    let doc = await t.context.access.get(MANIFEST_TWO);
+    t.falsy(doc.public);
+
+    let error = await t.throwsAsync(
+      t.context.access.unpublish({ id: MANIFEST_TWO })
+    );
+    t.is(error.message, "Trying to unpublish an object that isn't public");
+
+    await t.context.access.publish({ id: MANIFEST_TWO });
+
+    doc = await t.context.access.get(MANIFEST_TWO);
+    t.true(Timestamp.safeParse(doc.public).success);
+  }
+);
+
+test.serial("Can remove staff object", async (t) => {
+  await t.context.access.unpublish({ id: MANIFEST_TWO, user: USER });
+  await t.context.access.publish({ id: MANIFEST_TWO, user: USER });
+  await t.context.access.update({
+    ddoc: "access",
+    name: "removeStaff",
+    docId: MANIFEST_TWO,
+  });
+
+  const doc = await t.context.access.get(MANIFEST_TWO);
+  t.is(doc.staff, undefined);
+});
+
 test.serial("Slugs can only change if they aren't taken", async (t) => {
   const error = await t.throwsAsync(
     t.context.access.editCollection({
