@@ -41,4 +41,5 @@
 </script>
 
 {error}
+{JSON.stringify(results)}
 <DipstagingLegacyPackageTable bind:results />
