@@ -11,6 +11,7 @@
    */
   const { session } = getStores<Session>();
   let selectedIndexes: number[] = [];
+  let sucessfulSmeltRequestIndexes: number[] = [];
 
   function setSelectedIndexes() {
     selectedIndexes = [];
@@ -40,14 +41,21 @@
     let index = 0;
     for (const importStatus of results) {
       if (selectedIndexes.includes(index)) {
-        const response = await $session.lapin.mutation(
-          `dipstaging.requestSmelt`,
-          {
-            user: $session.user,
-            slug: importStatus.id,
+        try {
+          const response = await $session.lapin.mutation(
+            `dipstaging.requestSmelt`,
+            {
+              user: $session.user,
+              slug: importStatus.id,
+            }
+          );
+          if (!sucessfulSmeltRequestIndexes.includes(index)) {
+            sucessfulSmeltRequestIndexes.push(index);
+            sucessfulSmeltRequestIndexes = sucessfulSmeltRequestIndexes;
           }
-        );
-        console.log("response", response);
+        } catch (e) {
+          console.log(e?.message);
+        }
       }
       index++;
     }
@@ -102,7 +110,13 @@
           <!--td>{importStatus["requestDate"]}</td>
           <td>{importStatus["processDate"]}</td-->
           <td>
-            {#if importStatus["status"] === "slug-unavailable"}
+            {#if sucessfulSmeltRequestIndexes.includes(i)}
+              Smelter is running on the package! <a
+                target="_blank"
+                href="https://access-dev.canadiana.ca/smelter/queue"
+                >Track its status in the 'Queue' tab.</a
+              >
+            {:else if importStatus["status"] === "slug-unavailable"}
               Slug is taken,
               {#if importStatus["noid"]}
                 <a href={`/object/${importStatus["noid"]}`} target="_blank">
@@ -112,7 +126,11 @@
                 it must be unassigned before continuing.
               {/if}
             {:else if importStatus["status"] === "processing"}
-              Package already processing.
+              Smelter is running on the package! <a
+                target="_blank"
+                href="https://access-dev.canadiana.ca/smelter/queue"
+                >Track its status in the 'Queue' tab.</a
+              >
             {:else if importStatus["status"] === "not-found"}
               Package not found.
             {:else if importStatus["status"] === "succeeded"}

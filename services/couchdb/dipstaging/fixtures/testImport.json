@@ -1,6 +1,6 @@
 {
   "_id": "testImport",
-  "repos": ["eclipse", "swift", "romano"],
+  "repos": ["eclipse", "swiftz", "romano"],
   "reposManifestDate": "2016-03-09T18:12:05Z",
   "reposDate": "2021-04-01T22:20:02Z",
   "updated": "2021-04-01T22:20:02Z",
