@@ -1,16 +1,69 @@
 <script lang="ts">
+  import { getStores } from "$app/stores";
+
+  import type { Session } from "$lib/types";
+
   import type { ImportStatus } from "@crkn-rcdr/access-data";
 
   export let results: ImportStatus[];
+  /**
+   * @type {Session} The session store that contains the module for sending requests to lapin.
+   */
+  const { session } = getStores<Session>();
+  let selectedIndexes: number[] = [];
+
+  function setSelectedIndexes() {
+    selectedIndexes = [];
+    let index = 0;
+    for (const importStatus of results) {
+      if (importStatus["status"] === "new") selectedIndexes.push(index);
+      index++;
+    }
+    selectedIndexes = selectedIndexes;
+  }
+
+  function handleItemSelected(index: number) {
+    if (selectedIndexes.includes(index))
+      selectedIndexes = selectedIndexes.filter((item) => item !== index);
+    else {
+      selectedIndexes.push(index);
+      selectedIndexes = selectedIndexes;
+    }
+  }
+
+  function toggleAllSelected() {
+    if (selectedIndexes.length) selectedIndexes = [];
+    else setSelectedIndexes();
+  }
+
+  async function handleRunSmelterPressed() {
+    let index = 0;
+    for (const importStatus of results) {
+      if (selectedIndexes.includes(index)) {
+        const response = await $session.lapin.mutation(
+          `dipstaging.requestSmelt`,
+          {
+            user: $session.user,
+            slug: importStatus.id,
+          }
+        );
+        console.log("response", response);
+      }
+      index++;
+    }
+  }
+
+  $: {
+    results;
+    setSelectedIndexes();
+  }
 </script>
 
-<!--[{"status":"succeeded","id":"test","repos":["eclipse","swift","romano"],"ingestDate":"2016-03-09T18:12:05Z","noid":null,"slug":"test","requestDate":"2020-04-20T20:28:50Z","processDate":"2020-04-22T20:15:21Z","message":""}]-->
-
-<!--on:click={toggleAllItemsSelected}
-            bind:checked={shouldUpdateAllItems}-->
 {#if results}
   <div class="extra-spacing">
-    <button class="primary">Run Smelter on Selected Packages</button>
+    <button class="primary" on:click={handleRunSmelterPressed}
+      >Run Smelter on Selected Packages</button
+    >
   </div>
   <br />
   <br />
@@ -19,10 +72,9 @@
     <thead>
       <tr>
         <th>
-          <input type="checkbox" checked />
+          <input type="checkbox" on:click={toggleAllSelected} checked />
         </th>
         <th>Id</th>
-        <th>Slug</th>
         <th>Repos</th>
         <!--th>ingestDate</th-->
         <!--th>requestDate</th>
@@ -31,21 +83,20 @@
       </tr>
     </thead>
     <tbody>
-      {#each results as importStatus}
+      {#each results as importStatus, i}
         <tr>
-          <!--
-                  bind:checked={$dmdTasksStore[dmdTaskId].itemStates[item.id]
-                    .shouldUpdate}
-                  on:change={checkIfAllItemsSelected}-->
           <td>
-            {#if importStatus["status"] !== "slug-unavailable" && importStatus["status"] !== "processing" && importStatus["status"] !== "not-found"}
-              <input type="checkbox" checked />
+            {#if importStatus["status"] === "new"}
+              <input
+                type="checkbox"
+                on:click={() => handleItemSelected(i)}
+                checked={selectedIndexes.includes(i)}
+              />
             {:else}
               <input type="checkbox" disabled />
             {/if}
           </td>
           <td>{importStatus.id}</td>
-          <td>{importStatus["slug"] ? importStatus["slug"] : "none"}</td>
           <td>{@html importStatus["repos"]?.join("<br/>")}</td>
           <!--td>{importStatus["ingestDate"]}</td-->
           <!--td>{importStatus["requestDate"]}</td>
@@ -64,7 +115,11 @@
               Package already processing.
             {:else if importStatus["status"] === "not-found"}
               Package not found.
-            {:else}
+            {:else if importStatus["status"] === "succeeded"}
+              Package import has ran previously and suceeded.
+            {:else if importStatus["status"] === "failed"}
+              Package import has ran previously and failed.
+            {:else if importStatus["status"] === "new"}
               <!--{importStatus["status"]}-->
               Ready to import!
             {/if}

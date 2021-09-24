@@ -1,5 +1,5 @@
 {
-  "_id": "oocihm.8_06941",
+  "_id": "testImport2",
   "repos": ["eclipse", "swift", "romano"],
   "reposManifestDate": "2016-03-09T18:12:05Z",
   "reposDate": "2021-04-01T22:20:02Z",
@@ -16,11 +16,5 @@
   ],
   "METSManifestDate": "2016-03-09T18:12:05Z",
   "METSDate": "2019-08-29T19:45:32Z",
-  "slug": "oocihm.8_06941",
-  "smelt": {
-    "succeeded": true,
-    "message": "test",
-    "requestDate": "2020-04-20T20:28:52Z",
-    "processDate": "2020-04-22T21:01:24Z"
-  }
+  "slug": "testImport2"
 }

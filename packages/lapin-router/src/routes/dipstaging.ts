@@ -1,11 +1,16 @@
 import { z } from "zod";
 
 import { createRouter, httpErrorToTRPC } from "../router.js";
-import { Slug } from "@crkn-rcdr/access-data";
+import { Slug, User } from "@crkn-rcdr/access-data";
 
 const ListFromDates = z.object({
   from: z.string(),
   to: z.string(),
+});
+
+const SmeltInput = z.object({
+  user: User,
+  slug: Slug,
 });
 
 export const dipstagingRouter = createRouter()
@@ -71,6 +76,21 @@ export const dipstagingRouter = createRouter()
         return await ctx.couch.dipstaging.listFromView("neverSmelted");
       } catch (e) {
         console.log(e?.message);
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .mutation("requestSmelt", {
+    input: SmeltInput.parse,
+    async resolve({ input, ctx }) {
+      try {
+        return await ctx.couch.dipstaging.update({
+          ddoc: "access",
+          name: "requestSmelt",
+          docId: input.slug,
+          body: input,
+        });
+      } catch (e) {
         throw httpErrorToTRPC(e);
       }
     },
