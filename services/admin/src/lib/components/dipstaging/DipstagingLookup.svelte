@@ -13,8 +13,8 @@
     prefix: "none",
     label: "",
   };
-  const BY_SLUG_LABEL = "Search by Slug";
-  const BY_DATE_LABEL = "Search by Date";
+  const BY_SLUG_LABEL = "Look-up by Slug";
+  const BY_DATE_LABEL = "Look-up by Date";
   let lookupView: string = BY_SLUG_LABEL;
 
   let startDateStr: string;
@@ -122,7 +122,7 @@
 
 <div class="lookup-wrap auto-align" on:click={resetLookupColor}>
   <div class="user-input">
-    {#if lookupView === "Search by Slug"}
+    {#if lookupView === BY_SLUG_LABEL}
       <div class="extra-spacing">
         <PrefixSelector bind:depositor />
         <textarea
