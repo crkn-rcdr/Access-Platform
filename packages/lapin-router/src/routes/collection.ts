@@ -22,10 +22,11 @@ const checkAdditions = z.object({
   id: Noid,
   slugArray: z.array(Slug),
 });
-const addMemberscontext = z.object({
+/* const addMemberscontext = z.object({
   id: z.array(Noid),
-  /*  data: EditableCollection, */
-});
+   data: EditableCollection, 
+}); */
+const id = z.array(Noid);
 export const collectionRouter = createRouter()
   .mutation("edit", {
     input: EditInput.parse,
@@ -64,10 +65,10 @@ export const collectionRouter = createRouter()
     },
   })
   .query("viewMembersContext", {
-    input: addMemberscontext.parse,
+    input: id.parse,
     async resolve({ input, ctx }) {
       try {
-        return await ctx.couch.access.findUniqueArray("id", input.id, [
+        return await ctx.couch.access.findUniqueArray("id", input, [
           "slug",
           "label",
         ] as const);

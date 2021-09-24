@@ -59,7 +59,7 @@ Allows the user to modify the member list for a collection.
   async function getMemberContext() {
     for (let index of collection.members) {
       const resolutions = await $session.lapin.query(
-        "collections.viewMembersContext",
+        "collection.viewMembersContext",
         index.id
       );
       console.log("know what it retrieves", resolutions);
@@ -125,6 +125,7 @@ Allows the user to modify the member list for a collection.
             <ul>
               <li>
                 <a href="/object/{item?.data?.id}">{item?.data?.id}</a><br />
+
                 <!--  {#each collection.members as members} -->
                 <!--   <textarea
                     id="label"
