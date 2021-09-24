@@ -28,28 +28,28 @@
    * @description This is the common layout for the dmd task updater pages
    */
 
-  export let view: "dip" | "neversmelted" | "status";
+  export let view: "dip" | "status" | "neversmelted";
   export let error: string;
 
   const VIEW_LABELS = [
     "Browse Newly Created Dips",
+    "Browse Processed Packages",
     "Browse Packages Never Smelted",
-    "Browse Smelted Packages",
   ];
   let activeIndex = 0;
 
   function setActiveIndex() {
     if (view) {
       if (view === "dip") activeIndex = 0;
-      else if (view === "neversmelted") activeIndex = 1;
-      else if (view === "status") activeIndex = 2;
+      else if (view === "status") activeIndex = 1;
+      else if (view === "neversmelted") activeIndex = 2;
     }
   }
 
   function handleChangeView() {
     if (activeIndex === 0) goto("/smelter/browse/dip");
-    else if (activeIndex === 1) goto("/smelter/browse/neversmelted");
-    else if (activeIndex === 2) goto("/smelter/browse/status");
+    else if (activeIndex === 1) goto("/smelter/browse/status");
+    else if (activeIndex === 2) goto("/smelter/browse/neversmelted");
   }
 
   onMount(() => {
