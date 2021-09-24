@@ -22,6 +22,7 @@ Allows the user to modify the member list for a collection.
   import TiTrash from "svelte-icons/ti/TiTrash.svelte";
   import CollectionMembersAddition from "./CollectionMembersAddition.svelte";
   import { session } from "$app/stores";
+  import type { ObjectList } from "@crkn-rcdr/access-data";
 
   export let collection: Collection;
   let activeMemberIndex: number = 0;
@@ -56,15 +57,23 @@ Allows the user to modify the member list for a collection.
       setActiveIndex(activeMemberIndex);
     }
   }
+  let documentSlug: ObjectList = [];
   async function getMemberContext() {
     let currentMembers = collection.members.map((members) => members.id);
-    
+
     const resolutions = await $session.lapin.query(
       "collection.viewMembersContext",
       currentMembers
     );
     console.log("know what it retrieves", resolutions);
+    documentSlug = resolutions.map((slug) => {
+      if (slug[1].found) {
+        documentSlug = slug[1].result;
+      }
+      console.log("check what is in document slug", documentSlug);
+    });
   }
+
   onMount(() => {
     if (collection.members.length) activeMemberIndex = 0;
   });
@@ -126,13 +135,15 @@ Allows the user to modify the member list for a collection.
               <li>
                 <a href="/object/{item?.data?.id}">{item?.data?.id}</a><br />
 
-                <!--  {#each collection.members as members} -->
-                <!--   <textarea
-                    id="label"
-                    name="label"
-                    bind:value={collection.members["label"]["none"]}
-                  /> -->
-                <!--   {/each} -->
+                {#each collection.members as members}
+                  {#if members.label !== null && members.label !== undefined}
+                    <textarea
+                      id="label"
+                      name="label"
+                      bind:value={members["label"]["none"]}
+                    />
+                  {/if}
+                {/each}
               </li>
             </ul>
             <button on:click={getMemberContext}>Check</button>
