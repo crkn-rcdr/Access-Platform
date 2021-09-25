@@ -9,6 +9,7 @@
 </script>
 
 {#if results}
+  <div>Group by: status, message, date, date & time</div>
   <div class="table-actions auto-align">
     <input class="search" placeholder="Search the table..." />
     <!--button class="primary clear-button">Clear</button-->
