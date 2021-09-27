@@ -15,6 +15,7 @@
         return { props: { view: "neversmelted" } };
       else if (page.path.includes("status"))
         return { props: { view: "status" } };
+      else if (page.path.includes("queue")) return { props: { view: "queue" } };
       else return { props: { error: "Invalid path" } };
     } catch (e) {
       return { props: { error: e?.message } };
@@ -28,13 +29,14 @@
    * @description This is the common layout for the dmd task updater pages
    */
 
-  export let view: "neversmelted" | "dip" | "status";
+  export let view: "neversmelted" | "dip" | "status" | "queue";
   export let error: string;
 
   const VIEW_LABELS = [
     "Browse Packages Never Smelted",
     "Browse Newly Created Dips",
     "Browse Processed Packages",
+    "Browse Packages in the Processing Queue",
   ];
   let activeIndex = 0;
 
@@ -43,6 +45,7 @@
       if (view === "neversmelted") activeIndex = 0;
       else if (view === "status") activeIndex = 1;
       else if (view === "dip") activeIndex = 2;
+      else if (view === "queue") activeIndex = 3;
     }
   }
 
@@ -50,6 +53,7 @@
     if (activeIndex === 0) goto("/smelter/browse/neversmelted");
     else if (activeIndex === 1) goto("/smelter/browse/status");
     else if (activeIndex === 2) goto("/smelter/browse/dip");
+    else if (activeIndex === 3) goto("/smelter/browse/queue");
   }
 
   onMount(() => {

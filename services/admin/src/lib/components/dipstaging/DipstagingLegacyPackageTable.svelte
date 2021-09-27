@@ -9,20 +9,46 @@
 </script>
 
 {#if results}
-  <div>Group by: status, message, date, date & time</div>
   <div class="table-actions auto-align">
-    <input class="search" placeholder="Search the table..." />
-    <!--button class="primary clear-button">Clear</button-->
+    <div>
+      Group items in table by:
+      <select>
+        <option>status</option>
+        <option>message</option>
+        <option>date</option>
+        <option>date & time</option>
+      </select>
+    </div>
+    <div class="icon-input auto-align auto-align__a-center">
+      <PopupMenu on:cancel={() => {}} on:ok={() => {}}>
+        <span class="icon filter" slot="popup-button">
+          <FaFilter />
+        </span>
+        Content
+        <span class="chip">value</span>
+        <span class="chip">value</span>
+        <span class="chip">value</span>
+        <span class="chip">value</span>
+      </PopupMenu>
+      <input class="search" placeholder="Search the table..." />
+    </div>
+    <!--div>
+      restrict search to:
+      <select>
+        <option>status</option>
+        <option>message</option>
+        <option>date</option>
+        <option>date & time</option>
+      </select>
+    </div-->
     <button class="primary">Run Smelter</button>
+    <!--button class="primary clear-button">Clear</button-->
   </div>
-  <br />
   <br />
   <div class="table-wrap">
     <table>
       <thead>
         <tr>
-          <th class="center sm"><input type="checkbox" /></th>
-
           <th class="center sm">
             <div class="auto-align auto-align__a-center">
               <PopupMenu on:cancel={() => {}} on:ok={() => {}}>
@@ -107,12 +133,12 @@
               </span>
             </div>
           </th>
+          <th class="center sm"><input type="checkbox" /></th>
         </tr>
       </thead>
       <tbody>
         {#each results as legacyPackage}
           <tr>
-            <td><input type="checkbox" /></td>
             <td>
               {legacyPackage.id}
             </td>
@@ -151,6 +177,7 @@
                   ).toLocaleString()
                 : "N/A"}
             </td>
+            <td><input type="checkbox" /></td>
           </tr>
         {/each}
       </tbody>
@@ -203,8 +230,17 @@
   .clear-button {
     margin-right: var(--margin-sm);
   }
-  input.search {
+  .icon-input {
+    flex: 6;
+    border: 1px solid var(--border-color);
+    margin-top: 0.25rem;
+    outline: none;
+    border-radius: var(--border-radius);
+    background-color: var(--form-field-bg);
+    color: var(--base-font-color);
+  }
+  .icon-input input {
     flex: 9;
-    margin-right: 1rem;
+    border: none;
   }
 </style>
