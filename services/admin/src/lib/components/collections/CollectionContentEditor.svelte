@@ -57,7 +57,7 @@ Allows the user to modify the member list for a collection.
       setActiveIndex(activeMemberIndex);
     }
   }
-  let documentSlug: ObjectList = [];
+  let documentSlug: string[] = [];
   async function getMemberContext() {
     let currentMembers = collection.members.map((members) => members.id);
 
@@ -143,6 +143,13 @@ Allows the user to modify the member list for a collection.
                       bind:value={members["label"]["none"]}
                     />
                   {/if}
+                {/each}
+                {#each documentSlug as document}
+                  <textarea
+                    id="label"
+                    name="label"
+                    bind:value={document.slug}
+                  />
                 {/each}
               </li>
             </ul>
