@@ -4,11 +4,12 @@
   import type { LegacyPackage } from "@crkn-rcdr/access-data";
   import PopupMenu from "../shared/PopupMenu.svelte";
   export let results: LegacyPackage[];
-
+  export let pageNumber: number = 1;
   export let view: "dip" | "neversmelted" | "queue" | "status" = "dip";
 </script>
 
-{#if results}
+{pageNumber}
+{#if typeof results !== "undefined" && typeof pageNumber !== "undefined"}
   <div class="table-actions auto-align">
     <div>
       Group items in table by:

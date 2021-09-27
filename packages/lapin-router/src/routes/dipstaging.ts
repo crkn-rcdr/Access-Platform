@@ -13,6 +13,11 @@ const SmeltInput = z.object({
   slug: Slug,
 });
 
+const ViewInput = z.object({
+  page: z.number(),
+  pageSize: z.number(),
+});
+
 export const dipstagingRouter = createRouter()
   .query("listFromKeys", {
     input: z.array(Slug).parse,
@@ -41,9 +46,14 @@ export const dipstagingRouter = createRouter()
     },
   })
   .query("listNewDip", {
-    async resolve({ ctx }) {
+    input: ViewInput.parse,
+    async resolve({ input, ctx }) {
       try {
-        return await ctx.couch.dipstaging.listFromView("newDip");
+        return await ctx.couch.dipstaging.listFromView(
+          "newDip",
+          input.pageSize,
+          (input.page - 1) * input.pageSize
+        );
       } catch (e) {
         console.log(e?.message);
         throw httpErrorToTRPC(e);
@@ -51,9 +61,14 @@ export const dipstagingRouter = createRouter()
     },
   })
   .query("listSmeltQueue", {
-    async resolve({ ctx }) {
+    input: ViewInput.parse,
+    async resolve({ input, ctx }) {
       try {
-        return await ctx.couch.dipstaging.listFromView("smeltQueue");
+        return await ctx.couch.dipstaging.listFromView(
+          "smeltQueue",
+          input.pageSize,
+          (input.page - 1) * input.pageSize
+        );
       } catch (e) {
         console.log(e?.message);
         throw httpErrorToTRPC(e);
@@ -61,9 +76,17 @@ export const dipstagingRouter = createRouter()
     },
   })
   .query("listSmeltStatus", {
-    async resolve({ ctx }) {
+    input: ViewInput.parse,
+    async resolve({ input, ctx }) {
       try {
-        return await ctx.couch.dipstaging.listFromView("smeltStatus");
+        return await ctx.couch.dipstaging.listFromView(
+          "smeltStatus",
+          input.pageSize,
+          (input.page - 1) * input.pageSize,
+          "2012-01-01",
+          "2021-09-27",
+          false
+        );
       } catch (e) {
         console.log(e?.message);
         throw httpErrorToTRPC(e);
@@ -71,9 +94,16 @@ export const dipstagingRouter = createRouter()
     },
   })
   .query("listNeverSmelted", {
-    async resolve({ ctx }) {
+    input: ViewInput.parse,
+    async resolve({ input, ctx }) {
       try {
-        return await ctx.couch.dipstaging.listFromView("neverSmelted");
+        return await ctx.couch.dipstaging.listFromView(
+          "neverSmelted",
+          input.pageSize,
+          (input.page - 1) * input.pageSize,
+          "2012-01-01",
+          "2021-09-27"
+        );
       } catch (e) {
         console.log(e?.message);
         throw httpErrorToTRPC(e);

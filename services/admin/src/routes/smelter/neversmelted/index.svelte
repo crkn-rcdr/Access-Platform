@@ -9,11 +9,21 @@
   import DipstagingLegacyPackageTable from "$lib/components/dipstaging/DipstagingLegacyPackageTable.svelte";
   export const load: Load<RootLoadOutput> = async ({ page, context }) => {
     try {
-      //: ImportStatus[]
+      const pageNumber = parseInt(page.query.get("page")) || 1;
       const response: LegacyPackage[] = await context.lapin.query(
-        "dipstaging.listSmeltStatus"
+        "dipstaging.listNeverSmelted",
+        {
+          page: pageNumber,
+          pageSize: 10,
+        }
       );
-      if (response) return { props: { results: response } };
+      if (response)
+        return {
+          props: {
+            results: response,
+            pageNumber,
+          },
+        };
       else
         return {
           props: {
@@ -37,8 +47,16 @@
   //import DipstagingTable from "$lib/components/dipstaging/DipstagingTable.svelte";
 
   export let results: LegacyPackage[]; //: ImportStatus[]
+  export let pageNumber: number;
   export let error: string = "";
 </script>
 
 {error}
-<DipstagingLegacyPackageTable bind:results view="status" />
+{pageNumber}
+{#if typeof results !== "undefined" && typeof pageNumber !== "undefined"}
+  <DipstagingLegacyPackageTable
+    bind:results
+    view="neversmelted"
+    bind:pageNumber
+  />
+{/if}

@@ -21,9 +21,6 @@ The resolver component allows the user to enter a slug, and then a request is se
 *Note: `bind:` is required for changes to the properties to be reflected in higher level components.*
 -->
 <script lang="ts">
-  import DipstagingLookup from "$lib/components/dipstaging/DipstagingLookup.svelte";
-  import ScrollStepper from "$lib/components/shared/ScrollStepper.svelte";
-  import ScrollStepperStep from "$lib/components/shared/ScrollStepperStep.svelte";
   import SideMenuContainer from "../shared/SideMenuContainer.svelte";
   import SideMenuPageList from "../shared/SideMenuPageList.svelte";
   import SideMenuPageListButton from "../shared/SideMenuPageListButton.svelte";
@@ -31,7 +28,6 @@ The resolver component allows the user to enter a slug, and then a request is se
   import SideMenuPage from "../shared/SideMenuPage.svelte";
 
   export let activePageIndex: number = 0;
-  export let activeStepIndex: number = 0;
 </script>
 
 <SideMenuContainer
@@ -40,24 +36,20 @@ The resolver component allows the user to enter a slug, and then a request is se
   bind:activeIndex={activePageIndex}
 >
   <SideMenuPageList>
-    <a href="/smelter/browse/neversmelted">
-      <SideMenuPageListButton>Browse Packages</SideMenuPageListButton>
+    <a href="/smelter/neversmelted?page=1">
+      <SideMenuPageListButton>Non-Smelted Packages</SideMenuPageListButton>
     </a>
-    <a href="/smelter">
-      <SideMenuPageListButton>Look-up Packages</SideMenuPageListButton>
+    <a href="/smelter/updated?page=1">
+      <SideMenuPageListButton
+        >Packages Needing Re-Smelting</SideMenuPageListButton
+      >
     </a>
-    <a href="/smelter/queue">
-      <SideMenuPageListButton>View Processing Queue</SideMenuPageListButton>
+    <a href="/smelter/queue?page=1">
+      <SideMenuPageListButton>Smelt Processing Queue</SideMenuPageListButton>
     </a>
-    <!--a href="/smelter/dip">
-      <SideMenuPageListButton>New Dips</SideMenuPageListButton>
+    <a href="/smelter/status?page=1">
+      <SideMenuPageListButton>Smelted Packages</SideMenuPageListButton>
     </a>
-    <a href="/smelter/neversmelted">
-      <SideMenuPageListButton>Never Smelted</SideMenuPageListButton>
-    </a>
-    <a href="/smelter/status">
-      <SideMenuPageListButton>Status</SideMenuPageListButton>
-    </a-->
   </SideMenuPageList>
   <SideMenuBody>
     <SideMenuPage>
@@ -67,31 +59,10 @@ The resolver component allows the user to enter a slug, and then a request is se
     </SideMenuPage>
     <SideMenuPage>
       <div class="page-wrap">
-        <ScrollStepper
-          bind:activeStepIndex
-          displayPrevious={true}
-          enableAutoScrolling={false}
-        >
-          <ScrollStepperStep title="Look-up packages to import">
-            <div slot="icon">1</div>
-            <DipstagingLookup />
-          </ScrollStepperStep>
-          <ScrollStepperStep
-            title="Create manifests from packages"
-            isLastStep={true}
-          >
-            <div slot="icon">2</div>
-            <slot />
-          </ScrollStepperStep>
-        </ScrollStepper>
-      </div>
-    </SideMenuPage>
-    <SideMenuPage>
-      <div class="page-wrap">
         <slot />
       </div>
     </SideMenuPage>
-    <!--SideMenuPage>
+    <SideMenuPage>
       <div class="page-wrap">
         <slot />
       </div>
@@ -100,7 +71,7 @@ The resolver component allows the user to enter a slug, and then a request is se
       <div class="page-wrap">
         <slot />
       </div>
-    </SideMenuPage-->
+    </SideMenuPage>
   </SideMenuBody>
 </SideMenuContainer>
 

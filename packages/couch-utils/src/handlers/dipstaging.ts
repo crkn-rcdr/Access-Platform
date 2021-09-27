@@ -5,7 +5,7 @@ import {
   LegacyPackage,
   Slug,
 } from "@crkn-rcdr/access-data";
-import { ServerScope } from "nano";
+import { DocumentViewParams, ServerScope } from "nano";
 import { DatabaseHandler } from "../DatabaseHandler.js";
 import { AccessHandler } from "./access.js";
 
@@ -74,11 +74,39 @@ export class LegacyPackageHandler extends DatabaseHandler<LegacyPackage> {
   }
 
   // TODO: test
-  async listFromView(viewName: string) {
-    const list = await this.view("access", viewName, {
-      reduce: false,
+  async listFromView(
+    viewName: string,
+    limit: number,
+    skip: number,
+    startDate: string | null = null,
+    endDate: string | null = null,
+    status: boolean | null = null
+  ) {
+    let viewOptions: DocumentViewParams = {
       include_docs: true,
-    });
+      reduce: false,
+      limit,
+      skip,
+    };
+
+    if (startDate !== null && endDate !== null) {
+      const startArray = DateString.parse(startDate);
+      const endArray = DateString.parse(endDate);
+      // endArray[2] = (endArray[2] as number) + 0.1;
+      viewOptions["startkey"] = startArray;
+      viewOptions["endkey"] = endArray;
+    }
+
+    if (status !== null) {
+      if (viewOptions["startkey"].length)
+        viewOptions["startkey"] = [status, ...viewOptions["startkey"]];
+      else viewOptions["startkey"] = [status];
+      if (viewOptions["endkey"].length)
+        viewOptions["endkey"] = [status, ...viewOptions["endkey"]];
+      else viewOptions["endkey"] = [status];
+    }
+
+    const list = await this.view("access", viewName, viewOptions);
     return list.rows.map((row) => row.doc);
   }
 }

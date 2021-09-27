@@ -8,16 +8,15 @@
   export const load: Load<RootLoadOutput> = async ({ page, context }) => {
     try {
       console.log(page.path);
-      if (page.path === "/smelter")
-        return { props: { activePageIndex: 0, activeStepIndex: 0 } };
-      else if (page.path.includes("browse"))
-        return { props: { activePageIndex: 0, activeStepIndex: 1 } };
-      else if (page.path.includes("keys"))
-        return { props: { activePageIndex: 1, activeStepIndex: 1 } };
-      else if (page.path.includes("dates"))
-        return { props: { activePageIndex: 1, activeStepIndex: 1 } };
+      if (page.path === "/smelter") return { props: { activePageIndex: 0 } };
+      else if (page.path.includes("neversmelted"))
+        return { props: { activePageIndex: 0 } };
+      else if (page.path.includes("updated"))
+        return { props: { activePageIndex: 1 } };
       else if (page.path.includes("queue"))
-        return { props: { activePageIndex: 2, activeStepIndex: 1 } };
+        return { props: { activePageIndex: 2 } };
+      else if (page.path.includes("status"))
+        return { props: { activePageIndex: 3 } };
     } catch (e) {
       return { props: { error: e?.message } };
     }
@@ -35,7 +34,6 @@
   import Wizard from "$lib/components/shared/Wizard.svelte";
 
   export let activePageIndex: number;
-  export let activeStepIndex: number;
   export let error: string;
 </script>
 
@@ -43,8 +41,8 @@
   {#if error}
     <NotificationBar status="fail" message={error} />
   {/if}
-  {#if typeof activePageIndex !== "undefined" && typeof activeStepIndex !== "undefined"}
-    <Dipstaging bind:activePageIndex bind:activeStepIndex>
+  {#if typeof activePageIndex !== "undefined"}
+    <Dipstaging bind:activePageIndex>
       <slot />
     </Dipstaging>
   {/if}
