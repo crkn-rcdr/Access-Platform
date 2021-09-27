@@ -33,3 +33,4 @@ export { FileRef } from "./util/FileRef.js";
 export { ImageRef } from "./util/ImageRef.js";
 export { ObjectList } from "./util/ObjectList.js";
 export { TextRecord } from "./util/TextRecord.js";
+export { SlugList } from "./util/SlugList.js";

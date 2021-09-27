@@ -22,7 +22,8 @@ Allows the user to modify the member list for a collection.
   import TiTrash from "svelte-icons/ti/TiTrash.svelte";
   import CollectionMembersAddition from "./CollectionMembersAddition.svelte";
   import { session } from "$app/stores";
-  import type { ObjectList } from "@crkn-rcdr/access-data";
+  /* import type { ObjectList } from "@crkn-rcdr/access-data"; */
+  import type { SlugList } from "@crkn-rcdr/access-data";
 
   export let collection: Collection;
   let activeMemberIndex: number = 0;
@@ -57,7 +58,7 @@ Allows the user to modify the member list for a collection.
       setActiveIndex(activeMemberIndex);
     }
   }
-  let documentSlug: string[] = [];
+  let documentSlug: SlugList = [];
   async function getMemberContext() {
     let currentMembers = collection.members.map((members) => members.id);
 

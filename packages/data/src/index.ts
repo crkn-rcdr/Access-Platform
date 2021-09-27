@@ -14,6 +14,7 @@ export {
   Manifest,
   ObjectList,
   TextRecord,
+  SlugList,
   isAlias,
   isCanvas,
   isCollection,
