@@ -52,5 +52,4 @@
 </script>
 
 {error}
-{pageNumber}
 <DipstagingLegacyPackageTable bind:results bind:pageNumber />

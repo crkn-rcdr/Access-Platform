@@ -1,140 +1,50 @@
 <script lang="ts">
-  import FaFilter from "svelte-icons/fa/FaFilter.svelte";
-  import FaSort from "svelte-icons/fa/FaSort.svelte";
   import type { LegacyPackage } from "@crkn-rcdr/access-data";
-  import PopupMenu from "../shared/PopupMenu.svelte";
   export let results: LegacyPackage[];
   export let pageNumber: number = 1;
   export let view: "dip" | "neversmelted" | "queue" | "status" = "dip";
+  let startDateStr: string;
+  let endDateStr: string;
 </script>
 
-{pageNumber}
 {#if typeof results !== "undefined" && typeof pageNumber !== "undefined"}
   <div class="table-actions auto-align">
-    <div>
-      Group items in table by:
-      <select>
-        <option>status</option>
-        <option>message</option>
-        <option>date</option>
-        <option>date & time</option>
-      </select>
-    </div>
-    <div class="icon-input auto-align auto-align__a-center">
-      <PopupMenu on:cancel={() => {}} on:ok={() => {}}>
-        <span class="icon filter" slot="popup-button">
-          <FaFilter />
-        </span>
-        Content
-        <span class="chip">value</span>
-        <span class="chip">value</span>
-        <span class="chip">value</span>
-        <span class="chip">value</span>
-      </PopupMenu>
-      <input class="search" placeholder="Search the table..." />
-    </div>
-    <!--div>
-      restrict search to:
-      <select>
-        <option>status</option>
-        <option>message</option>
-        <option>date</option>
-        <option>date & time</option>
-      </select>
-    </div-->
-    <button class="primary">Run Smelter</button>
-    <!--button class="primary clear-button">Clear</button-->
+    <span class="dates">
+      <span>
+        <label for="start">Start date:</label>
+        <input
+          type="date"
+          id="start"
+          name="trip-start"
+          bind:value={startDateStr}
+        />
+      </span>
+      <span>
+        <label for="end">End date:</label>
+        <input
+          type="date"
+          id="end"
+          name="trip-end"
+          bind:value={endDateStr}
+        /><br />
+      </span>
+    </span>
+
+    <button class="primary">Run Smelter on Selected Packages</button>
   </div>
   <br />
   <div class="table-wrap">
     <table>
       <thead>
         <tr>
-          <th class="center sm">
-            <div class="auto-align auto-align__a-center">
-              <PopupMenu on:cancel={() => {}} on:ok={() => {}}>
-                <span class="icon filter" slot="popup-button">
-                  <FaFilter />
-                </span>
-                Content
-                <span class="chip">value</span>
-                <span class="chip">value</span>
-                <span class="chip">value</span>
-                <span class="chip">value</span>
-              </PopupMenu>
-              <span class="colname"> Id </span>
-              <span class="icon sort">
-                <FaSort />
-              </span>
-            </div>
-          </th>
-          <th class="center sm">
-            <div class="auto-align auto-align__a-center">
-              <span class="icon filter">
-                <FaFilter />
-              </span>
-              <span class="colname"> Slug </span>
-              <span class="icon sort">
-                <FaSort />
-              </span>
-            </div>
-          </th>
-          <th class="center sm">
-            <div class="auto-align auto-align__a-center">
-              <span class="icon filter">
-                <FaFilter />
-              </span>
-              <span class="colname"> Smelt Status </span>
-              <span class="icon sort">
-                <FaSort />
-              </span>
-            </div>
-          </th>
-          <th class="center sm">
-            <div class="auto-align auto-align__a-center">
-              <span class="icon filter">
-                <FaFilter />
-              </span>
-              <span class="colname"> Message </span>
-              <span class="icon sort">
-                <FaSort />
-              </span>
-            </div>
-          </th>
-          <th class="center sm">
-            <div class="auto-align auto-align__a-center">
-              <span class="icon filter">
-                <FaFilter />
-              </span>
-              <span class="colname"> Repos Manifest Date </span>
-              <span class="icon sort">
-                <FaSort />
-              </span>
-            </div>
-          </th>
-          <th class="center sm">
-            <div class="auto-align auto-align__a-center">
-              <span class="icon filter">
-                <FaFilter />
-              </span>
-              <span class="colname"> Request Date </span>
-              <span class="icon sort">
-                <FaSort />
-              </span>
-            </div>
-          </th>
-          <th class="center sm">
-            <div class="auto-align auto-align__a-center">
-              <span class="icon filter">
-                <FaFilter />
-              </span>
-              <span class="colname"> Process Date </span>
-              <span class="icon sort">
-                <FaSort />
-              </span>
-            </div>
-          </th>
-          <th class="center sm"><input type="checkbox" /></th>
+          <th>Id</th>
+          <th>Slug</th>
+          <th>Smelt Status</th>
+          <th>Message</th>
+          <th>Repos Manifest Date</th>
+          <th>Request Date</th>
+          <th>Process Date</th>
+          <th><input type="checkbox" /></th>
         </tr>
       </thead>
       <tbody>
@@ -187,14 +97,20 @@
 {/if}
 
 <style>
-  .table-wrap {
-    min-height: 20rem;
-  }
-  thead tr {
+  .table-actions {
     width: 100%;
   }
+  .dates {
+    flex: 9;
+  }
+  .dates > span:not(:first-child) {
+    margin-left: var(--margin-sm);
+  }
+  .table-actions button {
+    margin-left: var(--margin-sm);
+  }
 
-  .icon,
+  /*.icon,
   .icon svg {
     cursor: pointer;
   }
@@ -213,35 +129,9 @@
   .icon.filter {
     width: 1rem;
     height: 1.7rem;
-  }
-  .colname {
-    flex: 9;
-  }
-  th div {
-    width: 100%;
-  }
+  }*/
 
-  th:not(:first-child) {
+  /*th:not(:first-child) {
     border-left: 1px solid var(--border-color);
-  }
-
-  .table-actions {
-    width: 100%;
-  }
-  .clear-button {
-    margin-right: var(--margin-sm);
-  }
-  .icon-input {
-    flex: 6;
-    border: 1px solid var(--border-color);
-    margin-top: 0.25rem;
-    outline: none;
-    border-radius: var(--border-radius);
-    background-color: var(--form-field-bg);
-    color: var(--base-font-color);
-  }
-  .icon-input input {
-    flex: 9;
-    border: none;
-  }
+  }*/
 </style>

@@ -36,6 +36,9 @@ The resolver component allows the user to enter a slug, and then a request is se
   bind:activeIndex={activePageIndex}
 >
   <SideMenuPageList>
+    <a href="/smelter/keys">
+      <SideMenuPageListButton>Package Finder</SideMenuPageListButton>
+    </a>
     <a href="/smelter/neversmelted?page=1">
       <SideMenuPageListButton>Non-Smelted Packages</SideMenuPageListButton>
     </a>
@@ -52,6 +55,11 @@ The resolver component allows the user to enter a slug, and then a request is se
     </a>
   </SideMenuPageList>
   <SideMenuBody>
+    <SideMenuPage>
+      <div class="page-wrap">
+        <slot />
+      </div></SideMenuPage
+    >
     <SideMenuPage>
       <div class="page-wrap">
         <slot />

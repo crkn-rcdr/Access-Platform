@@ -1,10 +1,11 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
-  import { page } from "$app/stores";
-
   import PrefixSelector from "$lib/components/access-objects/PrefixSelector.svelte";
   import ToggleButtons from "$lib/components/shared/ToggleButtons.svelte";
   import type { AccessPlatform } from "$lib/types";
+
+  export let keys: string[] = [];
+  export let dates: string[] = [];
 
   /**
    *  @type { AccessPlatform } The access platform to look for the items in.
@@ -27,27 +28,27 @@
     lookupView = event.detail.option;
   }
 
-  function handleLookupPressedSlugList(event) {
+  async function handleLookupPressedSlugList(event) {
     event.stopPropagation();
     let slugList: string[] = slugListString.split(",");
-
     if (depositor.prefix !== "none")
-      slugList = slugList.map((slug) =>
-        encodeURIComponent(
-          encodeURIComponent(`${depositor.prefix}.${slug.trim()}`)
-        )
-      );
-    else
-      slugList = slugList.map((slug) =>
-        encodeURIComponent(encodeURIComponent(slug.trim()))
-      );
-    goto(`/smelter/keys/${slugList.toString()}`);
+      keys = slugList.map((slug) => `${depositor.prefix}.${slug.trim()}`);
+    else keys = slugList;
+    await sendLookupRequestKeys();
+  }
+
+  async function handleLookupPressedDates(event) {
+    event.stopPropagation();
+    await sendLookupRequestDates();
+  }
+
+  async function sendLookupRequestDates() {
+    goto(`/smelter/dates/${startDateStr},${endDateStr}`);
     lookupDone = true;
   }
 
-  function handleLookupPressedDates(event) {
-    event.stopPropagation();
-    goto(`/smelter/dates/${startDateStr},${endDateStr}`);
+  async function sendLookupRequestKeys() {
+    goto(`/smelter/keys/${keys.toString()}`);
     lookupDone = true;
   }
 
@@ -80,7 +81,6 @@
       lookupDone = true;
       slugListString = keys
         .map((prefixedSlug) => {
-          prefixedSlug = decodeURIComponent(decodeURIComponent(prefixedSlug));
           const arr = prefixedSlug.split(".");
           if (arr.length > 1) {
             depositor.prefix = arr[0];
@@ -93,22 +93,22 @@
     }
   }
 
-  function setDefaults(params) {
-    if (params?.dates) setDateDefaults(params.dates.split(","));
-    else if (params?.keys)
-      setSlugDefaults(
-        params.keys
-          .split(",")
-          .map((key) => encodeURIComponent(encodeURIComponent(key)))
-      );
-    else reset();
-  }
-
   function resetLookupColor() {
     lookupDone = false;
   }
 
-  $: setDefaults($page.params);
+  $: {
+    console.log(keys);
+    if (keys)
+      setSlugDefaults(
+        keys.map((key) => encodeURIComponent(encodeURIComponent(key)))
+      );
+  }
+
+  $: {
+    console.log(dates);
+    if (dates) setDateDefaults(dates);
+  }
 </script>
 
 <br />

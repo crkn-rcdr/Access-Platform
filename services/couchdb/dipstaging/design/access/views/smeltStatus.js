@@ -7,7 +7,7 @@ module.exports = {
       const requestDate = parseTimestamp(update.requestDate);
       const processDate = parseTimestamp(update.processDate);
       if (!!update.message && processDate >= requestDate) {
-        emit([update.succeeded, ...dateAsArray(processDate)], update.message);
+        emit([...dateAsArray(processDate), update.succeeded], update.message);
       }
     }
   },

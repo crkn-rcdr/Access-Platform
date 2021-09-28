@@ -16,6 +16,8 @@ const SmeltInput = z.object({
 const ViewInput = z.object({
   page: z.number(),
   pageSize: z.number(),
+  to: z.string().optional(),
+  from: z.string().optional(),
 });
 
 export const dipstagingRouter = createRouter()
@@ -84,8 +86,7 @@ export const dipstagingRouter = createRouter()
           input.pageSize,
           (input.page - 1) * input.pageSize,
           "2012-01-01",
-          "2021-09-27",
-          false
+          "2021-09-27"
         );
       } catch (e) {
         console.log(e?.message);

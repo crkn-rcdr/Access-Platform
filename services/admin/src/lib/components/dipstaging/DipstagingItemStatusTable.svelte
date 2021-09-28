@@ -4,6 +4,7 @@
   import type { Session } from "$lib/types";
 
   import type { ImportStatus } from "@crkn-rcdr/access-data";
+  import { isArray } from "lodash-es";
 
   export let results: ImportStatus[];
   /**
@@ -12,6 +13,8 @@
   const { session } = getStores<Session>();
   let selectedIndexes: number[] = [];
   let sucessfulSmeltRequestIndexes: number[] = [];
+  let startDateStr: string;
+  let endDateStr: string;
 
   function setSelectedIndexes() {
     selectedIndexes = [];
@@ -67,15 +70,10 @@
   }
 </script>
 
-{#if results}
-  <div class="extra-spacing">
-    <button class="primary" on:click={handleRunSmelterPressed}
-      >Run Smelter on Selected Packages</button
-    >
-  </div>
-  <br />
-  <br />
-  <br />
+{#if results && Array.isArray(results)}
+  <button class="primary" on:click={handleRunSmelterPressed}
+    >Run Smelter on Selected Packages</button
+  >
   <table>
     <thead>
       <tr>
@@ -153,14 +151,11 @@
 {/if}
 
 <style>
-  .extra-spacing {
-    width: 95%;
-  }
   button {
     float: right;
   }
   table {
-    width: 95%;
+    width: 100%;
     overflow-y: auto;
   }
 </style>

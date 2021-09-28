@@ -79,8 +79,7 @@ export class LegacyPackageHandler extends DatabaseHandler<LegacyPackage> {
     limit: number,
     skip: number,
     startDate: string | null = null,
-    endDate: string | null = null,
-    status: boolean | null = null
+    endDate: string | null = null
   ) {
     let viewOptions: DocumentViewParams = {
       include_docs: true,
@@ -92,21 +91,72 @@ export class LegacyPackageHandler extends DatabaseHandler<LegacyPackage> {
     if (startDate !== null && endDate !== null) {
       const startArray = DateString.parse(startDate);
       const endArray = DateString.parse(endDate);
-      // endArray[2] = (endArray[2] as number) + 0.1;
+      //endArray[2] = (endArray[2] as number) + 0.1;
+      viewOptions["startkey"] = startArray;
+      viewOptions["endkey"] = endArray;
+    }
+    console.log(viewOptions);
+
+    const list = await this.view("access", viewName, viewOptions);
+    return list.rows.map((row) => row.doc);
+  }
+
+  // Too slow
+  async findIdsInView(
+    viewName: string,
+    page: number,
+    pageSize: number,
+    startDate: string | null = null,
+    endDate: string | null = null,
+    status: boolean | null = null,
+    ids: string[] | null = null
+  ) {
+    let viewOptions: DocumentViewParams = {
+      include_docs: true,
+      reduce: false,
+    };
+    console.log(startDate, endDate, status);
+
+    if (startDate !== null && endDate !== null) {
+      const startArray = DateString.parse(startDate);
+      const endArray = DateString.parse(endDate);
+      //endArray[2] = (endArray[2] as number) + 0.1;
+      viewOptions["startkey"] = startArray;
+      viewOptions["endkey"] = endArray;
+    } else {
+      const today = new Date().toISOString().split("T")[0];
+      const startArray = DateString.parse("1995-05-19");
+      const endArray = DateString.parse(today);
+      endArray[2] = (endArray[2] as number) + 0.1;
       viewOptions["startkey"] = startArray;
       viewOptions["endkey"] = endArray;
     }
 
-    if (status !== null) {
-      if (viewOptions["startkey"].length)
-        viewOptions["startkey"] = [status, ...viewOptions["startkey"]];
-      else viewOptions["startkey"] = [status];
-      if (viewOptions["endkey"].length)
-        viewOptions["endkey"] = [status, ...viewOptions["endkey"]];
-      else viewOptions["endkey"] = [status];
-    }
+    console.log(viewOptions);
 
     const list = await this.view("access", viewName, viewOptions);
-    return list.rows.map((row) => row.doc);
+
+    const start = (page - 1) * pageSize;
+    const end = Math.min(list.total_rows, start + pageSize);
+
+    console.log(list.rows, list.total_rows, start + pageSize, start, end);
+
+    let response = list.rows;
+
+    if (ids && ids.length)
+      response = response.filter((row) => {
+        console.log(row.id);
+        return ids.includes(row.id);
+      });
+
+    if (status !== null)
+      response = response.filter((row) => {
+        if (row.doc?.smelt)
+          return (row.doc?.smelt as any)["succeeded"] === status;
+        else return false;
+      });
+
+    //console.log("response", response);
+    return response.slice(start, end).map((row) => row.doc);
   }
 }

@@ -52,7 +52,6 @@
 </script>
 
 {error}
-{pageNumber}
 {#if typeof results !== "undefined" && typeof pageNumber !== "undefined"}
   <DipstagingLegacyPackageTable
     bind:results
