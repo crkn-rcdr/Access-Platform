@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { createRouter, httpErrorToTRPC } from "../router.js";
+import { createRouter, httpErrorToTRPC, HTTPErrorLike } from "../router.js";
 import { Slug } from "@crkn-rcdr/access-data";
 
 const ListFromDates = z.object({
@@ -15,8 +15,7 @@ export const dipstagingRouter = createRouter()
       try {
         return await ctx.couch.dipstaging.listFromKeys(input, ctx.couch.access);
       } catch (e) {
-        console.log(e?.message);
-        throw httpErrorToTRPC(e);
+        throw httpErrorToTRPC(e as HTTPErrorLike);
       }
     },
   })
@@ -30,8 +29,7 @@ export const dipstagingRouter = createRouter()
           ctx.couch.access
         );
       } catch (e) {
-        console.log(e?.message);
-        throw httpErrorToTRPC(e);
+        throw httpErrorToTRPC(e as HTTPErrorLike);
       }
     },
   });
