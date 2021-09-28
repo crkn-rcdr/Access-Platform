@@ -5,7 +5,7 @@ import {
   Noid,
   User,
 } from "@crkn-rcdr/access-data";
-import { createRouter, httpErrorToTRPC } from "../router.js";
+import { createRouter, httpErrorToTRPC, HTTPErrorLike } from "../router.js";
 
 const EditInput = z.object({
   id: Noid,
@@ -25,7 +25,7 @@ export const manifestRouter = createRouter()
       try {
         return await ctx.couch.access.editManifest(input);
       } catch (e) {
-        throw httpErrorToTRPC(e);
+        throw httpErrorToTRPC(e as HTTPErrorLike);
       }
     },
   })
@@ -40,8 +40,7 @@ export const manifestRouter = createRouter()
         });
         return id;
       } catch (e) {
-        console.log(e?.message);
-        throw httpErrorToTRPC(e);
+        throw httpErrorToTRPC(e as HTTPErrorLike);
       }
     },
   });

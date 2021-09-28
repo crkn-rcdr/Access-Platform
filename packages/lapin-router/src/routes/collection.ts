@@ -6,7 +6,7 @@ import {
   User,
   Slug,
 } from "@crkn-rcdr/access-data";
-import { createRouter, httpErrorToTRPC } from "../router.js";
+import { createRouter, httpErrorToTRPC, HTTPErrorLike } from "../router.js";
 
 const EditInput = z.object({
   id: Noid,
@@ -29,7 +29,7 @@ export const collectionRouter = createRouter()
       try {
         return await ctx.couch.access.editCollection(input);
       } catch (e) {
-        throw httpErrorToTRPC(e);
+        throw httpErrorToTRPC(e as HTTPErrorLike);
       }
     },
   })
@@ -44,8 +44,7 @@ export const collectionRouter = createRouter()
         });
         return id;
       } catch (e) {
-        console.log(e?.message);
-        throw httpErrorToTRPC(e);
+        throw httpErrorToTRPC(e as HTTPErrorLike);
       }
     },
   })
@@ -55,7 +54,7 @@ export const collectionRouter = createRouter()
       try {
         return await ctx.couch.access.checkAdditions(input.id, input.slugArray);
       } catch (e) {
-        throw httpErrorToTRPC(e);
+        throw httpErrorToTRPC(e as HTTPErrorLike);
       }
     },
   });
