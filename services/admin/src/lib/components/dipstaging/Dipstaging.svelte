@@ -48,7 +48,7 @@ The resolver component allows the user to enter a slug, and then a request is se
       >
     </a>
     <a href="/smelter/queue?page=1">
-      <SideMenuPageListButton>Smelt Processing Queue</SideMenuPageListButton>
+      <SideMenuPageListButton>Smelting Queue</SideMenuPageListButton>
     </a>
     <a href="/smelter/status?page=1">
       <SideMenuPageListButton>Smelted Packages</SideMenuPageListButton>

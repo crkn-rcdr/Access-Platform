@@ -54,7 +54,9 @@ export const dipstagingRouter = createRouter()
         return await ctx.couch.dipstaging.listFromView(
           "newDip",
           input.pageSize,
-          (input.page - 1) * input.pageSize
+          (input.page - 1) * input.pageSize,
+          input.from,
+          input.to
         );
       } catch (e) {
         console.log(e?.message);
@@ -69,7 +71,9 @@ export const dipstagingRouter = createRouter()
         return await ctx.couch.dipstaging.listFromView(
           "smeltQueue",
           input.pageSize,
-          (input.page - 1) * input.pageSize
+          (input.page - 1) * input.pageSize,
+          input.from,
+          input.to
         );
       } catch (e) {
         console.log(e?.message);
@@ -85,8 +89,8 @@ export const dipstagingRouter = createRouter()
           "smeltStatus",
           input.pageSize,
           (input.page - 1) * input.pageSize,
-          "2012-01-01",
-          "2021-09-27"
+          input.from,
+          input.to
         );
       } catch (e) {
         console.log(e?.message);
@@ -102,8 +106,8 @@ export const dipstagingRouter = createRouter()
           "neverSmelted",
           input.pageSize,
           (input.page - 1) * input.pageSize,
-          "2012-01-01",
-          "2021-09-27"
+          input.from,
+          input.to
         );
       } catch (e) {
         console.log(e?.message);

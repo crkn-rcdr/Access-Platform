@@ -1,16 +1,31 @@
 <script lang="ts">
+  import { goto } from "$app/navigation";
+
+  import { getStores, page } from "$app/stores";
+  import type { Session } from "$lib/types";
+
   import type { LegacyPackage } from "@crkn-rcdr/access-data";
   export let results: LegacyPackage[];
   export let pageNumber: number = 1;
-  export let view: "dip" | "neversmelted" | "queue" | "status" = "dip";
-  let startDateStr: string;
-  let endDateStr: string;
+  export let view: string = "updated";
+  //"dip" | "neversmelted" | "queue" | "status"
+  export let startDateStr: string;
+  export let endDateStr: string;
+
+  /**
+   * @type {Session} The session store that contains the module for sending requests to lapin.
+   */
+  const { session } = getStores<Session>();
+
+  async function refineByDate() {
+    goto(`/smelter/${view}/${pageNumber}/${startDateStr},${endDateStr}`);
+  }
 </script>
 
 {#if typeof results !== "undefined" && typeof pageNumber !== "undefined"}
-  <div class="table-actions auto-align">
-    <span class="dates">
-      <span>
+  <div class="table-actions auto-align auto-align__a-end">
+    <span class="dates auto-align auto-align__a-end">
+      <span class="auto-align auto-align__column">
         <label for="start">Start date:</label>
         <input
           type="date"
@@ -19,19 +34,20 @@
           bind:value={startDateStr}
         />
       </span>
-      <span>
+      <span class="auto-align auto-align__column">
         <label for="end">End date:</label>
-        <input
-          type="date"
-          id="end"
-          name="trip-end"
-          bind:value={endDateStr}
-        /><br />
+        <input type="date" id="end" name="trip-end" bind:value={endDateStr} />
       </span>
+      {#if startDateStr?.length && endDateStr?.length}
+        <button class="secondary" on:click={refineByDate}
+          >Refine Packages</button
+        >
+      {/if}
     </span>
 
     <button class="primary">Run Smelter on Selected Packages</button>
   </div>
+  <br />
   <br />
   <div class="table-wrap">
     <table>

@@ -70,47 +70,44 @@
   }
 </script>
 
-{#if results?.length}
-  <button class="primary" on:click={handleRunSmelterPressed}
-    >Run Smelter on Selected Packages</button
-  >
+<br />
+<br />
+<br />
+<br />
+{#if results && results.length}
+  <div class="button-wrap">
+    <button class="primary" on:click={handleRunSmelterPressed}
+      >Run Smelter on Selected Packages</button
+    >
+  </div>
+
   <table>
     <thead>
       <tr>
+        <th>Id</th>
+        <th>Slug</th>
+        <th>Ingest Date</th>
+        <th>Request Date</th>
+        <th>Process Date</th>
+        <th>Message</th>
         <th>
           <input type="checkbox" on:click={toggleAllSelected} checked />
         </th>
-        <th>Id</th>
-        <th>Repos</th>
-        <!--th>ingestDate</th-->
-        <!--th>requestDate</th>
-        <th>processDate</th-->
-        <th>Message</th>
       </tr>
     </thead>
     <tbody>
       {#each results as importStatus, i}
         <tr>
-          <td>
-            {#if importStatus["status"] === "new"}
-              <input
-                type="checkbox"
-                on:click={() => handleItemSelected(i)}
-                checked={selectedIndexes.includes(i)}
-              />
-            {:else}
-              <input type="checkbox" disabled />
-            {/if}
-          </td>
           <td>{importStatus.id}</td>
-          <td
+          <td>{importStatus["slug"]}</td>
+          <!--td
             >{@html importStatus["repos"]
               ? importStatus["repos"].join("<br/>")
               : "N/A"}</td
-          >
-          <!--td>{importStatus["ingestDate"]}</td-->
-          <!--td>{importStatus["requestDate"]}</td>
-          <td>{importStatus["processDate"]}</td-->
+          -->
+          <td>{importStatus["ingestDate"]}</td>
+          <td>{importStatus["requestDate"]}</td>
+          <td>{importStatus["processDate"]}</td>
           <td>
             {#if sucessfulSmeltRequestIndexes.includes(i)}
               Smelter is running on the package! <a
@@ -144,19 +141,29 @@
               Ready to import!
             {/if}
           </td>
+          <td>
+            {#if importStatus["status"] === "new"}
+              <input
+                type="checkbox"
+                on:click={() => handleItemSelected(i)}
+                checked={selectedIndexes.includes(i)}
+              />
+            {:else}
+              <input type="checkbox" disabled />
+            {/if}
+          </td>
         </tr>
       {/each}
     </tbody>
   </table>
-{:else}
-  No results.
 {/if}
 
 <style>
-  button {
-    float: right;
+  .button-wrap {
+    text-align: right;
   }
   table {
+    margin-top: 2rem;
     width: 100%;
     overflow-y: auto;
   }

@@ -38,10 +38,6 @@
 
   async function handleLookupPressedSlugList(event) {
     event.stopPropagation();
-    slugList = slugListString.split(",");
-    if (depositor.prefix !== "none")
-      slugList = slugList.map((slug) => `${depositor.prefix}.${slug.trim()}`);
-    else slugList = slugList;
     await sendLookupRequestKeys();
   }
 
@@ -56,25 +52,34 @@
       from: startDateStr,
       to: endDateStr,
     });
-    const response = await $session.lapin.query("dipstaging.listFromDates", {
-      from: startDateStr,
-      to: endDateStr,
-    });
-    if (response) results = response;
-    lookupDone = true;
+    if (startDateStr?.length && endDateStr?.length) {
+      const response = await $session.lapin.query("dipstaging.listFromDates", {
+        from: startDateStr,
+        to: endDateStr,
+      });
+      if (response) results = response;
+      lookupDone = true;
+    }
   }
 
   async function sendLookupRequestKeys() {
-    //goto(`/smelter/keys/${keys.toString()}`);
-    const response = await $session.lapin.query(
-      "dipstaging.listFromKeys",
-      keys
-    );
-    if (response) results = response;
-    lookupDone = true;
+    slugList = slugListString.split(",");
+    if (slugList.length) {
+      if (depositor.prefix !== "none")
+        slugList = slugList.map((slug) => `${depositor.prefix}.${slug.trim()}`);
+      else slugList = slugList.map((slug) => slug.trim());
+      //goto(`/smelter/keys/${keys.toString()}`);
+      const response = await $session.lapin.query(
+        "dipstaging.listFromKeys",
+        slugList
+      );
+      if (response) results = response;
+      console.log(results);
+      lookupDone = true;
+    }
   }
 
-  function reset() {
+  /*function reset() {
     depositor = {
       prefix: "none",
       label: "",
@@ -84,10 +89,10 @@
     startDateStr = "";
     endDateStr = "";
     slugListString = "";
-  }
+  }*/
 
   function resetLookupColor() {
-    lookupDone = false;
+    //lookupDone = false;
   }
 </script>
 
@@ -128,7 +133,6 @@
 
 <div class="extra-spacing">
   {#if lookupView === BY_SLUG_LABEL && slugListString?.length}
-    <br />
     <button
       class:primary={!lookupDone}
       class:secondary={lookupDone}
@@ -144,8 +148,6 @@
     >
       {lookupDone ? "Look-up Packages Again" : "Look-up Packages"}
     </button>
-    <br />
-    <br />
   {/if}
 </div>
 
@@ -157,7 +159,7 @@
     flex: 9;
   }
   .extra-spacing {
-    width: 95%;
+    width: 100%;
   }
   textarea {
     width: 100%;
