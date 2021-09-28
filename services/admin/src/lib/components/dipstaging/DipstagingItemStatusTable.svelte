@@ -70,7 +70,7 @@
   }
 </script>
 
-{#if results && Array.isArray(results)}
+{#if results?.length}
   <button class="primary" on:click={handleRunSmelterPressed}
     >Run Smelter on Selected Packages</button
   >
@@ -148,6 +148,8 @@
       {/each}
     </tbody>
   </table>
+{:else}
+  No results.
 {/if}
 
 <style>

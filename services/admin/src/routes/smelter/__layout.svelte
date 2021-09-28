@@ -9,9 +9,7 @@
     try {
       console.log(page.path);
       if (page.path === "/smelter") return { props: { activePageIndex: 0 } };
-      else if (page.path.includes("keys"))
-        return { props: { activePageIndex: 0 } };
-      else if (page.path.includes("dates"))
+      else if (page.path.includes("find"))
         return { props: { activePageIndex: 0 } };
       else if (page.path.includes("neversmelted"))
         return { props: { activePageIndex: 1 } };

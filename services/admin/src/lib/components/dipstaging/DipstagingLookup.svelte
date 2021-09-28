@@ -1,12 +1,19 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
+  import { getStores } from "$app/stores";
+  //import { page } from "$app/stores";
+
   import PrefixSelector from "$lib/components/access-objects/PrefixSelector.svelte";
   import ToggleButtons from "$lib/components/shared/ToggleButtons.svelte";
-  import type { AccessPlatform } from "$lib/types";
+  import type { AccessPlatform, Session } from "$lib/types";
+  import type { ImportStatus } from "@crkn-rcdr/access-data";
 
-  export let keys: string[] = [];
-  export let dates: string[] = [];
+  export let results: ImportStatus[] = [];
 
+  /**
+   * @type {Session} The session store that contains the module for sending requests to lapin.
+   */
+  const { session } = getStores<Session>();
   /**
    *  @type { AccessPlatform } The access platform to look for the items in.
    */
@@ -21,6 +28,7 @@
   let startDateStr: string;
   let endDateStr: string;
   let slugListString: string;
+  let slugList: string[] = [];
 
   let lookupDone: boolean = false;
 
@@ -30,10 +38,10 @@
 
   async function handleLookupPressedSlugList(event) {
     event.stopPropagation();
-    let slugList: string[] = slugListString.split(",");
+    slugList = slugListString.split(",");
     if (depositor.prefix !== "none")
-      keys = slugList.map((slug) => `${depositor.prefix}.${slug.trim()}`);
-    else keys = slugList;
+      slugList = slugList.map((slug) => `${depositor.prefix}.${slug.trim()}`);
+    else slugList = slugList;
     await sendLookupRequestKeys();
   }
 
@@ -43,12 +51,26 @@
   }
 
   async function sendLookupRequestDates() {
-    goto(`/smelter/dates/${startDateStr},${endDateStr}`);
+    //goto(`/smelter/dates/${startDateStr},${endDateStr}`);
+    console.log({
+      from: startDateStr,
+      to: endDateStr,
+    });
+    const response = await $session.lapin.query("dipstaging.listFromDates", {
+      from: startDateStr,
+      to: endDateStr,
+    });
+    if (response) results = response;
     lookupDone = true;
   }
 
   async function sendLookupRequestKeys() {
-    goto(`/smelter/keys/${keys.toString()}`);
+    //goto(`/smelter/keys/${keys.toString()}`);
+    const response = await $session.lapin.query(
+      "dipstaging.listFromKeys",
+      keys
+    );
+    if (response) results = response;
     lookupDone = true;
   }
 
@@ -64,50 +86,8 @@
     slugListString = "";
   }
 
-  function setDateDefaults(dates: string[]) {
-    if (dates && dates.length === 2) {
-      lookupView = BY_DATE_LABEL;
-      startDateStr = dates[0];
-      endDateStr = dates[1];
-      lookupDone = true;
-    } else {
-      reset();
-    }
-  }
-
-  function setSlugDefaults(keys: string[]) {
-    if (keys && keys.length) {
-      lookupView = BY_SLUG_LABEL;
-      lookupDone = true;
-      slugListString = keys
-        .map((prefixedSlug) => {
-          const arr = prefixedSlug.split(".");
-          if (arr.length > 1) {
-            depositor.prefix = arr[0];
-            return arr.slice(1);
-          } else return prefixedSlug;
-        })
-        .toString();
-    } else {
-      reset();
-    }
-  }
-
   function resetLookupColor() {
     lookupDone = false;
-  }
-
-  $: {
-    console.log(keys);
-    if (keys)
-      setSlugDefaults(
-        keys.map((key) => encodeURIComponent(encodeURIComponent(key)))
-      );
-  }
-
-  $: {
-    console.log(dates);
-    if (dates) setDateDefaults(dates);
   }
 </script>
 
