@@ -86,9 +86,6 @@
   export let dates: string[];
 </script>
 
-<!--dates: {dates}
-page: {pageNumber}
-  {JSON.stringify(results)}-->
 {error}
 {#if typeof results !== "undefined" && typeof pageNumber !== "undefined"}
   <DipstagingLegacyPackageTable

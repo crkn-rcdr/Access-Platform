@@ -39,18 +39,18 @@ The resolver component allows the user to enter a slug, and then a request is se
     <a href="/smelter/find">
       <SideMenuPageListButton>Package Finder</SideMenuPageListButton>
     </a>
-    <a href="/smelter/neversmelted?page=1">
+    <a href="/smelter/neversmelted/1">
       <SideMenuPageListButton>Non-Smelted Packages</SideMenuPageListButton>
     </a>
-    <a href="/smelter/updated?page=1">
+    <a href="/smelter/updated/1">
       <SideMenuPageListButton
         >Packages Needing Re-Smelting</SideMenuPageListButton
       >
     </a>
-    <a href="/smelter/queue?page=1">
+    <a href="/smelter/queue/1">
       <SideMenuPageListButton>Smelting Queue</SideMenuPageListButton>
     </a>
-    <a href="/smelter/status?page=1">
+    <a href="/smelter/status/1">
       <SideMenuPageListButton>Smelted Packages</SideMenuPageListButton>
     </a>
   </SideMenuPageList>
