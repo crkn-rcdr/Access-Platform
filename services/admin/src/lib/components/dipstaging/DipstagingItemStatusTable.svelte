@@ -18,7 +18,7 @@
     selectedIndexes = [];
     let index = 0;
     for (const importStatus of results) {
-      if (importStatus["status"] === "new") selectedIndexes.push(index);
+      if (importStatus["status"] !== "not-found") selectedIndexes.push(index);
       index++;
     }
     selectedIndexes = selectedIndexes;
@@ -140,7 +140,7 @@
             {/if}
           </td>
           <td>
-            {#if importStatus["status"] === "new"}
+            {#if importStatus["status"] !== "not-found"}
               <input
                 type="checkbox"
                 on:click={() => handleItemSelected(i)}
