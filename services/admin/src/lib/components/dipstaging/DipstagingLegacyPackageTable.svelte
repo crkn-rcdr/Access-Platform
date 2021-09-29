@@ -1,18 +1,19 @@
 <script lang="ts">
-  import { goto } from "$app/navigation";
-
-  import { getStores, page } from "$app/stores";
+  import FaAngleRight from "svelte-icons/fa/FaAngleRight.svelte";
+  import FaAngleDown from "svelte-icons/fa/FaAngleDown.svelte";
+  import { getStores } from "$app/stores";
   import type { Session } from "$lib/types";
-
   import type { LegacyPackage } from "@crkn-rcdr/access-data";
+  import Resolver from "../access-objects/Resolver.svelte";
+
   export let results: LegacyPackage[];
   export let pageNumber: number = 1;
   export let view: string = "updated";
-  //"dip" | "neversmelted" | "queue" | "status"
-  //export let startDateStr: string;
-  //export let endDateStr: string;
-  let selectedIndexes: number[] = [];
-  let sucessfulSmeltRequestIndexes: number[] = [];
+
+  let selectedMap: any = {};
+  let sucessfulSmeltRequestMap: any = {};
+  let expandedMap: any = {};
+  let slugUnavailableMap: any = {};
 
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
@@ -20,60 +21,89 @@
   const { session } = getStores<Session>();
 
   function setSelectedIndexes() {
-    selectedIndexes = [];
-    let index = 0;
-    for (const importStatus of results) {
-      selectedIndexes.push(index); // TODO slug check logic
-      index++;
+    selectedMap = {};
+    for (const item of results) {
+      if (!slugUnavailableMap[item.id]) selectedMap[item.id] = true;
+      else selectedMap[item.id] = false;
     }
-    selectedIndexes = selectedIndexes;
+    selectedMap = selectedMap;
   }
 
-  function handleItemSelected(index: number) {
-    if (selectedIndexes.includes(index))
-      selectedIndexes = selectedIndexes.filter((item) => item !== index);
-    else {
-      selectedIndexes.push(index);
-      selectedIndexes = selectedIndexes;
-    }
+  function handleItemSelected(item: LegacyPackage) {
+    selectedMap[item.id] = !selectedMap[item.id];
+    selectedMap = selectedMap;
   }
 
   function toggleAllSelected() {
-    if (selectedIndexes.length) selectedIndexes = [];
-    else setSelectedIndexes();
+    for (let id of selectedMap) selectedMap[id] = !selectedMap[id];
+    selectedMap = selectedMap;
   }
 
   async function handleRunSmelterPressed() {
-    let index = 0;
-    for (const importStatus of results) {
-      if (selectedIndexes.includes(index)) {
+    for (const item of results) {
+      if (selectedMap[item.id]) {
         try {
           const response = await $session.lapin.mutation(
             `dipstaging.requestSmelt`,
             {
               user: $session.user,
-              slug: importStatus.id,
+              id: item.id,
+              slug: item.slug,
             }
           );
-          if (!sucessfulSmeltRequestIndexes.includes(index)) {
-            sucessfulSmeltRequestIndexes.push(index);
-            sucessfulSmeltRequestIndexes = sucessfulSmeltRequestIndexes;
-          }
+          sucessfulSmeltRequestMap[item.id] = true;
         } catch (e) {
+          sucessfulSmeltRequestMap[item.id] = false;
           console.log(e?.message);
         }
       }
-      index++;
     }
   }
 
-  /*$: {
+  function handleItemExpanded(item: LegacyPackage) {
+    expandedMap[item.id] = !expandedMap[item.id];
+    expandedMap = expandedMap;
+  }
+
+  function setSlugAvailability(event, item: LegacyPackage) {
+    slugUnavailableMap[item.id] = event.detail.status;
+    console.log(slugUnavailableMap);
+    slugUnavailableMap = slugUnavailableMap;
+  }
+
+  function checkIfSlugsDefined() {
+    for (const item of results) {
+      if (!item.slug) item.slug = item.id;
+    }
+    results = results;
+    console.log("SlugsDefined results", results);
+  }
+
+  function setExpandedModel() {
+    for (const item of results) {
+      expandedMap[item.id] = false;
+    }
+    expandedMap = expandedMap;
+    console.log("expandedMap", expandedMap);
+  }
+
+  function setSelectedModel() {
+    for (const item of results) {
+      selectedMap[item.id] = false;
+    }
+    selectedMap = selectedMap;
+    console.log("selectedMap", selectedMap);
+  }
+
+  $: {
     results;
-    setSelectedIndexes();
-  }*/
+    checkIfSlugsDefined();
+    setExpandedModel();
+    setSelectedModel();
+  }
 </script>
 
-<!--a) their status is neither "not-found" or "processing" b) their slug isn't already taken by a noid.-->
+<!--Can run smelter if a) their status is neither "not-found" or "processing" b) their slug isn't already taken by a noid.-->
 {#if typeof results !== "undefined" && typeof pageNumber !== "undefined"}
   <div class="table-actions auto-align auto-align__a-end">
     <slot name="dates" />
@@ -92,10 +122,9 @@
           <th>Id</th>
           <th>Slug</th>
           <th>Repos Manifest Date</th>
-          <th>Smelt Status</th>
-          <th>Message</th>
-          <th>Request Date</th>
-          <th>Process Date</th>
+          {#if view === "status" || view === "updated"}
+            <th>Smelt Status</th>
+          {/if}
           {#if view !== "queue"}
             <th>
               <input type="checkbox" on:click={toggleAllSelected} />
@@ -106,13 +135,35 @@
       </thead>
       <tbody>
         {#each results as legacyPackage, i}
-          <tr>
-            <td>
+          <tr
+            class:success={legacyPackage.smelt?.["succeeded"]}
+            class:not-success={!legacyPackage.smelt?.["succeeded"]}
+            class:normal={!legacyPackage.smelt ||
+              !("succeeded" in legacyPackage.smelt)}
+          >
+            <td class="auto-align">
+              {#if legacyPackage.smelt && "succeeded" in legacyPackage.smelt}
+                <span
+                  class="icon"
+                  on:click={() => handleItemExpanded(legacyPackage)}
+                >
+                  {#if expandedMap[legacyPackage.id]}
+                    <FaAngleDown />
+                  {:else}
+                    <FaAngleRight />
+                  {/if}
+                </span>
+              {/if}
               {legacyPackage.id}
             </td>
 
             <td>
-              {legacyPackage.slug}
+              <Resolver
+                on:available={(e) => setSlugAvailability(e, legacyPackage)}
+                bind:slug={legacyPackage.slug}
+                hideInitial={false}
+                size="sm"
+              />
             </td>
 
             <td>
@@ -121,45 +172,63 @@
                 : "N/A"}
             </td>
 
-            {#if legacyPackage.smelt}
-              <td>
-                {legacyPackage.smelt?.["succeeded"] ? "Suceeded" : "Failed"}
+            {#if view === "status" || view === "updated"}
+              <td
+                >{legacyPackage.smelt?.["succeeded"] ? "Suceeded" : "Failed"}
               </td>
-            {:else}
-              <td> N/A </td>
             {/if}
 
-            <td>
-              {legacyPackage.smelt?.["message"]?.length
-                ? legacyPackage.smelt?.["message"]
-                : "N/A"}
-            </td>
-
-            <td>
-              {legacyPackage.smelt?.requestDate
-                ? new Date(legacyPackage.smelt?.requestDate).toLocaleString()
-                : "N/A"}
-            </td>
-
-            <td>
-              {legacyPackage.smelt?.["processDate"]
-                ? new Date(
-                    legacyPackage.smelt?.["processDate"]
-                  ).toLocaleString()
-                : "N/A"}
-            </td>
             {#if view !== "queue"}
               <td>
                 <!--slug taken logic-->
-                <input
-                  type="checkbox"
-                  on:click={() => handleItemSelected(i)}
-                  checked={selectedIndexes.includes(i)}
-                />
-                <!--input type="checkbox" disabled /-->
+                {#if !slugUnavailableMap[legacyPackage.id]}
+                  <input
+                    type="checkbox"
+                    disabled
+                    data-tooltip="The slug entered for this package is taken."
+                  />
+                {:else}
+                  <input
+                    type="checkbox"
+                    on:click={() => handleItemSelected(legacyPackage)}
+                    checked={selectedMap[legacyPackage.id]}
+                  />
+                {/if}
               </td>
             {/if}
           </tr>
+          {#if expandedMap[legacyPackage.id] && legacyPackage.smelt && "succeeded" in legacyPackage.smelt}
+            <tr>
+              <td colspan="5">
+                <div>
+                  Smelt Status: {legacyPackage.smelt?.["succeeded"]
+                    ? "Suceeded"
+                    : "Failed"}
+                </div>
+
+                <div>
+                  Message: {legacyPackage.smelt?.["message"]?.length
+                    ? legacyPackage.smelt?.["message"]
+                    : "N/A"}
+                </div>
+                <div>
+                  Request Date: {legacyPackage.smelt?.requestDate
+                    ? new Date(
+                        legacyPackage.smelt?.requestDate
+                      ).toLocaleString()
+                    : "N/A"}
+                </div>
+                <div>
+                  Process Date:
+                  {legacyPackage.smelt?.["processDate"]
+                    ? new Date(
+                        legacyPackage.smelt?.["processDate"]
+                      ).toLocaleString()
+                    : "N/A"}
+                </div>
+              </td>
+            </tr>
+          {/if}
         {/each}
       </tbody>
     </table>
@@ -173,7 +242,15 @@
   .table-actions button {
     margin-left: var(--margin-sm);
   }
-
+  .success {
+    background-color: var(--success-light);
+  }
+  .not-success {
+    background-color: var(--danger-light);
+  }
+  .normal {
+    background-color: var(--structural-div-bg);
+  }
   /*.icon,
   .icon svg {
     cursor: pointer;

@@ -10,6 +10,7 @@ const ListFromDates = z.object({
 
 const SmeltInput = z.object({
   user: User,
+  id: z.string(),
   slug: Slug,
 });
 
@@ -122,7 +123,7 @@ export const dipstagingRouter = createRouter()
         return await ctx.couch.dipstaging.update({
           ddoc: "access",
           name: "requestSmelt",
-          docId: input.slug,
+          docId: input.id,
           body: input,
         });
       } catch (e) {

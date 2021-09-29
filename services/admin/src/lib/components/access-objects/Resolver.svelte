@@ -42,6 +42,10 @@ The resolver component allows the user to enter a slug, and then a request is se
   export let hideInitial = false;
   // https://github.com/crkn-rcdr/Access-Platform/blob/main/data/src/format/slug.ts
 
+  export let size: "sm" | "rg" = "rg";
+
+  export let hideUnavailableMsg: boolean = false;
+
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
    */
@@ -59,6 +63,8 @@ The resolver component allows the user to enter a slug, and then a request is se
   /** @type {"READY" | "LOADING" | "MALFORMED" | "ERROR"} */
   let status: "READY" | "LOADING" | "MALFORMED" | "ERROR" =
     slug === undefined ? "LOADING" : "READY";
+
+  let noid = "";
 
   /**
    * @type {NodeJS.Timeout | null} Used to debounce the searching of slugs.
@@ -84,6 +90,7 @@ The resolver component allows the user to enter a slug, and then a request is se
       if (timer) clearTimeout(timer);
       timer = setTimeout(async () => {
         status = "LOADING";
+        noid = "";
         if (regex.test(slug)) {
           try {
             const response = await $session.lapin.query("slug.resolve", slug);
@@ -97,6 +104,7 @@ The resolver component allows the user to enter a slug, and then a request is se
             } else {
               dispatch("available", { slug: initial, status: false });
               isFound = true;
+              noid = response.result.id;
               status = "READY";
             }
           } catch (e) {
@@ -125,35 +133,60 @@ The resolver component allows the user to enter a slug, and then a request is se
    * @listens initial
    * @description A reactive code block that is executed any time the @var slug or @initial changes. It sets @var shouldQuery, which controls if the @function resolve method actually sends the request to the backend, or shows an error state instead.
    */
-  $: shouldQuery = !!slug && slug !== initial;
+  $: shouldQuery = !!slug && (slug !== initial || !hideInitial);
 </script>
 
-<div>
-  {#if !!slug && !(slug === initial)}
-    {#if status === "LOADING"}
-      <NotificationBar message="Loading" />
-    {:else if status === "ERROR"}
-      <NotificationBar message="Slug resolver unavailable." status="fail" />
-    {:else if status === "MALFORMED"}
-      <NotificationBar
-        message="Slugs can only contain letters, numbers, and the following symbols: _ - ."
-        status="fail"
-      />
-    {:else if isFound}
-      <slot name="in-use">
-        <a href="/object/blurr">
-          <NotificationBar message="⚠️ Slug in use" status="fail" />
-        </a>
-      </slot>
-    {:else if !isFound}
-      <slot name="available">
-        <NotificationBar message="✅ Slug available" status="success" />
-      </slot>
+{#if size === "rg"}
+  <div>
+    {#if !!slug && (slug !== initial || !hideInitial)}
+      {#if status === "LOADING"}
+        <NotificationBar message="Loading" />
+      {:else if status === "ERROR"}
+        <NotificationBar message="Slug resolver unavailable." status="fail" />
+      {:else if status === "MALFORMED"}
+        <NotificationBar
+          message="Slugs can only contain letters, numbers, and the following symbols: _ - ."
+          status="fail"
+        />
+      {:else if isFound && !hideUnavailableMsg}
+        <slot name="in-use">
+          <a href={`/object/${noid}`}>
+            <NotificationBar message="⚠️ Slug in use" status="fail" />
+          </a>
+        </slot>
+      {:else if !isFound}
+        <slot name="available">
+          <NotificationBar message="✅ Slug available" status="success" />
+        </slot>
+      {/if}
     {/if}
+  </div>
+{:else if !!slug && (slug !== initial || !hideInitial)}
+  {#if status === "LOADING"}
+    <span data-tooltip="Loading">...</span>
+  {:else if status === "ERROR"}
+    <span data-tooltip="Slug resolver unavailable.">❌</span>
+  {:else if status === "MALFORMED"}
+    <span
+      data-tooltip="Slugs can only contain letters, numbers, and the following symbols: _ - ."
+      >❌</span
+    >
+  {:else if isFound && !hideUnavailableMsg}
+    <slot name="in-use">
+      <a href={`/object/${noid}`}>
+        <span data-tooltip="⚠️ Slug in use">❌</span>
+      </a>
+    </slot>
+  {:else if !isFound}
+    <slot name="available">
+      <span data-tooltip="Slug available">✅</span>
+    </slot>
   {/if}
-</div>
+{/if}
 
 <input
+  class:rg={size === "rg"}
+  class:sm={size === "sm"}
   type="text"
   placeholder="Type in a slug..."
   bind:value={slug}
@@ -161,7 +194,10 @@ The resolver component allows the user to enter a slug, and then a request is se
 />
 
 <style>
-  input {
+  input.rg {
     width: 100%;
+  }
+  input.sm {
+    padding: 0 0.25rem !important;
   }
 </style>
