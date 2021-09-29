@@ -1,16 +1,19 @@
 <script lang="ts">
+  import FaAngleRight from "svelte-icons/fa/FaAngleRight.svelte";
+  import FaAngleDown from "svelte-icons/fa/FaAngleDown.svelte";
   import { getStores } from "$app/stores";
 
   import type { Session } from "$lib/types";
 
   import type { ImportStatus } from "@crkn-rcdr/access-data";
   import { isArray } from "lodash-es";
+  import Resolver from "../access-objects/Resolver.svelte";
 
   export let results: ImportStatus[];
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
    */
-  const { session } = getStores<Session>();
+  /*const { session } = getStores<Session>();
   let selectedIndexes: number[] = [];
   let sucessfulSmeltRequestIndexes: number[] = [];
 
@@ -18,7 +21,7 @@
     selectedIndexes = [];
     let index = 0;
     for (const importStatus of results) {
-      if (importStatus["status"] !== "not-found") selectedIndexes.push(index);
+      if (importStatus.status !== "not-found") selectedIndexes.push(index);
       index++;
     }
     selectedIndexes = selectedIndexes;
@@ -47,6 +50,7 @@
             `dipstaging.requestSmelt`,
             {
               user: $session.user,
+              id: importStatus.id,
               slug: importStatus.id,
             }
           );
@@ -65,6 +69,95 @@
   $: {
     results;
     setSelectedIndexes();
+  }*/
+
+  /**
+   * @type {Session} The session store that contains the module for sending requests to lapin.
+   */
+  const { session } = getStores<Session>();
+
+  let selectedMap: any = {};
+  let sucessfulSmeltRequestMap: any = {};
+  let expandedMap: any = {};
+  let slugUnavailableMap: any = {};
+
+  function handleItemSelected(item: ImportStatus) {
+    selectedMap[item.id] = !selectedMap[item.id];
+    selectedMap = selectedMap;
+  }
+
+  function toggleAllSelected() {
+    for (const item of results) {
+      if (!slugUnavailableMap[item.id])
+        selectedMap[item.id] = !selectedMap[item.id];
+      else selectedMap[item.id] = false;
+    }
+    selectedMap = selectedMap;
+  }
+
+  async function handleRunSmelterPressed() {
+    for (const item of results) {
+      if (selectedMap[item.id]) {
+        try {
+          const response = await $session.lapin.mutation(
+            `dipstaging.requestSmelt`,
+            {
+              user: $session.user,
+              id: item.id,
+              slug: item["slug"],
+            }
+          );
+          console.log(response);
+          sucessfulSmeltRequestMap[item.id] = true;
+          setSelectedModel();
+        } catch (e) {
+          sucessfulSmeltRequestMap[item.id] = false;
+          console.log(e?.message);
+        }
+      }
+    }
+  }
+
+  function handleItemExpanded(item: ImportStatus) {
+    expandedMap[item.id] = !expandedMap[item.id];
+    expandedMap = expandedMap;
+  }
+
+  function setSlugAvailability(event, item: ImportStatus) {
+    slugUnavailableMap[item.id] = event.detail.status;
+    console.log(slugUnavailableMap);
+    slugUnavailableMap = slugUnavailableMap;
+  }
+
+  function checkIfSlugsDefined() {
+    for (const item of results) {
+      if (!item["slug"]) item["slug"] = item.id;
+    }
+    results = results;
+    console.log("SlugsDefined results", results);
+  }
+
+  function setExpandedModel() {
+    for (const item of results) {
+      expandedMap[item.id] = false;
+    }
+    expandedMap = expandedMap;
+    console.log("expandedMap", expandedMap);
+  }
+
+  function setSelectedModel() {
+    for (const item of results) {
+      selectedMap[item.id] = false;
+    }
+    selectedMap = selectedMap;
+    console.log("selectedMap", selectedMap);
+  }
+
+  $: {
+    results;
+    checkIfSlugsDefined();
+    setExpandedModel();
+    setSelectedModel();
   }
 </script>
 
@@ -85,9 +178,7 @@
         <th>Id</th>
         <th>Slug</th>
         <th>Ingest Date</th>
-        <th>Request Date</th>
-        <th>Process Date</th>
-        <th>Message</th>
+        <th>Status</th>
         <th>
           <input type="checkbox" on:click={toggleAllSelected} checked />
         </th>
@@ -96,61 +187,96 @@
     <tbody>
       {#each results as importStatus, i}
         <tr>
-          <td>{importStatus.id}</td>
-          <td>{importStatus["slug"]}</td>
+          <td class="auto-align">
+            {#if importStatus.status === "succeeded" || importStatus.status === "failed"}
+              <span
+                class="icon"
+                on:click={() => handleItemExpanded(importStatus)}
+              >
+                {#if expandedMap[importStatus.id]}
+                  <FaAngleDown />
+                {:else}
+                  <FaAngleRight />
+                {/if}
+              </span>
+            {/if}
+            {importStatus.id}
+          </td>
+          <td>
+            {#if importStatus.status !== "not-found"}
+              <Resolver
+                on:available={(e) => setSlugAvailability(e, importStatus)}
+                bind:slug={importStatus["slug"]}
+                hideInitial={false}
+                size="sm"
+              />
+            {/if}
+          </td>
           <!--td
             >{@html importStatus["repos"]
               ? importStatus["repos"].join("<br/>")
               : "N/A"}</td
           -->
-          <td>{importStatus["ingestDate"]}</td>
-          <td>{importStatus["requestDate"]}</td>
-          <td>{importStatus["processDate"]}</td>
           <td>
-            {#if sucessfulSmeltRequestIndexes.includes(i)}
+            {#if importStatus.status !== "not-found"}
+              {importStatus["ingestDate"]}
+            {/if}
+          </td>
+          <td>
+            {#if sucessfulSmeltRequestMap[importStatus.id]}
               Smelter is running on the package! <a
                 target="_blank"
                 href="https://access-dev.canadiana.ca/smelter/queue"
-                >Track its status in the 'Queue' tab.</a
+                ><br />Track its status in the 'Queue' tab.</a
               >
-            {:else if importStatus["status"] === "slug-unavailable"}
-              Slug is taken,
-              {#if importStatus["noid"]}
-                <a href={`/object/${importStatus["noid"]}`} target="_blank">
-                  please unassign it here before continuing.
-                </a>
-              {:else}
-                it must be unassigned before continuing.
-              {/if}
-            {:else if importStatus["status"] === "processing"}
+            {:else if importStatus.status === "processing"}
               Smelter is running on the package! <a
                 target="_blank"
                 href="https://access-dev.canadiana.ca/smelter/queue"
-                >Track its status in the 'Queue' tab.</a
+                ><br />Track its status in the 'Queue' tab.</a
               >
-            {:else if importStatus["status"] === "not-found"}
+            {:else if importStatus.status === "not-found"}
               Package not found.
-            {:else if importStatus["status"] === "succeeded"}
-              Package import has ran previously and suceeded.
-            {:else if importStatus["status"] === "failed"}
-              Package import has ran previously and failed.
-            {:else if importStatus["status"] === "new"}
-              <!--{importStatus["status"]}-->
+            {:else if importStatus.status === "succeeded"}
+              Succeeded
+            {:else if importStatus.status === "failed"}
+              Failed
+            {:else if importStatus.status === "new"}
+              <!--{importStatus.status}-->
               Ready to import!
             {/if}
           </td>
           <td>
-            {#if importStatus["status"] !== "not-found"}
+            {#if sucessfulSmeltRequestMap[importStatus.id] || !slugUnavailableMap[importStatus.id] || importStatus.status === "not-found" || importStatus.status === "processing"}
+              <input type="checkbox" disabled />
+            {:else}
               <input
                 type="checkbox"
-                on:click={() => handleItemSelected(i)}
-                checked={selectedIndexes.includes(i)}
+                on:click={() => handleItemSelected(importStatus)}
+                checked={selectedMap[importStatus.id]}
               />
-            {:else}
-              <input type="checkbox" disabled />
             {/if}
           </td>
         </tr>
+
+        {#if (expandedMap[importStatus.id] && importStatus.status === "succeeded") || importStatus.status === "failed"}
+          <tr>
+            <td colspan="5">
+              <div>
+                Status: {importStatus.status === "succeeded"
+                  ? "Succeeded"
+                  : "Failed"}
+              </div>
+              <div>Request Date: {importStatus["requestDate"]}</div>
+              <div>Process Date: {importStatus["processDate"]}</div>
+              <div>
+                Message: {importStatus.message?.length
+                  ? importStatus.message
+                  : "N/A"}
+              </div>
+            </td>
+          </tr>
+        {/if}
       {/each}
     </tbody>
   </table>

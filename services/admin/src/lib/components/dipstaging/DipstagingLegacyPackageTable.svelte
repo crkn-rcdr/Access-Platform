@@ -10,24 +10,15 @@
   export let pageNumber: number = 1;
   export let view: string = "updated";
 
-  let selectedMap: any = {};
-  let sucessfulSmeltRequestMap: any = {};
-  let expandedMap: any = {};
-  let slugUnavailableMap: any = {};
-
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
    */
   const { session } = getStores<Session>();
 
-  function setSelectedIndexes() {
-    selectedMap = {};
-    for (const item of results) {
-      if (!slugUnavailableMap[item.id]) selectedMap[item.id] = true;
-      else selectedMap[item.id] = false;
-    }
-    selectedMap = selectedMap;
-  }
+  let selectedMap: any = {};
+  let sucessfulSmeltRequestMap: any = {};
+  let expandedMap: any = {};
+  let slugUnavailableMap: any = {};
 
   function handleItemSelected(item: LegacyPackage) {
     selectedMap[item.id] = !selectedMap[item.id];
@@ -35,7 +26,11 @@
   }
 
   function toggleAllSelected() {
-    for (let id of selectedMap) selectedMap[id] = !selectedMap[id];
+    for (const item of results) {
+      if (!slugUnavailableMap[item.id])
+        selectedMap[item.id] = !selectedMap[item.id];
+      else selectedMap[item.id] = false;
+    }
     selectedMap = selectedMap;
   }
 
@@ -52,6 +47,7 @@
             }
           );
           sucessfulSmeltRequestMap[item.id] = true;
+          setSelectedModel();
         } catch (e) {
           sucessfulSmeltRequestMap[item.id] = false;
           console.log(e?.message);
@@ -121,7 +117,7 @@
         <tr>
           <th>Id</th>
           <th>Slug</th>
-          <th>Repos Manifest Date</th>
+          <th><!--Repos Manifest Date-->Ingest Date</th>
           {#if view === "status" || view === "updated"}
             <th>Smelt Status</th>
           {/if}
@@ -135,12 +131,12 @@
       </thead>
       <tbody>
         {#each results as legacyPackage, i}
-          <tr
+          <tr>
+            <!--
             class:success={legacyPackage.smelt?.["succeeded"]}
             class:not-success={!legacyPackage.smelt?.["succeeded"]}
             class:normal={!legacyPackage.smelt ||
-              !("succeeded" in legacyPackage.smelt)}
-          >
+              !("succeeded" in legacyPackage.smelt)}-->
             <td class="auto-align">
               {#if legacyPackage.smelt && "succeeded" in legacyPackage.smelt}
                 <span
@@ -202,7 +198,7 @@
               <td colspan="5">
                 <div>
                   Smelt Status: {legacyPackage.smelt?.["succeeded"]
-                    ? "Suceeded"
+                    ? "Succeeded"
                     : "Failed"}
                 </div>
 
