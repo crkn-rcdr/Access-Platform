@@ -63,7 +63,8 @@
   }
 
   async function sendLookupRequestKeys() {
-    slugList = slugListString.split(",");
+    if (slugList.includes(",")) slugList = slugListString.split(",");
+    else slugList = slugListString.split("\n");
     if (slugList.length) {
       if (depositor.prefix !== "none")
         slugList = slugList.map((slug) => `${depositor.prefix}.${slug.trim()}`);
