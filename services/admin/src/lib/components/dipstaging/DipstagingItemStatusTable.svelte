@@ -13,8 +13,6 @@
   const { session } = getStores<Session>();
   let selectedIndexes: number[] = [];
   let sucessfulSmeltRequestIndexes: number[] = [];
-  let startDateStr: string;
-  let endDateStr: string;
 
   function setSelectedIndexes() {
     selectedIndexes = [];
@@ -76,9 +74,9 @@
 <br />
 {#if results && results.length}
   <div class="button-wrap">
-    <button class="primary" on:click={handleRunSmelterPressed}
-      >Run Smelter on Selected Packages</button
-    >
+    <button class="primary" on:click={handleRunSmelterPressed}>
+      Run Smelter on Selected Packages
+    </button>
   </div>
 
   <table>

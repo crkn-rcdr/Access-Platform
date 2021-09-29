@@ -11,6 +11,8 @@
   //"dip" | "neversmelted" | "queue" | "status"
   export let startDateStr: string;
   export let endDateStr: string;
+  let selectedIndexes: number[] = [];
+  let sucessfulSmeltRequestIndexes: number[] = [];
 
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
@@ -20,8 +22,62 @@
   async function refineByDate() {
     goto(`/smelter/${view}/${pageNumber}/${startDateStr},${endDateStr}`);
   }
+
+  function setSelectedIndexes() {
+    selectedIndexes = [];
+    let index = 0;
+    for (const importStatus of results) {
+      selectedIndexes.push(index); // TODO slug check logic
+      index++;
+    }
+    selectedIndexes = selectedIndexes;
+  }
+
+  function handleItemSelected(index: number) {
+    if (selectedIndexes.includes(index))
+      selectedIndexes = selectedIndexes.filter((item) => item !== index);
+    else {
+      selectedIndexes.push(index);
+      selectedIndexes = selectedIndexes;
+    }
+  }
+
+  function toggleAllSelected() {
+    if (selectedIndexes.length) selectedIndexes = [];
+    else setSelectedIndexes();
+  }
+
+  async function handleRunSmelterPressed() {
+    let index = 0;
+    for (const importStatus of results) {
+      if (selectedIndexes.includes(index)) {
+        try {
+          const response = await $session.lapin.mutation(
+            `dipstaging.requestSmelt`,
+            {
+              user: $session.user,
+              slug: importStatus.id,
+            }
+          );
+          if (!sucessfulSmeltRequestIndexes.includes(index)) {
+            sucessfulSmeltRequestIndexes.push(index);
+            sucessfulSmeltRequestIndexes = sucessfulSmeltRequestIndexes;
+          }
+        } catch (e) {
+          console.log(e?.message);
+        }
+      }
+      index++;
+    }
+  }
+
+  /*$: {
+    results;
+    setSelectedIndexes();
+  }*/
 </script>
 
+<!--a) their status is neither "not-found" or "processing" b) their slug isn't already taken by a noid.-->
 {#if typeof results !== "undefined" && typeof pageNumber !== "undefined"}
   <div class="table-actions auto-align auto-align__a-end">
     <span class="dates auto-align auto-align__a-end">
@@ -45,7 +101,11 @@
       {/if}
     </span>
 
-    <button class="primary">Run Smelter on Selected Packages</button>
+    {#if view !== "queue"}
+      <button class="primary" on:click={handleRunSmelterPressed}
+        >Run Smelter on Selected Packages</button
+      >
+    {/if}
   </div>
   <br />
   <br />
@@ -60,11 +120,16 @@
           <th>Repos Manifest Date</th>
           <th>Request Date</th>
           <th>Process Date</th>
-          <th><input type="checkbox" /></th>
+          {#if view !== "queue"}
+            <th>
+              <input type="checkbox" on:click={toggleAllSelected} />
+              <!--checked-->
+            </th>
+          {/if}
         </tr>
       </thead>
       <tbody>
-        {#each results as legacyPackage}
+        {#each results as legacyPackage, i}
           <tr>
             <td>
               {legacyPackage.id}
@@ -104,7 +169,17 @@
                   ).toLocaleString()
                 : "N/A"}
             </td>
-            <td><input type="checkbox" /></td>
+            {#if view !== "queue"}
+              <td>
+                <!--slug taken logic-->
+                <input
+                  type="checkbox"
+                  on:click={() => handleItemSelected(i)}
+                  checked={selectedIndexes.includes(i)}
+                />
+                <!--input type="checkbox" disabled /-->
+              </td>
+            {/if}
           </tr>
         {/each}
       </tbody>
