@@ -7,7 +7,6 @@
   export let count;
   export let page = 0;
   export let pageSize;
-  export let serverSide = false;
 
   export let labels = {
     first: "First",
@@ -19,18 +18,7 @@
   $: pageCount = Math.floor(count / pageSize);
 
   function onChange(event, page) {
-    const state = stateContext.getState();
-    const detail = {
-      originalEvent: event,
-      page,
-      pageIndex: serverSide ? 0 : page * state.pageSize,
-      pageSize: state.pageSize,
-    };
-    dispatch("pageChange", detail);
-
-    if (detail.preventDefault !== true) {
-      stateContext.setPage(detail.page, detail.pageIndex);
-    }
+    dispatch("pageChange", page + 1);
   }
 </script>
 
@@ -46,7 +34,7 @@
     </button>
   </li>
   {#each buttons as button}
-    {#if page + button >= 0 && page + button <= pageCount}
+    {#if page + button >= 0 && page + button < pageCount}
       <li>
         <button
           class:active={page === page + button}
@@ -77,8 +65,7 @@
 
 <style>
   .active {
-    background-color: rgb(150, 150, 235);
-    color: white;
+    background-color: var(--primary-light);
   }
 
   ul {
@@ -93,10 +80,12 @@
 
   button {
     background: transparent;
-    border: 1px solid #ccc;
-    padding: 5px 10px;
+    border: 1px solid var(--border-color);
+    padding: 0.5rem 1em;
     margin-left: 3px;
     float: left;
     cursor: pointer;
+    height: fit-content !important;
+    filter: none;
   }
 </style>

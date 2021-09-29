@@ -98,7 +98,10 @@ export class LegacyPackageHandler extends DatabaseHandler<LegacyPackage> {
     console.log(viewOptions);
 
     const list = await this.view("access", viewName, viewOptions);
-    return list.rows.map((row) => row.doc);
+    return {
+      count: list.total_rows,
+      results: list.rows.map((row) => row.doc),
+    };
   }
 
   // Too slow

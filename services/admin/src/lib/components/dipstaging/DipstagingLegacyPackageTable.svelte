@@ -9,8 +9,8 @@
   export let pageNumber: number = 1;
   export let view: string = "updated";
   //"dip" | "neversmelted" | "queue" | "status"
-  export let startDateStr: string;
-  export let endDateStr: string;
+  //export let startDateStr: string;
+  //export let endDateStr: string;
   let selectedIndexes: number[] = [];
   let sucessfulSmeltRequestIndexes: number[] = [];
 
@@ -18,10 +18,6 @@
    * @type {Session} The session store that contains the module for sending requests to lapin.
    */
   const { session } = getStores<Session>();
-
-  async function refineByDate() {
-    goto(`/smelter/${view}/${pageNumber}/${startDateStr},${endDateStr}`);
-  }
 
   function setSelectedIndexes() {
     selectedIndexes = [];
@@ -80,27 +76,7 @@
 <!--a) their status is neither "not-found" or "processing" b) their slug isn't already taken by a noid.-->
 {#if typeof results !== "undefined" && typeof pageNumber !== "undefined"}
   <div class="table-actions auto-align auto-align__a-end">
-    <span class="dates auto-align auto-align__a-end">
-      <span class="auto-align auto-align__column">
-        <label for="start">Start date:</label>
-        <input
-          type="date"
-          id="start"
-          name="trip-start"
-          bind:value={startDateStr}
-        />
-      </span>
-      <span class="auto-align auto-align__column">
-        <label for="end">End date:</label>
-        <input type="date" id="end" name="trip-end" bind:value={endDateStr} />
-      </span>
-      {#if startDateStr?.length && endDateStr?.length}
-        <button class="secondary" on:click={refineByDate}
-          >Refine Packages</button
-        >
-      {/if}
-    </span>
-
+    <slot name="dates" />
     {#if view !== "queue"}
       <button class="primary" on:click={handleRunSmelterPressed}
         >Run Smelter on Selected Packages</button
@@ -115,9 +91,9 @@
         <tr>
           <th>Id</th>
           <th>Slug</th>
+          <th>Repos Manifest Date</th>
           <th>Smelt Status</th>
           <th>Message</th>
-          <th>Repos Manifest Date</th>
           <th>Request Date</th>
           <th>Process Date</th>
           {#if view !== "queue"}
@@ -134,9 +110,17 @@
             <td>
               {legacyPackage.id}
             </td>
+
             <td>
               {legacyPackage.slug}
             </td>
+
+            <td>
+              {legacyPackage.reposManifestDate
+                ? new Date(legacyPackage.reposManifestDate).toLocaleString()
+                : "N/A"}
+            </td>
+
             {#if legacyPackage.smelt}
               <td>
                 {legacyPackage.smelt?.["succeeded"] ? "Suceeded" : "Failed"}
@@ -148,11 +132,6 @@
             <td>
               {legacyPackage.smelt?.["message"]?.length
                 ? legacyPackage.smelt?.["message"]
-                : "N/A"}
-            </td>
-            <td>
-              {legacyPackage.reposManifestDate
-                ? new Date(legacyPackage.reposManifestDate).toLocaleString()
                 : "N/A"}
             </td>
 
@@ -190,12 +169,6 @@
 <style>
   .table-actions {
     width: 100%;
-  }
-  .dates {
-    flex: 9;
-  }
-  .dates > span:not(:first-child) {
-    margin-left: var(--margin-sm);
   }
   .table-actions button {
     margin-left: var(--margin-sm);
