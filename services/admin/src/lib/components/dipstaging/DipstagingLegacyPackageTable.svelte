@@ -5,6 +5,7 @@
   import type { Session } from "$lib/types";
   import type { LegacyPackage } from "@crkn-rcdr/access-data";
   import Resolver from "../access-objects/Resolver.svelte";
+  import { afterUpdate } from "svelte";
 
   export let results: LegacyPackage[];
   export let pageNumber: number = 1;
@@ -15,6 +16,7 @@
    */
   const { session } = getStores<Session>();
 
+  let loading = false;
   let selectedMap: any = {};
   let sucessfulSmeltRequestMap: any = {};
   let expandedMap: any = {};
@@ -63,8 +65,8 @@
 
   function setSlugAvailability(event, item: LegacyPackage) {
     slugUnavailableMap[item.id] = event.detail.status;
-    console.log(slugUnavailableMap);
     slugUnavailableMap = slugUnavailableMap;
+    console.log("slugUnavailableMap", slugUnavailableMap);
   }
 
   function checkIfSlugsDefined() {
@@ -72,7 +74,7 @@
       if (!item.slug) item.slug = item.id;
     }
     results = results;
-    console.log("SlugsDefined results", results);
+    //console.log("SlugsDefined results", results);
   }
 
   function setExpandedModel() {
@@ -80,7 +82,7 @@
       expandedMap[item.id] = false;
     }
     expandedMap = expandedMap;
-    console.log("expandedMap", expandedMap);
+    //console.log("expandedMap", expandedMap);
   }
 
   function setSelectedModel() {
@@ -88,147 +90,154 @@
       selectedMap[item.id] = false;
     }
     selectedMap = selectedMap;
-    console.log("selectedMap", selectedMap);
+    //console.log("selectedMap", selectedMap);
   }
 
-  $: {
+  afterUpdate(() => {
+    loading = true;
     results;
+    console.log("results", results);
     checkIfSlugsDefined();
     setExpandedModel();
     setSelectedModel();
-  }
+    loading = false;
+  });
 </script>
 
-<!--Can run smelter if a) their status is neither "not-found" or "processing" b) their slug isn't already taken by a noid.-->
-{#if typeof results !== "undefined" && typeof pageNumber !== "undefined"}
-  <div class="table-actions auto-align auto-align__a-end">
-    <slot name="dates" />
-    {#if view !== "queue"}
-      <button class="primary" on:click={handleRunSmelterPressed}
-        >Run Smelter on Selected Packages</button
-      >
-    {/if}
-  </div>
-  <br />
-  <br />
-  <div class="table-wrap">
-    <table>
-      <thead>
-        <tr>
-          <th>Id</th>
-          <th>Slug</th>
-          <th><!--Repos Manifest Date-->Ingest Date</th>
-          {#if view === "status" || view === "updated"}
-            <th>Smelt Status</th>
-          {/if}
-          {#if view !== "queue"}
-            <th>
-              <input type="checkbox" on:click={toggleAllSelected} />
-              <!--checked-->
-            </th>
-          {/if}
-        </tr>
-      </thead>
-      <tbody>
-        {#each results as legacyPackage, i}
+{#if !loading}
+  <!--Can run smelter if a) their status is neither "not-found" or "processing" b) their slug isn't already taken by a noid.-->
+  {#if typeof results !== "undefined" && typeof pageNumber !== "undefined"}
+    <div class="table-actions auto-align auto-align__a-end">
+      <slot name="dates" />
+      {#if view !== "queue"}
+        <button class="primary" on:click={handleRunSmelterPressed}
+          >Run Smelter on Selected Packages</button
+        >
+      {/if}
+    </div>
+    <br />
+    <br />
+    <div class="table-wrap">
+      <table>
+        <thead>
           <tr>
-            <!--
+            <th>Id</th>
+            <th>Slug</th>
+            <th><!--Repos Manifest Date-->Ingest Date</th>
+            {#if view === "status" || view === "updated"}
+              <th>Smelt Status</th>
+            {/if}
+            {#if view !== "queue"}
+              <th>
+                <input type="checkbox" on:click={toggleAllSelected} />
+                <!--checked-->
+              </th>
+            {/if}
+          </tr>
+        </thead>
+        <tbody>
+          {#each results as legacyPackage, i}
+            <tr>
+              <!--
             class:success={legacyPackage.smelt?.["succeeded"]}
             class:not-success={!legacyPackage.smelt?.["succeeded"]}
             class:normal={!legacyPackage.smelt ||
               !("succeeded" in legacyPackage.smelt)}-->
-            <td class="auto-align">
-              {#if legacyPackage.smelt && "succeeded" in legacyPackage.smelt}
-                <span
-                  class="icon"
-                  on:click={() => handleItemExpanded(legacyPackage)}
-                >
-                  {#if expandedMap[legacyPackage.id]}
-                    <FaAngleDown />
-                  {:else}
-                    <FaAngleRight />
-                  {/if}
-                </span>
-              {/if}
-              {legacyPackage.id}
-            </td>
-
-            <td>
-              <Resolver
-                on:available={(e) => setSlugAvailability(e, legacyPackage)}
-                bind:slug={legacyPackage.slug}
-                hideInitial={false}
-                size="sm"
-              />
-            </td>
-
-            <td>
-              {legacyPackage.reposManifestDate
-                ? new Date(legacyPackage.reposManifestDate).toLocaleString()
-                : "N/A"}
-            </td>
-
-            {#if view === "status" || view === "updated"}
-              <td
-                >{legacyPackage.smelt?.["succeeded"] ? "Suceeded" : "Failed"}
-              </td>
-            {/if}
-
-            {#if view !== "queue"}
-              <td>
-                <!--slug taken logic-->
-                {#if !slugUnavailableMap[legacyPackage.id]}
-                  <input
-                    type="checkbox"
-                    disabled
-                    data-tooltip="The slug entered for this package is taken."
-                  />
-                {:else}
-                  <input
-                    type="checkbox"
-                    on:click={() => handleItemSelected(legacyPackage)}
-                    checked={selectedMap[legacyPackage.id]}
-                  />
+              <td class="auto-align">
+                {#if legacyPackage.smelt && "succeeded" in legacyPackage.smelt}
+                  <span
+                    class="icon"
+                    on:click={() => handleItemExpanded(legacyPackage)}
+                  >
+                    {#if expandedMap[legacyPackage.id]}
+                      <FaAngleDown />
+                    {:else}
+                      <FaAngleRight />
+                    {/if}
+                  </span>
                 {/if}
+                {legacyPackage.id}
               </td>
-            {/if}
-          </tr>
-          {#if expandedMap[legacyPackage.id] && legacyPackage.smelt && "succeeded" in legacyPackage.smelt}
-            <tr>
-              <td colspan="5">
-                <div>
-                  Smelt Status: {legacyPackage.smelt?.["succeeded"]
-                    ? "Succeeded"
-                    : "Failed"}
-                </div>
 
-                <div>
-                  Message: {legacyPackage.smelt?.["message"]?.length
-                    ? legacyPackage.smelt?.["message"]
-                    : "N/A"}
-                </div>
-                <div>
-                  Request Date: {legacyPackage.smelt?.requestDate
-                    ? new Date(
-                        legacyPackage.smelt?.requestDate
-                      ).toLocaleString()
-                    : "N/A"}
-                </div>
-                <div>
-                  Process Date:
-                  {legacyPackage.smelt?.["processDate"]
-                    ? new Date(
-                        legacyPackage.smelt?.["processDate"]
-                      ).toLocaleString()
-                    : "N/A"}
-                </div>
+              <td>
+                <Resolver
+                  on:available={(e) => setSlugAvailability(e, legacyPackage)}
+                  bind:slug={legacyPackage.slug}
+                  hideInitial={false}
+                  size="sm"
+                />
               </td>
+
+              <td>
+                {legacyPackage.reposManifestDate
+                  ? new Date(legacyPackage.reposManifestDate).toLocaleString()
+                  : "N/A"}
+              </td>
+
+              {#if view === "status" || view === "updated"}
+                <td
+                  >{legacyPackage.smelt?.["succeeded"] ? "Suceeded" : "Failed"}
+                </td>
+              {/if}
+
+              {#if view !== "queue"}
+                <td>
+                  <!--slug taken logic-->
+                  {#if !slugUnavailableMap[legacyPackage.id]}
+                    <input
+                      type="checkbox"
+                      disabled
+                      data-tooltip="The slug entered for this package is taken."
+                    />
+                  {:else}
+                    <input
+                      type="checkbox"
+                      on:click={() => handleItemSelected(legacyPackage)}
+                      checked={selectedMap[legacyPackage.id]}
+                    />
+                  {/if}
+                </td>
+              {/if}
             </tr>
-          {/if}
-        {/each}
-      </tbody>
-    </table>
-  </div>
+            {#if expandedMap[legacyPackage.id] && legacyPackage.smelt && "succeeded" in legacyPackage.smelt}
+              <tr>
+                <td colspan="5">
+                  <div>
+                    Smelt Status: {legacyPackage.smelt?.["succeeded"]
+                      ? "Succeeded"
+                      : "Failed"}
+                  </div>
+
+                  <div>
+                    Message: {legacyPackage.smelt?.["message"]?.length
+                      ? legacyPackage.smelt?.["message"]
+                      : "N/A"}
+                  </div>
+                  <div>
+                    Request Date: {legacyPackage.smelt?.requestDate
+                      ? new Date(
+                          legacyPackage.smelt?.requestDate
+                        ).toLocaleString()
+                      : "N/A"}
+                  </div>
+                  <div>
+                    Process Date:
+                    {legacyPackage.smelt?.["processDate"]
+                      ? new Date(
+                          legacyPackage.smelt?.["processDate"]
+                        ).toLocaleString()
+                      : "N/A"}
+                  </div>
+                </td>
+              </tr>
+            {/if}
+          {/each}
+        </tbody>
+      </table>
+    </div>
+  {/if}
+{:else}
+  Loading...
 {/if}
 
 <style>

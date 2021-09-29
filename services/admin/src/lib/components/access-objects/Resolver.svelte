@@ -81,6 +81,8 @@ The resolver component allows the user to enter a slug, and then a request is se
    */
   let initial = slug;
 
+  let initialised = false;
+
   /**
    * Searches the backend for an object by the inputted slug. It also shows various error states to the user.
    * @returns void
@@ -125,8 +127,12 @@ The resolver component allows the user to enter a slug, and then a request is se
    */
   onMount(async () => {
     initial = slug;
-    if (!hideInitial) await resolve();
+    initialised = true;
   });
+
+  async function resolveOnChange() {
+    if ((hideInitial && initialised) || !hideInitial) await resolve();
+  }
 
   /**
    * @listens slug
@@ -134,6 +140,11 @@ The resolver component allows the user to enter a slug, and then a request is se
    * @description A reactive code block that is executed any time the @var slug or @initial changes. It sets @var shouldQuery, which controls if the @function resolve method actually sends the request to the backend, or shows an error state instead.
    */
   $: shouldQuery = !!slug && (slug !== initial || !hideInitial);
+
+  $: {
+    slug;
+    resolveOnChange().then((res) => console.log(res, "done"));
+  }
 </script>
 
 {#if size === "rg"}
