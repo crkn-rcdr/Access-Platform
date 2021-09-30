@@ -366,6 +366,6 @@ This component shows the results of a dipstaging find-package(s) request. It all
     text-align: center;
   }
   .detail-label {
-    min-width: 20rem;
+    width: 20rem;
   }
 </style>

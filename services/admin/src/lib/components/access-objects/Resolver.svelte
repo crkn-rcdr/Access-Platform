@@ -210,7 +210,10 @@ The resolver component allows the user to enter a slug, and then a request is se
   {:else if isFound && !hideUnavailableMsg}
     <slot name="in-use">
       <a href={`/object/${noid}`}>
-        <span data-tooltip="⚠️ Slug in use">❌</span>
+        <span
+          data-tooltip="⚠️ Slug in use, click to unassign it, or enter another."
+          >❌</span
+        >
       </a>
     </slot>
   {:else if !isFound}

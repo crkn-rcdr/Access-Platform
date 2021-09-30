@@ -387,7 +387,7 @@ This component shows the results of a dipstaging package view. It allows the use
     width: 100%;
   }
   .detail-label {
-    min-width: 20rem;
+    width: 20rem;
   }
   .status-text {
     flex: 9;
