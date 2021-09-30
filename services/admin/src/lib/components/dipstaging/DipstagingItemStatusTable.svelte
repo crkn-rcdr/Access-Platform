@@ -2,74 +2,11 @@
   import FaAngleRight from "svelte-icons/fa/FaAngleRight.svelte";
   import FaAngleDown from "svelte-icons/fa/FaAngleDown.svelte";
   import { getStores } from "$app/stores";
-
   import type { Session } from "$lib/types";
-
   import type { ImportStatus } from "@crkn-rcdr/access-data";
-  import { isArray } from "lodash-es";
   import Resolver from "../access-objects/Resolver.svelte";
 
   export let results: ImportStatus[];
-  /**
-   * @type {Session} The session store that contains the module for sending requests to lapin.
-   */
-  /*const { session } = getStores<Session>();
-  let selectedIndexes: number[] = [];
-  let sucessfulSmeltRequestIndexes: number[] = [];
-
-  function setSelectedIndexes() {
-    selectedIndexes = [];
-    let index = 0;
-    for (const importStatus of results) {
-      if (importStatus.status !== "not-found") selectedIndexes.push(index);
-      index++;
-    }
-    selectedIndexes = selectedIndexes;
-  }
-
-  function handleItemSelected(index: number) {
-    if (selectedIndexes.includes(index))
-      selectedIndexes = selectedIndexes.filter((item) => item !== index);
-    else {
-      selectedIndexes.push(index);
-      selectedIndexes = selectedIndexes;
-    }
-  }
-
-  function toggleAllSelected() {
-    if (selectedIndexes.length) selectedIndexes = [];
-    else setSelectedIndexes();
-  }
-
-  async function handleRunSmelterPressed() {
-    let index = 0;
-    for (const importStatus of results) {
-      if (selectedIndexes.includes(index)) {
-        try {
-          const response = await $session.lapin.mutation(
-            `dipstaging.requestSmelt`,
-            {
-              user: $session.user,
-              id: importStatus.id,
-              slug: importStatus.id,
-            }
-          );
-          if (!sucessfulSmeltRequestIndexes.includes(index)) {
-            sucessfulSmeltRequestIndexes.push(index);
-            sucessfulSmeltRequestIndexes = sucessfulSmeltRequestIndexes;
-          }
-        } catch (e) {
-          console.log(e?.message);
-        }
-      }
-      index++;
-    }
-  }
-
-  $: {
-    results;
-    setSelectedIndexes();
-  }*/
 
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
@@ -80,6 +17,7 @@
   let sucessfulSmeltRequestMap: any = {};
   let expandedMap: any = {};
   let slugAvailableMap: any = {};
+  let itemsAreSelected: boolean = true;
 
   function handleItemSelected(item: ImportStatus) {
     selectedMap[item.id] = !selectedMap[item.id];
@@ -159,6 +97,9 @@
     setExpandedModel();
     setSelectedModel();
   }
+
+  $: itemsAreSelected =
+    Object.keys(selectedMap).filter((key) => selectedMap[key]).length > 0;
 </script>
 
 <br />
@@ -167,7 +108,11 @@
 <br />
 {#if results && results.length}
   <div class="button-wrap">
-    <button class="primary" on:click={handleRunSmelterPressed}>
+    <button
+      class="primary"
+      on:click={handleRunSmelterPressed}
+      disabled={!itemsAreSelected}
+    >
       Run Smelter on Selected Packages
     </button>
   </div>

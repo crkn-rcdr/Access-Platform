@@ -21,6 +21,7 @@
   let sucessfulSmeltRequestMap: any = {};
   let expandedMap: any = {};
   let slugAvailableMap: any = {};
+  let itemsAreSelected: boolean = false;
 
   function handleItemSelected(item: LegacyPackage) {
     selectedMap[item.id] = !selectedMap[item.id];
@@ -90,14 +91,19 @@
     selectedMap = selectedMap;
   }
 
-  afterUpdate(() => {
+  //afterUpdate(() => {
+  $: {
     loading = true;
     results;
     checkIfSlugsDefined();
     setExpandedModel();
     setSelectedModel();
     loading = false;
-  });
+  }
+  //});
+
+  $: itemsAreSelected =
+    Object.keys(selectedMap).filter((key) => selectedMap[key]).length > 0;
 </script>
 
 {#if !loading}
@@ -106,9 +112,13 @@
     <div class="table-actions auto-align auto-align__a-end">
       <slot name="dates" />
       {#if view !== "queue"}
-        <button class="primary" on:click={handleRunSmelterPressed}
-          >Run Smelter on Selected Packages</button
+        <button
+          class="primary"
+          on:click={handleRunSmelterPressed}
+          disabled={!itemsAreSelected}
         >
+          Run Smelter on Selected Packages
+        </button>
       {/if}
     </div>
     <br />
