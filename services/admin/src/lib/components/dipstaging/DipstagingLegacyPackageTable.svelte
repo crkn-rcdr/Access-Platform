@@ -20,17 +20,18 @@
   let selectedMap: any = {};
   let sucessfulSmeltRequestMap: any = {};
   let expandedMap: any = {};
-  let slugUnavailableMap: any = {};
+  let slugAvailableMap: any = {};
 
   function handleItemSelected(item: LegacyPackage) {
     selectedMap[item.id] = !selectedMap[item.id];
     selectedMap = selectedMap;
   }
 
-  function toggleAllSelected() {
+  function toggleAllSelected(event) {
     for (const item of results) {
-      if (!slugUnavailableMap[item.id])
-        selectedMap[item.id] = !selectedMap[item.id];
+      console.log(slugAvailableMap[item.id]);
+      if (slugAvailableMap[item.id])
+        selectedMap[item.id] = event.target.checked;
       else selectedMap[item.id] = false;
     }
     selectedMap = selectedMap;
@@ -64,8 +65,8 @@
   }
 
   function setSlugAvailability(event, item: LegacyPackage) {
-    slugUnavailableMap[item.id] = event.detail.status;
-    slugUnavailableMap = slugUnavailableMap;
+    slugAvailableMap[item.id] = event.detail.status;
+    slugAvailableMap = slugAvailableMap;
   }
 
   function checkIfSlugsDefined() {
@@ -116,41 +117,45 @@
       <table>
         <thead>
           <tr>
-            <th>Id</th>
-            <th>Slug</th>
-            <th><!--Repos Manifest Date-->Ingest Date</th>
-            {#if view === "status" || view === "updated"}
-              <th>Smelt Status</th>
-            {/if}
             {#if view !== "queue"}
               <th>
                 <input type="checkbox" on:click={toggleAllSelected} />
                 <!--checked-->
               </th>
             {/if}
+            <th>Id</th>
+            <th>Slug</th>
+            <th><!--Repos Manifest Date-->Ingest Date</th>
+            <th>Smelt Status</th>
           </tr>
         </thead>
         <tbody>
           {#each results as legacyPackage, i}
             <tr>
+              {#if view !== "queue"}
+                <td>
+                  <!--slug taken logic-->
+                  {#if !slugAvailableMap[legacyPackage.id]}
+                    <input
+                      type="checkbox"
+                      disabled
+                      data-tooltip="The slug entered for this package is taken."
+                    />
+                  {:else}
+                    <input
+                      type="checkbox"
+                      on:click={() => handleItemSelected(legacyPackage)}
+                      checked={selectedMap[legacyPackage.id]}
+                    />
+                  {/if}
+                </td>
+              {/if}
               <!--
             class:success={legacyPackage.smelt?.["succeeded"]}
             class:not-success={!legacyPackage.smelt?.["succeeded"]}
             class:normal={!legacyPackage.smelt ||
               !("succeeded" in legacyPackage.smelt)}-->
-              <td class="auto-align auto-align__a-center">
-                {#if legacyPackage.smelt && "succeeded" in legacyPackage.smelt}
-                  <span
-                    class="icon"
-                    on:click={() => handleItemExpanded(legacyPackage)}
-                  >
-                    {#if expandedMap[legacyPackage.id]}
-                      <FaAngleDown />
-                    {:else}
-                      <FaAngleRight />
-                    {/if}
-                  </span>
-                {/if}
+              <td>
                 {legacyPackage.id}
               </td>
 
@@ -169,30 +174,40 @@
                   : "N/A"}
               </td>
 
-              {#if view === "status" || view === "updated"}
-                <td
-                  >{legacyPackage.smelt?.["succeeded"] ? "Suceeded" : "Failed"}
-                </td>
-              {/if}
-
-              {#if view !== "queue"}
-                <td>
-                  <!--slug taken logic-->
-                  {#if !slugUnavailableMap[legacyPackage.id]}
-                    <input
-                      type="checkbox"
-                      disabled
-                      data-tooltip="The slug entered for this package is taken."
-                    />
-                  {:else}
-                    <input
-                      type="checkbox"
-                      on:click={() => handleItemSelected(legacyPackage)}
-                      checked={selectedMap[legacyPackage.id]}
-                    />
+              <!---->
+              <td class="status auto-align align__block auto-align__a-center">
+                <span class="status-text">
+                  {#if sucessfulSmeltRequestMap[legacyPackage.id]}
+                    Smelter is running on the package! <a
+                      target="_blank"
+                      href="https://access-dev.canadiana.ca/smelter/queue"
+                      ><br />Track its status in the 'Queue' tab.</a
+                    >
+                  {:else if view === "queue"}
+                    Smelter is running on the package.
+                  {:else if view === "status"}
+                    {legacyPackage.smelt?.["succeeded"] ? "Suceeded" : "Failed"}
+                  {:else if view === "neversmelted"}
+                    Never Smelted
+                  {:else if view === "updated"}
+                    Package requires re-smelting.
                   {/if}
-                </td>
-              {/if}
+                </span>
+
+                {#if view === "status" || view === "updated"}
+                  <span
+                    class="icon"
+                    on:click={() => handleItemExpanded(legacyPackage)}
+                    data-tooltip="Information on previous smelter run..."
+                  >
+                    {#if expandedMap[legacyPackage.id]}
+                      <FaAngleDown />
+                    {:else}
+                      <FaAngleRight />
+                    {/if}
+                  </span>
+                {/if}
+              </td>
             </tr>
             {#if expandedMap[legacyPackage.id]}
               <tr>
@@ -242,6 +257,16 @@
   .table-actions button {
     margin-left: var(--margin-sm);
   }
+  .icon {
+    cursor: pointer;
+  }
+  td.status {
+    width: 100%;
+  }
+  .status-text {
+    flex: 9;
+  }
+  /*
   .success {
     background-color: var(--success-light);
   }
@@ -251,10 +276,7 @@
   .normal {
     background-color: var(--structural-div-bg);
   }
-  .icon {
-    cursor: pointer;
-  }
-  /*.icon,
+  .icon,
   .icon svg {
     cursor: pointer;
   }

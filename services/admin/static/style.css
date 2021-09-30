@@ -660,15 +660,18 @@ input[type="checkbox"]:checked {
   content: attr(data-tooltip); /* magic! */
 
   /* most of the rest of this is opinion */
-  text-align: center;
+  /*text-align: center;*/
 
   /* 
     Let the content set the size of the data-tooltips 
     but this will also keep them from being obnoxious
     */
-  min-width: 3em;
+  /*min-width: 3em;
   max-width: 21em;
-  white-space: nowrap;
+  white-space: nowrap;*/
+  text-align: left;
+  max-width: 12em;
+  white-space: break-spaces;
   overflow: hidden;
   text-overflow: ellipsis;
   padding: 1ch 1.5ch;

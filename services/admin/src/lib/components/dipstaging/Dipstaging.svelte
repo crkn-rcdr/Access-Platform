@@ -40,7 +40,7 @@ The resolver component allows the user to enter a slug, and then a request is se
       <SideMenuPageListButton>Package Finder</SideMenuPageListButton>
     </a>
     <a href="/smelter/neversmelted/1/all">
-      <SideMenuPageListButton>Non-Smelted Packages</SideMenuPageListButton>
+      <SideMenuPageListButton>Packages Never Smelted</SideMenuPageListButton>
     </a>
     <a href="/smelter/updated/1/all">
       <SideMenuPageListButton
@@ -91,7 +91,7 @@ The resolver component allows the user to enter a slug, and then a request is se
     text-decoration: none;
   }
   .page-wrap {
-    padding: 1rem;
+    padding: 2rem 3rem;
     height: 100%;
   }
 </style>

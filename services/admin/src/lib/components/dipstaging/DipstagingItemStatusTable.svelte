@@ -79,17 +79,18 @@
   let selectedMap: any = {};
   let sucessfulSmeltRequestMap: any = {};
   let expandedMap: any = {};
-  let slugUnavailableMap: any = {};
+  let slugAvailableMap: any = {};
 
   function handleItemSelected(item: ImportStatus) {
     selectedMap[item.id] = !selectedMap[item.id];
     selectedMap = selectedMap;
   }
 
-  function toggleAllSelected() {
+  function toggleAllSelected(event) {
     for (const item of results) {
-      if (!slugUnavailableMap[item.id])
-        selectedMap[item.id] = !selectedMap[item.id];
+      console.log(slugAvailableMap[item.id]);
+      if (slugAvailableMap[item.id])
+        selectedMap[item.id] = event.target.checked;
       else selectedMap[item.id] = false;
     }
     selectedMap = selectedMap;
@@ -124,9 +125,9 @@
   }
 
   function setSlugAvailability(event, item: ImportStatus) {
-    slugUnavailableMap[item.id] = event.detail.status;
-    console.log(slugUnavailableMap);
-    slugUnavailableMap = slugUnavailableMap;
+    slugAvailableMap[item.id] = event.detail.status;
+    console.log(slugAvailableMap);
+    slugAvailableMap = slugAvailableMap;
   }
 
   function checkIfSlugsDefined() {
@@ -138,14 +139,16 @@
 
   function setExpandedModel() {
     for (const item of results) {
-      if (!(item.id in expandedMap)) expandedMap[item.id] = false;
+      console.log(expandedMap.hasOwnProperty(item.id), item.id);
+      if (!expandedMap.hasOwnProperty(item.id)) expandedMap[item.id] = false;
     }
     expandedMap = expandedMap;
+    console.log(expandedMap);
   }
 
   function setSelectedModel() {
     for (const item of results) {
-      if (!(item.id in selectedMap)) selectedMap[item.id] = false;
+      if (!(item.id in selectedMap)) selectedMap[item.id] = true;
     }
     selectedMap = selectedMap;
   }
@@ -172,31 +175,30 @@
   <table>
     <thead>
       <tr>
-        <th>Id</th>
-        <th>Slug</th>
-        <th>Ingest Date</th>
-        <th>Status</th>
         <th>
           <input type="checkbox" on:click={toggleAllSelected} checked />
         </th>
+        <th>Id</th>
+        <th>Slug</th>
+        <th>Ingest Date</th>
+        <th>Smelt Status</th>
       </tr>
     </thead>
     <tbody>
       {#each results as importStatus, i}
         <tr>
-          <td class="id auto-align auto-align__a-center">
-            {#if importStatus.status === "succeeded" || importStatus.status === "failed"}
-              <span
-                class="icon"
-                on:click={() => handleItemExpanded(importStatus)}
-              >
-                {#if expandedMap[importStatus.id]}
-                  <FaAngleDown />
-                {:else}
-                  <FaAngleRight />
-                {/if}
-              </span>
+          <td>
+            {#if sucessfulSmeltRequestMap[importStatus.id] || !slugAvailableMap[importStatus.id] || importStatus.status === "not-found" || importStatus.status === "processing"}
+              <input type="checkbox" disabled />
+            {:else}
+              <input
+                type="checkbox"
+                on:click={() => handleItemSelected(importStatus)}
+                checked={selectedMap[importStatus.id]}
+              />
             {/if}
+          </td>
+          <td class="id">
             {importStatus.id}
           </td>
           <td>
@@ -209,54 +211,54 @@
               />
             {/if}
           </td>
-          <!--td
-            >{@html importStatus["repos"]
-              ? importStatus["repos"].join("<br/>")
-              : "N/A"}</td
-          -->
           <td>
             {#if importStatus.status !== "not-found"}
               {importStatus["ingestDate"]}
             {/if}
           </td>
-          <td>
-            {#if sucessfulSmeltRequestMap[importStatus.id]}
-              Smelter is running on the package! <a
-                target="_blank"
-                href="https://access-dev.canadiana.ca/smelter/queue"
-                ><br />Track its status in the 'Queue' tab.</a
+          <td class="status auto-align auto-align__block auto-align__a-center">
+            <span class="status-text">
+              {#if sucessfulSmeltRequestMap[importStatus.id]}
+                Smelter is running on the package! <a
+                  target="_blank"
+                  href="https://access-dev.canadiana.ca/smelter/queue"
+                  ><br />Track its status in the 'Queue' tab.</a
+                >
+              {:else if importStatus.status === "processing"}
+                Smelter is running on the package! <a
+                  target="_blank"
+                  href="https://access-dev.canadiana.ca/smelter/queue"
+                  ><br />Track its status in the 'Queue' tab.</a
+                >
+              {:else if importStatus.status === "not-found"}
+                Package not found.
+              {:else if "reposManifestDate" in importStatus && importStatus["reposManifestDate"] && "processDate" in importStatus && importStatus["processDate"] && Date.parse(importStatus["reposManifestDate"]) > Date.parse(importStatus["processDate"])}
+                Package requires re-smelting.
+              {:else if importStatus.status === "succeeded"}
+                Succeeded
+              {:else if importStatus.status === "failed"}
+                Failed
+              {:else if importStatus.status === "new"}
+                Never Smelted
+              {/if}
+            </span>
+            {#if importStatus.status === "succeeded" || importStatus.status === "failed"}
+              <span
+                class="icon"
+                on:click={() => handleItemExpanded(importStatus)}
+                data-tooltip="Information on previous smelter run..."
               >
-            {:else if importStatus.status === "processing"}
-              Smelter is running on the package! <a
-                target="_blank"
-                href="https://access-dev.canadiana.ca/smelter/queue"
-                ><br />Track its status in the 'Queue' tab.</a
-              >
-            {:else if importStatus.status === "not-found"}
-              Package not found.
-            {:else if importStatus.status === "succeeded"}
-              Succeeded
-            {:else if importStatus.status === "failed"}
-              Failed
-            {:else if importStatus.status === "new"}
-              <!--{importStatus.status}-->
-              Ready to import!
-            {/if}
-          </td>
-          <td>
-            {#if sucessfulSmeltRequestMap[importStatus.id] || !slugUnavailableMap[importStatus.id] || importStatus.status === "not-found" || importStatus.status === "processing"}
-              <input type="checkbox" disabled />
-            {:else}
-              <input
-                type="checkbox"
-                on:click={() => handleItemSelected(importStatus)}
-                checked={selectedMap[importStatus.id]}
-              />
+                {#if expandedMap[importStatus.id]}
+                  <FaAngleDown />
+                {:else}
+                  <FaAngleRight />
+                {/if}
+              </span>
             {/if}
           </td>
         </tr>
 
-        {#if (expandedMap[importStatus.id] && importStatus.status === "succeeded") || importStatus.status === "failed"}
+        {#if expandedMap[importStatus.id]}
           <tr>
             <td colspan="5">
               <div>
@@ -267,8 +269,8 @@
               <div>Request Date: {importStatus["requestDate"]}</div>
               <div>Process Date: {importStatus["processDate"]}</div>
               <div>
-                Message: {importStatus.message?.length
-                  ? importStatus.message
+                Message: {importStatus["message"]?.length
+                  ? importStatus["message"]
                   : "N/A"}
               </div>
             </td>
@@ -293,5 +295,11 @@
   }
   .icon {
     cursor: pointer;
+  }
+  td.status {
+    width: 100%;
+  }
+  .status-text {
+    flex: 9;
   }
 </style>
