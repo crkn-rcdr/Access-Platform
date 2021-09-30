@@ -66,7 +66,6 @@
   function setSlugAvailability(event, item: LegacyPackage) {
     slugUnavailableMap[item.id] = event.detail.status;
     slugUnavailableMap = slugUnavailableMap;
-    console.log("slugUnavailableMap", slugUnavailableMap);
   }
 
   function checkIfSlugsDefined() {
@@ -74,29 +73,25 @@
       if (!item.slug) item.slug = item.id;
     }
     results = results;
-    //console.log("SlugsDefined results", results);
   }
 
   function setExpandedModel() {
     for (const item of results) {
-      expandedMap[item.id] = false;
+      if (!(item.id in expandedMap)) expandedMap[item.id] = false;
     }
     expandedMap = expandedMap;
-    //console.log("expandedMap", expandedMap);
   }
 
   function setSelectedModel() {
     for (const item of results) {
-      selectedMap[item.id] = false;
+      if (!(item.id in selectedMap)) selectedMap[item.id] = false;
     }
     selectedMap = selectedMap;
-    //console.log("selectedMap", selectedMap);
   }
 
   afterUpdate(() => {
     loading = true;
     results;
-    console.log("results", results);
     checkIfSlugsDefined();
     setExpandedModel();
     setSelectedModel();
@@ -143,7 +138,7 @@
             class:not-success={!legacyPackage.smelt?.["succeeded"]}
             class:normal={!legacyPackage.smelt ||
               !("succeeded" in legacyPackage.smelt)}-->
-              <td class="auto-align">
+              <td class="auto-align auto-align__a-center">
                 {#if legacyPackage.smelt && "succeeded" in legacyPackage.smelt}
                   <span
                     class="icon"
@@ -199,7 +194,7 @@
                 </td>
               {/if}
             </tr>
-            {#if expandedMap[legacyPackage.id] && legacyPackage.smelt && "succeeded" in legacyPackage.smelt}
+            {#if expandedMap[legacyPackage.id]}
               <tr>
                 <td colspan="5">
                   <div>
@@ -255,6 +250,9 @@
   }
   .normal {
     background-color: var(--structural-div-bg);
+  }
+  .icon {
+    cursor: pointer;
   }
   /*.icon,
   .icon svg {

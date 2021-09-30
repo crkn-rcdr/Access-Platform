@@ -134,23 +134,20 @@
       if (!item["slug"]) item["slug"] = item.id;
     }
     results = results;
-    console.log("SlugsDefined results", results);
   }
 
   function setExpandedModel() {
     for (const item of results) {
-      expandedMap[item.id] = false;
+      if (!(item.id in expandedMap)) expandedMap[item.id] = false;
     }
     expandedMap = expandedMap;
-    console.log("expandedMap", expandedMap);
   }
 
   function setSelectedModel() {
     for (const item of results) {
-      selectedMap[item.id] = false;
+      if (!(item.id in selectedMap)) selectedMap[item.id] = false;
     }
     selectedMap = selectedMap;
-    console.log("selectedMap", selectedMap);
   }
 
   $: {
@@ -187,7 +184,7 @@
     <tbody>
       {#each results as importStatus, i}
         <tr>
-          <td class="auto-align">
+          <td class="id auto-align auto-align__a-center">
             {#if importStatus.status === "succeeded" || importStatus.status === "failed"}
               <span
                 class="icon"
@@ -290,5 +287,11 @@
     margin-top: 2rem;
     width: 100%;
     overflow-y: auto;
+  }
+  .id {
+    height: 100%;
+  }
+  .icon {
+    cursor: pointer;
   }
 </style>
