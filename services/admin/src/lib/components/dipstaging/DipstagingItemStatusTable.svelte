@@ -299,18 +299,34 @@ This component shows the results of a dipstaging find-package(s) request. It all
           {#if expandedMap[importStatus.id]}
             <tr>
               <td colspan="5">
-                <div>
-                  Status: {importStatus.status === "succeeded"
-                    ? "Succeeded"
-                    : "Failed"}
-                </div>
-                <div>Request Date: {importStatus["requestDate"]}</div>
-                <div>Process Date: {importStatus["processDate"]}</div>
-                <div>
-                  Message: {importStatus["message"]?.length
-                    ? importStatus["message"]
-                    : "N/A"}
-                </div>
+                <table>
+                  <tbody>
+                    <tr>
+                      <td class="detail-label">Smelt Status:</td>
+                      <td
+                        >{importStatus.status === "succeeded"
+                          ? "Succeeded"
+                          : "Failed"}</td
+                      >
+                    </tr>
+                    <tr>
+                      <td class="detail-label">Request Date:</td>
+                      <td>{importStatus["requestDate"]}</td>
+                    </tr>
+                    <tr>
+                      <td class="detail-label">Process Date:</td>
+                      <td>{importStatus["processDate"]}</td>
+                    </tr>
+                    <tr>
+                      <td class="detail-label">Message:</td>
+                      <td
+                        >{importStatus["message"]?.length
+                          ? importStatus["message"]
+                          : "N/A"}</td
+                      >
+                    </tr>
+                  </tbody>
+                </table>
               </td>
             </tr>
           {/if}
@@ -348,5 +364,8 @@ This component shows the results of a dipstaging find-package(s) request. It all
   .loading {
     width: 100%;
     text-align: center;
+  }
+  .detail-label {
+    min-width: 20rem;
   }
 </style>

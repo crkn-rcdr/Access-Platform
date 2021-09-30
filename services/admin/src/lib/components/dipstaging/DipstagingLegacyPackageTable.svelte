@@ -319,32 +319,46 @@ This component shows the results of a dipstaging package view. It allows the use
             {#if expandedMap[legacyPackage.id]}
               <tr>
                 <td colspan="5">
-                  <div>
-                    Smelt Status: {legacyPackage.smelt?.["succeeded"]
-                      ? "Succeeded"
-                      : "Failed"}
-                  </div>
-
-                  <div>
-                    Message: {legacyPackage.smelt?.["message"]?.length
-                      ? legacyPackage.smelt?.["message"]
-                      : "N/A"}
-                  </div>
-                  <div>
-                    Request Date: {legacyPackage.smelt?.requestDate
-                      ? new Date(
-                          legacyPackage.smelt?.requestDate
-                        ).toLocaleString()
-                      : "N/A"}
-                  </div>
-                  <div>
-                    Process Date:
-                    {legacyPackage.smelt?.["processDate"]
-                      ? new Date(
-                          legacyPackage.smelt?.["processDate"]
-                        ).toLocaleString()
-                      : "N/A"}
-                  </div>
+                  <table>
+                    <tbody>
+                      <tr>
+                        <td class="detail-label">Smelt Status:</td>
+                        <td>
+                          {legacyPackage.smelt?.["succeeded"]
+                            ? "Succeeded"
+                            : "Failed"}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="detail-label">Request Date:</td>
+                        <td>
+                          {legacyPackage.smelt?.requestDate
+                            ? new Date(
+                                legacyPackage.smelt?.requestDate
+                              ).toLocaleString()
+                            : "N/A"}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="detail-label">Process Date:</td>
+                        <td>
+                          {legacyPackage.smelt?.["processDate"]
+                            ? new Date(
+                                legacyPackage.smelt?.["processDate"]
+                              ).toLocaleString()
+                            : "N/A"}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="detail-label">Message:</td>
+                        <td>
+                          {legacyPackage.smelt?.["message"]?.length
+                            ? legacyPackage.smelt?.["message"]
+                            : "N/A"}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </td>
               </tr>
             {/if}
@@ -371,6 +385,9 @@ This component shows the results of a dipstaging package view. It allows the use
   }
   td.status {
     width: 100%;
+  }
+  .detail-label {
+    min-width: 20rem;
   }
   .status-text {
     flex: 9;
