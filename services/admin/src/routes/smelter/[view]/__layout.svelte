@@ -126,11 +126,13 @@
         <label for="end">End date:</label>
         <input type="date" id="end" name="trip-end" bind:value={dates[1]} />
       </span>
-      {#if dates[0]?.length && dates[1]?.length}
-        <button class="secondary" on:click={refineByDate}
-          >Refine Packages</button
-        >
-      {/if}
+      <button
+        class="refine-button secondary"
+        on:click={refineByDate}
+        disabled={!(dates[0]?.length && dates[1]?.length)}
+      >
+        Refine Packages
+      </button>
     </span>
   </DipstagingLegacyPackageTable>
   <Paginator
@@ -146,6 +148,9 @@
     flex: 9;
   }
   .dates > span:not(:first-child) {
+    margin-left: var(--margin-sm);
+  }
+  .refine-button {
     margin-left: var(--margin-sm);
   }
 </style>
