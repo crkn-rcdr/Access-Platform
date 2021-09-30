@@ -1,3 +1,23 @@
+<!--
+@component
+### Overview
+This component shows the results of a dipstaging package view. It allows the user to call smelter on eligible packages.
+
+### Properties
+|    |    |    |
+| -- | -- | -- |
+| results: LegacyPackage[] | required | The packages to display |
+| pageNumber: number | required | The current page of results being viewed |
+| view: string | required | The current view being displayed |
+
+### Usage
+```  
+<DipstagingLegacyPackageTable bind:results bind:view bind:pageNumber>
+  <div slot="actions"> ...optional actions</div>
+</DipstagingLegacyPackageTable>
+```
+*Note: `bind:` is required for changes to the properties to be reflected in higher level components.*
+-->
 <script lang="ts">
   import FaAngleRight from "svelte-icons/fa/FaAngleRight.svelte";
   import FaAngleDown from "svelte-icons/fa/FaAngleDown.svelte";
@@ -5,10 +25,24 @@
   import type { Session } from "$lib/types";
   import type { LegacyPackage } from "@crkn-rcdr/access-data";
   import Resolver from "../access-objects/Resolver.svelte";
-  import { afterUpdate } from "svelte";
+  import Loading from "../shared/Loading.svelte";
 
+  /**
+   * @type {LegacyPackage[]}
+   * The packages in the format of LegacyPackage, to be displayed to the user
+   */
   export let results: LegacyPackage[];
+
+  /**
+   * @type {number}
+   * The current page of results being viewed
+   */
   export let pageNumber: number = 1;
+
+  /**
+   * @type {string}
+   * The current view being displayed
+   */
   export let view: string = "updated";
 
   /**
@@ -16,18 +50,53 @@
    */
   const { session } = getStores<Session>();
 
-  let loading = false;
+  /**
+   * @type {any} A map from ImportStatus.id => if the item is selected in the table
+   */
   let selectedMap: any = {};
-  let sucessfulSmeltRequestMap: any = {};
-  let expandedMap: any = {};
-  let slugAvailableMap: any = {};
-  let itemsAreSelected: boolean = false;
 
+  /**
+   * @type {any} A map from ImportStatus.id => if the request for adding the item to the smelte queue was sucessful or not
+   */
+  let sucessfulSmeltRequestMap: any = {};
+
+  /**
+   * @type {any} A map from ImportStatus.id => if the item in the table is expanded or not
+   */
+  let expandedMap: any = {};
+
+  /**
+   * @type {any} A map from ImportStatus.id => if the slug of the item's slug is available.
+   */
+  let slugAvailableMap: any = {};
+
+  /**
+   * @type {boolean}
+   * An indicator if any item is selected or not. Helpful for the disabling of the smelter button.
+   */
+  let itemsAreSelected: boolean = true;
+
+  /**
+   * @type {boolean}
+   * An indicator of if the result's item models are being processed or not
+   */
+  let loading = false;
+
+  /**
+   * Keeps track if @param item is selected or not
+   * @param item
+   * @returns void
+   */
   function handleItemSelected(item: LegacyPackage) {
     selectedMap[item.id] = !selectedMap[item.id];
     selectedMap = selectedMap;
   }
 
+  /**
+   * Sets all of the item's selected boolean to the value of the table's control checkbox.
+   * @param event
+   * @returns void
+   */
   function toggleAllSelected(event) {
     for (const item of results) {
       console.log(slugAvailableMap[item.id]);
@@ -38,6 +107,10 @@
     selectedMap = selectedMap;
   }
 
+  /**
+   * Sends a request to the back-end for each selected item in the table, to queue them up for smelter processing.
+   * @returns void
+   */
   async function handleRunSmelterPressed() {
     for (const item of results) {
       if (selectedMap[item.id]) {
@@ -60,16 +133,30 @@
     }
   }
 
+  /**
+   * Keeps track if @param item is expanded in the table or not
+   * @param item
+   * @returns void
+   */
   function handleItemExpanded(item: LegacyPackage) {
     expandedMap[item.id] = !expandedMap[item.id];
     expandedMap = expandedMap;
   }
 
+  /**
+   * Keeps track if @param item's slug is available or not. Is trigger on load and any time the slug is edited.
+   * @param item
+   * @returns void
+   */
   function setSlugAvailability(event, item: LegacyPackage) {
     slugAvailableMap[item.id] = event.detail.status;
     slugAvailableMap = slugAvailableMap;
   }
 
+  /**
+   * Sets the it's slug to its id if it's slug isn't defined
+   * @returns void
+   */
   function checkIfSlugsDefined() {
     for (const item of results) {
       if (!item.slug) item.slug = item.id;
@@ -77,6 +164,10 @@
     results = results;
   }
 
+  /**
+   * Sets the expanded map for items in the results array
+   * @returns void
+   */
   function setExpandedModel() {
     for (const item of results) {
       if (!(item.id in expandedMap)) expandedMap[item.id] = false;
@@ -84,6 +175,10 @@
     expandedMap = expandedMap;
   }
 
+  /**
+   * Sets the selected map for items in the results array
+   * @returns void
+   */
   function setSelectedModel() {
     for (const item of results) {
       if (!(item.id in selectedMap)) selectedMap[item.id] = false;
@@ -91,7 +186,10 @@
     selectedMap = selectedMap;
   }
 
-  //afterUpdate(() => {
+  /**
+   * @listens results
+   * @description Calls @function checkIfSlugsDefined and @function setExpandedModel and @function setSelectedModel any time the results change. Also sets loading to re-trigger the draw of the slug resolvers
+   */
   $: {
     loading = true;
     results;
@@ -100,7 +198,6 @@
     setSelectedModel();
     loading = false;
   }
-  //});
 
   $: itemsAreSelected =
     Object.keys(selectedMap).filter((key) => selectedMap[key]).length > 0;
@@ -110,7 +207,7 @@
   <!--Can run smelter if a) their status is neither "not-found" or "processing" b) their slug isn't already taken by a noid.-->
   {#if typeof results !== "undefined" && typeof pageNumber !== "undefined"}
     <div class="table-actions auto-align auto-align__a-end">
-      <slot name="dates" />
+      <slot name="actions" />
       {#if view !== "queue"}
         <button
           class="primary"
@@ -257,7 +354,9 @@
     </div>
   {/if}
 {:else}
-  Loading...
+  <div class="loading">
+    <Loading backgroundType="gradient" />
+  </div>
 {/if}
 
 <style>
@@ -276,38 +375,8 @@
   .status-text {
     flex: 9;
   }
-  /*
-  .success {
-    background-color: var(--success-light);
+  .loading {
+    width: 100%;
+    text-align: center;
   }
-  .not-success {
-    background-color: var(--danger-light);
-  }
-  .normal {
-    background-color: var(--structural-div-bg);
-  }
-  .icon,
-  .icon svg {
-    cursor: pointer;
-  }
-  .icon {
-    color: var(--secondary);
-  }
-  .icon:hover {
-    background: none !important;
-  }
-
-  .icon.sort {
-    width: 1.3rem;
-    height: 1.4rem;
-    margin-top: -0.12rem;
-  }
-  .icon.filter {
-    width: 1rem;
-    height: 1.7rem;
-  }*/
-
-  /*th:not(:first-child) {
-    border-left: 1px solid var(--border-color);
-  }*/
 </style>

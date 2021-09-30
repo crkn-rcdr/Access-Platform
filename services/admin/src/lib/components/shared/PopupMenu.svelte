@@ -4,7 +4,9 @@
 A popup menu that can contain any amount of items or links.
 
 ### Properties
-none
+|    |    |    |
+| -- | -- | -- |
+| direction : "left" or "right" or "center"  | required | Determines what direction to draw the menu in |
 
 ### Usage
 ```  
@@ -21,7 +23,11 @@ none
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
 
+  /**
+   * @type {"left" | "right" | "center"} Determines what direction to draw the menu in
+   */
   export let direction: "left" | "right" | "center" = "center";
+
   /**
    * @type {HTMLDivElement} This container element holds the drop down
    */
@@ -41,6 +47,7 @@ none
    * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.
    */
   const dispatch = createEventDispatcher();
+
   /**
    * @function
    * When the user clicks on the button, toggle between hiding and showing the popup content
@@ -49,29 +56,23 @@ none
     popupMenu.classList.toggle("show");
   }
 
+  /**
+   * @function
+   * When the user clicks on the cancel button, close the menu
+   */
   function handleCancelPressed() {
     popupMenu.classList.remove("show");
     dispatch("cancel");
   }
+
+  /**
+   * @function
+   * When the user clicks on the ok button, close the menu
+   */
   function handleOkPressed() {
     popupMenu.classList.remove("show");
     dispatch("ok");
   }
-
-  /**
-   * @event onMount
-   * @description When the component instance is mounted onto the dom, add an @event to the window that will close the popup menu if the user clicks outside of it
-   */
-  /*onMount(() => {
-    window.addEventListener("click", function (event) {
-      const target = event.target as Node;
-      if (!popupWrapper?.contains(target)) {
-        if (popupMenu?.classList.contains("show")) {
-          popupMenu.classList.remove("show");
-        }
-      }
-    });
-  });*/
 </script>
 
 <div class="popup auto-align" bind:this={popupWrapper}>

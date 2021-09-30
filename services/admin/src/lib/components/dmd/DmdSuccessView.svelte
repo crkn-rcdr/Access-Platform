@@ -16,7 +16,7 @@ This component shows the view for a dmd task that had its metadata successfully 
 -->
 <script lang="ts">
   import type { SucceededDMDTask } from "@crkn-rcdr/access-data";
-  import type { AccessPlatform, DmdItemStates, DmdItemState } from "$lib/types";
+  import type { Depositor, DmdItemStates, DmdItemState } from "$lib/types";
   import ProgressBar from "$lib/components/shared/ProgressBar.svelte";
   import ScrollStepper from "$lib/components/shared/ScrollStepper.svelte";
   import ScrollStepperStep from "$lib/components/shared/ScrollStepperStep.svelte";
@@ -39,7 +39,7 @@ This component shows the view for a dmd task that had its metadata successfully 
   /**
    *  @type { AccessPlatform } The access platform to look for the items in.
    */
-  let accessPlatform: AccessPlatform = {
+  let accessPlatform: Depositor = {
     prefix: "oocihm",
     label: "Canadiana.org",
   };

@@ -1,22 +1,18 @@
 <!--
 @component
 ### Overview
-The resolver component allows the user to enter a slug, and then a request is sent to the backend to vheck if an object exists with that slug. Error states are shown for invalid slugs or otherwise.
+This component controls the rendering of the dipstaging menu (smelter) based on the activePageIndex
+
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| slug : string                      | optional | Slug being resolved. |
-| noid: string | null | undefined    | optional | Noid that the slug resolves to, or null. |
-| hideInitial : boolean              | optional | Whether to hide the display when the current slug is the same as the initial slug provided. |
+| activePageIndex : number | required | The index of the page to be displayed |
+
 ### Usage
 ```  
-  <Resolver
-    bind:slug={object["slug"]}
-    noid={object["id"]}
-    on:available={(event) => {
-      ..do something
-    }}
-  />
+<Dipstaging bind:activePageIndex>
+  ...content
+</Dipstaging>
 ```
 *Note: `bind:` is required for changes to the properties to be reflected in higher level components.*
 -->
@@ -27,6 +23,9 @@ The resolver component allows the user to enter a slug, and then a request is se
   import SideMenuBody from "../shared/SideMenuBody.svelte";
   import SideMenuPage from "../shared/SideMenuPage.svelte";
 
+  /**
+   * @type {number} The index of the page to be displayed in the list of pages in the SideMenuContainer. This is set based of of the URL in the layout.
+   */
   export let activePageIndex: number = 0;
 </script>
 

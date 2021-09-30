@@ -1,25 +1,76 @@
-<script>
-  import { createEventDispatcher, getContext } from "svelte";
-  const dispatch = createEventDispatcher();
-  const stateContext = getContext("state");
+<!--
+@component
+### Overview
+A card component that optionally allows for user selection
 
-  export let buttons = [-2, -1, 0, 1, 2];
+### Properties
+|    |    |    |
+| -- | -- | -- |
+| page : number  | required | The page number counting form zero |
+| count : number  | required | The total number of items |
+| pageSize : number  | optional | The number of items in the page |
+
+### Usage
+```  
+<Paginator
+    page={pageNumber - 1}
+    {count}
+    on:pageChange={handlePageChangePressed}
+  />
+```
+-->
+<script lang="ts">
+  import { createEventDispatcher } from "svelte";
+
+  /**
+   * @type {number} The total number of items
+   */
   export let count;
-  export let page = 0;
-  export let pageSize;
 
-  export let labels = {
+  /**
+   * @type {number} The page number counting form zero
+   */
+  export let page = 0;
+
+  /**
+   * @type {number}  The number of items in the page
+   */
+  export let pageSize = 10;
+
+  /**
+   * @type {number[]} A model for the visible buttons
+   */
+  let buttons = [-2, -1, 0, 1, 2];
+
+  /**
+   * @type {any} A model for the visible buttons labels
+   */
+  let labels = {
     first: "First",
     last: "Last",
     next: "Next",
     previous: "Previous",
   };
 
-  $: pageCount = Math.floor(count / pageSize);
+  /**
+   * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.
+   */
+  const dispatch = createEventDispatcher();
 
+  /**
+   * Dispatches the pageChange event
+   * @returns void
+   */
   function onChange(event, page) {
     dispatch("pageChange", page + 1);
   }
+
+  /**
+   * @listens count
+   * @listens pageSize
+   * @description Re-sets the page count when the count or page size change.
+   */
+  $: pageCount = Math.floor(count / pageSize);
 </script>
 
 <ul>

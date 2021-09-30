@@ -8,17 +8,17 @@ Allows the user to select one of many pre-defined depositors.
 | depositor: {string: string; label: string}    | optional | The prefix that is selected in the selection element |
 ### Usage
 ```  
-<DmdDepositorSelector bind:depositor={depositor} />
+<PrefixSelector bind:depositor={depositor} />
 ```
 *Note: `bind:` is required for changes to the parameters to be reflected in higher level components.*
 -->
 <script lang="ts">
-  import type { AccessPlatform } from "$lib/types";
+  import type { Depositor } from "$lib/types";
 
   /**
-   * @type {AccessPlatform} The access platform information that is selected in the selection element
+   * @type {Depositor} The access platform information that is selected in the selection element
    */
-  export let depositor: AccessPlatform = {
+  export let depositor: Depositor = {
     prefix: "none",
     label: "",
   };

@@ -61,14 +61,6 @@ export type SideMenuPageData = {
   };
 };
 
-/**
- * Used to creatre a pull-down of available access platforms to prepend to identifiers in the CSV or MarcXML files.
- */
-export type AccessPlatform = {
-  prefix: string;
-  label: string;
-};
-
 export type DmdItemState = {
   slug: Slug;
   noid: Noid;
@@ -94,7 +86,10 @@ export type DmdTaskState = {
 
 export type DmdTasksCache = Map<string, DmdTaskState>;
 
+/**
+ * Used to create a pull-down of available access platforms to prepend to identifiers in the CSV or MarcXML files.
+ */
 export type Depositor = {
-  string: string;
+  prefix: string;
   label: string;
 };

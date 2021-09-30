@@ -1,9 +1,8 @@
 <script lang="ts">
-  import type { AccessPlatform, Session } from "$lib/types";
+  import type { Depositor, Session } from "$lib/types";
   import { getStores } from "$app/stores";
 
   import type { Collection } from "@crkn-rcdr/access-data/src/access/Collection";
-  import { createEventDispatcher } from "svelte";
   import TiArrowBack from "svelte-icons/ti/TiArrowBack.svelte";
 
   import PrefixSelector from "$lib/components/access-objects/PrefixSelector.svelte";
@@ -32,8 +31,7 @@
   /**
    * @type {string} An prefix to the Depositor.
    */
-
-  let depositor: AccessPlatform = {
+  let depositor: Depositor = {
     prefix: "none",
     label: "",
   };

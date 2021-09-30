@@ -1,57 +1,123 @@
-<script lang="ts">
-  import { goto } from "$app/navigation";
-  import { getStores } from "$app/stores";
-  //import { page } from "$app/stores";
+<!--
+@component
+### Overview
+This component allows the user to find packages in the dipstaging database.
 
+### Properties
+|    |    |    |
+| -- | -- | -- |
+| results: ImportStatus[] | required | The packages to display |
+
+### Usage
+```
+<DipstagingLookup bind:results />
+```
+*Note: `bind:` is required for changes to the properties to be reflected in higher level components.*
+-->
+<script lang="ts">
+  import { getStores } from "$app/stores";
   import PrefixSelector from "$lib/components/access-objects/PrefixSelector.svelte";
   import ToggleButtons from "$lib/components/shared/ToggleButtons.svelte";
-  import type { AccessPlatform, Session } from "$lib/types";
+  import type { Depositor, Session } from "$lib/types";
   import type { ImportStatus } from "@crkn-rcdr/access-data";
+  import Loading from "../shared/Loading.svelte";
 
-  export let results: ImportStatus[] = [];
+  /**
+   * @type {ImportStatus[]}
+   * The packages in the format of ImportStatus, to be displayed to the user/
+   */
+  export let results: ImportStatus[];
 
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
    */
   const { session } = getStores<Session>();
+
   /**
-   *  @type { AccessPlatform } The access platform to look for the items in.
+   * @type { AccessPlatform } The access platform to look for the items in.
    */
-  let depositor: AccessPlatform = {
+  let depositor: Depositor = {
     prefix: "none",
     label: "",
   };
+
+  /**
+   * @type { string } The label for the by-slug toggle
+   */
   const BY_SLUG_LABEL = "Look-up by Slug";
+
+  /**
+   * @type { string } The label for the by-date toggle
+   */
   const BY_DATE_LABEL = "Look-up by Date";
+
+  /**
+   * @type { string } The selected lookup method
+   */
   let lookupView: string = BY_SLUG_LABEL;
 
+  /**
+   * @type { string } The selected start date to search for items from
+   */
   let startDateStr: string = "";
+
+  /**
+   * @type { string } The selected end date to search for items to
+   */
   let endDateStr: string = "";
+
+  /**
+   * @type { string } The value of the text input where users can enter slugs
+   */
   let slugListString: string = "";
+
+  /**
+   * @type { string } The array of slugs derived from @var slugListString
+   */
   let slugList: string[] = [];
 
+  /**
+   * @type { boolean } If the lookup has completed run once yet.
+   */
   let lookupDone: boolean = false;
 
+  /**
+   * @type { boolean } If the lookup has completed or not.
+   */
+  let loading: boolean = false;
+
+  /**
+   * Sets the @var lookupView when the toggle buttons are clicked
+   * @returns void
+   */
   function changeView(event) {
     lookupView = event.detail.option;
   }
 
+  /**
+   * Stops the event propogation of the button press then calls @function handleLookupPressedSlugList
+   * @returns void
+   */
   async function handleLookupPressedSlugList(event) {
     event.stopPropagation();
     await sendLookupRequestKeys();
   }
 
+  /**
+   * Stops the event propogation of the button press then calls @function handleLookupPressedDates
+   * @returns void
+   */
   async function handleLookupPressedDates(event) {
     event.stopPropagation();
     await sendLookupRequestDates();
   }
 
+  /**
+   * Sends the request to look up the items by date to the backend and saves the results
+   * @returns void
+   */
   async function sendLookupRequestDates() {
-    //goto(`/smelter/dates/${startDateStr},${endDateStr}`);
-    console.log({
-      from: startDateStr,
-      to: endDateStr,
-    });
+    loading = true;
     if (startDateStr?.length && endDateStr?.length) {
       const response = await $session.lapin.query("dipstaging.listFromDates", {
         from: startDateStr,
@@ -60,40 +126,29 @@
       if (response) results = response;
       lookupDone = true;
     }
+    loading = false;
   }
 
+  /**
+   * Sends the request to look up the items by slug to the backend and saves the results
+   * @returns void
+   */
   async function sendLookupRequestKeys() {
+    loading = true;
     if (slugList.includes(",")) slugList = slugListString.split(",");
     else slugList = slugListString.split("\n");
     if (slugList.length) {
       if (depositor.prefix !== "none")
         slugList = slugList.map((slug) => `${depositor.prefix}.${slug.trim()}`);
       else slugList = slugList.map((slug) => slug.trim());
-      //goto(`/smelter/keys/${keys.toString()}`);
       const response = await $session.lapin.query(
         "dipstaging.listFromKeys",
         slugList
       );
       if (response) results = response;
-      console.log(results);
       lookupDone = true;
     }
-  }
-
-  /*function reset() {
-    depositor = {
-      prefix: "none",
-      label: "",
-    };
-    lookupView = BY_SLUG_LABEL;
-    lookupDone = false;
-    startDateStr = "";
-    endDateStr = "";
-    slugListString = "";
-  }*/
-
-  function resetLookupColor() {
-    //lookupDone = false;
+    loading = false;
   }
 </script>
 
@@ -103,10 +158,11 @@
   color={lookupDone ? "secondary" : "primary"}
   options={[BY_SLUG_LABEL, BY_DATE_LABEL]}
   on:select={changeView}
-/><br />
+/>
+<br />
 <br />
 
-<div class="lookup-wrap auto-align" on:click={resetLookupColor}>
+<div class="lookup-wrap auto-align">
   <div class="user-input">
     {#if lookupView === BY_SLUG_LABEL}
       <div class="extra-spacing">
@@ -168,7 +224,6 @@
   textarea {
     width: 100%;
   }
-
   button {
     float: right;
   }

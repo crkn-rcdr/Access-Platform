@@ -6,9 +6,10 @@ The resolver component allows the user to enter a slug, and then a request is se
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| slug : string                      | optional | Slug being resolved. |
-| noid: string | null | undefined    | optional | Noid that the slug resolves to, or null. |
-| hideInitial : boolean              | optional | Whether to hide the display when the current slug is the same as the initial slug provided. |
+| slug : string | optional | Slug being resolved. |
+| size: "sm" or "rg"  | optional | To display the resolve component in a small form or in full form. |
+| hideInitial : boolean | optional | Whether to hide the display when the current slug is the same as the initial slug provided. |
+| hideUnavailableMsg: boolean | optional | If the unavailable message should be hidden. Useful for custom errors. |
 
 ### Usage
 ```  
@@ -35,15 +36,21 @@ The resolver component allows the user to enter a slug, and then a request is se
 
   /**
    * @type {boolean}
-  /**
    * Whether to hide the display when the current slug is the
    * same as the initial slug provided.
    */
   export let hideInitial = false;
-  // https://github.com/crkn-rcdr/Access-Platform/blob/main/data/src/format/slug.ts
 
+  /**
+   * @type {"sm" | "rg"}
+   * To display the resolve component in a small form or in full form
+   */
   export let size: "sm" | "rg" = "rg";
 
+  /**
+   * @type {boolean}
+   * If the unavailable message should be hidden. Useful for custom errors.
+   */
   export let hideUnavailableMsg: boolean = false;
 
   /**
@@ -60,10 +67,17 @@ The resolver component allows the user to enter a slug, and then a request is se
    * @type {RegExp} A regular expression that will validate strings as slugs.
    */
   const regex = /^[\p{L}\p{Nl}\p{Nd}\-_\.]+$/u;
-  /** @type {"READY" | "LOADING" | "MALFORMED" | "ERROR"} */
+
+  /** @type {"READY" | "LOADING" | "MALFORMED" | "ERROR"}
+   * Indicates if the slug is available or not, or if the component is loading.
+   */
   let status: "READY" | "LOADING" | "MALFORMED" | "ERROR" =
     slug === undefined ? "LOADING" : "READY";
 
+  /**
+   * @type {string}
+   * The noid of item resolved, if the slug resolves to anything.
+   */
   let noid = "";
 
   /**
@@ -81,6 +95,9 @@ The resolver component allows the user to enter a slug, and then a request is se
    */
   let initial = slug;
 
+  /**
+   * @type {boolean} An indicator if the component has been rendered to the dom before, or not.
+   */
   let initialised = false;
 
   /**
@@ -122,6 +139,14 @@ The resolver component allows the user to enter a slug, and then a request is se
   }
 
   /**
+   * Checks if the component has been rendered and if the results should be hidden the first time that @var slug is set. Calls @function resolve appropriately
+   * @returns void
+   */
+  async function resolveOnChange() {
+    if ((hideInitial && initialised) || !hideInitial) await resolve();
+  }
+
+  /**
    * @event onMount
    * @description When the component instance is mounted onto the dom, @var initial object is set with the @var slug and @var noid that were passed into the component. Then, the resolve method is called.
    */
@@ -130,10 +155,6 @@ The resolver component allows the user to enter a slug, and then a request is se
     initialised = true;
   });
 
-  async function resolveOnChange() {
-    if ((hideInitial && initialised) || !hideInitial) await resolve();
-  }
-
   /**
    * @listens slug
    * @listens initial
@@ -141,6 +162,10 @@ The resolver component allows the user to enter a slug, and then a request is se
    */
   $: shouldQuery = !!slug && (slug !== initial || !hideInitial);
 
+  /**
+   * @listens slug
+   * @description A reactive code block that is executed any time the @var slug changes. It calls @function resolveOnChange which calls @function resolve under certain criteria.
+   */
   $: {
     slug;
     resolveOnChange().then((res) => console.log(res, "done"));

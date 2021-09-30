@@ -1,6 +1,7 @@
 <!--
 @component
 ### Overview
+This component lets the user toggle between two or more options (ex: daily, weekly, monthly)
 
 ### Properties
 |    |    |    |
@@ -9,6 +10,12 @@
 
 ### Usage
 ```  
+<ToggleButtons
+  activeIndex={lookupView === BY_SLUG_LABEL ? 0 : 1}
+  color={lookupDone ? "secondary" : "primary"}
+  options={[BY_SLUG_LABEL, BY_DATE_LABEL]}
+  on:select={changeView}
+/>
 ```
 -->
 <script lang="ts">
@@ -20,13 +27,29 @@
   const dispatch = createEventDispatcher();
 
   /**
-   * @type {string} The label text to display.
+   * @type {string} The label text of the toggle group to display.
    */
   export let label = "";
+
+  /**
+   * @type {string[]} The labels for each toggle button
+   */
   export let options: string[] = [];
+
+  /**
+   * @type {number}
+   */
   export let activeIndex: number = 0;
+
+  /**
+   * @type {"primary" or "secondary"} The labels for each toggle button
+   */
   export let color: "primary" | "secondary" = "primary";
 
+  /**
+   * @function
+   * When a toggle button is clicked, set the active button and alert any parents
+   */
   function itemClicked(index: number, option: string) {
     activeIndex = index;
     dispatch("select", { index, option });

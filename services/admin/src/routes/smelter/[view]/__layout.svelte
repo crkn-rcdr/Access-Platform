@@ -117,7 +117,7 @@
 <NotificationBar message={error} status="fail" />
 {#if typeof results !== "undefined" && typeof pageNumber !== "undefined" && typeof count !== "undefined"}
   <DipstagingLegacyPackageTable bind:results bind:view bind:pageNumber>
-    <span slot="dates" class="dates auto-align auto-align__a-end">
+    <span slot="actions" class="dates auto-align auto-align__a-end">
       <span class="auto-align auto-align__column">
         <label for="start">Start date:</label>
         <input type="date" id="start" name="trip-start" bind:value={dates[0]} />

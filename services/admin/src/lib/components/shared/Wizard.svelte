@@ -1,10 +1,31 @@
+<!--
+@component
+### Overview
+This component displays a wizard-like view used on the smelter and dmd pages.
+
+### Properties
+|    |    |    |
+| -- | -- | -- |
+| title: string | optional | A title to tell the user what the wizard is trying to accomplish |
+| size: "md" or "lg" | optional | How big the wizard should be |
+
+### Usage
+```
+<Wizard title="Smelter" size="lg">
+  ...content
+</Wizard>
+```
+*Note: `bind:` is required for changes to the properties to be reflected in higher level components.*
+-->
 <script lang="ts">
   /**
-   * @template
-   * @description This is the common layout for the wizard like pages
+   * @type {string} 1A title to tell the user what the wizard is trying to
    */
-
   export let title: string = "";
+
+  /**
+   * @type {"md" | "lg"} How big the wizard should be
+   */
   export let size: "md" | "lg" = "md";
 </script>
 

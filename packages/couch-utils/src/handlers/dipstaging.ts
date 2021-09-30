@@ -104,7 +104,7 @@ export class LegacyPackageHandler extends DatabaseHandler<LegacyPackage> {
     };
   }
 
-  // Too slow
+  /* Too slow
   async findIdsInView(
     viewName: string,
     page: number,
@@ -161,5 +161,5 @@ export class LegacyPackageHandler extends DatabaseHandler<LegacyPackage> {
 
     //console.log("response", response);
     return response.slice(start, end).map((row) => row.doc);
-  }
+  }*/
 }
