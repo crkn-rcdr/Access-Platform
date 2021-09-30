@@ -10,12 +10,17 @@ import { dmdTaskRouter } from "./routes/dmdTask.js";
 import { wipmetaRouter } from "./routes/wipmeta.js";
 import { dipstagingRouter } from "./routes/dipstaging.js";
 
+export interface HTTPErrorLike {
+  status: number;
+  message: string;
+}
+
 /**
  * Converts an HTTP Error (i.e. one with `status` as its 3-digit code) to
  * the JSON-RPC format tRPC prefers. It looks like tRPC 9.x might accept
  * HTTP codes for errors, thankfully.
  */
-export function httpErrorToTRPC(error: { status: number; message: string }) {
+export function httpErrorToTRPC(error: HTTPErrorLike) {
   const code =
     error.status === 400
       ? "BAD_REQUEST"

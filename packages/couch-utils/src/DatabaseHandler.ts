@@ -139,7 +139,8 @@ export class DatabaseHandler<T extends Document> {
     try {
       doc = (await this.db.get(id)) as CouchDocument;
     } catch (e) {
-      throw createHttpError(e.statusCode, e.error);
+      const error = e as RequestError;
+      throw createHttpError(error.statusCode || 500, error.message);
     }
 
     return this.parser.parse(fromCouch(doc));
@@ -194,7 +195,8 @@ export class DatabaseHandler<T extends Document> {
         }),
       };
     } catch (e) {
-      throw createHttpError(e.statusCode, e.error);
+      const error = e as RequestError;
+      throw createHttpError(error.statusCode || 500, error.message);
     }
   }
 
@@ -216,7 +218,8 @@ export class DatabaseHandler<T extends Document> {
     try {
       await this.db.insert(doc);
     } catch (e) {
-      throw createHttpError(e.statusCode, e.error);
+      const error = e as RequestError;
+      throw createHttpError(error.statusCode || 500, error.message);
     }
   }
 
@@ -244,7 +247,8 @@ export class DatabaseHandler<T extends Document> {
       );
       return response.message;
     } catch (e) {
-      throw createHttpError(e.statusCode, e.error);
+      const error = e as RequestError;
+      throw createHttpError(error.statusCode || 500, error.message);
     }
   }
 
@@ -269,7 +273,8 @@ export class DatabaseHandler<T extends Document> {
         body: args.body,
       })) as { message: string };
     } catch (e) {
-      throw createHttpError(e.statusCode, e.error);
+      const error = e as RequestError;
+      throw createHttpError(error.statusCode || 500, error.message);
     }
   }
 
@@ -300,7 +305,8 @@ export class DatabaseHandler<T extends Document> {
         }),
       };
     } catch (e) {
-      throw createHttpError(e.statusCode, e.error);
+      const error = e as RequestError;
+      throw createHttpError(error.statusCode || 500, error.message);
     }
   }
 
@@ -341,7 +347,8 @@ export class DatabaseHandler<T extends Document> {
         return response.docs as unknown as FindResult<T, Fields>[];
       }
     } catch (e) {
-      throw createHttpError(e.statusCode, e.error);
+      const error = e as RequestError;
+      throw createHttpError(error.statusCode || 500, error.message);
     }
   }
 
@@ -434,9 +441,10 @@ export class DatabaseHandler<T extends Document> {
     try {
       return JSON.parse(attachment.toString("utf-8"));
     } catch (e) {
+      const error = e as RequestError;
       throw createHttpError(
         400,
-        `Could not parse attachment ${args.attachment} as JSON: ${e.message}`
+        `Could not parse attachment ${args.attachment} as JSON: ${error.message}`
       );
     }
   }
@@ -480,7 +488,8 @@ export class DatabaseHandler<T extends Document> {
         }
       );
     } catch (e) {
-      throw createHttpError(e.statusCode, e.error);
+      const error = e as RequestError;
+      throw createHttpError(error.statusCode || 500, error.message);
     }
   }
 
