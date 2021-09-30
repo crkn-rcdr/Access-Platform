@@ -186,7 +186,7 @@ The resolver component allows the user to enter a slug, and then a request is se
         />
       {:else if isFound && !hideUnavailableMsg}
         <slot name="in-use">
-          <a href={`/object/${noid}`}>
+          <a target="_blank" href={`/object/${noid}`}>
             <NotificationBar message="⚠️ Slug in use" status="fail" />
           </a>
         </slot>
@@ -209,7 +209,7 @@ The resolver component allows the user to enter a slug, and then a request is se
     >
   {:else if isFound && !hideUnavailableMsg}
     <slot name="in-use">
-      <a href={`/object/${noid}`}>
+      <a target="_blank" href={`/object/${noid}`}>
         <span
           data-tooltip="⚠️ Slug in use, click to unassign it, or enter another."
           >❌</span
