@@ -80,7 +80,7 @@
 
   button {
     background: transparent;
-    border: 1px solid var(--border-color);
+    border: none;
     padding: 0.5rem 1em;
     margin-left: 3px;
     float: left;
