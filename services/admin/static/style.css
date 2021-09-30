@@ -523,6 +523,12 @@ button .icon,
   height: var(--perfect-fourth-6);
   margin: 0;
 }
+button:disabled {
+  background-color: var(--grey-light) !important;
+  color: var(--grey) !important;
+  filter: none !important;
+  cursor: not-allowed !important;
+}
 
 label {
   padding-bottom: 0.5rem;

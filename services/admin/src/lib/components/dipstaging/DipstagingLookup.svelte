@@ -25,9 +25,9 @@
   const BY_DATE_LABEL = "Look-up by Date";
   let lookupView: string = BY_SLUG_LABEL;
 
-  let startDateStr: string;
-  let endDateStr: string;
-  let slugListString: string;
+  let startDateStr: string = "";
+  let endDateStr: string = "";
+  let slugListString: string = "";
   let slugList: string[] = [];
 
   let lookupDone: boolean = false;
@@ -112,7 +112,8 @@
       <div class="extra-spacing">
         <PrefixSelector bind:depositor />
         <textarea
-          placeholder="Type a comma-seperated list of slugs"
+          rows="6"
+          placeholder="Enter a list of slugs seperated by commas or new lines."
           bind:value={slugListString}
         />
       </div>
@@ -133,19 +134,21 @@
 </div>
 
 <div class="extra-spacing">
-  {#if lookupView === BY_SLUG_LABEL && slugListString?.length}
+  {#if lookupView === BY_SLUG_LABEL}
     <button
       class:primary={!lookupDone}
       class:secondary={lookupDone}
       on:click={handleLookupPressedSlugList}
+      disabled={slugListString.length === 0}
     >
       {lookupDone ? "Look-up Packages Again" : "Look-up Packages"}
     </button>
-  {:else if lookupView === BY_DATE_LABEL && startDateStr?.length && endDateStr?.length}
+  {:else if lookupView === BY_DATE_LABEL}
     <button
       class:primary={!lookupDone}
       class:secondary={lookupDone}
       on:click={handleLookupPressedDates}
+      disabled={!(startDateStr.length && endDateStr.length)}
     >
       {lookupDone ? "Look-up Packages Again" : "Look-up Packages"}
     </button>
