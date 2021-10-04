@@ -15,7 +15,6 @@ export {
   ObjectList,
   TextRecord,
   isAlias,
-  isCanvas,
   isCollection,
   isManifest,
 } from "./access/index.js";
