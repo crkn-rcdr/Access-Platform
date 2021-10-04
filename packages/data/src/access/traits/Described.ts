@@ -22,4 +22,17 @@ export const Described = z.object({
    * The type of descriptive metadata record associated with this resource.
    */
   dmdType: DMDType.optional(),
+
+  /**
+   * Membership record for this object.
+   * Keys should be collection noids.
+   */
+  membership: z.record(
+    z.object({
+      /** Order sequence. Required even for unordered collections */
+      seq: z.number().int().positive(),
+      /** Optional member-context label */
+      label: TextRecord.optional(),
+    })
+  ),
 });
