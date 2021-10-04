@@ -288,9 +288,11 @@ export class AccessHandler extends DatabaseHandler<AccessObject> {
           if (r.id === id) {
             return [slug, { error: "is-self", resolved: false }];
           }
-          for (let member of currentMembers) {
-            if (r.id === member.id) {
-              return [slug, { error: "already-member", resolved: false }];
+          if (currentMembers) {
+            for (let member of currentMembers) {
+              if (r.id === member.id) {
+                return [slug, { error: "already-member", resolved: false }];
+              }
             }
           }
         }
