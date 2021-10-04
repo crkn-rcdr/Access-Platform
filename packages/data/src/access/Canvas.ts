@@ -9,8 +9,6 @@ import { ImageRef } from "./util/ImageRef.js";
  */
 export const Canvas = z
   .object({
-    type: z.enum(["canvas"]).default("canvas"),
-
     /**
      * Source information for this Canvas.
      */
