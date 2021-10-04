@@ -11,7 +11,7 @@ export const ObjectList = z.array(
     /**
      * The object's Noid.
      */
-    id: Noid.optional(),
+    id: Noid,
 
     /**
      * The object's label in this list's context.

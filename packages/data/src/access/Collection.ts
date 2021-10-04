@@ -19,9 +19,9 @@ export const Collection = z
     behavior: z.enum(["unordered", "individuals", "multi-part"]),
 
     /**
-     * The list of members of this collection.
+     * The list of members of this collection. Deprecated.
      */
-    members: ObjectList,
+    members: ObjectList.optional(),
   })
   .merge(Identified)
   .merge(Slugged)
