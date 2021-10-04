@@ -1,9 +1,8 @@
-import { z } from "zod";
 import createHttpError from "http-errors";
 import { ServerScope } from "nano";
 
 import {
-  Alias,
+  AccessObject,
   Manifest,
   Collection,
   Noid,
@@ -20,12 +19,6 @@ import { DatabaseHandler } from "../DatabaseHandler.js";
 
 import { xorWith, isEqual } from "lodash-es";
 
-// Use this essentially so that `slug` is defined
-// TODO: define a Zod parser that is aware of all possible fields.
-const AccessDatabaseObject = z.union([Alias, Manifest, Collection]);
-
-type AccessDatabaseObject = z.infer<typeof AccessDatabaseObject>;
-
 type SlugResolution =
   | { resolved: true; id: Noid; type: "manifest" | "collection" | "alias" }
   | { resolved: false; error: SlugResolutionError };
@@ -37,14 +30,14 @@ type SlugResolutionError =
 /**
  * Interact with Access Objects in their database.
  */
-export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
+export class AccessHandler extends DatabaseHandler<AccessObject> {
   /**
    * Create an AccessHandler.
    * @param client A couchdb-nano client.
    * @param suffix Suffix to append to the access database's name.
    */
   constructor(client: ServerScope, suffix?: string) {
-    super(suffix ? `access-${suffix}` : `access`, AccessDatabaseObject, client);
+    super(suffix ? `access-${suffix}` : `access`, AccessObject, client);
   }
 
   /**
