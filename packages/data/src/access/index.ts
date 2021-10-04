@@ -1,19 +1,14 @@
 import { z } from "zod";
 
 import { Alias } from "./Alias.js";
-import { Canvas } from "./Canvas.js";
 import { Collection } from "./Collection.js";
 import { Manifest } from "./Manifest.js";
 
-export const AccessObject = z.union([Alias, Canvas, Collection, Manifest]);
+export const AccessObject = z.union([Alias, Collection, Manifest]);
 export type AccessObject = z.infer<typeof AccessObject>;
 
 export const isAlias = (obj: AccessObject): obj is Alias => {
   return obj.type === "alias";
-};
-
-export const isCanvas = (obj: AccessObject): obj is Canvas => {
-  return obj.type === "canvas";
 };
 
 export const isCollection = (obj: AccessObject): obj is Collection => {
