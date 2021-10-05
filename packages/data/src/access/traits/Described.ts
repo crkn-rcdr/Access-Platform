@@ -27,12 +27,14 @@ export const Described = z.object({
    * Membership record for this object.
    * Keys should be collection noids.
    */
-  membership: z.record(
-    z.object({
-      /** Order sequence. Required even for unordered collections */
-      seq: z.number().int().positive(),
-      /** Optional member-context label */
-      label: TextRecord.optional(),
-    })
-  ),
+  membership: z
+    .record(
+      z.object({
+        /** Order sequence. Required even for unordered collections */
+        seq: z.number().int().positive(),
+        /** Optional member-context label */
+        label: TextRecord.optional(),
+      })
+    )
+    .optional(),
 });
