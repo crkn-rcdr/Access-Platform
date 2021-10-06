@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { Described } from "./traits/Described.js";
 import { Identified } from "./traits/Identified.js";
-import { Slugged } from "./traits/Slugged.js";
 import { FileRef } from "./util/FileRef.js";
 import { ObjectList } from "./util/ObjectList.js";
 import { TextRecord } from "./util/TextRecord.js";
@@ -64,7 +63,6 @@ export const Manifest = z
     pageLabels: z.array(TextRecord).optional(),
   })
   .merge(Identified)
-  .merge(Slugged)
   .merge(Described);
 
 export type Manifest = z.infer<typeof Manifest>;

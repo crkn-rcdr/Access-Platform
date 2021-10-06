@@ -1,9 +1,7 @@
 export {
   AccessObject,
-  Alias,
   Canvas,
   Collection,
-  EditableAlias,
   EditableCanvas,
   EditableCollection,
   NewCollection,
@@ -14,7 +12,6 @@ export {
   Manifest,
   ObjectList,
   TextRecord,
-  isAlias,
   isCollection,
   isManifest,
 } from "./access/index.js";

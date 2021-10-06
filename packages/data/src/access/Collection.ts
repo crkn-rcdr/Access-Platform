@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { Described } from "./traits/Described.js";
 import { Identified } from "./traits/Identified.js";
-import { Slugged } from "./traits/Slugged.js";
 import { ObjectList } from "./util/ObjectList.js";
 
 export const Collection = z
@@ -24,7 +23,6 @@ export const Collection = z
     members: ObjectList.optional(),
   })
   .merge(Identified)
-  .merge(Slugged)
   .merge(Described);
 
 export type Collection = z.infer<typeof Collection>;
