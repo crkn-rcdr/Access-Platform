@@ -20,16 +20,6 @@ const testCollection: Collection = {
   },
   dmdType: "dc",
   behavior: "multi-part",
-  members: [
-    {
-      id: "69429/m0696zw19t6s",
-      label: { none: "Vol. I, No. 1 (October 17, 1891)" },
-    },
-    {
-      id: "69429/m02n4zg6h671",
-      label: { none: "Vol. I, No. 2 (October 24, 1891)" },
-    },
-  ],
 };
 
 test("Collection parses valid data", isValid, testCollection);

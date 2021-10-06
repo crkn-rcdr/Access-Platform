@@ -87,6 +87,13 @@ export const testCanvasManifest: Manifest = {
       label: { none: "8" },
     },
   ],
+  memberships: [
+    {
+      of: "69429/s0vq2s46j98h",
+      seq: 2,
+      label: { none: "Vol. I, No. 2 (October 24, 1891)" },
+    },
+  ],
 };
 
 test("Manifest schema validates a CanvasManifest", isValid, testCanvasManifest);
