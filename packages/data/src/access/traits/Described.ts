@@ -1,5 +1,5 @@
 import { z } from "zod";
-
+import { Noid } from "../../util/Noid.js";
 import { TextRecord } from "../util/TextRecord.js";
 
 export const DMDType = z.enum(["dc", "marc", "issueinfo"]);
@@ -24,14 +24,15 @@ export const Described = z.object({
   dmdType: DMDType.optional(),
 
   /**
-   * Membership record for this object.
-   * Keys should be collection noids.
+   * Array of memberships for this object.
    */
   membership: z
-    .record(
+    .array(
       z.object({
-        /** Order sequence. Required even for unordered collections */
-        seq: z.number().int().positive(),
+        /** Noid of the collection this is a member of. */
+        of: Noid,
+        /** Order sequence */
+        seq: z.number().int().positive().optional(),
         /** Optional member-context label */
         label: TextRecord.optional(),
       })
