@@ -69,6 +69,7 @@
     "@crkn-rcdr/couch-utils": "workspace:*",
     "@crkn-rcdr/swift": "workspace:*",
     "@trpc/server": "^8.4.2",
+    "ava-ts": "^0.25.2",
     "deep-object-diff": "^1.1.0",
     "node-fetch": "^2.6.1",
     "zod": "^3.7.1"
