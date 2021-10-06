@@ -202,6 +202,7 @@ test.serial("Can unassign a slug", async (t) => {
   const collection = Collection.parse(await t.context.access.get(COLLECTION));
 
   const isMember = (id: string) =>
+    collection.members &&
     collection.members.findIndex((member) => member.id === id) >= 0;
 
   t.false(isMember(MANIFEST_TWO));
