@@ -12,6 +12,7 @@ importers:
     specifiers:
       '@crkn-rcdr/access-data': workspace:^0.0.0
       '@crkn-rcdr/access-env': workspace:*
+      '@crkn-rcdr/nano': ^2.0.1
       '@types/http-errors': ^1.8.1
       '@types/lodash-es': ^4.17.4
       '@types/node': ^16.4.13
@@ -33,6 +34,7 @@ importers:
       nano: 9.0.3
       zod: 3.7.1
     devDependencies:
+      '@crkn-rcdr/nano': 2.0.1
       '@types/http-errors': 1.8.1
       '@types/lodash-es': 4.17.4
       '@types/node': 16.4.13

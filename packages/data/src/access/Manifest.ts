@@ -61,6 +61,8 @@ export const Manifest = z
      * for `pdf` Manifests.
      */
     pageLabels: z.array(TextRecord).optional(),
+
+    members: z.undefined(),
   })
   .merge(Identified)
   .merge(Described);

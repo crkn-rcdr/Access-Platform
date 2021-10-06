@@ -1,7 +1,7 @@
 {
   "extends": "../tsconfig.json",
   "include": ["src/**/*.ts"],
-  "exclude": ["src/**/*.spec.ts", "src/testHelper.ts"],
+  "exclude": ["src/**/*.spec.ts", "src/migrate.ts"],
   "compilerOptions": {
     "outDir": "./dist/esm"
   }

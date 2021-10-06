@@ -17,8 +17,6 @@ import {
 
 import { DatabaseHandler } from "../DatabaseHandler.js";
 
-import { xorWith, isEqual } from "lodash-es";
-
 type SlugResolution =
   | { resolved: true; id: Noid; type: "manifest" | "collection" | "alias" }
   | { resolved: false; error: SlugResolutionError };
@@ -149,6 +147,8 @@ export class AccessHandler extends DatabaseHandler<AccessObject> {
 
     if (data.members) {
       const currentMembers = Collection.parse(await this.get(args.id)).members;
+
+      const { xorWith, isEqual } = await import("lodash-es");
 
       const filteredMembers = xorWith(data.members, currentMembers, isEqual);
 
