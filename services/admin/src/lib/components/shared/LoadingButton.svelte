@@ -8,6 +8,7 @@ This component is a button that shows a loading indicator when its property, sho
 | -- | -- | -- |
 | buttonClass: string  | optional | The html class attribute for the button. |
 | showLoader: boolean | optional | The state of the button, either to show the loading indicator or not. |
+| disabled: boolean | optional | If the user should be able to use the button or not. |
 
 ### Usage
 ```
@@ -35,7 +36,10 @@ This component is a button that shows a loading indicator when its property, sho
    * @type { boolean } The state of the button, either to show the loading indicator or not.
    */
   export let showLoader: boolean = false;
-
+  /**
+   * @type { boolean } If the user should be able to use the button or not
+   */
+  export let disabled: boolean = false;
   /**
    * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.
    */
@@ -51,7 +55,7 @@ This component is a button that shows a loading indicator when its property, sho
   }
 </script>
 
-<button class={buttonClass} on:click={handleClicked}>
+<button class={buttonClass} on:click={handleClicked} {disabled}>
   <span
     class="auto-align auto-align__a-center"
     class:loading-button={showLoader}

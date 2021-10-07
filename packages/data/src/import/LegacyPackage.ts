@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { MD5 } from "../util/MD5.js";
 import { Noid } from "../util/Noid.js";
-import { ProcessResult, ProcessUpdate } from "../util/ProcessUpdate.js";
+import { SmeltProcess } from "../util/ProcessUpdate.js"; //ProcessUpdate
 import { Slug } from "../util/Slug.js";
 import { StaffUpdate } from "../util/StaffUpdate.js";
 import { Timestamp } from "../util/Timestamp.js";
@@ -73,7 +73,7 @@ export const LegacyPackage = z.object({
   /**
    * Request for a Smelter operation on this package.
    */
-  smelt: ProcessUpdate.optional(),
+  smelt: SmeltProcess.optional(),
 
   /**
    * A record of the staff member who caused this record to be updated.
@@ -108,9 +108,9 @@ interface WithRequest extends WithDip {
 
 interface WithProcess extends WithRequest {
   /** The time the package was processed. */
-  processDate: Timestamp;
+  processDate: Timestamp | undefined;
   /** The message returned by the import processor. */
-  message: string;
+  message: string | undefined;
 }
 interface SlugUnavailableStatus extends WithId {
   status: "slug-unavailable";
@@ -132,12 +132,12 @@ interface FailureStatus extends WithProcess {
 }
 
 export type ImportStatus =
-  | SlugUnavailableStatus
-  | NotFoundStatus
+  | SuccessStatus
+  | FailureStatus
   | NewStatus
   | ProcessingStatus
-  | SuccessStatus
-  | FailureStatus;
+  | SlugUnavailableStatus
+  | NotFoundStatus;
 
 /**
  * Determines the status of a LegacyPackage object.
@@ -161,7 +161,7 @@ export const getImportStatus = (
       slug: slug || "",
       requestDate: smelt.requestDate,
     };
-    const processed = ProcessResult.safeParse(smelt);
+    const processed = SmeltProcess.safeParse(smelt);
     if (processed.success) {
       const processedResponse = {
         ...processResponse,

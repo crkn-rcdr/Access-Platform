@@ -20,7 +20,7 @@ This component allows the user to find packages in the dipstaging database.
   import ToggleButtons from "$lib/components/shared/ToggleButtons.svelte";
   import type { Depositor, Session } from "$lib/types";
   import type { ImportStatus } from "@crkn-rcdr/access-data";
-  import Loading from "../shared/Loading.svelte";
+  import LoadingButton from "$lib/components/shared/LoadingButton.svelte";
 
   /**
    * @type {ImportStatus[]}
@@ -137,6 +137,7 @@ This component allows the user to find packages in the dipstaging database.
     loading = true;
     if (slugList.includes(",")) slugList = slugListString.split(",");
     else slugList = slugListString.split("\n");
+    slugList = slugList.filter((slug) => slug.length);
     if (slugList.length) {
       if (depositor.prefix !== "none")
         slugList = slugList.map((slug) => `${depositor.prefix}.${slug.trim()}`);
@@ -190,25 +191,31 @@ This component allows the user to find packages in the dipstaging database.
 </div>
 
 <div class="extra-spacing">
-  {#if lookupView === BY_SLUG_LABEL}
-    <button
-      class:primary={!lookupDone}
-      class:secondary={lookupDone}
-      on:click={handleLookupPressedSlugList}
-      disabled={slugListString.length === 0}
-    >
-      {lookupDone ? "Look-up Packages Again" : "Look-up Packages"}
-    </button>
-  {:else if lookupView === BY_DATE_LABEL}
-    <button
-      class:primary={!lookupDone}
-      class:secondary={lookupDone}
-      on:click={handleLookupPressedDates}
-      disabled={!(startDateStr.length && endDateStr.length)}
-    >
-      {lookupDone ? "Look-up Packages Again" : "Look-up Packages"}
-    </button>
-  {/if}
+  <span class="lookup-button">
+    {#if lookupView === BY_SLUG_LABEL}
+      <LoadingButton
+        buttonClass={lookupDone ? "secondary" : "primary"}
+        on:clicked={handleLookupPressedSlugList}
+        showLoader={loading}
+        disabled={slugListString.length === 0}
+      >
+        <span slot="content">
+          {lookupDone ? "Look-up Packages Again" : "Look-up Packages"}
+        </span>
+      </LoadingButton>
+    {:else if lookupView === BY_DATE_LABEL}
+      <LoadingButton
+        buttonClass={lookupDone ? "secondary" : "primary"}
+        on:clicked={handleLookupPressedDates}
+        showLoader={loading}
+        disabled={!(startDateStr.length && endDateStr.length)}
+      >
+        <span slot="content">
+          {lookupDone ? "Look-up Packages Again" : "Look-up Packages"}
+        </span>
+      </LoadingButton>
+    {/if}
+  </span>
 </div>
 
 <style>
@@ -224,7 +231,7 @@ This component allows the user to find packages in the dipstaging database.
   textarea {
     width: 100%;
   }
-  button {
+  .lookup-button {
     float: right;
   }
 </style>

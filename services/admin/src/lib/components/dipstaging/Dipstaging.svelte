@@ -17,11 +17,11 @@ This component controls the rendering of the dipstaging menu (smelter) based on 
 *Note: `bind:` is required for changes to the properties to be reflected in higher level components.*
 -->
 <script lang="ts">
-  import SideMenuContainer from "../shared/SideMenuContainer.svelte";
-  import SideMenuPageList from "../shared/SideMenuPageList.svelte";
-  import SideMenuPageListButton from "../shared/SideMenuPageListButton.svelte";
-  import SideMenuBody from "../shared/SideMenuBody.svelte";
-  import SideMenuPage from "../shared/SideMenuPage.svelte";
+  import SideMenuContainer from "$lib/components/shared/SideMenuContainer.svelte";
+  import SideMenuPageList from "$lib/components/shared/SideMenuPageList.svelte";
+  import SideMenuPageListButton from "$lib/components/shared/SideMenuPageListButton.svelte";
+  import SideMenuBody from "$lib/components/shared/SideMenuBody.svelte";
+  import SideMenuPage from "$lib/components/shared/SideMenuPage.svelte";
 
   /**
    * @type {number} The index of the page to be displayed in the list of pages in the SideMenuContainer. This is set based of of the URL in the layout.
@@ -90,7 +90,7 @@ This component controls the rendering of the dipstaging menu (smelter) based on 
     text-decoration: none;
   }
   .page-wrap {
-    padding: 2rem 3rem;
+    padding: 2rem 4rem;
     height: 100%;
   }
 </style>

@@ -51,4 +51,4 @@ FROM init AS prod
 
 COPY --from=builder /repo /repo
 
-RUN pnpm i -r --silent --prod
+RUN pnpm i -r --prod

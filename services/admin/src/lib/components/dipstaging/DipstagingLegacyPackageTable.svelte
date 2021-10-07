@@ -24,8 +24,9 @@ This component shows the results of a dipstaging package view. It allows the use
   import { getStores } from "$app/stores";
   import type { Session } from "$lib/types";
   import type { LegacyPackage } from "@crkn-rcdr/access-data";
-  import Resolver from "../access-objects/Resolver.svelte";
-  import Loading from "../shared/Loading.svelte";
+  import Resolver from "$lib/components/access-objects/Resolver.svelte";
+  import Loading from "$lib/components/shared/Loading.svelte";
+  import XmlViewer from "$lib/components/shared/XmlViewer.svelte";
 
   /**
    * @type {LegacyPackage[]}
@@ -238,7 +239,7 @@ This component shows the results of a dipstaging package view. It allows the use
         </thead>
         <tbody>
           {#each results as legacyPackage, i}
-            <tr>
+            <tr class:expanded={expandedMap[legacyPackage.id]}>
               {#if view !== "queue"}
                 <td>
                   <!--slug taken logic-->
@@ -317,7 +318,7 @@ This component shows the results of a dipstaging package view. It allows the use
               </td>
             </tr>
             {#if expandedMap[legacyPackage.id]}
-              <tr>
+              <tr class="row-details">
                 <td colspan="5">
                   <table>
                     <tbody>
@@ -352,9 +353,11 @@ This component shows the results of a dipstaging package view. It allows the use
                       <tr>
                         <td class="detail-label">Message:</td>
                         <td>
-                          {legacyPackage.smelt?.["message"]?.length
-                            ? legacyPackage.smelt?.["message"]
-                            : "N/A"}
+                          <XmlViewer
+                            xml={legacyPackage.smelt?.["message"]?.length
+                              ? legacyPackage.smelt?.["message"]
+                              : "N/A"}
+                          />
                         </td>
                       </tr>
                     </tbody>
@@ -395,5 +398,27 @@ This component shows the results of a dipstaging package view. It allows the use
   .loading {
     width: 100%;
     text-align: center;
+  }
+  .detail-label {
+    width: 20rem;
+  }
+  .row-details {
+    color: var(--secondary);
+    background: var(--light-bg);
+    filter: brightness(0.98);
+  }
+  .row-details table {
+    margin-top: 0;
+  }
+  .row-details tbody {
+    background: none;
+  }
+  tr.expanded {
+    background: var(--light-bg);
+    filter: brightness(0.98);
+  }
+  pre {
+    color: var(--secondary);
+    background: none;
   }
 </style>

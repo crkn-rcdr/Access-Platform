@@ -20,8 +20,9 @@ This component shows the results of a dipstaging find-package(s) request. It all
   import { getStores } from "$app/stores";
   import type { Session } from "$lib/types";
   import type { ImportStatus } from "@crkn-rcdr/access-data";
-  import Resolver from "../access-objects/Resolver.svelte";
-  import Loading from "../shared/Loading.svelte";
+  import Resolver from "$lib/components/access-objects/Resolver.svelte";
+  import Loading from "$lib/components/shared/Loading.svelte";
+  import XmlViewer from "$lib/components/shared/XmlViewer.svelte";
 
   /**
    * @type {ImportStatus[]}
@@ -222,7 +223,7 @@ This component shows the results of a dipstaging find-package(s) request. It all
       </thead>
       <tbody>
         {#each results as importStatus, i}
-          <tr>
+          <tr class:expanded={expandedMap[importStatus.id]}>
             <td>
               {#if sucessfulSmeltRequestMap[importStatus.id] || !slugAvailableMap[importStatus.id] || importStatus.status === "not-found" || importStatus.status === "processing"}
                 <input type="checkbox" disabled />
@@ -297,7 +298,7 @@ This component shows the results of a dipstaging find-package(s) request. It all
           </tr>
 
           {#if expandedMap[importStatus.id]}
-            <tr>
+            <tr class="row-details">
               <td colspan="5">
                 <table>
                   <tbody>
@@ -319,11 +320,13 @@ This component shows the results of a dipstaging find-package(s) request. It all
                     </tr>
                     <tr>
                       <td class="detail-label">Message:</td>
-                      <td
-                        >{importStatus["message"]?.length
-                          ? importStatus["message"]
-                          : "N/A"}</td
-                      >
+                      <td>
+                        <XmlViewer
+                          xml={importStatus["message"]?.length
+                            ? importStatus["message"]
+                            : "N/A"}
+                        />
+                      </td>
                     </tr>
                   </tbody>
                 </table>
@@ -367,5 +370,24 @@ This component shows the results of a dipstaging find-package(s) request. It all
   }
   .detail-label {
     width: 20rem;
+  }
+  .row-details {
+    color: var(--secondary);
+    background: var(--light-bg);
+    filter: brightness(0.98);
+  }
+  .row-details table {
+    margin-top: 0;
+  }
+  .row-details tbody {
+    background: none;
+  }
+  tr.expanded {
+    background: var(--light-bg);
+    filter: brightness(0.98);
+  }
+  pre {
+    color: var(--secondary);
+    background: none;
   }
 </style>
