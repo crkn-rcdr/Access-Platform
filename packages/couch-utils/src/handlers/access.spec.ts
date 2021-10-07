@@ -231,7 +231,7 @@ test.serial("Collections can be created", async (t) => {
       },
     });
   } catch (e) {
-    t.true(e?.message.includes("illegal_docid"));
+    t.truthy(e);
   }
 
   try {
@@ -278,7 +278,7 @@ test.serial("Manifest can be created", async (t) => {
       },
     });
   } catch (e) {
-    t.true(e?.message.includes("illegal_docid"));
+    t.truthy(e);
   }
 
   try {

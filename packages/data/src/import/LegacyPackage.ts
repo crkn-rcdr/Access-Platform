@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { MD5 } from "../util/MD5.js";
 import { Noid } from "../util/Noid.js";
-import { SmeltProcess } from "../util/ProcessUpdate.js"; //ProcessUpdate
+import { SmeltProcess, ProcessResult } from "../util/ProcessUpdate.js"; //ProcessUpdate
 import { Slug } from "../util/Slug.js";
 import { StaffUpdate } from "../util/StaffUpdate.js";
 import { Timestamp } from "../util/Timestamp.js";
@@ -112,9 +112,6 @@ interface WithProcess extends WithRequest {
   /** The message returned by the import processor. */
   message: string | undefined;
 }
-interface SlugUnavailableStatus extends WithId {
-  status: "slug-unavailable";
-}
 interface NotFoundStatus extends WithId {
   status: "not-found";
 }
@@ -136,7 +133,6 @@ export type ImportStatus =
   | FailureStatus
   | NewStatus
   | ProcessingStatus
-  | SlugUnavailableStatus
   | NotFoundStatus;
 
 /**
@@ -153,15 +149,13 @@ export const getImportStatus = (
   if (!lp) return { status: "not-found", id };
   const { repos, reposManifestDate: ingestDate, slug, smelt, staff } = lp;
   const response = { id, repos, ingestDate, noid: noid || null, staff };
-  if (!smelt && typeof noid !== "undefined") {
-    return { status: "slug-unavailable", ...response };
-  } else if (smelt) {
+  if (smelt) {
     const processResponse = {
       ...response,
       slug: slug || "",
       requestDate: smelt.requestDate,
     };
-    const processed = SmeltProcess.safeParse(smelt);
+    const processed = ProcessResult.safeParse(smelt);
     if (processed.success) {
       const processedResponse = {
         ...processResponse,

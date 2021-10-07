@@ -76,26 +76,27 @@ export class LegacyPackageHandler extends DatabaseHandler<LegacyPackage> {
   // TODO: test
   async listFromView(
     viewName: string,
-    limit: number,
-    skip: number,
+    limit: number | null = null,
+    skip: number | null = null,
     startDate: string | null = null,
     endDate: string | null = null
   ) {
     let viewOptions: DocumentViewParams = {
       include_docs: true,
       reduce: false,
-      limit,
-      skip,
     };
+    if (limit !== null) viewOptions.limit = limit;
+    if (skip !== null) viewOptions.skip = skip;
 
     if (startDate !== null && endDate !== null) {
       const startArray = DateString.parse(startDate);
       const endArray = DateString.parse(endDate);
-      //endArray[2] = (endArray[2] as number) + 0.1;
-      viewOptions["startkey"] = startArray;
-      viewOptions["endkey"] = endArray;
+      viewOptions["startkey"] =
+        viewName === "smeltStatus" ? [...startArray, {}] : startArray;
+      viewOptions["endkey"] =
+        viewName === "smeltStatus" ? [...endArray, {}] : endArray;
     }
-    console.log(viewOptions);
+    console.log("viewOptions", viewOptions);
 
     const list = await this.view("access", viewName, viewOptions);
     return {
