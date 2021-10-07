@@ -95,6 +95,8 @@ export class LegacyPackageHandler extends DatabaseHandler<LegacyPackage> {
         viewName === "smeltStatus" ? [...startArray, {}] : startArray;
       viewOptions["endkey"] =
         viewName === "smeltStatus" ? [...endArray, {}] : endArray;
+      /*viewOptions["startkey"] = startArray;
+      viewOptions["endkey"] = endArray;*/
     }
     console.log("viewOptions", viewOptions);
 

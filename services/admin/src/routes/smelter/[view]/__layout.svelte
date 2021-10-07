@@ -100,11 +100,11 @@
   }
 
   function handlePageChangePressed(event) {
-    console.log(event);
+    //console.log(event);
     const route = `/smelter/${view}/${event.detail}/${
       dates?.length && dates[0].length ? dates.toString() : "all"
     }`;
-    console.log(route);
+    //console.log(route);
     goto(route);
   }
 </script>
