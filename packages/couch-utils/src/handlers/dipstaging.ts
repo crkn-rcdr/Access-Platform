@@ -92,9 +92,9 @@ export class LegacyPackageHandler extends DatabaseHandler<LegacyPackage> {
       const startArray = DateString.parse(startDate);
       const endArray = DateString.parse(endDate);
       viewOptions["startkey"] =
-        viewName === "smeltStatus" ? [...startArray, true] : startArray;
+        viewName === "smeltStatus" ? [...startArray, {}] : startArray;
       viewOptions["endkey"] =
-        viewName === "smeltStatus" ? [...endArray, true] : endArray;
+        viewName === "smeltStatus" ? [...endArray, {}] : endArray;
       /*viewOptions["startkey"] = startArray;
       viewOptions["endkey"] = endArray;*/
     }
