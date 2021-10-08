@@ -26,12 +26,11 @@
       }
 
       if (route) {
-        const pageNumber =
-          parseInt(page.params["page"]) ||
-          1; /*parseInt(page.query.get("page")) || 1;*/
+        const pageNumber = parseInt(page.params["page"]) || 1;
+        const pageSize = parseInt(page.params["size"]) || 10;
         let bodyObj = {
           page: pageNumber,
-          pageSize: 10,
+          pageSize: pageSize,
         };
 
         let dates = ["", ""];
@@ -60,6 +59,7 @@
               pageNumber,
               dates,
               view,
+              pageSize,
             },
           };
       }
@@ -91,6 +91,7 @@
 
   export let results: LegacyPackage[]; //: ImportStatus[]
   export let pageNumber: number;
+  export let pageSize: number;
   export let count: number;
   export let view: string = "";
   export let error: string = "";
@@ -108,21 +109,24 @@
   function filter() {
     const datesRouteStr = getDateRouteStr();
     const statusRouteStr = getStatusRouteStr();
-    goto(`/smelter/${view}/${pageNumber}${datesRouteStr}${statusRouteStr}`, {
-      noscroll: true,
-    });
+    goto(
+      `/smelter/${view}/${pageNumber}/${pageSize}${datesRouteStr}${statusRouteStr}`,
+      {
+        noscroll: true,
+      }
+    );
   }
 
   function reset() {
     goto(`/smelter/${view}/${pageNumber}/all`, { noscroll: true });
   }
 
-  function handlePageChangePressed(event) {
+  function handlePaginatorChange(event) {
     const datesRouteStr = getDateRouteStr();
     const statusRouteStr = getStatusRouteStr();
-    const route = `/smelter/${view}/${event.detail}${
-      datesRouteStr.length ? datesRouteStr + statusRouteStr : "/all"
-    }`;
+    const route = `/smelter/${view}/${event.detail.page}/${
+      event.detail.pageSize
+    }${datesRouteStr.length ? datesRouteStr + statusRouteStr : "/all"}`;
     goto(route, { noscroll: true });
   }
 </script>
@@ -181,9 +185,9 @@
   </DipstagingLegacyPackageTable>
   <Paginator
     page={pageNumber - 1}
-    pageSize={10}
+    {pageSize}
     {count}
-    on:pageChange={handlePageChangePressed}
+    on:change={handlePaginatorChange}
   />
 {/if}
 

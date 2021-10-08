@@ -62,7 +62,10 @@ A card component that optionally allows for user selection
    * @returns void
    */
   function onChange(event, page) {
-    dispatch("pageChange", page + 1);
+    dispatch("change", {
+      page: page + 1,
+      pageSize,
+    });
   }
 
   /**
@@ -73,6 +76,19 @@ A card component that optionally allows for user selection
   $: pageCount = Math.floor(count / pageSize);
 </script>
 
+<label for="page-size">Items per page:</label>
+<select
+  name="page-size"
+  bind:value={pageSize}
+  on:change={(e) => onChange(e, page)}
+>
+  <option value={10}>10</option>
+  <option value={20}>20</option>
+  <option value={30}>30</option>
+  <option value={40}>40</option>
+  <option value={50}>50</option>
+  <option value={100}>100</option>
+</select>
 <ul>
   <li>
     <button disabled={page === 0} on:click={(e) => onChange(e, 0)}>
