@@ -109,16 +109,14 @@
   function filter() {
     const datesRouteStr = getDateRouteStr();
     const statusRouteStr = getStatusRouteStr();
-    goto(
-      `/smelter/${view}/${pageNumber}/${pageSize}${datesRouteStr}${statusRouteStr}`,
-      {
-        noscroll: true,
-      }
-    );
+    //${pageNumber}
+    goto(`/smelter/${view}/1/${pageSize}${datesRouteStr}${statusRouteStr}`, {
+      noscroll: true,
+    });
   }
 
   function reset() {
-    goto(`/smelter/${view}/${pageNumber}/all`, { noscroll: true });
+    goto(`/smelter/${view}/1/${pageSize}/all`, { noscroll: true });
   }
 
   function handlePaginatorChange(event) {
