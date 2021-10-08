@@ -134,12 +134,6 @@
 
 <NotificationBar message={error} status="fail" />
 {#if typeof results !== "undefined" && typeof pageNumber !== "undefined" && typeof count !== "undefined"}
-  <Paginator
-    page={pageNumber - 1}
-    pageSize={10}
-    {count}
-    on:pageChange={handlePageChangePressed}
-  />
   <DipstagingLegacyPackageTable bind:results bind:view bind:pageNumber>
     <span slot="actions" class="dates auto-align auto-align__a-end">
       {#if view === "status"}
