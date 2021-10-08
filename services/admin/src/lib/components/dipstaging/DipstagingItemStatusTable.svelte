@@ -84,7 +84,6 @@ This component shows the results of a dipstaging find-package(s) request. It all
    */
   function toggleAllSelected(event) {
     for (const item of results) {
-      console.log(slugAvailableMap[item.id]);
       if (slugAvailableMap[item.id])
         selectedMap[item.id] = event.target.checked;
       else selectedMap[item.id] = false;
@@ -108,9 +107,8 @@ This component shows the results of a dipstaging find-package(s) request. It all
               slug: item["slug"],
             }
           );
-          console.log(response);
           sucessfulSmeltRequestMap[item.id] = true;
-          setSelectedModel();
+          selectedMap[item.id] = false;
         } catch (e) {
           sucessfulSmeltRequestMap[item.id] = false;
           console.log(e?.message);
@@ -167,9 +165,23 @@ This component shows the results of a dipstaging find-package(s) request. It all
    */
   function setSelectedModel() {
     for (const item of results) {
-      if (!(item.id in selectedMap)) selectedMap[item.id] = true;
+      if (!(item.id in selectedMap) && isItemSelectable(item))
+        selectedMap[item.id] = true;
     }
     selectedMap = selectedMap;
+  }
+
+  /**
+   * Checks to see if the item can be run through smelter or not
+   * @returns void
+   */
+  function isItemSelectable(importStatus: ImportStatus) {
+    return (
+      !sucessfulSmeltRequestMap[importStatus.id] &&
+      slugAvailableMap[importStatus.id] &&
+      importStatus.status !== "not-found" &&
+      importStatus.status !== "processing"
+    );
   }
 
   /**
@@ -183,6 +195,17 @@ This component shows the results of a dipstaging find-package(s) request. It all
     setExpandedModel();
     setSelectedModel();
     loading = false;
+  }
+
+  /**
+   * @listens slugAvailableMap
+   * @listens sucessfulSmeltRequestMap
+   * @description calls @function setSelectedModel to re-set what items are selected when @var slugAvailableMap or @var sucessfulSmeltRequestMap change.
+   */
+  $: {
+    slugAvailableMap;
+    sucessfulSmeltRequestMap;
+    setSelectedModel();
   }
 
   /**
@@ -385,9 +408,5 @@ This component shows the results of a dipstaging find-package(s) request. It all
   tr.expanded {
     background: var(--light-bg);
     filter: brightness(0.98);
-  }
-  pre {
-    color: var(--secondary);
-    background: none;
   }
 </style>

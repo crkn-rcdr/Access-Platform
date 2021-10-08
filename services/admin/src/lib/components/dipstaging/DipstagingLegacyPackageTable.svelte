@@ -125,7 +125,7 @@ This component shows the results of a dipstaging package view. It allows the use
             }
           );
           sucessfulSmeltRequestMap[item.id] = true;
-          setSelectedModel();
+          selectedMap[item.id] = false;
         } catch (e) {
           sucessfulSmeltRequestMap[item.id] = false;
           console.log(e?.message);
@@ -182,9 +182,22 @@ This component shows the results of a dipstaging package view. It allows the use
    */
   function setSelectedModel() {
     for (const item of results) {
-      if (!(item.id in selectedMap)) selectedMap[item.id] = false;
+      if (!(item.id in selectedMap) && isItemSelectable(item))
+        selectedMap[item.id] = false;
     }
     selectedMap = selectedMap;
+  }
+
+  /**
+   * Checks to see if the item can be run through smelter or not
+   * @returns void
+   */
+  function isItemSelectable(legacyPackage: LegacyPackage) {
+    return (
+      !sucessfulSmeltRequestMap[legacyPackage.id] &&
+      slugAvailableMap[legacyPackage.id] &&
+      view !== "queue"
+    );
   }
 
   /**
@@ -200,6 +213,21 @@ This component shows the results of a dipstaging package view. It allows the use
     loading = false;
   }
 
+  /**
+   * @listens slugAvailableMap
+   * @listens sucessfulSmeltRequestMap
+   * @description calls @function setSelectedModel to re-set what items are selected when @var slugAvailableMap or @var sucessfulSmeltRequestMap change.
+   */
+  $: {
+    slugAvailableMap;
+    sucessfulSmeltRequestMap;
+    setSelectedModel();
+  }
+
+  /**
+   * @listens selectedMap
+   * @description Checks the selectedMap to see if at least one item is selected, if so @var itemsAreSelected is set to true, otherwise it is false.
+   */
   $: itemsAreSelected =
     Object.keys(selectedMap).filter((key) => selectedMap[key]).length > 0;
 </script>
@@ -251,7 +279,7 @@ This component shows the results of a dipstaging package view. It allows the use
               {#if view !== "queue"}
                 <td>
                   <!--slug taken logic-->
-                  {#if !slugAvailableMap[legacyPackage.id]}
+                  {#if sucessfulSmeltRequestMap[legacyPackage.id] || !slugAvailableMap[legacyPackage.id] || view === "queue"}
                     <input
                       type="checkbox"
                       disabled
@@ -436,9 +464,5 @@ This component shows the results of a dipstaging package view. It allows the use
   tr.expanded {
     background: var(--light-bg);
     filter: brightness(0.98);
-  }
-  pre {
-    color: var(--secondary);
-    background: none;
   }
 </style>

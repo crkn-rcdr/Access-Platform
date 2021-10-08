@@ -21,6 +21,7 @@ This component allows the user to find packages in the dipstaging database.
   import type { Depositor, Session } from "$lib/types";
   import type { ImportStatus } from "@crkn-rcdr/access-data";
   import LoadingButton from "$lib/components/shared/LoadingButton.svelte";
+  import NotificationBar from "../shared/NotificationBar.svelte";
 
   /**
    * @type {ImportStatus[]}
@@ -87,6 +88,11 @@ This component allows the user to find packages in the dipstaging database.
   let loading: boolean = false;
 
   /**
+   * @type { string } Used to diaplay any errors from the backend to the user.
+   */
+  let error = "";
+
+  /**
    * Sets the @var lookupView when the toggle buttons are clicked
    * @returns void
    */
@@ -118,12 +124,20 @@ This component allows the user to find packages in the dipstaging database.
    */
   async function sendLookupRequestDates() {
     loading = true;
+    error = "";
     if (startDateStr?.length && endDateStr?.length) {
-      const response = await $session.lapin.query("dipstaging.listFromDates", {
-        from: startDateStr,
-        to: endDateStr,
-      });
-      if (response) results = response;
+      try {
+        const response = await $session.lapin.query(
+          "dipstaging.listFromDates",
+          {
+            from: startDateStr,
+            to: endDateStr,
+          }
+        );
+        if (response) results = response;
+      } catch (e) {
+        error = e?.message;
+      }
       lookupDone = true;
     }
     loading = false;
@@ -217,6 +231,14 @@ This component allows the user to find packages in the dipstaging database.
     {/if}
   </span>
 </div>
+
+{#if error.length}
+  <br />
+  <br />
+  <br />
+  <br />
+{/if}
+<NotificationBar message={error} status="fail" />
 
 <style>
   .lookup-wrap {

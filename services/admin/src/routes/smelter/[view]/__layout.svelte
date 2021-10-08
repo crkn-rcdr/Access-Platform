@@ -105,10 +105,14 @@
     return view === "status" && status !== null ? `/${status}` : "";
   }
 
-  function refine() {
+  function filter() {
     const datesRouteStr = getDateRouteStr();
     const statusRouteStr = getStatusRouteStr();
     goto(`/smelter/${view}/${pageNumber}${datesRouteStr}${statusRouteStr}`);
+  }
+
+  function reset() {
+    goto(`/smelter/${view}/${pageNumber}/all`);
   }
 
   function handlePageChangePressed(event) {
@@ -150,15 +154,28 @@
       </span>
       <button
         class="refine-button secondary"
-        on:click={refine}
+        on:click={filter}
         disabled={!(
           dates[0]?.length &&
           dates[1]?.length &&
           (view !== "status" || status !== null)
         )}
       >
-        Refine Packages
+        Filter
       </button>
+      {#if dates[0]?.length && dates[1]?.length && (view !== "status" || status !== null)}
+        <button
+          class="refine-button secondary"
+          on:click={reset}
+          disabled={!(
+            dates[0]?.length &&
+            dates[1]?.length &&
+            (view !== "status" || status !== null)
+          )}
+        >
+          Clear Filters
+        </button>
+      {/if}
     </span>
   </DipstagingLegacyPackageTable>
   <Paginator
