@@ -79,7 +79,8 @@ export class LegacyPackageHandler extends DatabaseHandler<LegacyPackage> {
     limit: number | null = null,
     skip: number | null = null,
     startDate: string | null = null,
-    endDate: string | null = null
+    endDate: string | null = null,
+    status: boolean | null = null
   ) {
     let viewOptions: DocumentViewParams = {
       include_docs: true,
@@ -92,11 +93,9 @@ export class LegacyPackageHandler extends DatabaseHandler<LegacyPackage> {
       const startArray = DateString.parse(startDate);
       const endArray = DateString.parse(endDate);
       viewOptions["startkey"] =
-        viewName === "smeltStatus" ? [true, ...startArray, {}] : startArray;
+        status !== null ? [status, ...startArray] : startArray;
       viewOptions["endkey"] =
-        viewName === "smeltStatus" ? [true, ...endArray, {}] : endArray;
-      /*viewOptions["startkey"] = startArray;
-      viewOptions["endkey"] = endArray;*/
+        status !== null ? [status, ...endArray] : endArray;
     }
     console.log("viewOptions", viewOptions);
 

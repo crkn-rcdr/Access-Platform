@@ -44,6 +44,11 @@
           }
         }
 
+        const status = page.params["status"];
+        if (typeof status !== "undefined") {
+          bodyObj["status"] = status === "true";
+        }
+
         const response: { count: number; results: LegacyPackage[] } =
           await context.lapin.query(`dipstaging.${route}`, bodyObj);
         console.log(response);
@@ -90,19 +95,27 @@
   export let view: string = "";
   export let error: string = "";
   export let dates: string[];
+  export let status: boolean;
 
-  function refineByDate() {
-    goto(
-      `/smelter/${view}/${pageNumber}/${
-        dates?.length && dates[0].length ? dates.toString() : "all"
-      }`
-    );
+  function getDateRouteStr() {
+    return dates?.length && dates[0].length ? `/${dates.toString()}` : "";
+  }
+
+  function getStatusRouteStr() {
+    return view === "status" && status !== null ? `/${status}` : "";
+  }
+
+  function refine() {
+    const datesRouteStr = getDateRouteStr();
+    const statusRouteStr = getStatusRouteStr();
+    goto(`/smelter/${view}/${pageNumber}${datesRouteStr}${statusRouteStr}`);
   }
 
   function handlePageChangePressed(event) {
-    //console.log(event);
-    const route = `/smelter/${view}/${event.detail}/${
-      dates?.length && dates[0].length ? dates.toString() : "all"
+    const datesRouteStr = getDateRouteStr();
+    const statusRouteStr = getStatusRouteStr();
+    const route = `/smelter/${view}/${event.detail}${
+      datesRouteStr.length ? datesRouteStr + statusRouteStr : "/all"
     }`;
     //console.log(route);
     goto(route);
@@ -118,18 +131,31 @@
 {#if typeof results !== "undefined" && typeof pageNumber !== "undefined" && typeof count !== "undefined"}
   <DipstagingLegacyPackageTable bind:results bind:view bind:pageNumber>
     <span slot="actions" class="dates auto-align auto-align__a-end">
+      {#if view === "status"}
+        <span class="status auto-align auto-align__column">
+          <label for="status">Status:</label>
+          <select name="status" bind:value={status}>
+            <option value={true}>Succeeded</option>
+            <option value={false}>Failed</option>
+          </select>
+        </span>
+      {/if}
       <span class="auto-align auto-align__column">
         <label for="start">Start date:</label>
-        <input type="date" id="start" name="trip-start" bind:value={dates[0]} />
+        <input type="date" id="start" name="start" bind:value={dates[0]} />
       </span>
       <span class="auto-align auto-align__column">
         <label for="end">End date:</label>
-        <input type="date" id="end" name="trip-end" bind:value={dates[1]} />
+        <input type="date" id="end" name="end" bind:value={dates[1]} />
       </span>
       <button
         class="refine-button secondary"
-        on:click={refineByDate}
-        disabled={!(dates[0]?.length && dates[1]?.length)}
+        on:click={refine}
+        disabled={!(
+          dates[0]?.length &&
+          dates[1]?.length &&
+          (view !== "status" || status !== null)
+        )}
       >
         Refine Packages
       </button>
@@ -152,5 +178,9 @@
   }
   .refine-button {
     margin-left: var(--margin-sm);
+  }
+  .status select {
+    margin-top: 0;
+    padding: 1.15rem var(--perfect-fourth-8);
   }
 </style>

@@ -19,6 +19,7 @@ const ViewInput = z.object({
   pageSize: z.number(),
   to: z.string().optional(),
   from: z.string().optional(),
+  status: z.boolean().optional(),
 });
 
 export const dipstagingRouter = createRouter()
@@ -89,7 +90,8 @@ export const dipstagingRouter = createRouter()
           input.pageSize,
           (input.page - 1) * input.pageSize,
           input.from,
-          input.to
+          input.to,
+          input.status
         );
       } catch (e) {
         console.log(e?.message);

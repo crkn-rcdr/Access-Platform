@@ -233,7 +233,15 @@ This component shows the results of a dipstaging package view. It allows the use
             {/if}
             <th>Id</th>
             <th>Slug</th>
-            <th><!--Repos Manifest Date-->Ingest Date</th>
+            <th>
+              {#if view === "status"}
+                Processed Date
+              {:else if view === "queue"}
+                Request Date
+              {:else}
+                Updated Date
+              {/if}
+            </th>
             <th>Smelt Status</th>
           </tr>
         </thead>
@@ -277,9 +285,19 @@ This component shows the results of a dipstaging package view. It allows the use
               </td>
 
               <td>
-                {legacyPackage.reposManifestDate
-                  ? new Date(legacyPackage.reposManifestDate).toLocaleString()
-                  : "N/A"}
+                {#if view === "status"}
+                  {legacyPackage?.smelt?.processDate
+                    ? new Date(legacyPackage.smelt.processDate).toLocaleString()
+                    : "N/A"}
+                {:else if view === "queue"}
+                  {legacyPackage?.smelt?.requestDate
+                    ? new Date(legacyPackage.smelt.requestDate).toLocaleString()
+                    : "N/A"}
+                {:else}
+                  {legacyPackage?.reposManifestDate
+                    ? new Date(legacyPackage.reposManifestDate).toLocaleString()
+                    : "N/A"}
+                {/if}
               </td>
 
               <!---->
@@ -294,7 +312,9 @@ This component shows the results of a dipstaging package view. It allows the use
                   {:else if view === "queue"}
                     Smelter is running on the package.
                   {:else if view === "status"}
-                    {legacyPackage.smelt?.["succeeded"] ? "Suceeded" : "Failed"}
+                    {legacyPackage.smelt?.["succeeded"]
+                      ? "Succeeded"
+                      : "Failed"}
                   {:else if view === "neversmelted"}
                     Never Smelted
                   {:else if view === "updated"}

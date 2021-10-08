@@ -14,7 +14,8 @@ module.exports = function (doc, req) {
     return errorReturn(`Could not parse request body as JSON: ${req.body}`);
   }
 
-  const now = Date.now() / 1000;
+  //const now = Date.now() / 1000;
+  const now = new Date().toISOString().replace(/.\d+Z$/g, "Z");
 
   const { user } = data;
 
