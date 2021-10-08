@@ -108,11 +108,13 @@
   function filter() {
     const datesRouteStr = getDateRouteStr();
     const statusRouteStr = getStatusRouteStr();
-    goto(`/smelter/${view}/${pageNumber}${datesRouteStr}${statusRouteStr}`);
+    goto(`/smelter/${view}/${pageNumber}${datesRouteStr}${statusRouteStr}`, {
+      noscroll: true,
+    });
   }
 
   function reset() {
-    goto(`/smelter/${view}/${pageNumber}/all`);
+    goto(`/smelter/${view}/${pageNumber}/all`, { noscroll: true });
   }
 
   function handlePageChangePressed(event) {
@@ -121,8 +123,7 @@
     const route = `/smelter/${view}/${event.detail}${
       datesRouteStr.length ? datesRouteStr + statusRouteStr : "/all"
     }`;
-    //console.log(route);
-    goto(route);
+    goto(route, { noscroll: true });
   }
 </script>
 
@@ -133,6 +134,12 @@
 
 <NotificationBar message={error} status="fail" />
 {#if typeof results !== "undefined" && typeof pageNumber !== "undefined" && typeof count !== "undefined"}
+  <Paginator
+    page={pageNumber - 1}
+    pageSize={10}
+    {count}
+    on:pageChange={handlePageChangePressed}
+  />
   <DipstagingLegacyPackageTable bind:results bind:view bind:pageNumber>
     <span slot="actions" class="dates auto-align auto-align__a-end">
       {#if view === "status"}

@@ -112,23 +112,28 @@ A card component that optionally allows for user selection
       {labels.last}
     </button>
   </li>
+  <br />
+  <li class="count-message">
+    Viewing items {(page + 1) * pageSize - pageSize + 1} to {count <
+    (page + 1) * pageSize
+      ? count
+      : (page + 1) * pageSize}
+    of {count}.
+  </li>
 </ul>
 
 <style>
   .active {
     background-color: var(--primary-light);
   }
-
   ul {
     flex: 1;
     float: right;
     list-style: none;
   }
-
   li {
     float: left;
   }
-
   button {
     background: transparent;
     border: none;
@@ -138,5 +143,11 @@ A card component that optionally allows for user selection
     cursor: pointer;
     height: fit-content !important;
     filter: none;
+  }
+  .count-message {
+    text-align: right;
+    width: 100%;
+    color: var(--secondary);
+    padding: var(--perfect-fourth-8);
   }
 </style>
