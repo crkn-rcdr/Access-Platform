@@ -27,9 +27,13 @@ The resolver component allows the user to enter a slug, and then a request is se
   import type { Session } from "$lib/types";
   import { getStores } from "$app/stores";
 
-  import PrefixSelector from "../collections/PrefixSelector.svelte";
+  import PrefixSelector from "$lib/components/access-objects/PrefixSelector.svelte";
 
-  let prefix = "";
+  let depositor = {
+    prefix: "none",
+    label: "",
+  };
+
   let input = "";
 
   /**
@@ -50,27 +54,6 @@ The resolver component allows the user to enter a slug, and then a request is se
    */
   const dispatch = createEventDispatcher();
 
-  let cancelselector = false;
-
-  /**
-   * @type {RegExp} A regular expression that will validate strings as slugs.
-   */
-
-  /**
-   * @type {NodeJS.Timeout | null} Used to debounce the searching of slugs.
-   */
-  let timer: NodeJS.Timeout | null = null;
-
-  /**
-   * @type {boolean} If the slug was isFound in the database
-   */
-  let isFound = false;
-
-  /**
-   * @type {string} The intitial slug passed into the component.
-   */
-  /*   let initial = slug; */
-
   /**
    * Searches the backend for an object by the inputted slug. It also shows various error states to the user.
    * @returns void
@@ -78,27 +61,29 @@ The resolver component allows the user to enter a slug, and then a request is se
 
   async function slugSelector() {
     let slugs = input.split(/[,|\s]/);
-    if (prefix.length > 0) {
-      slugs = slugs.map((slug) => prefix + slug);
+    if (depositor.prefix !== "none") {
+      slugs = slugs.map((slug) => depositor.prefix + slug);
     }
 
     const response = await $session.lapin.query("slug.resolveMany", slugs);
-    console.log("response", response);
+    //console.log("response", response);
 
     dispatch("found", response);
     hideInitial = true;
   }
 
   function clear() {
-    cancelselector = true;
     input = "";
-    prefix = "";
+    depositor = {
+      prefix: "none",
+      label: "",
+    };
   }
 </script>
 
 <div>
   {#if !hideInitial}
-    <PrefixSelector bind:prefix /><br /><br />
+    <PrefixSelector bind:depositor /><br /><br />
 
     <div class="grid">
       <textarea bind:value={input} />

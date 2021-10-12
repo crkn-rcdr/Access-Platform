@@ -255,6 +255,12 @@ Source: https://github.com/twbs/bootstrap/blob/main/scss/mixins/_visually-hidden
   padding-inline: 1rem;
   max-width: 90rem;
 }
+.wrapper.md {
+  max-width: 90rem;
+}
+.wrapper.lg {
+  max-width: 116rem;
+}
 
 .center {
   padding-top: var(--perfect-fourth-1);
@@ -517,6 +523,12 @@ button .icon,
   height: var(--perfect-fourth-6);
   margin: 0;
 }
+button:disabled {
+  background-color: var(--grey-light) !important;
+  color: var(--grey) !important;
+  filter: none !important;
+  cursor: not-allowed !important;
+}
 
 label {
   padding-bottom: 0.5rem;
@@ -577,11 +589,17 @@ tr:nth-child(even) {
 
 thead th {
   padding: 1rem;
-  font-weight: bold;
+  /*font-weight: bold;*/
 }
 
 th {
-  font-weight: normal;
+  font-weight: normal !important;
+}
+th.sm {
+  padding: 0.5rem;
+}
+th.center {
+  text-align: center;
 }
 
 td {
@@ -648,15 +666,19 @@ input[type="checkbox"]:checked {
   content: attr(data-tooltip); /* magic! */
 
   /* most of the rest of this is opinion */
-  text-align: center;
+  /*text-align: center;*/
 
   /* 
     Let the content set the size of the data-tooltips 
     but this will also keep them from being obnoxious
     */
-  min-width: 3em;
+  /*min-width: 3em;
   max-width: 21em;
-  white-space: nowrap;
+  white-space: nowrap;*/
+  text-align: left;
+  max-width: 9em;
+  min-width: 9em;
+  white-space: break-spaces;
   overflow: hidden;
   text-overflow: ellipsis;
   padding: 1ch 1.5ch;
@@ -836,4 +858,13 @@ fieldset {
   white-space: pre-line;
   border-radius: var(--border-radius);
   background-color: var(--base-bg);
+}
+
+.chip {
+  border-radius: var(--border-radius);
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--primary);
+  background-color: var(--primary-light);
+  color: var(--primary);
+  display: inline;
 }

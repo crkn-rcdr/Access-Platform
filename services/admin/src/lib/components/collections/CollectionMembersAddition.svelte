@@ -1,12 +1,11 @@
 <script lang="ts">
-  import type { Session } from "$lib/types";
+  import type { Depositor, Session } from "$lib/types";
   import { getStores } from "$app/stores";
 
   import type { Collection } from "@crkn-rcdr/access-data/src/access/Collection";
-  import { createEventDispatcher } from "svelte";
   import TiArrowBack from "svelte-icons/ti/TiArrowBack.svelte";
 
-  import PrefixSelector from "./PrefixSelector.svelte";
+  import PrefixSelector from "$lib/components/access-objects/PrefixSelector.svelte";
 
   /**
    * @type {Collection} The Collection where the members are added to.
@@ -32,8 +31,10 @@
   /**
    * @type {string} An prefix to the Depositor.
    */
-
-  let prefix: string = "";
+  let depositor: Depositor = {
+    prefix: "none",
+    label: "",
+  };
 
   /**
    * When a collection is selected from the table of search results, grab its details from the backend.
@@ -55,7 +56,10 @@
   let resolutions: PromiseValue<ReturnType<typeof resolveMembers>>;
 
   async function resolveMembers() {
-    const slugArray = input.split(/[,|\s]/).map((slug) => prefix + slug);
+    let slugArray = input.split(/[,|\s]/);
+
+    if (depositor.prefix !== "none")
+      slugArray = slugArray.map((slug) => `${depositor.prefix}.${slug}`);
 
     const response = await $session.lapin.query("collection.checkAdditions", {
       id,
@@ -95,7 +99,10 @@
   }
   function clearText() {
     input = "";
-    prefix = "";
+    depositor = {
+      prefix: "none",
+      label: "",
+    };
   }
 </script>
 
@@ -119,7 +126,7 @@
     </div>
     {#if addedMember}
       <div>
-        <PrefixSelector bind:prefix />
+        <PrefixSelector bind:depositor />
         <textarea bind:value={input} /><br />
         <button class="primary lg" on:click={resolveMembers}>Lookup</button>
         <button class="primary lg" on:click={clearText}>Clear Text</button>

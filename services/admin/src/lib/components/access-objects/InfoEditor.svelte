@@ -48,6 +48,8 @@ This component displays the non content properties for an access editorObject an
         status="fail"
       />
       <Resolver
+        hideInitial={true}
+        hideUnavailableMsg={true}
         bind:slug={editorObject["slug"]}
         on:available={(event) => {
           if (!event?.detail?.["status"]) {

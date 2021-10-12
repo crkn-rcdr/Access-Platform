@@ -5,7 +5,7 @@ import {
   LegacyPackage,
   Slug,
 } from "@crkn-rcdr/access-data";
-import { ServerScope } from "nano";
+import { DocumentViewParams, ServerScope } from "nano";
 import { DatabaseHandler } from "../DatabaseHandler.js";
 import { AccessHandler } from "./access.js";
 
@@ -36,6 +36,7 @@ export class LegacyPackageHandler extends DatabaseHandler<LegacyPackage> {
   async listFromKeys(keys: Slug[], access: AccessHandler) {
     const resolutions = await access.resolveSlugs(keys);
     const list = await this.list({ include_docs: true, keys });
+
     return list.rows.map((row): ImportStatus => {
       const r = resolutions[row.key];
       let id: string | undefined = undefined;
@@ -58,9 +59,10 @@ export class LegacyPackageHandler extends DatabaseHandler<LegacyPackage> {
       include_docs: true,
     });
 
-    const resolutions = await access.resolveSlugs(
-      list.rows.map((row) => row.id)
-    );
+    const slugs = list.rows.map((row) => row.id);
+
+    const resolutions = await access.resolveSlugs(slugs);
+
     return list.rows.map((row): ImportStatus => {
       const r = resolutions[row.id];
       let id: string | undefined = undefined;
@@ -70,4 +72,95 @@ export class LegacyPackageHandler extends DatabaseHandler<LegacyPackage> {
       return getImportStatus(row.id, row.doc, id);
     });
   }
+
+  async listFromView(
+    viewName: string,
+    limit: number | null = null,
+    skip: number | null = null,
+    startDate: string | null = null,
+    endDate: string | null = null,
+    status: boolean | null = null
+  ) {
+    let viewOptions: DocumentViewParams = {
+      include_docs: true,
+      reduce: false,
+    };
+    if (limit !== null) viewOptions.limit = limit;
+    if (skip !== null) viewOptions.skip = skip;
+
+    if (startDate !== null && endDate !== null) {
+      const startArray = DateString.parse(startDate);
+      const endArray = DateString.parse(endDate);
+      viewOptions["startkey"] =
+        status !== null ? [status, ...startArray] : startArray;
+      viewOptions["endkey"] =
+        status !== null ? [status, ...endArray] : endArray;
+    }
+    console.log("viewOptions", viewOptions);
+
+    const list = await this.view("access", viewName, viewOptions);
+    return {
+      count: list.total_rows,
+      results: list.rows.map((row) => row.doc),
+    };
+  }
+
+  /* Too slow
+  async findIdsInView(
+    viewName: string,
+    page: number,
+    pageSize: number,
+    startDate: string | null = null,
+    endDate: string | null = null,
+    status: boolean | null = null,
+    ids: string[] | null = null
+  ) {
+    let viewOptions: DocumentViewParams = {
+      include_docs: true,
+      reduce: false,
+    };
+    console.log(startDate, endDate, status);
+
+    if (startDate !== null && endDate !== null) {
+      const startArray = DateString.parse(startDate);
+      const endArray = DateString.parse(endDate);
+      //endArray[2] = (endArray[2] as number) + 0.1;
+      viewOptions["startkey"] = startArray;
+      viewOptions["endkey"] = endArray;
+    } else {
+      const today = new Date().toISOString().split("T")[0];
+      const startArray = DateString.parse("1995-05-19");
+      const endArray = DateString.parse(today);
+      endArray[2] = (endArray[2] as number) + 0.1;
+      viewOptions["startkey"] = startArray;
+      viewOptions["endkey"] = endArray;
+    }
+
+    console.log(viewOptions);
+
+    const list = await this.view("access", viewName, viewOptions);
+
+    const start = (page - 1) * pageSize;
+    const end = Math.min(list.total_rows, start + pageSize);
+
+    console.log(list.rows, list.total_rows, start + pageSize, start, end);
+
+    let response = list.rows;
+
+    if (ids && ids.length)
+      response = response.filter((row) => {
+        console.log(row.id);
+        return ids.includes(row.id);
+      });
+
+    if (status !== null)
+      response = response.filter((row) => {
+        if (row.doc?.smelt)
+          return (row.doc?.smelt as any)["succeeded"] === status;
+        else return false;
+      });
+
+    //console.log("response", response);
+    return response.slice(start, end).map((row) => row.doc);
+  }*/
 }

@@ -7,14 +7,14 @@ This component displays the items in the dmd task throughout the various stages 
 |    |    |    |
 | -- | -- | -- |
 | dmdTaskId: string | required | The id of the dmd task. |
-| accessPlatform: AccessPlatform | required | The access platform the items are in. |
+| depositor: Depositor | required | The access platform the items are in. |
 | itemsToShow: ParseRecord[] | optional | The dmdtask items to be displayed. |
 
 ### Usage
 ```
 <DmdItemsTable
     dmdTaskId={dmdTask.id}
-    bind:accessPlatform
+    bind:depositor
     bind:itemsToShow={dmdTask.items}
   />
 ```
@@ -23,7 +23,7 @@ This component displays the items in the dmd task throughout the various stages 
 <script lang="ts">
   import TiWarning from "svelte-icons/ti/TiWarning.svelte";
   import TiDelete from "svelte-icons/ti/TiDelete.svelte";
-  import type { AccessPlatform } from "$lib/types";
+  import type { Depositor } from "$lib/types";
   import type { ParseRecord } from "@crkn-rcdr/access-data/dist/esm/dmd/Task";
   import { dmdTasksStore } from "$lib/stores/dmdTasksStore";
   import DmdSuccessItemPreview from "./DmdSuccessItemPreview.svelte";
@@ -34,9 +34,9 @@ This component displays the items in the dmd task throughout the various stages 
   export let dmdTaskId: string;
 
   /**
-   *  @type { AccessPlatform } The access platform the items are in.
+   *  @type { Depositor } The access platform the items are in.
    */
-  export let accessPlatform: AccessPlatform;
+  export let depositor: Depositor;
 
   /**
    *  @type { ParseRecord[]  } The dmdtask items to be displayed.
@@ -120,10 +120,10 @@ This component displays the items in the dmd task throughout the various stages 
         <th>Preview</th>
 
         {#if $dmdTasksStore[dmdTaskId].lookupState !== "ready" && $dmdTasksStore[dmdTaskId].shouldUpdateInAccess}
-          <th>Found in {accessPlatform.label}?</th>
+          <th>Found in Access?</th>
         {/if}
         {#if $dmdTasksStore[dmdTaskId].updateState !== "ready" && $dmdTasksStore[dmdTaskId].shouldUpdateInAccess}
-          <th>Updated in {accessPlatform.label}?</th>
+          <th>Updated in Access?</th>
         {/if}
 
         {#if $dmdTasksStore[dmdTaskId].lookupState !== "ready" && $dmdTasksStore[dmdTaskId].shouldUpdateInPreservation}

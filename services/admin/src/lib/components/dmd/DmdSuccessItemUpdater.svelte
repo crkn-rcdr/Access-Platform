@@ -6,20 +6,20 @@ This component allows the user to update the dmd tasks items in an access platfo
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| accessPlatform: AccessPlatform | required | The access platform to look for the items in. |
+| depositor: Depositor | required | The access platform to look for the items in. |
 | dmdTaskId: string | required | The 'id' of the DMDTask being processed. |
 
 ### Usage
 ```
 <DmdItemUpdater
   dmdTaskId={dmdTask.id}
-  bind:accessPlatform
+  bind:depositor
 />
 ```
 *Note: `bind:` is required for changes to the parameters to be reflected in higher level components.*
 -->
 <script lang="ts">
-  import type { AccessPlatform } from "$lib/types";
+  import type { Depositor } from "$lib/types";
   import type { Session } from "$lib/types";
   import { getStores } from "$app/stores";
   import { dmdTasksStore } from "$lib/stores/dmdTasksStore";
@@ -30,9 +30,9 @@ This component allows the user to update the dmd tasks items in an access platfo
   const { session } = getStores<Session>();
 
   /**
-   *  @type { AccessPlatform } The access platform to look for the items in.
+   *  @type { Depositor } The access platform to look for the items in.
    */
-  export let accessPlatform: AccessPlatform;
+  export let depositor: Depositor;
 
   /**
    *  @type { string } The 'id' of the DMDTask being processed.
@@ -62,7 +62,7 @@ This component allows the user to update the dmd tasks items in an access platfo
         type="checkbox"
         bind:checked={$dmdTasksStore[dmdTaskId].shouldUpdateInAccess}
       />
-      <label for="access">in {accessPlatform["label"]}</label>
+      <label for="access">in Access</label>
     </span>
     <span>
       <input

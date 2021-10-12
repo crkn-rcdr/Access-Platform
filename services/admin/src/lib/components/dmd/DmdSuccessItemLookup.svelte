@@ -6,14 +6,14 @@ This components takes the items in a successfull dmd task and looks them up in a
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| accessPlatform: AccessPlatform | required | The access platform to look for the items in. |
+| depositor: Depositor | required | The access platform to look for the items in. |
 | dmdTaskId: string | required | The id of the dmd task. |
 
 ### Usage
 ```
 <DmdItemLookup
   bind:dmdTaskId={dmdTask.id}
-  bind:accessPlatform
+  bind:depositor
 />
 ```
 *Note: `bind:` is required for changes to the parameters to be reflected in higher level components.*
@@ -21,8 +21,8 @@ This components takes the items in a successfull dmd task and looks them up in a
 <script lang="ts">
   import type { Session } from "$lib/types";
   import { getStores } from "$app/stores";
-  import type { AccessPlatform } from "$lib/types";
-  import DmdPrefixSelector from "$lib/components/dmd/DmdPrefixSelector.svelte";
+  import type { Depositor } from "$lib/types";
+  import PrefixSelector from "$lib/components/access-objects/PrefixSelector.svelte";
   import LoadingButton from "$lib/components/shared/LoadingButton.svelte";
   import { dmdTasksStore } from "$lib/stores/dmdTasksStore";
 
@@ -37,20 +37,16 @@ This components takes the items in a successfull dmd task and looks them up in a
   export let dmdTaskId: string;
 
   /**
-   *  @type { AccessPlatform } The access platform to look for the items in.
+   *  @type { Depositor } The access platform to look for the items in.
    */
-  export let accessPlatform: AccessPlatform;
+  export let depositor: Depositor;
 
   /**
    * Passes on the work of looking up the items in the task to the dmdTasksStore
    * @returns void
    */
   function handleLookupPressed() {
-    dmdTasksStore.lookupTaskItems(
-      dmdTaskId,
-      accessPlatform.prefix,
-      $session.lapin
-    );
+    dmdTasksStore.lookupTaskItems(dmdTaskId, depositor.prefix, $session.lapin);
   }
 </script>
 
@@ -59,10 +55,10 @@ This components takes the items in a successfull dmd task and looks them up in a
     class="look-up-wrap auto-align auto-align__a-center auto-align__j-between "
   >
     <div class="select-wrap">
-      <DmdPrefixSelector bind:depositor={accessPlatform} />
+      <PrefixSelector bind:depositor />
     </div>
 
-    {#if accessPlatform?.prefix?.length}
+    {#if depositor?.prefix?.length}
       <LoadingButton
         buttonClass={`${
           $dmdTasksStore[dmdTaskId].lookupState === "ready"

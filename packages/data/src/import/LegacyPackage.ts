@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { MD5 } from "../util/MD5.js";
 import { Noid } from "../util/Noid.js";
-import { ProcessResult, ProcessUpdate } from "../util/ProcessUpdate.js";
+import { SmeltProcess, ProcessResult } from "../util/ProcessUpdate.js"; //ProcessUpdate
 import { Slug } from "../util/Slug.js";
 import { StaffUpdate } from "../util/StaffUpdate.js";
 import { Timestamp } from "../util/Timestamp.js";
@@ -73,7 +73,7 @@ export const LegacyPackage = z.object({
   /**
    * Request for a Smelter operation on this package.
    */
-  smelt: ProcessUpdate.optional(),
+  smelt: SmeltProcess.optional(),
 
   /**
    * A record of the staff member who caused this record to be updated.
@@ -101,18 +101,17 @@ interface WithDip extends WithId {
 
 interface WithRequest extends WithDip {
   /** The slug of the Manifest that the package is imported to. */
-  slug: Slug;
+  slug: Slug | undefined;
   /** The time the package was requested to be processed. */
-  requestDate: Timestamp;
+  requestDate: Timestamp | undefined;
 }
 
 interface WithProcess extends WithRequest {
   /** The time the package was processed. */
-  processDate: Timestamp;
+  processDate: Timestamp | undefined;
   /** The message returned by the import processor. */
-  message: string;
+  message: string | undefined;
 }
-
 interface NotFoundStatus extends WithId {
   status: "not-found";
 }
@@ -130,11 +129,11 @@ interface FailureStatus extends WithProcess {
 }
 
 export type ImportStatus =
-  | NotFoundStatus
+  | SuccessStatus
+  | FailureStatus
   | NewStatus
   | ProcessingStatus
-  | SuccessStatus
-  | FailureStatus;
+  | NotFoundStatus;
 
 /**
  * Determines the status of a LegacyPackage object.

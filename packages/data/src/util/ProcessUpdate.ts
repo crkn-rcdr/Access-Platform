@@ -76,6 +76,33 @@ export const ProcessResult = z.union([
 export type ProcessResult = z.infer<typeof ProcessResult>;
 
 /**
+ * The result of a background smelter process.
+ */
+export const SmeltProcess = z.object({
+  /**
+   * Most recent request time for the automated process to run.
+   */
+  requestDate: Timestamp.optional(),
+
+  /**
+   * Most recent time the process update took place.
+   */
+  processDate: Timestamp.optional(),
+
+  /**
+   * Whether the last process was run successfully on this object.
+   */
+  succeeded: z.boolean().optional(),
+
+  /**
+   * Error message supplied by the process.
+   */
+  message: z.string().optional(),
+});
+
+export type SmeltProcess = z.infer<typeof SmeltProcess>;
+
+/**
  * An object that describes a request for and the output of an automated
  * process that is applied to the parent object.
  */

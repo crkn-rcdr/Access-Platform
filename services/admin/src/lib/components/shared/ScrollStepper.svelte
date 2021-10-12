@@ -126,7 +126,7 @@ The scroll stepper component is a component that breaks down a long task into sm
           setTimeout(() => {
             const offset = getOffset(steps[i]);
             const y = offset.top - 20;
-            console.log(i === steps.length - 1, activeStepIndex, "SCROOLLL", y);
+            //console.log(i === steps.length - 1, activeStepIndex, "SCROOLLL", y);
             window.history.scrollRestoration = "manual";
             window.scrollTo({ top: y, behavior: "smooth" });
           }, 10);

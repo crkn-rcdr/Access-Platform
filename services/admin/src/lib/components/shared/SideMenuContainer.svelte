@@ -55,6 +55,11 @@ A component that shows a navigable set of pages with a side menu to allow the us
   import type { SideMenuPageData } from "$lib/types";
 
   /**
+   * @type {boolean}
+   */
+  export let showHeader = true;
+
+  /**
    * @type {boolean} If the menu that takes up the entire body of a page, or if it should be an inline menu.
    */
   export let fullPage = true;
@@ -188,10 +193,12 @@ A component that shows a navigable set of pages with a side menu to allow the us
 </script>
 
 <div bind:this={container} class="side-menu-container">
-  <div class:fixed-full-page={fullPage}>
-    <div class="header">
-      <slot name="side-menu-header" />
-    </div>
+  <div class:fixed-full-page={fullPage} class:no-header={!showHeader}>
+    {#if showHeader}
+      <div class="header">
+        <slot name="side-menu-header" />
+      </div>
+    {/if}
     <div class="menu">
       <div
         class="auto-align auto-align__full auto-align auto-align__a-stretch auto-align auto-align__wrap"
@@ -262,6 +269,11 @@ A component that shows a navigable set of pages with a side menu to allow the us
       height: calc(100vh - 12rem - var(--viewport-scaling));
     }
   }*/
+  .menu {
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    background: var(--light-bg);
+  }
 
   .fixed-full-page .header {
     height: 12%;
@@ -270,5 +282,8 @@ A component that shows a navigable set of pages with a side menu to allow the us
   .fixed-full-page .menu {
     height: 88%;
     width: 100%;
+  }
+  .fixed-full-page.no-header .menu {
+    height: 100%;
   }
 </style>
