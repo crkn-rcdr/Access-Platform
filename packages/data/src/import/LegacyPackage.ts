@@ -101,9 +101,9 @@ interface WithDip extends WithId {
 
 interface WithRequest extends WithDip {
   /** The slug of the Manifest that the package is imported to. */
-  slug: Slug;
+  slug: Slug | undefined;
   /** The time the package was requested to be processed. */
-  requestDate: Timestamp;
+  requestDate: Timestamp | undefined;
 }
 
 interface WithProcess extends WithRequest {

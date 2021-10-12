@@ -78,24 +78,27 @@ export type ProcessResult = z.infer<typeof ProcessResult>;
 /**
  * The result of a background smelter process.
  */
-export const SmeltProcess = ProcessRequest.merge(
-  z.object({
-    /**
-     * Most recent time the process update took place.
-     */
-    processDate: Timestamp.optional(),
+export const SmeltProcess = z.object({
+  /**
+   * Most recent request time for the automated process to run.
+   */
+  requestDate: Timestamp.optional(),
 
-    /**
-     * Whether the last process was run successfully on this object.
-     */
-    succeeded: z.boolean().optional(),
+  /**
+   * Most recent time the process update took place.
+   */
+  processDate: Timestamp.optional(),
 
-    /**
-     * Error message supplied by the process.
-     */
-    message: z.string().optional(),
-  })
-).strict();
+  /**
+   * Whether the last process was run successfully on this object.
+   */
+  succeeded: z.boolean().optional(),
+
+  /**
+   * Error message supplied by the process.
+   */
+  message: z.string().optional(),
+});
 
 export type SmeltProcess = z.infer<typeof SmeltProcess>;
 

@@ -73,7 +73,6 @@ export class LegacyPackageHandler extends DatabaseHandler<LegacyPackage> {
     });
   }
 
-  // TODO: test
   async listFromView(
     viewName: string,
     limit: number | null = null,

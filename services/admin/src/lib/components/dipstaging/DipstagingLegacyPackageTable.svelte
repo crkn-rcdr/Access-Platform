@@ -315,15 +315,27 @@ This component shows the results of a dipstaging package view. It allows the use
               <td>
                 {#if view === "status"}
                   {legacyPackage?.smelt?.processDate
-                    ? new Date(legacyPackage.smelt.processDate).toLocaleString()
+                    ? new Date(
+                        typeof legacyPackage.smelt.processDate === "number"
+                          ? legacyPackage.smelt.processDate * 1000
+                          : legacyPackage.smelt.processDate
+                      ).toLocaleString()
                     : "N/A"}
                 {:else if view === "queue"}
                   {legacyPackage?.smelt?.requestDate
-                    ? new Date(legacyPackage.smelt.requestDate).toLocaleString()
+                    ? new Date(
+                        typeof legacyPackage.smelt.requestDate === "number"
+                          ? legacyPackage.smelt.requestDate * 1000
+                          : legacyPackage.smelt.requestDate
+                      ).toLocaleString()
                     : "N/A"}
                 {:else}
                   {legacyPackage?.reposManifestDate
-                    ? new Date(legacyPackage.reposManifestDate).toLocaleString()
+                    ? new Date(
+                        typeof legacyPackage.reposManifestDate === "number"
+                          ? legacyPackage.reposManifestDate * 1000
+                          : legacyPackage.reposManifestDate
+                      ).toLocaleString()
                     : "N/A"}
                 {/if}
               </td>

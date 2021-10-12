@@ -136,7 +136,7 @@ This component allows the user to find packages in the dipstaging database.
         );
         if (response) results = response;
       } catch (e) {
-        error = e?.message;
+        error = "There was a problem with your search. Please try again.";
       }
       lookupDone = true;
     }
@@ -233,12 +233,6 @@ This component allows the user to find packages in the dipstaging database.
   </span>
 </div>
 
-{#if error.length}
-  <br />
-  <br />
-  <br />
-  <br />
-{/if}
 <NotificationBar message={error} status="fail" />
 
 <style>

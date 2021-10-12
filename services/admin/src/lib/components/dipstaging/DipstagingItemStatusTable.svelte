@@ -272,7 +272,13 @@ This component shows the results of a dipstaging find-package(s) request. It all
             </td>
             <td>
               {#if importStatus.status !== "not-found"}
-                {importStatus["ingestDate"]}
+                {importStatus["ingestDate"]
+                  ? new Date(
+                      typeof importStatus["ingestDate"] === "number"
+                        ? importStatus["ingestDate"] * 1000
+                        : importStatus["ingestDate"]
+                    ).toLocaleString()
+                  : "N/A"}
               {/if}
             </td>
             <td
