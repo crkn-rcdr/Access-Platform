@@ -120,10 +120,10 @@ This component displays the items in the dmd task throughout the various stages 
         <th>Preview</th>
 
         {#if $dmdTasksStore[dmdTaskId].lookupState !== "ready" && $dmdTasksStore[dmdTaskId].shouldUpdateInAccess}
-          <th>Found in {depositor.label}?</th>
+          <th>Found in {depositor?.label}?</th>
         {/if}
         {#if $dmdTasksStore[dmdTaskId].updateState !== "ready" && $dmdTasksStore[dmdTaskId].shouldUpdateInAccess}
-          <th>Updated in {depositor.label}?</th>
+          <th>Updated in {depositor?.label}?</th>
         {/if}
 
         {#if $dmdTasksStore[dmdTaskId].lookupState !== "ready" && $dmdTasksStore[dmdTaskId].shouldUpdateInPreservation}
