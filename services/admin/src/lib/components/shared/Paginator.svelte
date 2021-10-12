@@ -76,19 +76,21 @@ A card component that optionally allows for user selection
   $: pageCount = Math.floor(count / pageSize);
 </script>
 
-<label for="page-size">Items per page:</label>
-<select
-  name="page-size"
-  bind:value={pageSize}
-  on:change={(e) => onChange(e, page)}
->
-  <option value={10}>10</option>
-  <option value={20}>20</option>
-  <option value={30}>30</option>
-  <option value={40}>40</option>
-  <option value={50}>50</option>
-  <option value={100}>100</option>
-</select>
+<span class="page-size">
+  <label for="page-size">Items per page:</label>
+  <select
+    name="page-size"
+    bind:value={pageSize}
+    on:change={(e) => onChange(e, page)}
+  >
+    <option value={10}>10</option>
+    <option value={20}>20</option>
+    <option value={30}>30</option>
+    <option value={40}>40</option>
+    <option value={50}>50</option>
+    <option value={100}>100</option>
+  </select>
+</span>
 <ul>
   <li>
     <button disabled={page === 0} on:click={(e) => onChange(e, 0)}>
@@ -139,6 +141,10 @@ A card component that optionally allows for user selection
 </ul>
 
 <style>
+  .page-size {
+    display: inline-block;
+    margin-top: 0.8em;
+  }
   .active {
     background-color: var(--primary-light);
   }
