@@ -50,7 +50,6 @@
 
         const response: { count: number; results: LegacyPackage[] } =
           await context.lapin.query(`dipstaging.${route}`, bodyObj);
-        console.log(response);
 
         if (response)
           return {

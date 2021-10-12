@@ -100,7 +100,6 @@ This component shows the results of a dipstaging package view. It allows the use
    */
   function toggleAllSelected(event) {
     for (const item of results) {
-      console.log(slugAvailableMap[item.id]);
       if (slugAvailableMap[item.id])
         selectedMap[item.id] = event.target.checked;
       else selectedMap[item.id] = false;

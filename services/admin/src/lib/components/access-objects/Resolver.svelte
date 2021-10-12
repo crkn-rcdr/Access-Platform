@@ -168,7 +168,7 @@ The resolver component allows the user to enter a slug, and then a request is se
    */
   $: {
     slug;
-    resolveOnChange().then((res) => console.log(res, "done"));
+    resolveOnChange().then((res) => {});
   }
 </script>
 

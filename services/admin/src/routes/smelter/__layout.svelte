@@ -7,7 +7,6 @@
   import type { RootLoadOutput } from "$lib/types";
   export const load: Load<RootLoadOutput> = async ({ page, context }) => {
     try {
-      console.log(page.path);
       if (page.path === "/smelter") return { props: { activePageIndex: 0 } };
       else if (page.path.includes("find"))
         return { props: { activePageIndex: 0 } };
@@ -32,9 +31,6 @@
    * @template
    * @description This is the common layout for the dmd task updater pages
    */
-
-  import Wizard from "$lib/components/shared/Wizard.svelte";
-
   export let activePageIndex: number;
   export let error: string;
 </script>

@@ -62,7 +62,7 @@ This component allows the user to update the dmd tasks items in an access platfo
         type="checkbox"
         bind:checked={$dmdTasksStore[dmdTaskId].shouldUpdateInAccess}
       />
-      <label for="access">in {depositor?.["label"]}</label>
+      <label for="access">in Access</label>
     </span>
     <span>
       <input
