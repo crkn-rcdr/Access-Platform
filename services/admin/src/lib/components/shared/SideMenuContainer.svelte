@@ -193,7 +193,7 @@ A component that shows a navigable set of pages with a side menu to allow the us
 </script>
 
 <div bind:this={container} class="side-menu-container">
-  <div class:fixed-full-page={fullPage}>
+  <div class:fixed-full-page={fullPage} class:no-header={!showHeader}>
     {#if showHeader}
       <div class="header">
         <slot name="side-menu-header" />
@@ -282,5 +282,8 @@ A component that shows a navigable set of pages with a side menu to allow the us
   .fixed-full-page .menu {
     height: 88%;
     width: 100%;
+  }
+  .fixed-full-page.no-header .menu {
+    height: 100%;
   }
 </style>

@@ -142,6 +142,7 @@
         <span class="status auto-align auto-align__column">
           <label for="status">Status:</label>
           <select name="status" bind:value={status}>
+            <option disabled selected value> -- select an option -- </option>
             <option value={true}>Succeeded</option>
             <option value={false}>Failed</option>
           </select>

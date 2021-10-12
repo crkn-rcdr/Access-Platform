@@ -142,6 +142,7 @@ This component shows the results of a dipstaging find-package(s) request. It all
    * @returns void
    */
   function checkIfSlugsDefined() {
+    if (!results) return;
     for (const item of results) {
       if (!item["slug"]) item["slug"] = item.id;
     }
@@ -153,6 +154,7 @@ This component shows the results of a dipstaging find-package(s) request. It all
    * @returns void
    */
   function setExpandedModel() {
+    if (!results) return;
     for (const item of results) {
       if (!(item.id in expandedMap)) expandedMap[item.id] = false;
     }
@@ -164,6 +166,7 @@ This component shows the results of a dipstaging find-package(s) request. It all
    * @returns void
    */
   function setSelectedModel() {
+    if (!results) return;
     for (const item of results) {
       if (!(item.id in selectedMap) && isItemSelectable(item))
         selectedMap[item.id] = true;
@@ -189,8 +192,8 @@ This component shows the results of a dipstaging find-package(s) request. It all
    * @description Calls @function checkIfSlugsDefined and @function setExpandedModel and @function setSelectedModel any time the results change. Also sets loading to re-trigger the draw of the slug resolvers
    */
   $: {
-    loading = true;
     results;
+    loading = true;
     checkIfSlugsDefined();
     setExpandedModel();
     setSelectedModel();
@@ -217,34 +220,30 @@ This component shows the results of a dipstaging find-package(s) request. It all
 </script>
 
 {#if !loading}
-  <br />
-  <br />
-  <br />
-  <br />
-  {#if results && results.length}
-    <div class="button-wrap">
-      <button
-        class="primary"
-        on:click={handleRunSmelterPressed}
-        disabled={!itemsAreSelected}
-      >
-        Run Smelter on Selected Packages
-      </button>
-    </div>
+  <div class="button-wrap" class:disabled={!results}>
+    <button
+      class="primary"
+      on:click={handleRunSmelterPressed}
+      disabled={!itemsAreSelected}
+    >
+      Run Smelter on Selected Packages
+    </button>
+  </div>
 
-    <table>
-      <thead>
-        <tr>
-          <th>
-            <input type="checkbox" on:click={toggleAllSelected} checked />
-          </th>
-          <th>Id</th>
-          <th>Slug</th>
-          <th>Ingest Date</th>
-          <th>Smelt Status</th>
-        </tr>
-      </thead>
-      <tbody>
+  <table class:disabled={!results}>
+    <thead>
+      <tr>
+        <th>
+          <input type="checkbox" on:click={toggleAllSelected} checked />
+        </th>
+        <th>Id</th>
+        <th>Slug</th>
+        <th>Ingest Date</th>
+        <th>Smelt Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {#if results}
         {#each results as importStatus, i}
           <tr class:expanded={expandedMap[importStatus.id]}>
             <td>
@@ -357,9 +356,9 @@ This component shows the results of a dipstaging find-package(s) request. It all
             </tr>
           {/if}
         {/each}
-      </tbody>
-    </table>
-  {/if}
+      {/if}
+    </tbody>
+  </table>
 {:else}
   <div class="loading">
     <Loading backgroundType="gradient" />
@@ -408,5 +407,9 @@ This component shows the results of a dipstaging find-package(s) request. It all
   tr.expanded {
     background: var(--light-bg);
     filter: brightness(0.98);
+  }
+  table.disabled,
+  .button-wrap.disabled {
+    opacity: 0.2;
   }
 </style>

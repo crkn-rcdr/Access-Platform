@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg id="object" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>.cls-1{fill:#eef5fd;}.cls-2{fill:#d7e2f2;}.cls-3{fill:#c9c1f5;}.cls-4{fill:#96d7ff;}.cls-5{fill:#86c3ef;}</style>
+  </defs>
+  <title/>
+  <rect class="cls-1" height="30" rx="5" ry="5" width="30" x="1" y="1" style="fill: rgb(231, 237, 227);"/>
+  <path class="cls-2" d="M26,1H16V31H26a5,5,0,0,0,5-5V6A5,5,0,0,0,26,1Z" style="fill: rgb(205, 220, 195);"/>
+  <path class="cls-3" d="M6,27a1,1,0,0,1-.71-.29,1,1,0,0,1,0-1.42l8.05-8a1,1,0,1,1,1.42,1.42l-8,8.05A1,1,0,0,1,6,27Z" style="fill: rgb(126, 126, 126);"/>
+  <circle class="cls-4" cx="19" cy="13" r="8" style="fill: rgb(192, 209, 211);"/>
+  <path class="cls-5" d="M19,5a7.9,7.9,0,0,0-3,.59V20.41A7.9,7.9,0,0,0,19,21,8,8,0,0,0,19,5Z" style="fill: rgb(135, 177, 182);"/>
+</svg>

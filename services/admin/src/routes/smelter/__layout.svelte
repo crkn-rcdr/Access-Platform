@@ -39,13 +39,11 @@
   export let error: string;
 </script>
 
-<Wizard title="Smelter" size="lg">
-  {#if error}
-    <NotificationBar status="fail" message={error} />
-  {/if}
-  {#if typeof activePageIndex !== "undefined"}
-    <Dipstaging bind:activePageIndex>
-      <slot />
-    </Dipstaging>
-  {/if}
-</Wizard>
+{#if error}
+  <NotificationBar status="fail" message={error} />
+{/if}
+{#if typeof activePageIndex !== "undefined"}
+  <Dipstaging bind:activePageIndex>
+    <slot />
+  </Dipstaging>
+{/if}

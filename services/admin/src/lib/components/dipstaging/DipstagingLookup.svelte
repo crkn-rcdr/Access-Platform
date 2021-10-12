@@ -27,7 +27,7 @@ This component allows the user to find packages in the dipstaging database.
    * @type {ImportStatus[]}
    * The packages in the format of ImportStatus, to be displayed to the user/
    */
-  export let results: ImportStatus[];
+  export let results: ImportStatus[] | undefined;
 
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
@@ -151,7 +151,7 @@ This component allows the user to find packages in the dipstaging database.
     loading = true;
     if (slugList.includes(",")) slugList = slugListString.split(",");
     else slugList = slugListString.split("\n");
-    slugList = slugList.filter((slug) => slug.length);
+    slugList = slugList.filter((slug) => slug.trim().length);
     if (slugList.length) {
       if (depositor.prefix !== "none")
         slugList = slugList.map((slug) => `${depositor.prefix}.${slug.trim()}`);
@@ -167,7 +167,6 @@ This component allows the user to find packages in the dipstaging database.
   }
 </script>
 
-<br />
 <ToggleButtons
   activeIndex={lookupView === BY_SLUG_LABEL ? 0 : 1}
   color={lookupDone ? "secondary" : "primary"}
@@ -183,23 +182,23 @@ This component allows the user to find packages in the dipstaging database.
       <div class="extra-spacing">
         <PrefixSelector bind:depositor />
         <textarea
-          rows="6"
+          rows="16"
           placeholder="Enter a list of slugs seperated by commas or new lines."
           bind:value={slugListString}
         />
       </div>
     {:else}
-      <label for="start">Start date:</label>
+      <label for="start">Start date:</label><br />
       <input
         type="date"
         id="start"
         name="trip-start"
         bind:value={startDateStr}
-      />
+      /><br /><br />
 
-      <label for="end">End date:</label>
+      <label for="end">End date:</label><br />
       <input type="date" id="end" name="trip-end" bind:value={endDateStr} /><br
-      />
+      /><br />
     {/if}
   </div>
 </div>
@@ -242,7 +241,8 @@ This component allows the user to find packages in the dipstaging database.
 
 <style>
   .lookup-wrap {
-    width: 100%;
+    height: 100%;
+    width: 30.5rem;
   }
   .user-input {
     flex: 9;
@@ -255,5 +255,8 @@ This component allows the user to find packages in the dipstaging database.
   }
   .lookup-button {
     float: right;
+  }
+  input {
+    width: 100%;
   }
 </style>
