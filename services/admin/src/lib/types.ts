@@ -68,7 +68,9 @@ export type DmdItemState = {
   foundInAccess: "Yes" | "No" | "Searching...";
   foundInPreservation: "Yes" | "No" | "Searching...";
   updatedInAccess: "Yes" | "No" | "Updating...";
+  updatedInAccessMsg: string;
   updatedInPreservation: "Yes" | "No" | "Updating...";
+  updatedInPreservationMsg: string;
   shouldUpdate: boolean;
 };
 

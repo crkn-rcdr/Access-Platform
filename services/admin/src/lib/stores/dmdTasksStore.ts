@@ -202,11 +202,12 @@ async function updateItemsInAccess(
           user: user,
         });
         items[itemSlug].updatedInAccess = "Yes";
-        updateTask(dmdTaskId, "itemStates", items);
+        items[itemSlug].updatedInAccessMsg = "Succeeded";
         updateTask(dmdTaskId, "itemStates", items);
       } catch (e) {
         console.log(e?.message);
         items[itemSlug].updatedInAccess = "No";
+        items[itemSlug].updatedInAccessMsg = e?.message;
         updateTask(dmdTaskId, "itemStates", items);
       }
     } else {
@@ -251,11 +252,12 @@ async function updateItemsInPreservation(
           id: items[itemSlug]["slug"],
         });
         items[itemSlug].updatedInPreservation = "Yes";
-        updateTask(dmdTaskId, "itemStates", items);
+        items[itemSlug].updatedInPreservationMsg = "Succeeded";
         updateTask(dmdTaskId, "itemStates", items);
       } catch (e) {
         console.log(e?.message);
         items[itemSlug].updatedInPreservation = "No";
+        items[itemSlug].updatedInPreservationMsg = e?.message;
         updateTask(dmdTaskId, "itemStates", items);
       }
     } else {

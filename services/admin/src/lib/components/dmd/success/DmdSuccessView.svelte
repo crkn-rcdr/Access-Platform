@@ -88,7 +88,9 @@ This component shows the view for a dmd task that had its metadata successfully 
           foundInAccess: "No",
           foundInPreservation: "No",
           updatedInAccess: "No",
+          updatedInAccessMsg: "",
           updatedInPreservation: "No",
+          updatedInPreservationMsg: "",
           shouldUpdate: true,
           parseSuccess: item.parsed && item.message === "",
         };

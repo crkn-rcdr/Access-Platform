@@ -27,6 +27,7 @@ This component displays the items in the dmd task throughout the various stages 
   import type { ParseRecord } from "@crkn-rcdr/access-data/dist/esm/dmd/Task";
   import { dmdTasksStore } from "$lib/stores/dmdTasksStore";
   import DmdSuccessItemPreview from "./DmdSuccessItemPreview.svelte";
+  import XmlViewer from "$lib/components/shared/XmlViewer.svelte";
 
   /**
    *  @type { string } The 'id' of the DMDTask being shown.
@@ -116,7 +117,7 @@ This component displays the items in the dmd task throughout the various stages 
         {/if}
         <th>Id</th>
         <th>Label</th>
-        <th>Validity</th>
+        <th>Metadata Validity</th>
         <th>Preview</th>
 
         {#if $dmdTasksStore[dmdTaskId].lookupState !== "ready" && $dmdTasksStore[dmdTaskId].shouldUpdateInAccess}
@@ -168,10 +169,10 @@ This component displays the items in the dmd task throughout the various stages 
                 </span>
               {/if}
               {item.parsed && item.message?.length === 0
-                ? "Valid"
+                ? "Valid Metadata"
                 : item.parsed
-                ? "Warning"
-                : "Invalid"}
+                ? "Warning - Possible issues with Metadata"
+                : "Invalid Metadata"}
             </td>
             <td>
               <button
@@ -249,6 +250,40 @@ This component displays the items in the dmd task throughout the various stages 
               {/if}
             {/if}
           </tr>
+          {#if $dmdTasksStore[dmdTaskId].itemStates[item.id].updatedInAccessMsg.length || $dmdTasksStore[dmdTaskId].itemStates[item.id].updatedInPreservationMsg.length}
+            <tr class="row-details">
+              <td colspan="9">
+                <table>
+                  <tbody>
+                    {#if $dmdTasksStore[dmdTaskId].itemStates[item.id].updatedInAccessMsg.length}
+                      <tr>
+                        <td class="detail-label">Access Update Message:</td>
+                        <td>
+                          <XmlViewer
+                            xml={$dmdTasksStore[dmdTaskId].itemStates[item.id]
+                              .updatedInAccessMsg}
+                          />
+                        </td>
+                      </tr>
+                    {/if}
+                    {#if $dmdTasksStore[dmdTaskId].itemStates[item.id].updatedInPreservationMsg.length}
+                      <tr>
+                        <td class="detail-label"
+                          >Preservation Update Message:</td
+                        >
+                        <td>
+                          <XmlViewer
+                            xml={$dmdTasksStore[dmdTaskId].itemStates[item.id]
+                              .updatedInPreservationMsg}
+                          />
+                        </td>
+                      </tr>
+                    {/if}
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+          {/if}
         {/if}
       {/each}
     </tbody>
@@ -284,5 +319,16 @@ This component displays the items in the dmd task throughout the various stages 
   .warning.icon {
     color: var(--warn);
     background-color: transparent;
+  }
+  .row-details {
+    color: var(--secondary);
+    background: var(--light-bg);
+    filter: brightness(0.98);
+  }
+  .row-details table {
+    margin-top: 0;
+  }
+  .row-details tbody {
+    background: none;
   }
 </style>
