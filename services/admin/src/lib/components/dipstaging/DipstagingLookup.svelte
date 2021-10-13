@@ -35,7 +35,7 @@ This component allows the user to find packages in the dipstaging database.
   const { session } = getStores<Session>();
 
   /**
-   * @type { AccessPlatform } The access platform to look for the items in.
+   * @type { Depositor } The access platform to look for the items in.
    */
   let depositor: Depositor = {
     prefix: "none",

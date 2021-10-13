@@ -20,9 +20,9 @@ This component shows the view for a dmd task that had its metadata successfully 
   import ProgressBar from "$lib/components/shared/ProgressBar.svelte";
   import ScrollStepper from "$lib/components/shared/ScrollStepper.svelte";
   import ScrollStepperStep from "$lib/components/shared/ScrollStepperStep.svelte";
-  import DmdSuccessItemsTable from "$lib/components/dmd/DmdSuccessItemsTable.svelte";
-  import DmdSuccessItemLookup from "$lib/components/dmd/DmdSuccessItemLookup.svelte";
-  import DmdSuccessItemUpdater from "$lib/components/dmd/DmdSuccessItemUpdater.svelte";
+  import DmdSuccessItemsTable from "$lib/components/dmd/success/DmdSuccessItemsTable.svelte";
+  import DmdSuccessItemLookup from "$lib/components/dmd/success/DmdSuccessItemLookup.svelte";
+  import DmdSuccessItemUpdater from "$lib/components/dmd/success/DmdSuccessItemUpdater.svelte";
   import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
   import { dmdTasksStore } from "$lib/stores/dmdTasksStore";
 
@@ -37,15 +37,15 @@ This component shows the view for a dmd task that had its metadata successfully 
   let activeStepIndex = 0;
 
   /**
-   *  @type { AccessPlatform } The access platform to look for the items in.
+   *  @type { Depositor } The access platform to look for the items in.
    */
-  let accessPlatform: Depositor = {
+  let depositor: Depositor = {
     prefix: "oocihm",
     label: "Canadiana.org",
   };
 
   /**
-   *  @type { string } A variable that contains the previously selected prefix of @var accessPlatform, to ensure events are only fired when this value actually changes.
+   *  @type { string } A variable that contains the previously selected prefix of @var depositor, to ensure events are only fired when this value actually changes.
    */
   let prevPrefix: string = "oocihm";
 
@@ -64,11 +64,11 @@ This component shows the view for a dmd task that had its metadata successfully 
    * @returns void
    */
   function resetView() {
-    if (accessPlatform.prefix !== prevPrefix) {
+    if (depositor.prefix !== prevPrefix) {
       $dmdTasksStore[dmdTask.id].lookupState = "ready";
       $dmdTasksStore[dmdTask.id].updateState = "ready";
     }
-    prevPrefix = accessPlatform.prefix;
+    prevPrefix = depositor.prefix;
   }
 
   /**
@@ -130,11 +130,11 @@ This component shows the view for a dmd task that had its metadata successfully 
     $dmdTasksStore[dmdTask.id]?.lookupState === "loaded" ? 1 : 0;
 
   /**
-   * @listens accessPlatform
-   * @description Calls @function resetView when the @var accessPlatform changes.
+   * @listens depositor
+   * @description Calls @function resetView when the @var depositor changes.
    */
   $: {
-    accessPlatform;
+    depositor;
     resetView();
   }
 </script>
@@ -166,7 +166,7 @@ This component shows the view for a dmd task that had its metadata successfully 
       >
         <ScrollStepperStep title="Select a prefix and look-up items">
           <div slot="icon">1</div>
-          <DmdSuccessItemLookup dmdTaskId={dmdTask.id} bind:accessPlatform />
+          <DmdSuccessItemLookup dmdTaskId={dmdTask.id} bind:depositor />
         </ScrollStepperStep>
         <ScrollStepperStep
           title={`Update descriptive metadata for items found`}
@@ -174,7 +174,7 @@ This component shows the view for a dmd task that had its metadata successfully 
         >
           <div slot="icon">2</div>
           {#if $dmdTasksStore[dmdTask.id].lookupState !== "loading"}
-            <DmdSuccessItemUpdater dmdTaskId={dmdTask.id} bind:accessPlatform />
+            <DmdSuccessItemUpdater dmdTaskId={dmdTask.id} bind:depositor />
           {/if}
         </ScrollStepperStep>
       </ScrollStepper>
@@ -204,7 +204,7 @@ This component shows the view for a dmd task that had its metadata successfully 
     <DmdSuccessItemsTable
       bind:itemsToShow={dmdTask.items}
       bind:dmdTaskId={dmdTask.id}
-      bind:accessPlatform
+      bind:depositor
     />
   </div>
 {/if}
