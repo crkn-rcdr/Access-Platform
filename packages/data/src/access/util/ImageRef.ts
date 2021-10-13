@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { ProcessUpdate } from "../../util/ProcessUpdate.js";
+import { MD5 } from "../../util/MD5.js";
 import { UnixFilePath } from "../../util/UnixFilePath.js";
 
 /**
@@ -22,6 +23,11 @@ export const ImageRef = z
      * Size of the file, in bytes.
      */
     size: z.number().min(0),
+
+    /**
+     * MD5 checksum.
+     */
+    md5: MD5.optional(),
 
     /**
      * RFC 2046 Media Type (formerly MIME). Supported: "image/jpeg", "image/jp2", "image/tiff"
