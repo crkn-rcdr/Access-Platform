@@ -9,6 +9,39 @@ import { Env } from "@crkn-rcdr/access-env";
 
 import { readFileSync } from "fs";
 import { join as pathJoin } from "path";
+import { Lock } from "semaphore-async-await";
+import Timeout from "await-timeout";
+
+const RETRY_DELAY_MS = 10000;
+const retryLock = new Lock();
+
+/**
+ * A helper method to allow for retries on any api calls that throw errors.
+ * Delays each attempt by RETRY_DELAY_MS.
+ * Uses semaphore-async-await to prevent any simultaneous calls.
+ */
+const retry = async (method: Function, numAttempts: number) => {
+  await retryLock.wait();
+  let curNumAttempts = 0;
+  let response;
+  while (curNumAttempts < numAttempts) {
+    try {
+      response = await method();
+      if (response.status >= 200 && response.status < 300) break;
+      console.log(`Retry attempt #${curNumAttempts}: `, response);
+    } catch (e) {
+      console.log(`Retry attempt #${curNumAttempts}: `, e?.message);
+      response = e;
+    }
+    console.log(`Waiting ${RETRY_DELAY_MS}ms before trying again...`);
+    await Timeout.set(RETRY_DELAY_MS);
+    curNumAttempts++;
+  }
+  if (curNumAttempts === numAttempts - 1)
+    console.log("Request failed. No more attempts allowed.");
+  retryLock.signal();
+  return response;
+};
 
 const verifyToken = (token: string, secret: string): User => {
   const payload = jwt.verify(token, secret) as JwtPayload;
@@ -75,7 +108,11 @@ export const handle: Handle<Locals> = async ({ request, resolve }) => {
       fetchOptions["body"] = request.rawBody;
 
     try {
-      const response = await fetch(url, fetchOptions);
+      // Retry all api requests 5 times on failure.
+      const response = await retry(async () => {
+        return await fetch(url, fetchOptions);
+      }, 5);
+
       return {
         status: response.status,
         // @ts-ignore: TypeScript's DOM library doesn't have Headers.entries()

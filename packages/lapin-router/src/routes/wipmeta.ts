@@ -5,6 +5,11 @@ import {
   getDmdTaskItemByIndex,
   lookupDmdTaskForStorage,
 } from "../util/dmdTask.js";
+import Timeout from "await-timeout";
+import { Lock } from "semaphore-async-await";
+
+const wipmetaStorageLimiter = new Lock();
+const SWIFT_DELAY_MS = 5000;
 
 export const StorePreservationInput = z.object({
   task: z.string(), // dmdtask uuid
@@ -31,6 +36,8 @@ export const wipmetaRouter = createRouter()
     input: StorePreservationInput.parse,
     async resolve({ input, ctx }) {
       try {
+        await wipmetaStorageLimiter.wait();
+
         const { id, index, task } = input;
         const itemXmlFile = await getDmdItemXML(ctx, task, index);
 
@@ -52,6 +59,8 @@ export const wipmetaRouter = createRouter()
           });
         }
 
+        await Timeout.set(SWIFT_DELAY_MS);
+        wipmetaStorageLimiter.signal();
         return response;
       } catch (e) {
         throw httpErrorToTRPC(e as HTTPErrorLike);

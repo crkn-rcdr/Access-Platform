@@ -13,6 +13,11 @@ import {
   storeDmdTaskItemXmlFile,
   updateLabelForDmdTaskItemAccessObject,
 } from "../util/dmdTask.js";
+import Timeout from "await-timeout";
+import { Lock } from "semaphore-async-await";
+
+const dmdAccessSwiftStorageLimiter = new Lock();
+const SWIFT_DELAY_MS = 5000;
 
 export const dmdTaskRouter = createRouter()
   .query("get", {
@@ -81,6 +86,9 @@ export const dmdTaskRouter = createRouter()
     async resolve({ input, ctx }) {
       try {
         // Each of these methods throws an error if the results arent what is expected.
+
+        await dmdAccessSwiftStorageLimiter.wait();
+
         const dmdTask = await lookupDmdTaskForStorage(ctx, input.task);
 
         const itemXmlFile = await getDmdItemXML(ctx, input.task, input.index);
@@ -109,6 +117,9 @@ export const dmdTaskRouter = createRouter()
             accessObject.type
           );
         }
+
+        await Timeout.set(SWIFT_DELAY_MS);
+        dmdAccessSwiftStorageLimiter.signal();
       } catch (e) {
         throw httpErrorToTRPC(e as HTTPErrorLike);
       }
