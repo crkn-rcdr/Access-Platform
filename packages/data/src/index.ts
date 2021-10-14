@@ -16,12 +16,14 @@ export {
   ObjectListHandler,
   ObjectListPage,
   ObjectListShort,
+  PagedCollection,
   PagedManifest,
   TextRecord,
   isAlias,
   isCanvas,
   isCollection,
   isManifest,
+  toPagedCollection,
   toPagedManifest,
 } from "./access/index.js";
 
