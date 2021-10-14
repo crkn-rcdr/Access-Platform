@@ -4,6 +4,7 @@ module.exports = function (doc, req) {
     errorReturn,
     extractJSONFromBody,
     updateObject,
+    timestamp,
   } = require("views/lib/prelude");
 
   if (!doc) {
@@ -16,7 +17,7 @@ module.exports = function (doc, req) {
 
   const user = extractJSONFromBody(req);
 
-  const now = Date.now() / 1000;
+  const now = timestamp();
   doc.public = now;
 
   updateObject(doc, user);

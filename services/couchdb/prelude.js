@@ -34,6 +34,13 @@ exports.extractJSONFromBody = (req) => {
   }
 };
 
+/**
+ * @returns a nice, friendly timestamp
+ */
+exports.timestamp = () => {
+  return new Date().toISOString().replace(/.\d+Z$/g, "Z");
+};
+
 // TODO: use the data type here
 /**
  * Parses a Timestamp into a Date.
@@ -69,7 +76,7 @@ exports.dateAsArray = (date) => {
  * @param {{name: string; email: string} | undefined} user The user who triggered this update, if one exists.
  */
 exports.updateObject = (doc, user) => {
-  const now = Date.now() / 1000;
+  const now = exports.timestamp();
   if (
     typeof user === "object" &&
     typeof user.email === "string" &&
@@ -88,7 +95,7 @@ exports.updateObject = (doc, user) => {
  * @param {string} message The message the process provided.
  */
 exports.processUpdate = (update, succeeded, message) => {
-  const now = Date.now() / 1000;
+  const now = exports.timestamp();
   return {
     requestDate: update ? update.requestDate : now,
     processDate: now,

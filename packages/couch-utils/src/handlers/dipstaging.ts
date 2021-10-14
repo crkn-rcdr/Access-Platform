@@ -96,7 +96,6 @@ export class LegacyPackageHandler extends DatabaseHandler<LegacyPackage> {
       viewOptions["endkey"] =
         status !== null ? [status, ...endArray] : endArray;
     }
-    console.log("viewOptions", viewOptions);
 
     const list = await this.view("access", viewName, viewOptions);
     return {

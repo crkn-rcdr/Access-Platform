@@ -3,6 +3,7 @@ module.exports = function (doc, req) {
     successReturn,
     errorReturn,
     extractJSONFromBody,
+    timestamp,
   } = require("views/lib/prelude");
 
   if (!doc) {
@@ -14,8 +15,7 @@ module.exports = function (doc, req) {
     return errorReturn(`Could not parse request body as JSON: ${req.body}`);
   }
 
-  //const now = Date.now() / 1000;
-  const now = new Date().toISOString().replace(/.\d+Z$/g, "Z");
+  const now = timestamp();
 
   const { user } = data;
 

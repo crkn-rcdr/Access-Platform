@@ -54,4 +54,5 @@ export {
   Timestamp,
   UnixFilePath,
   User,
+  parseTimestamp,
 } from "./util/index.js";

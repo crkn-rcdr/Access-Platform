@@ -23,8 +23,12 @@ const NEW_SLUG = "newDipTest";
 const QUEUE_SLUG = "queueTest";
 const NEVER_SMELTED_SLUG = "neversmeltedTest";
 
-const jul19 = new Date(2021, 6, 19, 12, 0, 0).valueOf() / 1000;
-const aug19 = new Date(2021, 7, 19, 12, 0, 0).valueOf() / 1000;
+const jul19 = new Date(2021, 6, 19, 12, 0, 0)
+  .toISOString()
+  .replace(/.\d+Z$/g, "Z");
+const aug19 = new Date(2021, 7, 19, 12, 0, 0)
+  .toISOString()
+  .replace(/.\d+Z$/g, "Z");
 
 const lp1: LegacyPackage = {
   id: MANIFEST_ONE_SLUG,
