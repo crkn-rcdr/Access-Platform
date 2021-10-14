@@ -11,8 +11,12 @@ const { isValid: isValidSucceeded, isInvalid: isInvalidSucceeded } =
 
 const USER: User = { name: "User McGee", email: "mcgee@crkn.ca" };
 
-const now = Date.now() / 1000;
-const then = now - 100;
+const timestamp = (d: number) => {
+  return new Date(d).toISOString().replace(/.\d+Z$/g, "Z");
+};
+
+const now = timestamp(Date.now());
+const then = timestamp(Date.now() - 100);
 
 const metadataAttachment = {
   content_type: "application/octet-stream",

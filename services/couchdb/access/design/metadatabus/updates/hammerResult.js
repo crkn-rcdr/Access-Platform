@@ -3,6 +3,7 @@ module.exports = function (doc, req) {
     successReturn,
     errorReturn,
     extractJSONFromBody,
+    timestamp,
   } = require("views/lib/prelude");
 
   if (!doc) {
@@ -14,7 +15,7 @@ module.exports = function (doc, req) {
     return errorReturn(`Could not parse request body as JSON: ${req.body}`);
   }
 
-  const now = Date.now() / 1000;
+  const now = timestamp();
   doc.updateInternalmeta = {
     requestDate: doc.updateInternalmeta
       ? doc.updateInternalmeta.requestDate

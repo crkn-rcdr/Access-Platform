@@ -165,7 +165,7 @@ test.serial(
 test.serial("Can add and remove members", async (t) => {
   // Get the time at the start of the test. We'll use this to ensure that
   // `updateInternalmeta` has been updated.
-  const teststart = Date.now() / 1000;
+  const teststart = new Date().toISOString();
 
   let collection = Collection.parse(await t.context.access.get(COLLECTION));
   const oldMembers = collection.members;
