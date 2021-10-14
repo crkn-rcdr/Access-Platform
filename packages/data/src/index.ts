@@ -13,11 +13,16 @@ export {
   ImageRef,
   Manifest,
   ObjectList,
+  ObjectListHandler,
+  ObjectListPage,
+  ObjectListShort,
+  PagedManifest,
   TextRecord,
   isAlias,
   isCanvas,
   isCollection,
   isManifest,
+  toPagedManifest,
 } from "./access/index.js";
 
 export {
