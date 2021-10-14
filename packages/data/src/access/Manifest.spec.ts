@@ -112,13 +112,13 @@ test("Canvas manifests can be paged", (t) => {
 
   const list = new ObjectListHandler(testCanvasManifest.canvases as ObjectList);
 
-  const firstPage = list.nextPage(null, 4);
+  const firstPage = list.pageAfter(null, 4);
   t.deepEqual(firstPage.list, testCanvasManifest.canvases?.slice(0, 4));
-  const secondPage = list.nextPage(firstPage.last, 4);
+  const secondPage = list.pageAfter(firstPage.last, 4);
   t.deepEqual(secondPage.list, testCanvasManifest.canvases?.slice(4, 8));
 
-  const frPage = list.previousPage(null, 5);
+  const frPage = list.pageBefore(null, 5);
   t.deepEqual(frPage.list, testCanvasManifest.canvases?.slice(3, 8));
-  const srPage = list.previousPage(frPage.first, 5);
+  const srPage = list.pageBefore(frPage.first, 5);
   t.deepEqual(srPage.list, testCanvasManifest.canvases?.slice(0, 3));
 });

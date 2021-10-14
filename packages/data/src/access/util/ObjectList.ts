@@ -48,6 +48,9 @@ const pageFrom = (list: ObjectList): ObjectListPage => {
   };
 };
 
+/**
+ * Methods for ObjectLists.
+ */
 export class ObjectListHandler {
   private list: ObjectList;
 
@@ -55,10 +58,17 @@ export class ObjectListHandler {
     this.list = list;
   }
 
+  /**
+   * Length of the ObjectList.
+   */
   length() {
     return this.list.length;
   }
 
+  /**
+   * The short form of the ObjectList, for use when sending
+   * all of the list is problematic.
+   */
   shortForm(): ObjectListShort {
     if (this.list.length > 0) {
       return {
@@ -71,7 +81,13 @@ export class ObjectListHandler {
     }
   }
 
-  nextPage(after: Noid | null, limit: number): ObjectListPage {
+  /**
+   * Return an ObjectListPage object for a slice of the list.
+   * @param after The id after which the page should be generated. Use
+   * `null` if you want to start at the top of the list.
+   * @param limit Maximum number of items to return.
+   */
+  pageAfter(after: Noid | null, limit: number): ObjectListPage {
     if (after) {
       const index = this.list.findIndex((obj) => obj.id === after);
       if (index === -1) {
@@ -84,7 +100,13 @@ export class ObjectListHandler {
     }
   }
 
-  previousPage(before: Noid | null, limit: number): ObjectListPage {
+  /**
+   * Return an ObjectListPage object for a slice of the list.
+   * @param before The id before which the page should be generated. Use
+   * `null` if you want to end at the bottom of the list.
+   * @param limit Maximum number of items to return.
+   */
+  pageBefore(before: Noid | null, limit: number): ObjectListPage {
     if (before) {
       const index = this.list.findIndex((obj) => obj.id === before);
       if (index === -1) {
