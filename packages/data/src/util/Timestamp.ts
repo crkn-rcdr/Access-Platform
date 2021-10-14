@@ -19,3 +19,13 @@ export const StringTimestamp = z.string().regex(isoRegex, "Invalid Timestamp");
  */
 export const Timestamp = z.union([z.number(), StringTimestamp]);
 export type Timestamp = z.infer<typeof Timestamp>;
+
+/**
+ * Returns a JavaScript Date object from a timestamp.
+ */
+export const parseTimestamp = (timestamp: Timestamp): Date => {
+  if (typeof timestamp === "number") return new Date(timestamp * 1000);
+  // if parsing fails, e.g. if date is undefined, date === NaN
+  const parsed = Date.parse(timestamp);
+  return Number.isNaN(parsed) ? new Date(0) : new Date(parsed);
+};

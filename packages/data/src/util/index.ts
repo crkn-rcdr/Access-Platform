@@ -8,6 +8,6 @@ export {
 } from "./ProcessUpdate.js";
 export { Slug } from "./Slug.js";
 export { StaffUpdate } from "./StaffUpdate.js";
-export { Timestamp } from "./Timestamp.js";
+export { Timestamp, parseTimestamp } from "./Timestamp.js";
 export { UnixFilePath } from "./UnixFilePath.js";
 export { User } from "./User.js";
