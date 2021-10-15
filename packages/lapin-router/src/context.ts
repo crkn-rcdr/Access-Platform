@@ -7,7 +7,7 @@ export type LapinContext = {
   couch: ReturnType<typeof initializeCouchDB>;
   noid: ReturnType<typeof initializeNoid>;
   swift: ReturnType<typeof initializeSwift>;
-  limiter: ReturnType<typeof initializeRouteLimiter>;
+  routeLimiters: ReturnType<typeof initializeRouteLimiter>;
 };
 
 export function createContext(): LapinContext {
@@ -15,6 +15,6 @@ export function createContext(): LapinContext {
     couch: initializeCouchDB(),
     noid: initializeNoid(),
     swift: initializeSwift(),
-    limiter: initializeRouteLimiter(),
+    routeLimiter: initializeRouteLimiter(),
   };
 }

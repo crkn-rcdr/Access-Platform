@@ -34,9 +34,7 @@ export const wipmetaRouter = createRouter()
     async resolve({ input, ctx }) {
       try {
         const path = "storePreservation";
-        ctx.limiter.queueJob(path, async () => {
-          console.log("No mine!!");
-
+        ctx.routeLimiters.queueJob(path, async () => {
           const { id, index, task } = input;
           const itemXmlFile = await getDmdItemXML(ctx, task, index);
 
