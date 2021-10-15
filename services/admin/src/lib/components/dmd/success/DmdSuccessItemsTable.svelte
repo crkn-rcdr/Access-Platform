@@ -124,14 +124,14 @@ This component displays the items in the dmd task throughout the various stages 
           <th>Found in Access?</th>
         {/if}
         {#if $dmdTasksStore[dmdTaskId].updateState !== "ready" && $dmdTasksStore[dmdTaskId].shouldUpdateInAccess}
-          <th>Proccessing in Access?</th>
+          <th>Queued for proccessing in Access?</th>
         {/if}
 
         {#if $dmdTasksStore[dmdTaskId].lookupState !== "ready" && $dmdTasksStore[dmdTaskId].shouldUpdateInPreservation}
           <th>Found in Preservation?</th>
         {/if}
         {#if $dmdTasksStore[dmdTaskId].updateState !== "ready" && $dmdTasksStore[dmdTaskId].shouldUpdateInPreservation}
-          <th>Proccessing in Preservation?</th>
+          <th>Queued for proccessing in Preservation?</th>
         {/if}
       </tr>
     </thead>
