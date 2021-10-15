@@ -83,7 +83,7 @@ export const dmdTaskRouter = createRouter()
     async resolve({ input, ctx }) {
       try {
         const path = "storeAccess";
-        ctx.routeLimiters.queueJob(path, async () => {
+        return await ctx.routeLimiter.queueJob(path, async () => {
           // Each of these methods throws an error if the results arent what is expected.
 
           const dmdTask = await lookupDmdTaskForStorage(ctx, input.task);

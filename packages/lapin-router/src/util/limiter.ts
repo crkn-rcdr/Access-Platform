@@ -29,6 +29,7 @@ export class RouteLimiter {
       routeLimiter.enqueue(async () => {
         await callback();
       });
-    }
+      return true;
+    } else return false;
   }
 }
