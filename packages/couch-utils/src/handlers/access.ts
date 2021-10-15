@@ -13,6 +13,7 @@ import {
   Slug,
   NewCollection,
   NewManifest,
+  TextRecord,
 } from "@crkn-rcdr/access-data";
 
 import { DatabaseHandler } from "../DatabaseHandler.js";
@@ -33,6 +34,15 @@ type SlugResolutionError =
   | "not-found" // the slug didn't resolve
   | "is-self" // the slug resolved to the collection being edited
   | "already-member"; // the slug resolved to an existing member of the collection
+
+export interface SimpleRecord {
+  id: Noid;
+  slug?: Slug;
+  label: TextRecord;
+}
+
+export type Membership = Array<SimpleRecord>;
+export type Ancestry = Array<Array<SimpleRecord>>;
 
 /**
  * Interact with Access Objects in their database.
@@ -304,5 +314,68 @@ export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
         return [slug, r];
       })
     );
+  }
+
+  private async simpleLookup(id: Noid): Promise<SimpleRecord> {
+    const lookup = await this.findUnique("id", id, [
+      "id",
+      "slug",
+      "label",
+    ] as const);
+    if (lookup.found) {
+      return lookup.result;
+    } else {
+      throw createHttpError(404, `Object ${id} not found.`);
+    }
+  }
+
+  /** TODO: move to lapin when it's testable */
+  async getMembership(id: Noid): Promise<Membership> {
+    const memberships = await this.isMemberOf(id);
+
+    const rv: Membership = [];
+    for (const m of memberships) {
+      rv.push(await this.simpleLookup(m));
+    }
+
+    return rv;
+  }
+
+  async getAncestry(id: Noid): Promise<Ancestry> {
+    const parentMemo = new Map<Noid, Noid[]>();
+    const recordMemo = new Map<Noid, SimpleRecord>();
+
+    const partial = async (id: Noid): Promise<Noid[][]> => {
+      if (!recordMemo.has(id)) {
+        recordMemo.set(id, await this.simpleLookup(id));
+      }
+      if (!parentMemo.has(id)) {
+        parentMemo.set(id, await this.isMemberOf(id));
+      }
+      const parents = parentMemo.get(id)!;
+      if (parents.length > 0) {
+        const rv: Noid[][] = [];
+        for (const parent of parents) {
+          const parentAncestry = await partial(parent);
+          rv.push(
+            ...parentAncestry.map((path) => {
+              if (path.indexOf(id) > -1) {
+                throw createHttpError(
+                  500,
+                  `Ancestry cycle detected! ${[...path, id].join(" -> ")}`
+                );
+              }
+              return [...path, id];
+            })
+          );
+        }
+        return rv;
+      } else {
+        return [[id]];
+      }
+    };
+    const graph = await partial(id);
+
+    return graph.map((path) => path.map((id) => recordMemo.get(id)!));
   }
 }

@@ -58,6 +58,26 @@ export const accessObjectRouter = createRouter()
       });
     },
   })
+  .query("getMembership", {
+    input: Noid.parse,
+    async resolve({ input: id, ctx }) {
+      try {
+        return await ctx.couch.access.getMembership(id);
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .query("getAncestry", {
+    input: Noid.parse,
+    async resolve({ input: id, ctx }) {
+      try {
+        return await ctx.couch.access.getAncestry(id);
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
   .mutation("publish", {
     input: NoidWithUser.parse,
     async resolve({ input, ctx }) {
