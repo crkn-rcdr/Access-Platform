@@ -211,17 +211,32 @@ export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
     return Manifest.parse(manifest);
   }
 
+  /**
+   * Removes a member from a collection.
+   */
+  async removeMember(args: {
+    /** Collection id */
+    id: Noid;
+    /** Member id */
+    member: Noid;
+    /** User making the update */
+    user?: User;
+  }): Promise<void> {
+    const { id, member, user } = args;
+    await this.update({
+      ddoc: "access",
+      name: "removeMember",
+      docId: id,
+      body: { id: member, user },
+    });
+  }
+
   async unassignSlug(args: { id: Noid; user: User }): Promise<void> {
     const { id, user } = args;
     const collections = await this.isMemberOf(id);
 
     for (const collection of collections) {
-      await this.update({
-        ddoc: "access",
-        name: "removeMember",
-        docId: collection,
-        body: { id, user },
-      });
+      await this.removeMember({ id: collection, member: id, user });
     }
 
     await this.update({
