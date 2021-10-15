@@ -13,11 +13,8 @@ import {
   storeDmdTaskItemXmlFile,
   updateLabelForDmdTaskItemAccessObject,
 } from "../util/dmdTask.js";
-import Timeout from "await-timeout";
-import { Lock } from "semaphore-async-await";
-
-const dmdAccessSwiftStorageLimiter = new Lock();
-const SWIFT_DELAY_MS = 5000;
+import { RouteLimiter } from "../util/limiter.js";
+const limiter = new RouteLimiter();
 
 export const dmdTaskRouter = createRouter()
   .query("get", {
@@ -85,41 +82,40 @@ export const dmdTaskRouter = createRouter()
     input: StoreAccessInput.parse,
     async resolve({ input, ctx }) {
       try {
-        // Each of these methods throws an error if the results arent what is expected.
+        const path = "storeAccess";
+        limiter.queueJob(path, async () => {
+          console.log("My turn!!");
+          // Each of these methods throws an error if the results arent what is expected.
 
-        await dmdAccessSwiftStorageLimiter.wait();
+          const dmdTask = await lookupDmdTaskForStorage(ctx, input.task);
 
-        const dmdTask = await lookupDmdTaskForStorage(ctx, input.task);
+          const itemXmlFile = await getDmdItemXML(ctx, input.task, input.index);
 
-        const itemXmlFile = await getDmdItemXML(ctx, input.task, input.index);
+          const item = await getDmdTaskItemByIndex(dmdTask, input.index);
 
-        const item = await getDmdTaskItemByIndex(dmdTask, input.index);
-
-        const accessObject = await getAccessObjectForDmdTaskItem(
-          ctx,
-          input.slug
-        );
-
-        const itemXMLFileName = getDmdTaskItemXMLFileName(
-          accessObject.id,
-          item.output
-        );
-
-        await storeDmdTaskItemXmlFile(ctx, itemXMLFileName, itemXmlFile);
-
-        // Should I add a length check?
-        if (typeof item.label === "string") {
-          await updateLabelForDmdTaskItemAccessObject(
+          const accessObject = await getAccessObjectForDmdTaskItem(
             ctx,
-            item.label,
-            accessObject.id,
-            input.user,
-            accessObject.type
+            input.slug
           );
-        }
 
-        await Timeout.set(SWIFT_DELAY_MS);
-        dmdAccessSwiftStorageLimiter.signal();
+          const itemXMLFileName = getDmdTaskItemXMLFileName(
+            accessObject.id,
+            item.output
+          );
+
+          await storeDmdTaskItemXmlFile(ctx, itemXMLFileName, itemXmlFile);
+
+          // Should I add a length check?
+          if (typeof item.label === "string") {
+            await updateLabelForDmdTaskItemAccessObject(
+              ctx,
+              item.label,
+              accessObject.id,
+              input.user,
+              accessObject.type
+            );
+          }
+        });
       } catch (e) {
         throw httpErrorToTRPC(e as HTTPErrorLike);
       }

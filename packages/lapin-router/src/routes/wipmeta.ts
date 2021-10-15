@@ -5,11 +5,8 @@ import {
   getDmdTaskItemByIndex,
   lookupDmdTaskForStorage,
 } from "../util/dmdTask.js";
-import Timeout from "await-timeout";
-import { Lock } from "semaphore-async-await";
-
-const wipmetaStorageLimiter = new Lock();
-const SWIFT_DELAY_MS = 5000;
+import { RouteLimiter } from "../util/limiter.js";
+const limiter = new RouteLimiter();
 
 export const StorePreservationInput = z.object({
   task: z.string(), // dmdtask uuid
@@ -36,32 +33,31 @@ export const wipmetaRouter = createRouter()
     input: StorePreservationInput.parse,
     async resolve({ input, ctx }) {
       try {
-        await wipmetaStorageLimiter.wait();
+        const path = "storePreservation";
+        limiter.queueJob(path, async () => {
+          console.log("No mine!!");
 
-        const { id, index, task } = input;
-        const itemXmlFile = await getDmdItemXML(ctx, task, index);
+          const { id, index, task } = input;
+          const itemXmlFile = await getDmdItemXML(ctx, task, index);
 
-        const file = itemXmlFile.toString("base64");
+          const file = itemXmlFile.toString("base64");
 
-        const response = await ctx.couch.wipmeta.uploadBase64Attachment({
-          document: id,
-          attachmentName: "dmd.xml",
-          attachment: file,
-          contentType: "application/octet-stream",
-        });
-
-        const dmdTask = await lookupDmdTaskForStorage(ctx, task);
-        const { label } = await getDmdTaskItemByIndex(dmdTask, index);
-        if (typeof label === "string") {
-          await ctx.couch.wipmeta.updateLabel({
-            id,
-            label,
+          await ctx.couch.wipmeta.uploadBase64Attachment({
+            document: id,
+            attachmentName: "dmd.xml",
+            attachment: file,
+            contentType: "application/octet-stream",
           });
-        }
 
-        await Timeout.set(SWIFT_DELAY_MS);
-        wipmetaStorageLimiter.signal();
-        return response;
+          const dmdTask = await lookupDmdTaskForStorage(ctx, task);
+          const { label } = await getDmdTaskItemByIndex(dmdTask, index);
+          if (typeof label === "string") {
+            await ctx.couch.wipmeta.updateLabel({
+              id,
+              label,
+            });
+          }
+        });
       } catch (e) {
         throw httpErrorToTRPC(e as HTTPErrorLike);
       }

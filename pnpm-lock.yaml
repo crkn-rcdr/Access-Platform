@@ -92,6 +92,9 @@ importers:
       deep-object-diff: ^1.1.0
       node-fetch: ^2.6.1
       npm-run-all: ^4.1.5
+      p-queue: ^7.1.0
+      queue-promise: ^2.2.1
+      semaphore: ^1.1.0
       semaphore-async-await: ^1.5.1
       ts-node: ^10.2.0
       typescript: ^4.3.5
@@ -106,6 +109,9 @@ importers:
       await-timeout: 1.0.1
       deep-object-diff: 1.1.0
       node-fetch: 2.6.1
+      p-queue: 7.1.0
+      queue-promise: 2.2.1
+      semaphore: 1.1.0
       semaphore-async-await: 1.5.1
       zod: 3.7.1
     devDependencies:
@@ -1300,6 +1306,10 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
+  /eventemitter3/4.0.7:
+    resolution: {integrity: sha512-8guHBZCwKnFhYdHr2ysuRWErTwhoN2X8XELRlrRwpmfeY2jjuUN4taQMsULKUVo1K4DvZl+0pgfyoysHxvmvEw==}
+    dev: false
+
   /fast-diff/1.2.0:
     resolution: {integrity: sha512-xJuoT5+L99XlZ8twedaRf6Ax2TgQVxvgZOYoPKqZufmJib0tL2tegPBOZb1pVNgIhlqDlA0eO0c3wBvQcmzx4w==}
     dev: true
@@ -2414,6 +2424,14 @@ packages:
       aggregate-error: 3.1.0
     dev: true
 
+  /p-queue/7.1.0:
+    resolution: {integrity: sha512-V+0vPJbhYkBqknPp0qnaz+dWcj8cNepfXZcsVIVEHPbFQXMPwrzCNIiM4FoxGtwHXtPzVCPHDvqCr1YrOJX2Gw==}
+    engines: {node: '>=12'}
+    dependencies:
+      eventemitter3: 4.0.7
+      p-timeout: 5.0.1
+    dev: false
+
   /p-retry/4.6.1:
     resolution: {integrity: sha512-e2xXGNhZOZ0lfgR9kL34iGlU8N/KO0xZnQxVEwdeOvpqNDQfdnxIYizvWtK8RglUa3bGqI8g0R/BdfzLMxRkiA==}
     engines: {node: '>=8'}
@@ -2427,6 +2445,11 @@ packages:
     dependencies:
       p-finally: 1.0.0
     dev: true
+
+  /p-timeout/5.0.1:
+    resolution: {integrity: sha512-iIxgiUu9dGmC9y234OT0scvFEoH/RZdslZrNJP/50wIg4ufqQlFv5DddQQ62kZ9ZAxS0cfwMu3Ewf98Oe6QlGg==}
+    engines: {node: '>=12'}
+    dev: false
 
   /p-try/2.2.0:
     resolution: {integrity: sha512-R4nPAVTAU0B9D35/Gk3uJf/7XYbQcyohSKdvAxIRSNghFl4e71hVoGnBNQz9cWaXxO2I10KTC+3jMdvvoKw6dQ==}
@@ -2616,6 +2639,11 @@ packages:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
     dev: true
 
+  /queue-promise/2.2.1:
+    resolution: {integrity: sha512-C3eyRwLF9m6dPV4MtqMVFX+Xmc7keZ9Ievm3jJ/wWM5t3uVbFnGsJXwpYzZ4LaIEcX9bss/mdaKzyrO6xheRuA==}
+    engines: {node: '>=8.12.0'}
+    dev: false
+
   /rc/1.2.8:
     resolution: {integrity: sha512-y3bGgqKj3QBdxLbLkomlohkvsA8gdAiUQlSBJnBhfn+BPxg4bc62d8TcBW15wavDfgexCgccckhcZvywyQYPOw==}
     hasBin: true
@@ -2789,6 +2817,11 @@ packages:
   /semaphore-async-await/1.5.1:
     resolution: {integrity: sha1-hXvvXjZEYBykuVcLh+nfXKEpdPo=}
     engines: {node: '>=4.1'}
+    dev: false
+
+  /semaphore/1.1.0:
+    resolution: {integrity: sha512-O4OZEaNtkMd/K0i6js9SL+gqy0ZCBMgUvlSqHKi4IBdjhe7wB8pwztUk1BbZ1fmrvpwFrPbHzqd2w5pTcJH6LA==}
+    engines: {node: '>=0.8.0'}
     dev: false
 
   /semver-diff/3.1.1:

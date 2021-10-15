@@ -73,6 +73,9 @@
     "await-timeout": "1.0.1",
     "deep-object-diff": "^1.1.0",
     "node-fetch": "^2.6.1",
+    "p-queue": "^7.1.0",
+    "queue-promise": "^2.2.1",
+    "semaphore": "^1.1.0",
     "semaphore-async-await": "^1.5.1",
     "zod": "^3.7.1"
   }

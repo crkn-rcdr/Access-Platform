@@ -202,7 +202,7 @@ async function updateItemsInAccess(
           user: user,
         });
         items[itemSlug].updatedInAccess = "Yes";
-        items[itemSlug].updatedInAccessMsg = "Succeeded";
+        items[itemSlug].updatedInAccessMsg = "";
         updateTask(dmdTaskId, "itemStates", items);
       } catch (e) {
         console.log(e?.message);
@@ -252,7 +252,7 @@ async function updateItemsInPreservation(
           id: items[itemSlug]["slug"],
         });
         items[itemSlug].updatedInPreservation = "Yes";
-        items[itemSlug].updatedInPreservationMsg = "Succeeded";
+        items[itemSlug].updatedInPreservationMsg = "";
         updateTask(dmdTaskId, "itemStates", items);
       } catch (e) {
         console.log(e?.message);
