@@ -23,15 +23,11 @@ export class RouteLimiter {
   }
 
   async queueJob(route: string, callback: Function) {
-    console.log("route", route, "limiter?", this.getLimiter(route));
     if (typeof this.getLimiter(route) === "undefined") this.setLimiter(route);
-
     const routeLimiter = this.getLimiter(route);
     if (typeof routeLimiter !== "undefined") {
       routeLimiter.enqueue(async () => {
-        console.log("Starting job...");
         await callback();
-        console.log("Done!");
       });
     }
   }

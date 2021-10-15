@@ -5,8 +5,8 @@ import {
   getDmdTaskItemByIndex,
   lookupDmdTaskForStorage,
 } from "../util/dmdTask.js";
-import { RouteLimiter } from "../util/limiter.js";
-const limiter = new RouteLimiter();
+//import { RouteLimiter } from "../util/limiter.js";
+//const limiter = new RouteLimiter();
 
 export const StorePreservationInput = z.object({
   task: z.string(), // dmdtask uuid
@@ -34,7 +34,7 @@ export const wipmetaRouter = createRouter()
     async resolve({ input, ctx }) {
       try {
         const path = "storePreservation";
-        limiter.queueJob(path, async () => {
+        ctx.limiter.queueJob(path, async () => {
           console.log("No mine!!");
 
           const { id, index, task } = input;

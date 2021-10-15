@@ -13,8 +13,8 @@ import {
   storeDmdTaskItemXmlFile,
   updateLabelForDmdTaskItemAccessObject,
 } from "../util/dmdTask.js";
-import { RouteLimiter } from "../util/limiter.js";
-const limiter = new RouteLimiter();
+//import { RouteLimiter } from "../util/limiter.js";
+//const limiter = new RouteLimiter();
 
 export const dmdTaskRouter = createRouter()
   .query("get", {
@@ -83,7 +83,7 @@ export const dmdTaskRouter = createRouter()
     async resolve({ input, ctx }) {
       try {
         const path = "storeAccess";
-        limiter.queueJob(path, async () => {
+        ctx.limiter.queueJob(path, async () => {
           console.log("My turn!!");
           // Each of these methods throws an error if the results arent what is expected.
 
