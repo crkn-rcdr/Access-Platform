@@ -9,7 +9,7 @@ import {
   Slug,
   ObjectListPage,
 } from "@crkn-rcdr/access-data";
-import { createRouter, httpErrorToTRPC, HTTPErrorLike } from "../router.js";
+import { createRouter, httpErrorToTRPC } from "../router.js";
 import { TRPCError } from "@trpc/server";
 import { LapinContext } from "../context.js";
 
@@ -110,7 +110,7 @@ export const collectionRouter = createRouter()
       try {
         return await ctx.couch.access.editCollection(input);
       } catch (e) {
-        throw httpErrorToTRPC(e as HTTPErrorLike);
+        throw httpErrorToTRPC(e);
       }
     },
   })
@@ -125,7 +125,7 @@ export const collectionRouter = createRouter()
         });
         return id;
       } catch (e) {
-        throw httpErrorToTRPC(e as HTTPErrorLike);
+        throw httpErrorToTRPC(e);
       }
     },
   })
@@ -135,7 +135,7 @@ export const collectionRouter = createRouter()
       try {
         return await ctx.couch.access.checkAdditions(input.id, input.slugArray);
       } catch (e) {
-        throw httpErrorToTRPC(e as HTTPErrorLike);
+        throw httpErrorToTRPC(e);
       }
     },
   });

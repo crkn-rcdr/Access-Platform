@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createRouter, HTTPErrorLike, httpErrorToTRPC } from "../router.js";
+import { createRouter, httpErrorToTRPC } from "../router.js";
 import {
   getDmdItemXML,
   getDmdTaskItemByIndex,
@@ -23,7 +23,7 @@ export const wipmetaRouter = createRouter()
         });
         return response.rows.length === 1;
       } catch (e) {
-        throw httpErrorToTRPC(e as HTTPErrorLike);
+        throw httpErrorToTRPC(e);
       }
     },
   })
@@ -54,7 +54,7 @@ export const wipmetaRouter = createRouter()
 
         return response;
       } catch (e) {
-        throw httpErrorToTRPC(e as HTTPErrorLike);
+        throw httpErrorToTRPC(e);
       }
     },
   });
