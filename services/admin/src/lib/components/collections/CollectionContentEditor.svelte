@@ -21,6 +21,8 @@ Allows the user to modify the member list for a collection.
   import { moveArrayElement } from "$lib/utils/arrayUtil";
   import TiTrash from "svelte-icons/ti/TiTrash.svelte";
   import CollectionMembersAddition from "./CollectionMembersAddition.svelte";
+  import { session } from "$app/stores";
+
   export let collection: Collection;
   let activeMemberIndex: number = 0;
   const dispatch = createEventDispatcher();
@@ -52,6 +54,22 @@ Allows the user to modify the member list for a collection.
       collection.members = collection?.members;
       setActiveIndex(activeMemberIndex);
     }
+  }
+  let documentSlug: string[] = [];
+  async function getMemberContext() {
+    let currentMembers = collection.members.map((members) => members.id);
+
+    const resolutions = await $session.lapin.query(
+      "collection.viewMembersContext",
+      currentMembers
+    );
+    console.log("know what it retrieves", resolutions);
+    documentSlug = resolutions.map((slug) => {
+      if (slug[1].found) {
+        documentSlug = slug[1].result;
+      }
+      console.log("check what is in document slug", documentSlug);
+    });
   }
   onMount(() => {
     if (collection.members.length) activeMemberIndex = 0;
@@ -112,9 +130,26 @@ Allows the user to modify the member list for a collection.
           <div id="grid">
             <ul>
               <li>
-                <a href="/object/{item?.data?.id}">{item?.data?.id}</a>
+                <a href="/object/{item?.data?.id}">{item?.data?.id}</a><br />
+                {#each collection.members as members}
+                  {#if members.label !== null && members.label !== undefined}
+                    <textarea
+                      id="label"
+                      name="label"
+                      bind:value={members["label"]["none"]}
+                    />
+                  {/if}
+                {/each}
+                {#each documentSlug as document}
+                  <textarea
+                    id="label"
+                    name="label"
+                    bind:value={document["label"]}
+                  />
+                {/each}
               </li>
             </ul>
+            <button on:click={getMemberContext}>Check</button>
           </div>
         </div>
       </div>
