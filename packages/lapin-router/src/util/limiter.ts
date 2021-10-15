@@ -27,7 +27,15 @@ export class RouteLimiter {
     const routeLimiter = this.getLimiter(route);
     if (typeof routeLimiter !== "undefined") {
       routeLimiter.enqueue(async () => {
-        await callback();
+        try {
+          await callback();
+        } catch (e: any) {
+          console.log(
+            "Error executing callback in route limiter: ",
+            e?.message
+          );
+          console.log("Route: ", route);
+        }
       });
       return true;
     } else return false;
