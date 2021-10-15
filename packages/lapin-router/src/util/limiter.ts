@@ -1,3 +1,4 @@
+import { Console } from "console";
 import Queue from "queue-promise";
 const DEFAULT_QUEUE_DELAY = 10000;
 
@@ -29,6 +30,7 @@ export class RouteLimiter {
       routeLimiter.enqueue(async () => {
         try {
           await callback();
+          console.log("Successfully executed job on route: ", route);
         } catch (e: any) {
           console.log(
             "Error executing callback in route limiter: ",
