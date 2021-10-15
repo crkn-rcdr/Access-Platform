@@ -3,7 +3,6 @@ import createHttpError from "http-errors";
 import { ServerScope } from "nano";
 
 import {
-  Alias,
   Manifest,
   Collection,
   Noid,
@@ -22,7 +21,8 @@ import { xorWith, isEqual } from "lodash-es";
 
 // Use this essentially so that `slug` is defined
 // TODO: define a Zod parser that is aware of all possible fields.
-const AccessDatabaseObject = z.union([Alias, Manifest, Collection]);
+// TODO: Re-add Alias when necessary
+const AccessDatabaseObject = z.union([Manifest, Collection]);
 
 type AccessDatabaseObject = z.infer<typeof AccessDatabaseObject>;
 

@@ -2,7 +2,11 @@ import { z } from "zod";
 import { Described } from "./traits/Described.js";
 import { Identified } from "./traits/Identified.js";
 import { Slugged } from "./traits/Slugged.js";
-import { ObjectList } from "./util/ObjectList.js";
+import {
+  ObjectList,
+  ObjectListHandler,
+  ObjectListShort,
+} from "./util/ObjectList.js";
 
 export const Collection = z
   .object({
@@ -63,3 +67,19 @@ export const NewCollection = Collection.pick({
 );
 
 export type NewCollection = z.infer<typeof NewCollection>;
+
+export const PagedCollection = Collection.omit({ members: true }).merge(
+  z.object({
+    members: ObjectListShort,
+  })
+);
+
+export type PagedCollection = z.infer<typeof PagedCollection>;
+
+export const toPagedCollection = (c: Collection): PagedCollection => {
+  const handler = new ObjectListHandler(c.members);
+  return {
+    ...c,
+    members: handler.shortForm(),
+  };
+};
