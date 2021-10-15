@@ -1,4 +1,3 @@
-import { Console } from "console";
 import Queue from "queue-promise";
 const DEFAULT_QUEUE_DELAY = 10000;
 

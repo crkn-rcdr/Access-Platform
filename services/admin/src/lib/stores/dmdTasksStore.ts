@@ -186,6 +186,7 @@ async function updateItemsInAccess(
   lapin: TRPCClient<LapinRouter>,
   numItems: number
 ) {
+  // TODO rename to queue for update then check if called (updated > timestamp to see if ran)
   let index = 0;
   for (const itemSlug in items) {
     if (
