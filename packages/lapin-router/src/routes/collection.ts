@@ -11,6 +11,7 @@ import {
 } from "@crkn-rcdr/access-data";
 import { createRouter, httpErrorToTRPC, HTTPErrorLike } from "../router.js";
 import { TRPCError } from "@trpc/server";
+import { LapinContext } from "../context.js";
 
 const PageAfterInput = z.object({
   id: Noid,
@@ -23,6 +24,26 @@ const PageBeforeInput = z.object({
   before: Noid.nullable(),
   limit: z.number().int().positive().default(100),
 });
+
+const expandList = async (ctx: LapinContext, page: ObjectListPage) => {
+  const expandedList = [];
+  for (const obj of page.list) {
+    const stuff = await ctx.couch.access.findUnique("id", obj.id, [
+      "slug",
+      "label",
+      "type",
+      "behavior",
+    ] as const);
+    if (stuff.found) {
+      expandedList.push({
+        labelFromMember: stuff.result.label,
+        ...stuff.result,
+        ...obj,
+      });
+    }
+  }
+  return { first: page.first, last: page.last, list: expandedList };
+};
 
 const EditInput = z.object({
   id: Noid,
@@ -41,16 +62,14 @@ const checkAdditions = z.object({
 export const collectionRouter = createRouter()
   .query("pageAfter", {
     input: PageAfterInput.parse,
-    async resolve({
-      input: { id, after, limit },
-      ctx,
-    }): Promise<ObjectListPage> {
+    async resolve({ input: { id, after, limit }, ctx }) {
       const response = await ctx.couch.access.getSafe(id);
       if (response.found) {
         const collectionCheck = Collection.safeParse(response.doc);
         if (collectionCheck.success) {
           const members = new ObjectListHandler(collectionCheck.data.members);
-          return members.pageAfter(after, limit);
+          const page = members.pageAfter(after, limit);
+          return await expandList(ctx, page);
         }
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -65,16 +84,14 @@ export const collectionRouter = createRouter()
   })
   .query("pageBefore", {
     input: PageBeforeInput.parse,
-    async resolve({
-      input: { id, before, limit },
-      ctx,
-    }): Promise<ObjectListPage> {
+    async resolve({ input: { id, before, limit }, ctx }) {
       const response = await ctx.couch.access.getSafe(id);
       if (response.found) {
         const collectionCheck = Collection.safeParse(response.doc);
         if (collectionCheck.success) {
           const members = new ObjectListHandler(collectionCheck.data.members);
-          return members.pageBefore(before, limit);
+          const page = members.pageBefore(before, limit);
+          return await expandList(ctx, page);
         }
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
