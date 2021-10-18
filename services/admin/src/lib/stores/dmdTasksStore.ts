@@ -4,7 +4,7 @@
  * This module exports a store of type DmdTasksCache that holds DmdTaskStates. This makes it easier for the components to interact with a dmd task and keep track of states throughout the progression of updating the items in the dmd task.
  */
 //import Queue from "queue-promise";
-import Deque from "../utils/deque";
+import PromiseDeque from "../utils/promiseDeque";
 const DEFAULT_QUEUE_DELAY = 10000;
 const MAX_RETRY = 5;
 
@@ -183,7 +183,7 @@ async function sendAccessUpdate(
   numItems: number,
   index: number,
   itemSlug: string,
-  reqDeque: Deque,
+  reqDeque: PromiseDeque,
   retryCount: number
 ) {
   try {
@@ -194,7 +194,8 @@ async function sendAccessUpdate(
       noid: items[itemSlug]["noid"],
       user: user,
     });
-    items[itemSlug].updatedInAccess = "Yes";
+    items[itemSlug].updatedInAccess = "No";
+    items[itemSlug].updatedInAccessMsg = "Test error message space 1";
     updateTask(dmdTaskId, "itemStates", items);
 
     const percentage = Math.round(((index + 1) / numItems) * 100);
@@ -240,7 +241,7 @@ async function updateItemsInAccess(
   lapin: TRPCClient<LapinRouter>,
   numItems: number
 ) {
-  let reqDeque = new Deque({
+  let reqDeque = new PromiseDeque({
     concurrent: 1,
     interval: DEFAULT_QUEUE_DELAY,
     start: false,
@@ -286,7 +287,7 @@ async function sendPreservationUpdate(
   numItems: number,
   index: number,
   itemSlug: string,
-  reqDeque: Deque,
+  reqDeque: PromiseDeque,
   retryCount: number,
   isUpdatingInAccessToo: boolean
 ) {
@@ -297,6 +298,7 @@ async function sendPreservationUpdate(
       id: items[itemSlug]["slug"],
     });
     items[itemSlug].updatedInPreservation = "Yes";
+    items[itemSlug].updatedInPreservationMsg = "Test error message space 2";
     updateTask(dmdTaskId, "itemStates", items);
 
     const percentage = Math.round(
@@ -346,7 +348,7 @@ async function updateItemsInPreservation(
   numItems: number,
   isUpdatingInAccessToo: boolean
 ) {
-  let reqDeque = new Deque({
+  let reqDeque = new PromiseDeque({
     concurrent: 1,
     interval: DEFAULT_QUEUE_DELAY,
     start: false,

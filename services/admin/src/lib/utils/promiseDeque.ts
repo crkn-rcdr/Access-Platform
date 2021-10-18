@@ -24,7 +24,7 @@ type Options = {
  *
  * @class   Deque
  */
-export default class Deque {
+export default class PromiseDeque {
   /**
    * A collection to store unresolved tasks. We use a Map here because V8 uses a
    * variant of hash tables that generally have O(1) complexity for retrieval

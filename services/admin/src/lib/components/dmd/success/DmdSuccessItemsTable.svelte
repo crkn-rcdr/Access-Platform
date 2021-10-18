@@ -124,14 +124,14 @@ This component displays the items in the dmd task throughout the various stages 
           <th>Found in Access?</th>
         {/if}
         {#if $dmdTasksStore[dmdTaskId].updateState !== "ready" && $dmdTasksStore[dmdTaskId].shouldUpdateInAccess}
-          <th>Queued for proccessing in Access?</th>
+          <th>Metadata File Updated for Access?</th>
         {/if}
 
         {#if $dmdTasksStore[dmdTaskId].lookupState !== "ready" && $dmdTasksStore[dmdTaskId].shouldUpdateInPreservation}
           <th>Found in Preservation?</th>
         {/if}
         {#if $dmdTasksStore[dmdTaskId].updateState !== "ready" && $dmdTasksStore[dmdTaskId].shouldUpdateInPreservation}
-          <th>Queued for proccessing in Preservation?</th>
+          <th>Metadata File Updated for Preservation?</th>
         {/if}
       </tr>
     </thead>
@@ -257,7 +257,9 @@ This component displays the items in the dmd task throughout the various stages 
                   <tbody>
                     {#if $dmdTasksStore[dmdTaskId].itemStates[item.id].updatedInAccessMsg.length}
                       <tr>
-                        <td class="detail-label">Access Update Message:</td>
+                        <td class="detail-label"
+                          >Error Updating Metadata File for Access:</td
+                        >
                         <td>
                           <XmlViewer
                             xml={$dmdTasksStore[dmdTaskId].itemStates[item.id]
@@ -269,7 +271,7 @@ This component displays the items in the dmd task throughout the various stages 
                     {#if $dmdTasksStore[dmdTaskId].itemStates[item.id].updatedInPreservationMsg.length}
                       <tr>
                         <td class="detail-label"
-                          >Preservation Update Message:</td
+                          >Error Updating Metadata File for Preservation:</td
                         >
                         <td>
                           <XmlViewer
