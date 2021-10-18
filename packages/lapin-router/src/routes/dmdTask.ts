@@ -3,18 +3,16 @@ import { TRPCError } from "@trpc/server";
 import { createRouter, httpErrorToTRPC, HTTPErrorLike } from "../router.js";
 import {
   FetchInput,
+  NewInput,
+  StoreAccessInput,
   getAccessObjectForDmdTaskItem,
   getDmdItemXML,
   getDmdTaskItemByIndex,
   getDmdTaskItemXMLFileName,
   lookupDmdTaskForStorage,
-  NewInput,
-  StoreAccessInput,
   storeDmdTaskItemXmlFile,
   updateLabelForDmdTaskItemAccessObject,
 } from "../util/dmdTask.js";
-//import { RouteLimiter } from "../util/limiter.js";
-//const limiter = new RouteLimiter();
 
 export const dmdTaskRouter = createRouter()
   .query("get", {
@@ -82,39 +80,43 @@ export const dmdTaskRouter = createRouter()
     input: StoreAccessInput.parse,
     async resolve({ input, ctx }) {
       try {
-        const path = "storeAccess";
-        return ctx.routeLimiter.queueBackgroundJob(path, async () => {
-          // Each of these methods throws an error if the results arent what is expected.
+        ctx.routeLimiter
+          .getLimiterSemaphore("storeAccess")
+          ?.execute(async () => {
+            const dmdTask = await lookupDmdTaskForStorage(ctx, input.task);
 
-          const dmdTask = await lookupDmdTaskForStorage(ctx, input.task);
-
-          const itemXmlFile = await getDmdItemXML(ctx, input.task, input.index);
-
-          const item = await getDmdTaskItemByIndex(dmdTask, input.index);
-
-          const accessObject = await getAccessObjectForDmdTaskItem(
-            ctx,
-            input.slug
-          );
-
-          const itemXMLFileName = getDmdTaskItemXMLFileName(
-            accessObject.id,
-            item.output
-          );
-
-          await storeDmdTaskItemXmlFile(ctx, itemXMLFileName, itemXmlFile);
-
-          // Should I add a length check?
-          if (typeof item.label === "string") {
-            await updateLabelForDmdTaskItemAccessObject(
+            const itemXmlFile = await getDmdItemXML(
               ctx,
-              item.label,
-              accessObject.id,
-              input.user,
-              accessObject.type
+              input.task,
+              input.index
             );
-          }
-        });
+
+            const item = await getDmdTaskItemByIndex(dmdTask, input.index);
+
+            const accessObject = await getAccessObjectForDmdTaskItem(
+              ctx,
+              input.slug
+            );
+
+            const itemXMLFileName = getDmdTaskItemXMLFileName(
+              accessObject.id,
+              item.output
+            );
+
+            await storeDmdTaskItemXmlFile(ctx, itemXMLFileName, itemXmlFile);
+
+            // Should I add a length check?
+            if (typeof item.label === "string") {
+              await updateLabelForDmdTaskItemAccessObject(
+                ctx,
+                item.label,
+                accessObject.id,
+                input.user,
+                accessObject.type
+              );
+            }
+          });
+        throw "test";
       } catch (e) {
         throw httpErrorToTRPC(e as HTTPErrorLike);
       }

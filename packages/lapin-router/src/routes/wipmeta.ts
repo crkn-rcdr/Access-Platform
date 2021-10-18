@@ -5,8 +5,6 @@ import {
   getDmdTaskItemByIndex,
   lookupDmdTaskForStorage,
 } from "../util/dmdTask.js";
-//import { RouteLimiter } from "../util/limiter.js";
-//const limiter = new RouteLimiter();
 
 export const StorePreservationInput = z.object({
   task: z.string(), // dmdtask uuid
@@ -33,29 +31,30 @@ export const wipmetaRouter = createRouter()
     input: StorePreservationInput.parse,
     async resolve({ input, ctx }) {
       try {
-        const path = "storePreservation";
-        return ctx.routeLimiter.queueBackgroundJob(path, async () => {
-          const { id, index, task } = input;
-          const itemXmlFile = await getDmdItemXML(ctx, task, index);
+        ctx.routeLimiter
+          .getLimiterSemaphore("storePreservation")
+          ?.execute(async () => {
+            const { id, index, task } = input;
+            const itemXmlFile = await getDmdItemXML(ctx, task, index);
 
-          const file = itemXmlFile.toString("base64");
+            const file = itemXmlFile.toString("base64");
 
-          await ctx.couch.wipmeta.uploadBase64Attachment({
-            document: id,
-            attachmentName: "dmd.xml",
-            attachment: file,
-            contentType: "application/octet-stream",
-          });
-
-          const dmdTask = await lookupDmdTaskForStorage(ctx, task);
-          const { label } = await getDmdTaskItemByIndex(dmdTask, index);
-          if (typeof label === "string") {
-            await ctx.couch.wipmeta.updateLabel({
-              id,
-              label,
+            await ctx.couch.wipmeta.uploadBase64Attachment({
+              document: id,
+              attachmentName: "dmd.xml",
+              attachment: file,
+              contentType: "application/octet-stream",
             });
-          }
-        });
+
+            const dmdTask = await lookupDmdTaskForStorage(ctx, task);
+            const { label } = await getDmdTaskItemByIndex(dmdTask, index);
+            if (typeof label === "string") {
+              await ctx.couch.wipmeta.updateLabel({
+                id,
+                label,
+              });
+            }
+          });
       } catch (e) {
         throw httpErrorToTRPC(e as HTTPErrorLike);
       }

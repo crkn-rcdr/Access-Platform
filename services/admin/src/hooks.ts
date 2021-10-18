@@ -9,11 +9,9 @@ import { Env } from "@crkn-rcdr/access-env";
 
 import { readFileSync } from "fs";
 import { join as pathJoin } from "path";
-import { Lock } from "semaphore-async-await";
 import Timeout from "await-timeout";
 
 const RETRY_DELAY_MS = 10000;
-const retryLock = new Lock();
 
 /**
  * A helper method to allow for retries on any api calls that throw errors.
@@ -21,7 +19,6 @@ const retryLock = new Lock();
  * Uses semaphore-async-await to prevent any simultaneous calls.
  */
 const retry = async (method: Function, numAttempts: number) => {
-  await retryLock.wait();
   let curNumAttempts = 0;
   let response;
   while (curNumAttempts < numAttempts) {
@@ -39,7 +36,6 @@ const retry = async (method: Function, numAttempts: number) => {
   }
   if (curNumAttempts === numAttempts - 1)
     console.log("Request failed. No more attempts allowed.");
-  retryLock.signal();
   return response;
 };
 
@@ -110,6 +106,7 @@ export const handle: Handle<Locals> = async ({ request, resolve }) => {
     try {
       // Retry all api requests 5 times on failure.
       const response = await retry(async () => {
+        //await fetch(url, fetchOptions);
         return await fetch(url, fetchOptions);
       }, 5);
 

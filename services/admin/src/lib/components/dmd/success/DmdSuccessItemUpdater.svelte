@@ -44,7 +44,7 @@ This component allows the user to update the dmd tasks items in an access platfo
    * @returns void
    */
   function handleUpdatePressed() {
-    dmdTasksStore.storeTaskItemsToSwift(
+    dmdTasksStore.storeTaskItemMetadata(
       dmdTaskId,
       $session.user,
       $session.lapin

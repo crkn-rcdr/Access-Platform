@@ -158,12 +158,17 @@ importers:
       await-timeout: ^1.1.1
       cookie: ^0.4.1
       deep-object-diff: ^1.1.0
+      jsonfn: ^0.31.0
       jsonwebtoken: ^8.5.1
       lodash-es: ^4.17.21
       npm-run-all: ^4.1.5
       openseadragon: ^2.4.2
+      promise-delay: ^2.1.0
+      queue-promise: ^2.2.1
       rfdc: ^1.3.0
       semaphore-async-await: ^1.5.1
+      simple-web-worker: ^1.2.0
+      stack-promises: ^0.0.5
       svelte: 3.40.1
       svelte-check: ^2.2.4
       svelte-grid-responsive: ^1.0.0
@@ -179,11 +184,16 @@ importers:
       await-timeout: 1.1.1
       cookie: 0.4.1
       deep-object-diff: 1.1.0
+      jsonfn: 0.31.0
       jsonwebtoken: 8.5.1
       lodash-es: 4.17.21
       openseadragon: 2.4.2
+      promise-delay: 2.1.0
+      queue-promise: 2.2.1
       rfdc: 1.3.0
       semaphore-async-await: 1.5.1
+      simple-web-worker: 1.2.0
+      stack-promises: 0.0.5
       svelte-grid-responsive: 1.0.0
       svelte-icons: 2.1.0
       svelte-virtual-scroll-list: 1.0.8_svelte@3.40.1
@@ -401,7 +411,7 @@ packages:
   /@trpc/server/8.4.2:
     resolution: {integrity: sha512-i00omlfV5t0t3GMKzIFJsv2Uu2xqL998OGG8TSV/82aGv2a9AYuTP1yjNKnoAH+oc908r0N7ak1oXI3FZ3vEKw==}
     dependencies:
-      tslib: 2.3.0
+      tslib: 2.3.1
     dev: false
 
   /@tsconfig/node10/1.0.8:
@@ -1902,6 +1912,10 @@ packages:
       graceful-fs: 4.2.8
     dev: true
 
+  /jsonfn/0.31.0:
+    resolution: {integrity: sha1-jNCe43bUbfdcLA3jxUipXbuB3Is=}
+    dev: false
+
   /jsonwebtoken/8.5.1:
     resolution: {integrity: sha512-XjwVfRS6jTMsqYs0EsuJ4LGxXV14zQybNd4L2r0UvbVnSF9Af8x7p5MzbJ90Ioz/9TI41/hTCvznF/loiSzn8w==}
     engines: {node: '>=4', npm: '>=1.4.28'}
@@ -2604,6 +2618,11 @@ packages:
     resolution: {integrity: sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==}
     dev: true
 
+  /promise-delay/2.1.0:
+    resolution: {integrity: sha1-gj9KUYmpls5XS+kRG9ZVFFfN8DU=}
+    engines: {node: '>=0.12'}
+    dev: false
+
   /psl/1.8.0:
     resolution: {integrity: sha512-RIdOzyoavK+hA18OGGWDqUTsCLhtA7IcZ/6NCs4fFJaHBDab+pDDmDIByWFRQJq2Cd7r1OoQxBGKOaztq+hjIQ==}
 
@@ -2848,6 +2867,10 @@ packages:
       lru-cache: 6.0.0
     dev: true
 
+  /sequent-promises/0.1.3:
+    resolution: {integrity: sha512-1RgiqC8/IQhPuo8QuyaziftpzE0U5u0xhqOAUAI01Dzy1fjfoJC1664u2/pkKkwEd3qGOCehnQsvesJgiAYmlg==}
+    dev: false
+
   /serialize-error/7.0.1:
     resolution: {integrity: sha512-8I8TjW5KMOKsZQTvoxjuSIa7foAwPWGOts+6o7sgjz41/qMD9VQHEDxi6PBvK2l0MXUmqZyNpUK+T2tQaaElvw==}
     engines: {node: '>=10'}
@@ -2891,6 +2914,10 @@ packages:
     dependencies:
       is-arrayish: 0.3.2
     dev: true
+
+  /simple-web-worker/1.2.0:
+    resolution: {integrity: sha1-Le/9CZiXa4JLFBonzlBNMdDZkQg=}
+    dev: false
 
   /slash/3.0.0:
     resolution: {integrity: sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==}
@@ -2957,6 +2984,12 @@ packages:
   /sprintf-js/1.0.3:
     resolution: {integrity: sha1-BOaSb2YolTVPPdAVIDYzuFcpfiw=}
     dev: true
+
+  /stack-promises/0.0.5:
+    resolution: {integrity: sha512-DGdF8xoGeNGHesd4AcA6+CLPPXootz1J00jM93/OJJcSgh+EFG4HKIPtq8aLovvr/MwGWYfPdwHt+MefAgSxBg==}
+    dependencies:
+      sequent-promises: 0.1.3
+    dev: false
 
   /stack-trace/0.0.10:
     resolution: {integrity: sha1-VHxws0fo0ytOEI6hoqFZ5f3eGcA=}
@@ -3290,6 +3323,11 @@ packages:
 
   /tslib/2.3.0:
     resolution: {integrity: sha512-N82ooyxVNm6h1riLCoyS9e3fuJ3AMG2zIZs2Gd1ATcSFjSA23Q0fzjjZeh0jbJvWVDZ0cJT8yaNNaaXHzueNjg==}
+    dev: true
+
+  /tslib/2.3.1:
+    resolution: {integrity: sha512-77EbyPPpMz+FRFRuAFlWMtmgUWGe9UOG2Z25NqCwiIjRhOf5iKGuzSe5P2w1laq+FkRy4p+PCuVkJSGkzTEKVw==}
+    dev: false
 
   /type-fest/0.13.1:
     resolution: {integrity: sha512-34R7HTnG0XIJcBSn5XhDd7nNFPRcXYRZrBB2O2jdKqYODldSzBAqzsWoZYYvduky73toYS/ESqxPvkDf/F0XMg==}

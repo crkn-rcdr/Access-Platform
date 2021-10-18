@@ -1,4 +1,6 @@
 import Queue from "queue-promise";
+import { Lock } from "semaphore-async-await";
+
 const DEFAULT_QUEUE_DELAY = 10000;
 
 /**
@@ -6,30 +8,53 @@ const DEFAULT_QUEUE_DELAY = 10000;
  */
 export class RouteLimiter {
   /**
+   * This holds a mapping of the api route string -> semaphore (lock) for that route
+   */
+  semaphoreLimiters: Map<string, Lock>;
+
+  /**
    * This holds a mapping of the api route string -> queue for that route
    */
-  limiters: Map<string, Queue>;
+  queueLimiters: Map<string, Queue>;
 
   constructor() {
-    this.limiters = new Map<string, Queue>();
+    this.queueLimiters = new Map<string, Queue>();
+    this.semaphoreLimiters = new Map<string, Lock>();
+  }
+
+  /**
+   * Allows the developer to create a lock for a route
+   */
+  setLimiterSemaphore(route: string) {
+    const lock = new Lock();
+    this.semaphoreLimiters.set(route, lock);
+  }
+
+  /**
+   * Allows the developer to get the lock for a route
+   */
+  getLimiterSemaphore(route: string): Lock | undefined {
+    const lock = this.semaphoreLimiters.get(route);
+    if (!lock) this.setLimiterSemaphore(route);
+    return this.semaphoreLimiters.get(route);
   }
 
   /**
    * Creates a Queue for a route. Allows for concurrent # of jobs, ran at interval.
    */
-  setLimiter(route: string, concurrent: number, interval: number) {
+  setLimiterQueue(route: string, concurrent: number, interval: number) {
     const queue = new Queue({
       concurrent,
       interval,
     });
-    this.limiters.set(route, queue);
+    this.queueLimiters.set(route, queue);
   }
 
   /**
    * Gets a Queue for a route
    */
-  getLimiter(route: string) {
-    return this.limiters.get(route);
+  getLimiterQueue(route: string): Queue | undefined {
+    return this.queueLimiters.get(route);
   }
 
   /**
@@ -48,9 +73,9 @@ export class RouteLimiter {
     concurrent = 1,
     interval = DEFAULT_QUEUE_DELAY
   ) {
-    if (typeof this.getLimiter(route) === "undefined")
-      this.setLimiter(route, concurrent, interval);
-    const routeLimiter = this.getLimiter(route);
+    if (typeof this.getLimiterQueue(route) === "undefined")
+      this.setLimiterQueue(route, concurrent, interval);
+    const routeLimiter = this.getLimiterQueue(route);
     if (typeof routeLimiter !== "undefined") {
       routeLimiter.enqueue(async () => {
         try {
@@ -84,15 +109,15 @@ export class RouteLimiter {
     interval = DEFAULT_QUEUE_DELAY
   ): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      if (typeof this.getLimiter(route) === "undefined")
-        this.setLimiter(route, concurrent, interval);
-      const routeLimiter = this.getLimiter(route);
+      if (typeof this.getLimiterQueue(route) === "undefined")
+        this.setLimiterQueue(route, concurrent, interval);
+      const routeLimiter = this.getLimiterQueue(route);
       if (typeof routeLimiter !== "undefined") {
         routeLimiter.enqueue(async () => {
           try {
-            await callback();
+            const res = await callback();
             console.log("Successfully executed job on route: ", route);
-            resolve(true);
+            resolve(typeof res !== "undefined" ? res : true);
           } catch (e: any) {
             const error = `Error executing callback in route limiter: ${e?.message}`;
             console.log(error);
