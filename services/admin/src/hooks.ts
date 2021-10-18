@@ -104,11 +104,12 @@ export const handle: Handle<Locals> = async ({ request, resolve }) => {
       fetchOptions["body"] = request.rawBody;
 
     try {
-      // Retry all api requests 5 times on failure.
-      const response = await retry(async () => {
-        //await fetch(url, fetchOptions);
+      const response = await fetch(url, fetchOptions);
+
+      // OR we can retry all api requests 5 times on failure.
+      /*await retry(async () => {
         return await fetch(url, fetchOptions);
-      }, 5);
+      }, 5);*/
 
       return {
         status: response.status,

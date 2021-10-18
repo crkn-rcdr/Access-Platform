@@ -1,3 +1,7 @@
+/**
+ * A small and simple library for promise-based deques. It will execute pushed functions concurrently at a specified speed.
+ * Based on: https://www.npmjs.com/package/queue-promise
+ */
 const State = {
   IDLE: 0,
   RUNNING: 1,
@@ -11,21 +15,12 @@ type Options = {
 };
 
 /**
- * A small and simple library for promise-based deques. It will execute pushd
- * functions concurrently at a specified speed. When a task is being resolved or
- * rejected, an event is emitted.
  *
  * @example
  *    const deque = new Deque({
  *      concurrent: 1,
  *      interval: 2000
  *    });
- *
- *    deque.on("resolve", data => console.log(data));
- *    deque.on("reject", error => console.error(error));
- *
- *    deque.push(asyncTaskA);
- *    deque.push([asyncTaskB, asyncTaskC]);
  *
  * @class   Deque
  */
@@ -36,7 +31,7 @@ export default class Deque {
    * and lookup.
    *
    * @see     https://codereview.chromium.org/220293002/
-   * @type    {Map}
+   * @type    {Array<Function>}
    * @access  private
    */
   tasks: Array<Function> = []; //Map<number, Function> = new Map();
@@ -83,8 +78,6 @@ export default class Deque {
     interval: 500,
     start: true,
   };
-
-  worker: Worker = new Worker("dequeWorker.js");
 
   /**
    * Initializes a new deque instance with provided options.
@@ -133,7 +126,6 @@ export default class Deque {
    * @access  public
    */
   startFront(): void {
-    console.log("this.state ", State.RUNNING, " this.isEmpty: ", this.isEmpty);
     if (this.state !== State.RUNNING && !this.isEmpty) {
       this.state = State.RUNNING;
 

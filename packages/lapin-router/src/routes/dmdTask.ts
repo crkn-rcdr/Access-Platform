@@ -116,7 +116,6 @@ export const dmdTaskRouter = createRouter()
               );
             }
           });
-        throw "test";
       } catch (e) {
         throw httpErrorToTRPC(e as HTTPErrorLike);
       }

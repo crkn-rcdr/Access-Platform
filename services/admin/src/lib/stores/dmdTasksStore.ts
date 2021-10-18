@@ -6,7 +6,7 @@
 //import Queue from "queue-promise";
 import Deque from "../utils/deque";
 const DEFAULT_QUEUE_DELAY = 10000;
-const MAX_RETRY = 2;
+const MAX_RETRY = 5;
 
 import type { DmdItemStates, DmdTasksCache, DmdTaskState } from "$lib/types";
 import { get, writable } from "svelte/store";
@@ -186,7 +186,6 @@ async function sendAccessUpdate(
   reqDeque: Deque,
   retryCount: number
 ) {
-  console.log("New Attempt Access!");
   try {
     await lapin.mutation("dmdTask.storeAccess", {
       task: dmdTaskId,
@@ -201,8 +200,6 @@ async function sendAccessUpdate(
     const percentage = Math.round(((index + 1) / numItems) * 100);
     updateTask(dmdTaskId, "updatedProgressPercentage", percentage);
   } catch (e) {
-    console.log(e?.message, e?.status, e?.code);
-    console.log(retryCount, " >= ", MAX_RETRY, retryCount > MAX_RETRY);
     if (retryCount >= MAX_RETRY) {
       items[itemSlug].updatedInAccess = "No";
       items[itemSlug].updatedInAccessMsg = e?.message;
@@ -293,7 +290,6 @@ async function sendPreservationUpdate(
   retryCount: number,
   isUpdatingInAccessToo: boolean
 ) {
-  console.log("New Attempt Pres!");
   try {
     await lapin.mutation("wipmeta.storePreservation", {
       task: dmdTaskId,
@@ -308,8 +304,6 @@ async function sendPreservationUpdate(
     );
     updateTask(dmdTaskId, "updatedProgressPercentage", percentage);
   } catch (e) {
-    console.log(e?.message, e?.status, e?.code);
-    console.log(retryCount, " >= ", MAX_RETRY, retryCount > MAX_RETRY);
     if (retryCount >= MAX_RETRY) {
       items[itemSlug].updatedInPreservation = "No";
       items[itemSlug].updatedInPreservationMsg = e?.message;
