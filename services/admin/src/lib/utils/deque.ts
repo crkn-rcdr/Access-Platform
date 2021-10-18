@@ -10,16 +10,6 @@ type Options = {
   start: boolean;
 };
 
-const workerCode = `
-  this.addEventListener("message", function (evt) {
-    let data = evt.data;
-    let time = parseInt(data.timeout || 0, 10);
-    setTimeout(() => {
-      this.postMessage({ time: Date.now() });
-    }, time);
-  });        
-`;
-
 /**
  * A small and simple library for promise-based deques. It will execute pushd
  * functions concurrently at a specified speed. When a task is being resolved or
@@ -64,6 +54,12 @@ export default class Deque {
   lastRan: number = 0;
 
   /**
+   * @type    {NodeJS.Timeout}
+   * @access  private
+   */
+  timeoutId: NodeJS.Timeout;
+
+  /**
    * @type    {number}  Amount of tasks currently handled by the deque
    * @access  private
    */
@@ -87,6 +83,8 @@ export default class Deque {
     interval: 500,
     start: true,
   };
+
+  worker: Worker = new Worker("dequeWorker.js");
 
   /**
    * Initializes a new deque instance with provided options.
@@ -135,6 +133,7 @@ export default class Deque {
    * @access  public
    */
   startFront(): void {
+    console.log("this.state ", State.RUNNING, " this.isEmpty: ", this.isEmpty);
     if (this.state !== State.RUNNING && !this.isEmpty) {
       this.state = State.RUNNING;
 
@@ -146,10 +145,27 @@ export default class Deque {
     }
   }
 
+  /**
+   * Forces the deque to stop. New tasks will not be executed automatically even
+   * if `options.start` was set to `true`.
+   *
+   * @emits   stop
+   * @return  {void}
+   * @access  public
+   */
   stop(): void {
+    clearTimeout(this.timeoutId);
+
     this.state = State.STOPPED;
   }
 
+  /**
+   * Goes to the next request and stops the loop if there are no requests left.
+   *
+   * @emits   end
+   * @return  {void}
+   * @access  private
+   */
   finalize(): void {
     this.currentlyHandled -= 1;
 
@@ -163,6 +179,16 @@ export default class Deque {
     }
   }
 
+  /**
+   * Executes _n_ concurrent (based od `options.concurrent`) promises from the
+   * deque.
+   *
+   * @return  {Promise<any>}
+   * @emits   resolve
+   * @emits   reject
+   * @emits   pop
+   * @access  private
+   */
   async executeBack(): Promise<any> {
     const promises = [];
 
@@ -200,6 +226,16 @@ export default class Deque {
     return this.options.concurrent === 1 ? output[0] : output;
   }
 
+  /**
+   * Executes _n_ concurrent (based od `options.concurrent`) promises from the
+   * deque.
+   *
+   * @return  {Promise<any>}
+   * @emits   resolve
+   * @emits   reject
+   * @emits   pop
+   * @access  private
+   */
   async executeFront(): Promise<any> {
     const promises = [];
 
@@ -235,52 +271,71 @@ export default class Deque {
     return this.options.concurrent === 1 ? output[0] : output;
   }
 
+  /**
+   * Executes _n_ concurrent (based od `options.concurrent`) promises from the
+   * deque.
+   *
+   * @return  {Promise<any>}
+   * @emits   resolve
+   * @emits   reject
+   * @emits   pop
+   * @access  public
+   */
   popBack(): Promise<any> {
     const { interval } = this.options;
 
     return new Promise<any>((resolve, reject) => {
       const timeout = Math.max(0, interval - (Date.now() - this.lastRan));
 
-      const worker: Worker = new Worker(
-        "data:application/javascript," + encodeURIComponent(workerCode)
-      );
-
-      worker.addEventListener("message", () => {
+      clearTimeout(this.timeoutId);
+      this.timeoutId = setTimeout(() => {
         this.lastRan = Date.now();
         this.executeBack()
           .then(resolve)
           .catch((e) => {
             reject(e);
           });
-      });
-
-      worker.postMessage({ timeout });
+      }, timeout);
     });
   }
 
+  /**
+   * Executes _n_ concurrent (based od `options.concurrent`) promises from the
+   * deque.
+   *
+   * @return  {Promise<any>}
+   * @emits   resolve
+   * @emits   reject
+   * @emits   pop
+   * @access  public
+   */
   popFront(): Promise<any> {
     const { interval } = this.options;
 
     return new Promise<any>((resolve, reject) => {
       const timeout = Math.max(0, interval - (Date.now() - this.lastRan));
 
-      const worker: Worker = new Worker(
-        "data:application/javascript," + encodeURIComponent(workerCode)
-      );
+      clearTimeout(this.timeoutId);
 
-      worker.addEventListener("message", () => {
+      this.timeoutId = setTimeout(() => {
         this.lastRan = Date.now();
         this.executeFront()
           .then(resolve)
           .catch((e) => {
             reject(e);
           });
-      });
-
-      worker.postMessage({ timeout });
+      }, timeout);
     });
   }
 
+  /**
+   * Adds tasks to the deque.
+   *
+   * @param   {Function|Array}  tasks     Tasks to add to the deque
+   * @throws  {Error}                     When task is not a function
+   * @return  {void}
+   * @access  public
+   */
   pushBack(tasks: Function | Array<Function>): void {
     if (Array.isArray(tasks)) {
       tasks.map((task) => this.pushBack(task));
@@ -294,6 +349,14 @@ export default class Deque {
     this.tasks.push(tasks);
   }
 
+  /**
+   * Adds tasks to the deque.
+   *
+   * @param   {Function|Array}  tasks     Tasks to add to the deque
+   * @throws  {Error}                     When task is not a function
+   * @return  {void}
+   * @access  public
+   */
   pushFront(tasks: Function | Array<Function>): void {
     if (Array.isArray(tasks)) {
       tasks.map((task) => this.pushFront(task));
@@ -307,18 +370,42 @@ export default class Deque {
     this.tasks.unshift(tasks);
   }
 
+  /**
+   * Removes all tasks from the deque.
+   *
+   * @return  {void}
+   * @access  public
+   */
   clear(): void {
     this.tasks = [];
   }
 
+  /**
+   * Size of the deque.
+   *
+   * @type    {number}
+   * @access  public
+   */
   get size(): number {
     return this.tasks.length;
   }
 
+  /**
+   * Checks whether the deque is empty, i.e. there's no tasks.
+   *
+   * @type    {boolean}
+   * @access  public
+   */
   get isEmpty(): boolean {
     return this.size === 0;
   }
 
+  /**
+   * Checks whether the deque is not empty and not stopped.
+   *
+   * @type    {boolean}
+   * @access  public
+   */
   get shouldRun(): boolean {
     return !this.isEmpty && this.state !== State.STOPPED;
   }
