@@ -55,10 +55,12 @@ const NewInput = z.object({
   user: User,
   data: NewCollection,
 });
+
 const checkAdditions = z.object({
   id: Noid,
   slugArray: z.array(Slug),
 });
+
 export const collectionRouter = createRouter()
   .query("pageAfter", {
     input: PageAfterInput.parse,
@@ -134,6 +136,21 @@ export const collectionRouter = createRouter()
     async resolve({ input, ctx }) {
       try {
         return await ctx.couch.access.checkAdditions(input.id, input.slugArray);
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .mutation("removeMember", {
+    input: z.object({
+      id: Noid,
+      member: Noid,
+      user: User.optional(),
+    }),
+    async resolve({ input, ctx }) {
+      try {
+        await ctx.couch.access.removeMember(input);
+        await ctx.couch.access.forceUpdate(input.member);
       } catch (e) {
         throw httpErrorToTRPC(e);
       }
