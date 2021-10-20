@@ -78,11 +78,14 @@ Allows the user to modify the member list for a collection.
 
     console.log("know what it retrieves", resolutions);
     documentSlug = resolutions.map((slug) => {
+      console.log("check what is in document slug[1]", slug[1]);
       if (slug[1].found) {
-        documentSlug = slug[1].result;
+        return slug[1].result;
+      } else {
+        return null;
       }
-      console.log("check what is in document slug", documentSlug);
     });
+    console.log("check what is in document slug", documentSlug);
   }
   onMount(() => {
     if (collection.members.length) activeMemberIndex = 0;
@@ -155,11 +158,13 @@ Allows the user to modify the member list for a collection.
                 {/each} -->
 
                 {#each documentSlug as document}
-                  <textarea
-                    id="label"
-                    name="label"
-                    bind:value={document["label"]["none"]}
-                  />
+                  {#if document?.["label"]?.["none"]}
+                    <textarea
+                      id="label"
+                      name="label"
+                      bind:value={document["label"]["none"]}
+                    />
+                  {/if}
                   <!-- <li>{document?.slug}</li> -->
                 {/each}
               </li>
