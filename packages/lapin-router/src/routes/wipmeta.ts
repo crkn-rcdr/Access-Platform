@@ -1,10 +1,6 @@
 import { z } from "zod";
-import { createRouter, HTTPErrorLike, httpErrorToTRPC } from "../router.js";
-import {
-  getDmdItemXML,
-  getDmdTaskItemByIndex,
-  lookupDmdTaskForStorage,
-} from "../util/dmdTask.js";
+import { createRouter } from "../router.js";
+import { storePreservation } from "../util/dmdTask.js";
 
 export const StorePreservationInput = z.object({
   task: z.string(), // dmdtask uuid
@@ -12,51 +8,12 @@ export const StorePreservationInput = z.object({
   id: z.string(), // = prefix.slug
 });
 
-export const wipmetaRouter = createRouter()
-  .query("find", {
-    input: z.string(), //Slug.parse,
-    async resolve({ input: id, ctx }) {
-      try {
-        const response = await ctx.couch.wipmeta.list({
-          key: id,
-          limit: 1,
-        });
-        return response.rows.length === 1;
-      } catch (e) {
-        throw httpErrorToTRPC(e as HTTPErrorLike);
-      }
-    },
-  })
-  .mutation("storePreservation", {
-    input: StorePreservationInput.parse,
-    async resolve({ input, ctx }) {
-      try {
-        ctx.routeLimiter
-          .getLimiterSemaphore("storePreservation")
-          ?.execute(async () => {
-            const { id, index, task } = input;
-            const itemXmlFile = await getDmdItemXML(ctx, task, index);
-
-            const file = itemXmlFile.toString("base64");
-
-            await ctx.couch.wipmeta.uploadBase64Attachment({
-              document: id,
-              attachmentName: "dmd.xml",
-              attachment: file,
-              contentType: "application/octet-stream",
-            });
-
-            const dmdTask = await lookupDmdTaskForStorage(ctx, task);
-            const { label } = await getDmdTaskItemByIndex(dmdTask, index);
-            if (typeof label === "string") {
-              await ctx.couch.wipmeta.updateLabel({
-                id,
-                label,
-              });
-            }
-          });
-      } catch (e) {
-        throw httpErrorToTRPC(e as HTTPErrorLike);
-      }
-    },
-  });
+export const wipmetaRouter = createRouter().mutation("storePreservation", {
+  input: StorePreservationInput.parse,
+  async resolve({ input, ctx }) {
+    console.log("preservation input: ", input);
+    const { id, index, task } = input;
+    // Throws user-readable TRPC errors for specific issues
+    await storePreservation(ctx, id, task, index);
+  },
+});

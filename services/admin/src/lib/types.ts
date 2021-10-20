@@ -65,8 +65,6 @@ export type DmdItemState = {
   slug: Slug;
   noid: Noid;
   parseSuccess: boolean;
-  foundInAccess: "Yes" | "No" | "Searching...";
-  foundInPreservation: "Yes" | "No" | "Searching...";
   updatedInAccess: "Yes" | "No" | "Updating...";
   updatedInAccessMsg: string;
   updatedInPreservation: "Yes" | "No" | "Updating...";
@@ -78,7 +76,7 @@ export type DmdItemStates = Map<string, DmdItemState>;
 
 export type DmdTaskState = {
   lookupState: "ready" | "loading" | "loaded" | "error";
-  updateState: "ready" | "updarting" | "updated" | "error";
+  updateState: "ready" | "updating" | "updated" | "error";
   itemStates: DmdItemStates;
   errorMsg: string;
   shouldUpdateInPreservation: boolean;

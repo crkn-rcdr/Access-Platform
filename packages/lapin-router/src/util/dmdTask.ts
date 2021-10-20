@@ -11,9 +11,10 @@ import {
   Slug,
   SucceededDMDTask,
   Noid,
+  isSucceededDMDTask,
 } from "@crkn-rcdr/access-data";
-import { isSucceededDMDTask } from "@crkn-rcdr/access-data";
 import { LapinContext } from "../context.js";
+import { TRPCError } from "@trpc/server";
 
 export const NewInput = z.object({
   user: User,
@@ -32,22 +33,40 @@ export const StoreAccessInput = z.object({
   task: z.string(), // dmdtask uuid
   index: z.number(), // array index of item whose metadata is being stored
   slug: Slug, // prefix + id (we might not need this if we send the resolved noid)
-  noid: z.string(), // result of slug lookup
   user: User,
 });
+
+export const findObjectInPreservation = async function (
+  ctx: LapinContext,
+  slug: Slug
+) {
+  try {
+    const response = await ctx.couch.wipmeta.list({
+      key: slug,
+      limit: 1,
+    });
+    if (response.rows.length === 1) return response.rows[0]?.doc;
+    else return null;
+  } catch (e: any) {
+    console.log("DMD error: ", e?.message);
+    return null;
+  }
+};
 
 // Not sure if I should move these somewhere else
 export const lookupDmdTaskForStorage = async function (
   ctx: LapinContext,
   dmdTaskId: string
 ) {
-  const dmdTaskLookup = await ctx.couch.dmdtask.getSafe(dmdTaskId);
+  try {
+    const dmdTaskLookup = await ctx.couch.dmdtask.getSafe(dmdTaskId);
 
-  if (dmdTaskLookup.found) {
-    if (isSucceededDMDTask(dmdTaskLookup.doc)) {
+    if (dmdTaskLookup.found) {
       return dmdTaskLookup.doc;
-    } else throw "Dmd task has not completed successfully yet.";
-  } else throw "Could not find dmd task";
+    } else return null;
+  } catch (e: any) {
+    return null;
+  }
 };
 
 export const getDmdItemXML = async function (
@@ -55,13 +74,17 @@ export const getDmdItemXML = async function (
   dmdTaskId: string,
   index: number
 ) {
-  const itemXmlFile = await ctx.couch.dmdtask.getAttachment({
-    document: dmdTaskId,
-    attachment: `${index}.xml`,
-  });
+  try {
+    const itemXmlFile = await ctx.couch.dmdtask.getAttachment({
+      document: dmdTaskId,
+      attachment: `${index}.xml`,
+    });
 
-  if (itemXmlFile) return itemXmlFile;
-  else throw "Could not retreive XML attachment for item from dmd task.";
+    if (itemXmlFile) return itemXmlFile;
+    else return null;
+  } catch (e: any) {
+    return null;
+  }
 };
 
 export const getDmdTaskItemByIndex = async function (
@@ -70,29 +93,37 @@ export const getDmdTaskItemByIndex = async function (
 ) {
   const item = dmdTask?.items?.[index];
   if (item) return item;
-  else throw "Could not retrieve item from dmd task.";
+  else return null;
 };
 
 export const getAccessObjectForDmdTaskItem = async function (
   ctx: LapinContext,
   slug: Slug
 ) {
-  const accessObjectLookup = await ctx.couch.access.findUnique("slug", slug, [
-    "id",
-    "type",
-  ] as const);
+  try {
+    const accessObjectLookup = await ctx.couch.access.findUnique("slug", slug, [
+      "id",
+      "type",
+    ] as const);
 
-  if (accessObjectLookup.found) return accessObjectLookup.result;
-  else throw "Could not find access object for dmd task item.";
+    if (accessObjectLookup.found) return accessObjectLookup.result;
+    else return null;
+  } catch (e: any) {
+    return null;
+  }
 };
 
 export const getWipmetaObjectForDmdTaskItem = async function (
   ctx: LapinContext,
   id: string
 ) {
-  const wipmetaObjectLookup = await ctx.couch.wipmeta.getSafe(id);
-  if (wipmetaObjectLookup.found) return wipmetaObjectLookup.doc;
-  else throw "Could not find wipmeta (preservation) object for dmd task item.";
+  try {
+    const wipmetaObjectLookup = await ctx.couch.wipmeta.getSafe(id);
+    if (wipmetaObjectLookup.found) return wipmetaObjectLookup.doc;
+    else return null;
+  } catch (e: any) {
+    return null;
+  }
 };
 
 export const getDmdTaskItemXMLFileName = function (
@@ -102,7 +133,7 @@ export const getDmdTaskItemXMLFileName = function (
   if (output === "marc") return noid + "/dmdMARC.xml";
   else if (output === "dc") return noid + "/dmdDC.xml";
   else if (output === "issueinfo") return noid + "/dmdISSUEINFO.xml";
-  else throw "Could not assemble metadata XML file name for dmd task item.";
+  else return null;
 };
 
 export const storeDmdTaskItemXmlFile = async function (
@@ -110,13 +141,17 @@ export const storeDmdTaskItemXmlFile = async function (
   itemXMLFileName: string,
   itemXmlFile: Buffer
 ) {
-  const storeResult = await ctx.swift.accessMetadata.putObject(
-    itemXMLFileName,
-    { data: itemXmlFile, contentType: "application/xml" }
-  );
+  try {
+    const storeResult = await ctx.swift.accessMetadata.putObject(
+      itemXMLFileName,
+      { data: itemXmlFile, contentType: "application/xml" }
+    );
 
-  if (storeResult.code === 201) return true;
-  else throw "Could not store dmd task item xml file in swift.";
+    if (storeResult.code === 201) return true;
+    else return false;
+  } catch (e: any) {
+    return false;
+  }
 };
 
 export const updateLabelForDmdTaskItemAccessObject = async function (
@@ -126,24 +161,297 @@ export const updateLabelForDmdTaskItemAccessObject = async function (
   user: User,
   type: "alias" | "manifest" | "collection"
 ) {
-  const itemLabel: Record<string, string> = {
-    none: label,
-  };
+  try {
+    const itemLabel: Record<string, string> = {
+      none: label,
+    };
 
-  const labelUpdateObject = {
-    id: noid,
-    user: user,
-    data: {
-      label: itemLabel,
-    },
-  };
+    const labelUpdateObject = {
+      id: noid,
+      user: user,
+      data: {
+        label: itemLabel,
+      },
+    };
 
-  const labelUpdateResult =
-    type === "manifest"
-      ? await ctx.couch.access.editManifest(labelUpdateObject)
-      : await ctx.couch.access.editCollection(labelUpdateObject);
+    const labelUpdateResult =
+      type === "manifest"
+        ? await ctx.couch.access.editManifest(labelUpdateObject)
+        : await ctx.couch.access.editCollection(labelUpdateObject);
 
-  if (labelUpdateResult.label["none"] === itemLabel["none"]) {
+    if (labelUpdateResult.label["none"] === itemLabel["none"]) {
+      return true;
+    } else return false;
+  } catch (e: any) {
+    return false;
+  }
+};
+
+export const uploadDmdTaskItemXmlFile = async function (
+  ctx: LapinContext,
+  id: string,
+  file: string
+) {
+  try {
+    await ctx.couch.wipmeta.uploadBase64Attachment({
+      document: id,
+      attachmentName: "dmd.xml",
+      attachment: file,
+      contentType: "application/octet-stream",
+    });
     return true;
-  } else throw "Label not updated successfully.";
+  } catch (e: any) {
+    return false;
+  }
+};
+
+export const updateLabelForDmdTaskItemWipmetaObject = async function (
+  ctx: LapinContext,
+  id: string,
+  label: string
+) {
+  try {
+    const labelRes = await ctx.couch.wipmeta.updateLabel({
+      id,
+      label,
+    });
+    if (labelRes) {
+      return true;
+    } else return false;
+  } catch (e: any) {
+    return false;
+  }
+};
+
+export const storePreservation = async function (
+  ctx: LapinContext,
+  id: string,
+  task: string,
+  index: number
+) {
+  await ctx.routeLimiter.getLimiterSemaphore("storePreservation")?.wait();
+
+  const wipmetaObj = await findObjectInPreservation(ctx, id);
+
+  if (wipmetaObj === null) {
+    await ctx.routeLimiter.getLimiterSemaphore("storePreservation")?.signal();
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Item not found in preservation. Id: " + id,
+    });
+  } else {
+    const itemXmlFile = await getDmdItemXML(ctx, task, index);
+    if (itemXmlFile === null) {
+      await ctx.routeLimiter.getLimiterSemaphore("storePreservation")?.signal();
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message:
+          "Could not get Metadata XML file for item with id: " +
+          id +
+          " from DMD task with id: " +
+          task,
+      });
+    } else {
+      const file = itemXmlFile.toString("base64");
+
+      const uploadRes = uploadDmdTaskItemXmlFile(ctx, id, file);
+
+      if (!uploadRes) {
+        await ctx.routeLimiter
+          .getLimiterSemaphore("storePreservation")
+          ?.signal();
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message:
+            "Could not store metadata XML file in preservation for item with id: " +
+            id +
+            " from DMD task with id: " +
+            task,
+        });
+      } else {
+        const dmdTask = await lookupDmdTaskForStorage(ctx, task);
+        if (dmdTask === null) {
+          await ctx.routeLimiter
+            .getLimiterSemaphore("storePreservation")
+            ?.signal();
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Could not get DMD task with id: " + task,
+          });
+        } else if (!isSucceededDMDTask(dmdTask)) {
+          await ctx.routeLimiter
+            .getLimiterSemaphore("storePreservation")
+            ?.signal();
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "DMD task has not completed successfully yet. Id: " + task,
+          });
+        } else {
+          const item = await getDmdTaskItemByIndex(dmdTask, index);
+
+          if (item === null) {
+            await ctx.routeLimiter
+              .getLimiterSemaphore("storePreservation")
+              ?.signal();
+            throw new TRPCError({
+              code: "INTERNAL_SERVER_ERROR",
+              message:
+                "Could not get item at index: " +
+                index +
+                " from DMD task with id: " +
+                task,
+            });
+          } else {
+            const label = item.label;
+            if (label && typeof item.label === "string") {
+              const labelRes = updateLabelForDmdTaskItemWipmetaObject(
+                ctx,
+                id,
+                label
+              );
+
+              if (!labelRes) {
+                await ctx.routeLimiter
+                  .getLimiterSemaphore("storePreservation")
+                  ?.signal();
+                throw new TRPCError({
+                  code: "INTERNAL_SERVER_ERROR",
+                  message:
+                    "Could not update label to " +
+                    label +
+                    " for item with id: " +
+                    id +
+                    " from DMD task with id: " +
+                    task,
+                });
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  await ctx.routeLimiter.getLimiterSemaphore("storePreservation")?.signal();
+};
+
+export const storeAccess = async function (
+  ctx: LapinContext,
+  user: User,
+  task: string,
+  index: number,
+  slug: Slug
+) {
+  await ctx.routeLimiter.getLimiterSemaphore("storeAccess")?.wait();
+  const accessObject = await getAccessObjectForDmdTaskItem(ctx, slug);
+
+  if (accessObject === null) {
+    await ctx.routeLimiter.getLimiterSemaphore("storeAccess")?.signal();
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Item not found in access. Id: " + slug,
+    });
+  } else {
+    const dmdTask = await lookupDmdTaskForStorage(ctx, task);
+    if (dmdTask === null) {
+      await ctx.routeLimiter.getLimiterSemaphore("storeAccess")?.signal();
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Could not get DMD task with id: " + task,
+      });
+    } else if (!isSucceededDMDTask(dmdTask)) {
+      await ctx.routeLimiter.getLimiterSemaphore("storeAccess")?.signal();
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "DMD task has not completed successfully yet. Id: " + task,
+      });
+    } else {
+      const itemXmlFile = await getDmdItemXML(ctx, task, index);
+      if (itemXmlFile === null) {
+        await ctx.routeLimiter.getLimiterSemaphore("storeAccess")?.signal();
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message:
+            "Could not get Metadata XML file for item with id: " +
+            slug +
+            " from DMD task with id: " +
+            task,
+        });
+      } else {
+        const item = await getDmdTaskItemByIndex(dmdTask, index);
+        if (item === null) {
+          await ctx.routeLimiter.getLimiterSemaphore("storeAccess")?.signal();
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message:
+              "Could not get item at index: " +
+              index +
+              " from DMD task with id: " +
+              task,
+          });
+        } else {
+          const itemXMLFileName = getDmdTaskItemXMLFileName(
+            accessObject?.id,
+            item.output
+          );
+
+          if (itemXMLFileName === null) {
+            await ctx.routeLimiter.getLimiterSemaphore("storeAccess")?.signal();
+            throw new TRPCError({
+              code: "INTERNAL_SERVER_ERROR",
+              message:
+                "Could not compile metadata file name for item with id: " +
+                accessObject?.id +
+                " from DMD task with id: " +
+                task,
+            });
+          } else {
+            const storeResult = await storeDmdTaskItemXmlFile(
+              ctx,
+              itemXMLFileName,
+              itemXmlFile
+            );
+
+            if (!storeResult) {
+              await ctx.routeLimiter
+                .getLimiterSemaphore("storeAccess")
+                ?.signal();
+              throw new TRPCError({
+                code: "INTERNAL_SERVER_ERROR",
+                message:
+                  "Could not store metadata XML file in swift for item with id: " +
+                  accessObject?.id +
+                  " from DMD task with id: " +
+                  task,
+              });
+            } else if (typeof item.label === "string") {
+              const labelRes = await updateLabelForDmdTaskItemAccessObject(
+                ctx,
+                item.label,
+                accessObject?.id,
+                user,
+                accessObject?.type
+              );
+
+              if (!labelRes) {
+                await ctx.routeLimiter
+                  .getLimiterSemaphore("storeAccess")
+                  ?.signal();
+                throw new TRPCError({
+                  code: "INTERNAL_SERVER_ERROR",
+                  message:
+                    "Could not update label to " +
+                    item.label +
+                    " for item with id: " +
+                    accessObject?.id +
+                    " from DMD task with id: " +
+                    task,
+                });
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  await ctx.routeLimiter.getLimiterSemaphore("storeAccess")?.signal();
 };

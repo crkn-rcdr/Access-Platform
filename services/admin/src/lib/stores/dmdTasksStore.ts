@@ -3,10 +3,6 @@
  * @description
  * This module exports a store of type DmdTasksCache that holds DmdTaskStates. This makes it easier for the components to interact with a dmd task and keep track of states throughout the progression of updating the items in the dmd task.
  */
-//import Queue from "queue-promise";
-import PromiseDeque from "../utils/promiseDeque";
-const DEFAULT_QUEUE_DELAY = 10000;
-const MAX_RETRY = 5;
 
 import type { DmdItemStates, DmdTasksCache, DmdTaskState } from "$lib/types";
 import { get, writable } from "svelte/store";
@@ -81,152 +77,6 @@ function getTaskItemLength(
 }
 
 /**
- * A helper method that takes the result of a lookup request for a singular item, and formats the DmdTasksCache[dmdTaskId]["itemStates"][slug] for that item.
- * @param dmdTaskId
- * @param slug
- * @param items
- * @param result
- */
-function setLookupTaskItemResult(
-  dmdTaskId: string,
-  slug: string,
-  items: DmdItemStates,
-  result: any
-) {
-  const itemFound = result[1].found;
-  if (itemFound && result.length === 2 && "result" in result[1]) {
-    const itemData = result[1].result;
-    items[slug].slug = itemData.slug;
-    items[slug].noid = itemData.id;
-    items[slug].foundInAccess = "Yes";
-    updateTask(dmdTaskId, "itemStates", items);
-  } else {
-    items[slug].foundInAccess = "No";
-    updateTask(dmdTaskId, "itemStates", items);
-  }
-}
-
-/**
- * A helper method that takes a subset of items in DmdTasksCache[dmdTaskId] and searches for them in the access database through lapin-router.
- * @param prefix
- * @param dmdTaskId
- * @param items
- * @param subsetSlugs
- * @param lapin
- */
-async function lookupTaskItemSubsetInAccess(
-  prefix: string,
-  dmdTaskId: string,
-  items: DmdItemStates,
-  subsetSlugs: string[],
-  lapin: TRPCClient<LapinRouter>
-) {
-  try {
-    const response = await lapin.query(
-      "slug.lookupMany",
-      prefix !== "none"
-        ? subsetSlugs.map((slug) => `${prefix}.${slug}`)
-        : subsetSlugs
-    );
-
-    let resultIndex = 0;
-    for (let slug of subsetSlugs) {
-      if (resultIndex < response.length) {
-        setLookupTaskItemResult(dmdTaskId, slug, items, response[resultIndex]);
-      } else {
-        throw "Not every item was searched.";
-      }
-      resultIndex++;
-    }
-  } catch (e) {
-    console.log(e?.message);
-    for (let slug of subsetSlugs) items[slug].foundInAccess = "No";
-  }
-}
-
-/**
- * A helper method that takes the items in DmdTasksCache[dmdTaskId] and searches for them in the wipmeta database through lapin-router.
- * @param prefix
- * @param dmdTaskId
- * @param items
- * @param lapin
- */
-async function lookupTaskItemsInPreservation(
-  prefix: string,
-  dmdTaskId: string,
-  items: DmdItemStates,
-  lapin: TRPCClient<LapinRouter>
-) {
-  const slugs = Object.keys(items);
-  for (const slug of slugs) {
-    try {
-      const id = prefix !== "none" ? `${prefix}.${slug}` : slug;
-      const response = await lapin.query("wipmeta.find", id);
-      if (response) {
-        items[slug].foundInPreservation = "Yes";
-      } else {
-        items[slug].foundInPreservation = "No";
-      }
-      updateTask(dmdTaskId, "itemStates", items);
-    } catch (e) {
-      console.log(e?.message);
-      items[slug].foundInPreservation = "No";
-    }
-  }
-}
-
-async function sendAccessUpdate(
-  dmdTaskId: string,
-  items: DmdItemStates,
-  user: User,
-  lapin: TRPCClient<LapinRouter>,
-  numItems: number,
-  index: number,
-  itemSlug: string,
-  reqDeque: PromiseDeque,
-  retryCount: number
-) {
-  try {
-    await lapin.mutation("dmdTask.storeAccess", {
-      task: dmdTaskId,
-      index,
-      slug: items[itemSlug]["slug"],
-      noid: items[itemSlug]["noid"],
-      user: user,
-    });
-    items[itemSlug].updatedInAccess = "No";
-    items[itemSlug].updatedInAccessMsg = "Test error message space 1";
-    updateTask(dmdTaskId, "itemStates", items);
-
-    const percentage = Math.round(((index + 1) / numItems) * 100);
-    updateTask(dmdTaskId, "updatedProgressPercentage", percentage);
-  } catch (e) {
-    if (retryCount >= MAX_RETRY) {
-      items[itemSlug].updatedInAccess = "No";
-      items[itemSlug].updatedInAccessMsg = e?.message;
-      updateTask(dmdTaskId, "itemStates", items);
-
-      const percentage = Math.round(((index + 1) / numItems) * 100);
-      updateTask(dmdTaskId, "updatedProgressPercentage", percentage);
-    } else {
-      reqDeque.pushFront(() =>
-        sendAccessUpdate(
-          dmdTaskId,
-          items,
-          user,
-          lapin,
-          numItems,
-          index,
-          itemSlug,
-          reqDeque,
-          retryCount + 1
-        )
-      );
-    }
-  }
-}
-
-/**
  * A helper method that one by one, updates the items in DmdTasksCache[dmdTaskId] metadata in the access platform, through lapin-router. Keeps track of the progress as well.
  * @param dmdTaskId
  * @param items
@@ -241,95 +91,46 @@ async function updateItemsInAccess(
   lapin: TRPCClient<LapinRouter>,
   numItems: number
 ) {
-  let reqDeque = new PromiseDeque({
-    concurrent: 1,
-    interval: DEFAULT_QUEUE_DELAY,
-    start: false,
-  });
-
   let index = 0;
   for (const itemSlug in items) {
-    if (
-      items[itemSlug].foundInAccess === "Yes" &&
-      items[itemSlug].shouldUpdate &&
-      items[itemSlug].parseSuccess
-    ) {
+    if (items[itemSlug].shouldUpdate && items[itemSlug].parseSuccess) {
       const i = index;
-      reqDeque.pushBack(() =>
-        sendAccessUpdate(
-          dmdTaskId,
-          items,
-          user,
-          lapin,
-          numItems,
-          i,
-          itemSlug,
-          reqDeque,
-          1
-        )
-      );
+      try {
+        const res = await lapin.mutation("dmdTask.storeAccess", {
+          task: dmdTaskId,
+          index,
+          slug: items[itemSlug].slug,
+          user: user,
+        });
+        console.log("access res:", res);
+        items[itemSlug].updatedInAccess = "Yes";
+        items[itemSlug].updatedInAccessMsg =
+          "Metadata file updated successfully.";
+        updateTask(dmdTaskId, "itemStates", items);
+
+        const percentage = Math.round(((index + 1) / numItems) * 100);
+        updateTask(dmdTaskId, "updatedProgressPercentage", percentage);
+        if (percentage === 100) updateTask(dmdTaskId, "updateState", "updated");
+      } catch (e) {
+        console.log("access e:", e);
+        items[itemSlug].updatedInAccess = "No";
+        if (!items[itemSlug].updatedInAccessMsg.length) {
+          items[itemSlug].updatedInAccessMsg = e?.message;
+          updateTask(dmdTaskId, "itemStates", items);
+        }
+
+        const percentage = Math.round(((index + 1) / numItems) * 100);
+        updateTask(dmdTaskId, "updatedProgressPercentage", percentage);
+        if (percentage === 100) updateTask(dmdTaskId, "updateState", "updated");
+      }
     } else {
       items[itemSlug].updatedInAccess = "No";
       updateTask(dmdTaskId, "itemStates", items);
       const percentage = Math.round(((index + 1) / numItems) * 100);
       updateTask(dmdTaskId, "updatedProgressPercentage", percentage);
+      if (percentage === 100) updateTask(dmdTaskId, "updateState", "updated");
     }
     index++;
-  }
-
-  reqDeque.startFront();
-}
-
-async function sendPreservationUpdate(
-  dmdTaskId: string,
-  items: DmdItemStates,
-  lapin: TRPCClient<LapinRouter>,
-  numItems: number,
-  index: number,
-  itemSlug: string,
-  reqDeque: PromiseDeque,
-  retryCount: number,
-  isUpdatingInAccessToo: boolean
-) {
-  try {
-    await lapin.mutation("wipmeta.storePreservation", {
-      task: dmdTaskId,
-      index,
-      id: items[itemSlug]["slug"],
-    });
-    items[itemSlug].updatedInPreservation = "Yes";
-    items[itemSlug].updatedInPreservationMsg = "Test error message space 2";
-    updateTask(dmdTaskId, "itemStates", items);
-
-    const percentage = Math.round(
-      (((index + 1) * (isUpdatingInAccessToo ? 2 : 1)) / numItems) * 100
-    );
-    updateTask(dmdTaskId, "updatedProgressPercentage", percentage);
-  } catch (e) {
-    if (retryCount >= MAX_RETRY) {
-      items[itemSlug].updatedInPreservation = "No";
-      items[itemSlug].updatedInPreservationMsg = e?.message;
-      updateTask(dmdTaskId, "itemStates", items);
-
-      const percentage = Math.round(
-        (((index + 1) * (isUpdatingInAccessToo ? 2 : 1)) / numItems) * 100
-      );
-      updateTask(dmdTaskId, "updatedProgressPercentage", percentage);
-    } else {
-      reqDeque.pushFront(() =>
-        sendPreservationUpdate(
-          dmdTaskId,
-          items,
-          lapin,
-          numItems,
-          index,
-          itemSlug,
-          reqDeque,
-          retryCount + 1,
-          isUpdatingInAccessToo
-        )
-      );
-    }
   }
 }
 
@@ -348,33 +149,39 @@ async function updateItemsInPreservation(
   numItems: number,
   isUpdatingInAccessToo: boolean
 ) {
-  let reqDeque = new PromiseDeque({
-    concurrent: 1,
-    interval: DEFAULT_QUEUE_DELAY,
-    start: false,
-  });
-
   let index = 0;
   for (const itemSlug in items) {
-    if (
-      items[itemSlug].foundInAccess === "Yes" &&
-      items[itemSlug].shouldUpdate &&
-      items[itemSlug].parseSuccess
-    ) {
+    if (items[itemSlug].shouldUpdate && items[itemSlug].parseSuccess) {
       const i = index;
-      reqDeque.pushBack(() =>
-        sendPreservationUpdate(
-          dmdTaskId,
-          items,
-          lapin,
-          numItems,
-          i,
-          itemSlug,
-          reqDeque,
-          1,
-          isUpdatingInAccessToo
-        )
-      );
+      try {
+        const res = await lapin.mutation("wipmeta.storePreservation", {
+          task: dmdTaskId,
+          index,
+          id: items[itemSlug].slug,
+        });
+        console.log("pres r:", res);
+        items[itemSlug].updatedInPreservation = "Yes";
+        items[itemSlug].updatedInPreservationMsg =
+          "Metadata file updated successfully.";
+        updateTask(dmdTaskId, "itemStates", items);
+
+        const percentage = Math.round(
+          (((index + 1) * (isUpdatingInAccessToo ? 2 : 1)) / numItems) * 100
+        );
+        updateTask(dmdTaskId, "updatedProgressPercentage", percentage);
+        if (percentage === 100) updateTask(dmdTaskId, "updateState", "updated");
+      } catch (e) {
+        console.log("pres e:", e);
+        items[itemSlug].updatedInPreservation = "No";
+        items[itemSlug].updatedInPreservationMsg = e?.message;
+        updateTask(dmdTaskId, "itemStates", items);
+
+        const percentage = Math.round(
+          (((index + 1) * (isUpdatingInAccessToo ? 2 : 1)) / numItems) * 100
+        );
+        updateTask(dmdTaskId, "updatedProgressPercentage", percentage);
+        if (percentage === 100) updateTask(dmdTaskId, "updateState", "updated");
+      }
     } else {
       items[itemSlug].updatedInPreservation = "No";
       updateTask(dmdTaskId, "itemStates", items);
@@ -383,60 +190,10 @@ async function updateItemsInPreservation(
         (((index + 1) * (isUpdatingInAccessToo ? 2 : 1)) / numItems) * 100
       );
       updateTask(dmdTaskId, "updatedProgressPercentage", percentage);
+      if (percentage === 100) updateTask(dmdTaskId, "updateState", "updated");
     }
     index++;
   }
-  reqDeque.startFront();
-}
-
-/**
- * Calls @function lookupTaskItemSubsetInAccess and @function lookupTaskItemsInPreservation and updates DmdTasksCache[dmdTaskId] with the results.
- * @param dmdTaskId
- * @param prefix
- * @param lapin
- */
-async function lookupTaskItems(
-  dmdTaskId: string,
-  prefix: string,
-  lapin: TRPCClient<LapinRouter>
-) {
-  updateTask(dmdTaskId, "updateState", "ready");
-  updateTask(dmdTaskId, "lookupState", "loading");
-
-  let items = getTask(dmdTaskId).itemStates;
-  let index = 0;
-  let slugs: string[] = [];
-
-  let numItems = getTaskItemLength(
-    dmdTaskId,
-    items,
-    (dmdTaskId, itemSlug, items) => {
-      items[itemSlug].foundInAccess = "Searching...";
-      items[itemSlug].foundInPreservation = "Searching...";
-      updateTask(dmdTaskId, "itemStates", items);
-    }
-  );
-
-  // Batch lookup requests by 100 items.
-  for (const itemSlug in items) {
-    slugs.push(itemSlug);
-    if ((index !== 0 && index % 100 === 0) || index === numItems - 1) {
-      await lookupTaskItemSubsetInAccess(
-        prefix,
-        dmdTaskId,
-        items,
-        slugs,
-        lapin
-      );
-      slugs = [];
-    }
-    index++;
-  }
-
-  await lookupTaskItemsInPreservation(prefix, dmdTaskId, items, lapin);
-
-  updateTask(dmdTaskId, "itemStates", items);
-  updateTask(dmdTaskId, "lookupState", "loaded");
 }
 
 /**
@@ -448,7 +205,8 @@ async function lookupTaskItems(
 async function storeTaskItemMetadata(
   dmdTaskId: string,
   user: User,
-  lapin: TRPCClient<LapinRouter>
+  lapin: TRPCClient<LapinRouter>,
+  prefix: string
 ) {
   updateTask(dmdTaskId, "updateState", "updating");
   updateTask(dmdTaskId, "updatedProgressPercentage", 0);
@@ -461,10 +219,18 @@ async function storeTaskItemMetadata(
     dmdTaskId,
     items,
     (dmdTaskId, itemSlug, items) => {
+      items[itemSlug].updatedInAccessMsg = "";
+      items[itemSlug].updatedInPreservationMsg = "";
+
       if (dmdTask.shouldUpdateInAccess)
         items[itemSlug].updatedInAccess = "Updating...";
       if (dmdTask.shouldUpdateInPreservation)
         items[itemSlug].updatedInPreservation = "Updating...";
+
+      const prefixedSlug =
+        prefix !== "none" ? `${prefix}.${itemSlug}` : itemSlug;
+      items[itemSlug].slug = prefixedSlug;
+
       updateTask(dmdTaskId, "itemStates", items);
     }
   );
@@ -485,9 +251,6 @@ async function storeTaskItemMetadata(
       totalNumRequests,
       dmdTask.shouldUpdateInAccess
     );
-
-  updateTask(dmdTaskId, "itemStates", items);
-  updateTask(dmdTaskId, "updateState", "updated");
 }
 
 /**
@@ -523,7 +286,6 @@ export const dmdTasksStore = {
   initializeTask,
   getTask,
   updateTask,
-  lookupTaskItems,
   storeTaskItemMetadata,
   toggleAllItemsSelected,
   checkIfAllTaskItemsSelected,

@@ -106,7 +106,7 @@ This component displays the items in the dmd task throughout the various stages 
   <table>
     <thead>
       <tr>
-        {#if $dmdTasksStore[dmdTaskId].lookupState === "loaded" && ($dmdTasksStore[dmdTaskId].shouldUpdateInAccess || $dmdTasksStore[dmdTaskId].shouldUpdateInPreservation)}
+        {#if $dmdTasksStore[dmdTaskId].shouldUpdateInAccess || $dmdTasksStore[dmdTaskId].shouldUpdateInPreservation}
           <th>
             <input
               type="checkbox"
@@ -118,28 +118,14 @@ This component displays the items in the dmd task throughout the various stages 
         <th>Id</th>
         <th>Label</th>
         <th>Metadata Validity</th>
-        <th>Preview</th>
-
-        {#if $dmdTasksStore[dmdTaskId].lookupState !== "ready" && $dmdTasksStore[dmdTaskId].shouldUpdateInAccess}
-          <th>Found in Access?</th>
-        {/if}
-        {#if $dmdTasksStore[dmdTaskId].updateState !== "ready" && $dmdTasksStore[dmdTaskId].shouldUpdateInAccess}
-          <th>Metadata File Updated for Access?</th>
-        {/if}
-
-        {#if $dmdTasksStore[dmdTaskId].lookupState !== "ready" && $dmdTasksStore[dmdTaskId].shouldUpdateInPreservation}
-          <th>Found in Preservation?</th>
-        {/if}
-        {#if $dmdTasksStore[dmdTaskId].updateState !== "ready" && $dmdTasksStore[dmdTaskId].shouldUpdateInPreservation}
-          <th>Metadata File Updated for Preservation?</th>
-        {/if}
+        <th>Metadata Preview</th>
       </tr>
     </thead>
     <tbody>
       {#each itemsToShow as item, i}
         {#if typeof item === "object"}
           <tr>
-            {#if $dmdTasksStore[dmdTaskId].lookupState === "loaded" && ($dmdTasksStore[dmdTaskId].shouldUpdateInAccess || $dmdTasksStore[dmdTaskId].shouldUpdateInPreservation)}
+            {#if $dmdTasksStore[dmdTaskId].shouldUpdateInAccess || $dmdTasksStore[dmdTaskId].shouldUpdateInPreservation}
               <td>
                 <input
                   type="checkbox"
@@ -180,86 +166,25 @@ This component displays the items in the dmd task throughout the various stages 
                 class:danger={!item.parsed}
                 class:warn={item.parsed && item.message?.length !== 0}
                 on:click={() => handlePreviewItemPressed(i, item)}
-                >Preview</button
+                >Preview Metadata</button
               >
             </td>
-
-            {#if $dmdTasksStore[dmdTaskId].itemStates[item.id]}
-              {#if $dmdTasksStore[dmdTaskId].lookupState !== "ready" && $dmdTasksStore[dmdTaskId].shouldUpdateInAccess}
-                <td
-                  class:success={$dmdTasksStore[dmdTaskId].itemStates[item.id]
-                    .foundInAccess === "Yes"}
-                  class:not-success={$dmdTasksStore[dmdTaskId].itemStates[
-                    item.id
-                  ].foundInAccess === "No"}
-                >
-                  {#if $dmdTasksStore[dmdTaskId].itemStates[item.id].noid}
-                    <a
-                      href={`/object/${
-                        $dmdTasksStore[dmdTaskId].itemStates[item.id].noid
-                      }`}
-                      target="_blank"
-                    >
-                      {$dmdTasksStore[dmdTaskId].itemStates[item.id]
-                        .foundInAccess}
-                    </a>
-                  {:else}
-                    {$dmdTasksStore[dmdTaskId].itemStates[item.id]
-                      .foundInAccess}
-                  {/if}
-                </td>
-              {/if}
-
-              {#if $dmdTasksStore[dmdTaskId].updateState !== "ready" && $dmdTasksStore[dmdTaskId].shouldUpdateInAccess}
-                <td
-                  class:success={$dmdTasksStore[dmdTaskId].itemStates[item.id]
-                    .updatedInAccess === "Yes"}
-                  class:not-success={$dmdTasksStore[dmdTaskId].itemStates[
-                    item.id
-                  ].updatedInAccess === "No"}
-                >
-                  {$dmdTasksStore[dmdTaskId].itemStates[item.id]
-                    .updatedInAccess}
-                </td>
-              {/if}
-
-              {#if $dmdTasksStore[dmdTaskId].lookupState !== "ready" && $dmdTasksStore[dmdTaskId].shouldUpdateInPreservation}
-                <td
-                  class:success={$dmdTasksStore[dmdTaskId].itemStates[item.id]
-                    .foundInPreservation === "Yes"}
-                  class:not-success={$dmdTasksStore[dmdTaskId].itemStates[
-                    item.id
-                  ].foundInPreservation === "No"}
-                >
-                  {$dmdTasksStore[dmdTaskId].itemStates[item.id]
-                    .foundInPreservation}
-                </td>
-              {/if}
-
-              {#if $dmdTasksStore[dmdTaskId].updateState !== "ready" && $dmdTasksStore[dmdTaskId].shouldUpdateInPreservation}
-                <td
-                  class:success={$dmdTasksStore[dmdTaskId].itemStates[item.id]
-                    .updatedInPreservation === "Yes"}
-                  class:not-success={$dmdTasksStore[dmdTaskId].itemStates[
-                    item.id
-                  ].updatedInPreservation === "No"}
-                >
-                  {$dmdTasksStore[dmdTaskId].itemStates[item.id]
-                    .updatedInPreservation}
-                </td>
-              {/if}
-            {/if}
           </tr>
           {#if $dmdTasksStore[dmdTaskId].itemStates[item.id].updatedInAccessMsg.length || $dmdTasksStore[dmdTaskId].itemStates[item.id].updatedInPreservationMsg.length}
             <tr class="row-details">
-              <td colspan="9">
+              <td class="result-cell" colspan="5">
                 <table>
                   <tbody>
                     {#if $dmdTasksStore[dmdTaskId].itemStates[item.id].updatedInAccessMsg.length}
-                      <tr>
-                        <td class="detail-label"
-                          >Error Updating Metadata File for Access:</td
-                        >
+                      <tr
+                        class:success={$dmdTasksStore[dmdTaskId].itemStates[
+                          item.id
+                        ].updatedInAccess === "Yes"}
+                        class:not-success={$dmdTasksStore[dmdTaskId].itemStates[
+                          item.id
+                        ].updatedInAccess === "No"}
+                      >
+                        <td class="detail-label">Access Result:</td>
                         <td>
                           <XmlViewer
                             xml={$dmdTasksStore[dmdTaskId].itemStates[item.id]
@@ -269,10 +194,15 @@ This component displays the items in the dmd task throughout the various stages 
                       </tr>
                     {/if}
                     {#if $dmdTasksStore[dmdTaskId].itemStates[item.id].updatedInPreservationMsg.length}
-                      <tr>
-                        <td class="detail-label"
-                          >Error Updating Metadata File for Preservation:</td
-                        >
+                      <tr
+                        class:success={$dmdTasksStore[dmdTaskId].itemStates[
+                          item.id
+                        ].updatedInPreservation === "Yes"}
+                        class:not-success={$dmdTasksStore[dmdTaskId].itemStates[
+                          item.id
+                        ].updatedInPreservation === "No"}
+                      >
+                        <td class="detail-label">Preservation Result:</td>
                         <td>
                           <XmlViewer
                             xml={$dmdTasksStore[dmdTaskId].itemStates[item.id]
@@ -309,7 +239,7 @@ This component displays the items in the dmd task throughout the various stages 
   }
   .not-success {
     background-color: var(--danger-light);
-    /*color: var(--danger);*/
+    color: var(--danger);
   }
   .not-success.icon {
     color: var(--danger);
@@ -322,15 +252,18 @@ This component displays the items in the dmd task throughout the various stages 
     color: var(--warn);
     background-color: transparent;
   }
-  .row-details {
+  /*.row-details {
     color: var(--secondary);
     background: var(--light-bg);
     filter: brightness(0.98);
-  }
+  }*/
   .row-details table {
     margin-top: 0;
   }
   .row-details tbody {
     background: none;
+  }
+  .result-cell {
+    padding: 0 !important;
   }
 </style>

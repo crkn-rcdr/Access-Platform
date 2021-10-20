@@ -23,6 +23,7 @@ This component allows the user to update the dmd tasks items in an access platfo
   import type { Session } from "$lib/types";
   import { getStores } from "$app/stores";
   import { dmdTasksStore } from "$lib/stores/dmdTasksStore";
+  import PrefixSelector from "$lib/components/access-objects/PrefixSelector.svelte";
 
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
@@ -47,7 +48,8 @@ This component allows the user to update the dmd tasks items in an access platfo
     dmdTasksStore.storeTaskItemMetadata(
       dmdTaskId,
       $session.user,
-      $session.lapin
+      $session.lapin,
+      depositor.prefix
     );
   }
 </script>
@@ -56,6 +58,7 @@ This component allows the user to update the dmd tasks items in an access platfo
   <div
     class="update-wrap auto-align auto-align__a-center auto-align__j-between "
   >
+    <PrefixSelector bind:depositor />
     <span>
       <input
         name="access"
@@ -85,5 +88,11 @@ This component allows the user to update the dmd tasks items in an access platfo
 <style>
   .update-wrap {
     width: 100%;
+  }
+  .update-wrap > *:not(:first-child) {
+    margin-left: 1rem;
+  }
+  :global(.update-wrap select) {
+    flex: 1;
   }
 </style>
