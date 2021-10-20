@@ -127,12 +127,16 @@ This component displays the items in the dmd task throughout the various stages 
           <tr>
             {#if $dmdTasksStore[dmdTaskId].shouldUpdateInAccess || $dmdTasksStore[dmdTaskId].shouldUpdateInPreservation}
               <td>
-                <input
-                  type="checkbox"
-                  bind:checked={$dmdTasksStore[dmdTaskId].itemStates[item.id]
-                    .shouldUpdate}
-                  on:change={checkIfAllItemsSelected}
-                />
+                {#if item.parsed && !(($dmdTasksStore[dmdTaskId].shouldUpdateInAccess && $dmdTasksStore[dmdTaskId].itemStates[item.id].updatedInAccess === "Yes") || ($dmdTasksStore[dmdTaskId].shouldUpdateInPreservation && $dmdTasksStore[dmdTaskId].itemStates[item.id].updatedInPreservation === "Yes"))}
+                  <input
+                    type="checkbox"
+                    bind:checked={$dmdTasksStore[dmdTaskId].itemStates[item.id]
+                      .shouldUpdate}
+                    on:change={checkIfAllItemsSelected}
+                  />
+                {:else}
+                  <input type="checkbox" disabled />
+                {/if}
               </td>
             {/if}
             <td>

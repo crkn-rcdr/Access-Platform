@@ -93,8 +93,7 @@ async function updateItemsInAccess(
 ) {
   let index = 0;
   for (const itemSlug in items) {
-    if (items[itemSlug].shouldUpdate && items[itemSlug].parseSuccess) {
-      const i = index;
+    if (items[itemSlug].shouldUpdate) {
       try {
         const res = await lapin.mutation("dmdTask.storeAccess", {
           task: dmdTaskId,
@@ -124,8 +123,8 @@ async function updateItemsInAccess(
         if (percentage === 100) updateTask(dmdTaskId, "updateState", "updated");
       }
     } else {
-      items[itemSlug].updatedInAccess = "No";
-      updateTask(dmdTaskId, "itemStates", items);
+      //items[itemSlug].updatedInAccess = "No";
+      //updateTask(dmdTaskId, "itemStates", items);
       const percentage = Math.round(((index + 1) / numItems) * 100);
       updateTask(dmdTaskId, "updatedProgressPercentage", percentage);
       if (percentage === 100) updateTask(dmdTaskId, "updateState", "updated");
@@ -151,8 +150,7 @@ async function updateItemsInPreservation(
 ) {
   let index = 0;
   for (const itemSlug in items) {
-    if (items[itemSlug].shouldUpdate && items[itemSlug].parseSuccess) {
-      const i = index;
+    if (items[itemSlug].shouldUpdate) {
       try {
         const res = await lapin.mutation("wipmeta.storePreservation", {
           task: dmdTaskId,
@@ -183,8 +181,8 @@ async function updateItemsInPreservation(
         if (percentage === 100) updateTask(dmdTaskId, "updateState", "updated");
       }
     } else {
-      items[itemSlug].updatedInPreservation = "No";
-      updateTask(dmdTaskId, "itemStates", items);
+      //items[itemSlug].updatedInPreservation = "No";
+      //updateTask(dmdTaskId, "itemStates", items);
 
       const percentage = Math.round(
         (((index + 1) * (isUpdatingInAccessToo ? 2 : 1)) / numItems) * 100
@@ -222,9 +220,15 @@ async function storeTaskItemMetadata(
       items[itemSlug].updatedInAccessMsg = "";
       items[itemSlug].updatedInPreservationMsg = "";
 
-      if (dmdTask.shouldUpdateInAccess)
+      if (
+        dmdTask.shouldUpdateInAccess &&
+        items[itemSlug].updatedInAccess !== "Yes"
+      )
         items[itemSlug].updatedInAccess = "Updating...";
-      if (dmdTask.shouldUpdateInPreservation)
+      if (
+        dmdTask.shouldUpdateInPreservation &&
+        items[itemSlug].updatedInPreservation !== "Yes"
+      )
         items[itemSlug].updatedInPreservation = "Updating...";
 
       const prefixedSlug =
@@ -251,6 +255,20 @@ async function storeTaskItemMetadata(
       totalNumRequests,
       dmdTask.shouldUpdateInAccess
     );
+
+  for (const itemSlug in items) {
+    items[itemSlug].shouldUpdate = false;
+    if (
+      dmdTask.shouldUpdateInAccess &&
+      items[itemSlug].updatedInAccess === "No"
+    )
+      items[itemSlug].shouldUpdate = true;
+    if (
+      dmdTask.shouldUpdateInPreservation &&
+      items[itemSlug].updatedInPreservation === "No"
+    )
+      items[itemSlug].shouldUpdate = true;
+  }
 }
 
 /**
@@ -259,9 +277,25 @@ async function storeTaskItemMetadata(
  * @param shouldUpdate
  */
 function toggleAllItemsSelected(dmdTaskId: string, shouldUpdate: boolean) {
-  let items = getTask(dmdTaskId).itemStates;
+  const dmdTask = getTask(dmdTaskId);
+  let items = dmdTask.itemStates;
   for (const itemSlug in items) {
-    items[itemSlug].shouldUpdate = shouldUpdate;
+    if (
+      !(
+        (dmdTask.shouldUpdateInAccess &&
+          items[itemSlug].updatedInAccess === "Yes") ||
+        (dmdTask.shouldUpdateInPreservation &&
+          items[itemSlug].updatedInAccess === "Yes")
+      )
+    )
+      items[itemSlug].shouldUpdate = shouldUpdate;
+    console.log(dmdTask.shouldUpdateInAccess);
+    console.log(items[itemSlug].updatedInAccess === "Yes");
+    console.log(dmdTask.shouldUpdateInPreservation);
+    console.log(items[itemSlug].updatedInAccess === "Yes");
+    console.log(items[itemSlug].shouldUpdate);
+    console.log("");
+    console.log("");
   }
   updateTask(dmdTaskId, "itemStates", items);
 }
@@ -272,10 +306,20 @@ function toggleAllItemsSelected(dmdTaskId: string, shouldUpdate: boolean) {
  * @param shouldUpdate
  */
 function checkIfAllTaskItemsSelected(dmdTaskId: string): boolean {
-  let items = getTask(dmdTaskId).itemStates;
+  const dmdTask = getTask(dmdTaskId);
+  let items = dmdTask.itemStates;
   let areAllItemsSelected = true;
-  for (const itemId in items) {
-    areAllItemsSelected = areAllItemsSelected && items[itemId].shouldUpdate;
+  for (const itemSlug in items) {
+    if (
+      !(
+        (dmdTask.shouldUpdateInAccess &&
+          items[itemSlug].updatedInAccess === "Yes") ||
+        (dmdTask.shouldUpdateInPreservation &&
+          items[itemSlug].updatedInAccess === "Yes")
+      ) &&
+      items[itemSlug].parseSuccess
+    )
+      areAllItemsSelected = areAllItemsSelected && items[itemSlug].shouldUpdate;
   }
   return areAllItemsSelected;
 }

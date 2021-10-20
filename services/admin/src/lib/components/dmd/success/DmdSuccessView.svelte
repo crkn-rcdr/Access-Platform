@@ -83,8 +83,8 @@ This component shows the view for a dmd task that had its metadata successfully 
           updatedInAccessMsg: "",
           updatedInPreservation: "No",
           updatedInPreservationMsg: "",
-          shouldUpdate: true,
-          parseSuccess: item.parsed && item.message === "",
+          shouldUpdate: item.parsed,
+          parseSuccess: item.parsed, //&& item.message === "",
         };
       }
       dmdTasksStore.initializeTask(dmdTask.id, {
