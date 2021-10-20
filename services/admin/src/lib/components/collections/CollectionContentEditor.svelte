@@ -22,8 +22,10 @@ Allows the user to modify the member list for a collection.
   import TiTrash from "svelte-icons/ti/TiTrash.svelte";
   import CollectionMembersAddition from "./CollectionMembersAddition.svelte";
   import { session } from "$app/stores";
+  import type { ObjectList, ObjectListShort } from "@crkn-rcdr/access-data";
 
   export let collection: Collection;
+  //console.log("Collection checking", collection);
   let activeMemberIndex: number = 0;
   const dispatch = createEventDispatcher();
   function setActiveIndex(index: number) {
@@ -55,7 +57,8 @@ Allows the user to modify the member list for a collection.
       setActiveIndex(activeMemberIndex);
     }
   }
-  let documentSlug: string[] = [];
+  let documentSlug: [] = [];
+  let members: ObjectList = [];
   async function getMemberContext() {
     let currentMembers = collection.members.map((members) => members.id);
 
@@ -63,6 +66,16 @@ Allows the user to modify the member list for a collection.
       "collection.viewMembersContext",
       currentMembers
     );
+    /* for (let id of collection.members) {
+      const result = await $session.lapin.query("collection.pageAfter", {
+        id: collection.id,
+        after: id?.id || null,
+        limit: 10,
+      });
+      console.log("result", result.list);
+       
+    } */
+
     console.log("know what it retrieves", resolutions);
     documentSlug = resolutions.map((slug) => {
       if (slug[1].found) {
@@ -131,7 +144,7 @@ Allows the user to modify the member list for a collection.
             <ul>
               <li>
                 <a href="/object/{item?.data?.id}">{item?.data?.id}</a><br />
-                {#each collection.members as members}
+                <!--  {#each collection.members as members}
                   {#if members.label !== null && members.label !== undefined}
                     <textarea
                       id="label"
@@ -139,13 +152,15 @@ Allows the user to modify the member list for a collection.
                       bind:value={members["label"]["none"]}
                     />
                   {/if}
-                {/each}
+                {/each} -->
+
                 {#each documentSlug as document}
                   <textarea
                     id="label"
                     name="label"
-                    bind:value={document["label"]}
+                    bind:value={document["label"]["none"]}
                   />
+                  <!-- <li>{document?.slug}</li> -->
                 {/each}
               </li>
             </ul>
