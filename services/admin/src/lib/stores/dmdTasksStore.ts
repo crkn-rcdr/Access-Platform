@@ -71,131 +71,21 @@ function getTaskItemLength(
   let numItems = 0;
   for (var itemSlug in items) {
     if (method !== undefined) method(dmdTaskId, itemSlug, items);
-    numItems++;
+    if (items[itemSlug].shouldUpdate) numItems++;
   }
   return numItems;
 }
 
 /**
- * A helper method that one by one, updates the items in DmdTasksCache[dmdTaskId] metadata in the access platform, through lapin-router. Keeps track of the progress as well.
- * @param dmdTaskId
- * @param items
- * @param user
- * @param lapin
- * @param numItems
+ * A helper method to slow down the rate of requests going to the backend. Causes the script to pause for 'ms.'
+ * @param ms
  */
-async function updateItemsInAccess(
-  dmdTaskId: string,
-  items: DmdItemStates,
-  user: User,
-  lapin: TRPCClient<LapinRouter>,
-  numItems: number
-) {
-  let index = 0;
-  for (const itemSlug in items) {
-    if (items[itemSlug].shouldUpdate) {
-      try {
-        const res = await lapin.mutation("dmdTask.storeAccess", {
-          task: dmdTaskId,
-          index,
-          slug: items[itemSlug].slug,
-          user: user,
-        });
-        console.log("access res:", res);
-        items[itemSlug].updatedInAccess = "Yes";
-        items[itemSlug].updatedInAccessMsg =
-          "Metadata file updated successfully.";
-        updateTask(dmdTaskId, "itemStates", items);
-
-        const percentage = Math.round(((index + 1) / numItems) * 100);
-        updateTask(dmdTaskId, "updatedProgressPercentage", percentage);
-        if (percentage === 100) updateTask(dmdTaskId, "updateState", "updated");
-      } catch (e) {
-        console.log("access e:", e);
-        items[itemSlug].updatedInAccess = "No";
-        if (!items[itemSlug].updatedInAccessMsg.length) {
-          items[itemSlug].updatedInAccessMsg = e?.message;
-          updateTask(dmdTaskId, "itemStates", items);
-        }
-
-        const percentage = Math.round(((index + 1) / numItems) * 100);
-        updateTask(dmdTaskId, "updatedProgressPercentage", percentage);
-        if (percentage === 100) updateTask(dmdTaskId, "updateState", "updated");
-      }
-    } else {
-      //items[itemSlug].updatedInAccess = "No";
-      //updateTask(dmdTaskId, "itemStates", items);
-      const percentage = Math.round(((index + 1) / numItems) * 100);
-      updateTask(dmdTaskId, "updatedProgressPercentage", percentage);
-      if (percentage === 100) updateTask(dmdTaskId, "updateState", "updated");
-    }
-    index++;
-  }
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 /**
- * A helper method that one by one, updates the items in DmdTasksCache[dmdTaskId] metadata in the preservation, through lapin-router. Keeps track of the progress as well.
- * @param dmdTaskId
- * @param items
- * @param lapin
- * @param numItems
- * @param isUpdatingInAccessToo
- */
-async function updateItemsInPreservation(
-  dmdTaskId: string,
-  items: DmdItemStates,
-  lapin: TRPCClient<LapinRouter>,
-  numItems: number,
-  isUpdatingInAccessToo: boolean
-) {
-  let index = 0;
-  for (const itemSlug in items) {
-    if (items[itemSlug].shouldUpdate) {
-      try {
-        const res = await lapin.mutation("wipmeta.storePreservation", {
-          task: dmdTaskId,
-          index,
-          id: items[itemSlug].slug,
-        });
-        console.log("pres r:", res);
-        items[itemSlug].updatedInPreservation = "Yes";
-        items[itemSlug].updatedInPreservationMsg =
-          "Metadata file updated successfully.";
-        updateTask(dmdTaskId, "itemStates", items);
-
-        const percentage = Math.round(
-          (((index + 1) * (isUpdatingInAccessToo ? 2 : 1)) / numItems) * 100
-        );
-        updateTask(dmdTaskId, "updatedProgressPercentage", percentage);
-        if (percentage === 100) updateTask(dmdTaskId, "updateState", "updated");
-      } catch (e) {
-        console.log("pres e:", e);
-        items[itemSlug].updatedInPreservation = "No";
-        items[itemSlug].updatedInPreservationMsg = e?.message;
-        updateTask(dmdTaskId, "itemStates", items);
-
-        const percentage = Math.round(
-          (((index + 1) * (isUpdatingInAccessToo ? 2 : 1)) / numItems) * 100
-        );
-        updateTask(dmdTaskId, "updatedProgressPercentage", percentage);
-        if (percentage === 100) updateTask(dmdTaskId, "updateState", "updated");
-      }
-    } else {
-      //items[itemSlug].updatedInPreservation = "No";
-      //updateTask(dmdTaskId, "itemStates", items);
-
-      const percentage = Math.round(
-        (((index + 1) * (isUpdatingInAccessToo ? 2 : 1)) / numItems) * 100
-      );
-      updateTask(dmdTaskId, "updatedProgressPercentage", percentage);
-      if (percentage === 100) updateTask(dmdTaskId, "updateState", "updated");
-    }
-    index++;
-  }
-}
-
-/**
- * Calls @function updateItemsInAccess and/or @function updateItemsInPreservation and updates DmdTasksCache[dmdTaskId] with the results and progress %.
+ * Calls the lapin routes to update the items metadata and updates DmdTasksCache[dmdTaskId] with the results and progress %.
  * @param dmdTaskId
  * @param prefix
  * @param lapin
@@ -239,24 +129,65 @@ async function storeTaskItemMetadata(
     }
   );
 
-  const totalNumRequests =
-    dmdTask.shouldUpdateInAccess && dmdTask.shouldUpdateInPreservation
-      ? numItems * 2
-      : numItems;
-
-  if (dmdTask.shouldUpdateInAccess)
-    await updateItemsInAccess(dmdTaskId, items, user, lapin, totalNumRequests);
-
-  if (dmdTask.shouldUpdateInPreservation)
-    await updateItemsInPreservation(
-      dmdTaskId,
-      items,
-      lapin,
-      totalNumRequests,
-      dmdTask.shouldUpdateInAccess
-    );
-
+  let index = 0;
   for (const itemSlug in items) {
+    // Only run on items the user selects
+    if (items[itemSlug].shouldUpdate) {
+      // ACCESS
+      if (dmdTask.shouldUpdateInAccess) {
+        try {
+          const res = await lapin.mutation("dmdTask.storeAccess", {
+            task: dmdTaskId,
+            index,
+            slug: items[itemSlug].slug,
+            user: user,
+          });
+          console.log("access res:", res);
+          items[itemSlug].updatedInAccess = "Yes";
+          items[itemSlug].updatedInAccessMsg =
+            "Metadata file updated successfully.";
+          updateTask(dmdTaskId, "itemStates", items);
+        } catch (e) {
+          console.log("access e:", e);
+          items[itemSlug].updatedInAccess = "No";
+          items[itemSlug].updatedInAccessMsg = e?.message;
+          updateTask(dmdTaskId, "itemStates", items);
+        }
+      }
+
+      // PRESERVATION
+      if (dmdTask.shouldUpdateInPreservation) {
+        try {
+          const res = await lapin.mutation("wipmeta.storePreservation", {
+            task: dmdTaskId,
+            index,
+            id: items[itemSlug].slug,
+          });
+          console.log("pres r:", res);
+          items[itemSlug].updatedInPreservation = "Yes";
+          items[itemSlug].updatedInPreservationMsg =
+            "Metadata file updated successfully.";
+          updateTask(dmdTaskId, "itemStates", items);
+        } catch (e) {
+          console.log("pres e:", e);
+          items[itemSlug].updatedInPreservation = "No";
+          items[itemSlug].updatedInPreservationMsg = e?.message;
+          updateTask(dmdTaskId, "itemStates", items);
+        }
+      } else {
+        items[itemSlug].updatedInAccess = "No";
+        items[itemSlug].updatedInPreservation = "No";
+        items[itemSlug].updatedInPreservationMsg = "";
+        items[itemSlug].updatedInAccessMsg = "";
+      }
+    }
+
+    // Update progress bar
+    const percentage = Math.round(((index + 1) / numItems) * 100);
+    updateTask(dmdTaskId, "updatedProgressPercentage", percentage);
+    if (percentage === 100) updateTask(dmdTaskId, "updateState", "updated");
+
+    // Make any errored items selected again upon completed
     items[itemSlug].shouldUpdate = false;
     if (
       dmdTask.shouldUpdateInAccess &&
@@ -268,6 +199,11 @@ async function storeTaskItemMetadata(
       items[itemSlug].updatedInPreservation === "No"
     )
       items[itemSlug].shouldUpdate = true;
+
+    console.log("Taking a pause...");
+    await sleep(10000);
+
+    index++;
   }
 }
 
