@@ -7,11 +7,11 @@ services:
   haproxy:
     profiles:
       - dev
-    image: haproxy:2.2-alpine
+    image: haproxy:2.4.7
     container_name: access-haproxy
     ports:
-      - "80:80"
-      - "443:443"
+      - "80:8080"
+      - "443:8443"
       - "10000:10000"
       - "14747:14747"
     volumes:
