@@ -70,8 +70,10 @@ function getTaskItemLength(
 ): number {
   let numItems = 0;
   for (var itemSlug in items) {
-    if (method !== undefined) method(dmdTaskId, itemSlug, items);
-    if (items[itemSlug].shouldUpdate) numItems++;
+    if (items[itemSlug].shouldUpdate) {
+      numItems++;
+      if (method !== undefined) method(dmdTaskId, itemSlug, items);
+    }
   }
   return numItems;
 }
@@ -96,9 +98,6 @@ async function storeTaskItemMetadata(
   lapin: TRPCClient<LapinRouter>,
   prefix: string
 ) {
-  updateTask(dmdTaskId, "updateState", "updating");
-  updateTask(dmdTaskId, "updatedProgressPercentage", 0);
-
   const dmdTask = getTask(dmdTaskId);
 
   let items = dmdTask.itemStates;
@@ -106,6 +105,7 @@ async function storeTaskItemMetadata(
   const numItems = getTaskItemLength(
     dmdTaskId,
     items,
+    // Might as well reset the state fr all items to be updated in the same loop.
     (dmdTaskId, itemSlug, items) => {
       items[itemSlug].updatedInAccessMsg = "";
       items[itemSlug].updatedInPreservationMsg = "";
@@ -128,6 +128,11 @@ async function storeTaskItemMetadata(
       updateTask(dmdTaskId, "itemStates", items);
     }
   );
+
+  if (numItems === 0) return;
+
+  updateTask(dmdTaskId, "updateState", "updating");
+  updateTask(dmdTaskId, "updatedProgressPercentage", 0);
 
   let index = 0;
   for (const itemSlug in items) {
