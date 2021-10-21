@@ -22,12 +22,26 @@ Allows the user to modify the member list for a collection.
   import TiTrash from "svelte-icons/ti/TiTrash.svelte";
   import CollectionMembersAddition from "./CollectionMembersAddition.svelte";
   import { session } from "$app/stores";
-  import type { ObjectList, ObjectListShort } from "@crkn-rcdr/access-data";
 
   export let collection: Collection;
-  //console.log("Collection checking", collection);
+
   let activeMemberIndex: number = 0;
   const dispatch = createEventDispatcher();
+  let documentSlug: [] = [];
+
+  async function getMemberContext() {
+    let currentMembers = collection.members.map((members) => members.id);
+
+    const resolutions = await $session.lapin.query(
+      "collection.viewMembersContext",
+      currentMembers
+    );
+
+    console.log("know what it retrieves", resolutions);
+    documentSlug = resolutions.map((slug) => {
+      return { id: slug[0], result: slug[1].result };
+    });
+  }
   function setActiveIndex(index: number) {
     if (index >= collection.members.length)
       index = collection.members.length - 1;
@@ -57,38 +71,10 @@ Allows the user to modify the member list for a collection.
       setActiveIndex(activeMemberIndex);
     }
   }
-  let documentSlug: [] = [];
-  let members: ObjectList = [];
-  async function getMemberContext() {
-    let currentMembers = collection.members.map((members) => members.id);
 
-    const resolutions = await $session.lapin.query(
-      "collection.viewMembersContext",
-      currentMembers
-    );
-    /* for (let id of collection.members) {
-      const result = await $session.lapin.query("collection.pageAfter", {
-        id: collection.id,
-        after: id?.id || null,
-        limit: 10,
-      });
-      console.log("result", result.list);
-       
-    } */
-
-    console.log("know what it retrieves", resolutions);
-    documentSlug = resolutions.map((slug) => {
-      console.log("check what is in document slug[1]", slug[1]);
-      if (slug[1].found) {
-        return slug[1].result;
-      } else {
-        return null;
-      }
-    });
-    console.log("check what is in document slug", documentSlug);
-  }
   onMount(() => {
     if (collection.members.length) activeMemberIndex = 0;
+    getMemberContext();
   });
 </script>
 
@@ -147,29 +133,15 @@ Allows the user to modify the member list for a collection.
             <ul>
               <li>
                 <a href="/object/{item?.data?.id}">{item?.data?.id}</a><br />
-                <!--  {#each collection.members as members}
-                  {#if members.label !== null && members.label !== undefined}
-                    <textarea
-                      id="label"
-                      name="label"
-                      bind:value={members["label"]["none"]}
-                    />
-                  {/if}
-                {/each} -->
 
                 {#each documentSlug as document}
-                  {#if document?.["label"]?.["none"]}
-                    <textarea
-                      id="label"
-                      name="label"
-                      bind:value={document["label"]["none"]}
-                    />
+                  {#if document["result"]?.["label"]?.["none"] && document["id"] === item?.data?.id}
+                    <li>{document["result"]["slug"]}</li>
+                    <li>{document["result"]["label"]["none"]}</li>
                   {/if}
-                  <!-- <li>{document?.slug}</li> -->
                 {/each}
               </li>
             </ul>
-            <button on:click={getMemberContext}>Check</button>
           </div>
         </div>
       </div>
