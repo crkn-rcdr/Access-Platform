@@ -31,9 +31,9 @@ This component shows the view for a dmd task that had its metadata successfully 
   /**
    *  @type { Depositor } The access platform to look for the items in.
    */
-  let depositor: Depositor = {
-    prefix: "oocihm",
-    label: "Canadiana.org",
+  let depositor: Depositor | null = {
+    prefix: "none",
+    label: "",
   };
 
   /**
@@ -56,11 +56,11 @@ This component shows the view for a dmd task that had its metadata successfully 
    * @returns void
    */
   function resetView() {
-    if (depositor.prefix !== prevPrefix) {
+    if (depositor?.prefix !== prevPrefix) {
       $dmdTasksStore[dmdTask.id].lookupState = "ready";
       $dmdTasksStore[dmdTask.id].updateState = "ready";
     }
-    prevPrefix = depositor.prefix;
+    prevPrefix = depositor?.prefix;
   }
 
   /**
@@ -170,8 +170,8 @@ This component shows the view for a dmd task that had its metadata successfully 
         progress={$dmdTasksStore[dmdTask.id].updatedProgressPercentage}
         progressText={$dmdTasksStore[dmdTask.id].updatedProgressPercentage ===
         100
-          ? "updated!"
-          : "updating items..."}
+          ? "done!"
+          : "updating files..."}
       />
       <br />
     {/if}

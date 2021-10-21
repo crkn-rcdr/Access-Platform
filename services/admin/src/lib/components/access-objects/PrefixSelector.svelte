@@ -18,10 +18,7 @@ Allows the user to select one of many pre-defined depositors.
   /**
    * @type {Depositor} The access platform information that is selected in the selection element
    */
-  export let depositor: Depositor = {
-    prefix: "none",
-    label: "",
-  };
+  export let depositor: Depositor | null = null;
 
   /**
    * @type { object} The object of prefix options for the selection element.
@@ -42,24 +39,27 @@ Allows the user to select one of many pre-defined depositors.
   };
 </script>
 
-<select
-  name="depositor"
-  on:change={(e) => {
-    depositor = {
-      prefix: e.target["value"],
-      label: depositors[e.target["value"]],
-    };
-  }}
-  value={depositor["prefix"]}
->
-  <option value="">Select the depositor/prefix:</option>
-  {#each Object.keys(depositors) as depositorCode}
-    <option value={depositorCode}>
-      {depositors[depositorCode]}
-      {depositorCode !== "none" ? `(${depositorCode})` : ""}
-    </option>
-  {/each}
-</select>
+<span>
+  <label for="depositor">Depositor:</label>
+  <select
+    name="depositor"
+    on:change={(e) => {
+      depositor = {
+        prefix: e.target["value"],
+        label: depositors[e.target["value"]],
+      };
+    }}
+    value={depositor?.["prefix"]}
+  >
+    <option disabled selected value>select an option</option>
+    {#each Object.keys(depositors) as depositorCode}
+      <option value={depositorCode}>
+        {depositors[depositorCode]}
+        {depositorCode !== "none" ? `(${depositorCode})` : ""}
+      </option>
+    {/each}
+  </select>
+</span>
 
 <style>
   select {

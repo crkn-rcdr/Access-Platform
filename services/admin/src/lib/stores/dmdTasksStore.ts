@@ -224,13 +224,6 @@ function toggleAllItemsSelected(dmdTaskId: string, shouldUpdate: boolean) {
       )
     )
       items[itemSlug].shouldUpdate = shouldUpdate;
-    console.log(dmdTask.shouldUpdateInAccess);
-    console.log(items[itemSlug].updatedInAccess === "Yes");
-    console.log(dmdTask.shouldUpdateInPreservation);
-    console.log(items[itemSlug].updatedInAccess === "Yes");
-    console.log(items[itemSlug].shouldUpdate);
-    console.log("");
-    console.log("");
   }
   updateTask(dmdTaskId, "itemStates", items);
 }

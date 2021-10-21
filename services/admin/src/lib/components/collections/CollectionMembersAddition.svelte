@@ -58,8 +58,8 @@
   async function resolveMembers() {
     let slugArray = input.split(/[,|\s]/);
 
-    if (depositor.prefix !== "none")
-      slugArray = slugArray.map((slug) => `${depositor.prefix}.${slug}`);
+    if (depositor?.prefix !== "none")
+      slugArray = slugArray.map((slug) => `${depositor?.prefix}.${slug}`);
 
     const response = await $session.lapin.query("collection.checkAdditions", {
       id,

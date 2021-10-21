@@ -40,48 +40,73 @@ This component allows the user to update the dmd tasks items in an access platfo
    */
   export let dmdTaskId: string;
 
+  let disabled: boolean = true;
+
   /**
    * Passes on the work of updating the metadata of the items in the task to the dmdTasksStore
    * @returns void
    */
-  function handleUpdatePressed() {
-    dmdTasksStore.storeTaskItemMetadata(
+  async function handleUpdatePressed() {
+    await dmdTasksStore.storeTaskItemMetadata(
       dmdTaskId,
       $session.user,
       $session.lapin,
-      depositor.prefix
+      depositor?.prefix
     );
+    console.log("Done running update");
+    // generate msg
   }
+
+  $: {
+    let numItems = 0;
+    for (const itemSlug in $dmdTasksStore[dmdTaskId].itemStates) {
+      if ($dmdTasksStore[dmdTaskId].itemStates[itemSlug].shouldUpdate)
+        numItems++;
+    }
+
+    disabled =
+      depositor === null ||
+      numItems === 0 ||
+      !(
+        $dmdTasksStore[dmdTaskId].shouldUpdateInAccess ||
+        $dmdTasksStore[dmdTaskId].shouldUpdateInPreservation
+      );
+  }
+
+  // success msg notification w. warningto wait an hour
+  // fail msg with explain to try again and button to make issue
+  // https://github.com/[user]/[repo]/issues/new?title=[title]&assignee=[user]&body=[body]&labels[]=label1&labels[]=label2
 </script>
 
 {#if $dmdTasksStore[dmdTaskId]}
-  <div
-    class="update-wrap auto-align auto-align__a-center auto-align__j-between "
-  >
+  <div class="update-wrap auto-align auto-align__a-end auto-align__j-between ">
     <PrefixSelector bind:depositor />
-    <span>
-      <input
-        name="access"
-        type="checkbox"
-        bind:checked={$dmdTasksStore[dmdTaskId].shouldUpdateInAccess}
-      />
-      <label for="access">in Access</label>
-    </span>
-    <span>
-      <input
-        name="preservation"
-        type="checkbox"
-        bind:checked={$dmdTasksStore[dmdTaskId].shouldUpdateInPreservation}
-      />
-      <label for="preservation">in Preservation</label>
-    </span>
-    {#if $dmdTasksStore[dmdTaskId].shouldUpdateInAccess || $dmdTasksStore[dmdTaskId].shouldUpdateInPreservation}
-      <button class="primary" on:click={handleUpdatePressed}>
+
+    <div class="auto-align auto-align__column auto-align__a-end">
+      <div class="auto-align auto-align__a-end auto-align__j-between">
+        <span class="checkbox">
+          <input
+            name="access"
+            type="checkbox"
+            bind:checked={$dmdTasksStore[dmdTaskId].shouldUpdateInAccess}
+          />
+          <label for="access">Update in Access</label>
+        </span>
+        <span class="checkbox">
+          <input
+            name="preservation"
+            type="checkbox"
+            bind:checked={$dmdTasksStore[dmdTaskId].shouldUpdateInPreservation}
+          />
+          <label for="preservation">Update in Preservation</label>
+        </span>
+      </div>
+      <button class="primary" {disabled} on:click={handleUpdatePressed}>
         {$dmdTasksStore[dmdTaskId].updateState === "updated"
           ? "Update Descriptive Metadata Records Again"
           : "Update Descriptive Metadata Records"}
       </button>
-    {/if}
+    </div>
   </div>
 {/if}
 
@@ -92,7 +117,14 @@ This component allows the user to update the dmd tasks items in an access platfo
   .update-wrap > *:not(:first-child) {
     margin-left: 1rem;
   }
-  :global(.update-wrap select) {
+  :global(.update-wrap span:first-child) {
     flex: 1;
+  }
+  :global(.update-wrap > div) {
+    flex: 3;
+  }
+
+  .checkbox:first-child {
+    margin-left: var(--margin-sm);
   }
 </style>

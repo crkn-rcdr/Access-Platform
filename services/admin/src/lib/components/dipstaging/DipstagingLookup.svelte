@@ -37,7 +37,7 @@ This component allows the user to find packages in the dipstaging database.
   /**
    * @type { Depositor } The access platform to look for the items in.
    */
-  let depositor: Depositor = {
+  let depositor: Depositor | null = {
     prefix: "none",
     label: "",
   };
@@ -153,8 +153,10 @@ This component allows the user to find packages in the dipstaging database.
     else slugList = slugListString.split("\n");
     slugList = slugList.filter((slug) => slug.trim().length);
     if (slugList.length) {
-      if (depositor.prefix !== "none")
-        slugList = slugList.map((slug) => `${depositor.prefix}.${slug.trim()}`);
+      if (depositor?.prefix !== "none")
+        slugList = slugList.map(
+          (slug) => `${depositor?.prefix}.${slug.trim()}`
+        );
       else slugList = slugList.map((slug) => slug.trim());
       const response = await $session.lapin.query(
         "dipstaging.listFromKeys",
@@ -223,7 +225,7 @@ This component allows the user to find packages in the dipstaging database.
         buttonClass={lookupDone ? "secondary" : "primary"}
         on:clicked={handleLookupPressedDates}
         showLoader={loading}
-        disabled={!(startDateStr.length && endDateStr.length)}
+        disabled={!(depositor && startDateStr.length && endDateStr.length)}
       >
         <span slot="content">
           {lookupDone ? "Look-up Packages Again" : "Look-up Packages"}
