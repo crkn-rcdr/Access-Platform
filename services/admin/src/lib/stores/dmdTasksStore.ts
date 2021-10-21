@@ -98,6 +98,8 @@ async function storeTaskItemMetadata(
   lapin: TRPCClient<LapinRouter>,
   prefix: string
 ) {
+  let hasFailed = false;
+
   const dmdTask = getTask(dmdTaskId);
 
   let items = dmdTask.itemStates;
@@ -133,6 +135,7 @@ async function storeTaskItemMetadata(
 
   updateTask(dmdTaskId, "updateState", "updating");
   updateTask(dmdTaskId, "updatedProgressPercentage", 0);
+  updateTask(dmdTaskId, "resultMsg", "");
 
   let index = 0;
   for (const itemSlug in items) {
@@ -140,6 +143,8 @@ async function storeTaskItemMetadata(
     if (items[itemSlug].shouldUpdate) {
       // Deselect item
       items[itemSlug].shouldUpdate = false;
+      console.log("Taking a pause...");
+      await sleep(10000);
 
       // ACCESS
       if (dmdTask.shouldUpdateInAccess) {
@@ -162,6 +167,8 @@ async function storeTaskItemMetadata(
           // Make any errored items selected again upon completed
           items[itemSlug].shouldUpdate = true;
           updateTask(dmdTaskId, "itemStates", items);
+
+          hasFailed = true;
         }
       }
 
@@ -185,6 +192,8 @@ async function storeTaskItemMetadata(
           // Make any errored items selected again upon completed
           items[itemSlug].shouldUpdate = true;
           updateTask(dmdTaskId, "itemStates", items);
+
+          hasFailed = true;
         }
       }
     } else {
@@ -197,12 +206,26 @@ async function storeTaskItemMetadata(
     // Update progress bar
     const percentage = Math.round(((index + 1) / numItems) * 100);
     updateTask(dmdTaskId, "updatedProgressPercentage", percentage);
-    if (percentage === 100) updateTask(dmdTaskId, "updateState", "updated");
-
-    console.log("Taking a pause...");
-    await sleep(10000);
 
     index++;
+  }
+
+  if (hasFailed) {
+    let githubLink = "woooooo";
+    updateTask(dmdTaskId, "updateState", "error");
+    updateTask(
+      dmdTaskId,
+      "resultMsg",
+      `There was a problem updating one or more of your items metadata files. Please check the results in the table below for details about the problem. You can 1) Try running the update again, 2) Correct any formatting issues in the input file, or <a href="${githubLink}" target="_blank">3) Open a ticket here for the platform team to investigate the problem.</a>`
+    );
+  } else {
+    let githubLink = "woooooo";
+    updateTask(dmdTaskId, "updateState", "updated");
+    updateTask(
+      dmdTaskId,
+      "resultMsg",
+      `Success! All of the metadata files were updated. Please wait up to one hour to see the new metadata updated in access and/or preservation. <a href="${githubLink}" target="_blank">If after one hour the updates still aren't visible, open a ticket here.</a>`
+    );
   }
 }
 

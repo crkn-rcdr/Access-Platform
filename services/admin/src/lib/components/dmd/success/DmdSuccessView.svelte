@@ -52,18 +52,6 @@ This component shows the view for a dmd task that had its metadata successfully 
   let showAllInvalidErrorMsg: string = "";
 
   /**
-   * Sets the state of the dmd task to the initial state on page load.
-   * @returns void
-   */
-  function resetView() {
-    if (depositor?.prefix !== prevPrefix) {
-      $dmdTasksStore[dmdTask.id].lookupState = "ready";
-      $dmdTasksStore[dmdTask.id].updateState = "ready";
-    }
-    prevPrefix = depositor?.prefix;
-  }
-
-  /**
    * Adds the dmd task to the dmd task store on page load. (If it isn't in the store already)
    * @returns void
    */
@@ -88,10 +76,9 @@ This component shows the view for a dmd task that had its metadata successfully 
         };
       }
       dmdTasksStore.initializeTask(dmdTask.id, {
-        lookupState: "ready",
         updateState: "ready",
         itemStates: items,
-        errorMsg: "",
+        resultMsg: "",
         shouldUpdateInPreservation: true,
         shouldUpdateInAccess: true,
         updatedProgressPercentage: 0,
@@ -117,20 +104,20 @@ This component shows the view for a dmd task that had its metadata successfully 
   }
 
   /**
-   * @listens $dmdTasksStore[dmdTask.id]?.lookupState
-   * @description Sets @var activeStepIndex, the control of the stepper, depending on if the user has looked up the items.
-   */
-  $: activeStepIndex =
-    $dmdTasksStore[dmdTask.id]?.lookupState === "loaded" ? 1 : 0;
-
-  /**
    * @listens depositor
    * @description Calls @function resetView when the @var depositor changes.
    */
-  $: {
+  /*$: {
     depositor;
     resetView();
   }
+   function resetView() {
+    if (depositor?.prefix !== prevPrefix) {
+      $dmdTasksStore[dmdTask.id].updateState = "ready";
+    }
+    prevPrefix = depositor?.prefix;
+  }
+  */
 </script>
 
 {#if $dmdTasksStore && $dmdTasksStore[dmdTask.id]}
@@ -141,6 +128,7 @@ This component shows the view for a dmd task that had its metadata successfully 
     {#if dmdTask?.fileName}
       <h5>{dmdTask.fileName}</h5>
     {/if}
+
     <NotificationBar
       message={dmdTask.process.message?.length
         ? `File parsing ${dmdTask.process.succeeded ? "warning" : "error"}: ${
@@ -149,6 +137,18 @@ This component shows the view for a dmd task that had its metadata successfully 
         : ""}
       status={dmdTask.process.succeeded ? "warn" : "fail"}
     />
+
+    <NotificationBar
+      message={$dmdTasksStore[dmdTask.id].resultMsg}
+      status={$dmdTasksStore[dmdTask.id].updateState === "error"
+        ? "fail"
+        : "success"}
+    />
+
+    {#if $dmdTasksStore[dmdTask.id].resultMsg?.length}
+      <br />
+    {/if}
+
     {#if !showAllInvalidError}
       <DmdSuccessItemUpdater dmdTaskId={dmdTask.id} bind:depositor />
       <br />

@@ -75,10 +75,9 @@ export type DmdItemState = {
 export type DmdItemStates = Map<string, DmdItemState>;
 
 export type DmdTaskState = {
-  lookupState: "ready" | "loading" | "loaded" | "error";
   updateState: "ready" | "updating" | "updated" | "error";
   itemStates: DmdItemStates;
-  errorMsg: string;
+  resultMsg: string;
   shouldUpdateInPreservation: boolean;
   shouldUpdateInAccess: boolean;
   updatedProgressPercentage: number;

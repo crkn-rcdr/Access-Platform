@@ -53,8 +53,6 @@ This component allows the user to update the dmd tasks items in an access platfo
       $session.lapin,
       depositor?.prefix
     );
-    console.log("Done running update");
-    // generate msg
   }
 
   $: {
@@ -72,10 +70,6 @@ This component allows the user to update the dmd tasks items in an access platfo
         $dmdTasksStore[dmdTaskId].shouldUpdateInPreservation
       );
   }
-
-  // success msg notification w. warningto wait an hour
-  // fail msg with explain to try again and button to make issue
-  // https://github.com/[user]/[repo]/issues/new?title=[title]&assignee=[user]&body=[body]&labels[]=label1&labels[]=label2
 </script>
 
 {#if $dmdTasksStore[dmdTaskId]}
@@ -102,8 +96,8 @@ This component allows the user to update the dmd tasks items in an access platfo
         </span>
       </div>
       <button class="primary" {disabled} on:click={handleUpdatePressed}>
-        {$dmdTasksStore[dmdTaskId].updateState === "updated"
-          ? "Update Descriptive Metadata Records Again"
+        {$dmdTasksStore[dmdTaskId].updateState === "error"
+          ? "Try Updating Descriptive Metadata Records Again"
           : "Update Descriptive Metadata Records"}
       </button>
     </div>
@@ -125,6 +119,6 @@ This component allows the user to update the dmd tasks items in an access platfo
   }
 
   .checkbox:first-child {
-    margin-left: var(--margin-sm);
+    margin-right: var(--margin-sm);
   }
 </style>
