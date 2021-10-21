@@ -133,6 +133,9 @@ async function storeTaskItemMetadata(
   for (const itemSlug in items) {
     // Only run on items the user selects
     if (items[itemSlug].shouldUpdate) {
+      // Deselect item
+      items[itemSlug].shouldUpdate = false;
+
       // ACCESS
       if (dmdTask.shouldUpdateInAccess) {
         try {
@@ -151,6 +154,8 @@ async function storeTaskItemMetadata(
           console.log("access e:", e);
           items[itemSlug].updatedInAccess = "No";
           items[itemSlug].updatedInAccessMsg = e?.message;
+          // Make any errored items selected again upon completed
+          items[itemSlug].shouldUpdate = true;
           updateTask(dmdTaskId, "itemStates", items);
         }
       }
@@ -172,33 +177,22 @@ async function storeTaskItemMetadata(
           console.log("pres e:", e);
           items[itemSlug].updatedInPreservation = "No";
           items[itemSlug].updatedInPreservationMsg = e?.message;
+          // Make any errored items selected again upon completed
+          items[itemSlug].shouldUpdate = true;
           updateTask(dmdTaskId, "itemStates", items);
         }
-      } else {
-        items[itemSlug].updatedInAccess = "No";
-        items[itemSlug].updatedInPreservation = "No";
-        items[itemSlug].updatedInPreservationMsg = "";
-        items[itemSlug].updatedInAccessMsg = "";
       }
+    } else {
+      items[itemSlug].updatedInAccess = "No";
+      items[itemSlug].updatedInPreservation = "No";
+      items[itemSlug].updatedInPreservationMsg = "";
+      items[itemSlug].updatedInAccessMsg = "";
     }
 
     // Update progress bar
     const percentage = Math.round(((index + 1) / numItems) * 100);
     updateTask(dmdTaskId, "updatedProgressPercentage", percentage);
     if (percentage === 100) updateTask(dmdTaskId, "updateState", "updated");
-
-    // Make any errored items selected again upon completed
-    items[itemSlug].shouldUpdate = false;
-    if (
-      dmdTask.shouldUpdateInAccess &&
-      items[itemSlug].updatedInAccess === "No"
-    )
-      items[itemSlug].shouldUpdate = true;
-    if (
-      dmdTask.shouldUpdateInPreservation &&
-      items[itemSlug].updatedInPreservation === "No"
-    )
-      items[itemSlug].shouldUpdate = true;
 
     console.log("Taking a pause...");
     await sleep(10000);

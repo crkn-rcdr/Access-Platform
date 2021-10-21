@@ -65,6 +65,7 @@ export const lookupDmdTaskForStorage = async function (
       return dmdTaskLookup.doc;
     } else return null;
   } catch (e: any) {
+    console.log("DMD error: ", e?.message);
     return null;
   }
 };
@@ -83,6 +84,7 @@ export const getDmdItemXML = async function (
     if (itemXmlFile) return itemXmlFile;
     else return null;
   } catch (e: any) {
+    console.log("DMD error: ", e?.message);
     return null;
   }
 };
@@ -109,6 +111,7 @@ export const getAccessObjectForDmdTaskItem = async function (
     if (accessObjectLookup.found) return accessObjectLookup.result;
     else return null;
   } catch (e: any) {
+    console.log("DMD error: ", e?.message);
     return null;
   }
 };
@@ -122,6 +125,7 @@ export const getWipmetaObjectForDmdTaskItem = async function (
     if (wipmetaObjectLookup.found) return wipmetaObjectLookup.doc;
     else return null;
   } catch (e: any) {
+    console.log("DMD error: ", e?.message);
     return null;
   }
 };
@@ -150,6 +154,7 @@ export const storeDmdTaskItemXmlFile = async function (
     if (storeResult.code === 201) return true;
     else return false;
   } catch (e: any) {
+    console.log("DMD error: ", e?.message);
     return false;
   }
 };
@@ -183,6 +188,7 @@ export const updateLabelForDmdTaskItemAccessObject = async function (
       return true;
     } else return false;
   } catch (e: any) {
+    console.log("DMD error: ", e?.message);
     return false;
   }
 };
@@ -201,6 +207,7 @@ export const uploadDmdTaskItemXmlFile = async function (
     });
     return true;
   } catch (e: any) {
+    console.log("DMD error: ", e?.message);
     return false;
   }
 };
@@ -219,6 +226,7 @@ export const updateLabelForDmdTaskItemWipmetaObject = async function (
       return true;
     } else return false;
   } catch (e: any) {
+    console.log("DMD error: ", e?.message);
     return false;
   }
 };
@@ -254,7 +262,7 @@ export const storePreservation = async function (
     } else {
       const file = itemXmlFile.toString("base64");
 
-      const uploadRes = uploadDmdTaskItemXmlFile(ctx, id, file);
+      const uploadRes = await uploadDmdTaskItemXmlFile(ctx, id, file);
 
       if (!uploadRes) {
         await ctx.routeLimiter
@@ -303,12 +311,20 @@ export const storePreservation = async function (
             });
           } else {
             const label = item.label;
+            console.log("label: ", label);
+            console.log(
+              "typeof item.label === string ",
+              typeof item.label === "string"
+            );
             if (label && typeof item.label === "string") {
-              const labelRes = updateLabelForDmdTaskItemWipmetaObject(
+              console.log("yep");
+              console.log("id ", id);
+              const labelRes = await updateLabelForDmdTaskItemWipmetaObject(
                 ctx,
                 id,
                 label
               );
+              console.log("labelRes ", labelRes);
 
               if (!labelRes) {
                 await ctx.routeLimiter
