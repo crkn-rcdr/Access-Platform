@@ -15,28 +15,44 @@ export interface HTTPErrorLike {
   message: string;
 }
 
+const isErrorLike = (error: unknown): error is HTTPErrorLike => {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    error.hasOwnProperty("status") &&
+    error.hasOwnProperty("message")
+  );
+};
+
 /**
  * Converts an HTTP Error (i.e. one with `status` as its 3-digit code) to
  * the JSON-RPC format tRPC prefers. It looks like tRPC 9.x might accept
  * HTTP codes for errors, thankfully.
  */
-export function httpErrorToTRPC(error: HTTPErrorLike) {
-  const code =
-    error.status === 400
-      ? "BAD_REQUEST"
-      : error.status === 401
-      ? "UNAUTHORIZED"
-      : error.status === 404
-      ? "PATH_NOT_FOUND"
-      : "INTERNAL_SERVER_ERROR";
-  return new TRPCError({ message: error.message, code });
+export function httpErrorToTRPC(error: unknown) {
+  if (isErrorLike(error)) {
+    const code =
+      error.status === 400
+        ? "BAD_REQUEST"
+        : error.status === 401
+        ? "UNAUTHORIZED"
+        : error.status === 404
+        ? "PATH_NOT_FOUND"
+        : "INTERNAL_SERVER_ERROR";
+    return new TRPCError({ message: error.message, code });
+  } else {
+    return new TRPCError({
+      message: "Unknown error",
+      code: "INTERNAL_SERVER_ERROR",
+    });
+  }
 }
 
 export function createRouter() {
   return trpcRouter<LapinContext>();
 }
 
-export const router = createRouter()
+export const router = trpcRouter<LapinContext>()
   .merge("slug.", slugRouter)
   .merge("accessObject.", accessObjectRouter)
   .merge("manifest.", manifestRouter)

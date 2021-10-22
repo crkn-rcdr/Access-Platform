@@ -15,6 +15,8 @@ const NEW_MANIFEST_NOID = "69429/g04x54f1mk14";
 const COLLECTION = "69429/s0vq2s46j98h";
 const COLLECTION_SLUG = "oocihm.8_06941";
 const NEW_COLLECTION_NOID = "69429/g0154dn3zs9c";
+const ANCESTRY_COLLECTION_NOID1 = "69429/g0154dn3zs9d";
+const ANCESTRY_COLLECTION_NOID2 = "69429/g0154dn3zs9g";
 
 const USER = { name: "User McGee", email: "mcgee@crkn.ca" };
 
@@ -72,6 +74,42 @@ test.serial("Objects can be published and unpublished", async (t) => {
     t.context.access.publish({ id: MANIFEST_TWO, user: USER })
   );
   t.is(error.message, "Trying to publish an object that is already public");
+});
+
+test.serial("Membership and ancestry can be determined", async (t) => {
+  await t.context.access.createCollection({
+    id: ANCESTRY_COLLECTION_NOID1,
+    user: USER,
+    data: {
+      slug: "outer1",
+      label: {
+        none: "Outer Collection 1",
+      },
+      type: "collection",
+      behavior: "unordered",
+      members: [{ id: COLLECTION }],
+    },
+  });
+  await t.context.access.createCollection({
+    id: ANCESTRY_COLLECTION_NOID2,
+    user: USER,
+    data: {
+      slug: "outer2",
+      label: {
+        none: "Outer Collection 2",
+      },
+      type: "collection",
+      behavior: "unordered",
+      members: [{ id: COLLECTION }],
+    },
+  });
+
+  const membership = await t.context.access.getMembership(MANIFEST_TWO);
+  t.is(membership[0]!.id, COLLECTION);
+  const ancestry = await t.context.access.getAncestry(MANIFEST_TWO);
+  t.is(ancestry.length, 2);
+  t.is(ancestry[0]![0]!.id, ANCESTRY_COLLECTION_NOID1);
+  t.is(ancestry[1]![0]!.id, ANCESTRY_COLLECTION_NOID2);
 });
 
 // TODO: dry this
@@ -165,7 +203,7 @@ test.serial(
 test.serial("Can add and remove members", async (t) => {
   // Get the time at the start of the test. We'll use this to ensure that
   // `updateInternalmeta` has been updated.
-  const teststart = Date.now() / 1000;
+  const teststart = new Date().toISOString();
 
   let collection = Collection.parse(await t.context.access.get(COLLECTION));
   const oldMembers = collection.members;

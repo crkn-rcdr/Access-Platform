@@ -3,7 +3,11 @@ import { Described } from "./traits/Described.js";
 import { Identified } from "./traits/Identified.js";
 import { Slugged } from "./traits/Slugged.js";
 import { FileRef } from "./util/FileRef.js";
-import { ObjectList } from "./util/ObjectList.js";
+import {
+  ObjectList,
+  ObjectListShort,
+  ObjectListHandler,
+} from "./util/ObjectList.js";
 import { TextRecord } from "./util/TextRecord.js";
 
 /**
@@ -107,3 +111,25 @@ export const NewManifest = Manifest.pick({
 );
 
 export type NewManifest = z.infer<typeof NewManifest>;
+
+export const PagedManifest = Manifest.omit({ canvases: true }).merge(
+  z.object({
+    canvases: ObjectListShort,
+  })
+);
+
+export type PagedManifest = z.infer<typeof PagedManifest>;
+
+export const toPagedManifest = (m: Manifest): PagedManifest => {
+  const pm: PagedManifest = {
+    ...m,
+    canvases: null,
+  };
+
+  if (m.canvases) {
+    const handler = new ObjectListHandler(m.canvases);
+    pm.canvases = handler.shortForm();
+  }
+
+  return pm;
+};

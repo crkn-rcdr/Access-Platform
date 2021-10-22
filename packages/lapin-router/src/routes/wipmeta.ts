@@ -1,6 +1,11 @@
 import { z } from "zod";
 import { createRouter } from "../router.js";
-import { storePreservation } from "../util/dmdTask.js";
+import {
+  getDmdItemXML,
+  getDmdTaskItemByIndex,
+  lookupDmdTaskForStorage,
+  storePreservation,
+} from "../util/dmdTask.js";
 
 export const StorePreservationInput = z.object({
   task: z.string(), // dmdtask uuid

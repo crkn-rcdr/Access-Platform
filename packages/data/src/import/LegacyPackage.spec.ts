@@ -10,7 +10,11 @@ test("Undefined dipstaging document has status `not-found`", (t) =>
 
 const USER: User = { name: "User McGee", email: "mcgee@crkn.ca" };
 
-const now = Date.now() / 1000;
+const timestamp = (d: number) => {
+  return new Date(d).toISOString().replace(/.\d+Z$/g, "Z");
+};
+
+const now = timestamp(Date.now());
 
 const newLP: LegacyPackage = {
   id: "new",

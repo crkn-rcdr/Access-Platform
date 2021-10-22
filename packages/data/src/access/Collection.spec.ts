@@ -1,6 +1,6 @@
 import test from "ava";
 import { tester } from "../testHelper.js";
-import { Collection } from "./Collection.js";
+import { Collection, toPagedCollection } from "./Collection.js";
 
 const { isValid } = tester(Collection);
 
@@ -33,3 +33,11 @@ const testCollection: Collection = {
 };
 
 test("Collection parses valid data", isValid, testCollection);
+
+test("Collections can be paged", (t) => {
+  t.deepEqual(toPagedCollection(testCollection).members, {
+    first: "69429/m0696zw19t6s",
+    last: "69429/m02n4zg6h671",
+    count: 2,
+  });
+});

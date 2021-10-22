@@ -1,7 +1,16 @@
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
-import { Noid, User } from "@crkn-rcdr/access-data";
-import { createRouter, httpErrorToTRPC, HTTPErrorLike } from "../router.js";
+import {
+  Noid,
+  User,
+  Manifest,
+  Collection,
+  PagedCollection,
+  PagedManifest,
+  toPagedManifest,
+  toPagedCollection,
+} from "@crkn-rcdr/access-data";
+import { createRouter, httpErrorToTRPC } from "../router.js";
 
 const NoidWithUser = z.object({
   id: Noid,
@@ -20,13 +29,62 @@ export const accessObjectRouter = createRouter()
       });
     },
   })
+  .query("getPaged", {
+    input: Noid.parse,
+    async resolve({
+      input: id,
+      ctx,
+    }): Promise<PagedCollection | PagedManifest> {
+      const response = await ctx.couch.access.getSafe(id);
+      if (response.found) {
+        const manifestCheck = Manifest.safeParse(response.doc);
+        if (manifestCheck.success) {
+          return toPagedManifest(manifestCheck.data);
+        }
+
+        const collectionCheck = Collection.safeParse(response.doc);
+        if (collectionCheck.success) {
+          return toPagedCollection(collectionCheck.data);
+        }
+
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: `Object ${id} cannot be parsed.`,
+        });
+      }
+      throw new TRPCError({
+        code: "PATH_NOT_FOUND",
+        message: `No object with id ${id} found.`,
+      });
+    },
+  })
+  .query("getMembership", {
+    input: Noid.parse,
+    async resolve({ input: id, ctx }) {
+      try {
+        return await ctx.couch.access.getMembership(id);
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .query("getAncestry", {
+    input: Noid.parse,
+    async resolve({ input: id, ctx }) {
+      try {
+        return await ctx.couch.access.getAncestry(id);
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
   .mutation("publish", {
     input: NoidWithUser.parse,
     async resolve({ input, ctx }) {
       try {
         return await ctx.couch.access.publish(input);
       } catch (e) {
-        throw httpErrorToTRPC(e as HTTPErrorLike);
+        throw httpErrorToTRPC(e);
       }
     },
   })
@@ -36,7 +94,7 @@ export const accessObjectRouter = createRouter()
       try {
         return await ctx.couch.access.unpublish(input);
       } catch (e) {
-        throw httpErrorToTRPC(e as HTTPErrorLike);
+        throw httpErrorToTRPC(e);
       }
     },
   })
@@ -58,7 +116,7 @@ export const accessObjectRouter = createRouter()
           }
         }
       } catch (e) {
-        throw httpErrorToTRPC(e as HTTPErrorLike);
+        throw httpErrorToTRPC(e);
       }
     },
   });

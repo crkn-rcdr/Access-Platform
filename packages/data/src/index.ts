@@ -13,11 +13,18 @@ export {
   ImageRef,
   Manifest,
   ObjectList,
+  ObjectListHandler,
+  ObjectListPage,
+  ObjectListShort,
+  PagedCollection,
+  PagedManifest,
   TextRecord,
   isAlias,
   isCanvas,
   isCollection,
   isManifest,
+  toPagedCollection,
+  toPagedManifest,
 } from "./access/index.js";
 
 export {
@@ -54,4 +61,5 @@ export {
   Timestamp,
   UnixFilePath,
   User,
+  parseTimestamp,
 } from "./util/index.js";

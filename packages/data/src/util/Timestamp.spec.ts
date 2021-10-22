@@ -1,6 +1,6 @@
 import test from "ava";
 import { tester } from "../testHelper.js";
-import { Timestamp } from "./Timestamp.js";
+import { Timestamp, parseTimestamp } from "./Timestamp.js";
 
 const { isInvalid, isValid } = tester(Timestamp);
 
@@ -23,3 +23,8 @@ test(
 );
 
 test("Timestamp validates a number of seconds", isValid, 1616188726.633);
+
+test("Can parse a timestamp", (t) => {
+  t.is(parseTimestamp("2020-09-17T06:01:50Z").getFullYear(), 2020);
+  t.is(parseTimestamp(1616188726.633).getFullYear(), 2021);
+});
