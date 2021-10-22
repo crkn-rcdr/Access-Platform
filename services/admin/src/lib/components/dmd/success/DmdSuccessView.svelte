@@ -31,15 +31,17 @@ This component shows the view for a dmd task that had its metadata successfully 
   /**
    *  @type { Depositor } The access platform to look for the items in.
    */
-  let depositor: Depositor | null = {
+  let depositor: Depositor | null = null;
+
+  /*{
     prefix: "none",
     label: "",
-  };
+  };*/
 
   /**
    *  @type { string } A variable that contains the previously selected prefix of @var depositor, to ensure events are only fired when this value actually changes.
    */
-  let prevPrefix: string = "oocihm";
+  //let prevPrefix: string = "oocihm";
 
   /**
    *  @type { boolean } A control for if the 'all items XML metadata are invalid' view is showing, or if the table of results per item will show.

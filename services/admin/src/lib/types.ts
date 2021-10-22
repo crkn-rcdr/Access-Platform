@@ -65,9 +65,9 @@ export type DmdItemState = {
   slug: Slug;
   noid: Noid;
   parseSuccess: boolean;
-  updatedInAccess: "Yes" | "No" | "Updating...";
+  updatedInAccess: "Yes" | "No" | "Updating";
   updatedInAccessMsg: string;
-  updatedInPreservation: "Yes" | "No" | "Updating...";
+  updatedInPreservation: "Yes" | "No" | "Updating";
   updatedInPreservationMsg: string;
   shouldUpdate: boolean;
 };

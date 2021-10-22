@@ -98,8 +98,6 @@ async function storeTaskItemMetadata(
   lapin: TRPCClient<LapinRouter>,
   prefix: string
 ) {
-  let hasFailed = false;
-
   const dmdTask = getTask(dmdTaskId);
 
   let items = dmdTask.itemStates;
@@ -111,17 +109,6 @@ async function storeTaskItemMetadata(
     (dmdTaskId, itemSlug, items) => {
       items[itemSlug].updatedInAccessMsg = "";
       items[itemSlug].updatedInPreservationMsg = "";
-
-      if (
-        dmdTask.shouldUpdateInAccess &&
-        items[itemSlug].updatedInAccess !== "Yes"
-      )
-        items[itemSlug].updatedInAccess = "Updating...";
-      if (
-        dmdTask.shouldUpdateInPreservation &&
-        items[itemSlug].updatedInPreservation !== "Yes"
-      )
-        items[itemSlug].updatedInPreservation = "Updating...";
 
       const prefixedSlug =
         prefix !== "none" ? `${prefix}.${itemSlug}` : itemSlug;
@@ -138,11 +125,14 @@ async function storeTaskItemMetadata(
   updateTask(dmdTaskId, "resultMsg", "");
 
   let index = 0;
+  let failedSlugs: string[] = [];
   for (const itemSlug in items) {
     // Only run on items the user selects
     if (items[itemSlug].shouldUpdate) {
-      // Deselect item
-      items[itemSlug].shouldUpdate = false;
+      items[itemSlug].updatedInAccess = "Updating";
+      items[itemSlug].updatedInPreservation = "Updating";
+      updateTask(dmdTaskId, "itemStates", items);
+
       console.log("Taking a pause...");
       await sleep(10000);
 
@@ -168,8 +158,11 @@ async function storeTaskItemMetadata(
           items[itemSlug].shouldUpdate = true;
           updateTask(dmdTaskId, "itemStates", items);
 
-          hasFailed = true;
+          failedSlugs.push(itemSlug);
         }
+      } else {
+        items[itemSlug].updatedInAccess = "No";
+        updateTask(dmdTaskId, "itemStates", items);
       }
 
       // PRESERVATION
@@ -193,14 +186,22 @@ async function storeTaskItemMetadata(
           items[itemSlug].shouldUpdate = true;
           updateTask(dmdTaskId, "itemStates", items);
 
-          hasFailed = true;
+          failedSlugs.push(itemSlug);
         }
+      } else {
+        items[itemSlug].updatedInPreservation = "No";
+        updateTask(dmdTaskId, "itemStates", items);
       }
+
+      // Deselect item
+      items[itemSlug].shouldUpdate = false;
+      updateTask(dmdTaskId, "itemStates", items);
     } else {
       items[itemSlug].updatedInAccess = "No";
       items[itemSlug].updatedInPreservation = "No";
       items[itemSlug].updatedInPreservationMsg = "";
       items[itemSlug].updatedInAccessMsg = "";
+      updateTask(dmdTaskId, "itemStates", items);
     }
 
     // Update progress bar
@@ -210,21 +211,46 @@ async function storeTaskItemMetadata(
     index++;
   }
 
-  if (hasFailed) {
-    let githubLink = "woooooo";
+  if (failedSlugs.length) {
+    const newLine = "%0A";
+    const title = "title=DMD Task Failing";
+    const label = "labels[]=bug";
+    const date = new Date().toISOString();
+    const userName = user.name;
+    const erroredSlugs = failedSlugs.join(", ");
+    const body = `body=When: ${date}${newLine}${newLine}Who: ${userName}${newLine}${newLine}Affected Slugs:${newLine}${erroredSlugs}${newLine}${newLine}Please attach a screenshot:${newLine}(drag and drop it here)${newLine}`;
+
+    const githubLink =
+      `https://github.com/crkn-rcdr/Access-Platform/issues/new?${title}&${body}&${label}`.replace(
+        " ",
+        "+"
+      );
+
     updateTask(dmdTaskId, "updateState", "error");
     updateTask(
       dmdTaskId,
       "resultMsg",
-      `There was a problem updating one or more of your items metadata files. Please check the results in the table below for details about the problem. You can 1) Try running the update again, 2) Correct any formatting issues in the input file, or <a href="${githubLink}" target="_blank">3) Open a ticket here for the platform team to investigate the problem.</a>`
+      `There was a problem updating one or more of your items metadata files. Please check the results in the table below for details about the problem. You can 1) Try running the update again, <a href="/dmd/new" target="_blank">2) Correct any formatting issues in the input file and upload it again</a>, or <a href="${githubLink}" target="_blank">3) Open a ticket for the platform team to investigate the problem.</a>`
     );
   } else {
-    let githubLink = "woooooo";
+    const newLine = "%0A";
+    const title = "title=DMD Task Failing";
+    const label = "labels[]=bug";
+    const date = new Date().toISOString();
+    const userName = user.name;
+    const body = `body=When: ${date}${newLine}${newLine}Who: ${userName}${newLine}${newLine}Affected Slugs:${newLine}(Please type the affected slugs here)${newLine}${newLine}Or, please attach a screenshot:${newLine}(drag and drop it here)${newLine}`;
+
+    const githubLink =
+      `https://github.com/crkn-rcdr/Access-Platform/issues/new?${title}&${body}&${label}`.replace(
+        " ",
+        "+"
+      );
+
     updateTask(dmdTaskId, "updateState", "updated");
     updateTask(
       dmdTaskId,
       "resultMsg",
-      `Success! All of the metadata files were updated. Please wait up to one hour to see the new metadata updated in access and/or preservation. <a href="${githubLink}" target="_blank">If after one hour the updates still aren't visible, open a ticket here.</a>`
+      `Success! All of the metadata files were updated. Please wait up to one hour to see the new metadata updated in access and/or preservation. <a href="${githubLink}" target="_blank">If after one hour the updates still aren't visible, open a ticket for the platform team to investigate the problem.</a>`
     );
   }
 }

@@ -35,7 +35,7 @@ Allows the user to select one of many pre-defined depositors.
     ooga: "Canadian Hazards Information Service",
     qmma: "McGill University Archives",
     "490": "MARC File",
-    none: "No prefix",
+    none: "None (no prefix)",
   };
 </script>
 

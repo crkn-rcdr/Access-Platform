@@ -28,6 +28,7 @@ This component displays the items in the dmd task throughout the various stages 
   import { dmdTasksStore } from "$lib/stores/dmdTasksStore";
   import DmdSuccessItemPreview from "./DmdSuccessItemPreview.svelte";
   import XmlViewer from "$lib/components/shared/XmlViewer.svelte";
+  import Loading from "$lib/components/shared/Loading.svelte";
 
   /**
    *  @type { string } The 'id' of the DMDTask being shown.
@@ -127,7 +128,9 @@ This component displays the items in the dmd task throughout the various stages 
           <tr>
             {#if $dmdTasksStore[dmdTaskId].shouldUpdateInAccess || $dmdTasksStore[dmdTaskId].shouldUpdateInPreservation}
               <td>
-                {#if item.parsed && !(($dmdTasksStore[dmdTaskId].shouldUpdateInAccess && $dmdTasksStore[dmdTaskId].itemStates[item.id].updatedInAccess === "Yes") || ($dmdTasksStore[dmdTaskId].shouldUpdateInPreservation && $dmdTasksStore[dmdTaskId].itemStates[item.id].updatedInPreservation === "Yes"))}
+                {#if $dmdTasksStore[dmdTaskId].itemStates[item.id].updatedInAccess === "Updating" || $dmdTasksStore[dmdTaskId].itemStates[item.id].updatedInPreservation === "Updating"}
+                  <Loading size="sm" backgroundType="gradient" />
+                {:else if item.parsed && !(($dmdTasksStore[dmdTaskId].shouldUpdateInAccess && $dmdTasksStore[dmdTaskId].itemStates[item.id].updatedInAccess === "Yes") || ($dmdTasksStore[dmdTaskId].shouldUpdateInPreservation && $dmdTasksStore[dmdTaskId].itemStates[item.id].updatedInPreservation === "Yes"))}
                   <input
                     type="checkbox"
                     bind:checked={$dmdTasksStore[dmdTaskId].itemStates[item.id]

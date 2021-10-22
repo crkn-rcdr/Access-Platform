@@ -37,10 +37,11 @@ This component allows the user to find packages in the dipstaging database.
   /**
    * @type { Depositor } The access platform to look for the items in.
    */
-  let depositor: Depositor | null = {
+  let depositor: Depositor | null = null;
+  /*{
     prefix: "none",
     label: "",
-  };
+  };*/
 
   /**
    * @type { string } The label for the by-slug toggle
