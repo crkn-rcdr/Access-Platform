@@ -242,7 +242,7 @@ async function storeTaskItemMetadata(
     );
   } else {
     const newLine = "%0A";
-    const title = "title=DMD Task Failing";
+    const title = "title=DMD Task Item Updates Not Propagating";
     const label = "labels[]=bug";
     const date = new Date().toISOString();
     const userName = user.name;
