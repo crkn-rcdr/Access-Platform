@@ -150,7 +150,7 @@ services:
   haproxy-prod:
     profiles:
       - prod
-    image: haproxy:2.2-alpine
+    image: haproxy:2.4.7
     container_name: access-haproxy-prod
     depends_on:
       - lapin-prod
