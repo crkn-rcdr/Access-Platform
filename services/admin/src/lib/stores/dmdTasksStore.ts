@@ -125,18 +125,20 @@ async function storeTaskItemMetadata(
   updateTask(dmdTaskId, "resultMsg", "");
 
   let index = 0;
+  let numUpdated = 0;
   let failedSlugs: string[] = [];
   for (const itemSlug in items) {
     // Only run on items the user selects
     if (items[itemSlug].shouldUpdate) {
+      // Shows a loader
       items[itemSlug].updatedInAccess = "Updating";
       items[itemSlug].updatedInPreservation = "Updating";
       updateTask(dmdTaskId, "itemStates", items);
 
-      console.log("Taking a pause...");
+      // Taking a pause to conserve resources
       await sleep(10000);
 
-      // ACCESS
+      // Updating ACCESS
       if (dmdTask.shouldUpdateInAccess) {
         try {
           const res = await lapin.mutation("dmdTask.storeAccess", {
@@ -165,7 +167,7 @@ async function storeTaskItemMetadata(
         updateTask(dmdTaskId, "itemStates", items);
       }
 
-      // PRESERVATION
+      // Updating PRESERVATION
       if (dmdTask.shouldUpdateInPreservation) {
         try {
           const res = await lapin.mutation("wipmeta.storePreservation", {
@@ -193,6 +195,9 @@ async function storeTaskItemMetadata(
         updateTask(dmdTaskId, "itemStates", items);
       }
 
+      // For progress count
+      numUpdated++;
+
       // Deselect item
       items[itemSlug].shouldUpdate = false;
       updateTask(dmdTaskId, "itemStates", items);
@@ -205,8 +210,11 @@ async function storeTaskItemMetadata(
     }
 
     // Update progress bar
-    const percentage = Math.round(((index + 1) / numItems) * 100);
+    const percentage = Math.round((numUpdated / numItems) * 100);
     updateTask(dmdTaskId, "updatedProgressPercentage", percentage);
+    console.log("percentage ", percentage);
+    console.log("numUpdated ", numUpdated);
+    console.log("numItems ", numItems);
 
     index++;
   }
@@ -250,7 +258,7 @@ async function storeTaskItemMetadata(
     updateTask(
       dmdTaskId,
       "resultMsg",
-      `Success! All of the metadata files were updated. Please wait up to one hour to see the new metadata updated in access and/or preservation. <a href="${githubLink}" target="_blank">If after one hour the updates still aren't visible, open a ticket for the platform team to investigate the problem.</a>`
+      `Success! All of the metadata files were updated for the selected items. Please wait up to one hour to see the new metadata updated in access and/or preservation. <a href="${githubLink}" target="_blank">If after one hour the updates still aren't visible, open a ticket for the platform team to investigate the problem.</a>`
     );
   }
 }
