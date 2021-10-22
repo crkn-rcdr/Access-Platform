@@ -164,7 +164,7 @@ async function storeTaskItemMetadata(
           items[itemSlug].shouldUpdate = true;
           updateTask(dmdTaskId, "itemStates", items);
 
-          failedSlugs.push(itemSlug);
+          failedSlugs.push(`| ${itemSlug} | ${e?.message} |`);
         }
       } else {
         items[itemSlug].updatedInAccess = "No";
@@ -192,7 +192,7 @@ async function storeTaskItemMetadata(
           items[itemSlug].shouldUpdate = true;
           updateTask(dmdTaskId, "itemStates", items);
 
-          failedSlugs.push(itemSlug);
+          failedSlugs.push(`| ${itemSlug} | ${e?.message} |`);
         }
       } else {
         items[itemSlug].updatedInPreservation = "No";
@@ -225,8 +225,9 @@ async function storeTaskItemMetadata(
     const label = "labels[]=bug";
     const date = new Date().toISOString();
     const userName = user.name;
-    const erroredSlugs = failedSlugs.join(", ");
-    const body = `body=When: ${date}${newLine}${newLine}Who: ${userName}${newLine}${newLine}Affected Slugs:${newLine}${erroredSlugs}${newLine}${newLine}Please attach a screenshot:${newLine}(drag and drop it here)${newLine}`;
+    const issueTable = `| Item | Error Message |${newLine}| ------------- | ------------- |`;
+    const erroredSlugs = failedSlugs.join(newLine);
+    const body = `body=Task Id: ${dmdTaskId}${newLine}${newLine}Link: https://access.canadiana.ca/dmd/${dmdTaskId}${newLine}${newLine}When: ${date}${newLine}${newLine}Who: ${userName}${newLine}${newLine}Issues:${newLine}${issueTable}${newLine}${erroredSlugs}${newLine}${newLine}Please attach a screenshot:${newLine}(drag and drop it here)${newLine}`;
 
     const githubLink =
       `https://github.com/crkn-rcdr/Access-Platform/issues/new?${title}&${body}&${label}`.replace(
@@ -246,7 +247,7 @@ async function storeTaskItemMetadata(
     const label = "labels[]=bug";
     const date = new Date().toISOString();
     const userName = user.name;
-    const body = `body=When: ${date}${newLine}${newLine}Who: ${userName}${newLine}${newLine}Affected Slugs:${newLine}(Please type the affected slugs here)${newLine}${newLine}Or, please attach a screenshot:${newLine}(drag and drop it here)${newLine}`;
+    const body = `body=Task Id: ${dmdTaskId}${newLine}${newLine}Link: https://access.canadiana.ca/dmd/${dmdTaskId}${newLine}${newLine}When: ${date}${newLine}${newLine}Who: ${userName}${newLine}${newLine}Affected Slugs:${newLine}(Please type the affected slugs here)${newLine}${newLine}Or, please attach a screenshot:${newLine}(drag and drop it here)${newLine}`;
 
     const githubLink =
       `https://github.com/crkn-rcdr/Access-Platform/issues/new?${title}&${body}&${label}`.replace(
