@@ -156,8 +156,8 @@ services:
       - lapin-prod
       - admin-prod
     ports:
-      - "80:80"
-      - "443:443"
+      - "80:8080"
+      - "443:8443"
     volumes:
       - ./services/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
       - ./services/haproxy/certs:/usr/local/etc/haproxy/certs:ro
