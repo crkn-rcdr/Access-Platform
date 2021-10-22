@@ -138,6 +138,10 @@ async function storeTaskItemMetadata(
       // Taking a pause to conserve resources
       await sleep(10000);
 
+      // Deselect item
+      items[itemSlug].shouldUpdate = false;
+      updateTask(dmdTaskId, "itemStates", items);
+
       // Updating ACCESS
       if (dmdTask.shouldUpdateInAccess) {
         try {
@@ -197,10 +201,6 @@ async function storeTaskItemMetadata(
 
       // For progress count
       numUpdated++;
-
-      // Deselect item
-      items[itemSlug].shouldUpdate = false;
-      updateTask(dmdTaskId, "itemStates", items);
     } else {
       items[itemSlug].updatedInAccess = "No";
       items[itemSlug].updatedInPreservation = "No";
