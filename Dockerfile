@@ -1,7 +1,7 @@
 # init
 # Sets up pnpm and copies over workspace config.
 
-FROM node:16-alpine AS init
+FROM node:16.11.1-alpine AS init
 
 ENV ADMIN_PORT=4747 \
     ADMIN_DEV_WS_PORT=14747 \

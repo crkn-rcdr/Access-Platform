@@ -178,6 +178,7 @@ services:
     env_file:
       - .env.prod
       - .env.secret
+      - .env.secret.prod
     networks:
       access-platform:
         ipv4_address: 172.30.0.51
@@ -190,6 +191,7 @@ services:
     env_file:
       - .env.prod
       - .env.secret
+      - .env.secret.prod
     depends_on:
       - lapin-prod
     networks:
