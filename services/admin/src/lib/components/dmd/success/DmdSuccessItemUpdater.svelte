@@ -41,6 +41,7 @@ This component allows the user to update the dmd tasks items in an access platfo
   export let dmdTaskId: string;
 
   let disabled: boolean = true;
+  let updatingIn: string;
 
   /**
    * Passes on the work of updating the metadata of the items in the task to the dmdTasksStore
@@ -65,42 +66,52 @@ This component allows the user to update the dmd tasks items in an access platfo
     disabled =
       depositor === null ||
       numItems === 0 ||
-      !(
-        $dmdTasksStore[dmdTaskId].shouldUpdateInAccess ||
-        $dmdTasksStore[dmdTaskId].shouldUpdateInPreservation
-      );
+      !(updatingIn === "access" || updatingIn === "preservation");
+  }
+
+  function onChange(event) {
+    updatingIn = event.currentTarget.value;
+    if (updatingIn === "access") {
+      $dmdTasksStore[dmdTaskId].shouldUpdateInAccess = true;
+      $dmdTasksStore[dmdTaskId].shouldUpdateInPreservation = false;
+    } else if (updatingIn === "preservation") {
+      $dmdTasksStore[dmdTaskId].shouldUpdateInAccess = false;
+      $dmdTasksStore[dmdTaskId].shouldUpdateInPreservation = true;
+    }
   }
 </script>
 
 {#if $dmdTasksStore[dmdTaskId]}
-  <div class="update-wrap auto-align auto-align__a-end auto-align__j-between ">
+  <div
+    class="update-wrap auto-align auto-align__a-center auto-align__j-between"
+  >
     <PrefixSelector bind:depositor />
+    <label>
+      <input
+        checked={updatingIn === "access"}
+        on:change={onChange}
+        type="radio"
+        name="amount"
+        value="access"
+      /> Update in Access
+    </label>
+    <label>
+      <input
+        checked={updatingIn === "preservation"}
+        on:change={onChange}
+        type="radio"
+        name="amount"
+        value="preservation"
+      /> Update in Preservation
+    </label>
+    <!--div class="auto-align auto-align__column auto-align__a-end"-->
 
-    <div class="auto-align auto-align__column auto-align__a-end">
-      <div class="auto-align auto-align__a-end auto-align__j-between">
-        <span class="checkbox">
-          <input
-            name="access"
-            type="checkbox"
-            bind:checked={$dmdTasksStore[dmdTaskId].shouldUpdateInAccess}
-          />
-          <label for="access">Update in Access</label>
-        </span>
-        <span class="checkbox">
-          <input
-            name="preservation"
-            type="checkbox"
-            bind:checked={$dmdTasksStore[dmdTaskId].shouldUpdateInPreservation}
-          />
-          <label for="preservation">Update in Preservation</label>
-        </span>
-      </div>
-      <button class="primary" {disabled} on:click={handleUpdatePressed}>
-        {$dmdTasksStore[dmdTaskId].updateState === "error"
-          ? "Try Updating Descriptive Metadata Records Again"
-          : "Update Descriptive Metadata Records"}
-      </button>
-    </div>
+    <button class="primary" {disabled} on:click={handleUpdatePressed}>
+      {$dmdTasksStore[dmdTaskId].updateState === "error"
+        ? "Try Updating Descriptive Metadata Records Again"
+        : "Update Descriptive Metadata Records"}
+    </button>
+    <!--/div-->
   </div>
 {/if}
 
@@ -112,13 +123,13 @@ This component allows the user to update the dmd tasks items in an access platfo
     margin-left: 1rem;
   }
   :global(.update-wrap span:first-child) {
-    flex: 1;
+    flex: 2;
   }
   :global(.update-wrap > div) {
     flex: 3;
   }
 
-  .checkbox:first-child {
+  label:first-child {
     margin-right: var(--margin-sm);
   }
 </style>

@@ -173,7 +173,7 @@ This component shows the view for a dmd task that had its metadata successfully 
         progressText={$dmdTasksStore[dmdTask.id].updatedProgressPercentage ===
         100
           ? "done!"
-          : "updating files..."}
+          : "files updated..."}
       />
       <br />
     {/if}

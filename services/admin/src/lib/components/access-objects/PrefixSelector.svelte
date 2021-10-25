@@ -40,7 +40,6 @@ Allows the user to select one of many pre-defined depositors.
 </script>
 
 <span>
-  <label for="depositor">Depositor:</label>
   <select
     name="depositor"
     on:change={(e) => {
@@ -51,7 +50,7 @@ Allows the user to select one of many pre-defined depositors.
     }}
     value={depositor?.["prefix"]}
   >
-    <option disabled selected value>select an option</option>
+    <option disabled selected value>Select a depositor:</option>
     {#each Object.keys(depositors) as depositorCode}
       <option value={depositorCode}>
         {depositors[depositorCode]}

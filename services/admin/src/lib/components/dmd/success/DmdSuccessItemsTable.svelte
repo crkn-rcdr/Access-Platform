@@ -191,7 +191,7 @@ This component displays the items in the dmd task throughout the various stages 
                           item.id
                         ].updatedInAccess === "No"}
                       >
-                        <td class="detail-label">Access Result:</td>
+                        <td class="detail-label">Access Update Result:</td>
                         <td>
                           <XmlViewer
                             xml={$dmdTasksStore[dmdTaskId].itemStates[item.id]
@@ -209,7 +209,8 @@ This component displays the items in the dmd task throughout the various stages 
                           item.id
                         ].updatedInPreservation === "No"}
                       >
-                        <td class="detail-label">Preservation Result:</td>
+                        <td class="detail-label">Preservation Update Result:</td
+                        >
                         <td>
                           <XmlViewer
                             xml={$dmdTasksStore[dmdTaskId].itemStates[item.id]
