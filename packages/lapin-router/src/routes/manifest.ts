@@ -8,7 +8,7 @@ import {
   ObjectListPage,
   User,
 } from "@crkn-rcdr/access-data";
-import { createRouter, httpErrorToTRPC, HTTPErrorLike } from "../router.js";
+import { createRouter, httpErrorToTRPC } from "../router.js";
 import { TRPCError } from "@trpc/server";
 
 const PageAfterInput = z.object({
@@ -93,7 +93,7 @@ export const manifestRouter = createRouter()
       try {
         return await ctx.couch.access.editManifest(input);
       } catch (e) {
-        throw httpErrorToTRPC(e as HTTPErrorLike);
+        throw httpErrorToTRPC(e);
       }
     },
   })
@@ -108,7 +108,7 @@ export const manifestRouter = createRouter()
         });
         return id;
       } catch (e) {
-        throw httpErrorToTRPC(e as HTTPErrorLike);
+        throw httpErrorToTRPC(e);
       }
     },
   });

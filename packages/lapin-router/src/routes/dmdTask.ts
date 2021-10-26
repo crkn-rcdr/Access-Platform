@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
-import { createRouter, httpErrorToTRPC, HTTPErrorLike } from "../router.js";
+import { createRouter, httpErrorToTRPC } from "../router.js";
 import {
   FetchInput,
   getAccessObjectForDmdTaskItem,
@@ -62,7 +62,7 @@ export const dmdTaskRouter = createRouter()
               })
             ).toString();
       } catch (e) {
-        throw httpErrorToTRPC(e as HTTPErrorLike);
+        throw httpErrorToTRPC(e);
       }
     },
   })
@@ -72,7 +72,7 @@ export const dmdTaskRouter = createRouter()
       try {
         return await ctx.couch.dmdtask.create(input);
       } catch (e) {
-        throw httpErrorToTRPC(e as HTTPErrorLike);
+        throw httpErrorToTRPC(e);
       }
     },
   })
@@ -110,7 +110,7 @@ export const dmdTaskRouter = createRouter()
           );
         }
       } catch (e) {
-        throw httpErrorToTRPC(e as HTTPErrorLike);
+        throw httpErrorToTRPC(e);
       }
     },
   });

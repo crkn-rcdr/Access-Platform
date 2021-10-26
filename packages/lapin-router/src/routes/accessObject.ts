@@ -10,7 +10,7 @@ import {
   toPagedManifest,
   toPagedCollection,
 } from "@crkn-rcdr/access-data";
-import { createRouter, httpErrorToTRPC, HTTPErrorLike } from "../router.js";
+import { createRouter, httpErrorToTRPC } from "../router.js";
 
 const NoidWithUser = z.object({
   id: Noid,
@@ -58,13 +58,33 @@ export const accessObjectRouter = createRouter()
       });
     },
   })
+  .query("getMembership", {
+    input: Noid.parse,
+    async resolve({ input: id, ctx }) {
+      try {
+        return await ctx.couch.access.getMembership(id);
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .query("getAncestry", {
+    input: Noid.parse,
+    async resolve({ input: id, ctx }) {
+      try {
+        return await ctx.couch.access.getAncestry(id);
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
   .mutation("publish", {
     input: NoidWithUser.parse,
     async resolve({ input, ctx }) {
       try {
         return await ctx.couch.access.publish(input);
       } catch (e) {
-        throw httpErrorToTRPC(e as HTTPErrorLike);
+        throw httpErrorToTRPC(e);
       }
     },
   })
@@ -74,7 +94,7 @@ export const accessObjectRouter = createRouter()
       try {
         return await ctx.couch.access.unpublish(input);
       } catch (e) {
-        throw httpErrorToTRPC(e as HTTPErrorLike);
+        throw httpErrorToTRPC(e);
       }
     },
   })
@@ -96,7 +116,7 @@ export const accessObjectRouter = createRouter()
           }
         }
       } catch (e) {
-        throw httpErrorToTRPC(e as HTTPErrorLike);
+        throw httpErrorToTRPC(e);
       }
     },
   });

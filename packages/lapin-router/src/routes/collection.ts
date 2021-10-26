@@ -9,7 +9,7 @@ import {
   Slug,
   ObjectListPage,
 } from "@crkn-rcdr/access-data";
-import { createRouter, httpErrorToTRPC, HTTPErrorLike } from "../router.js";
+import { createRouter, httpErrorToTRPC } from "../router.js";
 import { TRPCError } from "@trpc/server";
 import { LapinContext } from "../context.js";
 
@@ -55,6 +55,7 @@ const NewInput = z.object({
   user: User,
   data: NewCollection,
 });
+
 const checkAdditions = z.object({
   id: Noid,
   slugArray: z.array(Slug),
@@ -112,7 +113,7 @@ export const collectionRouter = createRouter()
       try {
         return await ctx.couch.access.editCollection(input);
       } catch (e) {
-        throw httpErrorToTRPC(e as HTTPErrorLike);
+        throw httpErrorToTRPC(e);
       }
     },
   })
@@ -127,7 +128,7 @@ export const collectionRouter = createRouter()
         });
         return id;
       } catch (e) {
-        throw httpErrorToTRPC(e as HTTPErrorLike);
+        throw httpErrorToTRPC(e);
       }
     },
   })
@@ -137,7 +138,22 @@ export const collectionRouter = createRouter()
       try {
         return await ctx.couch.access.checkAdditions(input.id, input.slugArray);
       } catch (e) {
-        throw httpErrorToTRPC(e as HTTPErrorLike);
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .mutation("removeMember", {
+    input: z.object({
+      id: Noid,
+      member: Noid,
+      user: User.optional(),
+    }),
+    async resolve({ input, ctx }) {
+      try {
+        await ctx.couch.access.removeMember(input);
+        await ctx.couch.access.forceUpdate(input.member);
+      } catch (e) {
+        throw httpErrorToTRPC(e);
       }
     },
   })
