@@ -131,6 +131,17 @@ This component shows the view for a dmd task that had its metadata successfully 
       <h5>{dmdTask.fileName}</h5>
     {/if}
 
+    {#if $dmdTasksStore[dmdTask.id].updateState === "ready"}
+      <p>
+        Please take a moment to preview the metadata updates for each item in
+        the table. Then, select a depositor and choose where to apply the
+        updates to activate the 'Update Descriptive Metadata' button. You can
+        use the checkboxes in the table to control which items are updated when
+        pressing the update button.
+      </p>
+      <br />
+    {/if}
+
     <NotificationBar
       message={dmdTask.process.message?.length
         ? `File parsing ${dmdTask.process.succeeded ? "warning" : "error"}: ${

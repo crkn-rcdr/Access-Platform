@@ -244,7 +244,7 @@ export const storePreservation = async function (
   if (wipmetaObj === null) {
     await ctx.routeLimiter.getLimiterSemaphore("storePreservation")?.signal();
     throw new TRPCError({
-      code: "INTERNAL_SERVER_ERROR",
+      code: "PATH_NOT_FOUND",
       message: "Item not found in preservation. Id: " + id,
     });
   } else {
@@ -252,7 +252,7 @@ export const storePreservation = async function (
     if (itemXmlFile === null) {
       await ctx.routeLimiter.getLimiterSemaphore("storePreservation")?.signal();
       throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
+        code: "PATH_NOT_FOUND",
         message:
           "Could not get Metadata XML file for item with id: " +
           id +
@@ -260,72 +260,63 @@ export const storePreservation = async function (
           task,
       });
     } else {
-      const file = itemXmlFile.toString("base64");
-
-      const uploadRes = await uploadDmdTaskItemXmlFile(ctx, id, file);
-
-      if (!uploadRes) {
+      const dmdTask = await lookupDmdTaskForStorage(ctx, task);
+      if (dmdTask === null) {
         await ctx.routeLimiter
           .getLimiterSemaphore("storePreservation")
           ?.signal();
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message:
-            "Could not store metadata XML file in preservation for item with id: " +
-            id +
-            " from DMD task with id: " +
-            task,
+          code: "PATH_NOT_FOUND",
+          message: "Could not get DMD task with id: " + task,
+        });
+      } else if (!isSucceededDMDTask(dmdTask)) {
+        await ctx.routeLimiter
+          .getLimiterSemaphore("storePreservation")
+          ?.signal();
+        throw new TRPCError({
+          code: "METHOD_NOT_SUPPORTED",
+          message: "DMD task has not completed successfully yet. Id: " + task,
         });
       } else {
-        const dmdTask = await lookupDmdTaskForStorage(ctx, task);
-        if (dmdTask === null) {
+        const item = await getDmdTaskItemByIndex(dmdTask, index);
+
+        if (item === null) {
           await ctx.routeLimiter
             .getLimiterSemaphore("storePreservation")
             ?.signal();
           throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: "Could not get DMD task with id: " + task,
-          });
-        } else if (!isSucceededDMDTask(dmdTask)) {
-          await ctx.routeLimiter
-            .getLimiterSemaphore("storePreservation")
-            ?.signal();
-          throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: "DMD task has not completed successfully yet. Id: " + task,
+            code: "PATH_NOT_FOUND",
+            message:
+              "Could not get item at index: " +
+              index +
+              " from DMD task with id: " +
+              task,
           });
         } else {
-          const item = await getDmdTaskItemByIndex(dmdTask, index);
+          const file = itemXmlFile.toString("base64");
 
-          if (item === null) {
+          const uploadRes = await uploadDmdTaskItemXmlFile(ctx, id, file);
+
+          if (!uploadRes) {
             await ctx.routeLimiter
               .getLimiterSemaphore("storePreservation")
               ?.signal();
             throw new TRPCError({
               code: "INTERNAL_SERVER_ERROR",
               message:
-                "Could not get item at index: " +
-                index +
+                "Could not store metadata XML file in preservation for item with id: " +
+                id +
                 " from DMD task with id: " +
                 task,
             });
           } else {
             const label = item.label;
-            console.log("label: ", label);
-            console.log(
-              "typeof item.label === string ",
-              typeof item.label === "string"
-            );
             if (label && typeof item.label === "string") {
-              console.log("yep");
-              console.log("id ", id);
               const labelRes = await updateLabelForDmdTaskItemWipmetaObject(
                 ctx,
                 id,
                 label
               );
-              console.log("labelRes ", labelRes);
-
               if (!labelRes) {
                 await ctx.routeLimiter
                   .getLimiterSemaphore("storePreservation")
@@ -363,7 +354,7 @@ export const storeAccess = async function (
   if (accessObject === null) {
     await ctx.routeLimiter.getLimiterSemaphore("storeAccess")?.signal();
     throw new TRPCError({
-      code: "INTERNAL_SERVER_ERROR",
+      code: "PATH_NOT_FOUND",
       message: "Item not found in access. Id: " + slug,
     });
   } else {
@@ -371,13 +362,13 @@ export const storeAccess = async function (
     if (dmdTask === null) {
       await ctx.routeLimiter.getLimiterSemaphore("storeAccess")?.signal();
       throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
+        code: "PATH_NOT_FOUND",
         message: "Could not get DMD task with id: " + task,
       });
     } else if (!isSucceededDMDTask(dmdTask)) {
       await ctx.routeLimiter.getLimiterSemaphore("storeAccess")?.signal();
       throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
+        code: "METHOD_NOT_SUPPORTED",
         message: "DMD task has not completed successfully yet. Id: " + task,
       });
     } else {
@@ -385,7 +376,7 @@ export const storeAccess = async function (
       if (itemXmlFile === null) {
         await ctx.routeLimiter.getLimiterSemaphore("storeAccess")?.signal();
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
+          code: "PATH_NOT_FOUND",
           message:
             "Could not get Metadata XML file for item with id: " +
             slug +
@@ -397,7 +388,7 @@ export const storeAccess = async function (
         if (item === null) {
           await ctx.routeLimiter.getLimiterSemaphore("storeAccess")?.signal();
           throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
+            code: "PATH_NOT_FOUND",
             message:
               "Could not get item at index: " +
               index +
@@ -413,7 +404,7 @@ export const storeAccess = async function (
           if (itemXMLFileName === null) {
             await ctx.routeLimiter.getLimiterSemaphore("storeAccess")?.signal();
             throw new TRPCError({
-              code: "INTERNAL_SERVER_ERROR",
+              code: "PATH_NOT_FOUND",
               message:
                 "Could not compile metadata file name for item with id: " +
                 accessObject?.id +
