@@ -74,7 +74,6 @@ export const dmdTaskRouter = createRouter()
     input: StoreAccessInput.parse,
     async resolve({ input, ctx }) {
       const { user, task, index, slug } = input;
-      console.log("access input: ", input);
       // Throws user-readable TRPC errors for specific issues
       await storeAccess(ctx, user, task, index, slug);
     },
