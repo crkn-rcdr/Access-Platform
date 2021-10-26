@@ -82,6 +82,7 @@ Allows the user to modify the member list for a collection.
   <div>
     <CollectionMembersAddition
       bind:destinationMember={collection}
+      bind:contextDisplay={documentSlug}
       on:done={() => {
         setActiveIndex(0);
       }}

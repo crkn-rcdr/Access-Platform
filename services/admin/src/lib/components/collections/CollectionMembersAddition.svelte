@@ -11,6 +11,10 @@
    * @type {Collection} The Collection where the members are added to.
    */
   export let destinationMember: Collection;
+  /**
+   * To bind the context of members value.
+   */
+  export let contextDisplay;
 
   /**
    * @type {number} The starting index to add the selected canvases at.
@@ -48,6 +52,7 @@
   let id: string = destinationMember.id;
   let slugArray: string[];
   let input: "";
+  //  let documentSlug: {} = [];
 
   // https://github.com/sindresorhus/type-fest/blob/main/source/promise-value.d.ts
   type PromiseValue<PromiseType> = PromiseType extends PromiseLike<infer Value>
@@ -89,9 +94,22 @@
 
   async function handleAddPressed() {
     for (let index in resultArray) {
+      console.log("check the result array", resultArray);
+      const resolution = await $session.lapin.query(
+        "collection.viewMembersContext",
+        resultArray
+      );
+      resolution.map((slug) => {
+        if (slug[1].found === true) {
+          contextDisplay.push({ id: slug[0], result: slug[1].result });
+        }
+      });
+
       destinationMember?.members?.splice(destinationIndex, 0, {
         id: resultArray[index],
       });
+
+      contextDisplay = contextDisplay;
       destinationMember = destinationMember;
     }
     addedMember = false;
