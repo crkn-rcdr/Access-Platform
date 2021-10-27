@@ -24,7 +24,7 @@ The resolver component allows the user to enter a slug, and then a request is se
 *Note: `bind:` is required for changes to the properties to be reflected in higher level components.*
 -->
 <script lang="ts">
-  import { onMount, createEventDispatcher } from "svelte";
+  import { onMount, createEventDispatcher, afterUpdate } from "svelte";
   import type { Session } from "$lib/types";
   import { getStores } from "$app/stores";
   import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
@@ -32,7 +32,7 @@ The resolver component allows the user to enter a slug, and then a request is se
   /**
    * @type {string} Slug being resolved.
    */
-  export let slug = "";
+  export let slug;
 
   /**
    * @type {boolean}
@@ -40,6 +40,8 @@ The resolver component allows the user to enter a slug, and then a request is se
    * same as the initial slug provided.
    */
   export let hideInitial = false;
+
+  export let runInitial: boolean = false;
 
   /**
    * @type {"sm" | "rg"}
@@ -52,6 +54,17 @@ The resolver component allows the user to enter a slug, and then a request is se
    * If the unavailable message should be hidden. Useful for custom errors.
    */
   export let hideUnavailableMsg: boolean = false;
+
+  /**
+   * @type {string}
+   * The noid of item resolved, if the slug resolves to anything.
+   */
+  export let noid = "";
+
+  /**
+   * @type {boolean} If the slug was isFound in the database
+   */
+  export let isFound = false;
 
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
@@ -75,53 +88,35 @@ The resolver component allows the user to enter a slug, and then a request is se
     slug === undefined ? "LOADING" : "READY";
 
   /**
-   * @type {string}
-   * The noid of item resolved, if the slug resolves to anything.
-   */
-  let noid = "";
-
-  /**
    * @type {NodeJS.Timeout | null} Used to debounce the searching of slugs.
    */
   let timer: NodeJS.Timeout | null = null;
 
-  /**
-   * @type {boolean} If the slug was isFound in the database
-   */
-  let isFound = false;
-
-  /**
-   * @type {string} The intitial slug passed into the component.
-   */
-  let initial = slug;
-
-  /**
-   * @type {boolean} An indicator if the component has been rendered to the dom before, or not.
-   */
-  let initialised = false;
-
+  let previous = "";
+  let initialized = false;
   /**
    * Searches the backend for an object by the inputted slug. It also shows various error states to the user.
    * @returns void
    */
   async function resolve() {
-    if (shouldQuery) {
+    if (slug !== previous) {
       if (timer) clearTimeout(timer);
       timer = setTimeout(async () => {
+        console.log("slug changed: ", slug, " p:", previous);
         status = "LOADING";
         noid = "";
         if (regex.test(slug)) {
           try {
             const response = await $session.lapin.query("slug.resolve", slug);
             if (response === null) {
-              dispatch("available", { slug: initial, status: false });
+              dispatch("available", { slug, status: false });
               status = "ERROR";
             } else if (!response.found) {
-              dispatch("available", { slug: slug, status: true });
+              dispatch("available", { slug, status: true });
               isFound = false;
               status = "READY";
             } else {
-              dispatch("available", { slug: initial, status: false });
+              dispatch("available", { slug, status: false });
               isFound = true;
               noid = response.result.id;
               status = "READY";
@@ -133,8 +128,8 @@ The resolver component allows the user to enter a slug, and then a request is se
           status = "MALFORMED";
         }
       }, 50);
-    } else if (slug === initial) {
-      status = "READY";
+    } else {
+      console.log("slug not changed: ", slug, " p:", previous);
     }
   }
 
@@ -143,7 +138,7 @@ The resolver component allows the user to enter a slug, and then a request is se
    * @returns void
    */
   async function resolveOnChange() {
-    if ((hideInitial && initialised) || !hideInitial) await resolve();
+    await resolve();
   }
 
   /**
@@ -151,30 +146,22 @@ The resolver component allows the user to enter a slug, and then a request is se
    * @description When the component instance is mounted onto the dom, @var initial object is set with the @var slug and @var noid that were passed into the component. Then, the resolve method is called.
    */
   onMount(async () => {
-    initial = slug;
-    initialised = true;
+    console.log("s: ", slug, " p: ", previous);
+    if (runInitial) await resolve();
+    previous = slug;
+    initialized = true;
   });
 
-  /**
-   * @listens slug
-   * @listens initial
-   * @description A reactive code block that is executed any time the @var slug or @initial changes. It sets @var shouldQuery, which controls if the @function resolve method actually sends the request to the backend, or shows an error state instead.
-   */
-  $: shouldQuery = !!slug && (slug !== initial || !hideInitial);
-
-  /**
-   * @listens slug
-   * @description A reactive code block that is executed any time the @var slug changes. It calls @function resolveOnChange which calls @function resolve under certain criteria.
-   */
-  $: {
-    slug;
-    resolveOnChange().then((res) => {});
-  }
+  afterUpdate(async () => {
+    console.log("s: ", slug, " p: ", previous);
+    if (initialized) await resolve();
+    previous = slug;
+  });
 </script>
 
 {#if size === "rg"}
   <div>
-    {#if !!slug && (slug !== initial || !hideInitial)}
+    {#if !!slug && !hideInitial}
       {#if status === "LOADING"}
         <NotificationBar message="Loading" />
       {:else if status === "ERROR"}
@@ -197,7 +184,7 @@ The resolver component allows the user to enter a slug, and then a request is se
       {/if}
     {/if}
   </div>
-{:else if !!slug && (slug !== initial || !hideInitial)}
+{:else if !!slug && !hideInitial}
   {#if status === "LOADING"}
     <span data-tooltip="Loading">...</span>
   {:else if status === "ERROR"}

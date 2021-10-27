@@ -303,10 +303,18 @@ This component shows the results of a dipstaging package view. It allows the use
               </td>
 
               <td>
-                <Resolver
+                <!--Resolver
                   on:available={(e) => setSlugAvailability(e, legacyPackage)}
                   bind:slug={legacyPackage.slug}
                   hideInitial={false}
+                  size="sm"
+                /-->
+                <Resolver
+                  noid={"123"}
+                  isFound={true}
+                  runInitial={false}
+                  on:available={(e) => setSlugAvailability(e, legacyPackage)}
+                  bind:slug={legacyPackage.slug}
                   size="sm"
                 />
               </td>

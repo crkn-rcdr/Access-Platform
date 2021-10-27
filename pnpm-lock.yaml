@@ -166,7 +166,9 @@ importers:
       simple-web-worker: ^1.2.0
       stack-promises: ^0.0.5
       svelte: 3.40.1
+      svelte-calendar: ^3.1.6
       svelte-check: ^2.2.4
+      svelte-flatpickr: ^3.2.3
       svelte-grid-responsive: ^1.0.0
       svelte-icons: ^2.1.0
       svelte-preprocess: ^4.7.4
@@ -190,6 +192,7 @@ importers:
       semaphore-async-await: 1.5.1
       simple-web-worker: 1.2.0
       stack-promises: 0.0.5
+      svelte-flatpickr: 3.2.3_svelte@3.40.1
       svelte-grid-responsive: 1.0.0
       svelte-icons: 2.1.0
       svelte-virtual-scroll-list: 1.0.8_svelte@3.40.1
@@ -201,6 +204,7 @@ importers:
       '@types/jsonwebtoken': 8.5.4
       npm-run-all: 4.1.5
       svelte: 3.40.1
+      svelte-calendar: 3.1.6
       svelte-check: 2.2.4_svelte@3.40.1
       svelte-preprocess: 4.7.4_svelte@3.40.1+typescript@4.3.5
       tslib: 2.3.0
@@ -1080,6 +1084,10 @@ packages:
       time-zone: 1.0.0
     dev: true
 
+  /dayjs/1.10.7:
+    resolution: {integrity: sha512-P6twpd70BcPK34K26uJ1KT3wlhpuOAPoMwJzpsIWUxHZ7wpmbdZL/hQqBDfz7hGurYSa5PhzdhDHtt319hL3ig==}
+    dev: true
+
   /debug/2.6.9:
     resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==}
     dependencies:
@@ -1377,6 +1385,10 @@ packages:
       locate-path: 6.0.0
       path-exists: 4.0.0
     dev: true
+
+  /flatpickr/4.6.9:
+    resolution: {integrity: sha512-F0azNNi8foVWKSF+8X+ZJzz8r9sE1G4hl06RyceIaLvyltKvDl6vqk9Lm/6AUUCi5HWaIjiUbk7UpeE/fOXOpw==}
+    dev: false
 
   /fn.name/1.1.0:
     resolution: {integrity: sha512-GRnmB5gPyJpAhTQdSZTSp9uaPSvl09KoYcMQtsB9rQoOmzs9dH6ffeccH+Z+cv6P68Hu5bC6JjRh4Ah/mHSNRw==}
@@ -1923,6 +1935,10 @@ packages:
       ms: 2.1.3
       semver: 5.7.1
     dev: false
+
+  /just-throttle/2.3.1:
+    resolution: {integrity: sha512-0H4miIAWZYpnpg7oD/Y/PBb77ISSHAETif5xK9EnwIgYCO6oC8ErkJxDumMUTR44shSOwptRIArRuvNuvN/hOw==}
+    dev: true
 
   /jwa/1.4.1:
     resolution: {integrity: sha512-qiLX/xhEEFKUAJ6FiBMbes3w9ATzyk5W7Hvzpa/SLYdxNtng+gcurvrI7TbACjIXlsJyr05/S1oUhZrc63evQA==}
@@ -3090,6 +3106,13 @@ packages:
       has-flag: 4.0.0
     dev: true
 
+  /svelte-calendar/3.1.6:
+    resolution: {integrity: sha512-jOHiPlxBAa1LGVFQZoczdAGnCSI2RKcuQQHj32TjLbXO/P2Povx4JphPEcP7XjKj/s/jimBC6xQyFhyjD0vxbg==}
+    dependencies:
+      dayjs: 1.10.7
+      just-throttle: 2.3.1
+    dev: true
+
   /svelte-check/2.2.4_svelte@3.40.1:
     resolution: {integrity: sha512-eGEuZ3UEanOhlpQhICLjKejDxcZ9uYJlGnBGKAPW7uugolaBE6HpEBIiKFZN/TMRFFHQUURgGvsVn8/HJUBfeQ==}
     hasBin: true
@@ -3118,6 +3141,15 @@ packages:
       - stylus
       - sugarss
     dev: true
+
+  /svelte-flatpickr/3.2.3_svelte@3.40.1:
+    resolution: {integrity: sha512-PNkqK4Napx8nTvCwkaUXdnKo8dISThaxEOK+szTUXcY6H0dQM0TSyuoMaVWY2yX7pM+PN5cpCQCcVe8YvTRFSw==}
+    peerDependencies:
+      svelte: ^3.31.0
+    dependencies:
+      flatpickr: 4.6.9
+      svelte: 3.40.1
+    dev: false
 
   /svelte-grid-responsive/1.0.0:
     resolution: {integrity: sha512-HzIBl7Wc9qLuCVHNqnlNj4up4A2ntkGqMq8Sb5g7VzVhsFdJowy+yE85k5dcRYEvtwhNNivckdm55E3QVQc2Ew==}

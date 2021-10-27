@@ -15,6 +15,7 @@ This component allows the user to find packages in the dipstaging database.
 *Note: `bind:` is required for changes to the properties to be reflected in higher level components.*
 -->
 <script lang="ts">
+  import Flatpickr from "svelte-flatpickr";
   import { getStores } from "$app/stores";
   import PrefixSelector from "$lib/components/access-objects/PrefixSelector.svelte";
   import ToggleButtons from "$lib/components/shared/ToggleButtons.svelte";
@@ -169,6 +170,17 @@ This component allows the user to find packages in the dipstaging database.
     }
     loading = false;
   }
+
+  function handleDateRangeSelected(event: { detail: any[] }) {
+    console.log(event.detail);
+    if (event.detail.length === 3) {
+      const dates = event.detail[1].split(" to ");
+      if (dates.length === 2) {
+        startDateStr = dates[0];
+        endDateStr = dates[1];
+      }
+    }
+  }
 </script>
 
 <ToggleButtons
@@ -194,7 +206,7 @@ This component allows the user to find packages in the dipstaging database.
         <br />
       </div>
     {:else}
-      <label for="start">Start date:</label><br />
+      <!--label for="start">Start date:</label><br />
       <input
         type="date"
         id="start"
@@ -203,8 +215,20 @@ This component allows the user to find packages in the dipstaging database.
       /><br /><br />
 
       <label for="end">End date:</label><br />
-      <input type="date" id="end" name="trip-end" bind:value={endDateStr} /><br
-      /><br />
+      <input type="date" id="end" name="trip-end" bind:value={endDateStr} /-->
+
+      <span class="flatpickr-date-filter-label">Select a date range:</span>
+      <br />
+      <Flatpickr
+        value={startDateStr.length && endDateStr.length
+          ? `${startDateStr} to ${endDateStr}`
+          : ""}
+        options={{ mode: "range" }}
+        on:change={handleDateRangeSelected}
+        name="date"
+      />
+      <br />
+      <br />
     {/if}
   </div>
 </div>
@@ -257,7 +281,7 @@ This component allows the user to find packages in the dipstaging database.
   .lookup-button {
     float: right;
   }
-  input {
+  :global(.user-input input) {
     width: 100%;
   }
 </style>

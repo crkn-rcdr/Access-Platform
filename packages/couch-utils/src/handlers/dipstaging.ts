@@ -47,7 +47,8 @@ export class LegacyPackageHandler extends DatabaseHandler<LegacyPackage> {
     });
   }
 
-  async listFromDates(start: string, end: string, access: AccessHandler) {
+  async listFromDates(start: string, end: string) {
+    //, access: AccessHandler
     const startArray = DateString.parse(start);
     const endArray = DateString.parse(end);
     endArray[2] = (endArray[2] as number) + 0.1;
@@ -62,18 +63,19 @@ export class LegacyPackageHandler extends DatabaseHandler<LegacyPackage> {
 
     console.log("list", list);
 
-    const slugs = list.rows.map((row) => row.id);
+    //const slugs = list.rows.map((row) => row.id);
+    //console.log("slugs", slugs);
 
-    const resolutions = await access.resolveSlugs(slugs);
+    //const resolutions = await access.resolveSlugs(slugs);
 
-    console.log("resolutions", resolutions);
+    //console.log("resolutions", resolutions);
     const res = list.rows.map((row): ImportStatus => {
-      const r = resolutions[row.id];
+      /*const r = resolutions[row.id];
       let id: string | undefined = undefined;
       if (r && r.resolved) {
         id = r.id;
-      }
-      return getImportStatus(row.id, row.doc, id);
+      }*/
+      return getImportStatus(row.id, row.doc);
     });
     console.log("res", res);
     return res;

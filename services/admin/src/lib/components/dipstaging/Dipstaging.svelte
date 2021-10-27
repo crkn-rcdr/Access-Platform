@@ -40,6 +40,14 @@ This component controls the rendering of the dipstaging menu (smelter) based on 
     <a href="/smelter/find">
       <SideMenuPageListButton>Package Finder</SideMenuPageListButton>
     </a>
+    <a href="/smelter/queue/1/10/all">
+      <SideMenuPageListButton>Smelter Queue</SideMenuPageListButton>
+    </a>
+    <a href="/smelter/status/1/10/all">
+      <SideMenuPageListButton
+        >Smelter Warnings and Failures</SideMenuPageListButton
+      >
+    </a>
     <a href="/smelter/neversmelted/1/10/all">
       <SideMenuPageListButton>Packages Never Smelted</SideMenuPageListButton>
     </a>
@@ -47,12 +55,6 @@ This component controls the rendering of the dipstaging menu (smelter) based on 
       <SideMenuPageListButton
         >Packages Needing Re-Smelting</SideMenuPageListButton
       >
-    </a>
-    <a href="/smelter/queue/1/10/all">
-      <SideMenuPageListButton>Smelting Queue</SideMenuPageListButton>
-    </a>
-    <a href="/smelter/status/1/10/all">
-      <SideMenuPageListButton>Smelter Results</SideMenuPageListButton>
     </a>
   </SideMenuPageList>
   <SideMenuBody>

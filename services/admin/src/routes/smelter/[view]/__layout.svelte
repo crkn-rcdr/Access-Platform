@@ -81,9 +81,7 @@
    * @file
    * @description This page displays the information about the dipstaging process
    */
-  //import type { ImportStatus } from "@crkn-rcdr/access-data";
-  //import DipstagingTable from "$lib/components/dipstaging/DipstagingTable.svelte";
-
+  import Flatpickr from "svelte-flatpickr";
   import Paginator from "$lib/components/shared/Paginator.svelte";
   import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
   import { goto } from "$app/navigation";
@@ -126,19 +124,21 @@
     }${datesRouteStr.length ? datesRouteStr + statusRouteStr : "/all"}`;
     goto(route, { noscroll: true });
   }
-</script>
 
-<!--
-{results}
-{pageNumber}
-{count}-->
+  function handleDateRangeSelected(event: { detail: any[] }) {
+    console.log(event.detail);
+    if (event.detail.length === 3) {
+      dates = event.detail[1].split(" to ");
+    }
+  }
+</script>
 
 <NotificationBar message={error} status="fail" />
 {#if typeof results !== "undefined" && typeof pageNumber !== "undefined" && typeof count !== "undefined"}
   <DipstagingLegacyPackageTable bind:results bind:view bind:pageNumber>
     <span slot="actions" class="dates auto-align auto-align__a-end">
       {#if view === "status"}
-        <span class="status auto-align auto-align__column">
+        <span class="status auto-align auto-align__a-center">
           <label for="status">Status:</label>
           <select name="status" bind:value={status}>
             <option disabled selected value>select an option</option>
@@ -147,14 +147,17 @@
           </select>
         </span>
       {/if}
-      <span class="auto-align auto-align__column">
-        <label for="start">Start date:</label>
-        <input type="date" id="start" name="start" bind:value={dates[0]} />
-      </span>
-      <span class="auto-align auto-align__column">
-        <label for="end">End date:</label>
-        <input type="date" id="end" name="end" bind:value={dates[1]} />
-      </span>
+
+      <div class="auto-align auto-align__a-center">
+        <span class="flatpickr-date-filter-label">Filter by date range:</span>
+        <Flatpickr
+          value={dates?.[0]?.length ? `${dates[0]} to ${dates[1]}` : ""}
+          options={{ mode: "range" }}
+          on:change={handleDateRangeSelected}
+          name="date"
+        />
+      </div>
+
       <button
         class="refine-button primary"
         on:click={filter}
@@ -198,6 +201,10 @@
   }
   .refine-button {
     margin-left: var(--margin-sm);
+  }
+  .status,
+  .status label {
+    margin-right: var(--margin-sm);
   }
   .status select {
     margin-top: 0;

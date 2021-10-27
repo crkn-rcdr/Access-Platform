@@ -144,7 +144,7 @@ export type ImportStatus =
 export const getImportStatus = (
   id: Slug,
   lp: LegacyPackage | undefined,
-  noid?: Noid
+  noid: Noid | null = null
 ): ImportStatus => {
   if (!lp) return { status: "not-found", id };
   const { repos, reposManifestDate: ingestDate, slug, smelt, staff } = lp;
