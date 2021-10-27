@@ -137,8 +137,9 @@ Allows the user to modify the member list for a collection.
 
                 {#each documentSlug as document}
                   {#if document["result"]?.["label"]?.["none"] && document["id"] === item?.data?.id}
-                    <li>{document["result"]["slug"]}</li>
-                    <li>{document["result"]["label"]["none"]}</li>
+                    {document["result"]["slug"]} : {document["result"]["label"][
+                      "none"
+                    ]}
                   {/if}
                 {/each}
               </li>
