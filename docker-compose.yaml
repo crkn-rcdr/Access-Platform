@@ -7,11 +7,11 @@ services:
   haproxy:
     profiles:
       - dev
-    image: haproxy:2.2-alpine
+    image: haproxy:2.4.7
     container_name: access-haproxy
     ports:
-      - "80:80"
-      - "443:443"
+      - "80:8080"
+      - "443:8443"
       - "10000:10000"
       - "14747:14747"
     volumes:
@@ -150,14 +150,14 @@ services:
   haproxy-prod:
     profiles:
       - prod
-    image: haproxy:2.2-alpine
+    image: haproxy:2.4.7
     container_name: access-haproxy-prod
     depends_on:
       - lapin-prod
       - admin-prod
     ports:
-      - "80:80"
-      - "443:443"
+      - "80:8080"
+      - "443:8443"
     volumes:
       - ./services/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
       - ./services/haproxy/certs:/usr/local/etc/haproxy/certs:ro
@@ -178,6 +178,7 @@ services:
     env_file:
       - .env.prod
       - .env.secret
+      - .env.secret.prod
     networks:
       access-platform:
         ipv4_address: 172.30.0.51
@@ -190,6 +191,7 @@ services:
     env_file:
       - .env.prod
       - .env.secret
+      - .env.secret.prod
     depends_on:
       - lapin-prod
     networks:
