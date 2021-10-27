@@ -81,7 +81,8 @@ The resolver component allows the user to enter a slug, and then a request is se
    */
   let timer: NodeJS.Timeout | null = null;
 
-  let intital = "";
+  let intitalSlug = "";
+  let initialResult;
   let previous = "";
   let initialized = false;
   let hasSearched = false;
@@ -90,7 +91,7 @@ The resolver component allows the user to enter a slug, and then a request is se
    * @returns void
    */
   async function resolve() {
-    if (slug !== previous && slug !== intital) {
+    if (slug !== previous && slug !== intitalSlug) {
       if (timer) clearTimeout(timer);
       timer = setTimeout(async () => {
         status = "LOADING";
@@ -119,8 +120,9 @@ The resolver component allows the user to enter a slug, and then a request is se
         }
         hasSearched = true;
       }, 50);
-    } else if (slug === intital) {
+    } else if (slug === intitalSlug) {
       status = "UNCHANGED";
+      isFound = initialResult;
     }
   }
 
@@ -131,7 +133,8 @@ The resolver component allows the user to enter a slug, and then a request is se
   onMount(async () => {
     if (runInitial) await resolve();
     previous = slug;
-    intital = slug;
+    intitalSlug = slug;
+    initialResult = isFound;
     initialized = true;
   });
 

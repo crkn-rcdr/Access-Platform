@@ -58,29 +58,34 @@ This component shows the results of a dipstaging package view. It allows the use
   const { session } = getStores<Session>();
 
   /**
-   * @type {any} A map from ImportStatus.id => if the item is selected in the table
+   * @type {any} A map from LegacyPackage.id => if the item is selected in the table
    */
   let selectedMap: any = {};
 
   /**
-   * @type {any} A map from ImportStatus.id => if the request for adding the item to the smelte queue was sucessful or not
+   * @type {any} A map from LegacyPackage.id => if the request for adding the item to the smelte queue was sucessful or not
    */
   let sucessfulSmeltRequestMap: any = {};
 
   /**
-   * @type {any} A map from ImportStatus.id => if the item in the table is expanded or not
+   * @type {any} A map from LegacyPackage.id => if the item in the table is expanded or not
    */
   let expandedMap: any = {};
 
   /**
-   * @type {any} A map from ImportStatus.id => if the slug of the item's slug is available.
+   * @type {any} A map from LegacyPackage.id => if the slug of the item's slug is available.
    */
   let slugAvailableMap: any = {};
 
   /**
-   * @type {any} A map from ImportStatus.id => if the slug of the item's slug is available.
+   * @type {any} A map from LegacyPackage.id => if the slug of the item's slug is available.
    */
   let noidMap: any = {};
+
+  /**
+   * @type {any} A map from LegacyPackage.id => if the slug of the item's slug is available.
+   */
+  let slugMap: any = {};
 
   /**
    * @type {boolean}
@@ -125,7 +130,7 @@ This component shows the results of a dipstaging package view. It allows the use
             {
               user: $session.user,
               id: item.id,
-              slug: item.slug,
+              slug: slugMap[item["id"]],
             }
           );
           sucessfulSmeltRequestMap[item.id] = true;
@@ -165,7 +170,7 @@ This component shows the results of a dipstaging package view. It allows the use
   function checkIfSlugsDefined() {
     if (!results) return;
     for (const item of results) {
-      if (!item.slug) item.slug = item.id;
+      if (!slugMap[item.id]) slugMap[item.id] = item.id;
     }
     results = results;
   }
@@ -209,9 +214,9 @@ This component shows the results of a dipstaging package view. It allows the use
 
   async function getSlugAvailability() {
     if (!results) return;
-    const slugs = results.map((item) => item.id);
+    const slugs = Object.keys(slugMap);
+    //results.map((item) => item.id);
     const response = await $session.lapin.mutation(`slug.resolveMany`, slugs);
-    console.log("response", response);
     for (const result of response) {
       if (result.length === 2) {
         const slug = result[0];
@@ -222,8 +227,6 @@ This component shows the results of a dipstaging package view. It allows the use
         }
       }
     }
-
-    console.log(slugAvailableMap, noidMap);
   }
 
   /**
@@ -265,7 +268,7 @@ This component shows the results of a dipstaging package view. It allows the use
 {#if !loading}
   <!--Can run smelter if a) their status is neither "not-found" or "processing" b) their slug isn't already taken by a noid.-->
   {#if typeof results !== "undefined" && typeof pageNumber !== "undefined"}
-    <div class="table-actions auto-align auto-align__a-end">
+    <div class="table-actions auto-align auto-align__a-center">
       <slot name="actions" />
       {#if view !== "queue"}
         <button
@@ -326,14 +329,14 @@ This component shows the results of a dipstaging package view. It allows the use
 
               <td>
                 <Resolver
-                  noid={legacyPackage.slug in noidMap
-                    ? noidMap[legacyPackage.slug]
+                  noid={legacyPackage.id in noidMap
+                    ? noidMap[legacyPackage.id]
                     : null}
-                  isFound={false}
+                  isFound={!slugAvailableMap[legacyPackage.id]}
                   alwaysShowIfFound={true}
                   runInitial={false}
                   on:available={(e) => setSlugAvailability(e, legacyPackage)}
-                  bind:slug={legacyPackage.slug}
+                  bind:slug={slugMap[legacyPackage.id]}
                   size="sm"
                 />
               </td>

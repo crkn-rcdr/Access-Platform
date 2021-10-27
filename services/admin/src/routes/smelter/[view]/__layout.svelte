@@ -144,7 +144,7 @@
     bind:pageNumber
     bind:loading
   >
-    <span slot="actions" class="dates auto-align auto-align__a-end">
+    <span slot="actions" class="dates auto-align auto-align__a-center">
       {#if view === "status"}
         <span class="status auto-align auto-align__a-center">
           <label for="status">Status:</label>

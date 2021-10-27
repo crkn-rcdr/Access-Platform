@@ -67,6 +67,11 @@ This component shows the results of a dipstaging find-package(s) request. It all
   let noidMap: any = {};
 
   /**
+   * @type {any} A map from ImportStatus.id => if the slug of the item's slug is available.
+   */
+  let slugMap: any = {};
+
+  /**
    * @type {boolean}
    * An indicator if any item is selected or not. Helpful for the disabling of the smelter button.
    */
@@ -109,7 +114,7 @@ This component shows the results of a dipstaging find-package(s) request. It all
             {
               user: $session.user,
               id: item.id,
-              slug: item["slug"],
+              slug: slugMap[item["id"]],
             }
           );
           sucessfulSmeltRequestMap[item.id] = true;
@@ -149,7 +154,7 @@ This component shows the results of a dipstaging find-package(s) request. It all
   function checkIfSlugsDefined() {
     if (!results) return;
     for (const item of results) {
-      if (!item["slug"]) item["slug"] = item.id;
+      if (!slugMap[item.id]) slugMap[item.id] = item.id;
     }
     results = results;
   }
@@ -194,9 +199,9 @@ This component shows the results of a dipstaging find-package(s) request. It all
 
   async function getSlugAvailability() {
     if (!results) return;
-    const slugs = results.map((item) => item.id);
+    const slugs = Object.keys(slugMap);
+    //results.map((item) => item.id);
     const response = await $session.lapin.mutation(`slug.resolveMany`, slugs);
-    console.log("response", response);
     for (const result of response) {
       if (result.length === 2) {
         const slug = result[0];
@@ -207,8 +212,6 @@ This component shows the results of a dipstaging find-package(s) request. It all
         }
       }
     }
-
-    console.log(slugAvailableMap, noidMap);
   }
 
   /**
@@ -291,12 +294,14 @@ This component shows the results of a dipstaging find-package(s) request. It all
             <td>
               {#if importStatus.status !== "not-found"}
                 <Resolver
-                  noid={"123"}
-                  isFound={false}
+                  noid={importStatus["id"] in noidMap
+                    ? noidMap[importStatus["id"]]
+                    : null}
+                  isFound={!slugAvailableMap[importStatus["id"]]}
                   alwaysShowIfFound={true}
                   runInitial={false}
                   on:available={(e) => setSlugAvailability(e, importStatus)}
-                  bind:slug={importStatus["slug"]}
+                  bind:slug={slugMap[importStatus["id"]]}
                   size="sm"
                 />
               {/if}
