@@ -31,6 +31,12 @@ This component shows the results of a dipstaging find-package(s) request. It all
   export let results: ImportStatus[];
 
   /**
+   * @type {boolean}
+   * An indicator of if the result's item models are being processed or not
+   */
+  export let loading = false;
+
+  /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
    */
   const { session } = getStores<Session>();
@@ -56,16 +62,15 @@ This component shows the results of a dipstaging find-package(s) request. It all
   let slugAvailableMap: any = {};
 
   /**
+   * @type {any} A map from ImportStatus.id => if the slug of the item's slug is available.
+   */
+  let noidMap: any = {};
+
+  /**
    * @type {boolean}
    * An indicator if any item is selected or not. Helpful for the disabling of the smelter button.
    */
   let itemsAreSelected: boolean = true;
-
-  /**
-   * @type {boolean}
-   * An indicator of if the result's item models are being processed or not
-   */
-  let loading = false;
 
   /**
    * Keeps track if @param item is selected or not
@@ -187,17 +192,40 @@ This component shows the results of a dipstaging find-package(s) request. It all
     );
   }
 
+  async function getSlugAvailability() {
+    if (!results) return;
+    const slugs = results.map((item) => item.id);
+    const response = await $session.lapin.mutation(`slug.resolveMany`, slugs);
+    console.log("response", response);
+    for (const result of response) {
+      if (result.length === 2) {
+        const slug = result[0];
+        const info = result[1];
+        slugAvailableMap[slug] = !info.found;
+        if (info.found && info.result) {
+          noidMap[slug] = info.result.id;
+        }
+      }
+    }
+
+    console.log(slugAvailableMap, noidMap);
+  }
+
   /**
    * @listens results
    * @description Calls @function checkIfSlugsDefined and @function setExpandedModel and @function setSelectedModel any time the results change. Also sets loading to re-trigger the draw of the slug resolvers
    */
   $: {
-    results;
     loading = true;
-    checkIfSlugsDefined();
-    setExpandedModel();
-    setSelectedModel();
-    loading = false;
+    results;
+    Promise.all([
+      getSlugAvailability(),
+      checkIfSlugsDefined(),
+      setExpandedModel(),
+      setSelectedModel(),
+    ]).then(() => {
+      loading = false;
+    });
   }
 
   /**

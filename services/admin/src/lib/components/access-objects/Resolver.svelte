@@ -90,11 +90,9 @@ The resolver component allows the user to enter a slug, and then a request is se
    * @returns void
    */
   async function resolve() {
-    console.log("s: ", slug, " i: ", intital, " p: ", previous);
     if (slug !== previous && slug !== intital) {
       if (timer) clearTimeout(timer);
       timer = setTimeout(async () => {
-        console.log("slug changed: ", slug, " p:", previous);
         status = "LOADING";
         noid = "";
         if (regex.test(slug)) {
@@ -123,7 +121,6 @@ The resolver component allows the user to enter a slug, and then a request is se
       }, 50);
     } else if (slug === intital) {
       status = "UNCHANGED";
-      console.log("slug not changed: ", slug, " p:", previous);
     }
   }
 

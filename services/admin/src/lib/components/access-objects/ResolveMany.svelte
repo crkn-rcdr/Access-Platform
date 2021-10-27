@@ -65,7 +65,7 @@ The resolver component allows the user to enter a slug, and then a request is se
       slugs = slugs.map((slug) => depositor?.prefix + slug);
     }
 
-    const response = await $session.lapin.query("slug.resolveMany", slugs);
+    const response = await $session.lapin.mutation("slug.resolveMany", slugs);
     //console.log("response", response);
 
     dispatch("found", response);

@@ -95,6 +95,8 @@
   export let dates: string[];
   export let status: boolean;
 
+  let loading = true;
+
   function getDateRouteStr() {
     return dates?.length && dates[0].length ? `/${dates.toString()}` : "";
   }
@@ -122,6 +124,7 @@
     const route = `/smelter/${view}/${event.detail.page}/${
       event.detail.pageSize
     }${datesRouteStr.length ? datesRouteStr + statusRouteStr : "/all"}`;
+    loading = true;
     goto(route, { noscroll: true });
   }
 
@@ -135,13 +138,18 @@
 
 <NotificationBar message={error} status="fail" />
 {#if typeof results !== "undefined" && typeof pageNumber !== "undefined" && typeof count !== "undefined"}
-  <DipstagingLegacyPackageTable bind:results bind:view bind:pageNumber>
+  <DipstagingLegacyPackageTable
+    bind:results
+    bind:view
+    bind:pageNumber
+    bind:loading
+  >
     <span slot="actions" class="dates auto-align auto-align__a-end">
       {#if view === "status"}
         <span class="status auto-align auto-align__a-center">
           <label for="status">Status:</label>
           <select name="status" bind:value={status}>
-            <option disabled selected value>select an option</option>
+            <option disabled selected value />
             <option value={true}>Succeeded</option>
             <option value={false}>Failed</option>
           </select>
@@ -149,7 +157,7 @@
       {/if}
 
       <div class="auto-align auto-align__a-center">
-        <span class="flatpickr-date-filter-label">Filter by date range:</span>
+        <span class="flatpickr-date-filter-label">Date range:</span>
         <Flatpickr
           value={dates?.[0]?.length ? `${dates[0]} to ${dates[1]}` : ""}
           options={{ mode: "range" }}
