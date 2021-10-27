@@ -58,7 +58,7 @@ export const LegacyPackage = z.object({
   /**
    * Date when this record's `METS` fields were last updated.
    */
-  METSDate: Timestamp,
+  METSDate: Timestamp.optional(),
 
   /**
    * Date when this record was last updated.

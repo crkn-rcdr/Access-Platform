@@ -51,6 +51,7 @@ export class LegacyPackageHandler extends DatabaseHandler<LegacyPackage> {
     const startArray = DateString.parse(start);
     const endArray = DateString.parse(end);
     endArray[2] = (endArray[2] as number) + 0.1;
+    console.log("startkey", startArray, "endkey", endArray);
 
     const list = await this.view("access", "byManifestDate", {
       startkey: startArray,
@@ -59,11 +60,14 @@ export class LegacyPackageHandler extends DatabaseHandler<LegacyPackage> {
       include_docs: true,
     });
 
+    console.log("list", list);
+
     const slugs = list.rows.map((row) => row.id);
 
     const resolutions = await access.resolveSlugs(slugs);
 
-    return list.rows.map((row): ImportStatus => {
+    console.log("resolutions", resolutions);
+    const res = list.rows.map((row): ImportStatus => {
       const r = resolutions[row.id];
       let id: string | undefined = undefined;
       if (r && r.resolved) {
@@ -71,6 +75,8 @@ export class LegacyPackageHandler extends DatabaseHandler<LegacyPackage> {
       }
       return getImportStatus(row.id, row.doc, id);
     });
+    console.log("res", res);
+    return res;
   }
 
   async listFromView(
@@ -95,6 +101,8 @@ export class LegacyPackageHandler extends DatabaseHandler<LegacyPackage> {
         status !== null ? [status, ...startArray] : startArray;
       viewOptions["endkey"] =
         status !== null ? [status, ...endArray] : endArray;
+    } else {
+      viewOptions["descending"] = true;
     }
 
     const list = await this.view("access", viewName, viewOptions);

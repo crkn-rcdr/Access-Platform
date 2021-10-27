@@ -153,6 +153,7 @@ This component allows the user to find packages in the dipstaging database.
     if (slugList.includes(",")) slugList = slugListString.split(",");
     else slugList = slugListString.split("\n");
     slugList = slugList.filter((slug) => slug.trim().length);
+    console.log("Searching", slugList);
     if (slugList.length) {
       if (depositor?.prefix !== "none")
         slugList = slugList.map(
@@ -208,6 +209,9 @@ This component allows the user to find packages in the dipstaging database.
   </div>
 </div>
 
+<NotificationBar message={error} status="fail" />
+<br />
+
 <div class="extra-spacing">
   <span class="lookup-button">
     {#if lookupView === BY_SLUG_LABEL}
@@ -215,7 +219,7 @@ This component allows the user to find packages in the dipstaging database.
         buttonClass={lookupDone ? "secondary" : "primary"}
         on:clicked={handleLookupPressedSlugList}
         showLoader={loading}
-        disabled={slugListString.length === 0}
+        disabled={!depositor || slugListString.length === 0}
       >
         <span slot="content">
           {lookupDone ? "Look-up Packages Again" : "Look-up Packages"}
@@ -226,7 +230,7 @@ This component allows the user to find packages in the dipstaging database.
         buttonClass={lookupDone ? "secondary" : "primary"}
         on:clicked={handleLookupPressedDates}
         showLoader={loading}
-        disabled={!(depositor && startDateStr.length && endDateStr.length)}
+        disabled={!startDateStr.length || !endDateStr.length}
       >
         <span slot="content">
           {lookupDone ? "Look-up Packages Again" : "Look-up Packages"}
@@ -235,8 +239,6 @@ This component allows the user to find packages in the dipstaging database.
     {/if}
   </span>
 </div>
-
-<NotificationBar message={error} status="fail" />
 
 <style>
   .lookup-wrap {
