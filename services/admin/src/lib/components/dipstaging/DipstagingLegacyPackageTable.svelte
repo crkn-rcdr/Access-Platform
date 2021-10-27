@@ -311,7 +311,8 @@ This component shows the results of a dipstaging package view. It allows the use
                 /-->
                 <Resolver
                   noid={"123"}
-                  isFound={true}
+                  isFound={false}
+                  alwaysShowIfFound={true}
                   runInitial={false}
                   on:available={(e) => setSlugAvailability(e, legacyPackage)}
                   bind:slug={legacyPackage.slug}

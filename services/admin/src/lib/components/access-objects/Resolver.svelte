@@ -34,26 +34,15 @@ The resolver component allows the user to enter a slug, and then a request is se
    */
   export let slug;
 
-  /**
-   * @type {boolean}
-   * Whether to hide the display when the current slug is the
-   * same as the initial slug provided.
-   */
-  export let hideInitial = false;
-
   export let runInitial: boolean = false;
+
+  export let alwaysShowIfFound: boolean = false;
 
   /**
    * @type {"sm" | "rg"}
    * To display the resolve component in a small form or in full form
    */
   export let size: "sm" | "rg" = "rg";
-
-  /**
-   * @type {boolean}
-   * If the unavailable message should be hidden. Useful for custom errors.
-   */
-  export let hideUnavailableMsg: boolean = false;
 
   /**
    * @type {string}
@@ -81,10 +70,10 @@ The resolver component allows the user to enter a slug, and then a request is se
    */
   const regex = /^[\p{L}\p{Nl}\p{Nd}\-_\.]+$/u;
 
-  /** @type {"READY" | "LOADING" | "MALFORMED" | "ERROR"}
+  /** @type {"READY" | "LOADING" | "MALFORMED" | "ERROR" | "UNCHANGED"}
    * Indicates if the slug is available or not, or if the component is loading.
    */
-  let status: "READY" | "LOADING" | "MALFORMED" | "ERROR" =
+  let status: "READY" | "LOADING" | "MALFORMED" | "ERROR" | "UNCHANGED" =
     slug === undefined ? "LOADING" : "READY";
 
   /**
@@ -92,14 +81,17 @@ The resolver component allows the user to enter a slug, and then a request is se
    */
   let timer: NodeJS.Timeout | null = null;
 
+  let intital = "";
   let previous = "";
   let initialized = false;
+  let hasSearched = false;
   /**
    * Searches the backend for an object by the inputted slug. It also shows various error states to the user.
    * @returns void
    */
   async function resolve() {
-    if (slug !== previous) {
+    console.log("s: ", slug, " i: ", intital, " p: ", previous);
+    if (slug !== previous && slug !== intital) {
       if (timer) clearTimeout(timer);
       timer = setTimeout(async () => {
         console.log("slug changed: ", slug, " p:", previous);
@@ -127,18 +119,12 @@ The resolver component allows the user to enter a slug, and then a request is se
         } else {
           status = "MALFORMED";
         }
+        hasSearched = true;
       }, 50);
-    } else {
+    } else if (slug === intital) {
+      status = "UNCHANGED";
       console.log("slug not changed: ", slug, " p:", previous);
     }
-  }
-
-  /**
-   * Checks if the component has been rendered and if the results should be hidden the first time that @var slug is set. Calls @function resolve appropriately
-   * @returns void
-   */
-  async function resolveOnChange() {
-    await resolve();
   }
 
   /**
@@ -146,14 +132,13 @@ The resolver component allows the user to enter a slug, and then a request is se
    * @description When the component instance is mounted onto the dom, @var initial object is set with the @var slug and @var noid that were passed into the component. Then, the resolve method is called.
    */
   onMount(async () => {
-    console.log("s: ", slug, " p: ", previous);
     if (runInitial) await resolve();
     previous = slug;
+    intital = slug;
     initialized = true;
   });
 
   afterUpdate(async () => {
-    console.log("s: ", slug, " p: ", previous);
     if (initialized) await resolve();
     previous = slug;
   });
@@ -161,7 +146,7 @@ The resolver component allows the user to enter a slug, and then a request is se
 
 {#if size === "rg"}
   <div>
-    {#if !!slug && !hideInitial}
+    {#if !!slug && ((hasSearched && status !== "UNCHANGED") || alwaysShowIfFound)}
       {#if status === "LOADING"}
         <NotificationBar message="Loading" />
       {:else if status === "ERROR"}
@@ -171,7 +156,7 @@ The resolver component allows the user to enter a slug, and then a request is se
           message="Slugs can only contain letters, numbers, and the following symbols: _ - ."
           status="fail"
         />
-      {:else if isFound && !hideUnavailableMsg}
+      {:else if isFound}
         <slot name="in-use">
           <a target="_blank" href={`/object/${noid}`}>
             <NotificationBar message="⚠️ Slug in use" status="fail" />
@@ -184,7 +169,7 @@ The resolver component allows the user to enter a slug, and then a request is se
       {/if}
     {/if}
   </div>
-{:else if !!slug && !hideInitial}
+{:else if !!slug && ((hasSearched && status !== "UNCHANGED") || alwaysShowIfFound)}
   {#if status === "LOADING"}
     <span data-tooltip="Loading">...</span>
   {:else if status === "ERROR"}
@@ -194,7 +179,7 @@ The resolver component allows the user to enter a slug, and then a request is se
       data-tooltip="Slugs can only contain letters, numbers, and the following symbols: _ - ."
       >❌</span
     >
-  {:else if isFound && !hideUnavailableMsg}
+  {:else if isFound}
     <slot name="in-use">
       <a target="_blank" href={`/object/${noid}`}>
         <span

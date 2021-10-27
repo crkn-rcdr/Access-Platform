@@ -264,7 +264,8 @@ This component shows the results of a dipstaging find-package(s) request. It all
               {#if importStatus.status !== "not-found"}
                 <Resolver
                   noid={"123"}
-                  isFound={true}
+                  isFound={false}
+                  alwaysShowIfFound={true}
                   runInitial={false}
                   on:available={(e) => setSlugAvailability(e, importStatus)}
                   bind:slug={importStatus["slug"]}
