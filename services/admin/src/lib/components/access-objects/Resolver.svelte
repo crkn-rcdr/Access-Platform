@@ -82,6 +82,7 @@ The resolver component allows the user to enter a slug, and then a request is se
   let timer: NodeJS.Timeout | null = null;
 
   let intitalSlug = "";
+  let intitalNoid = "";
   let initialResult;
   let previous = "";
   let initialized = false;
@@ -123,6 +124,7 @@ The resolver component allows the user to enter a slug, and then a request is se
     } else if (slug === intitalSlug) {
       status = "UNCHANGED";
       isFound = initialResult;
+      noid = intitalNoid;
     }
   }
 
@@ -134,6 +136,7 @@ The resolver component allows the user to enter a slug, and then a request is se
     if (runInitial) await resolve();
     previous = slug;
     intitalSlug = slug;
+    intitalNoid = noid;
     initialResult = isFound;
     initialized = true;
   });

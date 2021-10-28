@@ -85,6 +85,7 @@
   import Paginator from "$lib/components/shared/Paginator.svelte";
   import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
   import { goto } from "$app/navigation";
+  import Datepicker from "$lib/components/shared/Datepicker.svelte";
 
   export let results: LegacyPackage[]; //: ImportStatus[]
   export let pageNumber: number;
@@ -146,10 +147,9 @@
   >
     <span slot="actions" class="dates auto-align auto-align__a-center">
       {#if view === "status"}
-        <span class="status auto-align auto-align__a-center">
-          <label for="status">Status:</label>
+        <span class="status-select auto-align auto-align__a-center">
           <select name="status" bind:value={status}>
-            <option disabled selected value />
+            <option disabled selected value>Select a status</option>
             <option value={true}>Succeeded</option>
             <option value={false}>Failed</option>
           </select>
@@ -157,13 +157,14 @@
       {/if}
 
       <div class="auto-align auto-align__a-center">
-        <span class="flatpickr-date-filter-label">Date range:</span>
-        <Flatpickr
-          value={dates?.[0]?.length ? `${dates[0]} to ${dates[1]}` : ""}
-          options={{ mode: "range" }}
-          on:change={handleDateRangeSelected}
-          name="date"
-        />
+        {#if dates && dates.length === 2}
+          <Datepicker
+            placeholder="Select a date range"
+            bind:startDateStr={dates[0]}
+            bind:endDateStr={dates[1]}
+            options={{ mode: "range" }}
+          />
+        {/if}
       </div>
 
       <button
@@ -210,12 +211,11 @@
   .refine-button {
     margin-left: var(--margin-sm);
   }
-  .status,
-  .status label {
+  .status-select,
+  .status-select label {
     margin-right: var(--margin-sm);
   }
-  .status select {
-    margin-top: 0;
+  .status-select select {
     padding: 1.15rem var(--perfect-fourth-8);
   }
 </style>

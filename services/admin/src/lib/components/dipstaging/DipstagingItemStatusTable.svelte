@@ -23,6 +23,7 @@ This component shows the results of a dipstaging find-package(s) request. It all
   import Resolver from "$lib/components/access-objects/Resolver.svelte";
   import Loading from "$lib/components/shared/Loading.svelte";
   import XmlViewer from "$lib/components/shared/XmlViewer.svelte";
+  import NotificationBar from "../shared/NotificationBar.svelte";
 
   /**
    * @type {ImportStatus[]}
@@ -77,6 +78,8 @@ This component shows the results of a dipstaging find-package(s) request. It all
    */
   let itemsAreSelected: boolean = true;
 
+  let error = "";
+
   /**
    * Keeps track if @param item is selected or not
    * @param item
@@ -106,6 +109,7 @@ This component shows the results of a dipstaging find-package(s) request. It all
    * @returns void
    */
   async function handleRunSmelterPressed() {
+    error = "";
     for (const item of results) {
       if (selectedMap[item.id]) {
         try {
@@ -121,7 +125,7 @@ This component shows the results of a dipstaging find-package(s) request. It all
           selectedMap[item.id] = false;
         } catch (e) {
           sucessfulSmeltRequestMap[item.id] = false;
-          console.log(e?.message);
+          error = e?.message;
         }
       }
     }
@@ -202,17 +206,31 @@ This component shows the results of a dipstaging find-package(s) request. It all
 
   async function getSlugAvailability() {
     if (!results) return;
+
+    error = "";
+
     const slugs = Object.keys(slugMap);
-    //results.map((item) => item.id);
-    const response = await $session.lapin.mutation(`slug.resolveMany`, slugs);
-    for (const result of response) {
-      if (result.length === 2) {
-        const slug = result[0];
-        const info = result[1];
-        slugAvailableMap[slug] = !info.found;
-        if (info.found && info.result) {
-          noidMap[slug] = info.result.id;
+
+    while (slugs.length > 0) {
+      const slugBatch = slugs.splice(0, 500);
+      //results.map((item) => item.id);
+      try {
+        const response = await $session.lapin.mutation(
+          `slug.resolveMany`,
+          slugBatch
+        );
+        for (const result of response) {
+          if (result.length === 2) {
+            const slug = result[0];
+            const info = result[1];
+            slugAvailableMap[slug] = !info.found;
+            if (info.found && info.result) {
+              noidMap[slug] = info.result.id;
+            }
+          }
         }
+      } catch (e) {
+        error = e?.message;
       }
     }
   }
@@ -225,8 +243,8 @@ This component shows the results of a dipstaging find-package(s) request. It all
     loading = true;
     results;
     Promise.all([
-      getSlugAvailability(),
       checkIfSlugsDefined(),
+      getSlugAvailability(),
       setExpandedModel(),
       setSelectedModel(),
     ]).then(() => {
@@ -252,6 +270,8 @@ This component shows the results of a dipstaging find-package(s) request. It all
   $: itemsAreSelected =
     Object.keys(selectedMap).filter((key) => selectedMap[key]).length > 0;
 </script>
+
+<NotificationBar message={error} status="fail" />
 
 {#if !loading}
   <div class="button-wrap" class:disabled={!results}>

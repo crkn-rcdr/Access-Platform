@@ -48,11 +48,9 @@ export class LegacyPackageHandler extends DatabaseHandler<LegacyPackage> {
   }
 
   async listFromDates(start: string, end: string) {
-    //, access: AccessHandler
     const startArray = DateString.parse(start);
     const endArray = DateString.parse(end);
     endArray[2] = (endArray[2] as number) + 0.1;
-    console.log("startkey", startArray, "endkey", endArray);
 
     const list = await this.view("access", "byManifestDate", {
       startkey: startArray,
@@ -61,23 +59,9 @@ export class LegacyPackageHandler extends DatabaseHandler<LegacyPackage> {
       include_docs: true,
     });
 
-    console.log("list", list);
-
-    //const slugs = list.rows.map((row) => row.id);
-    //console.log("slugs", slugs);
-
-    //const resolutions = await access.resolveSlugs(slugs);
-
-    //console.log("resolutions", resolutions);
     const res = list.rows.map((row): ImportStatus => {
-      /*const r = resolutions[row.id];
-      let id: string | undefined = undefined;
-      if (r && r.resolved) {
-        id = r.id;
-      }*/
       return getImportStatus(row.id, row.doc);
     });
-    console.log("res", res);
     return res;
   }
 

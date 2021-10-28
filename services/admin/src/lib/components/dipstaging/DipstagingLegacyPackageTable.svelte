@@ -27,6 +27,7 @@ This component shows the results of a dipstaging package view. It allows the use
   import Resolver from "$lib/components/access-objects/Resolver.svelte";
   import Loading from "$lib/components/shared/Loading.svelte";
   import XmlViewer from "$lib/components/shared/XmlViewer.svelte";
+  import NotificationBar from "../shared/NotificationBar.svelte";
 
   /**
    * @type {LegacyPackage[]}
@@ -93,6 +94,8 @@ This component shows the results of a dipstaging package view. It allows the use
    */
   let itemsAreSelected: boolean = true;
 
+  let error = "";
+
   /**
    * Keeps track if @param item is selected or not
    * @param item
@@ -122,6 +125,7 @@ This component shows the results of a dipstaging package view. It allows the use
    * @returns void
    */
   async function handleRunSmelterPressed() {
+    error = "";
     for (const item of results) {
       if (selectedMap[item.id]) {
         try {
@@ -137,7 +141,7 @@ This component shows the results of a dipstaging package view. It allows the use
           selectedMap[item.id] = false;
         } catch (e) {
           sucessfulSmeltRequestMap[item.id] = false;
-          console.log(e?.message);
+          error = e?.message;
         }
       }
     }
@@ -217,18 +221,24 @@ This component shows the results of a dipstaging package view. It allows the use
 
   async function getSlugAvailability() {
     if (!results) return;
+    error = "";
+
     const slugs = Object.keys(slugMap);
-    //results.map((item) => item.id);
-    const response = await $session.lapin.mutation(`slug.resolveMany`, slugs);
-    for (const result of response) {
-      if (result.length === 2) {
-        const slug = result[0];
-        const info = result[1];
-        slugAvailableMap[slug] = !info.found;
-        if (info.found && info.result) {
-          noidMap[slug] = info.result.id;
+
+    try {
+      const response = await $session.lapin.mutation(`slug.resolveMany`, slugs);
+      for (const result of response) {
+        if (result.length === 2) {
+          const slug = result[0];
+          const info = result[1];
+          slugAvailableMap[slug] = !info.found;
+          if (info.found && info.result) {
+            noidMap[slug] = info.result.id;
+          }
         }
       }
+    } catch (e) {
+      error = e?.message;
     }
   }
 
@@ -240,8 +250,8 @@ This component shows the results of a dipstaging package view. It allows the use
     loading = true;
     results;
     Promise.all([
-      getSlugAvailability(),
       checkIfSlugsDefined(),
+      getSlugAvailability(),
       setExpandedModel(),
       setSelectedModel(),
     ]).then(() => {
@@ -267,6 +277,8 @@ This component shows the results of a dipstaging package view. It allows the use
   $: itemsAreSelected =
     Object.keys(selectedMap).filter((key) => selectedMap[key]).length > 0;
 </script>
+
+<NotificationBar message={error} status="fail" />
 
 {#if !loading}
   <!--Can run smelter if a) their status is neither "not-found" or "processing" b) their slug isn't already taken by a noid.-->

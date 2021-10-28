@@ -23,6 +23,7 @@ This component allows the user to find packages in the dipstaging database.
   import type { ImportStatus } from "@crkn-rcdr/access-data";
   import LoadingButton from "$lib/components/shared/LoadingButton.svelte";
   import NotificationBar from "../shared/NotificationBar.svelte";
+  import Datepicker from "../shared/Datepicker.svelte";
 
   /**
    * @type {ImportStatus[]}
@@ -219,13 +220,11 @@ This component allows the user to find packages in the dipstaging database.
 
       <span class="flatpickr-date-filter-label">Select a date range:</span>
       <br />
-      <Flatpickr
-        value={startDateStr.length && endDateStr.length
-          ? `${startDateStr} to ${endDateStr}`
-          : ""}
+      <Datepicker
+        placeholder="Select a date range"
+        bind:startDateStr
+        bind:endDateStr
         options={{ mode: "range" }}
-        on:change={handleDateRangeSelected}
-        name="date"
       />
       <br />
       <br />
