@@ -170,7 +170,10 @@ This component shows the results of a dipstaging package view. It allows the use
   function checkIfSlugsDefined() {
     if (!results) return;
     for (const item of results) {
-      if (!slugMap[item.id]) slugMap[item.id] = item.id;
+      if (!item["slug"]) {
+        item.slug = item.id;
+        slugMap[item.id] = item.id;
+      } else slugMap[item.id] = item.slug;
     }
     results = results;
   }
