@@ -27,6 +27,8 @@ This component displays the items in the dmd task throughout the various stages 
   import type { ParseRecord } from "@crkn-rcdr/access-data/dist/esm/dmd/Task";
   import { dmdTasksStore } from "$lib/stores/dmdTasksStore";
   import DmdSuccessItemPreview from "./DmdSuccessItemPreview.svelte";
+  import XmlViewer from "$lib/components/shared/XmlViewer.svelte";
+  import Loading from "$lib/components/shared/Loading.svelte";
 
   /**
    *  @type { string } The 'id' of the DMDTask being shown.
@@ -105,7 +107,7 @@ This component displays the items in the dmd task throughout the various stages 
   <table>
     <thead>
       <tr>
-        {#if $dmdTasksStore[dmdTaskId].lookupState === "loaded" && ($dmdTasksStore[dmdTaskId].shouldUpdateInAccess || $dmdTasksStore[dmdTaskId].shouldUpdateInPreservation)}
+        {#if $dmdTasksStore[dmdTaskId].shouldUpdateInAccess || $dmdTasksStore[dmdTaskId].shouldUpdateInPreservation}
           <th>
             <input
               type="checkbox"
@@ -116,36 +118,28 @@ This component displays the items in the dmd task throughout the various stages 
         {/if}
         <th>Id</th>
         <th>Label</th>
-        <th>Validity</th>
-        <th>Preview</th>
-
-        {#if $dmdTasksStore[dmdTaskId].lookupState !== "ready" && $dmdTasksStore[dmdTaskId].shouldUpdateInAccess}
-          <th>Found in Access?</th>
-        {/if}
-        {#if $dmdTasksStore[dmdTaskId].updateState !== "ready" && $dmdTasksStore[dmdTaskId].shouldUpdateInAccess}
-          <th>Updated in Access?</th>
-        {/if}
-
-        {#if $dmdTasksStore[dmdTaskId].lookupState !== "ready" && $dmdTasksStore[dmdTaskId].shouldUpdateInPreservation}
-          <th>Found in Preservation?</th>
-        {/if}
-        {#if $dmdTasksStore[dmdTaskId].updateState !== "ready" && $dmdTasksStore[dmdTaskId].shouldUpdateInPreservation}
-          <th>Updated in Preservation?</th>
-        {/if}
+        <th>Metadata Validity</th>
+        <th>Metadata Preview</th>
       </tr>
     </thead>
     <tbody>
       {#each itemsToShow as item, i}
         {#if typeof item === "object"}
           <tr>
-            {#if $dmdTasksStore[dmdTaskId].lookupState === "loaded" && ($dmdTasksStore[dmdTaskId].shouldUpdateInAccess || $dmdTasksStore[dmdTaskId].shouldUpdateInPreservation)}
+            {#if $dmdTasksStore[dmdTaskId].shouldUpdateInAccess || $dmdTasksStore[dmdTaskId].shouldUpdateInPreservation}
               <td>
-                <input
-                  type="checkbox"
-                  bind:checked={$dmdTasksStore[dmdTaskId].itemStates[item.id]
-                    .shouldUpdate}
-                  on:change={checkIfAllItemsSelected}
-                />
+                {#if $dmdTasksStore[dmdTaskId].itemStates[item.id].updatedInAccess === "Updating" || $dmdTasksStore[dmdTaskId].itemStates[item.id].updatedInPreservation === "Updating"}
+                  <Loading size="sm" backgroundType="gradient" />
+                {:else if item.parsed && !(($dmdTasksStore[dmdTaskId].shouldUpdateInAccess && $dmdTasksStore[dmdTaskId].itemStates[item.id].updatedInAccess === "Yes") || ($dmdTasksStore[dmdTaskId].shouldUpdateInPreservation && $dmdTasksStore[dmdTaskId].itemStates[item.id].updatedInPreservation === "Yes"))}
+                  <input
+                    type="checkbox"
+                    bind:checked={$dmdTasksStore[dmdTaskId].itemStates[item.id]
+                      .shouldUpdate}
+                    on:change={checkIfAllItemsSelected}
+                  />
+                {:else}
+                  <input type="checkbox" disabled />
+                {/if}
               </td>
             {/if}
             <td>
@@ -168,10 +162,10 @@ This component displays the items in the dmd task throughout the various stages 
                 </span>
               {/if}
               {item.parsed && item.message?.length === 0
-                ? "Valid"
+                ? "Valid Metadata"
                 : item.parsed
-                ? "Warning"
-                : "Invalid"}
+                ? "Warning - Possible issues with Metadata"
+                : "Invalid Metadata"}
             </td>
             <td>
               <button
@@ -179,76 +173,57 @@ This component displays the items in the dmd task throughout the various stages 
                 class:danger={!item.parsed}
                 class:warn={item.parsed && item.message?.length !== 0}
                 on:click={() => handlePreviewItemPressed(i, item)}
-                >Preview</button
+                >Preview Metadata</button
               >
             </td>
-
-            {#if $dmdTasksStore[dmdTaskId].itemStates[item.id]}
-              {#if $dmdTasksStore[dmdTaskId].lookupState !== "ready" && $dmdTasksStore[dmdTaskId].shouldUpdateInAccess}
-                <td
-                  class:success={$dmdTasksStore[dmdTaskId].itemStates[item.id]
-                    .foundInAccess === "Yes"}
-                  class:not-success={$dmdTasksStore[dmdTaskId].itemStates[
-                    item.id
-                  ].foundInAccess === "No"}
-                >
-                  {#if $dmdTasksStore[dmdTaskId].itemStates[item.id].noid}
-                    <a
-                      href={`/object/${
-                        $dmdTasksStore[dmdTaskId].itemStates[item.id].noid
-                      }`}
-                      target="_blank"
-                    >
-                      {$dmdTasksStore[dmdTaskId].itemStates[item.id]
-                        .foundInAccess}
-                    </a>
-                  {:else}
-                    {$dmdTasksStore[dmdTaskId].itemStates[item.id]
-                      .foundInAccess}
-                  {/if}
-                </td>
-              {/if}
-
-              {#if $dmdTasksStore[dmdTaskId].updateState !== "ready" && $dmdTasksStore[dmdTaskId].shouldUpdateInAccess}
-                <td
-                  class:success={$dmdTasksStore[dmdTaskId].itemStates[item.id]
-                    .updatedInAccess === "Yes"}
-                  class:not-success={$dmdTasksStore[dmdTaskId].itemStates[
-                    item.id
-                  ].updatedInAccess === "No"}
-                >
-                  {$dmdTasksStore[dmdTaskId].itemStates[item.id]
-                    .updatedInAccess}
-                </td>
-              {/if}
-
-              {#if $dmdTasksStore[dmdTaskId].lookupState !== "ready" && $dmdTasksStore[dmdTaskId].shouldUpdateInPreservation}
-                <td
-                  class:success={$dmdTasksStore[dmdTaskId].itemStates[item.id]
-                    .foundInPreservation === "Yes"}
-                  class:not-success={$dmdTasksStore[dmdTaskId].itemStates[
-                    item.id
-                  ].foundInPreservation === "No"}
-                >
-                  {$dmdTasksStore[dmdTaskId].itemStates[item.id]
-                    .foundInPreservation}
-                </td>
-              {/if}
-
-              {#if $dmdTasksStore[dmdTaskId].updateState !== "ready" && $dmdTasksStore[dmdTaskId].shouldUpdateInPreservation}
-                <td
-                  class:success={$dmdTasksStore[dmdTaskId].itemStates[item.id]
-                    .updatedInPreservation === "Yes"}
-                  class:not-success={$dmdTasksStore[dmdTaskId].itemStates[
-                    item.id
-                  ].updatedInPreservation === "No"}
-                >
-                  {$dmdTasksStore[dmdTaskId].itemStates[item.id]
-                    .updatedInPreservation}
-                </td>
-              {/if}
-            {/if}
           </tr>
+          {#if $dmdTasksStore[dmdTaskId].itemStates[item.id].updatedInAccessMsg.length || $dmdTasksStore[dmdTaskId].itemStates[item.id].updatedInPreservationMsg.length}
+            <tr class="row-details">
+              <td class="result-cell" colspan="5">
+                <table>
+                  <tbody>
+                    {#if $dmdTasksStore[dmdTaskId].itemStates[item.id].updatedInAccessMsg.length}
+                      <tr
+                        class:success={$dmdTasksStore[dmdTaskId].itemStates[
+                          item.id
+                        ].updatedInAccess === "Yes"}
+                        class:not-success={$dmdTasksStore[dmdTaskId].itemStates[
+                          item.id
+                        ].updatedInAccess === "No"}
+                      >
+                        <td class="detail-label">Access Update Result:</td>
+                        <td>
+                          <XmlViewer
+                            xml={$dmdTasksStore[dmdTaskId].itemStates[item.id]
+                              .updatedInAccessMsg}
+                          />
+                        </td>
+                      </tr>
+                    {/if}
+                    {#if $dmdTasksStore[dmdTaskId].itemStates[item.id].updatedInPreservationMsg.length}
+                      <tr
+                        class:success={$dmdTasksStore[dmdTaskId].itemStates[
+                          item.id
+                        ].updatedInPreservation === "Yes"}
+                        class:not-success={$dmdTasksStore[dmdTaskId].itemStates[
+                          item.id
+                        ].updatedInPreservation === "No"}
+                      >
+                        <td class="detail-label">Preservation Update Result:</td
+                        >
+                        <td>
+                          <XmlViewer
+                            xml={$dmdTasksStore[dmdTaskId].itemStates[item.id]
+                              .updatedInPreservationMsg}
+                          />
+                        </td>
+                      </tr>
+                    {/if}
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+          {/if}
         {/if}
       {/each}
     </tbody>
@@ -272,7 +247,7 @@ This component displays the items in the dmd task throughout the various stages 
   }
   .not-success {
     background-color: var(--danger-light);
-    /*color: var(--danger);*/
+    color: var(--danger);
   }
   .not-success.icon {
     color: var(--danger);
@@ -284,5 +259,19 @@ This component displays the items in the dmd task throughout the various stages 
   .warning.icon {
     color: var(--warn);
     background-color: transparent;
+  }
+  /*.row-details {
+    color: var(--secondary);
+    background: var(--light-bg);
+    filter: brightness(0.98);
+  }*/
+  .row-details table {
+    margin-top: 0;
+  }
+  .row-details tbody {
+    background: none;
+  }
+  .result-cell {
+    padding: 0 !important;
   }
 </style>

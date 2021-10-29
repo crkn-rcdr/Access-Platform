@@ -201,7 +201,7 @@ A component that shows a navigable set of pages with a side menu to allow the us
     {/if}
     <div class="menu">
       <div
-        class="auto-align auto-align__full auto-align auto-align__a-stretch auto-align auto-align__wrap"
+        class="auto-align auto-align__full auto-align auto-align__a-stretch auto-align"
       >
         {#if pageList.length}
           <SideMenuPageList>

@@ -32,6 +32,7 @@ None
     min-height: 100%;
     flex: 1.5;
     padding: var(--margin-sm);
+    width: fit-content;
   }
   .sidemenu ul {
     list-style-type: none;

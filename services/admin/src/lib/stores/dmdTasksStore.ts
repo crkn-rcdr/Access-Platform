@@ -70,273 +70,34 @@ function getTaskItemLength(
 ): number {
   let numItems = 0;
   for (var itemSlug in items) {
-    if (method !== undefined) method(dmdTaskId, itemSlug, items);
-    numItems++;
+    if (items[itemSlug].shouldUpdate) {
+      numItems++;
+      if (method !== undefined) method(dmdTaskId, itemSlug, items);
+    }
   }
   return numItems;
 }
 
 /**
- * A helper method that takes the result of a lookup request for a singular item, and formats the DmdTasksCache[dmdTaskId]["itemStates"][slug] for that item.
- * @param dmdTaskId
- * @param slug
- * @param items
- * @param result
+ * A helper method to slow down the rate of requests going to the backend. Causes the script to pause for 'ms.'
+ * @param ms
  */
-function setLookupTaskItemResult(
-  dmdTaskId: string,
-  slug: string,
-  items: DmdItemStates,
-  result: any
-) {
-  const itemFound = result[1].found;
-  if (itemFound && result.length === 2 && "result" in result[1]) {
-    const itemData = result[1].result;
-    items[slug].slug = itemData.slug;
-    items[slug].noid = itemData.id;
-    items[slug].foundInAccess = "Yes";
-    updateTask(dmdTaskId, "itemStates", items);
-  } else {
-    items[slug].foundInAccess = "No";
-    updateTask(dmdTaskId, "itemStates", items);
-  }
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 /**
- * A helper method that takes a subset of items in DmdTasksCache[dmdTaskId] and searches for them in the access database through lapin-router.
+ * Calls the lapin routes to update the items metadata and updates DmdTasksCache[dmdTaskId] with the results and progress %.
+ * @param dmdTaskId
  * @param prefix
- * @param dmdTaskId
- * @param items
- * @param subsetSlugs
  * @param lapin
  */
-async function lookupTaskItemSubsetInAccess(
-  prefix: string,
+async function storeTaskItemMetadata(
   dmdTaskId: string,
-  items: DmdItemStates,
-  subsetSlugs: string[],
-  lapin: TRPCClient<LapinRouter>
-) {
-  try {
-    const response = await lapin.query(
-      "slug.lookupMany",
-      prefix !== "none"
-        ? subsetSlugs.map((slug) => `${prefix}.${slug}`)
-        : subsetSlugs
-    );
-
-    let resultIndex = 0;
-    for (let slug of subsetSlugs) {
-      if (resultIndex < response.length) {
-        setLookupTaskItemResult(dmdTaskId, slug, items, response[resultIndex]);
-      } else {
-        throw "Not every item was searched.";
-      }
-      resultIndex++;
-    }
-  } catch (e) {
-    console.log(e?.message);
-    for (let slug of subsetSlugs) items[slug].foundInAccess = "No";
-  }
-}
-
-/**
- * A helper method that takes the items in DmdTasksCache[dmdTaskId] and searches for them in the wipmeta database through lapin-router.
- * @param prefix
- * @param dmdTaskId
- * @param items
- * @param lapin
- */
-async function lookupTaskItemsInPreservation(
-  prefix: string,
-  dmdTaskId: string,
-  items: DmdItemStates,
-  lapin: TRPCClient<LapinRouter>
-) {
-  const slugs = Object.keys(items);
-  for (const slug of slugs) {
-    try {
-      const id = prefix !== "none" ? `${prefix}.${slug}` : slug;
-      const response = await lapin.query("wipmeta.find", id);
-      if (response) {
-        items[slug].foundInPreservation = "Yes";
-      } else {
-        items[slug].foundInPreservation = "No";
-      }
-      updateTask(dmdTaskId, "itemStates", items);
-    } catch (e) {
-      console.log(e?.message);
-      items[slug].foundInPreservation = "No";
-    }
-  }
-}
-
-/**
- * A helper method that one by one, updates the items in DmdTasksCache[dmdTaskId] metadata in the access platform, through lapin-router. Keeps track of the progress as well.
- * @param dmdTaskId
- * @param items
- * @param user
- * @param lapin
- * @param numItems
- */
-async function updateItemsInAccess(
-  dmdTaskId: string,
-  items: DmdItemStates,
   user: User,
   lapin: TRPCClient<LapinRouter>,
-  numItems: number
+  prefix: string
 ) {
-  let index = 0;
-  for (const itemSlug in items) {
-    if (
-      items[itemSlug].foundInAccess === "Yes" &&
-      items[itemSlug].shouldUpdate &&
-      items[itemSlug].parseSuccess
-    ) {
-      try {
-        await lapin.mutation("dmdTask.storeAccess", {
-          task: dmdTaskId,
-          index,
-          slug: items[itemSlug]["slug"],
-          noid: items[itemSlug]["noid"],
-          user: user,
-        });
-        items[itemSlug].updatedInAccess = "Yes";
-        updateTask(dmdTaskId, "itemStates", items);
-        updateTask(dmdTaskId, "itemStates", items);
-      } catch (e) {
-        console.log(e?.message);
-        items[itemSlug].updatedInAccess = "No";
-        updateTask(dmdTaskId, "itemStates", items);
-      }
-    } else {
-      items[itemSlug].updatedInAccess = "No";
-      updateTask(dmdTaskId, "itemStates", items);
-    }
-
-    const percentage = Math.round(((index + 1) / numItems) * 100);
-
-    updateTask(dmdTaskId, "updatedProgressPercentage", percentage);
-
-    index++;
-  }
-}
-
-/**
- * A helper method that one by one, updates the items in DmdTasksCache[dmdTaskId] metadata in the preservation, through lapin-router. Keeps track of the progress as well.
- * @param dmdTaskId
- * @param items
- * @param lapin
- * @param numItems
- * @param isUpdatingInAccessToo
- */
-async function updateItemsInPreservation(
-  dmdTaskId: string,
-  items: DmdItemStates,
-  lapin: TRPCClient<LapinRouter>,
-  numItems: number,
-  isUpdatingInAccessToo: boolean
-) {
-  let index = 0;
-  for (const itemSlug in items) {
-    if (
-      items[itemSlug].foundInPreservation === "Yes" &&
-      items[itemSlug].shouldUpdate &&
-      items[itemSlug].parseSuccess
-    ) {
-      try {
-        await lapin.mutation("wipmeta.storePreservation", {
-          task: dmdTaskId,
-          index,
-          id: items[itemSlug]["slug"],
-        });
-        items[itemSlug].updatedInPreservation = "Yes";
-        updateTask(dmdTaskId, "itemStates", items);
-        updateTask(dmdTaskId, "itemStates", items);
-      } catch (e) {
-        console.log(e?.message);
-        items[itemSlug].updatedInPreservation = "No";
-        updateTask(dmdTaskId, "itemStates", items);
-      }
-    } else {
-      items[itemSlug].updatedInPreservation = "No";
-      updateTask(dmdTaskId, "itemStates", items);
-    }
-
-    const percentage = Math.round(
-      (((index + 1) * (isUpdatingInAccessToo ? 2 : 1)) / numItems) * 100
-    );
-
-    updateTask(dmdTaskId, "updatedProgressPercentage", percentage);
-
-    index++;
-  }
-}
-
-/**
- * Calls @function lookupTaskItemSubsetInAccess and @function lookupTaskItemsInPreservation and updates DmdTasksCache[dmdTaskId] with the results.
- * @param dmdTaskId
- * @param prefix
- * @param lapin
- */
-async function lookupTaskItems(
-  dmdTaskId: string,
-  prefix: string,
-  lapin: TRPCClient<LapinRouter>
-) {
-  updateTask(dmdTaskId, "updateState", "ready");
-  updateTask(dmdTaskId, "lookupState", "loading");
-
-  let items = getTask(dmdTaskId).itemStates;
-  let index = 0;
-  let slugs: string[] = [];
-
-  let numItems = getTaskItemLength(
-    dmdTaskId,
-    items,
-    (dmdTaskId, itemSlug, items) => {
-      items[itemSlug].foundInAccess = "Searching...";
-      items[itemSlug].foundInPreservation = "Searching...";
-      updateTask(dmdTaskId, "itemStates", items);
-    }
-  );
-
-  // Batch lookup requests by 100 items.
-  for (const itemSlug in items) {
-    slugs.push(itemSlug);
-    if ((index !== 0 && index % 100 === 0) || index === numItems - 1) {
-      await lookupTaskItemSubsetInAccess(
-        prefix,
-        dmdTaskId,
-        items,
-        slugs,
-        lapin
-      );
-      slugs = [];
-    }
-    index++;
-  }
-
-  await lookupTaskItemsInPreservation(prefix, dmdTaskId, items, lapin);
-
-  updateTask(dmdTaskId, "itemStates", items);
-  updateTask(dmdTaskId, "lookupState", "loaded");
-}
-
-/**
- * Calls @function updateItemsInAccess and/or @function updateItemsInPreservation and updates DmdTasksCache[dmdTaskId] with the results and progress %.
- * @param dmdTaskId
- * @param prefix
- * @param lapin
- */
-async function storeTaskItemsToSwift(
-  dmdTaskId: string,
-  user: User,
-  lapin: TRPCClient<LapinRouter>
-) {
-  updateTask(dmdTaskId, "updateState", "updating");
-  updateTask(dmdTaskId, "updatedProgressPercentage", 0);
-
   const dmdTask = getTask(dmdTaskId);
 
   let items = dmdTask.itemStates;
@@ -344,34 +105,163 @@ async function storeTaskItemsToSwift(
   const numItems = getTaskItemLength(
     dmdTaskId,
     items,
+    // Might as well reset the state fr all items to be updated in the same loop.
     (dmdTaskId, itemSlug, items) => {
-      if (dmdTask.shouldUpdateInAccess)
-        items[itemSlug].updatedInAccess = "Updating...";
-      if (dmdTask.shouldUpdateInPreservation)
-        items[itemSlug].updatedInPreservation = "Updating...";
+      items[itemSlug].updatedInAccessMsg = "";
+      items[itemSlug].updatedInPreservationMsg = "";
+
+      const prefixedSlug =
+        prefix !== "none" ? `${prefix}.${itemSlug}` : itemSlug;
+      items[itemSlug].slug = prefixedSlug;
+
       updateTask(dmdTaskId, "itemStates", items);
     }
   );
 
-  const totalNumRequests =
-    dmdTask.shouldUpdateInAccess && dmdTask.shouldUpdateInPreservation
-      ? numItems * 2
-      : numItems;
+  if (numItems === 0) return;
 
-  if (dmdTask.shouldUpdateInAccess)
-    await updateItemsInAccess(dmdTaskId, items, user, lapin, totalNumRequests);
+  updateTask(dmdTaskId, "updateState", "updating");
+  updateTask(dmdTaskId, "updatedProgressPercentage", 0);
+  updateTask(dmdTaskId, "resultMsg", "");
 
-  if (dmdTask.shouldUpdateInPreservation)
-    await updateItemsInPreservation(
+  let index = 0;
+  let numUpdated = 0;
+  let failedSlugs: string[] = [];
+  for (const itemSlug in items) {
+    // Only run on items the user selects
+    if (items[itemSlug].shouldUpdate) {
+      // Shows a loader
+      items[itemSlug].updatedInAccess = "Updating";
+      items[itemSlug].updatedInPreservation = "Updating";
+      updateTask(dmdTaskId, "itemStates", items);
+
+      // Taking a pause to conserve resources
+      await sleep(10000);
+
+      // Deselect item
+      items[itemSlug].shouldUpdate = false;
+      updateTask(dmdTaskId, "itemStates", items);
+
+      // Updating ACCESS
+      if (dmdTask.shouldUpdateInAccess) {
+        try {
+          const res = await lapin.mutation("dmdTask.storeAccess", {
+            task: dmdTaskId,
+            index,
+            slug: items[itemSlug].slug,
+            user: user,
+          });
+          console.log("access res:", res);
+          items[itemSlug].updatedInAccess = "Yes";
+          items[itemSlug].updatedInAccessMsg =
+            "Metadata file updated successfully.";
+          updateTask(dmdTaskId, "itemStates", items);
+        } catch (e) {
+          console.log("access e:", e);
+          items[itemSlug].updatedInAccess = "No";
+          items[itemSlug].updatedInAccessMsg = e?.message;
+          // Make any errored items selected again upon completed
+          items[itemSlug].shouldUpdate = true;
+          updateTask(dmdTaskId, "itemStates", items);
+
+          failedSlugs.push(`| ${itemSlug} | ${e?.message} |`);
+        }
+      } else {
+        items[itemSlug].updatedInAccess = "No";
+        updateTask(dmdTaskId, "itemStates", items);
+      }
+
+      // Updating PRESERVATION
+      if (dmdTask.shouldUpdateInPreservation) {
+        try {
+          const res = await lapin.mutation("wipmeta.storePreservation", {
+            task: dmdTaskId,
+            index,
+            id: items[itemSlug].slug,
+          });
+          console.log("pres r:", res);
+          items[itemSlug].updatedInPreservation = "Yes";
+          items[itemSlug].updatedInPreservationMsg =
+            "Metadata file updated successfully.";
+          updateTask(dmdTaskId, "itemStates", items);
+        } catch (e) {
+          console.log("pres e:", e);
+          items[itemSlug].updatedInPreservation = "No";
+          items[itemSlug].updatedInPreservationMsg = e?.message;
+          // Make any errored items selected again upon completed
+          items[itemSlug].shouldUpdate = true;
+          updateTask(dmdTaskId, "itemStates", items);
+
+          failedSlugs.push(`| ${itemSlug} | ${e?.message} |`);
+        }
+      } else {
+        items[itemSlug].updatedInPreservation = "No";
+        updateTask(dmdTaskId, "itemStates", items);
+      }
+
+      // For progress count
+      numUpdated++;
+    } else {
+      items[itemSlug].updatedInAccess = "No";
+      items[itemSlug].updatedInPreservation = "No";
+      items[itemSlug].updatedInPreservationMsg = "";
+      items[itemSlug].updatedInAccessMsg = "";
+      updateTask(dmdTaskId, "itemStates", items);
+    }
+
+    // Update progress bar
+    const percentage = Math.round((numUpdated / numItems) * 100);
+    updateTask(dmdTaskId, "updatedProgressPercentage", percentage);
+    console.log("percentage ", percentage);
+    console.log("numUpdated ", numUpdated);
+    console.log("numItems ", numItems);
+
+    index++;
+  }
+
+  if (failedSlugs.length) {
+    const newLine = "%0A";
+    const title = "title=DMD Task Failing";
+    const label = "labels[]=bug";
+    const date = new Date().toISOString();
+    const userName = user.name;
+    const issueTable = `| Item | Error Message |${newLine}| ------------- | ------------- |`;
+    const erroredSlugs = failedSlugs.join(newLine);
+    const body = `body=Task Id: ${dmdTaskId}${newLine}${newLine}Link: https://access.canadiana.ca/dmd/${dmdTaskId}${newLine}${newLine}When: ${date}${newLine}${newLine}Who: ${userName}${newLine}${newLine}Issues:${newLine}${issueTable}${newLine}${erroredSlugs}${newLine}${newLine}Please attach a screenshot:${newLine}(drag and drop it here)${newLine}`;
+
+    const githubLink =
+      `https://github.com/crkn-rcdr/Access-Platform/issues/new?${title}&${body}&${label}`.replace(
+        " ",
+        "+"
+      );
+
+    updateTask(dmdTaskId, "updateState", "error");
+    updateTask(
       dmdTaskId,
-      items,
-      lapin,
-      totalNumRequests,
-      dmdTask.shouldUpdateInAccess
+      "resultMsg",
+      `There was a problem updating one or more of your items metadata files. Please check the results in the table below for details about the problem. You can 1) Try running the update again, <a href="/dmd/new" target="_blank">2) Correct any formatting issues in the input file and upload it again</a>, or <a href="${githubLink}" target="_blank">3) Open a ticket for the platform team to investigate the problem.</a>`
     );
+  } else {
+    const newLine = "%0A";
+    const title = "title=DMD Task Item Updates Not Propagating";
+    const label = "labels[]=bug";
+    const date = new Date().toISOString();
+    const userName = user.name;
+    const body = `body=Task Id: ${dmdTaskId}${newLine}${newLine}Link: https://access.canadiana.ca/dmd/${dmdTaskId}${newLine}${newLine}When: ${date}${newLine}${newLine}Who: ${userName}${newLine}${newLine}Affected Slugs:${newLine}(Please type the affected slugs here)${newLine}${newLine}Or, please attach a screenshot:${newLine}(drag and drop it here)${newLine}`;
 
-  updateTask(dmdTaskId, "itemStates", items);
-  updateTask(dmdTaskId, "updateState", "updated");
+    const githubLink =
+      `https://github.com/crkn-rcdr/Access-Platform/issues/new?${title}&${body}&${label}`.replace(
+        " ",
+        "+"
+      );
+
+    updateTask(dmdTaskId, "updateState", "updated");
+    updateTask(
+      dmdTaskId,
+      "resultMsg",
+      `Success! All of the metadata files were updated for the selected items. Please wait up to one hour to see the new metadata updated in access and/or preservation. <a href="${githubLink}" target="_blank">If after one hour the updates still aren't visible, open a ticket for the platform team to investigate the problem.</a>`
+    );
+  }
 }
 
 /**
@@ -380,9 +270,18 @@ async function storeTaskItemsToSwift(
  * @param shouldUpdate
  */
 function toggleAllItemsSelected(dmdTaskId: string, shouldUpdate: boolean) {
-  let items = getTask(dmdTaskId).itemStates;
+  const dmdTask = getTask(dmdTaskId);
+  let items = dmdTask.itemStates;
   for (const itemSlug in items) {
-    items[itemSlug].shouldUpdate = shouldUpdate;
+    if (
+      !(
+        (dmdTask.shouldUpdateInAccess &&
+          items[itemSlug].updatedInAccess === "Yes") ||
+        (dmdTask.shouldUpdateInPreservation &&
+          items[itemSlug].updatedInAccess === "Yes")
+      )
+    )
+      items[itemSlug].shouldUpdate = shouldUpdate;
   }
   updateTask(dmdTaskId, "itemStates", items);
 }
@@ -393,10 +292,20 @@ function toggleAllItemsSelected(dmdTaskId: string, shouldUpdate: boolean) {
  * @param shouldUpdate
  */
 function checkIfAllTaskItemsSelected(dmdTaskId: string): boolean {
-  let items = getTask(dmdTaskId).itemStates;
+  const dmdTask = getTask(dmdTaskId);
+  let items = dmdTask.itemStates;
   let areAllItemsSelected = true;
-  for (const itemId in items) {
-    areAllItemsSelected = areAllItemsSelected && items[itemId].shouldUpdate;
+  for (const itemSlug in items) {
+    if (
+      !(
+        (dmdTask.shouldUpdateInAccess &&
+          items[itemSlug].updatedInAccess === "Yes") ||
+        (dmdTask.shouldUpdateInPreservation &&
+          items[itemSlug].updatedInAccess === "Yes")
+      ) &&
+      items[itemSlug].parseSuccess
+    )
+      areAllItemsSelected = areAllItemsSelected && items[itemSlug].shouldUpdate;
   }
   return areAllItemsSelected;
 }
@@ -407,8 +316,7 @@ export const dmdTasksStore = {
   initializeTask,
   getTask,
   updateTask,
-  lookupTaskItems,
-  storeTaskItemsToSwift,
+  storeTaskItemMetadata,
   toggleAllItemsSelected,
   checkIfAllTaskItemsSelected,
 };

@@ -4,12 +4,12 @@
   import JsonTree from "$lib/components/shared/JsonTree.svelte";
   import XmlViewer from "$lib/components/shared/XmlViewer.svelte";
   import Modal from "$lib/components/shared/Modal.svelte";
-  import SideMenuContainer from "../shared/SideMenuContainer.svelte";
-  import SideMenuPageList from "../shared/SideMenuPageList.svelte";
-  import SideMenuPageListButton from "../shared/SideMenuPageListButton.svelte";
-  import SideMenuBody from "../shared/SideMenuBody.svelte";
-  import SideMenuPage from "../shared/SideMenuPage.svelte";
-  import NotificationBar from "../shared/NotificationBar.svelte";
+  import SideMenuContainer from "$lib/components/shared/SideMenuContainer.svelte";
+  import SideMenuPageList from "$lib/components/shared/SideMenuPageList.svelte";
+  import SideMenuPageListButton from "$lib/components/shared/SideMenuPageListButton.svelte";
+  import SideMenuBody from "$lib/components/shared/SideMenuBody.svelte";
+  import SideMenuPage from "$lib/components/shared/SideMenuPage.svelte";
+  import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
 
   /**
    *  @type { string } The 'id' of the DMDTask being shown.

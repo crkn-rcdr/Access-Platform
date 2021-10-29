@@ -10,13 +10,13 @@
       if (page.path === "/smelter") return { props: { activePageIndex: 0 } };
       else if (page.path.includes("find"))
         return { props: { activePageIndex: 0 } };
-      else if (page.path.includes("neversmelted"))
-        return { props: { activePageIndex: 1 } };
-      else if (page.path.includes("updated"))
-        return { props: { activePageIndex: 2 } };
       else if (page.path.includes("queue"))
-        return { props: { activePageIndex: 3 } };
+        return { props: { activePageIndex: 1 } };
       else if (page.path.includes("status"))
+        return { props: { activePageIndex: 2 } };
+      else if (page.path.includes("neversmelted"))
+        return { props: { activePageIndex: 3 } };
+      else if (page.path.includes("updated"))
         return { props: { activePageIndex: 4 } };
     } catch (e) {
       return { props: { error: e?.message } };
