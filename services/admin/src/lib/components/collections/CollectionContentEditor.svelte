@@ -28,7 +28,18 @@ Allows the user to modify the member list for a collection.
   let activeMemberIndex: number = 0;
   const dispatch = createEventDispatcher();
   let documentSlug: [] = [];
-
+  /**
+   * @type {string} A control for what component is displayed in the free space of the content editor.
+   */
+  let state = "view";
+  /**
+   * Sets @var state to the newState passed in.
+   * @param newState
+   * @returns void
+   */
+  function changeView(newState: string) {
+    state = newState;
+  }
   async function getMemberContext() {
     let currentMembers = collection.members.map((members) => members.id);
 
@@ -81,10 +92,14 @@ Allows the user to modify the member list for a collection.
 {#if collection}
   <div>
     <CollectionMembersAddition
+      showAddButton={state != "add"}
       bind:destinationMember={collection}
       bind:contextDisplay={documentSlug}
       on:done={() => {
         setActiveIndex(0);
+      }}
+      on:addClicked={() => {
+        changeView("add");
       }}
     />
     <br />

@@ -1,11 +1,12 @@
 <script lang="ts">
   import type { Depositor, Session } from "$lib/types";
   import { getStores } from "$app/stores";
-
+  import { createEventDispatcher } from "svelte";
   import type { Collection } from "@crkn-rcdr/access-data/src/access/Collection";
   import TiArrowBack from "svelte-icons/ti/TiArrowBack.svelte";
 
   import PrefixSelector from "$lib/components/access-objects/PrefixSelector.svelte";
+  import ToggleButtons from "$lib/components/shared/ToggleButtons.svelte";
 
   /**
    * @type {Collection} The Collection where the members are added to.
@@ -33,12 +34,33 @@
   let addedMember = false;
 
   /**
+   * @type {boolean} If the add button should be displayed over the list of members.
+   */
+  export let showAddButton = true;
+  /**
    * @type {string} An prefix to the Depositor.
    */
   let depositor: Depositor = {
     prefix: "none",
     label: "",
   };
+  /**
+   * @type { string } The label for the by-slug toggle
+   */
+  const LOOKUP_MEMBER = "Look_up_slugs";
+
+  /**
+   * @type { string } The selected lookup method
+   */
+  let memberLookup: string = LOOKUP_MEMBER;
+  /**
+   * @type { boolean } If the lookup has completed run once yet.
+   */
+  let lookupDone: boolean = false;
+  /**
+   * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.
+   */
+  const dispatch = createEventDispatcher();
 
   /**
    * When a collection is selected from the table of search results, grab its details from the backend.
@@ -47,6 +69,7 @@
    */
   function addClicked() {
     addedMember = true;
+    dispatch("addClicked");
   }
 
   let id: string = destinationMember.id;
@@ -79,6 +102,8 @@
 
   function handleCancelPressed() {
     addedMember = false;
+    showAddButton = true;
+    dispatch("done");
   }
 
   /**
@@ -113,7 +138,11 @@
       destinationMember = destinationMember;
     }
     addedMember = false;
-    isMemberSelected = true;
+    showAddButton = true;
+    //isMemberSelected = true;
+    //dispatch("done");
+    resolutions = {};
+    clearText();
   }
   function clearText() {
     input = "";
@@ -125,33 +154,46 @@
 </script>
 
 <div class="canvas-selector-wrap add-menu">
-  {#if !isMemberSelected}
-    <div class="move-button">
-      <button class="primary lg" on:click={addClicked}>Member LookUp</button>
-      {#if addedMember}
-        <div class="exit-button">
-          <button
-            class="secondary cancel-button auto-align auto-align__a-center"
-            on:click={handleCancelPressed}
-          >
-            <div class="icon">
-              <TiArrowBack />
-            </div>
-            Exit
-          </button>
-          
-        </div>
-      {/if}
-    </div>
+  <div
+    class="move-button auto-align auto-align__full auto-align auto-align__column"
+  >
+    {#if showAddButton}
+      <!--  <button class="primary lg" on:click={addClicked}>Member LookUp</button> -->
+      <ToggleButtons
+        activeIndex={memberLookup === LOOKUP_MEMBER ? 0 : 1}
+        color={lookupDone ? "secondary" : "primary"}
+        options={[LOOKUP_MEMBER]}
+        on:select={addClicked}
+      />
+    {/if}
     {#if addedMember}
-      <div>
-        <PrefixSelector bind:depositor />
-        <textarea bind:value={input} /><br />
-        <button class="primary lg" on:click={resolveMembers}>Lookup</button>
-        <button class="primary lg" on:click={clearText}>Clear Text</button>
-        <br />
+      <div class="exit-button">
+        <button
+          class="secondary cancel-button auto-align auto-align__a-center"
+          on:click={handleCancelPressed}
+        >
+          <div class="icon">
+            <TiArrowBack />
+          </div>
+          Exit
+        </button>
       </div>
+    {/if}
+  </div>
+  {#if addedMember}
+    <div>
+      <PrefixSelector bind:depositor />
+      <textarea
+        rows="4"
+        placeholder="Enter a list of slugs seperated by commas or new lines."
+        bind:value={input}
+      /><br /> <br />
+      <button class="primary lg" on:click={resolveMembers}>Lookup</button>
+      <button class="primary lg" on:click={clearText}>Clear Text</button>
       <br />
+    </div>
+    <br />
+    {#if !showAddButton}
       {#if resolutions}
         <table>
           <thead>
@@ -206,10 +248,8 @@
   }
   textarea {
     display: grid;
-    background-color: var(--primary-light);
+
     width: 100%;
-    height: 100%;
-    grid-column: 1/2;
   }
 
   .success {
