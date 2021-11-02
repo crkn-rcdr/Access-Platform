@@ -95,7 +95,7 @@
     });
 
     resolutions = response;
-
+    showAddButton = false;
     // I'm returning here so that we can type `resolutions` properly (see above)
     return response;
   }
@@ -103,6 +103,7 @@
   function handleCancelPressed() {
     addedMember = false;
     showAddButton = true;
+    clearText();
     dispatch("done");
   }
 
