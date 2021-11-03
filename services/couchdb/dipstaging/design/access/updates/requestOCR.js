@@ -17,12 +17,11 @@ module.exports = function (doc, req) {
 
   const now = timestamp();
 
-  const { user, slug } = data;
+  const { user } = data;
 
   doc.user = user;
-  doc.slug = slug;
   doc.updated = now;
-  doc.smelt = { requestDate: now };
+  doc.ocr = { requestDate: now };
 
   return successReturn(doc, "ok");
 };
