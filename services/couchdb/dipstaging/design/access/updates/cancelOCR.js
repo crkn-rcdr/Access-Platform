@@ -21,7 +21,7 @@ module.exports = function (doc, req) {
 
   doc.user = user;
   doc.updated = now;
-  delete doc.smelt;
+  delete doc.ocr;
 
   return successReturn(doc, "ok");
 };
