@@ -21,9 +21,38 @@ Allows the user to modify the member list for a collection.
   import { moveArrayElement } from "$lib/utils/arrayUtil";
   import TiTrash from "svelte-icons/ti/TiTrash.svelte";
   import CollectionMembersAddition from "./CollectionMembersAddition.svelte";
+  import { session } from "$app/stores";
+
   export let collection: Collection;
+
   let activeMemberIndex: number = 0;
   const dispatch = createEventDispatcher();
+  let documentSlug: [] = [];
+  /**
+   * @type {string} A control for what component is displayed in the free space of the content editor.
+   */
+  let state = "view";
+  /**
+   * Sets @var state to the newState passed in.
+   * @param newState
+   * @returns void
+   */
+  function changeView(newState: string) {
+    state = newState;
+  }
+  async function getMemberContext() {
+    let currentMembers = collection.members.map((members) => members.id);
+
+    const resolutions = await $session.lapin.query(
+      "collection.viewMembersContext",
+      currentMembers
+    );
+
+    console.log("know what it retrieves", resolutions);
+    documentSlug = resolutions.map((slug) => {
+      return { id: slug[0], result: slug[1].result };
+    });
+  }
   function setActiveIndex(index: number) {
     if (index >= collection.members.length)
       index = collection.members.length - 1;
@@ -53,17 +82,24 @@ Allows the user to modify the member list for a collection.
       setActiveIndex(activeMemberIndex);
     }
   }
+
   onMount(() => {
     if (collection.members.length) activeMemberIndex = 0;
+    getMemberContext();
   });
 </script>
 
 {#if collection}
   <div>
     <CollectionMembersAddition
+      showAddButton={state != "add"}
       bind:destinationMember={collection}
+      bind:contextDisplay={documentSlug}
       on:done={() => {
         setActiveIndex(0);
+      }}
+      on:addClicked={() => {
+        changeView("add");
       }}
     />
     <br />
@@ -112,7 +148,15 @@ Allows the user to modify the member list for a collection.
           <div id="grid">
             <ul>
               <li>
-                <a href="/object/{item?.data?.id}">{item?.data?.id}</a>
+                <a href="/object/{item?.data?.id}">{item?.data?.id}</a><br />
+
+                {#each documentSlug as document}
+                  {#if document["result"]?.["label"]?.["none"] && document["id"] === item?.data?.id}
+                    {document["result"]["slug"]} : {document["result"]["label"][
+                      "none"
+                    ]}
+                  {/if}
+                {/each}
               </li>
             </ul>
           </div>
