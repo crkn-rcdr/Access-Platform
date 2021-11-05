@@ -3,6 +3,7 @@ module.exports = function (doc, req) {
     successReturn,
     errorReturn,
     extractJSONFromBody,
+    updateGenericObject,
     timestamp,
   } = require("views/lib/prelude");
 
@@ -15,12 +16,10 @@ module.exports = function (doc, req) {
     return errorReturn(`Could not parse request body as JSON: ${req.body}`);
   }
 
-  const now = timestamp();
-
   const { user } = data;
+  updateGenericObject(doc, user);
 
-  doc.user = user;
-  doc.updated = now;
+  const now = timestamp();
   doc.ocr = { requestDate: now };
 
   return successReturn(doc, "ok");
