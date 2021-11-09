@@ -30,7 +30,7 @@ export const slugRouter = createRouter()
       ] as const);
     },
   })
-  .query("resolveMany", {
+  .mutation("resolveMany", {
     input: SlugArray.parse,
     async resolve({ input, ctx }) {
       return await ctx.couch.access.findUniqueArray("slug", input, [

@@ -58,7 +58,7 @@ export const LegacyPackage = z.object({
   /**
    * Date when this record's `METS` fields were last updated.
    */
-  METSDate: Timestamp,
+  METSDate: Timestamp.optional(),
 
   /**
    * Date when this record was last updated.
@@ -76,6 +76,11 @@ export const LegacyPackage = z.object({
   smelt: SmeltProcess.optional(),
 
   /**
+   * Request to extract OCR information from his package.
+   */
+   ocr: SmeltProcess.optional(),
+
+   /**
    * A record of the staff member who caused this record to be updated.
    */
   staff: StaffUpdate.optional(),
@@ -144,7 +149,7 @@ export type ImportStatus =
 export const getImportStatus = (
   id: Slug,
   lp: LegacyPackage | undefined,
-  noid?: Noid
+  noid: Noid | null = null
 ): ImportStatus => {
   if (!lp) return { status: "not-found", id };
   const { repos, reposManifestDate: ingestDate, slug, smelt, staff } = lp;

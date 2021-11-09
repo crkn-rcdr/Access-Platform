@@ -61,11 +61,11 @@ The resolver component allows the user to enter a slug, and then a request is se
 
   async function slugSelector() {
     let slugs = input.split(/[,|\s]/);
-    if (depositor.prefix !== "none") {
-      slugs = slugs.map((slug) => depositor.prefix + slug);
+    if (depositor?.prefix !== "none") {
+      slugs = slugs.map((slug) => depositor?.prefix + slug);
     }
 
-    const response = await $session.lapin.query("slug.resolveMany", slugs);
+    const response = await $session.lapin.mutation("slug.resolveMany", slugs);
     //console.log("response", response);
 
     dispatch("found", response);

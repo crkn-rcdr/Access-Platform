@@ -61,6 +61,7 @@ const checkAdditions = z.object({
   slugArray: z.array(Slug),
 });
 
+const id = z.array(Noid);
 export const collectionRouter = createRouter()
   .query("pageAfter", {
     input: PageAfterInput.parse,
@@ -152,6 +153,20 @@ export const collectionRouter = createRouter()
         await ctx.couch.access.removeMember(input);
         await ctx.couch.access.forceUpdate(input.member);
       } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .query("viewMembersContext", {
+    input: id.parse,
+    async resolve({ input, ctx }) {
+      try {
+        return await ctx.couch.access.findUniqueArray("id", input, [
+          "slug",
+          "label",
+        ] as const);
+      } catch (e) {
+        console.log(e?.message);
         throw httpErrorToTRPC(e);
       }
     },

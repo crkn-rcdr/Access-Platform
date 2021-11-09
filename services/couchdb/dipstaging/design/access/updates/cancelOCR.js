@@ -18,7 +18,7 @@ module.exports = function (doc, req) {
   const { user } = data;
   updateGenericObject(doc, user);
 
-  delete doc.smelt;
+  delete doc.ocr;
 
   return successReturn(doc, "ok");
 };

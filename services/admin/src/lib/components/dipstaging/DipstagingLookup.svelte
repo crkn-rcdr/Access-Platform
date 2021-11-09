@@ -15,6 +15,7 @@ This component allows the user to find packages in the dipstaging database.
 *Note: `bind:` is required for changes to the properties to be reflected in higher level components.*
 -->
 <script lang="ts">
+  import Flatpickr from "svelte-flatpickr";
   import { getStores } from "$app/stores";
   import PrefixSelector from "$lib/components/access-objects/PrefixSelector.svelte";
   import ToggleButtons from "$lib/components/shared/ToggleButtons.svelte";
@@ -22,6 +23,7 @@ This component allows the user to find packages in the dipstaging database.
   import type { ImportStatus } from "@crkn-rcdr/access-data";
   import LoadingButton from "$lib/components/shared/LoadingButton.svelte";
   import NotificationBar from "../shared/NotificationBar.svelte";
+  import Datepicker from "../shared/Datepicker.svelte";
 
   /**
    * @type {ImportStatus[]}
@@ -35,12 +37,13 @@ This component allows the user to find packages in the dipstaging database.
   const { session } = getStores<Session>();
 
   /**
-   * @type { AccessPlatform } The access platform to look for the items in.
+   * @type { Depositor } The access platform to look for the items in.
    */
-  let depositor: Depositor = {
+  let depositor: Depositor | null = null;
+  /*{
     prefix: "none",
     label: "",
-  };
+  };*/
 
   /**
    * @type { string } The label for the by-slug toggle
@@ -152,9 +155,12 @@ This component allows the user to find packages in the dipstaging database.
     if (slugList.includes(",")) slugList = slugListString.split(",");
     else slugList = slugListString.split("\n");
     slugList = slugList.filter((slug) => slug.trim().length);
+    console.log("Searching", slugList);
     if (slugList.length) {
-      if (depositor.prefix !== "none")
-        slugList = slugList.map((slug) => `${depositor.prefix}.${slug.trim()}`);
+      if (depositor?.prefix !== "none")
+        slugList = slugList.map(
+          (slug) => `${depositor?.prefix}.${slug.trim()}`
+        );
       else slugList = slugList.map((slug) => slug.trim());
       const response = await $session.lapin.query(
         "dipstaging.listFromKeys",
@@ -164,6 +170,17 @@ This component allows the user to find packages in the dipstaging database.
       lookupDone = true;
     }
     loading = false;
+  }
+
+  function handleDateRangeSelected(event: { detail: any[] }) {
+    console.log(event.detail);
+    if (event.detail.length === 3) {
+      const dates = event.detail[1].split(" to ");
+      if (dates.length === 2) {
+        startDateStr = dates[0];
+        endDateStr = dates[1];
+      }
+    }
   }
 </script>
 
@@ -190,7 +207,7 @@ This component allows the user to find packages in the dipstaging database.
         <br />
       </div>
     {:else}
-      <label for="start">Start date:</label><br />
+      <!--label for="start">Start date:</label><br />
       <input
         type="date"
         id="start"
@@ -199,11 +216,24 @@ This component allows the user to find packages in the dipstaging database.
       /><br /><br />
 
       <label for="end">End date:</label><br />
-      <input type="date" id="end" name="trip-end" bind:value={endDateStr} /><br
-      /><br />
+      <input type="date" id="end" name="trip-end" bind:value={endDateStr} /-->
+
+      <span class="flatpickr-date-filter-label">Select a date range:</span>
+      <br />
+      <Datepicker
+        placeholder="Select a date range"
+        bind:startDateStr
+        bind:endDateStr
+        options={{ mode: "range" }}
+      />
+      <br />
+      <br />
     {/if}
   </div>
 </div>
+
+<NotificationBar message={error} status="fail" />
+<br />
 
 <div class="extra-spacing">
   <span class="lookup-button">
@@ -212,7 +242,7 @@ This component allows the user to find packages in the dipstaging database.
         buttonClass={lookupDone ? "secondary" : "primary"}
         on:clicked={handleLookupPressedSlugList}
         showLoader={loading}
-        disabled={slugListString.length === 0}
+        disabled={!depositor || slugListString.length === 0}
       >
         <span slot="content">
           {lookupDone ? "Look-up Packages Again" : "Look-up Packages"}
@@ -223,7 +253,7 @@ This component allows the user to find packages in the dipstaging database.
         buttonClass={lookupDone ? "secondary" : "primary"}
         on:clicked={handleLookupPressedDates}
         showLoader={loading}
-        disabled={!(startDateStr.length && endDateStr.length)}
+        disabled={!startDateStr.length || !endDateStr.length}
       >
         <span slot="content">
           {lookupDone ? "Look-up Packages Again" : "Look-up Packages"}
@@ -232,8 +262,6 @@ This component allows the user to find packages in the dipstaging database.
     {/if}
   </span>
 </div>
-
-<NotificationBar message={error} status="fail" />
 
 <style>
   .lookup-wrap {
@@ -252,7 +280,7 @@ This component allows the user to find packages in the dipstaging database.
   .lookup-button {
     float: right;
   }
-  input {
+  :global(.user-input input) {
     width: 100%;
   }
 </style>

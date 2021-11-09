@@ -103,7 +103,7 @@ A card component that optionally allows for user selection
     </button>
   </li>
   {#each buttons as button}
-    {#if page + button >= 0 && page + button < pageCount}
+    {#if page + button >= 0 && page + button <= pageCount}
       <li>
         <button
           class:active={page === page + button}
@@ -143,7 +143,7 @@ A card component that optionally allows for user selection
 <style>
   .page-size {
     display: inline-block;
-    margin-top: 0.8em;
+    margin-top: var(--margin-sm);
   }
   .active {
     background-color: var(--primary-light);

@@ -27,6 +27,7 @@ This component shows the results of a dipstaging package view. It allows the use
   import Resolver from "$lib/components/access-objects/Resolver.svelte";
   import Loading from "$lib/components/shared/Loading.svelte";
   import XmlViewer from "$lib/components/shared/XmlViewer.svelte";
+  import NotificationBar from "../shared/NotificationBar.svelte";
 
   /**
    * @type {LegacyPackage[]}
@@ -47,29 +48,45 @@ This component shows the results of a dipstaging package view. It allows the use
   export let view: string = "updated";
 
   /**
+   * @type {boolean}
+   * An indicator of if the result's item models are being processed or not
+   */
+  export let loading = false;
+
+  /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
    */
   const { session } = getStores<Session>();
 
   /**
-   * @type {any} A map from ImportStatus.id => if the item is selected in the table
+   * @type {any} A map from LegacyPackage.id => if the item is selected in the table
    */
   let selectedMap: any = {};
 
   /**
-   * @type {any} A map from ImportStatus.id => if the request for adding the item to the smelte queue was sucessful or not
+   * @type {any} A map from LegacyPackage.id => if the request for adding the item to the smelte queue was sucessful or not
    */
   let sucessfulSmeltRequestMap: any = {};
 
   /**
-   * @type {any} A map from ImportStatus.id => if the item in the table is expanded or not
+   * @type {any} A map from LegacyPackage.id => if the item in the table is expanded or not
    */
   let expandedMap: any = {};
 
   /**
-   * @type {any} A map from ImportStatus.id => if the slug of the item's slug is available.
+   * @type {any} A map from LegacyPackage.id => if the slug of the item's slug is available.
    */
   let slugAvailableMap: any = {};
+
+  /**
+   * @type {any} A map from LegacyPackage.id => if the slug of the item's slug is available.
+   */
+  let noidMap: any = {};
+
+  /**
+   * @type {any} A map from LegacyPackage.id => if the slug of the item's slug is available.
+   */
+  let slugMap: any = {};
 
   /**
    * @type {boolean}
@@ -77,11 +94,7 @@ This component shows the results of a dipstaging package view. It allows the use
    */
   let itemsAreSelected: boolean = true;
 
-  /**
-   * @type {boolean}
-   * An indicator of if the result's item models are being processed or not
-   */
-  let loading = false;
+  let error = "";
 
   /**
    * Keeps track if @param item is selected or not
@@ -112,6 +125,7 @@ This component shows the results of a dipstaging package view. It allows the use
    * @returns void
    */
   async function handleRunSmelterPressed() {
+    error = "";
     for (const item of results) {
       if (selectedMap[item.id]) {
         try {
@@ -120,14 +134,14 @@ This component shows the results of a dipstaging package view. It allows the use
             {
               user: $session.user,
               id: item.id,
-              slug: item.slug,
+              slug: slugMap[item["id"]],
             }
           );
           sucessfulSmeltRequestMap[item.id] = true;
           selectedMap[item.id] = false;
         } catch (e) {
           sucessfulSmeltRequestMap[item.id] = false;
-          console.log(e?.message);
+          error = e?.message;
         }
       }
     }
@@ -158,8 +172,12 @@ This component shows the results of a dipstaging package view. It allows the use
    * @returns void
    */
   function checkIfSlugsDefined() {
+    if (!results) return;
     for (const item of results) {
-      if (!item.slug) item.slug = item.id;
+      if (!item["slug"]) {
+        item.slug = item.id;
+        slugMap[item.id] = item.id;
+      } else slugMap[item.id] = item.slug;
     }
     results = results;
   }
@@ -169,6 +187,7 @@ This component shows the results of a dipstaging package view. It allows the use
    * @returns void
    */
   function setExpandedModel() {
+    if (!results) return;
     for (const item of results) {
       if (!(item.id in expandedMap)) expandedMap[item.id] = false;
     }
@@ -180,6 +199,7 @@ This component shows the results of a dipstaging package view. It allows the use
    * @returns void
    */
   function setSelectedModel() {
+    if (!results) return;
     for (const item of results) {
       if (!(item.id in selectedMap) && isItemSelectable(item))
         selectedMap[item.id] = false;
@@ -199,6 +219,29 @@ This component shows the results of a dipstaging package view. It allows the use
     );
   }
 
+  async function getSlugAvailability() {
+    if (!results) return;
+    error = "";
+
+    const slugs = Object.keys(slugMap);
+
+    try {
+      const response = await $session.lapin.mutation(`slug.resolveMany`, slugs);
+      for (const result of response) {
+        if (result.length === 2) {
+          const slug = result[0];
+          const info = result[1];
+          slugAvailableMap[slug] = !info.found;
+          if (info.found && info.result) {
+            noidMap[slug] = info.result.id;
+          }
+        }
+      }
+    } catch (e) {
+      error = e?.message;
+    }
+  }
+
   /**
    * @listens results
    * @description Calls @function checkIfSlugsDefined and @function setExpandedModel and @function setSelectedModel any time the results change. Also sets loading to re-trigger the draw of the slug resolvers
@@ -206,10 +249,14 @@ This component shows the results of a dipstaging package view. It allows the use
   $: {
     loading = true;
     results;
-    checkIfSlugsDefined();
-    setExpandedModel();
-    setSelectedModel();
-    loading = false;
+    Promise.all([
+      checkIfSlugsDefined(),
+      getSlugAvailability(),
+      setExpandedModel(),
+      setSelectedModel(),
+    ]).then(() => {
+      loading = false;
+    });
   }
 
   /**
@@ -231,10 +278,12 @@ This component shows the results of a dipstaging package view. It allows the use
     Object.keys(selectedMap).filter((key) => selectedMap[key]).length > 0;
 </script>
 
+<NotificationBar message={error} status="fail" />
+
 {#if !loading}
   <!--Can run smelter if a) their status is neither "not-found" or "processing" b) their slug isn't already taken by a noid.-->
   {#if typeof results !== "undefined" && typeof pageNumber !== "undefined"}
-    <div class="table-actions auto-align auto-align__a-end">
+    <div class="table-actions auto-align auto-align__a-center">
       <slot name="actions" />
       {#if view !== "queue"}
         <button
@@ -246,8 +295,6 @@ This component shows the results of a dipstaging package view. It allows the use
         </button>
       {/if}
     </div>
-    <br />
-    <br />
     <div class="table-wrap">
       <table>
         <thead>
@@ -255,7 +302,6 @@ This component shows the results of a dipstaging package view. It allows the use
             {#if view !== "queue"}
               <th>
                 <input type="checkbox" on:click={toggleAllSelected} />
-                <!--checked-->
               </th>
             {/if}
             <th>Id</th>
@@ -277,7 +323,6 @@ This component shows the results of a dipstaging package view. It allows the use
             <tr class:expanded={expandedMap[legacyPackage.id]}>
               {#if view !== "queue"}
                 <td>
-                  <!--slug taken logic-->
                   {#if sucessfulSmeltRequestMap[legacyPackage.id] || !slugAvailableMap[legacyPackage.id] || view === "queue"}
                     <input
                       type="checkbox"
@@ -293,20 +338,20 @@ This component shows the results of a dipstaging package view. It allows the use
                   {/if}
                 </td>
               {/if}
-              <!--
-            class:success={legacyPackage.smelt?.["succeeded"]}
-            class:not-success={!legacyPackage.smelt?.["succeeded"]}
-            class:normal={!legacyPackage.smelt ||
-              !("succeeded" in legacyPackage.smelt)}-->
               <td>
                 {legacyPackage.id}
               </td>
 
               <td>
                 <Resolver
+                  noid={legacyPackage.id in noidMap
+                    ? noidMap[legacyPackage.id]
+                    : null}
+                  isFound={!slugAvailableMap[legacyPackage.id]}
+                  alwaysShowIfFound={true}
+                  runInitial={false}
                   on:available={(e) => setSlugAvailability(e, legacyPackage)}
-                  bind:slug={legacyPackage.slug}
-                  hideInitial={false}
+                  bind:slug={slugMap[legacyPackage.id]}
                   size="sm"
                 />
               </td>
@@ -438,6 +483,7 @@ This component shows the results of a dipstaging package view. It allows the use
 <style>
   .table-actions {
     width: 100%;
+    margin-bottom: var(--margin-sm);
   }
   .table-actions button {
     margin-left: var(--margin-sm);

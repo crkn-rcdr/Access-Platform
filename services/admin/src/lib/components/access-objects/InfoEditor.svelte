@@ -25,42 +25,14 @@ This component displays the non content properties for an access editorObject an
    * @type {AccessObject} The AccessObject editorObject that will be manipulated by the user, usually, a copy of an access pbject that acts as a form model.
    */
   export let editorObject: AccessObject; // Not sure if we should pass an editorObject or have a list of props (ex: slug, label, ...) that can be null, and show ones that are instantiated only?
-
-  /**
-   * @type {boolean} Controls if the notification bar for slugs shows the error that the slug is unavailable, or if it shows a validation error (or nothing if it looks good)
-   */
-  let showSlugUnavailable = false;
-
-  /**
-   * @type {string} The message to be shown if the slug is not available.
-   */
-  let slugUnavailableMessage = "";
 </script>
 
 {#if editorObject}
   <form>
     {#if isManifest(editorObject) || isCollection(editorObject)}
       <label for="slug">Slug</label>
-      <NotificationBar
-        message={showSlugUnavailable
-          ? slugUnavailableMessage
-          : getSlugValidationMsg(editorObject["slug"])}
-        status="fail"
-      />
-      <Resolver
-        hideInitial={true}
-        hideUnavailableMsg={true}
-        bind:slug={editorObject["slug"]}
-        on:available={(event) => {
-          if (!event?.detail?.["status"]) {
-            slugUnavailableMessage = `${editorObject["slug"]} was unavailable.  The input has been reset, please try again with a different slug.`;
-            editorObject["slug"] = event.detail["slug"]; // No easier way to disable save button that I can think of
-            showSlugUnavailable = true;
-          } else {
-            showSlugUnavailable = false;
-          }
-        }}
-      />
+
+      <Resolver bind:slug={editorObject["slug"]} />
 
       <br /><br />
 

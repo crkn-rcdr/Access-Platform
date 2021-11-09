@@ -18,11 +18,8 @@ This component shows the view for a dmd task that had its metadata successfully 
   import type { SucceededDMDTask } from "@crkn-rcdr/access-data";
   import type { Depositor, DmdItemStates, DmdItemState } from "$lib/types";
   import ProgressBar from "$lib/components/shared/ProgressBar.svelte";
-  import ScrollStepper from "$lib/components/shared/ScrollStepper.svelte";
-  import ScrollStepperStep from "$lib/components/shared/ScrollStepperStep.svelte";
-  import DmdSuccessItemsTable from "$lib/components/dmd/DmdSuccessItemsTable.svelte";
-  import DmdSuccessItemLookup from "$lib/components/dmd/DmdSuccessItemLookup.svelte";
-  import DmdSuccessItemUpdater from "$lib/components/dmd/DmdSuccessItemUpdater.svelte";
+  import DmdSuccessItemsTable from "$lib/components/dmd/success/DmdSuccessItemsTable.svelte";
+  import DmdSuccessItemUpdater from "$lib/components/dmd/success/DmdSuccessItemUpdater.svelte";
   import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
   import { dmdTasksStore } from "$lib/stores/dmdTasksStore";
 
@@ -32,22 +29,19 @@ This component shows the view for a dmd task that had its metadata successfully 
   export let dmdTask: SucceededDMDTask;
 
   /**
-   * @type { number } The control for the stepper that lets the user either lookup or update the items in the @var dmdTask
+   *  @type { Depositor } The access platform to look for the items in.
    */
-  let activeStepIndex = 0;
+  let depositor: Depositor | null = null;
+
+  /*{
+    prefix: "none",
+    label: "",
+  };*/
 
   /**
-   *  @type { AccessPlatform } The access platform to look for the items in.
+   *  @type { string } A variable that contains the previously selected prefix of @var depositor, to ensure events are only fired when this value actually changes.
    */
-  let accessPlatform: Depositor = {
-    prefix: "oocihm",
-    label: "Canadiana.org",
-  };
-
-  /**
-   *  @type { string } A variable that contains the previously selected prefix of @var accessPlatform, to ensure events are only fired when this value actually changes.
-   */
-  let prevPrefix: string = "oocihm";
+  //let prevPrefix: string = "oocihm";
 
   /**
    *  @type { boolean } A control for if the 'all items XML metadata are invalid' view is showing, or if the table of results per item will show.
@@ -58,18 +52,6 @@ This component shows the view for a dmd task that had its metadata successfully 
    *  @type { boolean } The message to show if none of the items are found to be valid.
    */
   let showAllInvalidErrorMsg: string = "";
-
-  /**
-   * Sets the state of the dmd task to the initial state on page load.
-   * @returns void
-   */
-  function resetView() {
-    if (accessPlatform.prefix !== prevPrefix) {
-      $dmdTasksStore[dmdTask.id].lookupState = "ready";
-      $dmdTasksStore[dmdTask.id].updateState = "ready";
-    }
-    prevPrefix = accessPlatform.prefix;
-  }
 
   /**
    * Adds the dmd task to the dmd task store on page load. (If it isn't in the store already)
@@ -88,16 +70,17 @@ This component shows the view for a dmd task that had its metadata successfully 
           foundInAccess: "No",
           foundInPreservation: "No",
           updatedInAccess: "No",
+          updatedInAccessMsg: "",
           updatedInPreservation: "No",
-          shouldUpdate: true,
-          parseSuccess: item.parsed && item.message === "",
+          updatedInPreservationMsg: "",
+          shouldUpdate: item.parsed,
+          parseSuccess: item.parsed, //&& item.message === "",
         };
       }
       dmdTasksStore.initializeTask(dmdTask.id, {
-        lookupState: "ready",
         updateState: "ready",
         itemStates: items,
-        errorMsg: "",
+        resultMsg: "",
         shouldUpdateInPreservation: true,
         shouldUpdateInAccess: true,
         updatedProgressPercentage: 0,
@@ -123,20 +106,20 @@ This component shows the view for a dmd task that had its metadata successfully 
   }
 
   /**
-   * @listens $dmdTasksStore[dmdTask.id]?.lookupState
-   * @description Sets @var activeStepIndex, the control of the stepper, depending on if the user has looked up the items.
+   * @listens depositor
+   * @description Calls @function resetView when the @var depositor changes.
    */
-  $: activeStepIndex =
-    $dmdTasksStore[dmdTask.id]?.lookupState === "loaded" ? 1 : 0;
-
-  /**
-   * @listens accessPlatform
-   * @description Calls @function resetView when the @var accessPlatform changes.
-   */
-  $: {
-    accessPlatform;
+  /*$: {
+    depositor;
     resetView();
   }
+   function resetView() {
+    if (depositor?.prefix !== prevPrefix) {
+      $dmdTasksStore[dmdTask.id].updateState = "ready";
+    }
+    prevPrefix = depositor?.prefix;
+  }
+  */
 </script>
 
 {#if $dmdTasksStore && $dmdTasksStore[dmdTask.id]}
@@ -144,11 +127,21 @@ This component shows the view for a dmd task that had its metadata successfully 
     class="metadata-form"
     class:disabled={$dmdTasksStore[dmdTask.id].updateState === "updating"}
   >
-    <br />
     {#if dmdTask?.fileName}
       <h5>{dmdTask.fileName}</h5>
     {/if}
-    <br />
+
+    {#if $dmdTasksStore[dmdTask.id].updateState === "ready"}
+      <p>
+        Please take a moment to preview the metadata updates for each item in
+        the table. Then, select a depositor and choose where to apply the
+        updates to activate the 'Update Descriptive Metadata' button. You can
+        use the checkboxes in the table to control which items are updated when
+        pressing the update button.
+      </p>
+      <br />
+    {/if}
+
     <NotificationBar
       message={dmdTask.process.message?.length
         ? `File parsing ${dmdTask.process.succeeded ? "warning" : "error"}: ${
@@ -157,27 +150,22 @@ This component shows the view for a dmd task that had its metadata successfully 
         : ""}
       status={dmdTask.process.succeeded ? "warn" : "fail"}
     />
-    <br />
+
+    <NotificationBar
+      message={$dmdTasksStore[dmdTask.id].resultMsg}
+      status={$dmdTasksStore[dmdTask.id].updateState === "error"
+        ? "fail"
+        : "success"}
+    />
+
+    {#if $dmdTasksStore[dmdTask.id].resultMsg?.length}
+      <br />
+    {/if}
+
     {#if !showAllInvalidError}
-      <ScrollStepper
-        bind:activeStepIndex
-        displayPrevious={true}
-        enableAutoScrolling={false}
-      >
-        <ScrollStepperStep title="Select a prefix and look-up items">
-          <div slot="icon">1</div>
-          <DmdSuccessItemLookup dmdTaskId={dmdTask.id} bind:accessPlatform />
-        </ScrollStepperStep>
-        <ScrollStepperStep
-          title={`Update descriptive metadata for items found`}
-          isLastStep={true}
-        >
-          <div slot="icon">2</div>
-          {#if $dmdTasksStore[dmdTask.id].lookupState !== "loading"}
-            <DmdSuccessItemUpdater dmdTaskId={dmdTask.id} bind:accessPlatform />
-          {/if}
-        </ScrollStepperStep>
-      </ScrollStepper>
+      <DmdSuccessItemUpdater dmdTaskId={dmdTask.id} bind:depositor />
+      <br />
+      <br />
     {:else}
       <NotificationBar status="fail" message={showAllInvalidErrorMsg} />
       <br />
@@ -195,16 +183,16 @@ This component shows the view for a dmd task that had its metadata successfully 
         progress={$dmdTasksStore[dmdTask.id].updatedProgressPercentage}
         progressText={$dmdTasksStore[dmdTask.id].updatedProgressPercentage ===
         100
-          ? "updated!"
-          : "updating items..."}
+          ? "done!"
+          : "files updated..."}
       />
       <br />
-      <br />
     {/if}
+
     <DmdSuccessItemsTable
       bind:itemsToShow={dmdTask.items}
       bind:dmdTaskId={dmdTask.id}
-      bind:accessPlatform
+      bind:depositor
     />
   </div>
 {/if}

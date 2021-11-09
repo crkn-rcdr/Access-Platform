@@ -23,12 +23,19 @@ This component shows the results of a dipstaging find-package(s) request. It all
   import Resolver from "$lib/components/access-objects/Resolver.svelte";
   import Loading from "$lib/components/shared/Loading.svelte";
   import XmlViewer from "$lib/components/shared/XmlViewer.svelte";
+  import NotificationBar from "../shared/NotificationBar.svelte";
 
   /**
    * @type {ImportStatus[]}
    * The packages in the format of ImportStatus, to be displayed to the user/
    */
   export let results: ImportStatus[];
+
+  /**
+   * @type {boolean}
+   * An indicator of if the result's item models are being processed or not
+   */
+  export let loading = false;
 
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
@@ -56,16 +63,22 @@ This component shows the results of a dipstaging find-package(s) request. It all
   let slugAvailableMap: any = {};
 
   /**
+   * @type {any} A map from ImportStatus.id => if the slug of the item's slug is available.
+   */
+  let noidMap: any = {};
+
+  /**
+   * @type {any} A map from ImportStatus.id => if the slug of the item's slug is available.
+   */
+  let slugMap: any = {};
+
+  /**
    * @type {boolean}
    * An indicator if any item is selected or not. Helpful for the disabling of the smelter button.
    */
   let itemsAreSelected: boolean = true;
 
-  /**
-   * @type {boolean}
-   * An indicator of if the result's item models are being processed or not
-   */
-  let loading = false;
+  let error = "";
 
   /**
    * Keeps track if @param item is selected or not
@@ -96,6 +109,7 @@ This component shows the results of a dipstaging find-package(s) request. It all
    * @returns void
    */
   async function handleRunSmelterPressed() {
+    error = "";
     for (const item of results) {
       if (selectedMap[item.id]) {
         try {
@@ -104,14 +118,14 @@ This component shows the results of a dipstaging find-package(s) request. It all
             {
               user: $session.user,
               id: item.id,
-              slug: item["slug"],
+              slug: slugMap[item["id"]],
             }
           );
           sucessfulSmeltRequestMap[item.id] = true;
           selectedMap[item.id] = false;
         } catch (e) {
           sucessfulSmeltRequestMap[item.id] = false;
-          console.log(e?.message);
+          error = e?.message;
         }
       }
     }
@@ -144,7 +158,10 @@ This component shows the results of a dipstaging find-package(s) request. It all
   function checkIfSlugsDefined() {
     if (!results) return;
     for (const item of results) {
-      if (!item["slug"]) item["slug"] = item.id;
+      if (!item["slug"]) {
+        item["slug"] = item.id;
+        slugMap[item.id] = item.id;
+      } else slugMap[item.id] = item["slug"];
     }
     results = results;
   }
@@ -187,17 +204,52 @@ This component shows the results of a dipstaging find-package(s) request. It all
     );
   }
 
+  async function getSlugAvailability() {
+    if (!results) return;
+
+    error = "";
+
+    const slugs = Object.keys(slugMap);
+
+    while (slugs.length > 0) {
+      const slugBatch = slugs.splice(0, 500);
+      //results.map((item) => item.id);
+      try {
+        const response = await $session.lapin.mutation(
+          `slug.resolveMany`,
+          slugBatch
+        );
+        for (const result of response) {
+          if (result.length === 2) {
+            const slug = result[0];
+            const info = result[1];
+            slugAvailableMap[slug] = !info.found;
+            if (info.found && info.result) {
+              noidMap[slug] = info.result.id;
+            }
+          }
+        }
+      } catch (e) {
+        error = e?.message;
+      }
+    }
+  }
+
   /**
    * @listens results
    * @description Calls @function checkIfSlugsDefined and @function setExpandedModel and @function setSelectedModel any time the results change. Also sets loading to re-trigger the draw of the slug resolvers
    */
   $: {
-    results;
     loading = true;
-    checkIfSlugsDefined();
-    setExpandedModel();
-    setSelectedModel();
-    loading = false;
+    results;
+    Promise.all([
+      checkIfSlugsDefined(),
+      getSlugAvailability(),
+      setExpandedModel(),
+      setSelectedModel(),
+    ]).then(() => {
+      loading = false;
+    });
   }
 
   /**
@@ -218,6 +270,8 @@ This component shows the results of a dipstaging find-package(s) request. It all
   $: itemsAreSelected =
     Object.keys(selectedMap).filter((key) => selectedMap[key]).length > 0;
 </script>
+
+<NotificationBar message={error} status="fail" />
 
 {#if !loading}
   <div class="button-wrap" class:disabled={!results}>
@@ -263,9 +317,14 @@ This component shows the results of a dipstaging find-package(s) request. It all
             <td>
               {#if importStatus.status !== "not-found"}
                 <Resolver
+                  noid={importStatus["id"] in noidMap
+                    ? noidMap[importStatus["id"]]
+                    : null}
+                  isFound={!slugAvailableMap[importStatus["id"]]}
+                  alwaysShowIfFound={true}
+                  runInitial={false}
                   on:available={(e) => setSlugAvailability(e, importStatus)}
-                  bind:slug={importStatus["slug"]}
-                  hideInitial={false}
+                  bind:slug={slugMap[importStatus["id"]]}
                   size="sm"
                 />
               {/if}

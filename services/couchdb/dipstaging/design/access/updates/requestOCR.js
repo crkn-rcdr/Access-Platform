@@ -4,6 +4,7 @@ module.exports = function (doc, req) {
     errorReturn,
     extractJSONFromBody,
     updateGenericObject,
+    timestamp,
   } = require("views/lib/prelude");
 
   if (!doc) {
@@ -18,7 +19,8 @@ module.exports = function (doc, req) {
   const { user } = data;
   updateGenericObject(doc, user);
 
-  delete doc.smelt;
+  const now = timestamp();
+  doc.ocr = { requestDate: now };
 
   return successReturn(doc, "ok");
 };

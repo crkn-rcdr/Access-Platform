@@ -39,8 +39,8 @@ export const dipstagingRouter = createRouter()
       try {
         return await ctx.couch.dipstaging.listFromDates(
           input.from,
-          input.to,
-          ctx.couch.access
+          input.to
+          //ctx.couch.access
         );
       } catch (e) {
         throw httpErrorToTRPC(e);

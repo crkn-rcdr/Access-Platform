@@ -81,12 +81,11 @@
    * @file
    * @description This page displays the information about the dipstaging process
    */
-  //import type { ImportStatus } from "@crkn-rcdr/access-data";
-  //import DipstagingTable from "$lib/components/dipstaging/DipstagingTable.svelte";
-
+  import Flatpickr from "svelte-flatpickr";
   import Paginator from "$lib/components/shared/Paginator.svelte";
   import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
   import { goto } from "$app/navigation";
+  import Datepicker from "$lib/components/shared/Datepicker.svelte";
 
   export let results: LegacyPackage[]; //: ImportStatus[]
   export let pageNumber: number;
@@ -96,6 +95,8 @@
   export let error: string = "";
   export let dates: string[];
   export let status: boolean;
+
+  let loading = true;
 
   function getDateRouteStr() {
     return dates?.length && dates[0].length ? `/${dates.toString()}` : "";
@@ -124,37 +125,48 @@
     const route = `/smelter/${view}/${event.detail.page}/${
       event.detail.pageSize
     }${datesRouteStr.length ? datesRouteStr + statusRouteStr : "/all"}`;
+    loading = true;
     goto(route, { noscroll: true });
+  }
+
+  function handleDateRangeSelected(event: { detail: any[] }) {
+    console.log(event.detail);
+    if (event.detail.length === 3) {
+      dates = event.detail[1].split(" to ");
+    }
   }
 </script>
 
-<!--
-{results}
-{pageNumber}
-{count}-->
-
 <NotificationBar message={error} status="fail" />
 {#if typeof results !== "undefined" && typeof pageNumber !== "undefined" && typeof count !== "undefined"}
-  <DipstagingLegacyPackageTable bind:results bind:view bind:pageNumber>
-    <span slot="actions" class="dates auto-align auto-align__a-end">
+  <DipstagingLegacyPackageTable
+    bind:results
+    bind:view
+    bind:pageNumber
+    bind:loading
+  >
+    <span slot="actions" class="dates auto-align auto-align__a-center">
       {#if view === "status"}
-        <span class="status auto-align auto-align__column">
-          <label for="status">Status:</label>
+        <span class="status-select auto-align auto-align__a-center">
           <select name="status" bind:value={status}>
-            <option disabled selected value>select an option</option>
+            <option disabled selected value>Select a status</option>
             <option value={true}>Succeeded</option>
             <option value={false}>Failed</option>
           </select>
         </span>
       {/if}
-      <span class="auto-align auto-align__column">
-        <label for="start">Start date:</label>
-        <input type="date" id="start" name="start" bind:value={dates[0]} />
-      </span>
-      <span class="auto-align auto-align__column">
-        <label for="end">End date:</label>
-        <input type="date" id="end" name="end" bind:value={dates[1]} />
-      </span>
+
+      <div class="auto-align auto-align__a-center">
+        {#if dates && dates.length === 2}
+          <Datepicker
+            placeholder="Select a date range"
+            bind:startDateStr={dates[0]}
+            bind:endDateStr={dates[1]}
+            options={{ mode: "range" }}
+          />
+        {/if}
+      </div>
+
       <button
         class="refine-button primary"
         on:click={filter}
@@ -199,8 +211,11 @@
   .refine-button {
     margin-left: var(--margin-sm);
   }
-  .status select {
-    margin-top: 0;
+  .status-select,
+  .status-select label {
+    margin-right: var(--margin-sm);
+  }
+  .status-select select {
     padding: 1.15rem var(--perfect-fourth-8);
   }
 </style>

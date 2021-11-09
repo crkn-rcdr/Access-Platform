@@ -124,6 +124,7 @@ export class Client implements ClientInterface {
     const headers = new Headers(options.headers);
     headers.set("X-Auth-Token", await this.authorize());
 
+    // TODO: retry here too?
     const response = await fetch(url, {
       method,
       headers,
