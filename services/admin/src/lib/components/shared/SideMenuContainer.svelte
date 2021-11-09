@@ -179,16 +179,28 @@ A component that shows a navigable set of pages with a side menu to allow the us
    */
   $: pageComponents = pageList.map((el) => el["componentData"]);
 
+  function setInstanceEvents() {
+    for (const key in instances) {
+      instances[key].$$.after_update.push(() => {
+        pageComponents[parseInt(key)].update();
+      });
+
+      if (pageComponents[key]?.listeners) {
+        for (let [id, listener] of Object.entries(
+          pageComponents[key].listeners
+        )) {
+          instances[key].$on(id, listener);
+        }
+      }
+    }
+  }
   /**
    * @listens instances
    * @description Any time the instances object changes, add a callback to each component instance that triggers the update method passed in through the SideMenuPageData objects in the pageList array property.
    */
   $: {
-    for (const key in instances) {
-      instances[key].$$.after_update.push(() => {
-        pageComponents[parseInt(key)].update();
-      });
-    }
+    instances;
+    setInstanceEvents();
   }
 </script>
 

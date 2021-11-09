@@ -6,7 +6,7 @@ This component displays the non content properties for an access editorObject an
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| serverObject: AccessObject | required | The AccessObject editorObject that will be manipulated by the user, usually, a copy of an access pbject that acts as a form model. |
+| editorObject: AccessObject | required | The AccessObject that will be manipulated by the user, usually, a copy of an access pbject that acts as a form model. |
 
 ### Usage
 ```  
@@ -17,22 +17,41 @@ This component displays the non content properties for an access editorObject an
 <script lang="ts">
   import { isManifest, isCollection } from "@crkn-rcdr/access-data";
   import type { AccessObject } from "@crkn-rcdr/access-data";
-  import { getSlugValidationMsg, typedChecks } from "$lib/utils/validation";
+  import { typedChecks } from "$lib/utils/validation";
   import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
   import Resolver from "$lib/components/access-objects/Resolver.svelte";
+  import EditorInput from "$lib/components/access-objects/EditorInput.svelte";
+  import { createEventDispatcher } from "svelte";
 
   /**
    * @type {AccessObject} The AccessObject editorObject that will be manipulated by the user, usually, a copy of an access pbject that acts as a form model.
    */
   export let editorObject: AccessObject; // Not sure if we should pass an editorObject or have a list of props (ex: slug, label, ...) that can be null, and show ones that are instantiated only?
+
+  /**
+   * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.
+   */
+  const dispatch = createEventDispatcher();
+
+  function handleSavePressed(event: any) {
+    dispatch("save", event.detail);
+  }
 </script>
 
 {#if editorObject}
-  <form>
+  <div class="info-form">
     {#if isManifest(editorObject) || isCollection(editorObject)}
       <label for="slug">Slug</label>
-
-      <Resolver bind:slug={editorObject["slug"]} />
+      <EditorInput
+        objectId={editorObject["id"]}
+        keys={["slug"]}
+        bind:value={editorObject["slug"]}
+        on:save={handleSavePressed}
+      >
+        <div>
+          <Resolver bind:slug={editorObject["slug"]} />
+        </div>
+      </EditorInput>
 
       <br /><br />
 
@@ -44,16 +63,25 @@ This component displays the non content properties for an access editorObject an
         )}
         status="fail"
       />
-      <textarea
-        id="label"
-        name="label"
+      <EditorInput
+        objectId={editorObject["id"]}
+        keys={["label", "none"]}
         bind:value={editorObject["label"]["none"]}
-        on:keyup={() => {
-          // Triggers validation msg
-          if (editorObject?.["label"]?.["none"]?.length === 0)
-            editorObject["label"]["none"] = undefined;
-        }}
-      /><br /><br />
+        on:save={handleSavePressed}
+      >
+        <textarea
+          id="label"
+          name="label"
+          bind:value={editorObject["label"]["none"]}
+          on:keyup={() => {
+            // Triggers validation msg
+            if (editorObject?.["label"]?.["none"]?.length === 0)
+              editorObject["label"]["none"] = undefined;
+          }}
+        />
+      </EditorInput>
+
+      <br /><br />
 
       {#if isCollection(editorObject)}
         <label for="behavior">Behaviour</label><br />
@@ -84,11 +112,11 @@ This component displays the non content properties for an access editorObject an
     </select>
   </span><br /-->
     {/if}
-  </form>
+  </div>
 {/if}
 
 <style>
-  form {
+  .info-form {
     padding: 1.5rem;
   }
   label,

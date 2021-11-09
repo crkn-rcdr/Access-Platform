@@ -1,0 +1,51 @@
+<script lang="ts">
+  import ValueSaveForm from "$lib/components/shared/ValueSaveForm.svelte";
+  import { createEventDispatcher } from "svelte";
+
+  export let objectId: string;
+  export let keys: string[];
+  export let value: any;
+
+  /**
+   * @type {AccessObject} The AccessObject editorObject that will be manipulated by the user, usually, a copy of an access pbject that acts as a form model.
+   */
+  //export let editorObject: AccessObject;
+  /**
+   * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.
+   */
+  const dispatch = createEventDispatcher();
+
+  /**
+   * @type {"create" | "edit"} An indicator variable if the editor is in create mode or edit mode.
+   */
+  let mode: "create" | "edit";
+
+  /**
+   * Sends the request to save changes to the backend using lapin. Uses @function showConfirmation to display a floating notification with the results of the lapin call. The result of the lapin call is returned.
+   * @param data
+   * @returns response
+   */
+  async function handleSavePressed() {
+    let data = {};
+    keys.reduce((prevVal, currKey, currIndex) => {
+      if (currIndex === keys.length - 1) {
+        return prevVal[currKey] || (prevVal[currKey] = value);
+      } else {
+        return prevVal[currKey] || (prevVal[currKey] = {});
+      }
+    }, data);
+    dispatch("save", data);
+  }
+
+  $: {
+    mode = objectId ? "edit" : "create";
+  }
+</script>
+
+{#if mode === "create"}
+  <slot />
+{:else}
+  <ValueSaveForm bind:value on:save={handleSavePressed}>
+    <slot />
+  </ValueSaveForm>
+{/if}

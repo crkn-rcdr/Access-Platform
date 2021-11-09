@@ -81,6 +81,17 @@ function checkValidDiff(
   serverObject: AccessObject,
   editorObject: AccessObject
 ) {
+  let newObj = editorObject;
+  let oldObj = serverObject;
+
+  // Never compare array elements
+  for (let prop in newObj) {
+    if (Array.isArray(newObj[prop])) delete newObj[prop];
+  }
+  for (let prop in oldObj) {
+    if (Array.isArray(oldObj[prop])) delete oldObj[prop];
+  }
+
   const hasModelChanged = checkModelChanged(serverObject, editorObject);
   if (hasModelChanged) {
     const isModelValid = checkChangeIsValid(editorObject);

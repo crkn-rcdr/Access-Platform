@@ -24,7 +24,15 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
   import SideMenuContainer from "$lib/components/shared/SideMenuContainer.svelte";
   import EditorActions from "$lib/components/access-objects/EditorActions.svelte";
   import StatusIndicator from "$lib/components/access-objects/StatusIndicator.svelte";
-  import InfoEditor from "$lib/components/access-objects/InfoEditor.svelte";
+  import InfoEditor from "$lib/components/access-objects/EditorForm.svelte";
+  import { getStores } from "$app/stores";
+  import type { Session } from "$lib/types";
+  import { showConfirmation } from "$lib/utils/confirmation";
+
+  /**
+   * @type {Session} The session store that contains the module for sending requests to lapin.
+   */
+  const { session } = getStores<Session>();
 
   /**
    * @type {AccessObject} Object being edited.
@@ -46,6 +54,45 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
    */
   let editorObject: AccessObject;
 
+  async function saveChange(event: any) {
+    return await showConfirmation(
+      async () => {
+        try {
+          if (
+            serverObject.type === "manifest" ||
+            serverObject.type === "collection"
+          ) {
+            const bodyObj = {
+              id: serverObject.id,
+              user: $session.user,
+              data: event.detail,
+            };
+            const response = await $session.lapin.mutation(
+              `${serverObject.type}.edit`,
+              bodyObj
+            );
+            await pullServerObject();
+            return {
+              success: true,
+              details: JSON.stringify(bodyObj),
+            };
+          } else
+            return {
+              success: false,
+              details: "Object not of type canvas or manifest",
+            };
+        } catch (e) {
+          return {
+            success: false,
+            details: e.message,
+          };
+        }
+      },
+      "Success! Changes saved.",
+      "Error: failed to save changes."
+    );
+  }
+
   /**
    * Sets the sidemenu container component's pages and menu items based off of the model of the serverObject to be edited's type.
    * @param serverObject
@@ -64,6 +111,12 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
             update: () => {
               editorObject = editorObject;
             },
+            listeners: {
+              save: (event) => {
+                console.log(`save event`, event);
+                saveChange(event);
+              },
+            },
           },
         },
         {
@@ -77,6 +130,7 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
             update: () => {
               editorObject = editorObject;
             },
+            listeners: {},
           },
         },
       ];
@@ -91,6 +145,12 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
             update: () => {
               editorObject = editorObject;
             },
+            listeners: {
+              save: (event) => {
+                console.log(`save event`, event);
+                saveChange(event);
+              },
+            },
           },
         },
         {
@@ -104,9 +164,26 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
             update: () => {
               editorObject = editorObject;
             },
+            listeners: {},
           },
         },
       ];
+    }
+  }
+
+  /**
+   * This method pulls the 'serverObject' from the backend. This resets the form and ensures that any problems saving changes are caught.
+   * @returns void
+   */
+  async function pullServerObject() {
+    try {
+      const response = await $session.lapin.query(
+        "accessObject.get",
+        serverObject["id"]
+      );
+      serverObject = response;
+    } catch (e) {
+      console.log(e);
     }
   }
 
@@ -147,7 +224,11 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
           class="end-content auto-align auto-align__full auto-align auto-align__j-end auto-align auto-align__a-end auto-align auto-align__column"
         >
           <StatusIndicator bind:serverObject />
-          <EditorActions bind:serverObject bind:editorObject />
+          <EditorActions
+            bind:serverObject
+            bind:editorObject
+            on:updated={pullServerObject}
+          />
         </div>
       </Toolbar>
     </SideMenuContainer>

@@ -58,6 +58,7 @@ export type SideMenuPageData = {
     contentComponentProps: any;
     sideMenuPageProps: any;
     update: Function;
+    listeners: any;
   };
 };
 
