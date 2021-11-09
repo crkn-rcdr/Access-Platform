@@ -47,7 +47,7 @@ export type Ancestry = Array<Array<SimpleRecord>>;
 export type ProcessListCommand =
   | ["add", Noid[]]
   | ["remove", Noid[]]
-  | ["move", [number, number]]
+  | ["move", [Noid, number]]
   | ["relabel", [Noid, TextRecord]];
 
 /**

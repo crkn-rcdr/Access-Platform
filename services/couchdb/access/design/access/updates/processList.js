@@ -59,20 +59,13 @@ module.exports = function (doc, req) {
         throw new Error("`move` expects a list with two indices");
       }
 
-      const [fromIndex, toIndex] = input;
-      if (
-        !Number.isInteger(fromIndex) ||
-        fromIndex < 0 ||
-        fromIndex >= list.length
-      ) {
-        throw new Error("invalid fromIndex specified for `move`: " + fromIndex);
-      }
-
+      const [id, toIndex] = input;
       if (!Number.isInteger(toIndex) || toIndex < 0 || toIndex >= list.length) {
         throw new Error("invalid toIndex specified for `move`: " + toIndex);
       }
 
-      list.splice(toIndex, 0, list.splice(fromIndex, 1)[0]);
+      const fromIndex = findIndex(id);
+      if (fromIndex > -1) list.splice(toIndex, 0, list.splice(fromIndex, 1)[0]);
     } else if (command === "relabel") {
       if (!Array.isArray(input) || input.length !== 2) {
         throw new Error(
