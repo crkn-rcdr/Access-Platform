@@ -65,7 +65,19 @@ The editor actions component holds functionality that is responsible for perform
   /**
    * @type {boolean} Controls if the move to storage modal is being displayed or not.
    */
-  let showUnassignSlugModal = false;
+  let showDeleteModal = false;
+
+  /**
+   * @type {string} Used to show a message to the user when delete is pressed.
+   */
+  let deleteModalTitle = "";
+
+  /**
+   * @type {string} Used to show a message to the user when delete is pressed.
+   */
+  let deleteModalMsg = "";
+
+  let deleteModalActionText = "";
 
   /**
    * Sets @var isSaveEnabled depending on if the editorObject is valid.
@@ -203,8 +215,8 @@ The editor actions component holds functionality that is responsible for perform
    * Sends the request to the backend to unnasign a slug from the access serverObject. If it is successful, the serverObject model is deep cloned into the serverObject, and the editor state is updated to reflect the serverObject being a 'Slugless' access serverObject.
    * @returns response
    */
-  async function handleUnassignSlug() {
-    showUnassignSlugModal = false;
+  async function handleDelete() {
+    showDeleteModal = false;
     return await showConfirmation(
       async () => {
         if (
@@ -290,6 +302,40 @@ The editor actions component holds functionality that is responsible for perform
     );
   }
 
+  async function openDeletionModal() {
+    // check if delete or some other msg
+
+    await pullServerObject();
+
+    let requestDate =
+      typeof serverObject.updateInternalmeta["requestDate"] === "string"
+        ? Date.parse(serverObject.updateInternalmeta["requestDate"])
+        : serverObject.updateInternalmeta["requestDate"];
+    let updatedDate =
+      typeof serverObject.updated === "string"
+        ? Date.parse(serverObject.updated)
+        : serverObject.updated;
+
+    console.log(
+      serverObject.updateInternalmeta["succeeded"],
+      requestDate < updatedDate
+    );
+    console.log(requestDate, updatedDate);
+    if (
+      serverObject.updateInternalmeta["succeeded"] &&
+      requestDate < updatedDate
+    ) {
+      deleteModalTitle = `Are you sure you want to delete ${serverObject["slug"]}?`;
+      deleteModalMsg = `By deleting ${serverObject["slug"]}, you will be taking it out of all the collections it belongs to. You will also be unpublishing it, so it will no longer be accessible to in the access platform. You will be able to use the slug, "${serverObject["slug"]}", for future ${serverObject["type"]}s. You can add ${serverObject["slug"]} back into the access platform by importing it from preservation again.`;
+      deleteModalActionText = `Delete`;
+    } else {
+      deleteModalTitle = `${serverObject["slug"]} can not be deleted.`;
+      deleteModalMsg = `Can not delete ${serverObject["slug"]}. There are background processes running on ${serverObject["slug"]}. Please wait and try again later.`;
+      deleteModalActionText = `Ok`;
+    }
+    showDeleteModal = true;
+  }
+
   /**
    * This method pulls the 'serverObject' from the backend. This resets the form and ensures that any problems saving changes are caught.
    * @returns void
@@ -332,38 +378,40 @@ The editor actions component holds functionality that is responsible for perform
     >{serverObject["public"] ? "Unpublish" : "Publish"}</button
   >
 
-  {#if serverObject["slug"]}
+  {#if serverObject["slug"] && !serverObject["public"]}
     <button
       class="danger"
-      data-tooltip="Unassign Slug"
+      data-tooltip="Delete"
       data-tooltip-flow="bottom"
-      on:click={() => (showUnassignSlugModal = true)}
+      on:click={openDeletionModal}
     >
-      Unassign Slug
+      Delete
     </button>
   {/if}
 </span>
 
-<Modal
-  bind:open={showUnassignSlugModal}
-  title={`Are you sure you want to unassign this slug?`}
->
+<Modal bind:open={showDeleteModal} title={deleteModalTitle}>
   <p slot="body">
-    By unassigning this {serverObject.type}'s slug, you will be taking it out of
-    all the collections it belongs to. You will also be unpublishing the {serverObject.type}.
-    You can then use the slug, '{serverObject["slug"]}' for other manifests or
-    collections. Manifests and collections that do not have a slug assigned to
-    them are undiscoverable. You can bookmark this page to access this {serverObject.type}
-    again in the future. You can assign it a new slug, and publish it, to make it
-    discoverable on the platform again.
+    {deleteModalMsg}
   </p>
   <div slot="footer">
-    <button class="secondary" on:click={() => (showUnassignSlugModal = false)}>
+    <button class="secondary" on:click={() => (showDeleteModal = false)}>
       Cancel
     </button>
-    <button class="danger" on:click={handleUnassignSlug}>
-      Unassign Slug
-    </button>
+    {#if deleteModalActionText === "Ok"}
+      <button
+        class="primary"
+        on:click={() => {
+          showDeleteModal = false;
+        }}
+      >
+        {deleteModalActionText}
+      </button>
+    {:else}
+      <button class="danger" on:click={handleDelete}>
+        {deleteModalActionText}
+      </button>
+    {/if}
   </div>
 </Modal>
 
