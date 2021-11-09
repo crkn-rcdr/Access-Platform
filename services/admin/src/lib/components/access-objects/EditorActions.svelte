@@ -243,8 +243,8 @@ The editor actions component holds functionality that is responsible for perform
           details: "Object not of type canvas or manifest",
         };
       },
-      `Success! Unassigned the slug '${editorObject["slug"]}.'`,
-      `Error unassigning slug '${editorObject["slug"]}.'`
+      `Success! Deleted '${editorObject["slug"]}.'`,
+      `Error deleting '${editorObject["slug"]}.'`
     );
   }
 
@@ -305,28 +305,32 @@ The editor actions component holds functionality that is responsible for perform
   async function openDeletionModal() {
     // check if delete or some other msg
 
+    console.log("pulling serverObject");
     await pullServerObject();
+    console.log("pulled!", serverObject);
 
     let requestDate =
-      typeof serverObject.updateInternalmeta["requestDate"] === "string"
-        ? Date.parse(serverObject.updateInternalmeta["requestDate"])
-        : serverObject.updateInternalmeta["requestDate"];
+      typeof serverObject.updateInternalmeta?.["requestDate"] === "string"
+        ? Date.parse(serverObject.updateInternalmeta?.["requestDate"])
+        : serverObject.updateInternalmeta?.["requestDate"];
+
     let updatedDate =
       typeof serverObject.updated === "string"
         ? Date.parse(serverObject.updated)
         : serverObject.updated;
 
     console.log(
-      serverObject.updateInternalmeta["succeeded"],
+      serverObject.updateInternalmeta?.["succeeded"],
       requestDate < updatedDate
     );
     console.log(requestDate, updatedDate);
     if (
-      serverObject.updateInternalmeta["succeeded"] &&
-      requestDate < updatedDate
+      !serverObject.updateInternalmeta ||
+      (serverObject.updateInternalmeta?.["succeeded"] &&
+        requestDate < updatedDate)
     ) {
       deleteModalTitle = `Are you sure you want to delete ${serverObject["slug"]}?`;
-      deleteModalMsg = `By deleting ${serverObject["slug"]}, you will be taking it out of all the collections it belongs to. You will also be unpublishing it, so it will no longer be accessible to in the access platform. You will be able to use the slug, "${serverObject["slug"]}", for future ${serverObject["type"]}s. You can add ${serverObject["slug"]} back into the access platform by importing it from preservation again.`;
+      deleteModalMsg = `By deleting ${serverObject["slug"]}, you will be taking it out of all the collections it belongs to. You will be able to use the slug, "${serverObject["slug"]}", for future ${serverObject["type"]}s. You can add ${serverObject["slug"]} back into the access platform by importing it from preservation again.`;
       deleteModalActionText = `Delete`;
     } else {
       deleteModalTitle = `${serverObject["slug"]} can not be deleted.`;
