@@ -76,6 +76,11 @@ export const LegacyPackage = z.object({
   smelt: SmeltProcess.optional(),
 
   /**
+   * Request to extract OCR information from his package.
+   */
+   ocr: SmeltProcess.optional(),
+
+   /**
    * A record of the staff member who caused this record to be updated.
    */
   staff: StaffUpdate.optional(),

@@ -89,6 +89,23 @@ exports.updateObject = (doc, user) => {
 };
 
 /**
+ * Updates the fields that change when an Access Object is edited. Creates an internalmeta request.
+ * @param {Record<string, string>} doc The Access Object's document.
+ * @param {{name: string; email: string} | undefined} user The user who triggered this update, if one exists.
+ */
+ exports.updateGenericObject = (doc, user) => {
+  const now = exports.timestamp();
+  if (
+    typeof user === "object" &&
+    typeof user.email === "string" &&
+    typeof user.name === "string"
+  ) {
+    doc.staff = { by: user, date: now };
+  }
+  doc.updated = now;
+};
+
+/**
  * Returns a completed ProcessUpdate.
  * @param {update} update The pending ProcessUpdate.
  * @param {boolean} succeeded Whether the process succeeded.
