@@ -6,6 +6,7 @@ import {
   Noid,
   ObjectListHandler,
   ObjectListPage,
+  TextRecord,
   User,
 } from "@crkn-rcdr/access-data";
 import { createRouter, httpErrorToTRPC } from "../router.js";
@@ -137,6 +138,25 @@ export const manifestRouter = createRouter()
         await ctx.couch.access.processList({
           id,
           command: ["move", [canvases, toIndex]],
+          user,
+        });
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .mutation("relabelCanvas", {
+    input: z.object({
+      id: Noid,
+      canvas: Noid,
+      label: TextRecord,
+      user: User.optional(),
+    }),
+    async resolve({ input: { id, canvas, label, user }, ctx }) {
+      try {
+        await ctx.couch.access.processList({
+          id,
+          command: ["relabel", [canvas, label]],
           user,
         });
       } catch (e) {

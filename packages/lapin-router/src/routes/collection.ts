@@ -9,6 +9,7 @@ import {
   User,
   Slug,
   ObjectListPage,
+  TextRecord,
 } from "@crkn-rcdr/access-data";
 import { createRouter, httpErrorToTRPC } from "../router.js";
 import { TRPCError } from "@trpc/server";
@@ -209,6 +210,25 @@ export const collectionRouter = createRouter()
             await ctx.couch.access.forceUpdate(member.id);
           }
         }
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .mutation("relabelMember", {
+    input: z.object({
+      id: Noid,
+      member: Noid,
+      label: TextRecord,
+      user: User.optional(),
+    }),
+    async resolve({ input: { id, member, label, user }, ctx }) {
+      try {
+        await ctx.couch.access.processList({
+          id,
+          command: ["relabel", [member, label]],
+          user,
+        });
       } catch (e) {
         throw httpErrorToTRPC(e);
       }

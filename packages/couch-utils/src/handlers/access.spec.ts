@@ -276,6 +276,16 @@ test.serial("Can add, move, and remove items", async (t) => {
   t.is(manifest.canvases![0]!.id, CANVAS_ONE);
   t.is(manifest.canvases!.length, oldCanvasLength + 2);
 
+  const LABEL = "First page!";
+  await t.context.access.processList({
+    id: MANIFEST_TWO,
+    command: ["relabel", [CANVAS_ONE, { none: LABEL }]],
+  });
+
+  manifest = (await t.context.access.get(MANIFEST_TWO)) as Manifest;
+
+  t.is(manifest.canvases![0]!.label!["none"], LABEL);
+
   await t.context.access.processList({
     id: MANIFEST_TWO,
     command: ["remove", [CANVAS_ONE, CANVAS_TWO]],
