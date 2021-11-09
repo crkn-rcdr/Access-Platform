@@ -56,16 +56,27 @@ module.exports = function (doc, req) {
       });
     } else if (command === "move") {
       if (!Array.isArray(input) || input.length !== 2) {
-        throw new Error("`move` expects a list with two indices");
+        throw new Error(
+          "`move` expects a list with a list of ids and an index"
+        );
       }
 
-      const [id, toIndex] = input;
+      const [ids, toIndex] = input;
+
+      if (!Array.isArray(ids)) throw new Error("`move` expects a list of ids");
+
       if (!Number.isInteger(toIndex) || toIndex < 0 || toIndex >= list.length) {
         throw new Error("invalid toIndex specified for `move`: " + toIndex);
       }
 
-      const fromIndex = findIndex(id);
-      if (fromIndex > -1) list.splice(toIndex, 0, list.splice(fromIndex, 1)[0]);
+      let newIndex = toIndex;
+      for (const id of ids) {
+        const fromIndex = findIndex(id);
+        if (fromIndex > -1) {
+          list.splice(newIndex, 0, list.splice(fromIndex, 1)[0]);
+          newIndex += 1;
+        }
+      }
     } else if (command === "relabel") {
       if (!Array.isArray(input) || input.length !== 2) {
         throw new Error(
