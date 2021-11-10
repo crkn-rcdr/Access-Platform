@@ -250,6 +250,52 @@ test.serial("Can unassign a slug", async (t) => {
   t.is(manifest.slug, undefined);
 });
 
+test.serial("Can add, move, and remove items", async (t) => {
+  const CANVAS_ONE = "69429/c09s1kj9h004";
+  const CANVAS_TWO = "69429/c0610vs1v70v";
+
+  let manifest = (await t.context.access.get(MANIFEST_TWO)) as Manifest;
+  const oldCanvasLength = manifest.canvases!.length;
+
+  await t.context.access.processList({
+    id: MANIFEST_TWO,
+    command: ["add", [CANVAS_ONE, CANVAS_TWO]],
+  });
+
+  manifest = (await t.context.access.get(MANIFEST_TWO)) as Manifest;
+
+  t.is(manifest.canvases!.length, oldCanvasLength + 2);
+
+  await t.context.access.processList({
+    id: MANIFEST_TWO,
+    command: ["move", [[CANVAS_ONE, CANVAS_TWO], 0]],
+  });
+
+  manifest = (await t.context.access.get(MANIFEST_TWO)) as Manifest;
+
+  t.is(manifest.canvases![0]!.id, CANVAS_ONE);
+  t.is(manifest.canvases!.length, oldCanvasLength + 2);
+
+  const LABEL = "First page!";
+  await t.context.access.processList({
+    id: MANIFEST_TWO,
+    command: ["relabel", [CANVAS_ONE, { none: LABEL }]],
+  });
+
+  manifest = (await t.context.access.get(MANIFEST_TWO)) as Manifest;
+
+  t.is(manifest.canvases![0]!.label!["none"], LABEL);
+
+  await t.context.access.processList({
+    id: MANIFEST_TWO,
+    command: ["remove", [CANVAS_ONE, CANVAS_TWO]],
+  });
+
+  manifest = (await t.context.access.get(MANIFEST_TWO)) as Manifest;
+
+  t.is(manifest.canvases!.length, oldCanvasLength);
+});
+
 test.serial("Collections can be created", async (t) => {
   try {
     await t.context.access.createCollection({
