@@ -28,6 +28,8 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
   import { getStores } from "$app/stores";
   import type { Session } from "$lib/types";
   import { showConfirmation } from "$lib/utils/confirmation";
+  import { editorObjectStore } from "$lib/stores/accessObjectEditorStore";
+  import { onDestroy } from "svelte";
 
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
@@ -52,7 +54,7 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
   /**
    * @type {AccessObject} An serverObject of type AccessObject. This is a copy of the source serverObject being edited. The model is used to keep track of changes to the serverObject, without changing the actual serverObject until save is pressed.
    */
-  let editorObject: AccessObject;
+  //let $editorObjectStore: AccessObject;
 
   async function saveChange(event: any) {
     return await showConfirmation(
@@ -99,22 +101,23 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
    * @returns void
    */
   async function setPageList() {
-    if (!serverObject || !editorObject) return;
-    if (isManifest(editorObject)) {
+    if (!serverObject || !$editorObjectStore) return;
+    if (isManifest(serverObject)) {
       pageList = [
         {
           name: "General Info",
           componentData: {
             contentComponent: InfoEditor,
-            contentComponentProps: { editorObject: editorObject },
+            contentComponentProps: { editorObject: $editorObjectStore },
             sideMenuPageProps: {},
-            update: () => {
-              editorObject = editorObject;
-            },
+            /*update: () => {
+              $editorObjectStore = $editorObjectStore;
+            },*/
             listeners: {
               save: (event) => {
                 saveChange(event);
               },
+              //,
             },
           },
         },
@@ -122,31 +125,30 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
           name: "Manage Content",
           componentData: {
             contentComponent: ManifestContentEditor,
-            contentComponentProps: { manifest: editorObject },
+            contentComponentProps: { manifest: $editorObjectStore },
             sideMenuPageProps: {
               overflowY: "hidden",
             },
-            update: () => {
-              editorObject = editorObject;
-            },
+            /*update: () => {
+              $editorObjectStore = $editorObjectStore;
+            },*/
             listeners: {},
           },
         },
       ];
-    } else if (isCollection(editorObject)) {
+    } else if (isCollection($editorObjectStore)) {
       pageList = [
         {
           name: "General Info",
           componentData: {
             contentComponent: InfoEditor,
-            contentComponentProps: { editorObject: editorObject },
+            contentComponentProps: { editorObject: $editorObjectStore },
             sideMenuPageProps: {},
-            update: () => {
-              editorObject = editorObject;
-            },
+            /*update: () => {
+              $editorObjectStore = $editorObjectStore;
+            },*/
             listeners: {
               save: (event) => {
-                console.log(`save event`, event);
                 saveChange(event);
               },
             },
@@ -156,13 +158,13 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
           name: "Manage Members",
           componentData: {
             contentComponent: CollectionContentEditor,
-            contentComponentProps: { collection: editorObject },
+            contentComponentProps: { collection: $editorObjectStore },
             sideMenuPageProps: {
               overflowY: "hidden",
             },
-            update: () => {
-              editorObject = editorObject;
-            },
+            /*update: () => {
+              $editorObjectStore = $editorObjectStore;
+            },*/
             listeners: {},
           },
         },
@@ -187,15 +189,14 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
   }
 
   /**
-   * Deep copies the serverObject to be edited into the editorObject variable.
+   * Deep copies the serverObject to be edited into the $editorObjectStore variable.
    * @param serverObject
    * @returns void
    */
   async function setDataModel(serverObject: AccessObject) {
     if (!serverObject) return;
-
     rfdc = (await import("rfdc")).default();
-    editorObject = rfdc(serverObject) as AccessObject; // todo: get this done with zod
+    editorObjectStore.set(rfdc(serverObject) as AccessObject); // todo: get this done with zod
     setPageList();
   }
 
@@ -208,11 +209,15 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
       setDataModel(serverObject);
     }
   }
+
+  onDestroy(() => {
+    editorObjectStore.set(null);
+  });
 </script>
 
-{#if serverObject && editorObject}
+{#if serverObject && $editorObjectStore}
   <div class="editor">
-    <SideMenuContainer {pageList}>
+    <SideMenuContainer bind:pageList>
       <Toolbar
         slot="side-menu-header"
         title={serverObject?.["slug"]?.length
@@ -223,11 +228,7 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
           class="end-content auto-align auto-align__full auto-align auto-align__j-end auto-align auto-align__a-end auto-align auto-align__column"
         >
           <StatusIndicator bind:serverObject />
-          <EditorActions
-            bind:serverObject
-            bind:editorObject
-            on:updated={pullServerObject}
-          />
+          <EditorActions bind:serverObject on:updated={pullServerObject} />
         </div>
       </Toolbar>
     </SideMenuContainer>

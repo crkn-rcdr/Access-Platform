@@ -22,11 +22,12 @@ This component displays the non content properties for an access editorObject an
   import Resolver from "$lib/components/access-objects/Resolver.svelte";
   import EditorInput from "$lib/components/access-objects/EditorInput.svelte";
   import { createEventDispatcher } from "svelte";
+  import { editorObjectStore } from "$lib/stores/accessObjectEditorStore";
 
   /**
    * @type {AccessObject} The AccessObject editorObject that will be manipulated by the user, usually, a copy of an access pbject that acts as a form model.
    */
-  export let editorObject: AccessObject; // Not sure if we should pass an editorObject or have a list of props (ex: slug, label, ...) that can be null, and show ones that are instantiated only?
+  //export let editorObject: AccessObject; // Not sure if we should pass an editorObject or have a list of props (ex: slug, label, ...) that can be null, and show ones that are instantiated only?
 
   /**
    * @type {"create" | "edit"} An indicator variable if the editor is in create mode or edit mode.
@@ -43,26 +44,26 @@ This component displays the non content properties for an access editorObject an
   }
 
   $: {
-    mode = editorObject?.id ? "edit" : "create";
+    mode = $editorObjectStore?.id ? "edit" : "create";
   }
 </script>
 
-{#if editorObject}
+{#if $editorObjectStore}
   <div class="info-form">
-    {#if isManifest(editorObject) || isCollection(editorObject)}
+    {#if isManifest($editorObjectStore) || isCollection($editorObjectStore)}
       <label for="slug">Slug</label>
       {#if mode === "edit"}
         <EditorInput
           keys={["slug"]}
-          bind:value={editorObject["slug"]}
+          bind:value={$editorObjectStore["slug"]}
           on:save={handleSavePressed}
         >
           <div>
-            <Resolver bind:slug={editorObject["slug"]} />
+            <Resolver bind:slug={$editorObjectStore["slug"]} />
           </div>
         </EditorInput>
       {:else}
-        <Resolver bind:slug={editorObject["slug"]} />
+        <Resolver bind:slug={$editorObjectStore["slug"]} />
       {/if}
 
       <br /><br />
@@ -70,8 +71,8 @@ This component displays the non content properties for an access editorObject an
       <label for="label">Label</label>
       <br />
       <NotificationBar
-        message={typedChecks[editorObject["type"]].getLabelValidationMsg(
-          editorObject["label"]
+        message={typedChecks[$editorObjectStore["type"]].getLabelValidationMsg(
+          $editorObjectStore["label"]
         )}
         status="fail"
       />
@@ -79,17 +80,17 @@ This component displays the non content properties for an access editorObject an
       {#if mode === "edit"}
         <EditorInput
           keys={["label", "none"]}
-          bind:value={editorObject["label"]["none"]}
+          bind:value={$editorObjectStore["label"]["none"]}
           on:save={handleSavePressed}
         >
           <textarea
             id="label"
             name="label"
-            bind:value={editorObject["label"]["none"]}
+            bind:value={$editorObjectStore["label"]["none"]}
             on:keyup={() => {
               // Triggers validation msg
-              if (editorObject?.["label"]?.["none"]?.length === 0)
-                editorObject["label"]["none"] = undefined;
+              if ($editorObjectStore?.["label"]?.["none"]?.length === 0)
+                $editorObjectStore["label"]["none"] = undefined;
             }}
           />
         </EditorInput>
@@ -97,22 +98,22 @@ This component displays the non content properties for an access editorObject an
         <textarea
           id="label"
           name="label"
-          bind:value={editorObject["label"]["none"]}
+          bind:value={$editorObjectStore["label"]["none"]}
           on:keyup={() => {
             // Triggers validation msg
-            if (editorObject?.["label"]?.["none"]?.length === 0)
-              editorObject["label"]["none"] = undefined;
+            if ($editorObjectStore?.["label"]?.["none"]?.length === 0)
+              $editorObjectStore["label"]["none"] = undefined;
           }}
         />
       {/if}
       <br /><br />
 
-      {#if isCollection(editorObject)}
+      {#if isCollection($editorObjectStore)}
         <label for="behavior">Behaviour</label><br />
         <select
           id="behavior"
           name="behavior"
-          bind:value={editorObject["behavior"]}
+          bind:value={$editorObjectStore["behavior"]}
         >
           <option>multi-part</option>
           <option>unordered</option>

@@ -66,9 +66,9 @@ This component allows the user to search through other manifests and select canv
   let selectedManifest: Manifest;
 
   /**
-   * @type {ObjectList} The canvases the user selects.
+   * @type {{ id?: string; label?: Record<string, string>; }[]} The canvases the user selects.
    */
-  let selectedCanvases: ObjectList = [];
+  let selectedCanvases: { id?: string; label?: Record<string, string> }[] = [];
 
   /**
    * @type {string} If a manifest is selected.
@@ -127,6 +127,7 @@ This component allows the user to search through other manifests and select canv
    * @returns void
    */
   function handleAddPressed() {
+    //console.log("selected canvases", selectedCanvases);
     if (destinationManifest?.canvases) {
       destinationManifest.canvases.splice(
         destinationIndex,
@@ -134,7 +135,7 @@ This component allows the user to search through other manifests and select canv
         ...selectedCanvases
       );
     } else {
-      destinationManifest.canvases = selectedCanvases;
+      destinationManifest["canvases"] = selectedCanvases;
     }
     destinationManifest = destinationManifest;
     selectedCanvases = [];

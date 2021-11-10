@@ -181,9 +181,10 @@ A component that shows a navigable set of pages with a side menu to allow the us
 
   function setInstanceEvents() {
     for (const key in instances) {
-      instances[key].$$.after_update.push(() => {
+      /*instances[key].$$.after_update.push(() => {
+        console.log("instance", key, instances[key], pageComponents[key]);
         pageComponents[parseInt(key)].update();
-      });
+      });*/
 
       if (pageComponents[key]?.listeners) {
         for (let [id, listener] of Object.entries(

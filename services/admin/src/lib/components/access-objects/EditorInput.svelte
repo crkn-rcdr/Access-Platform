@@ -6,10 +6,6 @@
   export let value: any;
 
   /**
-   * @type {AccessObject} The AccessObject editorObject that will be manipulated by the user, usually, a copy of an access pbject that acts as a form model.
-   */
-  //export let editorObject: AccessObject;
-  /**
    * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.
    */
   const dispatch = createEventDispatcher();
