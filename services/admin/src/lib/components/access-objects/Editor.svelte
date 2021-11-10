@@ -113,7 +113,6 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
             },
             listeners: {
               save: (event) => {
-                console.log(`save event`, event);
                 saveChange(event);
               },
             },

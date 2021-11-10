@@ -26,7 +26,6 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
 
 -->
 <script lang="ts">
-  import type { ObjectList } from "@crkn-rcdr/access-data";
   import { createEventDispatcher, onMount } from "svelte";
   import { moveArrayElement } from "$lib/utils/arrayUtil";
   import TiTrash from "svelte-icons/ti/TiTrash.svelte";
@@ -36,7 +35,10 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
   /**
    * @type {ObjectList} An ObjectList containing canvases to be listed.
    */
-  export let canvases: ObjectList = [];
+  export let canvases: {
+    id?: string;
+    label?: Record<string, string>;
+  }[] = [];
 
   /**
    * @type {boolean} If the add button should be displayed over the list of canvases.

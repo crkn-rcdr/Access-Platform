@@ -2,7 +2,6 @@
   import ValueSaveForm from "$lib/components/shared/ValueSaveForm.svelte";
   import { createEventDispatcher } from "svelte";
 
-  export let objectId: string;
   export let keys: string[];
   export let value: any;
 
@@ -14,11 +13,6 @@
    * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.
    */
   const dispatch = createEventDispatcher();
-
-  /**
-   * @type {"create" | "edit"} An indicator variable if the editor is in create mode or edit mode.
-   */
-  let mode: "create" | "edit";
 
   /**
    * Sends the request to save changes to the backend using lapin. Uses @function showConfirmation to display a floating notification with the results of the lapin call. The result of the lapin call is returned.
@@ -36,16 +30,8 @@
     }, data);
     dispatch("save", data);
   }
-
-  $: {
-    mode = objectId ? "edit" : "create";
-  }
 </script>
 
-{#if mode === "create"}
+<ValueSaveForm bind:value on:save={handleSavePressed}>
   <slot />
-{:else}
-  <ValueSaveForm bind:value on:save={handleSavePressed}>
-    <slot />
-  </ValueSaveForm>
-{/if}
+</ValueSaveForm>

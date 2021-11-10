@@ -29,7 +29,7 @@
   $: {
     if (previous !== value) {
       if (typeof previous !== "undefined") {
-        dispatch("changed", { value, previous });
+        dispatch("different", { value, previous });
         showSave = true;
       }
       previous = value;

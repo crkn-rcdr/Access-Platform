@@ -116,11 +116,11 @@ Displays a list that when scrolls veritcally, creates and distoys children eleme
   function setIndexModel() {
     const prevArrLen = indexModel.length;
     indexModel = [];
-    for (let i = 0; i < dataList.length; i++) {
+    for (let i = 0; i < dataList?.length; i++) {
       indexModel.push({
         id: i,
         pos: i + 1,
-        new: prevArrLen != 0 && i < dataList.length - prevArrLen,
+        new: prevArrLen != 0 && i < dataList?.length - prevArrLen,
         data: { ...dataList[i] },
       });
     }
@@ -133,7 +133,7 @@ Displays a list that when scrolls veritcally, creates and distoys children eleme
    * @returns void
    */
   function setActiveIndex(index: number) {
-    if (index >= dataList.length) index = dataList.length - 1;
+    if (index >= dataList?.length) index = dataList?.length - 1;
     if (index < 0) index = 0;
     activeIndex = index;
     dataList = dataList;
@@ -171,7 +171,7 @@ Displays a list that when scrolls veritcally, creates and distoys children eleme
    * @returns void
    */
   function selectNext() {
-    if (activeIndex < dataList.length - 1) {
+    if (activeIndex < dataList?.length - 1) {
       activeIndex++;
       jumpTo(activeIndex);
       setActiveIndex(activeIndex);
@@ -209,7 +209,7 @@ Displays a list that when scrolls veritcally, creates and distoys children eleme
    * @description When the component instance is mounted onto the dom, @var activeIndex is instantiated, the dataList positions model is set using @function setIndexModel(), then @var isInitialized is set to true.
    */
   onMount(() => {
-    if (dataList.length) activeIndex = 0;
+    if (dataList?.length) activeIndex = 0;
     setIndexModel();
     isInitialized = true;
   });
@@ -227,7 +227,7 @@ Displays a list that when scrolls veritcally, creates and distoys children eleme
 <svelte:window on:keydown={handleKeydown} />
 
 <div bind:this={container} tabindex="0" class="list" class:disabled>
-  {#if indexModel.length === dataList.length}
+  {#if indexModel.length === dataList?.length}
     {#if draggable}
       <DynamicDragAndDropList
         bind:dragList={dataList}

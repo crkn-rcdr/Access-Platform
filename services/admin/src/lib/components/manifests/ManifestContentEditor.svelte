@@ -159,6 +159,7 @@ Allows the user to modify the canvas list for a manifest.
             bind:destinationManifest={manifest}
             on:done={() => {
               state = "view";
+              manifest = manifest;
               setActiveCanvas(0);
             }}
           />

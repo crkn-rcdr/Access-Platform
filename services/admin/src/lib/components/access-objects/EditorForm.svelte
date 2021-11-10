@@ -29,6 +29,11 @@ This component displays the non content properties for an access editorObject an
   export let editorObject: AccessObject; // Not sure if we should pass an editorObject or have a list of props (ex: slug, label, ...) that can be null, and show ones that are instantiated only?
 
   /**
+   * @type {"create" | "edit"} An indicator variable if the editor is in create mode or edit mode.
+   */
+  let mode: "create" | "edit";
+
+  /**
    * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.
    */
   const dispatch = createEventDispatcher();
@@ -36,22 +41,29 @@ This component displays the non content properties for an access editorObject an
   function handleSavePressed(event: any) {
     dispatch("save", event.detail);
   }
+
+  $: {
+    mode = editorObject?.id ? "edit" : "create";
+  }
 </script>
 
 {#if editorObject}
   <div class="info-form">
     {#if isManifest(editorObject) || isCollection(editorObject)}
       <label for="slug">Slug</label>
-      <EditorInput
-        objectId={editorObject["id"]}
-        keys={["slug"]}
-        bind:value={editorObject["slug"]}
-        on:save={handleSavePressed}
-      >
-        <div>
-          <Resolver bind:slug={editorObject["slug"]} />
-        </div>
-      </EditorInput>
+      {#if mode === "edit"}
+        <EditorInput
+          keys={["slug"]}
+          bind:value={editorObject["slug"]}
+          on:save={handleSavePressed}
+        >
+          <div>
+            <Resolver bind:slug={editorObject["slug"]} />
+          </div>
+        </EditorInput>
+      {:else}
+        <Resolver bind:slug={editorObject["slug"]} />
+      {/if}
 
       <br /><br />
 
@@ -63,12 +75,25 @@ This component displays the non content properties for an access editorObject an
         )}
         status="fail"
       />
-      <EditorInput
-        objectId={editorObject["id"]}
-        keys={["label", "none"]}
-        bind:value={editorObject["label"]["none"]}
-        on:save={handleSavePressed}
-      >
+
+      {#if mode === "edit"}
+        <EditorInput
+          keys={["label", "none"]}
+          bind:value={editorObject["label"]["none"]}
+          on:save={handleSavePressed}
+        >
+          <textarea
+            id="label"
+            name="label"
+            bind:value={editorObject["label"]["none"]}
+            on:keyup={() => {
+              // Triggers validation msg
+              if (editorObject?.["label"]?.["none"]?.length === 0)
+                editorObject["label"]["none"] = undefined;
+            }}
+          />
+        </EditorInput>
+      {:else}
         <textarea
           id="label"
           name="label"
@@ -79,8 +104,7 @@ This component displays the non content properties for an access editorObject an
               editorObject["label"]["none"] = undefined;
           }}
         />
-      </EditorInput>
-
+      {/if}
       <br /><br />
 
       {#if isCollection(editorObject)}

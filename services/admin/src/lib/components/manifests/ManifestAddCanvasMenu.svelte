@@ -127,11 +127,15 @@ This component allows the user to search through other manifests and select canv
    * @returns void
    */
   function handleAddPressed() {
-    destinationManifest?.canvases?.splice(
-      destinationIndex,
-      0,
-      ...selectedCanvases
-    );
+    if (destinationManifest?.canvases) {
+      destinationManifest.canvases.splice(
+        destinationIndex,
+        0,
+        ...selectedCanvases
+      );
+    } else {
+      destinationManifest.canvases = selectedCanvases;
+    }
     destinationManifest = destinationManifest;
     selectedCanvases = [];
     dispatch("done");
