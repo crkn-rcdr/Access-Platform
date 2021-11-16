@@ -15,12 +15,12 @@ This component displays the publish status of an access serverObject
 *Note: `bind:` is required for changes to the serverObject and its model to be reflected in higher level components.*
 -->
 <script lang="ts">
-  import type { AccessObject } from "@crkn-rcdr/access-data";
+  import type { PagedCollection, PagedManifest } from "@crkn-rcdr/access-data";
 
   /**
    * @type {string} The serverObject to display the status of.
    */
-  export let serverObject: AccessObject;
+  export let serverObject: PagedCollection | PagedManifest;
 </script>
 
 <span class="status">

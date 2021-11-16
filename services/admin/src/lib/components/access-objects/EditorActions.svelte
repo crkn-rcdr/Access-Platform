@@ -18,11 +18,8 @@ The editor actions component holds functionality that is responsible for perform
 <script lang="ts">
   import { createEventDispatcher, onMount } from "svelte";
   import type { Session } from "$lib/types";
-  import type {
-    AccessObject,
-    NewCollection,
-    NewManifest,
-  } from "@crkn-rcdr/access-data";
+  import type { PagedCollection, PagedManifest } from "@crkn-rcdr/access-data";
+  import type { NewCollection, NewManifest } from "@crkn-rcdr/access-data";
   import { getStores } from "$app/stores";
   import { showConfirmation } from "$lib/utils/confirmation";
   import { checkValidDiff } from "$lib/utils/validation";
@@ -30,13 +27,13 @@ The editor actions component holds functionality that is responsible for perform
   import { goto } from "$app/navigation";
 
   /**
-   * @type {AccessObject} This is th$lib/utils/confirmationerObject of type AccessObject pulled from the backend, to be edited only once an action is successfully performed.
+   * @type { PagedCollection | PagedManifest } This is th$lib/utils/confirmationerObject of type AccessObject pulled from the backend, to be edited only once an action is successfully performed.
    */
-  export let serverObject: AccessObject;
+  export let serverObject: PagedCollection | PagedManifest;
   /**
-   * @type {AccessObject} The AccessObject editorObject that will be manipulated by the user, usually, a copy of an access pbject that acts as a form model.
+   * @type {PagedCollection | PagedManifest} The AccessObject editorObject that will be manipulated by the user, usually, a copy of an access pbject that acts as a form model.
    */
-  export let editorObject: AccessObject;
+  export let editorObject: PagedCollection | PagedManifest;
   /**
    * @type {"create" | "edit"} An indicator variable if the editor is in create mode or edit mode.
    */
@@ -91,9 +88,19 @@ The editor actions component holds functionality that is responsible for perform
       async () => {
         try {
           if (editorObject.type === "manifest") {
+            const data: NewManifest = {
+              slug: editorObject.slug,
+              summary: editorObject.summary,
+              behavior: editorObject.behavior,
+              canvases: [], //editorObject.canvases || [],
+              viewingDirection: editorObject.viewingDirection,
+              type: editorObject.type,
+              from: editorObject.from,
+              label: editorObject.label,
+            };
             const response = await $session.lapin.mutation(`manifest.new`, {
               user: $session.user,
-              data: editorObject as NewManifest,
+              data,
             });
             goto(`/object/${response}`);
             return {
@@ -101,9 +108,17 @@ The editor actions component holds functionality that is responsible for perform
               details: response,
             };
           } else if (editorObject.type === "collection") {
+            const data: NewCollection = {
+              slug: editorObject.slug,
+              summary: editorObject.summary,
+              type: editorObject.type,
+              label: editorObject.label,
+              behavior: editorObject.behavior,
+              members: [],
+            };
             const response = await $session.lapin.mutation(`collection.new`, {
               user: $session.user,
-              data: editorObject as NewCollection,
+              data,
             });
             goto(`/object/${response}`);
             return {

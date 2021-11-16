@@ -1,12 +1,12 @@
 <!--
 @component
 ### Overview
-The editor component allows for the editing of AccessObjects. It will dynamically render the appropriate screens and options based on the AccessObject sub-type (collection, manifest...)
+The editor component allows for the editing of PagedCollection | PagedManifests. It will dynamically render the appropriate screens and options based on the PagedCollection | PagedManifest sub-type (collection, manifest...)
 
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| serverObject : AccessObject  | required | An serverObject of type AccessObject that will be editable in the editor. |
+| serverObject : PagedCollection or PagedManifest  | required | An serverObject of type PagedCollection | PagedManifest that will be editable in the editor. |
 
 ### Usage
 ```  
@@ -15,8 +15,7 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
 *Note: `bind:` is required for changes to the serverObject to be reflected in higher level components.*
 -->
 <script lang="ts">
-  import type { AccessObject } from "@crkn-rcdr/access-data";
-  import { isManifest, isCollection } from "@crkn-rcdr/access-data";
+  import type { PagedCollection, PagedManifest } from "@crkn-rcdr/access-data";
   import type { SideMenuPageData } from "$lib/types";
   import Toolbar from "$lib/components/shared/Toolbar.svelte";
   import ManifestContentEditor from "$lib/components/manifests/ManifestContentEditor.svelte";
@@ -37,9 +36,9 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
   const { session } = getStores<Session>();
 
   /**
-   * @type {AccessObject} Object being edited.
+   * @type {PagedCollection | PagedManifest} Object being edited.
    */
-  export let serverObject: AccessObject;
+  export let serverObject: PagedCollection | PagedManifest;
 
   /**
    * @type {"create" | "edit"} An indicator variable if the editor is in create mode or edit mode.
@@ -102,7 +101,7 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
    */
   async function setPageList() {
     if (!serverObject || !$editorObjectStore) return;
-    if (isManifest(serverObject)) {
+    if (serverObject.type === "manifest") {
       pageList = [
         {
           name: "General Info",
@@ -136,7 +135,7 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
           },
         },
       ];
-    } else if (isCollection($editorObjectStore)) {
+    } else if (serverObject.type === "collection") {
       pageList = [
         {
           name: "General Info",
@@ -180,7 +179,7 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
   async function pullServerObject() {
     try {
       const response = await $session.lapin.query(
-        "accessObject.get",
+        "accessObject.getPaged",
         serverObject["id"]
       );
       serverObject = response;
@@ -194,10 +193,12 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
    * @param serverObject
    * @returns void
    */
-  async function setDataModel(serverObject: AccessObject) {
+  async function setDataModel(serverObject: PagedCollection | PagedManifest) {
     if (!serverObject) return;
     rfdc = (await import("rfdc")).default();
-    editorObjectStore.set(rfdc(serverObject) as AccessObject); // todo: get this done with zod
+    editorObjectStore.set(
+      rfdc(serverObject) as PagedCollection | PagedManifest
+    ); // todo: get this done with zod
     setPageList();
   }
 

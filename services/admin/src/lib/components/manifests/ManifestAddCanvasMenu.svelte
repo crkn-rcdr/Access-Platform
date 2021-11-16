@@ -31,14 +31,17 @@ This component allows the user to search through other manifests and select canv
   import { isManifest, isCollection } from "@crkn-rcdr/access-data";
   import TypeAhead from "$lib/components/access-objects/TypeAhead.svelte";
   import { createEventDispatcher } from "svelte";
-  import type { Manifest } from "@crkn-rcdr/access-data/src/access/Manifest";
-  import type { ObjectList } from "@crkn-rcdr/access-data";
+  import type {
+    Manifest,
+    PagedManifest,
+  } from "@crkn-rcdr/access-data/src/access/Manifest";
+
   import CanvasesSelector from "$lib/components/canvases/CanvasesSelector.svelte";
 
   /**
-   * @type {Manifest} The manifest to add selected canvases to.
+   * @type {PagedManifest} The manifest to add selected canvases to.
    */
-  export let destinationManifest: Manifest;
+  export let destinationManifest: PagedManifest;
 
   /**
    * @type {number} The starting index to add the selected canvases at.
@@ -127,19 +130,9 @@ This component allows the user to search through other manifests and select canv
    * @returns void
    */
   function handleAddPressed() {
-    //console.log("selected canvases", selectedCanvases);
-    if (destinationManifest?.canvases) {
-      destinationManifest.canvases.splice(
-        destinationIndex,
-        0,
-        ...selectedCanvases
-      );
-    } else {
-      destinationManifest["canvases"] = selectedCanvases;
-    }
-    destinationManifest = destinationManifest;
+    // TODO: ADD CANVASES
+    dispatch("done", selectedCanvases);
     selectedCanvases = [];
-    dispatch("done");
   }
 </script>
 

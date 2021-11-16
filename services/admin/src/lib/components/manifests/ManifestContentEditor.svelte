@@ -17,18 +17,30 @@ Allows the user to modify the canvas list for a manifest.
 -->
 <script lang="ts">
   import { onMount } from "svelte";
-  import type { Manifest } from "@crkn-rcdr/access-data/src/access/Manifest";
+  import type { PagedManifest } from "@crkn-rcdr/access-data/src/access/Manifest";
   import CanvasLabelEditor from "$lib/components/canvases/CanvasLabelEditor.svelte";
   import CanvasViewer from "$lib/components/canvases/CanvasViewer.svelte";
   import CanvasThumbnailList from "$lib/components/canvases/CanvasThumbnailList.svelte";
   import Switch from "$lib/components/shared/Switch.svelte";
   import SwitchCase from "$lib/components/shared/SwitchCase.svelte";
   import ManifestAddCanvasMenu from "$lib/components/manifests/ManifestAddCanvasMenu.svelte";
+  //import type { ObjectList } from "@crkn-rcdr/access-data";
 
   /**
-   * @type {Manifest} The manifest thats contents should be edited.
+   * @type {PagedManifest} The manifest thats contents should be edited.
    */
-  export let manifest: Manifest;
+  export let manifest: PagedManifest;
+
+  /**
+   * @type {
+      label?: Record<string, string>;
+      id: string;
+    } The list of canvases in the manifest actively in the viewport.
+    */
+  let canvases: {
+    label?: Record<string, string>;
+    id: string;
+  }[] = [];
 
   /**
    * @type {any} The canvas being displayed in the canvas viewer.
@@ -64,7 +76,7 @@ Allows the user to modify the canvas list for a manifest.
    * @returns void
    */
   function setActiveCanvasLabel(event) {
-    manifest.canvases[activeCanvasIndex]["label"]["none"] = event.detail;
+    canvases[activeCanvasIndex]["label"]["none"] = event.detail;
     triggerUpdate();
   }
 
@@ -96,20 +108,20 @@ Allows the user to modify the canvas list for a manifest.
 
 {#if manifest}
   <!--NotificationBar
-    message={typedChecks.manifest.getCanvasesValidationMsg(manifest.canvases)}
+    message={typedChecks.manifest.getCanvasesValidationMsg(canvases)}
     status="fail"
   /-->
   <div class="auto-align auto-align__full content-wrapper">
     <div class="list-wrapper">
       <!--button
         on:click={() => {
-          manifest.canvases[activeCanvasIndex]["label"]["none"] = null;
+          canvases[activeCanvasIndex]["label"]["none"] = null;
           triggerUpdate();
         }}>test error</button
       > uncomment to test canvas error -->
       <CanvasThumbnailList
         showAddButton={state != "add"}
-        bind:canvases={manifest["canvases"]}
+        bind:canvases
         on:thumbnailClicked={(e) => {
           setActiveCanvas(e.detail.index);
         }}

@@ -12,8 +12,11 @@
           page.params["prefix"] as string,
           page.params["noid"] as string,
         ].join("/");
-        const response = await context.lapin.query("accessObject.get", id);
-        const serverObject = AccessObject.parse(response);
+        const response = await context.lapin.query("accessObject.getPaged", id);
+        const serverObject =
+          response.type === "collection"
+            ? PagedCollection.parse(response)
+            : PagedManifest.parse(response);
         return { props: { serverObject } };
       }
       return { props: { error: "Could not find prefix or noid in url." } };
@@ -29,15 +32,15 @@
    * @description This page shows the editor for the object.
    * The object is given to the page from the module above.
    */
-  import { AccessObject } from "@crkn-rcdr/access-data";
+  import { PagedCollection, PagedManifest } from "@crkn-rcdr/access-data";
   import Editor from "$lib/components/access-objects/Editor.svelte";
   import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
   import Loading from "$lib/components/shared/Loading.svelte";
 
   /**
-   * @type {AccessObject} Object being edited.
+   * @type {PagedCollection | PagedManifest} Object being edited.
    */
-  export let serverObject: AccessObject;
+  export let serverObject: PagedCollection | PagedManifest;
 
   /**
    * @type {string} An error message insdicating what went wrong.
