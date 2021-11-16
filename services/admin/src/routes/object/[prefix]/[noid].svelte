@@ -18,7 +18,7 @@
           "accessObject.getMembership",
           id
         );
-        return { props: { serverObject, membership } };
+        return { props: { serverObject, membership, id, error: "" } };
       }
       return { props: { error: "Could not find prefix or noid in url." } };
     } catch (e) {
@@ -34,10 +34,12 @@
    * The object is given to the page from the module above.
    */
   import { AccessObject } from "@crkn-rcdr/access-data";
-  import type { Membership } from "@crkn-rcdr/access-data";
+  import type { Membership, Noid } from "@crkn-rcdr/access-data";
   import Editor from "$lib/components/access-objects/Editor.svelte";
   import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
   import Loading from "$lib/components/shared/Loading.svelte";
+
+  export let id: Noid;
 
   /**
    * @type {AccessObject} Object being edited.
@@ -53,18 +55,22 @@
    * @type {string} An error message insdicating what went wrong.
    */
   export let error: string;
+
+  // The `key` directive below reloads this component's contents when `id` changes.
 </script>
 
-{#if serverObject}
-  <Editor bind:serverObject {membership} />
-{:else if error}
-  <br />
-  <div class="wrapper">
-    <NotificationBar status="fail" message={error} />
-  </div>
-{:else}
-  <div class="wrapper center">
-    <Loading backgroundType="gradient" /><br />
-    Loading...
-  </div>
-{/if}
+{#key id}
+  {#if serverObject}
+    <Editor bind:serverObject {membership} />
+  {:else if error}
+    <br />
+    <div class="wrapper">
+      <NotificationBar status="fail" message={error} />
+    </div>
+  {:else}
+    <div class="wrapper center">
+      <Loading backgroundType="gradient" /><br />
+      Loading...
+    </div>
+  {/if}
+{/key}

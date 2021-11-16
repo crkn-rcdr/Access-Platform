@@ -54,7 +54,7 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
    * @returns void
    */
   async function setPageList() {
-    if (!serverObject || !editorObject) return;
+    if (!editorObject) return;
 
     const generalInfo = {
       name: "General Info",
@@ -129,14 +129,14 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
   }
 </script>
 
-{#if serverObject && editorObject}
+{#if editorObject}
   <div class="editor">
     <SideMenuContainer {pageList}>
       <Toolbar
         slot="side-menu-header"
         title={serverObject?.["slug"]?.length
           ? serverObject["slug"]
-          : `Slugless ${serverObject["type"]}`}
+          : `Slugless ${serverObject.type}`}
       >
         <div
           class="end-content auto-align auto-align__full auto-align auto-align__j-end auto-align auto-align__a-end auto-align auto-align__column"
