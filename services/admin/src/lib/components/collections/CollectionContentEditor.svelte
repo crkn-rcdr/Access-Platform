@@ -22,12 +22,14 @@ Allows the user to modify the member list for a collection.
   import TiTrash from "svelte-icons/ti/TiTrash.svelte";
   import CollectionMembersAddition from "./CollectionMembersAddition.svelte";
   import { session } from "$app/stores";
+  import InfiniteScroller from "../shared/InfiniteScroller.svelte";
 
   export let collection: Collection;
 
   let activeMemberIndex: number = 0;
   const dispatch = createEventDispatcher();
   let documentSlug: [] = [];
+  let members: { id?: string; label?: Record<string, string> }[] = [];
   /**
    * @type {string} A control for what component is displayed in the free space of the content editor.
    */
@@ -37,6 +39,16 @@ Allows the user to modify the member list for a collection.
    * @param newState
    * @returns void
    */
+  /**
+   * @type {number} Shows the number of pages
+   */
+  let page: number = 0;
+  let size: number = 2;
+  let newBatch: {
+    id?: string;
+    label?: Record<string, string>;
+  }[] = [];
+
   function changeView(newState: string) {
     state = newState;
   }
@@ -84,10 +96,25 @@ Allows the user to modify the member list for a collection.
   }
 
   onMount(() => {
-    if (collection?.members?.length) activeMemberIndex = 0;
-    else if (collection) collection.members = [];
+    if (collection?.members?.length) {
+      activeMemberIndex = 0;
+      newBatch = collection.members.slice(size * page, size * (page + 1));
+    } else if (collection) collection.members = [];
     getMemberContext();
   });
+
+  // Any time newBatch changes, append it to members
+  $: members = [...members, ...newBatch];
+
+  // For testing
+  $: console.log(
+    "members",
+    members,
+    "newBatch",
+    newBatch,
+    size * page,
+    size * (page + 1)
+  );
 </script>
 
 {#if collection}
@@ -106,8 +133,10 @@ Allows the user to modify the member list for a collection.
       }}
     />
     <br />
-    <VirtualList
-      bind:dataList={collection.members}
+
+    <br />
+    <!--VirtualList
+      bind:dataList={members}
       bind:activeIndex={activeMemberIndex}
       draggable={collection.behavior !== "unordered"}
       let:item
@@ -165,12 +194,37 @@ Allows the user to modify the member list for a collection.
           </div>
         </div>
       </div>
-    </VirtualList>
+    </VirtualList-->
+    <br />
+
+    <!-- I commented out the above and added the styling from the example to help me see what's going on.
+    -->
+    <ul>
+      <!-- loop through the array where items are added when scrolling -->
+      {#each members as collectionmembers}
+        <li>{collectionmembers.id}</li>
+        {#each documentSlug as document}
+          {#if document["result"]?.["label"]?.["none"] && document["id"] === collectionmembers?.id}
+            {document["result"]["slug"]} : {document["result"]["label"]["none"]}
+          {/if}
+        {/each}
+      {/each}
+      <!-- collection.members.length has all the items; members gets filled as the user scrolls -->
+      <InfiniteScroller
+        hasMore={collection.members.length > members.length}
+        threshold={100}
+        on:loadMore={() => {
+          page++;
+          // Set newBatch on scroll. This will trigger line 107
+          newBatch = collection.members.slice(size * page, size * (page + 1));
+        }}
+      />
+    </ul>
   </div>
 {/if}
 
 <style>
-  .action.icon {
+  /* .action.icon {
     opacity: 0.6;
     cursor: pointer;
   }
@@ -196,9 +250,6 @@ Allows the user to modify the member list for a collection.
   .members:hover .pos {
     display: none;
   }
-  li {
-    list-style: none;
-  }
   #grid {
     margin-top: 1rem;
     height: 5rem;
@@ -206,5 +257,29 @@ Allows the user to modify the member list for a collection.
     grid-template-areas: "a a";
     gap: 10px;
     grid-auto-columns: 200px;
+  } */
+
+  ul {
+    box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2),
+      0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12);
+    display: flex;
+    flex-direction: column;
+    border-radius: 2px;
+    width: 100%;
+    max-width: 100%;
+    max-height: 100;
+    background-color: white;
+    overflow-x: auto;
+    list-style: none;
+    padding: 0;
+  }
+
+  li {
+    box-sizing: border-box;
+    transition: 0.2s all;
+  }
+
+  li:hover {
+    background-color: #eeeeee;
   }
 </style>

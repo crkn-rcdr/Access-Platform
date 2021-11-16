@@ -6,6 +6,7 @@ import {
   Noid,
   ObjectListHandler,
   ObjectListPage,
+  TextRecord,
   User,
 } from "@crkn-rcdr/access-data";
 import { createRouter, httpErrorToTRPC } from "../router.js";
@@ -85,6 +86,82 @@ export const manifestRouter = createRouter()
         code: "PATH_NOT_FOUND",
         message: `No object with id ${id} found.`,
       });
+    },
+  })
+  .mutation("addCanvases", {
+    input: z.object({
+      id: Noid,
+      canvases: z.array(Noid),
+      user: User.optional(),
+    }),
+    async resolve({ input: { id, canvases, user }, ctx }) {
+      try {
+        // TODO: this assumes that each id in `canvases` is legit.
+        // Should we check here?
+        await ctx.couch.access.processList({
+          id,
+          command: ["add", canvases],
+          user,
+        });
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .mutation("removeCanvases", {
+    input: z.object({
+      id: Noid,
+      canvases: z.array(Noid),
+      user: User.optional(),
+    }),
+    async resolve({ input: { id, canvases, user }, ctx }) {
+      try {
+        await ctx.couch.access.processList({
+          id,
+          command: ["remove", canvases],
+          user,
+        });
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .mutation("moveCanvases", {
+    input: z.object({
+      id: Noid,
+      canvases: z.array(Noid),
+      toIndex: z.number().int().positive(),
+      user: User.optional(),
+    }),
+    async resolve({ input: { id, canvases, toIndex, user }, ctx }) {
+      try {
+        await ctx.couch.access.processList({
+          id,
+          command: ["move", [canvases, toIndex]],
+          user,
+        });
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .mutation("relabelCanvas", {
+    input: z.object({
+      id: Noid,
+      canvas: Noid,
+      label: TextRecord,
+      user: User.optional(),
+    }),
+    async resolve({ input: { id, canvas, label, user }, ctx }) {
+      try {
+        await ctx.couch.access.processList({
+          id,
+          command: ["relabel", [canvas, label]],
+          user,
+        });
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
     },
   })
   .mutation("edit", {
