@@ -15,7 +15,12 @@ The editor component allows for the editing of PagedCollection | PagedManifests.
 *Note: `bind:` is required for changes to the serverObject to be reflected in higher level components.*
 -->
 <script lang="ts">
-  import type { PagedCollection, PagedManifest } from "@crkn-rcdr/access-data";
+  import type {
+    PagedCollection,
+    PagedManifest,
+    Membership,
+  } from "@crkn-rcdr/access-data";
+  import { isManifest, isCollection } from "@crkn-rcdr/access-data";
   import type { SideMenuPageData } from "$lib/types";
   import Toolbar from "$lib/components/shared/Toolbar.svelte";
   import ManifestContentEditor from "$lib/components/manifests/ManifestContentEditor.svelte";
@@ -29,6 +34,7 @@ The editor component allows for the editing of PagedCollection | PagedManifests.
   import { showConfirmation } from "$lib/utils/confirmation";
   import { editorObjectStore } from "$lib/stores/accessObjectEditorStore";
   import { onDestroy } from "svelte";
+  import EditorForm from "$lib/components/access-objects/EditorForm.svelte";
 
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
@@ -44,6 +50,8 @@ The editor component allows for the editing of PagedCollection | PagedManifests.
    * @type {"create" | "edit"} An indicator variable if the editor is in create mode or edit mode.
    */
   let mode: "create" | "edit";
+
+  export let membership: Membership;
 
   /**
    * @type {Array<SideMenuPageData>} This list controls the pages that appear in the side menu container, and their contents.
@@ -100,31 +108,34 @@ The editor component allows for the editing of PagedCollection | PagedManifests.
    * @returns void
    */
   async function setPageList() {
-    if (!serverObject || !$editorObjectStore) return;
-    if (serverObject.type === "manifest") {
-      pageList = [
-        {
-          name: "General Info",
-          componentData: {
-            contentComponent: InfoEditor,
-            contentComponentProps: {
-              mode,
-              editorObject: $editorObjectStore,
-            },
-            sideMenuPageProps: {},
-            listeners: {
-              save: (event) => {
-                saveChange(event);
-              },
-              change: (event) => {
-                // Unfortunately just passing the store only works for members and canvases lists
-                $editorObjectStore = event.detail;
-              },
-            },
+    if (!$editorObjectStore) return;
+
+    const generalInfo = {
+      name: "General Info",
+      componentData: {
+        contentComponent: EditorForm,
+        contentComponentProps: {
+          mode,
+          editorObject: $editorObjectStore,
+          membership,
+        },
+        sideMenuPageProps: {},
+        listeners: {
+          save: (event) => {
+            saveChange(event);
+          },
+          change: (event) => {
+            // Unfortunately just passing the store only works for members and canvases lists
+            $editorObjectStore = event.detail;
           },
         },
-      ];
-      if (mode !== "create") {
+      },
+    };
+
+    pageList = [generalInfo];
+
+    if (mode !== "create") {
+      if (serverObject.type === "manifest") {
         pageList.push({
           name: "Manage Content",
           componentData: {
@@ -136,31 +147,7 @@ The editor component allows for the editing of PagedCollection | PagedManifests.
             listeners: {},
           },
         });
-      }
-    } else if (serverObject.type === "collection") {
-      pageList = [
-        {
-          name: "General Info",
-          componentData: {
-            contentComponent: InfoEditor,
-            contentComponentProps: {
-              mode,
-              editorObject: $editorObjectStore,
-            },
-            sideMenuPageProps: {},
-            listeners: {
-              save: (event) => {
-                saveChange(event);
-              },
-              change: (event) => {
-                // Unfortunately just passing the store only works for members and canvases lists
-                $editorObjectStore = event.detail;
-              },
-            },
-          },
-        },
-      ];
-      if (mode !== "create") {
+      } else if (serverObject.type === "collection") {
         pageList.push({
           name: "Manage Members",
           componentData: {
@@ -225,14 +212,14 @@ The editor component allows for the editing of PagedCollection | PagedManifests.
   });
 </script>
 
-{#if serverObject && $editorObjectStore}
+{#if $editorObjectStore}
   <div class="editor">
     <SideMenuContainer bind:pageList>
       <Toolbar
         slot="side-menu-header"
         title={serverObject?.["slug"]?.length
           ? serverObject["slug"]
-          : `Slugless ${serverObject["type"]}`}
+          : `Slugless ${serverObject.type}`}
       >
         <div
           class="end-content auto-align auto-align__full auto-align auto-align__j-end auto-align auto-align__a-end auto-align auto-align__column"

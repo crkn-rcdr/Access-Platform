@@ -1760,7 +1760,7 @@ span.flatpickr-day.nextMonthDay.selected {
   border-right: 0;
 }
 
-@media screen and (min-width: 0\0) and (min-resolution: +72dpi) {
+@media screen and (min-width: 0\0) and (min-resolution: 72dpi) {
   span.flatpickr-day {
     display: block;
     -webkit-box-flex: 1;
