@@ -15,11 +15,19 @@ This component displays the non content properties for an access editorObject an
 *Note: `bind:` is required for changes to the editorObject to be reflected in higher level components.*
 -->
 <script lang="ts">
+  import { getStores } from "$app/stores";
+  import type { Session } from "$lib/types";
+
   import { isManifest, isCollection } from "@crkn-rcdr/access-data";
-  import type { AccessObject, Membership } from "@crkn-rcdr/access-data";
+  import type { AccessObject, Membership, Noid } from "@crkn-rcdr/access-data";
   import { typedChecks } from "$lib/utils/validation";
   import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
   import Resolver from "$lib/components/access-objects/Resolver.svelte";
+
+  /**
+   * The session store that contains the module for sending requests to lapin.
+   */
+  const session = getStores<Session>().session;
 
   /**
    * The AccessObject editorObject that will be manipulated by the user, usually, a copy of an access pbject that acts as a form model.
@@ -30,6 +38,20 @@ This component displays the non content properties for an access editorObject an
    * Membership record for this object.
    */
   export let membership: Membership;
+
+  const removeMembership = async (collectionID: Noid) => {
+    try {
+      await $session.lapin.mutation("collection.removeMembers", {
+        user: $session.user,
+        id: collectionID,
+        members: [editorObject.id],
+      });
+
+      membership = membership.filter((record) => record.id === collectionID);
+    } catch (e) {
+      console.log(e);
+    }
+  };
 </script>
 
 {#if editorObject}
@@ -78,6 +100,10 @@ This component displays the non content properties for an access editorObject an
           {#each membership as coll}
             <li>
               <a href="/object/{coll.id}">{coll.label["none"]} ({coll.slug})</a>
+              <button
+                class="sm danger"
+                on:click={() => removeMembership(coll.id)}>Remove</button
+              >
             </li>
           {/each}
         </ul>
@@ -112,5 +138,9 @@ This component displays the non content properties for an access editorObject an
   label,
   textarea {
     width: 100%;
+  }
+
+  li button {
+    margin-left: 0.5ch;
   }
 </style>
