@@ -6,6 +6,7 @@
   export let hasMore: boolean = true;
   export let reverse: boolean = false;
   export let window: boolean = false;
+
   const dispatch = createEventDispatcher<{ loadMore: never }>();
   let isLoadMore: boolean = false;
   let component: HTMLElement;

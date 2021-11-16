@@ -201,6 +201,11 @@ Allows the user to modify the member list for a collection.
       <!-- loop through the array where items are added when scrolling -->
       {#each members as collectionmembers}
         <li>{collectionmembers.id}</li>
+        {#each documentSlug as document}
+          {#if document["result"]?.["label"]?.["none"] && document["id"] === collectionmembers?.id}
+            {document["result"]["slug"]} : {document["result"]["label"]["none"]}
+          {/if}
+        {/each}
       {/each}
       <!-- collection.members.length has all the items; members gets filled as the user scrolls -->
       <InfiniteScroller
@@ -217,7 +222,7 @@ Allows the user to modify the member list for a collection.
 {/if}
 
 <style>
-  .action.icon {
+  /* .action.icon {
     opacity: 0.6;
     cursor: pointer;
   }
@@ -250,7 +255,7 @@ Allows the user to modify the member list for a collection.
     grid-template-areas: "a a";
     gap: 10px;
     grid-auto-columns: 200px;
-  }
+  } */
 
   ul {
     box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2),
@@ -260,7 +265,7 @@ Allows the user to modify the member list for a collection.
     border-radius: 2px;
     width: 100%;
     max-width: 100%;
-    max-height: 60px;
+    max-height: 100;
     background-color: white;
     overflow-x: auto;
     list-style: none;
@@ -268,10 +273,8 @@ Allows the user to modify the member list for a collection.
   }
 
   li {
-    padding: 15px;
     box-sizing: border-box;
     transition: 0.2s all;
-    font-size: 14px;
   }
 
   li:hover {
