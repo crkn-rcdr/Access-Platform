@@ -2,16 +2,19 @@
   import type { Depositor, Session } from "$lib/types";
   import { getStores } from "$app/stores";
   import { createEventDispatcher } from "svelte";
-  import type { Collection } from "@crkn-rcdr/access-data/src/access/Collection";
+  import type {
+    Collection,
+    PagedCollection,
+  } from "@crkn-rcdr/access-data/src/access/Collection";
   import TiArrowBack from "svelte-icons/ti/TiArrowBack.svelte";
 
   import PrefixSelector from "$lib/components/access-objects/PrefixSelector.svelte";
   import ToggleButtons from "$lib/components/shared/ToggleButtons.svelte";
 
   /**
-   * @type {Collection} The Collection where the members are added to.
+   * @type {PagedCollection} The Collection where the members are added to.
    */
-  export let destinationMember: Collection;
+  export let destinationMember: PagedCollection;
   /**
    * To bind the context of members value.
    */
@@ -149,13 +152,16 @@
         "collection.viewMembersContext",
         resultArray
       );
+
       resolution.map((slug) => {
         if (slug[1].found === true) {
           contextDisplay.push({ id: slug[0], result: slug[1].result });
         }
       });
 
-      if (destinationMember?.members) {
+      // TODO: use new api to add the new member
+
+      /*if (destinationMember?.members) {
         destinationMember?.members?.splice(destinationIndex, 0, {
           id: resultArray[index],
         });
@@ -165,10 +171,11 @@
             id: resultArray[index],
           },
         ];
-      }
+      }*/
     }
     contextDisplay = contextDisplay;
     destinationMember = destinationMember;
+
     addedMember = false;
     showAddButton = true;
     //isMemberSelected = true;

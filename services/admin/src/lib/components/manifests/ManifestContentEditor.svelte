@@ -113,19 +113,13 @@ Allows the user to modify the canvas list for a manifest.
   /-->
   <div class="auto-align auto-align__full content-wrapper">
     <div class="list-wrapper">
-      <!--button
-        on:click={() => {
-          canvases[activeCanvasIndex]["label"]["none"] = null;
-          triggerUpdate();
-        }}>test error</button
-      > uncomment to test canvas error -->
       <CanvasThumbnailList
         showAddButton={state != "add"}
-        bind:canvases
-        on:thumbnailClicked={(e) => {
-          setActiveCanvas(e.detail.index);
+        bind:manifest
+        on:thumbnailClicked={(event) => {
+          setActiveCanvas(event.detail.index);
         }}
-        on:addClicked={() => {
+        on:addClicked={(event) => {
           changeView("add");
         }}
       />

@@ -15,7 +15,10 @@ Allows the user to modify the member list for a collection.
 -->
 <script lang="ts">
   import { onMount, createEventDispatcher } from "svelte";
-  import type { Collection } from "@crkn-rcdr/access-data/src/access/Collection";
+  import type {
+    Collection,
+    PagedCollection,
+  } from "@crkn-rcdr/access-data/src/access/Collection";
   import AutomaticResizeNumberInput from "$lib/components/shared/AutomaticResizeNumberInput.svelte";
   import VirtualList from "$lib/components/shared/VirtualList.svelte";
   import { moveArrayElement } from "$lib/utils/arrayUtil";
@@ -24,7 +27,7 @@ Allows the user to modify the member list for a collection.
   import { session } from "$app/stores";
   import InfiniteScroller from "../shared/InfiniteScroller.svelte";
 
-  export let collection: Collection;
+  export let collection: PagedCollection;
 
   let activeMemberIndex: number = 0;
   const dispatch = createEventDispatcher();
@@ -53,7 +56,7 @@ Allows the user to modify the member list for a collection.
     state = newState;
   }
   async function getMemberContext() {
-    let currentMembers = collection.members.map((members) => members.id);
+    let currentMembers = members.map((members) => members.id);
 
     const resolutions = await $session.lapin.query(
       "collection.viewMembersContext",
@@ -66,40 +69,45 @@ Allows the user to modify the member list for a collection.
     });
   }
   function setActiveIndex(index: number) {
-    if (index >= collection.members.length)
-      index = collection.members.length - 1;
+    if (index >= collection?.members?.count)
+      index = collection.members.count - 1;
     if (index < 0) index = 0;
     activeMemberIndex = index;
     dispatch("membersClicked", { index });
   }
   function moveMember(event: any, originalItemIndex: number) {
+    //TODO: use new API to move member
+
     // Move the member and trigger saving
-    let destinationItemIndex = parseInt(event.detail.value) - 1;
+    /*let destinationItemIndex = parseInt(event.detail.value) - 1;
     moveArrayElement(
       collection.members,
       originalItemIndex,
       destinationItemIndex
     );
-    collection.members = collection.members;
+    collection.members = collection.members;*/
     // Highlight and move to new position
-    activeMemberIndex = destinationItemIndex;
+    //activeMemberIndex = destinationItemIndex;
     //jumpTo(activeMemberIndex);
+
     setActiveIndex(activeMemberIndex);
   }
   function deleteMemberByIndex(event: any, index: number) {
     event.stopPropagation();
-    if (index >= 0 && index < collection?.members.length) {
-      collection?.members.splice(index, 1);
+
+    if (index >= 0 && index < collection?.members?.count) {
+      //TODO: use new API to delete by index
+      /*collection?.members.splice(index, 1);
       collection.members = collection?.members;
-      setActiveIndex(activeMemberIndex);
+      setActiveIndex(activeMemberIndex);*/
     }
   }
 
   onMount(() => {
-    if (collection?.members?.length) {
-      activeMemberIndex = 0;
-      newBatch = collection.members.slice(size * page, size * (page + 1));
-    } else if (collection) collection.members = [];
+    activeMemberIndex = 0;
+    newBatch = []; // TODO: get collection members for page using API
+
+    //collection.members.slice(size * page, size * (page + 1));
     getMemberContext();
   });
 
@@ -211,12 +219,14 @@ Allows the user to modify the member list for a collection.
       {/each}
       <!-- collection.members.length has all the items; members gets filled as the user scrolls -->
       <InfiniteScroller
-        hasMore={collection.members.length > members.length}
+        hasMore={collection?.members?.count > members.length}
         threshold={100}
         on:loadMore={() => {
           page++;
-          // Set newBatch on scroll. This will trigger line 107
-          newBatch = collection.members.slice(size * page, size * (page + 1));
+
+          // TODO: grab new batch for members using new API
+          newBatch = [];
+          //collection.members.slice(size * page, size * (page + 1));
         }}
       />
     </ul>

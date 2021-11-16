@@ -31,14 +31,12 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
   import TiTrash from "svelte-icons/ti/TiTrash.svelte";
   import AutomaticResizeNumberInput from "$lib/components/shared/AutomaticResizeNumberInput.svelte";
   import VirtualList from "$lib/components/shared/VirtualList.svelte";
+  import type { PagedManifest } from "@crkn-rcdr/access-data";
 
   /**
-   * @type {ObjectList} An ObjectList containing canvases to be listed.
+   * @type {PagedManifest} An ObjectList containing canvases to be listed.
    */
-  export let canvases: {
-    id?: string;
-    label?: Record<string, string>;
-  }[] = [];
+  export let manifest: PagedManifest;
 
   /**
    * @type {boolean} If the add button should be displayed over the list of canvases.
@@ -61,7 +59,7 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
    * @returns void
    */
   function setActiveIndex(index: number) {
-    if (index >= canvases.length) index = canvases.length - 1;
+    if (index >= manifest?.canvases?.count) index = manifest.canvases.count - 1;
     if (index < 0) index = 0;
     activeCanvasIndex = index;
     dispatch("thumbnailClicked", { index });
@@ -75,10 +73,11 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
    */
   function deleteCanvasByIndex(event: any, index: number) {
     event.stopPropagation();
-    if (index >= 0 && index < canvases.length) {
-      canvases.splice(index, 1);
+    if (index >= 0 && index < manifest?.canvases?.count) {
+      // TODO: use new api to delete canvas
+      /*canvases.splice(index, 1);
       canvases = canvases;
-      setActiveIndex(activeCanvasIndex);
+      setActiveIndex(activeCanvasIndex);*/
     }
   }
 
@@ -92,14 +91,16 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
    * @returns void
    */
   function moveCanvas(event: any, originalItemIndex: number) {
-    // Move the canvas and trigger saving
+    // TODO: use new api to move canvas
+
+    /*// Move the canvas and trigger saving
     let destinationItemIndex = parseInt(event.detail.value) - 1;
     moveArrayElement(canvases, originalItemIndex, destinationItemIndex);
 
     canvases = canvases;
 
     // Highlight and move to new position
-    activeCanvasIndex = destinationItemIndex;
+    activeCanvasIndex = destinationItemIndex;*/
 
     //jumpTo(activeCanvasIndex);
     setActiveIndex(activeCanvasIndex);
@@ -118,7 +119,7 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
    * @description When the component instance is mounted onto the dom, @var activeCanvasIndex is instantiated, the canvases positions model is set using @function setIndexModel(), then @var isInitialized is set to true.
    */
   onMount(() => {
-    if (canvases.length) activeCanvasIndex = 0;
+    if (manifest?.canvases?.count) activeCanvasIndex = 0;
   });
 </script>
 
@@ -126,7 +127,7 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
   {#if showAddButton}
     <button class="primary lg" on:click={addClicked}>Add Canvas</button>
   {/if}
-  <VirtualList
+  <!--VirtualList
     bind:dataList={canvases}
     bind:activeIndex={activeCanvasIndex}
     disabled={!showAddButton}
@@ -181,7 +182,7 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
         />
       </div>
     </div>
-  </VirtualList>
+  </VirtualList-->
 </div>
 
 <style>

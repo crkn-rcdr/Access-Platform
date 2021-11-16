@@ -24,7 +24,7 @@ The editor component allows for the editing of PagedCollection | PagedManifests.
   import EditorActions from "$lib/components/access-objects/EditorActions.svelte";
   import StatusIndicator from "$lib/components/access-objects/StatusIndicator.svelte";
   import InfoEditor from "$lib/components/access-objects/EditorForm.svelte";
-  import { getStores } from "$app/stores";
+  import { getStores, page } from "$app/stores";
   import type { Session } from "$lib/types";
   import { showConfirmation } from "$lib/utils/confirmation";
   import { editorObjectStore } from "$lib/stores/accessObjectEditorStore";
@@ -123,7 +123,9 @@ The editor component allows for the editing of PagedCollection | PagedManifests.
             },
           },
         },
-        {
+      ];
+      if (mode !== "create") {
+        pageList.push({
           name: "Manage Content",
           componentData: {
             contentComponent: ManifestContentEditor,
@@ -133,8 +135,8 @@ The editor component allows for the editing of PagedCollection | PagedManifests.
             },
             listeners: {},
           },
-        },
-      ];
+        });
+      }
     } else if (serverObject.type === "collection") {
       pageList = [
         {
@@ -157,7 +159,9 @@ The editor component allows for the editing of PagedCollection | PagedManifests.
             },
           },
         },
-        {
+      ];
+      if (mode !== "create") {
+        pageList.push({
           name: "Manage Members",
           componentData: {
             contentComponent: CollectionContentEditor,
@@ -167,8 +171,8 @@ The editor component allows for the editing of PagedCollection | PagedManifests.
             },
             listeners: {},
           },
-        },
-      ];
+        });
+      }
     }
   }
 

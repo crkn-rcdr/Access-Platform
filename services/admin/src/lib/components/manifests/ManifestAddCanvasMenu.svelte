@@ -130,7 +130,7 @@ This component allows the user to search through other manifests and select canv
    * @returns void
    */
   function handleAddPressed() {
-    // TODO: ADD CANVASES
+    // TODO: add canvases using new api
     dispatch("done", selectedCanvases);
     selectedCanvases = [];
   }
