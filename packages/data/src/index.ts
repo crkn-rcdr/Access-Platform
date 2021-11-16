@@ -25,6 +25,9 @@ export {
   isManifest,
   toPagedCollection,
   toPagedManifest,
+  SimpleRecord,
+  Membership,
+  Ancestry,
 } from "./access/index.js";
 
 export {

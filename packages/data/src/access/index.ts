@@ -4,6 +4,8 @@ import { Alias } from "./Alias.js";
 import { Canvas } from "./Canvas.js";
 import { Collection } from "./Collection.js";
 import { Manifest } from "./Manifest.js";
+import { Noid, Slug } from "../util/index.js";
+import { TextRecord } from "./util/TextRecord.js";
 
 export const AccessObject = z.union([Alias, Canvas, Collection, Manifest]);
 export type AccessObject = z.infer<typeof AccessObject>;
@@ -50,3 +52,12 @@ export {
   ObjectListPage,
 } from "./util/ObjectList.js";
 export { TextRecord } from "./util/TextRecord.js";
+
+export interface SimpleRecord {
+  id: Noid;
+  slug?: Slug;
+  label: TextRecord;
+}
+
+export type Membership = Array<SimpleRecord>;
+export type Ancestry = Array<Array<SimpleRecord>>;

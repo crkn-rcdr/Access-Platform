@@ -16,15 +16,20 @@ This component displays the non content properties for an access editorObject an
 -->
 <script lang="ts">
   import { isManifest, isCollection } from "@crkn-rcdr/access-data";
-  import type { AccessObject } from "@crkn-rcdr/access-data";
-  import { getSlugValidationMsg, typedChecks } from "$lib/utils/validation";
+  import type { AccessObject, Membership } from "@crkn-rcdr/access-data";
+  import { typedChecks } from "$lib/utils/validation";
   import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
   import Resolver from "$lib/components/access-objects/Resolver.svelte";
 
   /**
-   * @type {AccessObject} The AccessObject editorObject that will be manipulated by the user, usually, a copy of an access pbject that acts as a form model.
+   * The AccessObject editorObject that will be manipulated by the user, usually, a copy of an access pbject that acts as a form model.
    */
   export let editorObject: AccessObject; // Not sure if we should pass an editorObject or have a list of props (ex: slug, label, ...) that can be null, and show ones that are instantiated only?
+
+  /**
+   * Membership record for this object.
+   */
+  export let membership: Membership;
 </script>
 
 {#if editorObject}
@@ -65,6 +70,19 @@ This component displays the non content properties for an access editorObject an
           <option>multi-part</option>
           <option>unordered</option>
         </select><br /><br />
+      {/if}
+
+      <p>Memberships</p>
+      {#if membership.length > 0}
+        <ul>
+          {#each membership as coll}
+            <li>
+              <a href="/object/{coll.id}">{coll.label["none"]} ({coll.slug})</a>
+            </li>
+          {/each}
+        </ul>
+      {:else}
+        <p>This {editorObject.type} is not a member of any collections.</p>
       {/if}
       <!--Fixtures don't have this yet, causes save to be enabled on load-->
 

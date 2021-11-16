@@ -15,7 +15,7 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
 *Note: `bind:` is required for changes to the serverObject to be reflected in higher level components.*
 -->
 <script lang="ts">
-  import type { AccessObject } from "@crkn-rcdr/access-data";
+  import type { AccessObject, Membership } from "@crkn-rcdr/access-data";
   import { isManifest, isCollection } from "@crkn-rcdr/access-data";
   import type { SideMenuPageData } from "$lib/types";
   import Toolbar from "$lib/components/shared/Toolbar.svelte";
@@ -30,6 +30,8 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
    * @type {AccessObject} Object being edited.
    */
   export let serverObject: AccessObject;
+
+  export let membership: Membership;
 
   /**
    * @type {Array<SideMenuPageData>} This list controls the pages that appear in the side menu container, and their contents.
@@ -53,19 +55,22 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
    */
   async function setPageList() {
     if (!serverObject || !editorObject) return;
+
+    const generalInfo = {
+      name: "General Info",
+      componentData: {
+        contentComponent: InfoEditor,
+        contentComponentProps: { editorObject, membership },
+        sideMenuPageProps: {},
+        update: () => {
+          editorObject = editorObject;
+        },
+      },
+    };
+
     if (isManifest(editorObject)) {
       pageList = [
-        {
-          name: "General Info",
-          componentData: {
-            contentComponent: InfoEditor,
-            contentComponentProps: { editorObject: editorObject },
-            sideMenuPageProps: {},
-            update: () => {
-              editorObject = editorObject;
-            },
-          },
-        },
+        generalInfo,
         {
           name: "Manage Content",
           componentData: {
@@ -82,17 +87,7 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
       ];
     } else if (isCollection(editorObject)) {
       pageList = [
-        {
-          name: "General Info",
-          componentData: {
-            contentComponent: InfoEditor,
-            contentComponentProps: { editorObject: editorObject },
-            sideMenuPageProps: {},
-            update: () => {
-              editorObject = editorObject;
-            },
-          },
-        },
+        generalInfo,
         {
           name: "Manage Members",
           componentData: {
