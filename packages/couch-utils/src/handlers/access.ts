@@ -14,6 +14,9 @@ import {
   NewCollection,
   NewManifest,
   TextRecord,
+  SimpleRecord,
+  Membership,
+  Ancestry,
 } from "@crkn-rcdr/access-data";
 
 import { DatabaseHandler } from "../DatabaseHandler.js";
@@ -34,15 +37,6 @@ type SlugResolutionError =
   | "not-found" // the slug didn't resolve
   | "is-self" // the slug resolved to the collection being edited
   | "already-member"; // the slug resolved to an existing member of the collection
-
-export interface SimpleRecord {
-  id: Noid;
-  slug?: Slug;
-  label: TextRecord;
-}
-
-export type Membership = Array<SimpleRecord>;
-export type Ancestry = Array<Array<SimpleRecord>>;
 
 export type ProcessListCommand =
   | ["add", Noid[]]

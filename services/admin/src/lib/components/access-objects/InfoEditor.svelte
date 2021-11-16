@@ -15,16 +15,43 @@ This component displays the non content properties for an access editorObject an
 *Note: `bind:` is required for changes to the editorObject to be reflected in higher level components.*
 -->
 <script lang="ts">
+  import { getStores } from "$app/stores";
+  import type { Session } from "$lib/types";
+
   import { isManifest, isCollection } from "@crkn-rcdr/access-data";
-  import type { AccessObject } from "@crkn-rcdr/access-data";
-  import { getSlugValidationMsg, typedChecks } from "$lib/utils/validation";
+  import type { AccessObject, Membership, Noid } from "@crkn-rcdr/access-data";
+  import { typedChecks } from "$lib/utils/validation";
   import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
   import Resolver from "$lib/components/access-objects/Resolver.svelte";
 
   /**
-   * @type {AccessObject} The AccessObject editorObject that will be manipulated by the user, usually, a copy of an access pbject that acts as a form model.
+   * The session store that contains the module for sending requests to lapin.
+   */
+  const session = getStores<Session>().session;
+
+  /**
+   * The AccessObject editorObject that will be manipulated by the user, usually, a copy of an access pbject that acts as a form model.
    */
   export let editorObject: AccessObject; // Not sure if we should pass an editorObject or have a list of props (ex: slug, label, ...) that can be null, and show ones that are instantiated only?
+
+  /**
+   * Membership record for this object.
+   */
+  export let membership: Membership;
+
+  const removeMembership = async (collectionID: Noid) => {
+    try {
+      await $session.lapin.mutation("collection.removeMembers", {
+        user: $session.user,
+        id: collectionID,
+        members: [editorObject.id],
+      });
+
+      membership = membership.filter((record) => record.id === collectionID);
+    } catch (e) {
+      console.log(e);
+    }
+  };
 </script>
 
 {#if editorObject}
@@ -66,6 +93,23 @@ This component displays the non content properties for an access editorObject an
           <option>unordered</option>
         </select><br /><br />
       {/if}
+
+      <p>Memberships</p>
+      {#if membership.length > 0}
+        <ul>
+          {#each membership as coll}
+            <li>
+              <a href="/object/{coll.id}">{coll.label["none"]} ({coll.slug})</a>
+              <button
+                class="sm danger"
+                on:click={() => removeMembership(coll.id)}>Remove</button
+              >
+            </li>
+          {/each}
+        </ul>
+      {:else}
+        <p>This {editorObject.type} is not a member of any collections.</p>
+      {/if}
       <!--Fixtures don't have this yet, causes save to be enabled on load-->
 
       <!--span>
@@ -94,5 +138,9 @@ This component displays the non content properties for an access editorObject an
   label,
   textarea {
     width: 100%;
+  }
+
+  li button {
+    margin-left: 0.5ch;
   }
 </style>
