@@ -84,7 +84,8 @@ Allows the user to modify the member list for a collection.
   }
 
   onMount(() => {
-    if (collection.members.length) activeMemberIndex = 0;
+    if (collection?.members?.length) activeMemberIndex = 0;
+    else if (collection) collection.members = [];
     getMemberContext();
   });
 </script>
@@ -100,6 +101,8 @@ Allows the user to modify the member list for a collection.
       }}
       on:addClicked={() => {
         changeView("add");
+        collection = collection;
+        console.log("collection", collection);
       }}
     />
     <br />

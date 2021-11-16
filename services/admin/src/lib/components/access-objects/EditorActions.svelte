@@ -36,14 +36,14 @@ The editor actions component holds functionality that is responsible for perform
   export let serverObject: AccessObject;
 
   /**
+   * @type {"create" | "edit"} An indicator variable if the editor is in create mode or edit mode.
+   */
+  export let mode: "create" | "edit";
+
+  /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
    */
   const { session } = getStores<Session>();
-
-  /**
-   * @type {"create" | "edit"} An indicator variable if the editor is in create mode or edit mode.
-   */
-  let mode: "create" | "edit";
 
   /**
    * @type {any} A module that quickly deep copies (clones) an serverObject.
@@ -70,8 +70,8 @@ The editor actions component holds functionality that is responsible for perform
    * @returns void
    */
   function checkEnableSave() {
-    isSaveEnabled =
-      mode === "create" && checkValidDiff(serverObject, $editorObjectStore);
+    const diff = checkValidDiff(serverObject, $editorObjectStore);
+    isSaveEnabled = mode === "create" && diff;
   }
 
   $: {

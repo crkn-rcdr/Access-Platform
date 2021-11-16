@@ -89,15 +89,39 @@
     if (depositor?.prefix !== "none")
       slugArray = slugArray.map((slug) => `${depositor?.prefix}.${slug}`);
 
-    const response = await $session.lapin.query("collection.checkAdditions", {
-      id,
-      slugArray,
-    });
+    if (id) {
+      const response = await $session.lapin.query("collection.checkAdditions", {
+        id,
+        slugArray,
+      });
 
-    resolutions = response;
-    showAddButton = false;
-    // I'm returning here so that we can type `resolutions` properly (see above)
-    return response;
+      resolutions = response;
+      showAddButton = false;
+
+      // I'm returning here so that we can type `resolutions` properly (see above)
+      return response;
+    } else {
+      const response = await $session.lapin.query("slug.lookupMany", slugArray);
+
+      resolutions = Object.fromEntries(
+        response.map(([slug, r]): [string, any] => {
+          if (r.found) {
+            return [
+              slug,
+              {
+                resolved: true,
+                ...r.result,
+              },
+            ];
+          }
+          return [slug, { error: "not-found", resolved: false }];
+        })
+      );
+      showAddButton = false;
+
+      // I'm returning here so that we can type `resolutions` properly (see above)
+      return response;
+    }
   }
 
   function handleCancelPressed() {
@@ -131,13 +155,20 @@
         }
       });
 
-      destinationMember?.members?.splice(destinationIndex, 0, {
-        id: resultArray[index],
-      });
-
-      contextDisplay = contextDisplay;
-      destinationMember = destinationMember;
+      if (destinationMember?.members) {
+        destinationMember?.members?.splice(destinationIndex, 0, {
+          id: resultArray[index],
+        });
+      } else {
+        destinationMember.members = [
+          {
+            id: resultArray[index],
+          },
+        ];
+      }
     }
+    contextDisplay = contextDisplay;
+    destinationMember = destinationMember;
     addedMember = false;
     showAddButton = true;
     //isMemberSelected = true;

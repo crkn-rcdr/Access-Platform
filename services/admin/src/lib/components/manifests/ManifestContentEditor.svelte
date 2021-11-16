@@ -24,8 +24,6 @@ Allows the user to modify the canvas list for a manifest.
   import Switch from "$lib/components/shared/Switch.svelte";
   import SwitchCase from "$lib/components/shared/SwitchCase.svelte";
   import ManifestAddCanvasMenu from "$lib/components/manifests/ManifestAddCanvasMenu.svelte";
-  import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
-  import { typedChecks } from "$lib/utils/validation";
 
   /**
    * @type {Manifest} The manifest thats contents should be edited.

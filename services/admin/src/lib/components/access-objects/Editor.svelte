@@ -42,6 +42,11 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
   export let serverObject: AccessObject;
 
   /**
+   * @type {"create" | "edit"} An indicator variable if the editor is in create mode or edit mode.
+   */
+  let mode: "create" | "edit";
+
+  /**
    * @type {Array<SideMenuPageData>} This list controls the pages that appear in the side menu container, and their contents.
    */
   let pageList: Array<SideMenuPageData> = [];
@@ -50,11 +55,6 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
    * @type {any} A module that deep copies an serverObject
    */
   let rfdc: any;
-
-  /**
-   * @type {AccessObject} An serverObject of type AccessObject. This is a copy of the source serverObject being edited. The model is used to keep track of changes to the serverObject, without changing the actual serverObject until save is pressed.
-   */
-  //let $editorObjectStore: AccessObject;
 
   async function saveChange(event: any) {
     return await showConfirmation(
@@ -108,16 +108,19 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
           name: "General Info",
           componentData: {
             contentComponent: InfoEditor,
-            contentComponentProps: { editorObject: $editorObjectStore },
+            contentComponentProps: {
+              mode,
+              editorObject: $editorObjectStore,
+            },
             sideMenuPageProps: {},
-            /*update: () => {
-              $editorObjectStore = $editorObjectStore;
-            },*/
             listeners: {
               save: (event) => {
                 saveChange(event);
               },
-              //,
+              change: (event) => {
+                // Unfortunately just passing the store only works for members and canvases lists
+                $editorObjectStore = event.detail;
+              },
             },
           },
         },
@@ -129,9 +132,6 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
             sideMenuPageProps: {
               overflowY: "hidden",
             },
-            /*update: () => {
-              $editorObjectStore = $editorObjectStore;
-            },*/
             listeners: {},
           },
         },
@@ -142,14 +142,18 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
           name: "General Info",
           componentData: {
             contentComponent: InfoEditor,
-            contentComponentProps: { editorObject: $editorObjectStore },
+            contentComponentProps: {
+              mode,
+              editorObject: $editorObjectStore,
+            },
             sideMenuPageProps: {},
-            /*update: () => {
-              $editorObjectStore = $editorObjectStore;
-            },*/
             listeners: {
               save: (event) => {
                 saveChange(event);
+              },
+              change: (event) => {
+                // Unfortunately just passing the store only works for members and canvases lists
+                $editorObjectStore = event.detail;
               },
             },
           },
@@ -162,9 +166,6 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
             sideMenuPageProps: {
               overflowY: "hidden",
             },
-            /*update: () => {
-              $editorObjectStore = $editorObjectStore;
-            },*/
             listeners: {},
           },
         },
@@ -210,6 +211,10 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
     }
   }
 
+  $: {
+    mode = serverObject?.id ? "edit" : "create";
+  }
+
   onDestroy(() => {
     editorObjectStore.set(null);
   });
@@ -228,7 +233,11 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
           class="end-content auto-align auto-align__full auto-align auto-align__j-end auto-align auto-align__a-end auto-align auto-align__column"
         >
           <StatusIndicator bind:serverObject />
-          <EditorActions bind:serverObject on:updated={pullServerObject} />
+          <EditorActions
+            bind:serverObject
+            {mode}
+            on:updated={pullServerObject}
+          />
         </div>
       </Toolbar>
     </SideMenuContainer>
