@@ -5,7 +5,7 @@ import { Canvas } from "./Canvas.js";
 import { Collection } from "./Collection.js";
 import { Manifest } from "./Manifest.js";
 
-export const AccessObject = z.union([Collection, Manifest, Canvas, Alias]);
+export const AccessObject = z.union([Alias, Canvas, Collection, Manifest]);
 export type AccessObject = z.infer<typeof AccessObject>;
 
 export const isAlias = (obj: AccessObject): obj is Alias => {
