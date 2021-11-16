@@ -11,7 +11,7 @@ The editor actions component holds functionality that is responsible for perform
 
 ### Usage
 ```  
-<EditorActions bind:serverObject bind:$editorObjectStore />
+<EditorActions bind:serverObject bind:editorObject />
 ```
 *Note: `bind:` is required for changes to the serverObject and its model to be reflected in higher level components.*
 -->
@@ -28,13 +28,15 @@ The editor actions component holds functionality that is responsible for perform
   import { checkValidDiff } from "$lib/utils/validation";
   import Modal from "$lib/components/shared/Modal.svelte";
   import { goto } from "$app/navigation";
-  import { editorObjectStore } from "$lib/stores/accessObjectEditorStore";
 
   /**
    * @type {AccessObject} This is th$lib/utils/confirmationerObject of type AccessObject pulled from the backend, to be edited only once an action is successfully performed.
    */
   export let serverObject: AccessObject;
-
+  /**
+   * @type {AccessObject} The AccessObject editorObject that will be manipulated by the user, usually, a copy of an access pbject that acts as a form model.
+   */
+  export let editorObject: AccessObject;
   /**
    * @type {"create" | "edit"} An indicator variable if the editor is in create mode or edit mode.
    */
@@ -66,16 +68,17 @@ The editor actions component holds functionality that is responsible for perform
   const dispatch = createEventDispatcher();
 
   /**
-   * Sets @var isSaveEnabled depending on if the $editorObjectStore is valid.
+   * Sets @var isSaveEnabled depending on if the editorObject is valid.
    * @returns void
    */
   function checkEnableSave() {
-    const diff = checkValidDiff(serverObject, $editorObjectStore);
+    console.log(editorObject["members"]);
+    const diff = checkValidDiff(serverObject, editorObject);
     isSaveEnabled = mode === "create" && diff;
   }
 
   $: {
-    $editorObjectStore;
+    editorObject;
     checkEnableSave();
   }
 
@@ -87,20 +90,20 @@ The editor actions component holds functionality that is responsible for perform
     await showConfirmation(
       async () => {
         try {
-          if ($editorObjectStore.type === "manifest") {
+          if (editorObject.type === "manifest") {
             const response = await $session.lapin.mutation(`manifest.new`, {
               user: $session.user,
-              data: $editorObjectStore as NewManifest,
+              data: editorObject as NewManifest,
             });
             goto(`/object/${response}`);
             return {
               success: true,
               details: response,
             };
-          } else if ($editorObjectStore.type === "collection") {
+          } else if (editorObject.type === "collection") {
             const response = await $session.lapin.mutation(`collection.new`, {
               user: $session.user,
-              data: $editorObjectStore as NewCollection,
+              data: editorObject as NewCollection,
             });
             goto(`/object/${response}`);
             return {
@@ -133,14 +136,14 @@ The editor actions component holds functionality that is responsible for perform
     return await showConfirmation(
       async () => {
         if (
-          $editorObjectStore.type === "manifest" ||
-          $editorObjectStore.type === "collection"
+          editorObject.type === "manifest" ||
+          editorObject.type === "collection"
         ) {
           try {
             const response = await $session.lapin.mutation(
               `accessObject.unassignSlug`,
               {
-                id: $editorObjectStore.id,
+                id: editorObject.id,
                 user: $session.user,
               }
             );
@@ -157,8 +160,8 @@ The editor actions component holds functionality that is responsible for perform
           details: "Object not of type canvas or manifest",
         };
       },
-      `Success! Unassigned the slug '${$editorObjectStore["slug"]}.'`,
-      `Error unassigning slug '${$editorObjectStore["slug"]}.'`
+      `Success! Unassigned the slug '${editorObject["slug"]}.'`,
+      `Error unassigning slug '${editorObject["slug"]}.'`
     );
   }
 
@@ -173,15 +176,15 @@ The editor actions component holds functionality that is responsible for perform
     return await showConfirmation(
       async () => {
         if (
-          $editorObjectStore.type === "manifest" ||
-          $editorObjectStore.type === "collection"
+          editorObject.type === "manifest" ||
+          editorObject.type === "collection"
         ) {
           try {
-            if ($editorObjectStore.public) {
+            if (editorObject.public) {
               const response = await $session.lapin.mutation(
                 `accessObject.unpublish`,
                 {
-                  id: $editorObjectStore.id,
+                  id: editorObject.id,
                   user: $session.user,
                 }
               );
@@ -189,7 +192,7 @@ The editor actions component holds functionality that is responsible for perform
               const response = await $session.lapin.mutation(
                 `accessObject.publish`,
                 {
-                  id: $editorObjectStore.id,
+                  id: editorObject.id,
                   user: $session.user,
                 }
               );
@@ -210,10 +213,10 @@ The editor actions component holds functionality that is responsible for perform
           details: "Object not of type canvas or manifest",
         };
       },
-      `Success! ${editorObjectStore["public"] ? "Unublish" : "Publish"}ed ${
-        $editorObjectStore["type"]
+      `Success! ${editorObject["public"] ? "Unublish" : "Publish"}ed ${
+        editorObject["type"]
       }.`,
-      `Error: could not publish ${$editorObjectStore["type"]}.`
+      `Error: could not publish ${editorObject["type"]}.`
     );
   }
 

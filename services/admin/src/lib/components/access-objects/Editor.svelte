@@ -235,6 +235,7 @@ The editor component allows for the editing of AccessObjects. It will dynamicall
           <StatusIndicator bind:serverObject />
           <EditorActions
             bind:serverObject
+            bind:editorObject={$editorObjectStore}
             {mode}
             on:updated={pullServerObject}
           />
