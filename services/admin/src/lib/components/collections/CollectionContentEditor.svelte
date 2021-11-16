@@ -22,12 +22,14 @@ Allows the user to modify the member list for a collection.
   import TiTrash from "svelte-icons/ti/TiTrash.svelte";
   import CollectionMembersAddition from "./CollectionMembersAddition.svelte";
   import { session } from "$app/stores";
+  import InfiniteScroller from "../shared/InfiniteScroller.svelte";
 
   export let collection: Collection;
 
   let activeMemberIndex: number = 0;
   const dispatch = createEventDispatcher();
   let documentSlug: [] = [];
+  let members: { id?: string; label?: Record<string, string> }[] = [];
   /**
    * @type {string} A control for what component is displayed in the free space of the content editor.
    */
@@ -37,6 +39,12 @@ Allows the user to modify the member list for a collection.
    * @param newState
    * @returns void
    */
+  /**
+   * @type {number} Shows the number of pages
+   */
+  let page: number = 0;
+  let size: number = 20;
+
   function changeView(newState: string) {
     state = newState;
   }
@@ -87,6 +95,11 @@ Allows the user to modify the member list for a collection.
     if (collection.members.length) activeMemberIndex = 0;
     getMemberContext();
   });
+  $: members = [
+    ...members,
+    ...collection.members.slice(size * page, size * (page + 1)),
+  ];
+  console.log("members", members);
 </script>
 
 {#if collection}
@@ -102,6 +115,8 @@ Allows the user to modify the member list for a collection.
         changeView("add");
       }}
     />
+    <br />
+
     <br />
     <VirtualList
       bind:dataList={collection.members}
@@ -163,6 +178,17 @@ Allows the user to modify the member list for a collection.
         </div>
       </div>
     </VirtualList>
+    <br />
+    <ul>
+      {#each collection?.members as collectionmembers}
+        <li>{collectionmembers.id}</li>
+      {/each}
+      <InfiniteScroller
+        hasMore={collection.members.length < members.length}
+        threshold={100}
+        on:loadMore={() => page++}
+      />
+    </ul>
   </div>
 {/if}
 
