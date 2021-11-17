@@ -86,12 +86,17 @@ function checkValidDiff(
   let oldObj = serverObject;
 
   // Never compare array elements
-  for (let prop in newObj) {
+  /*for (let prop in newObj) {
     if (Array.isArray(newObj[prop])) delete newObj[prop];
   }
   for (let prop in oldObj) {
     if (Array.isArray(oldObj[prop])) delete oldObj[prop];
-  }
+  }*/
+  if ("canvases" in newObj) delete newObj["canvases"];
+  if ("members" in newObj) delete newObj["members"];
+
+  if ("canvases" in oldObj) delete oldObj["canvases"];
+  if ("members" in oldObj) delete oldObj["members"];
 
   const hasModelChanged = checkModelChanged(serverObject, editorObject);
   if (hasModelChanged) {
