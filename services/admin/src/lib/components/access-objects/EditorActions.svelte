@@ -69,7 +69,6 @@ The editor actions component holds functionality that is responsible for perform
    * @returns void
    */
   function checkEnableSave() {
-    console.log(editorObject["members"]);
     const diff = checkValidDiff(serverObject, editorObject);
     isSaveEnabled = mode === "create" && diff;
   }

@@ -75,12 +75,9 @@ This component displays the non content properties for an access editorObject an
   };
 
   $: {
-    console.log("Changee");
     editorObject;
     dispatch("change", editorObject);
   }
-
-  $: console.log(mode);
 </script>
 
 {#if editorObject}
