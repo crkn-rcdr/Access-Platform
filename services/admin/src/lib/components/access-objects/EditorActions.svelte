@@ -31,6 +31,7 @@ The editor actions component holds functionality that is responsible for perform
   import { checkValidDiff, checkModelChanged } from "$lib/utils/validation";
   import Modal from "$lib/components/shared/Modal.svelte";
   import { goto } from "$app/navigation";
+  import Loading from "../shared/Loading.svelte";
 
   /**
    * @type {AccessObject} This is th$lib/utils/confirmationerObject of type AccessObject pulled from the backend, to be edited only once an action is successfully performed.
@@ -78,6 +79,8 @@ The editor actions component holds functionality that is responsible for perform
   let deleteModalMsg = "";
 
   let deleteModalActionText = "";
+
+  let isDeleteModalWaiting = false;
 
   /**
    * Sets @var isSaveEnabled depending on if the editorObject is valid.
@@ -302,35 +305,61 @@ The editor actions component holds functionality that is responsible for perform
     );
   }
 
+  async function setDeletionModalTextEnabled() {
+    deleteModalTitle = `Are you sure you want to delete ${serverObject["slug"]}?`;
+    deleteModalMsg = `By deleting ${serverObject["slug"]}, you will be taking it out of all the collections it belongs to. You will be able to use the slug, "${serverObject["slug"]}", for future ${serverObject["type"]}s. You can add ${serverObject["slug"]} back into the access platform by importing it from preservation again.`;
+    deleteModalActionText = `Delete`;
+  }
+
+  async function setDeletionModalTextWaiting() {
+    deleteModalTitle = `${serverObject["slug"]} can't be deleted yet.`;
+    deleteModalMsg = `There are background processes running preventing ${serverObject["slug"]} from being deleted. Please wait...`;
+    deleteModalActionText = `Ok`;
+  }
+
+  async function setDeletionModalTextTryAgain() {
+    console.log("No tries left");
+    deleteModalTitle = `${serverObject["slug"]} can not be deleted.`;
+    deleteModalMsg = `Can not delete ${serverObject["slug"]}. There are background processes running on ${serverObject["slug"]}. Please wait and try again later.`;
+    deleteModalActionText = `Ok`;
+  }
+
   async function openDeletionModal() {
-    // check if delete or some other msg
-
-    (function requestLoop(i) {
-      setTimeout(async () => {
-        console.log("pulling serverObject");
-        await pullServerObject();
-        console.log("pulled!", serverObject);
-        if (
-          !serverObject.updateInternalmeta ||
-          !serverObject.updateInternalmeta?.["succeeded"]
-        ) {
-          if (--i) requestLoop(i);
-        } else console.log("Update done");
-      }, 30000);
-    })(30);
-
     if (
-      serverObject.updateInternalmeta &&
+      !serverObject.updateInternalmeta ||
       serverObject.updateInternalmeta?.["succeeded"]
     ) {
-      deleteModalTitle = `Are you sure you want to delete ${serverObject["slug"]}?`;
-      deleteModalMsg = `By deleting ${serverObject["slug"]}, you will be taking it out of all the collections it belongs to. You will be able to use the slug, "${serverObject["slug"]}", for future ${serverObject["type"]}s. You can add ${serverObject["slug"]} back into the access platform by importing it from preservation again.`;
-      deleteModalActionText = `Delete`;
+      isDeleteModalWaiting = false;
+      setDeletionModalTextEnabled();
     } else {
-      deleteModalTitle = `${serverObject["slug"]} can not be deleted.`;
-      deleteModalMsg = `Can not delete ${serverObject["slug"]}. There are background processes running on ${serverObject["slug"]}. Please wait and try again later.`;
-      deleteModalActionText = `Ok`;
+      isDeleteModalWaiting = true;
+      setDeletionModalTextWaiting();
+
+      (function requestLoop(i) {
+        setTimeout(async () => {
+          isDeleteModalWaiting = true;
+          console.log("pulling serverObject");
+          await pullServerObject();
+          console.log("pulled!", serverObject);
+          if (serverObject.updateInternalmeta?.["succeeded"]) {
+            isDeleteModalWaiting = false;
+            setDeletionModalTextEnabled();
+          } else {
+            console.log("Update not done");
+            //isDeleteModalWaiting = true;
+            //setDeletionModalTextWaiting();
+            if (--i) {
+              console.log("More tries left");
+              requestLoop(i);
+            } else {
+              isDeleteModalWaiting = false;
+              setDeletionModalTextTryAgain();
+            }
+          }
+        }, 30000);
+      })(30);
     }
+
     showDeleteModal = true;
   }
 
@@ -389,26 +418,37 @@ The editor actions component holds functionality that is responsible for perform
 </span>
 
 <Modal bind:open={showDeleteModal} title={deleteModalTitle}>
-  <p slot="body">
-    {deleteModalMsg}
-  </p>
+  <div slot="body">
+    {#if isDeleteModalWaiting}
+      {deleteModalMsg}
+      <br />
+      <br />
+      <div class="modal-loader-wrap">
+        <Loading backgroundType="gradient" />
+      </div>
+    {:else}
+      <p>{deleteModalMsg}</p>
+    {/if}
+  </div>
   <div slot="footer">
     <button class="secondary" on:click={() => (showDeleteModal = false)}>
       Cancel
     </button>
-    {#if deleteModalActionText === "Ok"}
-      <button
-        class="primary"
-        on:click={() => {
-          showDeleteModal = false;
-        }}
-      >
-        {deleteModalActionText}
-      </button>
-    {:else}
-      <button class="danger" on:click={handleDelete}>
-        {deleteModalActionText}
-      </button>
+    {#if !isDeleteModalWaiting}
+      {#if deleteModalActionText === "Ok"}
+        <button
+          class="primary"
+          on:click={() => {
+            showDeleteModal = false;
+          }}
+        >
+          {deleteModalActionText}
+        </button>
+      {:else}
+        <button class="danger" on:click={handleDelete}>
+          {deleteModalActionText}
+        </button>
+      {/if}
     {/if}
   </div>
 </Modal>
@@ -416,5 +456,12 @@ The editor actions component holds functionality that is responsible for perform
 <style>
   button {
     margin-left: var(--margin-sm);
+  }
+  .centered-modal-content,
+  .modal-loader-wrap {
+    text-align: center;
+  }
+  .modal-loader-wrap {
+    height: 5rem;
   }
 </style>
