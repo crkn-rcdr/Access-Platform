@@ -2,12 +2,14 @@ import { z } from "zod";
 import {
   Collection,
   EditableCollection,
+  isCollection,
   NewCollection,
   Noid,
   ObjectListHandler,
   User,
   Slug,
   ObjectListPage,
+  TextRecord,
 } from "@crkn-rcdr/access-data";
 import { createRouter, httpErrorToTRPC } from "../router.js";
 import { TRPCError } from "@trpc/server";
@@ -142,16 +144,91 @@ export const collectionRouter = createRouter()
       }
     },
   })
-  .mutation("removeMember", {
+  .mutation("addMembers", {
+    input: z.object({
+      id: Noid,
+      members: z.array(Noid),
+      user: User.optional(),
+    }),
+    async resolve({ input: { id, members, user }, ctx }) {
+      try {
+        // TODO: this assumes that every new member id is legit,
+        // i.e. that checkAdditions ran and is accurate.
+        // We might want to change this.
+        await ctx.couch.access.processList({
+          id,
+          command: ["add", members],
+          user,
+        });
+        for (const member of members) {
+          await ctx.couch.access.forceUpdate(member);
+        }
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .mutation("removeMembers", {
+    input: z.object({
+      id: Noid,
+      members: z.array(Noid),
+      user: User.optional(),
+    }),
+    async resolve({ input: { id, members, user }, ctx }) {
+      try {
+        await ctx.couch.access.processList({
+          id,
+          command: ["remove", members],
+          user,
+        });
+        for (const member of members) {
+          await ctx.couch.access.forceUpdate(member);
+        }
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .mutation("moveMembers", {
+    input: z.object({
+      id: Noid,
+      members: z.array(Noid),
+      toIndex: z.number().int().positive(),
+      user: User.optional(),
+    }),
+    async resolve({ input: { id, members, toIndex, user }, ctx }) {
+      try {
+        await ctx.couch.access.processList({
+          id,
+          command: ["move", [members, toIndex]],
+          user,
+        });
+        const collection = await ctx.couch.access.get(id);
+        if (isCollection(collection)) {
+          // Update every member of the collection. For now.
+          for (const member of collection.members) {
+            await ctx.couch.access.forceUpdate(member.id);
+          }
+        }
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .mutation("relabelMember", {
     input: z.object({
       id: Noid,
       member: Noid,
+      label: TextRecord,
       user: User.optional(),
     }),
-    async resolve({ input, ctx }) {
+    async resolve({ input: { id, member, label, user }, ctx }) {
       try {
-        await ctx.couch.access.removeMember(input);
-        await ctx.couch.access.forceUpdate(input.member);
+        await ctx.couch.access.processList({
+          id,
+          command: ["relabel", [member, label]],
+          user,
+        });
       } catch (e) {
         throw httpErrorToTRPC(e);
       }
@@ -166,7 +243,6 @@ export const collectionRouter = createRouter()
           "label",
         ] as const);
       } catch (e) {
-        console.log(e?.message);
         throw httpErrorToTRPC(e);
       }
     },

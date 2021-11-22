@@ -14,6 +14,9 @@ import {
   NewCollection,
   NewManifest,
   TextRecord,
+  SimpleRecord,
+  Membership,
+  Ancestry,
 } from "@crkn-rcdr/access-data";
 
 import { DatabaseHandler } from "../DatabaseHandler.js";
@@ -35,14 +38,11 @@ type SlugResolutionError =
   | "is-self" // the slug resolved to the collection being edited
   | "already-member"; // the slug resolved to an existing member of the collection
 
-export interface SimpleRecord {
-  id: Noid;
-  slug?: Slug;
-  label: TextRecord;
-}
-
-export type Membership = Array<SimpleRecord>;
-export type Ancestry = Array<Array<SimpleRecord>>;
+export type ProcessListCommand =
+  | ["add", Noid[]]
+  | ["remove", Noid[]]
+  | ["move", [Noid[], number]]
+  | ["relabel", [Noid, TextRecord]];
 
 /**
  * Interact with Access Objects in their database.
@@ -211,6 +211,20 @@ export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
     return Manifest.parse(manifest);
   }
 
+  async processList(args: {
+    id: Noid;
+    command: ProcessListCommand;
+    user?: User;
+  }): Promise<void> {
+    const { id, command, user } = args;
+    await this.update({
+      ddoc: "access",
+      name: "processList",
+      docId: id,
+      body: { command, user },
+    });
+  }
+
   /**
    * Removes a member from a collection.
    */
@@ -223,11 +237,10 @@ export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
     user?: User;
   }): Promise<void> {
     const { id, member, user } = args;
-    await this.update({
-      ddoc: "access",
-      name: "removeMember",
-      docId: id,
-      body: { id: member, user },
+    await this.processList({
+      id,
+      command: ["remove", [member]],
+      user,
     });
   }
 
