@@ -36,6 +36,10 @@ Allows the user to modify the canvas list for a manifest.
    * First page of members in the object.
    */
   export let firstPage: ObjectListPage;
+  /**
+   * The number of children in the object.
+   */
+  export let childrenCount: number;
 
   /**
    * @type {

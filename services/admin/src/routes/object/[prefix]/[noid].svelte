@@ -25,23 +25,33 @@
         );
 
         let firstPage: ObjectListPage;
+        let childrenCount;
 
         if (serverObject["members"]) {
           firstPage = await context.lapin.query("collection.pageAfter", {
             id: serverObject.id,
             after: null,
-            limit: 10,
+            limit: 100,
           });
+          childrenCount = serverObject["members"].count;
         } else if (serverObject["canvases"]) {
           firstPage = await context.lapin.query("manifest.pageAfter", {
             id: serverObject.id,
             after: serverObject["canvases"].first,
-            limit: 10,
+            limit: 100,
           });
+          childrenCount = serverObject["canvases"].count;
         }
 
         return {
-          props: { serverObject, membership, id, firstPage, error: "" },
+          props: {
+            serverObject,
+            membership,
+            id,
+            childrenCount,
+            firstPage,
+            error: "",
+          },
         };
       }
       return { props: { error: "Could not find prefix or noid in url." } };
@@ -85,6 +95,11 @@
   export let firstPage: ObjectListPage;
 
   /**
+   * The number of children in the object.
+   */
+  export let childrenCount: number;
+
+  /**
    * @type {string} An error message insdicating what went wrong.
    */
   export let error: string;
@@ -94,7 +109,7 @@
 
 {#key id}
   {#if serverObject}
-    <Editor bind:serverObject {membership} {firstPage} />
+    <Editor bind:serverObject {membership} {firstPage} {childrenCount} />
   {:else if error}
     <br />
     <div class="wrapper">

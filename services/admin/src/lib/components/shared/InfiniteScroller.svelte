@@ -25,12 +25,14 @@
       element.scrollHeight - beforeScrollHeight + beforeScrollTop;
   }
   const onScroll = (e: Event) => {
+    console.log("scroll", hasMore);
     if (!hasMore) return;
     const target = e.target as HTMLElement;
     const offset = calcOffset(target, reverse, horizontal);
     if (offset <= threshold) {
       if (!isLoadMore && hasMore) {
         dispatch("loadMore");
+        console.log("load");
         beforeScrollHeight = target.scrollHeight;
         beforeScrollTop = target.scrollTop;
       }

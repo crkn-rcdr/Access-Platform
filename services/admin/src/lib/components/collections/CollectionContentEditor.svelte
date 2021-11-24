@@ -14,7 +14,7 @@ Allows the user to modify the member list for a collection.
 *Note: `bind:` is required for changes to the object to be reflected in higher level components.*
 -->
 <script lang="ts">
-  import { onMount, createEventDispatcher } from "svelte";
+  import { onMount, createEventDispatcher, afterUpdate } from "svelte";
   import type {
     Collection,
     PagedCollection,
@@ -35,6 +35,11 @@ Allows the user to modify the member list for a collection.
    */
   export let firstPage: ObjectListPage;
 
+  /**
+   * The number of children in the object.
+   */
+  export let childrenCount: number;
+
   let activeMemberIndex: number = 0;
   const dispatch = createEventDispatcher();
   let documentSlug: [] = [];
@@ -52,7 +57,7 @@ Allows the user to modify the member list for a collection.
    * @type {number} Shows the number of pages
    */
   let page: number = 0;
-  let size: number = 2;
+  let size: number = 100;
 
   function changeView(newState: string) {
     state = newState;
@@ -105,21 +110,29 @@ Allows the user to modify the member list for a collection.
       setActiveIndex(activeMemberIndex);*/
     }
   }
+  async function handleScroll() {
+    {
+      page++;
+
+      console.log("load more");
+      // TODO: grab new batch for members using new API
+      const currPage = await $session.lapin.query("collection.pageAfter", {
+        id: collection.id,
+        after: members[members.length - 1].id,
+        limit: size,
+      });
+      console.log("currPage", currPage);
+      members = [...members, ...currPage.list];
+      getMemberContext();
+    }
+  }
 
   onMount(async () => {
     activeMemberIndex = 0;
-    //collection.members.slice(size * page, size * (page + 1));
+    console.log("firstPage", firstPage);
+    members = firstPage.list;
+    getMemberContext();
   });
-
-  // For testing
-  $: console.log("members", members, size * page, size * (page + 1));
-
-  $: {
-    console.log(firstPage);
-    if (!members.length) {
-      members = firstPage.list;
-    }
-  }
 </script>
 
 {#if collection}
@@ -204,6 +217,9 @@ Allows the user to modify the member list for a collection.
 
     <!-- I commented out the above and added the styling from the example to help me see what's going on.
     -->
+    <!--{childrenCount > members.length}
+    {childrenCount}
+    {members.length}-->
     <ul>
       <!-- loop through the array where items are added when scrolling -->
       {#each members as collectionmembers}
@@ -216,26 +232,9 @@ Allows the user to modify the member list for a collection.
       {/each}
       <!-- collection.members.length has all the items; members gets filled as the user scrolls -->
       <InfiniteScroller
-        hasMore={collection?.members?.count > members.length}
+        hasMore={childrenCount > members.length}
         threshold={100}
-        on:loadMore={async () => {
-          page++;
-
-          // TODO: grab new batch for members using new API
-          if (members.length) {
-            const currPage = await $session.lapin.query(
-              "collection.pageAfter",
-              {
-                id: collection.id,
-                after: members[members.length - 1].id,
-                limit: size,
-              }
-            );
-            console.log("currPage", currPage);
-            members = [...members, ...currPage.list];
-            getMemberContext();
-          }
-        }}
+        on:loadMore={handleScroll}
       />
     </ul>
   </div>
@@ -285,7 +284,7 @@ Allows the user to modify the member list for a collection.
     border-radius: 2px;
     width: 100%;
     max-width: 100%;
-    max-height: 100;
+    max-height: 40rem;
     background-color: white;
     overflow-x: auto;
     list-style: none;

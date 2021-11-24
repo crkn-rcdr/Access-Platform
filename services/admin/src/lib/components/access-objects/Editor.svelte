@@ -60,6 +60,11 @@ The editor component allows for the editing of PagedCollection | PagedManifests.
   export let firstPage: ObjectListPage;
 
   /**
+   * The number of children in the object.
+   */
+  export let childrenCount: number;
+
+  /**
    * @type {Array<SideMenuPageData>} This list controls the pages that appear in the side menu container, and their contents.
    */
   let pageList: Array<SideMenuPageData> = [];
@@ -146,7 +151,11 @@ The editor component allows for the editing of PagedCollection | PagedManifests.
           name: "Manage Content",
           componentData: {
             contentComponent: ManifestContentEditor,
-            contentComponentProps: { manifest: $editorObjectStore, firstPage },
+            contentComponentProps: {
+              manifest: $editorObjectStore,
+              firstPage,
+              childrenCount,
+            },
             sideMenuPageProps: {
               overflowY: "hidden",
             },
@@ -161,6 +170,7 @@ The editor component allows for the editing of PagedCollection | PagedManifests.
             contentComponentProps: {
               collection: $editorObjectStore,
               firstPage,
+              childrenCount,
             },
             sideMenuPageProps: {
               overflowY: "hidden",
