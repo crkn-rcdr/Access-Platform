@@ -24,12 +24,18 @@ Allows the user to modify the canvas list for a manifest.
   import Switch from "$lib/components/shared/Switch.svelte";
   import SwitchCase from "$lib/components/shared/SwitchCase.svelte";
   import ManifestAddCanvasMenu from "$lib/components/manifests/ManifestAddCanvasMenu.svelte";
+  import type { ObjectListPage } from "@crkn-rcdr/access-data";
   //import type { ObjectList } from "@crkn-rcdr/access-data";
 
   /**
    * @type {PagedManifest} The manifest thats contents should be edited.
    */
   export let manifest: PagedManifest;
+
+  /**
+   * First page of members in the object.
+   */
+  export let firstPage: ObjectListPage;
 
   /**
    * @type {

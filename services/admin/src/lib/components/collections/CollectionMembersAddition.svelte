@@ -2,10 +2,7 @@
   import type { Depositor, Session } from "$lib/types";
   import { getStores } from "$app/stores";
   import { createEventDispatcher } from "svelte";
-  import type {
-    Collection,
-    PagedCollection,
-  } from "@crkn-rcdr/access-data/src/access/Collection";
+  import type { PagedCollection } from "@crkn-rcdr/access-data/src/access/Collection";
   import TiArrowBack from "svelte-icons/ti/TiArrowBack.svelte";
 
   import PrefixSelector from "$lib/components/access-objects/PrefixSelector.svelte";

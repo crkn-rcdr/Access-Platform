@@ -19,6 +19,7 @@ The editor component allows for the editing of PagedCollection | PagedManifests.
     PagedCollection,
     PagedManifest,
     Membership,
+    ObjectListPage,
   } from "@crkn-rcdr/access-data";
   import { isManifest, isCollection } from "@crkn-rcdr/access-data";
   import type { SideMenuPageData } from "$lib/types";
@@ -52,6 +53,11 @@ The editor component allows for the editing of PagedCollection | PagedManifests.
   let mode: "create" | "edit";
 
   export let membership: Membership;
+
+  /**
+   * First page of members in the object.
+   */
+  export let firstPage: ObjectListPage;
 
   /**
    * @type {Array<SideMenuPageData>} This list controls the pages that appear in the side menu container, and their contents.
@@ -140,7 +146,7 @@ The editor component allows for the editing of PagedCollection | PagedManifests.
           name: "Manage Content",
           componentData: {
             contentComponent: ManifestContentEditor,
-            contentComponentProps: { manifest: $editorObjectStore },
+            contentComponentProps: { manifest: $editorObjectStore, firstPage },
             sideMenuPageProps: {
               overflowY: "hidden",
             },
@@ -152,7 +158,10 @@ The editor component allows for the editing of PagedCollection | PagedManifests.
           name: "Manage Members",
           componentData: {
             contentComponent: CollectionContentEditor,
-            contentComponentProps: { collection: $editorObjectStore },
+            contentComponentProps: {
+              collection: $editorObjectStore,
+              firstPage,
+            },
             sideMenuPageProps: {
               overflowY: "hidden",
             },

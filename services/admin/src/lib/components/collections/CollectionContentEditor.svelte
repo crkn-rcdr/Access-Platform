@@ -26,8 +26,14 @@ Allows the user to modify the member list for a collection.
   import CollectionMembersAddition from "./CollectionMembersAddition.svelte";
   import { session } from "$app/stores";
   import InfiniteScroller from "../shared/InfiniteScroller.svelte";
+  import type { ObjectListPage } from "@crkn-rcdr/access-data";
 
   export let collection: PagedCollection;
+
+  /**
+   * First page of members in the object.
+   */
+  export let firstPage: ObjectListPage;
 
   let activeMemberIndex: number = 0;
   const dispatch = createEventDispatcher();
@@ -47,14 +53,11 @@ Allows the user to modify the member list for a collection.
    */
   let page: number = 0;
   let size: number = 2;
-  let newBatch: {
-    id?: string;
-    label?: Record<string, string>;
-  }[] = [];
 
   function changeView(newState: string) {
     state = newState;
   }
+
   async function getMemberContext() {
     let currentMembers = members.map((members) => members.id);
 
@@ -103,26 +106,20 @@ Allows the user to modify the member list for a collection.
     }
   }
 
-  onMount(() => {
+  onMount(async () => {
     activeMemberIndex = 0;
-    newBatch = []; // TODO: get collection members for page using API
-
     //collection.members.slice(size * page, size * (page + 1));
-    getMemberContext();
   });
 
-  // Any time newBatch changes, append it to members
-  $: members = [...members, ...newBatch];
-
   // For testing
-  $: console.log(
-    "members",
-    members,
-    "newBatch",
-    newBatch,
-    size * page,
-    size * (page + 1)
-  );
+  $: console.log("members", members, size * page, size * (page + 1));
+
+  $: {
+    console.log(firstPage);
+    if (!members.length) {
+      members = firstPage.list;
+    }
+  }
 </script>
 
 {#if collection}
@@ -221,12 +218,23 @@ Allows the user to modify the member list for a collection.
       <InfiniteScroller
         hasMore={collection?.members?.count > members.length}
         threshold={100}
-        on:loadMore={() => {
+        on:loadMore={async () => {
           page++;
 
           // TODO: grab new batch for members using new API
-          newBatch = [];
-          //collection.members.slice(size * page, size * (page + 1));
+          if (members.length) {
+            const currPage = await $session.lapin.query(
+              "collection.pageAfter",
+              {
+                id: collection.id,
+                after: members[members.length - 1].id,
+                limit: size,
+              }
+            );
+            console.log("currPage", currPage);
+            members = [...members, ...currPage.list];
+            getMemberContext();
+          }
         }}
       />
     </ul>

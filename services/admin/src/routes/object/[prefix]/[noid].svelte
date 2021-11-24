@@ -13,15 +13,36 @@
           page.params["noid"] as string,
         ].join("/");
         const response = await context.lapin.query("accessObject.getPaged", id);
+
         const serverObject =
           response.type === "collection"
             ? PagedCollection.parse(response)
             : PagedManifest.parse(response);
+
         const membership = await context.lapin.query(
           "accessObject.getMembership",
           id
         );
-        return { props: { serverObject, membership, id, error: "" } };
+
+        let firstPage: ObjectListPage;
+
+        if (serverObject["members"]) {
+          firstPage = await context.lapin.query("collection.pageAfter", {
+            id: serverObject.id,
+            after: null,
+            limit: 10,
+          });
+        } else if (serverObject["canvases"]) {
+          firstPage = await context.lapin.query("manifest.pageAfter", {
+            id: serverObject.id,
+            after: serverObject["canvases"].first,
+            limit: 10,
+          });
+        }
+
+        return {
+          props: { serverObject, membership, id, firstPage, error: "" },
+        };
       }
       return { props: { error: "Could not find prefix or noid in url." } };
     } catch (e) {
@@ -36,7 +57,11 @@
    * @description This page shows the editor for the object.
    * The object is given to the page from the module above.
    */
-  import { PagedCollection, PagedManifest } from "@crkn-rcdr/access-data";
+  import {
+    ObjectListPage,
+    PagedCollection,
+    PagedManifest,
+  } from "@crkn-rcdr/access-data";
   import type { Membership, Noid } from "@crkn-rcdr/access-data";
   import Editor from "$lib/components/access-objects/Editor.svelte";
   import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
@@ -55,6 +80,11 @@
   export let membership: Membership;
 
   /**
+   * First page of members in the object.
+   */
+  export let firstPage: ObjectListPage;
+
+  /**
    * @type {string} An error message insdicating what went wrong.
    */
   export let error: string;
@@ -64,7 +94,7 @@
 
 {#key id}
   {#if serverObject}
-    <Editor bind:serverObject {membership} />
+    <Editor bind:serverObject {membership} {firstPage} />
   {:else if error}
     <br />
     <div class="wrapper">
