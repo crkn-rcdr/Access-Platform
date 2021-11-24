@@ -19,9 +19,9 @@ A container that enables the dragging and dropping of it's childen elements.
   }}
 >
   {#each items as item, i}
-    <div>
+    <DynamicDragAndDropListItem bind:pos={i}>
       I am draggable!!!! {i}
-    </div>
+    </DynamicDragAndDropListItem>
   {/each}
 </DynamicDragAndDropList>
 ```
