@@ -242,6 +242,7 @@ Allows the user to modify the member list for a collection.
         on:loadMore={handleScroll}
       />
     </ul>
+    Showing {members.length} of {childrenCount}
   </div>
 {/if}
 
@@ -289,7 +290,7 @@ Allows the user to modify the member list for a collection.
     border-radius: 2px;
     width: 100%;
     max-width: 100%;
-    max-height: 40rem;
+    max-height: 38rem;
     background-color: white;
     overflow-x: auto;
     list-style: none;
