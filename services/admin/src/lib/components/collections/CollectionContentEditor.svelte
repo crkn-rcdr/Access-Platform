@@ -42,7 +42,7 @@ Allows the user to modify the member list for a collection.
 
   let activeMemberIndex: number = 0;
   const dispatch = createEventDispatcher();
-  let documentSlug: [] = [];
+  let documentSlug: any[] = [];
   let members: { id?: string; label?: Record<string, string> }[] = [];
   /**
    * @type {string} A control for what component is displayed in the free space of the content editor.
@@ -63,8 +63,10 @@ Allows the user to modify the member list for a collection.
     state = newState;
   }
 
-  async function getMemberContext() {
-    let currentMembers = members.map((members) => members.id);
+  async function getMemberContext(
+    newMembers: { id?: string; label?: Record<string, string> }[]
+  ) {
+    let currentMembers = newMembers.map((members) => members.id);
 
     const resolutions = await $session.lapin.query(
       "collection.viewMembersContext",
@@ -72,9 +74,12 @@ Allows the user to modify the member list for a collection.
     );
 
     console.log("know what it retrieves", resolutions);
-    documentSlug = resolutions.map((slug) => {
-      return { id: slug[0], result: slug[1].result };
-    });
+    documentSlug = [
+      ...documentSlug,
+      ...resolutions.map((slug) => {
+        return { id: slug[0], result: slug[1].result };
+      }),
+    ];
   }
   function setActiveIndex(index: number) {
     if (index >= collection?.members?.count)
@@ -123,7 +128,7 @@ Allows the user to modify the member list for a collection.
       });
       console.log("currPage", currPage);
       members = [...members, ...currPage.list];
-      getMemberContext();
+      getMemberContext(currPage.list);
     }
   }
 
@@ -131,7 +136,7 @@ Allows the user to modify the member list for a collection.
     activeMemberIndex = 0;
     console.log("firstPage", firstPage);
     members = firstPage.list;
-    getMemberContext();
+    getMemberContext(firstPage.list);
   });
 </script>
 
