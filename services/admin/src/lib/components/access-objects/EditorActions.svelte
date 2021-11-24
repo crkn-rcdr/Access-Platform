@@ -31,6 +31,7 @@ The editor actions component holds functionality that is responsible for perform
   import { checkValidDiff, checkModelChanged } from "$lib/utils/validation";
   import Modal from "$lib/components/shared/Modal.svelte";
   import { goto } from "$app/navigation";
+  import Loading from "../shared/Loading.svelte";
 
   /**
    * @type {AccessObject} This is th$lib/utils/confirmationerObject of type AccessObject pulled from the backend, to be edited only once an action is successfully performed.
@@ -65,7 +66,21 @@ The editor actions component holds functionality that is responsible for perform
   /**
    * @type {boolean} Controls if the move to storage modal is being displayed or not.
    */
-  let showUnassignSlugModal = false;
+  let showDeleteModal = false;
+
+  /**
+   * @type {string} Used to show a message to the user when delete is pressed.
+   */
+  let deleteModalTitle = "";
+
+  /**
+   * @type {string} Used to show a message to the user when delete is pressed.
+   */
+  let deleteModalMsg = "";
+
+  let deleteModalActionText = "";
+
+  let isDeleteModalWaiting = false;
 
   /**
    * Sets @var isSaveEnabled depending on if the editorObject is valid.
@@ -203,8 +218,8 @@ The editor actions component holds functionality that is responsible for perform
    * Sends the request to the backend to unnasign a slug from the access serverObject. If it is successful, the serverObject model is deep cloned into the serverObject, and the editor state is updated to reflect the serverObject being a 'Slugless' access serverObject.
    * @returns response
    */
-  async function handleUnassignSlug() {
-    showUnassignSlugModal = false;
+  async function handleDelete() {
+    showDeleteModal = false;
     return await showConfirmation(
       async () => {
         if (
@@ -231,8 +246,8 @@ The editor actions component holds functionality that is responsible for perform
           details: "Object not of type canvas or manifest",
         };
       },
-      `Success! Unassigned the slug '${editorObject["slug"]}.'`,
-      `Error unassigning slug '${editorObject["slug"]}.'`
+      `Success! Deleted '${editorObject["slug"]}.'`,
+      `Error deleting '${editorObject["slug"]}.'`
     );
   }
 
@@ -290,6 +305,64 @@ The editor actions component holds functionality that is responsible for perform
     );
   }
 
+  async function setDeletionModalTextEnabled() {
+    deleteModalTitle = `Are you sure you want to delete ${serverObject["slug"]}?`;
+    deleteModalMsg = `By deleting ${serverObject["slug"]}, you will be taking it out of all the collections it belongs to. You will be able to use the slug, "${serverObject["slug"]}", for future ${serverObject["type"]}s. You can add ${serverObject["slug"]} back into the access platform by importing it from preservation again.`;
+    deleteModalActionText = `Delete`;
+  }
+
+  async function setDeletionModalTextWaiting() {
+    deleteModalTitle = `${serverObject["slug"]} can't be deleted yet.`;
+    deleteModalMsg = `There are background processes running preventing ${serverObject["slug"]} from being deleted. Please wait...`;
+    deleteModalActionText = `Ok`;
+  }
+
+  async function setDeletionModalTextTryAgain() {
+    console.log("No tries left");
+    deleteModalTitle = `${serverObject["slug"]} can not be deleted.`;
+    deleteModalMsg = `Can not delete ${serverObject["slug"]}. There are background processes running on ${serverObject["slug"]}. Please wait and try again later.`;
+    deleteModalActionText = `Ok`;
+  }
+
+  async function openDeletionModal() {
+    if (
+      !serverObject.updateInternalmeta ||
+      serverObject.updateInternalmeta?.["succeeded"]
+    ) {
+      isDeleteModalWaiting = false;
+      setDeletionModalTextEnabled();
+    } else {
+      isDeleteModalWaiting = true;
+      setDeletionModalTextWaiting();
+
+      (function requestLoop(i) {
+        setTimeout(async () => {
+          isDeleteModalWaiting = true;
+          console.log("pulling serverObject");
+          await pullServerObject();
+          console.log("pulled!", serverObject);
+          if (serverObject.updateInternalmeta?.["succeeded"]) {
+            isDeleteModalWaiting = false;
+            setDeletionModalTextEnabled();
+          } else {
+            console.log("Update not done");
+            //isDeleteModalWaiting = true;
+            //setDeletionModalTextWaiting();
+            if (--i) {
+              console.log("More tries left");
+              requestLoop(i);
+            } else {
+              isDeleteModalWaiting = false;
+              setDeletionModalTextTryAgain();
+            }
+          }
+        }, 30000);
+      })(30);
+    }
+
+    showDeleteModal = true;
+  }
+
   /**
    * This method pulls the 'serverObject' from the backend. This resets the form and ensures that any problems saving changes are caught.
    * @returns void
@@ -332,43 +405,63 @@ The editor actions component holds functionality that is responsible for perform
     >{serverObject["public"] ? "Unpublish" : "Publish"}</button
   >
 
-  {#if serverObject["slug"]}
+  {#if serverObject["slug"] && !serverObject["public"]}
     <button
       class="danger"
-      data-tooltip="Unassign Slug"
+      data-tooltip="Delete"
       data-tooltip-flow="bottom"
-      on:click={() => (showUnassignSlugModal = true)}
+      on:click={openDeletionModal}
     >
-      Unassign Slug
+      Delete
     </button>
   {/if}
 </span>
 
-<Modal
-  bind:open={showUnassignSlugModal}
-  title={`Are you sure you want to unassign this slug?`}
->
-  <p slot="body">
-    By unassigning this {serverObject.type}'s slug, you will be taking it out of
-    all the collections it belongs to. You will also be unpublishing the {serverObject.type}.
-    You can then use the slug, '{serverObject["slug"]}' for other manifests or
-    collections. Manifests and collections that do not have a slug assigned to
-    them are undiscoverable. You can bookmark this page to access this {serverObject.type}
-    again in the future. You can assign it a new slug, and publish it, to make it
-    discoverable on the platform again.
-  </p>
+<Modal bind:open={showDeleteModal} title={deleteModalTitle}>
+  <div slot="body">
+    {#if isDeleteModalWaiting}
+      {deleteModalMsg}
+      <br />
+      <br />
+      <div class="modal-loader-wrap">
+        <Loading backgroundType="gradient" />
+      </div>
+    {:else}
+      <p>{deleteModalMsg}</p>
+    {/if}
+  </div>
   <div slot="footer">
-    <button class="secondary" on:click={() => (showUnassignSlugModal = false)}>
+    <button class="secondary" on:click={() => (showDeleteModal = false)}>
       Cancel
     </button>
-    <button class="danger" on:click={handleUnassignSlug}>
-      Unassign Slug
-    </button>
+    {#if !isDeleteModalWaiting}
+      {#if deleteModalActionText === "Ok"}
+        <button
+          class="primary"
+          on:click={() => {
+            showDeleteModal = false;
+          }}
+        >
+          {deleteModalActionText}
+        </button>
+      {:else}
+        <button class="danger" on:click={handleDelete}>
+          {deleteModalActionText}
+        </button>
+      {/if}
+    {/if}
   </div>
 </Modal>
 
 <style>
   button {
     margin-left: var(--margin-sm);
+  }
+  .centered-modal-content,
+  .modal-loader-wrap {
+    text-align: center;
+  }
+  .modal-loader-wrap {
+    height: 5rem;
   }
 </style>
