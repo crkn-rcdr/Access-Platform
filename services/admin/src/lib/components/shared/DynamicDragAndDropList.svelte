@@ -1,40 +1,32 @@
 <!--
 @component
 ### Overview
-A container that enables the dragging and dropping of it's childen elements.
+A container that enables the dragging and dropping of it's children elements.
 
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| dragList: any[]                         | required | A list of anything that has the exact same number of elements as the number of children directly under the DynamicDragAndDropList component. It is updated as the elements under DynamicDragAndDropList are dragged around, meaning that if child element of DynamicDragAndDropList at position 'i' is drragged and dropped to position 'j', the draglist item at position 'i' is also moved to position 'j'. |
 | direction: ctring, "y" or "x" or "both" | optional | The orientation of the drag list, either vertical (y), horizontal (x), or a grid (both) |
 
 ### Usage
 **Example one**
 ```  
 <DynamicDragAndDropList
-  bind:dragList={items}
   on:itemDropped={(e) => {
+    console.logs(e.detail.currentItemIndex);
     console.logs(e.detail.destinationItemIndex);
   }}
 >
   {#each items as item, i}
-    <DynamicDragAndDropListItem bind:pos={i}>
+    <DynamicDragAndDropListItem pos={i}>
       I am draggable!!!! {i}
     </DynamicDragAndDropListItem>
   {/each}
 </DynamicDragAndDropList>
 ```
-*Note: `dragList` must have the same number of elements as the number of children direcly under the DynamicDragAndDropList component.*
 -->
 <script lang="ts">
   import { createEventDispatcher, onMount } from "svelte";
-  import { moveArrayElement } from "$lib/utils/arrayUtil";
-
-  /**
-   * @type {string} A list of anything that has the exact same number of elements as the number of children directly under the DynamicDragAndDropList component. It is updated as the elements under DynamicDragAndDropList are dragged around, meaning that if child element of DynamicDragAndDropList at position 'i' is drragged and dropped to position 'j', the draglist item at position 'i' is also moved to position 'j'.
-   */
-  export let dragList: any[] = []; // TODO: make optional and edit the position of the actual elements array if not set
 
   /**
    * @type {"y" | "x" | "both"} The orientation of the drag list, either vertical (y), horizontal (x), or a grid (both).
@@ -62,26 +54,12 @@ A container that enables the dragging and dropping of it's childen elements.
   let destinationItemIndex: number;
 
   /**
-   * @type {any[]} A store for the list (dragList) to be used to reset it if a drop fails.
-   */
-  let originalList: any[] = [];
-
-  /**
-   * @type {boolean} If the move was successful.
-   */
-  let success = false;
-
-  /**
    * Takes care of moving the dragged item from @var currentItemIndex to @var destinationItemIndex in @var dragList. Triggers the @event itemDropped that sends out these indexes to the parent in its event.detail
    * @returns void
    */
   function handleMove() {
+    console.log("dragging", currentItemIndex, destinationItemIndex);
     if (currentItemIndex === destinationItemIndex) return;
-    dragList = moveArrayElement(
-      dragList,
-      currentItemIndex,
-      destinationItemIndex
-    );
     dispatch("itemDropped", { currentItemIndex, destinationItemIndex });
     currentItemIndex = destinationItemIndex;
   }
@@ -94,7 +72,6 @@ A container that enables the dragging and dropping of it's childen elements.
    */
   function dragStart(this: Element) {
     currentItemIndex = parseInt(this.getAttribute("data-i"));
-    originalList = [...dragList];
   }
 
   /**
@@ -110,18 +87,13 @@ A container that enables the dragging and dropping of it's childen elements.
    * When a successful drop occurs, set the @var success check to true.
    * @returns void
    */
-  function drop() {
-    success = true;
-  }
+  function drop() {}
 
   /**
    * When dragging is complete, if the drop wasn't successful, reset @var dragList to the @var originalList. Then, reset the @var success check.
    * @returns void
    */
-  function dragend() {
-    if (!success) dragList = originalList;
-    success = false; // Reset this after each drag operation
-  }
+  function dragend() {}
 
   /**
    * Sets the event listers that enable the dragging behaviour for the element passed in, that is at elementIndex in the array of children of it's parent element.
@@ -184,16 +156,16 @@ A container that enables the dragging and dropping of it's childen elements.
    */
   onMount(() => {
     enableDraggingOnChildren();
+    // Options for the observer (which mutations to observe)
+    const config = { attributes: false, childList: true, subtree: false };
+    // Create an observer instance linked to the callback function
+    const observer = new MutationObserver(function (mutationsList, observer) {
+      enableDraggingOnChildren();
+      console.log(mutationsList, observer);
+    });
+    // Start observing the target node for configured mutations
+    observer.observe(container, config);
   });
-
-  /**
-   * @listens dragList
-   * @description Enables dragging any time the dragList is updated by calling @function enableDraggingOnChildren
-   */
-  $: {
-    dragList;
-    enableDraggingOnChildren();
-  }
 </script>
 
 <div bind:this={container} class="drag-and-drop-wrap {direction}">

@@ -152,7 +152,9 @@ This component displays the non content properties for an access editorObject an
         </select><br /><br />
       {/if}
 
-      <p>Memberships</p>
+      <p>
+        This {editorObject["type"]} is a member of the following collections:
+      </p>
       {#if membership?.length > 0}
         <ul>
           {#each membership as coll}

@@ -30,7 +30,7 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
   import { moveArrayElement } from "$lib/utils/arrayUtil";
   import TiTrash from "svelte-icons/ti/TiTrash.svelte";
   import AutomaticResizeNumberInput from "$lib/components/shared/AutomaticResizeNumberInput.svelte";
-  import VirtualList from "$lib/components/shared/VirtualList.svelte";
+
   import type { PagedManifest } from "@crkn-rcdr/access-data";
 
   /**
@@ -127,13 +127,7 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
   {#if showAddButton}
     <button class="primary lg" on:click={addClicked}>Add Canvas</button>
   {/if}
-  <!--VirtualList
-    bind:dataList={canvases}
-    bind:activeIndex={activeCanvasIndex}
-    disabled={!showAddButton}
-    let:item
-  >
-    <div
+  <!--div
       class="thumbnail auto-align auto-align__full"
       class:active={activeCanvasIndex === item.id}
       class:new={item.new}
@@ -181,8 +175,7 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
           )}/full/!425,524/0/default.jpg`}
         />
       </div>
-    </div>
-  </VirtualList-->
+    </div-->
 </div>
 
 <style>

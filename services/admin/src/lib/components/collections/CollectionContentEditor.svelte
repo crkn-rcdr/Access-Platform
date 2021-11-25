@@ -15,18 +15,17 @@ Allows the user to modify the member list for a collection.
 -->
 <script lang="ts">
   import { onMount, createEventDispatcher, afterUpdate } from "svelte";
-  import type {
-    Collection,
-    PagedCollection,
-  } from "@crkn-rcdr/access-data/src/access/Collection";
+  import type { PagedCollection } from "@crkn-rcdr/access-data/src/access/Collection";
   import AutomaticResizeNumberInput from "$lib/components/shared/AutomaticResizeNumberInput.svelte";
-  import VirtualList from "$lib/components/shared/VirtualList.svelte";
-  import { moveArrayElement } from "$lib/utils/arrayUtil";
   import TiTrash from "svelte-icons/ti/TiTrash.svelte";
   import CollectionMembersAddition from "./CollectionMembersAddition.svelte";
   import { session } from "$app/stores";
   import InfiniteScroller from "../shared/InfiniteScroller.svelte";
   import type { ObjectListPage } from "@crkn-rcdr/access-data";
+  import DynamicDragAndDropList from "../shared/DynamicDragAndDropList.svelte";
+  import DynamicDragAndDropListItem from "../shared/DynamicDragAndDropListItem.svelte";
+  import { moveArrayElement } from "$lib/utils/arrayUtil";
+  import { showConfirmation } from "$lib/utils/confirmation";
 
   export let collection: PagedCollection;
 
@@ -127,8 +126,76 @@ Allows the user to modify the member list for a collection.
         limit: size,
       });
       console.log("currPage", currPage);
-      members = [...members, ...currPage.list];
+      members = currPage.list;
       getMemberContext(currPage.list);
+    }
+  }
+
+  async function handleItemDropped(event: {
+    detail: { currentItemIndex: number; destinationItemIndex: number };
+  }) {
+    /**
+     *
+     */
+    console.log("Drag info", event.detail);
+    if (
+      event.detail.currentItemIndex >= 0 &&
+      event.detail.currentItemIndex < members.length
+    ) {
+      const pagedDestinationIndex =
+        page * size + event.detail.destinationItemIndex;
+
+      const memberToMove = members[event.detail.currentItemIndex];
+
+      const data = {
+        id: collection.id,
+        members: [memberToMove.id],
+        toIndex: pagedDestinationIndex,
+        user: $session.user,
+      };
+      console.log(data);
+
+      await showConfirmation(
+        async () => {
+          try {
+            const response = await $session.lapin.mutation(
+              "collection.moveMembers",
+              data
+            );
+            members = moveArrayElement(
+              members,
+              event.detail.currentItemIndex,
+              event.detail.destinationItemIndex
+            );
+
+            console.log(response);
+
+            return {
+              success: true,
+              details: "",
+            };
+          } catch (e) {
+            return {
+              success: false,
+              details: e.message,
+            };
+          }
+        },
+        "Success! Changes saved.",
+        "Error: failed to save changes.",
+        true
+      );
+
+      /*const currPage = await $session.lapin.query("collection.pageAfter", {
+        id: collection.id,
+        after: members[0].id,
+        limit: size,
+      });
+      console.log("currPage", currPage);
+      members = currPage.list;
+      getMemberContext(currPage.list);*/
+    } else {
+      console.log("invalid index");
     }
   }
 
@@ -158,12 +225,7 @@ Allows the user to modify the member list for a collection.
     <br />
 
     <br />
-    <!--VirtualList
-      bind:dataList={members}
-      bind:activeIndex={activeMemberIndex}
-      draggable={collection.behavior !== "unordered"}
-      let:item
-    >
+    <!--
       <div
         class="members"
         class:active={item?.id === activeMemberIndex}
@@ -216,8 +278,7 @@ Allows the user to modify the member list for a collection.
             </ul>
           </div>
         </div>
-      </div>
-    </VirtualList-->
+      </div-->
     <br />
 
     <!-- I commented out the above and added the styling from the example to help me see what's going on.
@@ -226,15 +287,23 @@ Allows the user to modify the member list for a collection.
     {childrenCount}
     {members.length}-->
     <ul>
-      <!-- loop through the array where items are added when scrolling -->
-      {#each members as collectionmembers}
-        <li>{collectionmembers.id}</li>
-        {#each documentSlug as document}
-          {#if document["result"]?.["label"]?.["none"] && document["id"] === collectionmembers?.id}
-            {document["result"]["slug"]} : {document["result"]["label"]["none"]}
-          {/if}
+      <DynamicDragAndDropList on:itemDropped={handleItemDropped}>
+        <!-- loop through the array where items are added when scrolling -->
+        {#each members as collectionmembers, i}
+          <DynamicDragAndDropListItem pos={i + 1}>
+            <li>
+              {collectionmembers.id}
+              {#each documentSlug as document}
+                {#if document["result"]?.["label"]?.["none"] && document["id"] === collectionmembers?.id}
+                  {document["result"]["slug"]} : {document["result"]["label"][
+                    "none"
+                  ]}
+                {/if}
+              {/each}
+            </li>
+          </DynamicDragAndDropListItem>
         {/each}
-      {/each}
+      </DynamicDragAndDropList>
       <!-- collection.members.length has all the items; members gets filled as the user scrolls -->
       <InfiniteScroller
         hasMore={childrenCount > members.length}

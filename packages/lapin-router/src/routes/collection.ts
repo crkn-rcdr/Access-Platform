@@ -193,7 +193,7 @@ export const collectionRouter = createRouter()
     input: z.object({
       id: Noid,
       members: z.array(Noid),
-      toIndex: z.number().int().positive(),
+      toIndex: z.number().int(), // .positive() doesn't accept 0
       user: User.optional(),
     }),
     async resolve({ input: { id, members, toIndex, user }, ctx }) {

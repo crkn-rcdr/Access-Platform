@@ -24,10 +24,18 @@ let numVisibleNotifications = 0;
  * @param failMsg
  * @returns any
  */
-async function showConfirmation(call, successMsg, failMsg) {
+async function showConfirmation(
+  call,
+  successMsg,
+  failMsg,
+  hideOnSuccess = false
+) {
   numVisibleNotifications++;
   try {
     const res: { success: boolean; details: string } = await call();
+
+    if (hideOnSuccess && res["success"]) return;
+
     const notification = new NotificationBar({
       target: document.body,
       props: {
