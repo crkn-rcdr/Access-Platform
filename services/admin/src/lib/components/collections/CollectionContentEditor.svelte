@@ -58,6 +58,8 @@ Allows the user to modify the member list for a collection.
   let page: number = 0;
   let size: number = 100;
 
+  let previousLastItem: string | null = null;
+
   function changeView(newState: string) {
     state = newState;
   }
@@ -117,15 +119,13 @@ Allows the user to modify the member list for a collection.
   async function handleScroll() {
     {
       page++;
-
       console.log("load more");
-      // TODO: grab new batch for members using new API
       const currPage = await $session.lapin.query("collection.pageAfter", {
         id: collection.id,
         after: members[members.length - 1].id,
         limit: size,
       });
-      console.log("currPage", currPage);
+      previousLastItem = members[members.length - 1].id;
       members = currPage.list;
       getMemberContext(currPage.list);
     }
@@ -134,9 +134,6 @@ Allows the user to modify the member list for a collection.
   async function handleItemDropped(event: {
     detail: { currentItemIndex: number; destinationItemIndex: number };
   }) {
-    /**
-     *
-     */
     console.log("Drag info", event.detail);
     if (
       event.detail.currentItemIndex >= 0 &&
@@ -155,6 +152,7 @@ Allows the user to modify the member list for a collection.
       };
       console.log(data);
 
+      // Shows a notification on move failure
       await showConfirmation(
         async () => {
           try {
@@ -162,14 +160,7 @@ Allows the user to modify the member list for a collection.
               "collection.moveMembers",
               data
             );
-            members = moveArrayElement(
-              members,
-              event.detail.currentItemIndex,
-              event.detail.destinationItemIndex
-            );
-
-            console.log(response);
-
+            console.log("done 1");
             return {
               success: true,
               details: "",
@@ -181,19 +172,41 @@ Allows the user to modify the member list for a collection.
             };
           }
         },
-        "Success! Changes saved.",
-        "Error: failed to save changes.",
+        "",
+        "Error: failed to move member.",
         true
       );
 
-      /*const currPage = await $session.lapin.query("collection.pageAfter", {
-        id: collection.id,
-        after: members[0].id,
-        limit: size,
-      });
-      console.log("currPage", currPage);
-      members = currPage.list;
-      getMemberContext(currPage.list);*/
+      // Shows a notification on page grab failure
+      await showConfirmation(
+        async () => {
+          try {
+            // we can just grab the current page again instead, but we need to store the previous page's last item to do so.
+            const currPage = await $session.lapin.query(
+              "collection.pageAfter",
+              {
+                id: collection.id,
+                after: previousLastItem,
+                limit: size,
+              }
+            );
+            members = currPage.list;
+            console.log("done 2");
+            return {
+              success: true,
+              details: "",
+            };
+          } catch (e) {
+            return {
+              success: false,
+              details: e.message,
+            };
+          }
+        },
+        "",
+        "Error: failed to update page. Please refresh.",
+        true
+      );
     } else {
       console.log("invalid index");
     }
