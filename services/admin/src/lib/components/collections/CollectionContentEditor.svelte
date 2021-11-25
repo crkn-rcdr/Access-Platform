@@ -24,7 +24,6 @@ Allows the user to modify the member list for a collection.
   import type { ObjectListPage } from "@crkn-rcdr/access-data";
   import DynamicDragAndDropList from "../shared/DynamicDragAndDropList.svelte";
   import DynamicDragAndDropListItem from "../shared/DynamicDragAndDropListItem.svelte";
-  import { moveArrayElement } from "$lib/utils/arrayUtil";
   import { showConfirmation } from "$lib/utils/confirmation";
 
   export let collection: PagedCollection;
@@ -59,6 +58,8 @@ Allows the user to modify the member list for a collection.
   let size: number = 100;
 
   let previousLastItem: string | null = null;
+
+  let loading: boolean = false;
 
   function changeView(newState: string) {
     state = newState;
@@ -116,19 +117,35 @@ Allows the user to modify the member list for a collection.
       setActiveIndex(activeMemberIndex);*/
     }
   }
-  async function handleScroll() {
+
+  async function handleScroll(event) {
     {
-      page++;
-      console.log("load more");
-      const currPage = await $session.lapin.query("collection.pageAfter", {
-        id: collection.id,
-        after: members[members.length - 1].id,
-        limit: size,
-      });
-      previousLastItem = members[members.length - 1].id;
-      members = currPage.list;
-      getMemberContext(currPage.list);
+      loading = true;
+      if (event.detail.reverse) {
+        page--;
+        console.log("load prev");
+        const currPage = await $session.lapin.query("collection.pageBefore", {
+          id: collection.id,
+          before: members[0].id,
+          limit: size,
+        });
+        previousLastItem = members[members.length - 1].id;
+        members = currPage.list;
+        await getMemberContext(currPage.list);
+      } else {
+        page++;
+        console.log("load next");
+        const currPage = await $session.lapin.query("collection.pageAfter", {
+          id: collection.id,
+          after: members[members.length - 1].id,
+          limit: size,
+        });
+        previousLastItem = members[members.length - 1].id;
+        members = currPage.list;
+        await getMemberContext(currPage.list);
+      }
     }
+    loading = false;
   }
 
   async function handleItemDropped(event: {
@@ -296,11 +313,8 @@ Allows the user to modify the member list for a collection.
 
     <!-- I commented out the above and added the styling from the example to help me see what's going on.
     -->
-    <!--{childrenCount > members.length}
-    {childrenCount}
-    {members.length}-->
-    <ul>
-      <DynamicDragAndDropList on:itemDropped={handleItemDropped}>
+    <DynamicDragAndDropList on:itemDropped={handleItemDropped}>
+      <ul class:disabled={loading}>
         <!-- loop through the array where items are added when scrolling -->
         {#each members as collectionmembers, i}
           <DynamicDragAndDropListItem pos={i + 1}>
@@ -316,15 +330,15 @@ Allows the user to modify the member list for a collection.
             </li>
           </DynamicDragAndDropListItem>
         {/each}
-      </DynamicDragAndDropList>
-      <!-- collection.members.length has all the items; members gets filled as the user scrolls -->
-      <InfiniteScroller
-        hasMore={childrenCount > members.length}
-        threshold={100}
-        on:loadMore={handleScroll}
-      />
-    </ul>
-    Showing {members.length} of {childrenCount}
+        <InfiniteScroller
+          hasLess={page !== 0}
+          hasMore={childrenCount > page * size + members.length}
+          threshold={100}
+          on:loadMore={handleScroll}
+        />
+      </ul>
+    </DynamicDragAndDropList>
+    Showing {page * size} to {page * size + members.length} of {childrenCount}
   </div>
 {/if}
 
@@ -370,11 +384,11 @@ Allows the user to modify the member list for a collection.
     display: flex;
     flex-direction: column;
     border-radius: 2px;
-    width: 100%;
+    width: 75%;
     max-width: 100%;
     max-height: 38rem;
     background-color: white;
-    overflow-x: auto;
+    overflow-x: hidden;
     list-style: none;
     padding: 0;
   }
@@ -386,5 +400,9 @@ Allows the user to modify the member list for a collection.
 
   li:hover {
     background-color: #eeeeee;
+  }
+
+  ul.disabled {
+    opacity: 0.5;
   }
 </style>

@@ -4,43 +4,63 @@
   export let horizontal: boolean = false;
   export let elementScroll: HTMLElement | null = null;
   export let hasMore: boolean = true;
+  export let hasLess: boolean = false;
   export let reverse: boolean = false;
   export let window: boolean = false;
 
-  const dispatch = createEventDispatcher<{ loadMore: never }>();
+  const dispatch = createEventDispatcher();
   let isLoadMore: boolean = false;
   let component: HTMLElement;
   let beforeScrollHeight: number;
   let beforeScrollTop: number;
   let element: any | null;
+
   $: if (element) {
-    if (reverse) {
-      element.scrollTop = element.scrollHeight;
-    }
     element.addEventListener("scroll", onScroll);
     element.addEventListener("resize", onScroll);
   }
-  $: if (isLoadMore && reverse) {
-    element.scrollTop =
-      element.scrollHeight - beforeScrollHeight + beforeScrollTop;
-  }
+
+  /*$: if (isLoadMore && !reverse) {
+    element.scroll({ top: 0 });
+  }*/
+
   const onScroll = (e: Event) => {
-    console.log("scroll", hasMore);
-    if (!hasMore) return;
     const target = e.target as HTMLElement;
-    const offset = calcOffset(target, reverse, horizontal);
-    if (offset <= threshold) {
-      if (!isLoadMore && hasMore) {
-        dispatch("loadMore");
-        console.log("load");
-        beforeScrollHeight = target.scrollHeight;
-        beforeScrollTop = target.scrollTop;
+
+    // Determine direction
+    if (beforeScrollTop > target.scrollTop) {
+      reverse = true;
+    } else {
+      reverse = false;
+    }
+
+    // Don't grab is theres nothing to grab
+    if (!reverse && !hasMore) return;
+    else if (reverse && !hasLess) return;
+
+    // If within 'threshold' from beggining or end of list
+    const offsetFromBottom = calcOffset(target, reverse, horizontal);
+    if (
+      (!reverse && offsetFromBottom <= threshold) ||
+      (reverse && target.scrollTop <= threshold)
+    ) {
+      // If not already loading
+      if (!isLoadMore) {
+        dispatch("loadMore", { reverse });
+        console.log("loading...");
+        if (!reverse) element.scroll({ top: 0, behavior: "instant" });
+        else element.scroll({ top: element.scrollHeight, behavior: "instant" });
       }
       isLoadMore = true;
     } else {
       isLoadMore = false;
     }
+
+    // Record previous scroll position
+    beforeScrollHeight = target.scrollHeight;
+    beforeScrollTop = target.scrollTop;
   };
+
   const calcOffset = (target: any, reverse: boolean, horizontal: boolean) => {
     const element: HTMLElement = target.documentElement
       ? target.documentElement
