@@ -157,7 +157,7 @@
 
     addedMember = false;
     showAddButton = true;
-    //isMemberSelected = true;
+    resultArray = [];
     resolutions = {};
     clearText();
   }
