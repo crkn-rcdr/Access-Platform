@@ -123,13 +123,60 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
    * @param index
    * @returns void
    */
-  function deleteCanvasByIndex(event: any, index: number) {
+  async function deleteCanvasByIndex(event: any, index: number) {
     event.stopPropagation();
-    if (index >= 0 && index < childrenCount) {
-      // TODO: use new api to delete canvas
-      /*canvases.splice(index, 1);
-      canvases = canvases;
-      setActiveIndex(activeCanvasIndex);*/
+    if (index >= 0 && index < canvases.length) {
+      const data = {
+        id: manifest.id,
+        canvases: [canvases[index].id],
+        user: $session.user,
+      };
+
+      // Shows a notification on move failure
+      await showConfirmation(
+        async () => {
+          try {
+            const response = await $session.lapin.mutation(
+              "manifest.removeCanvases",
+              data
+            );
+            return {
+              success: true,
+              details: "",
+            };
+          } catch (e) {
+            return {
+              success: false,
+              details: e.message,
+            };
+          }
+        },
+        "",
+        "Error: failed to delete canvas.",
+        true
+      );
+
+      // Shows a notification on page grab failure
+      await showConfirmation(
+        async () => {
+          try {
+            // we can just grab the current page again instead, but we need to store the previous page's last item to do so.
+            await sendCurrentPageRequest();
+            return {
+              success: true,
+              details: "",
+            };
+          } catch (e) {
+            return {
+              success: false,
+              details: e.message,
+            };
+          }
+        },
+        "",
+        "Error: failed to update page. Please refresh.",
+        true
+      );
     }
   }
 
@@ -161,7 +208,7 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
         }
       },
       "",
-      "Error: failed to move member.",
+      "Error: failed to move canvas.",
       true
     );
 
@@ -275,9 +322,9 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
       const pagedDestinationIndex =
         page * size + event.detail.destinationItemIndex;
 
-      const memberToMove = canvases[event.detail.currentItemIndex];
+      const canvasToMove = canvases[event.detail.currentItemIndex];
 
-      await sendMoveRequest(memberToMove, pagedDestinationIndex);
+      await sendMoveRequest(canvasToMove, pagedDestinationIndex);
 
       // Highlight and move to new position
       activeCanvasIndex = event.detail.destinationItemIndex;
@@ -295,6 +342,7 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
       limit: size,
     });
     canvases = currPage.list;
+    setActiveIndex(activeCanvasIndex);
   }
 
   export async function grabCurrentPage() {
