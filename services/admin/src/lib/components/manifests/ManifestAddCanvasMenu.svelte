@@ -39,16 +39,6 @@ This component allows the user to search through other manifests and select canv
   import CanvasesSelector from "$lib/components/canvases/CanvasesSelector.svelte";
 
   /**
-   * @type {PagedManifest} The manifest to add selected canvases to.
-   */
-  export let destinationManifest: PagedManifest;
-
-  /**
-   * @type {number} The starting index to add the selected canvases at.
-   */
-  export let destinationIndex = 0;
-
-  /**
    * @type {boolean} If the user is allowed to select multiple canvases to add.
    */
   export let multiple = true;
@@ -130,8 +120,7 @@ This component allows the user to search through other manifests and select canv
    * @returns void
    */
   function handleAddPressed() {
-    // TODO: add canvases using new api
-    dispatch("done", selectedCanvases);
+    dispatch("done", { selectedCanvases });
     selectedCanvases = [];
   }
 </script>

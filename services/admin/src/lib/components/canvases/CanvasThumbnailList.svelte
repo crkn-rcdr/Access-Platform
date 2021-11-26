@@ -200,7 +200,6 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
         toIndex: pagedDestinationIndex,
         user: $session.user,
       };
-      console.log(data);
 
       // Shows a notification on move failure
       await showConfirmation(
@@ -210,7 +209,6 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
               "manifest.moveCanvases",
               data
             );
-            console.log("done 1");
             return {
               success: true,
               details: "",
@@ -232,13 +230,7 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
         async () => {
           try {
             // we can just grab the current page again instead, but we need to store the previous page's last item to do so.
-            const currPage = await $session.lapin.query("manifest.pageAfter", {
-              id: manifest.id,
-              after: previousLastItem,
-              limit: size,
-            });
-            canvases = currPage.list;
-            console.log("done 2");
+            await grabCurrentPage();
             return {
               success: true,
               details: "",
@@ -259,6 +251,15 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
     }
 
     loading = false;
+  }
+
+  export async function grabCurrentPage() {
+    const currPage = await $session.lapin.query("manifest.pageAfter", {
+      id: manifest.id,
+      after: previousLastItem,
+      limit: size,
+    });
+    canvases = currPage.list;
   }
 
   /**

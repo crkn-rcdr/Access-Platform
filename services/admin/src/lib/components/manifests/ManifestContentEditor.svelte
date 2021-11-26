@@ -25,6 +25,7 @@ Allows the user to modify the canvas list for a manifest.
   import SwitchCase from "$lib/components/shared/SwitchCase.svelte";
   import ManifestAddCanvasMenu from "$lib/components/manifests/ManifestAddCanvasMenu.svelte";
   import type { ObjectListPage } from "@crkn-rcdr/access-data";
+  import { session } from "$app/stores";
   //import type { ObjectList } from "@crkn-rcdr/access-data";
 
   /**
@@ -67,6 +68,8 @@ Allows the user to modify the canvas list for a manifest.
    */
   let state = "view";
 
+  let canvasListComponent;
+
   /**
    * Sets the @var activeCanvas to the canvas at index in the manifests canvas list.
    * Sets the @car activeCanvasIndex to the index passed in.
@@ -107,6 +110,28 @@ Allows the user to modify the canvas list for a manifest.
     state = newState;
   }
 
+  async function handleAddPressed(event: {
+    detail: {
+      selectedCanvases: { id?: string; label?: Record<string, string> }[];
+    };
+  }) {
+    console.log(event.detail);
+    const canvases = event.detail?.selectedCanvases?.map((el) => el.id);
+
+    const response = await $session.lapin.mutation("manifest.addCanvases", {
+      id: manifest.id,
+      canvases,
+      user: $session.user,
+    });
+
+    console.log(response);
+
+    await canvasListComponent.grabCurrentPage();
+    state = "view";
+    manifest = manifest;
+    setActiveCanvas(0);
+  }
+
   /**
    * @event onMount
    * @description When the component instance is mounted onto the dom, @var activeCanvas is set to the first canvas in the manifests canvas list, or null if the list is empty
@@ -124,6 +149,7 @@ Allows the user to modify the canvas list for a manifest.
   <div class="auto-align auto-align__full content-wrapper">
     <div class="list-wrapper">
       <CanvasThumbnailList
+        bind:this={canvasListComponent}
         bind:manifest
         {firstPage}
         {childrenCount}
@@ -170,15 +196,7 @@ Allows the user to modify the canvas list for a manifest.
           </div>
         </SwitchCase>
         <SwitchCase caseVal="add">
-          <!--TODO: Should we add the canvases after the selected canvas or just at the begining or end of the manifest?-->
-          <ManifestAddCanvasMenu
-            bind:destinationManifest={manifest}
-            on:done={() => {
-              state = "view";
-              manifest = manifest;
-              setActiveCanvas(0);
-            }}
-          />
+          <ManifestAddCanvasMenu on:done={handleAddPressed} />
         </SwitchCase>
       </Switch>
     </div>
