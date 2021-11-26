@@ -281,6 +281,12 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
       const memberToMove = canvases[event.detail.currentItemIndex];
 
       await sendMoveRequest(memberToMove, pagedDestinationIndex);
+
+      // Highlight and move to new position
+      activeCanvasIndex = event.detail.destinationItemIndex;
+
+      //jumpTo(activeCanvasIndex);
+      setActiveIndex(activeCanvasIndex);
     }
     loading = false;
   }
