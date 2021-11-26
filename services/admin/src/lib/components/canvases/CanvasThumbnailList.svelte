@@ -289,7 +289,7 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
               setActiveIndex(i);
             }}
           >
-            <div class="actions-wrap">
+            <div class="actions-wrap" class:not-loading={!loading}>
               <div
                 class="auto-align auto-align__full auto-align auto-align__column"
                 class:visibility-hidden={!showAddButton}
@@ -415,14 +415,14 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
   .pos-input {
     display: none;
   }
-  .thumbnail:hover .action.icon {
+  .thumbnail:hover .actions-wrap.not-loading .action.icon {
     display: inherit;
   }
-  .thumbnail:hover .pos {
+  .thumbnail:hover .actions-wrap.not-loading .pos {
     display: none;
   }
 
-  .thumbnail:hover .pos-input {
+  .thumbnail:hover .actions-wrap.not-loading .pos-input {
     display: inherit;
   }
   .page-info-loader {
@@ -441,8 +441,12 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
   .canvas-wrap.disabled {
     opacity: 0.5;
     overflow: hidden;
+    pointer-events: none;
+    user-select: none;
   }
   :global(.canvas-wrap.disabled > *) {
     overflow: hidden;
+    pointer-events: none;
+    user-select: none;
   }
 </style>

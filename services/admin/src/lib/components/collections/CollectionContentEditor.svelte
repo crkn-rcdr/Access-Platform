@@ -411,10 +411,14 @@ Allows the user to modify the member list for a collection.
   .member-wrap.disabled {
     opacity: 0.5;
     overflow: hidden;
+    pointer-events: none;
+    user-select: none;
   }
 
   :global(.member-wrap.disabled > *) {
     overflow: hidden;
+    pointer-events: none;
+    user-select: none;
   }
 
   .member:hover {
