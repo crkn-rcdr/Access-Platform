@@ -104,10 +104,7 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
     positions = [];
     for (let i = 0; i < canvases.length; i++) positions.push(i + 1);
   }
-  $: {
-    canvases;
-    setPositions();
-  }
+
   /**
    * Sets the @var activeCanvasIndex, the current 'selected' canvas. It also calls @event thumbnailClicked which outputs the index of the active canvas in the canvases list
    * @param index
@@ -313,6 +310,11 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
     canvases = firstPage.list;
     activeCanvas = canvases[activeCanvasIndex];
   });
+
+  $: {
+    canvases;
+    setPositions();
+  }
 </script>
 
 <div class="auto-align auto-align__full auto-align auto-align__column">

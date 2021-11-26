@@ -113,7 +113,13 @@ Allows the user to modify the canvas list for a manifest.
 
     await canvasListComponent.grabCurrentPage();
     state = "view";
-    manifest = manifest;
+
+    const objectResponse = await $session.lapin.query(
+      "accessObject.getPaged",
+      manifest.id
+    );
+    childrenCount = objectResponse.canvases.count;
+    manifest = objectResponse;
   }
 </script>
 
