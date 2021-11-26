@@ -120,6 +120,7 @@ Allows the user to modify the member list for a collection.
 
   async function handleScroll(event) {
     {
+      if (loading) return;
       loading = true;
       if (event.detail.reverse) {
         page--;
@@ -404,5 +405,6 @@ Allows the user to modify the member list for a collection.
 
   ul.disabled {
     opacity: 0.5;
+    overflow: hidden;
   }
 </style>
