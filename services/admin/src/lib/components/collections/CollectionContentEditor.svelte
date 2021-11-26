@@ -263,61 +263,6 @@ Allows the user to modify the member list for a collection.
     <br />
 
     <br />
-    <!--
-      <div
-        class="members"
-        class:active={item?.id === activeMemberIndex}
-        on:mousedown={() => setActiveIndex(item?.id)}
-      >
-        <div class="auto-align">
-          <div class="actions-wrap">
-            <div class="auto-align auto-align__column">
-              {#if collection.behavior !== "unordered"}
-                <div class="action pos">
-                  {item.pos}
-                </div>
-                <div
-                  class="action pos-input"
-                  on:click={(e) => {
-                    e.stopPropagation();
-                  }}
-                >
-                  <AutomaticResizeNumberInput
-                    name="position"
-                    max={collection?.members.length}
-                    value={item?.pos}
-                    on:changed={(e) => {
-                      moveMember(e, item?.id);
-                    }}
-                  />
-                </div>
-              {/if}
-              <div
-                class="action icon"
-                on:click={(e) => deleteMemberByIndex(e, item.id)}
-              >
-                <TiTrash />
-              </div>
-            </div>
-          </div>
-          <div id="grid">
-            <ul>
-              <li>
-                <a href="/object/{item?.data?.id}">{item?.data?.id}</a><br />
-
-                {#each documentSlug as document}
-                  {#if document["result"]?.["label"]?.["none"] && document["id"] === item?.data?.id}
-                    {document["result"]["slug"]} : {document["result"]["label"][
-                      "none"
-                    ]}
-                  {/if}
-                {/each}
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div-->
-    <br />
 
     <!-- I commented out the above and added the styling from the example to help me see what's going on.
     -->
@@ -328,17 +273,61 @@ Allows the user to modify the member list for a collection.
         bind:container={list}
         on:itemDropped={handleItemDropped}
       >
-        {#each members as collectionmembers, i}
+        <!--{collectionmembers.id}
+              -->
+        {#each members as collectionMember, i}
           <DynamicDragAndDropListItem pos={i + 1}>
-            <div class="member">
-              {collectionmembers.id}
-              {#each documentSlug as document}
-                {#if document["result"]?.["label"]?.["none"] && document["id"] === collectionmembers?.id}
-                  {document["result"]["slug"]} : {document["result"]["label"][
-                    "none"
-                  ]}
-                {/if}
-              {/each}
+            <div
+              class="member"
+              class:active={i === activeMemberIndex}
+              on:mousedown={() => setActiveIndex(i)}
+            >
+              <div class="auto-align">
+                <div class="actions-wrap">
+                  <div class="auto-align auto-align__column">
+                    {#if collection.behavior !== "unordered"}
+                      <div class="action pos">
+                        {i}
+                      </div>
+                      <div
+                        class="action pos-input"
+                        on:click={(e) => {
+                          e.stopPropagation();
+                        }}
+                      >
+                        <AutomaticResizeNumberInput
+                          name="position"
+                          max={childrenCount}
+                          value={i}
+                          on:changed={(e) => {
+                            moveMember(e, i);
+                          }}
+                        />
+                      </div>
+                    {/if}
+                    <div
+                      class="action icon"
+                      on:click={(e) => deleteMemberByIndex(e, i)}
+                    >
+                      <TiTrash />
+                    </div>
+                  </div>
+                </div>
+                <div class="auto-align auto-align__column">
+                  <a href="/object/{collectionMember?.id}">
+                    {collectionMember?.id}
+                  </a>
+                  {#each documentSlug as document}
+                    {#if document["result"]?.["label"]?.["none"] && document["id"] === collectionMember?.id}
+                      <span>
+                        {document["result"]["slug"]} : {document["result"][
+                          "label"
+                        ]["none"]}
+                      </span>
+                    {/if}
+                  {/each}
+                </div>
+              </div>
             </div>
           </DynamicDragAndDropListItem>
         {/each}
@@ -365,30 +354,33 @@ Allows the user to modify the member list for a collection.
 {/if}
 
 <style>
-  /* .action.icon {
+  .action {
+    margin-right: var(--margin-sm);
+  }
+  .action.icon {
     opacity: 0.6;
     cursor: pointer;
   }
   .pos {
     font-weight: 400;
-    margin-top: 0.58rem;
-    margin-top: 2rem;
-    margin-left: 0.58rem;
+    margin-top: 0.56rem;
+    margin-left: 0.56rem;
+    min-width: 3.15rem;
   }
   .action.icon {
     display: none;
     margin-top: 0.5em;
   }
-  .members:hover .action.icon {
+  .member-wrap:hover .action.icon {
     display: inherit;
   }
   .pos-input {
     display: none;
   }
-  .members:hover .pos-input {
+  .member-wrap:hover .pos-input {
     display: inherit;
   }
-  .members:hover .pos {
+  .member-wrap:hover .pos {
     display: none;
   }
   #grid {
@@ -398,8 +390,7 @@ Allows the user to modify the member list for a collection.
     grid-template-areas: "a a";
     gap: 10px;
     grid-auto-columns: 200px;
-  } */
-
+  }
   .member-wrap {
     display: flex;
     flex-direction: column;

@@ -401,7 +401,7 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
                 >
                   <AutomaticResizeNumberInput
                     name="position"
-                    max={canvases.length}
+                    max={childrenCount}
                     value={positions[i]}
                     on:changed={(e) => {
                       moveCanvas(e, positions[i] - 1);
