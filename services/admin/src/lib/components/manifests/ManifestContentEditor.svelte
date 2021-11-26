@@ -124,8 +124,10 @@ Allows the user to modify the canvas list for a manifest.
   <div class="auto-align auto-align__full content-wrapper">
     <div class="list-wrapper">
       <CanvasThumbnailList
-        showAddButton={state != "add"}
         bind:manifest
+        {firstPage}
+        {childrenCount}
+        showAddButton={state != "add"}
         on:thumbnailClicked={(event) => {
           setActiveCanvas(event.detail.index);
         }}

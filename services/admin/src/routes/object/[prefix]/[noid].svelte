@@ -37,7 +37,7 @@
         } else if (serverObject["canvases"]) {
           firstPage = await context.lapin.query("manifest.pageAfter", {
             id: serverObject.id,
-            after: serverObject["canvases"].first,
+            after: null,
             limit: 100,
           });
           childrenCount = serverObject["canvases"].count;

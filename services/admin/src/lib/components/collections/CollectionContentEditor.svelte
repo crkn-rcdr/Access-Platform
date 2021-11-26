@@ -354,7 +354,7 @@ Allows the user to modify the member list for a collection.
         </span>
       {/if}
       <span class="page-info">
-        Showing {page * size} to {page * size + members.length} of {childrenCount}
+        Showing {page * size + 1} to {page * size + members.length} of {childrenCount}
       </span>
     </div>
   </div>
