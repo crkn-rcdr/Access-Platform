@@ -69,6 +69,16 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
   }[] = [];
 
   /**
+   * @type {{
+    label?: Record<string, string>;
+    id: string;
+  }} The canvas being displayed in the canvas viewer.
+   */
+  export let activeCanvas: any;
+
+  let positions: number[] = [];
+
+  /**
    * @type {number} The index of the selected, 'active' canvas in the canvases list.
    */
   let activeCanvasIndex = 0;
@@ -90,6 +100,14 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
    */
   const dispatch = createEventDispatcher();
 
+  function setPositions() {
+    positions = [];
+    for (let i = 0; i < canvases.length; i++) positions.push(i + 1);
+  }
+  $: {
+    canvases;
+    setPositions();
+  }
   /**
    * Sets the @var activeCanvasIndex, the current 'selected' canvas. It also calls @event thumbnailClicked which outputs the index of the active canvas in the canvases list
    * @param index
@@ -99,7 +117,7 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
     if (index >= childrenCount) index = childrenCount - 1;
     if (index < 0) index = 0;
     activeCanvasIndex = index;
-    dispatch("thumbnailClicked", { index });
+    activeCanvas = canvases[activeCanvasIndex];
   }
 
   /**
@@ -118,6 +136,61 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
     }
   }
 
+  async function sendMoveRequest(canvasToMove, pagedDestinationIndex) {
+    const data = {
+      id: manifest.id,
+      canvases: [canvasToMove.id],
+      toIndex: pagedDestinationIndex,
+      user: $session.user,
+    };
+
+    // Shows a notification on move failure
+    await showConfirmation(
+      async () => {
+        try {
+          const response = await $session.lapin.mutation(
+            "manifest.moveCanvases",
+            data
+          );
+          return {
+            success: true,
+            details: "",
+          };
+        } catch (e) {
+          return {
+            success: false,
+            details: e.message,
+          };
+        }
+      },
+      "",
+      "Error: failed to move member.",
+      true
+    );
+
+    // Shows a notification on page grab failure
+    await showConfirmation(
+      async () => {
+        try {
+          // we can just grab the current page again instead, but we need to store the previous page's last item to do so.
+          await sendCurrentPageRequest();
+          return {
+            success: true,
+            details: "",
+          };
+        } catch (e) {
+          return {
+            success: false,
+            details: e.message,
+          };
+        }
+      },
+      "",
+      "Error: failed to update page. Please refresh.",
+      true
+    );
+  }
+
   /**
    * Moves a canvas from the originalItemIndex to the index specified in the event object
    * It then calls @function setIndexModel to update the index model,
@@ -127,20 +200,33 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
    * @param originalItemIndex
    * @returns void
    */
-  function moveCanvas(event: any, originalItemIndex: number) {
-    // TODO: use new api to move canvas
+  async function moveCanvas(event: any, currentItemIndex) {
+    if (loading) return;
+    loading = true;
 
-    /*// Move the canvas and trigger saving
     let destinationItemIndex = parseInt(event.detail.value) - 1;
-    moveArrayElement(canvases, originalItemIndex, destinationItemIndex);
+    console.log(
+      "destinationItemIndex",
+      destinationItemIndex,
+      "currentItemIndex",
+      currentItemIndex
+    );
 
-    canvases = canvases;
+    if (destinationItemIndex >= 0 && destinationItemIndex < canvases.length) {
+      const pagedDestinationIndex = page * size + destinationItemIndex;
 
-    // Highlight and move to new position
-    activeCanvasIndex = destinationItemIndex;*/
+      const canvasToMove = canvases[currentItemIndex];
 
-    //jumpTo(activeCanvasIndex);
-    setActiveIndex(activeCanvasIndex);
+      await sendMoveRequest(canvasToMove, pagedDestinationIndex);
+
+      // Highlight and move to new position
+      activeCanvasIndex = destinationItemIndex;
+
+      //jumpTo(activeCanvasIndex);
+      setActiveIndex(activeCanvasIndex);
+    }
+
+    loading = false;
   }
 
   /**
@@ -194,66 +280,12 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
 
       const memberToMove = canvases[event.detail.currentItemIndex];
 
-      const data = {
-        id: manifest.id,
-        canvases: [memberToMove.id],
-        toIndex: pagedDestinationIndex,
-        user: $session.user,
-      };
-
-      // Shows a notification on move failure
-      await showConfirmation(
-        async () => {
-          try {
-            const response = await $session.lapin.mutation(
-              "manifest.moveCanvases",
-              data
-            );
-            return {
-              success: true,
-              details: "",
-            };
-          } catch (e) {
-            return {
-              success: false,
-              details: e.message,
-            };
-          }
-        },
-        "",
-        "Error: failed to move member.",
-        true
-      );
-
-      // Shows a notification on page grab failure
-      await showConfirmation(
-        async () => {
-          try {
-            // we can just grab the current page again instead, but we need to store the previous page's last item to do so.
-            await grabCurrentPage();
-            return {
-              success: true,
-              details: "",
-            };
-          } catch (e) {
-            return {
-              success: false,
-              details: e.message,
-            };
-          }
-        },
-        "",
-        "Error: failed to update page. Please refresh.",
-        true
-      );
-    } else {
-      console.log("invalid index");
+      await sendMoveRequest(memberToMove, pagedDestinationIndex);
     }
-
     loading = false;
   }
 
-  export async function grabCurrentPage() {
+  async function sendCurrentPageRequest() {
     const currPage = await $session.lapin.query("manifest.pageAfter", {
       id: manifest.id,
       after: previousLastItem,
@@ -262,14 +294,18 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
     canvases = currPage.list;
   }
 
+  export async function grabCurrentPage() {
+    await sendCurrentPageRequest();
+  }
+
   /**
    * @event onMount
    * @description When the component instance is mounted onto the dom, @var activeCanvasIndex is instantiated, the canvases positions model is set
    */
   onMount(async () => {
     activeCanvasIndex = 0;
-    console.log("firstPage", firstPage);
     canvases = firstPage.list;
+    activeCanvas = canvases[activeCanvasIndex];
   });
 </script>
 
@@ -302,17 +338,17 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
                   {i + 1}
                 </div>
                 <div
-                  class="action pos-input"
                   on:click={(e) => {
-                    e.stopPropagation();
+                    e.preventDefault();
                   }}
+                  class="action pos-input"
                 >
                   <AutomaticResizeNumberInput
                     name="position"
                     max={canvases.length}
-                    value={i + 1}
+                    value={positions[i]}
                     on:changed={(e) => {
-                      moveCanvas(e, i);
+                      moveCanvas(e, positions[i] - 1);
                     }}
                   />
                 </div>

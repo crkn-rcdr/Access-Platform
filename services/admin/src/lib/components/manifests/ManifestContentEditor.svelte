@@ -54,14 +54,12 @@ Allows the user to modify the canvas list for a manifest.
   }[] = [];
 
   /**
-   * @type {any} The canvas being displayed in the canvas viewer.
+   * @type {{
+    label?: Record<string, string>;
+    id: string;
+  }} The canvas being displayed in the canvas viewer.
    */
   let activeCanvas: any;
-
-  /**
-   * @type {number} The index of the canvas being displayed in the canvas viewer.
-   */
-  let activeCanvasIndex = 0;
 
   /**
    * @type {string} A control for what component is displayed in the free space of the content editor.
@@ -71,25 +69,12 @@ Allows the user to modify the canvas list for a manifest.
   let canvasListComponent;
 
   /**
-   * Sets the @var activeCanvas to the canvas at index in the manifests canvas list.
-   * Sets the @car activeCanvasIndex to the index passed in.
-   * Calls @function triggerUpdate to make any other components aware of changes
-   * @param index
-   * @returns void
-   */
-  function setActiveCanvas(index: number) {
-    activeCanvasIndex = index;
-    activeCanvas = manifest?.canvases?.[index] || null;
-    triggerUpdate();
-  }
-
-  /**
    * Changes the label of the active canvas to the event.detail property of the label editors @event changed
    * @param event
    * @returns void
    */
   function setActiveCanvasLabel(event) {
-    canvases[activeCanvasIndex]["label"]["none"] = event.detail;
+    activeCanvas["label"]["none"] = event.detail;
     triggerUpdate();
   }
 
@@ -129,16 +114,7 @@ Allows the user to modify the canvas list for a manifest.
     await canvasListComponent.grabCurrentPage();
     state = "view";
     manifest = manifest;
-    setActiveCanvas(0);
   }
-
-  /**
-   * @event onMount
-   * @description When the component instance is mounted onto the dom, @var activeCanvas is set to the first canvas in the manifests canvas list, or null if the list is empty
-   */
-  onMount(() => {
-    activeCanvas = manifest?.canvases?.[0] || null;
-  });
 </script>
 
 {#if manifest}
@@ -151,12 +127,10 @@ Allows the user to modify the canvas list for a manifest.
       <CanvasThumbnailList
         bind:this={canvasListComponent}
         bind:manifest
+        bind:activeCanvas
         {firstPage}
         {childrenCount}
         showAddButton={state != "add"}
-        on:thumbnailClicked={(event) => {
-          setActiveCanvas(event.detail.index);
-        }}
         on:addClicked={(event) => {
           changeView("add");
         }}
