@@ -155,6 +155,8 @@ Allows the user to modify the member list for a collection.
   async function handleItemDropped(event: {
     detail: { currentItemIndex: number; destinationItemIndex: number };
   }) {
+    if (loading) return;
+    loading = true;
     console.log("Drag info", event.detail);
     if (
       event.detail.currentItemIndex >= 0 &&
@@ -231,6 +233,8 @@ Allows the user to modify the member list for a collection.
     } else {
       console.log("invalid index");
     }
+
+    loading = false;
   }
 
   onMount(async () => {

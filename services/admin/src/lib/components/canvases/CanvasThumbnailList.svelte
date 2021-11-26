@@ -183,7 +183,8 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
   async function handleItemDropped(event: {
     detail: { currentItemIndex: number; destinationItemIndex: number };
   }) {
-    console.log("Drag info", event.detail);
+    if (loading) return;
+    loading = true;
     if (
       event.detail.currentItemIndex >= 0 &&
       event.detail.currentItemIndex < canvases.length
@@ -256,6 +257,8 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
     } else {
       console.log("invalid index");
     }
+
+    loading = false;
   }
 
   /**
