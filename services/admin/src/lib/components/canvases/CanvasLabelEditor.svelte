@@ -19,6 +19,7 @@ This component holds the functionality for editing labels of canvases.
 -->
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
+  import ValueSaveForm from "../shared/ValueSaveForm.svelte";
 
   /**
    * @type {string} The label to be edited for the canvas
@@ -42,12 +43,9 @@ This component holds the functionality for editing labels of canvases.
 {#if typeof label !== "undefined"}
   <div id="label">
     <label for="canvasLabel">Canvas Label</label>
-    <textarea
-      rows="1"
-      name="canvasLabel"
-      bind:value={label}
-      on:keyup={changed}
-    />
+    <ValueSaveForm bind:value={label} on:save={changed}>
+      <textarea rows="1" name="canvasLabel" bind:value={label} />
+    </ValueSaveForm>
   </div>
   <slot />
 {/if}

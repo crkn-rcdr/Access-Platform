@@ -59,7 +59,10 @@ Allows the user to modify the canvas list for a manifest.
     id: string;
   }} The canvas being displayed in the canvas viewer.
    */
-  let activeCanvas: any;
+  let activeCanvas: {
+    label?: Record<string, string>;
+    id: string;
+  };
 
   /**
    * @type {string} A control for what component is displayed in the free space of the content editor.
@@ -73,8 +76,16 @@ Allows the user to modify the canvas list for a manifest.
    * @param event
    * @returns void
    */
-  function setActiveCanvasLabel(event) {
-    activeCanvas["label"]["none"] = event.detail;
+  async function setActiveCanvasLabel(event) {
+    const response = await $session.lapin.mutation("manifest.relabelCanvas", {
+      id: manifest.id,
+      canvas: activeCanvas.id,
+      label: {
+        none: event.detail,
+      },
+      user: $session.user,
+    });
+    await canvasListComponent.grabCurrentPage();
     triggerUpdate();
   }
 
