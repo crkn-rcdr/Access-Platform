@@ -27,6 +27,10 @@ A container that enables the dragging and dropping of it's children elements.
 -->
 <script lang="ts">
   import { createEventDispatcher, onMount } from "svelte";
+  /**
+   * @type {HTMLElement} The html element holding all of the elements that can be dragged around.
+   */
+  export let container: HTMLElement;
 
   /**
    * @type {"y" | "x" | "both"} The orientation of the drag list, either vertical (y), horizontal (x), or a grid (both).
@@ -37,11 +41,6 @@ A container that enables the dragging and dropping of it's children elements.
    * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.
    */
   const dispatch = createEventDispatcher();
-
-  /**
-   * @type {HTMLDivElement} The html element holding all of the elements that can be dragged around.
-   */
-  let container: HTMLDivElement;
 
   /**
    * @type {number} The index of the element that is being dragged.
@@ -160,6 +159,7 @@ A container that enables the dragging and dropping of it's children elements.
     const config = { attributes: false, childList: true, subtree: false };
     // Create an observer instance linked to the callback function
     const observer = new MutationObserver(function (mutationsList, observer) {
+      console.log("updating dragger");
       enableDraggingOnChildren();
       console.log(mutationsList, observer);
     });

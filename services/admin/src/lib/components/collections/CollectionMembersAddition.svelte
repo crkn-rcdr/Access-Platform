@@ -47,7 +47,7 @@
   /**
    * @type { string } The label for the by-slug toggle
    */
-  const LOOKUP_MEMBER = "Look_up_slugs";
+  const LOOKUP_MEMBER = "Add a member";
 
   /**
    * @type { string } The selected lookup method

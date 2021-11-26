@@ -1,28 +1,16 @@
 <script lang="ts">
-  import { onMount, onDestroy, createEventDispatcher } from "svelte";
+  import { onDestroy, createEventDispatcher } from "svelte";
   export let threshold: number = 0;
   export let horizontal: boolean = false;
-  export let elementScroll: HTMLElement | null = null;
+  export let elementScroll: HTMLElement;
   export let hasMore: boolean = true;
   export let hasLess: boolean = false;
   export let reverse: boolean = false;
-  export let window: boolean = false;
 
   const dispatch = createEventDispatcher();
   let isLoadMore: boolean = false;
-  let component: HTMLElement;
-  let beforeScrollHeight: number;
   let beforeScrollTop: number;
   let element: any | null;
-
-  $: if (element) {
-    element.addEventListener("scroll", onScroll);
-    element.addEventListener("resize", onScroll);
-  }
-
-  /*$: if (isLoadMore && !reverse) {
-    element.scroll({ top: 0 });
-  }*/
 
   const onScroll = (e: Event) => {
     const target = e.target as HTMLElement;
@@ -48,7 +36,7 @@
       if (!isLoadMore) {
         dispatch("loadMore", { reverse });
         console.log("loading...");
-        if (!reverse) element.scroll({ top: 0, behavior: "instant" });
+        if (!reverse) element.scroll({ top: 10, behavior: "instant" });
         else element.scroll({ top: element.scrollHeight, behavior: "instant" });
       }
       isLoadMore = true;
@@ -57,7 +45,6 @@
     }
 
     // Record previous scroll position
-    beforeScrollHeight = target.scrollHeight;
     beforeScrollTop = target.scrollTop;
   };
 
@@ -72,15 +59,16 @@
       ? element.scrollWidth - element.clientWidth - element.scrollLeft
       : element.scrollHeight - element.clientHeight - element.scrollTop;
   };
-  onMount(() => {
-    if (window) {
-      element = document;
-    } else if (elementScroll) {
+  function setElement(elementScroll) {
+    if (!element && elementScroll) {
       element = elementScroll;
-    } else {
-      element = component.parentNode;
+      element.addEventListener("scroll", onScroll);
+      element.addEventListener("resize", onScroll);
     }
-  });
+  }
+  $: {
+    setElement(elementScroll);
+  }
   onDestroy(() => {
     if (element) {
       element.removeEventListener("scroll", onScroll);
@@ -88,7 +76,3 @@
     }
   });
 </script>
-
-{#if !window && !elementScroll}
-  <div bind:this={component} id="svelte-infinite-scroll" style="width: 0;" />
-{/if}

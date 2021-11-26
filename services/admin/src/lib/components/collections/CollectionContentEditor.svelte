@@ -25,6 +25,7 @@ Allows the user to modify the member list for a collection.
   import DynamicDragAndDropList from "../shared/DynamicDragAndDropList.svelte";
   import DynamicDragAndDropListItem from "../shared/DynamicDragAndDropListItem.svelte";
   import { showConfirmation } from "$lib/utils/confirmation";
+  import Loading from "../shared/Loading.svelte";
 
   export let collection: PagedCollection;
 
@@ -60,6 +61,8 @@ Allows the user to modify the member list for a collection.
   let previousLastItem: string | null = null;
 
   let loading: boolean = false;
+
+  let list: HTMLElement;
 
   function changeView(newState: string) {
     state = newState;
@@ -314,12 +317,16 @@ Allows the user to modify the member list for a collection.
 
     <!-- I commented out the above and added the styling from the example to help me see what's going on.
     -->
-    <DynamicDragAndDropList on:itemDropped={handleItemDropped}>
-      <ul class:disabled={loading}>
-        <!-- loop through the array where items are added when scrolling -->
+
+    <div class="member-wrap" class:disabled={loading}>
+      <!-- loop through the array where items are added when scrolling -->
+      <DynamicDragAndDropList
+        bind:container={list}
+        on:itemDropped={handleItemDropped}
+      >
         {#each members as collectionmembers, i}
           <DynamicDragAndDropListItem pos={i + 1}>
-            <li>
+            <div class="member">
               {collectionmembers.id}
               {#each documentSlug as document}
                 {#if document["result"]?.["label"]?.["none"] && document["id"] === collectionmembers?.id}
@@ -328,18 +335,28 @@ Allows the user to modify the member list for a collection.
                   ]}
                 {/if}
               {/each}
-            </li>
+            </div>
           </DynamicDragAndDropListItem>
         {/each}
-        <InfiniteScroller
-          hasLess={page !== 0}
-          hasMore={childrenCount > page * size + members.length}
-          threshold={100}
-          on:loadMore={handleScroll}
-        />
-      </ul>
-    </DynamicDragAndDropList>
-    Showing {page * size} to {page * size + members.length} of {childrenCount}
+      </DynamicDragAndDropList>
+      <InfiniteScroller
+        elementScroll={list}
+        hasLess={page !== 0}
+        hasMore={childrenCount > page * size + members.length}
+        threshold={100}
+        on:loadMore={handleScroll}
+      />
+    </div>
+    <div class="auto-align auto-align__a-center">
+      {#if loading}
+        <span class="page-info-loader">
+          <Loading size="sm" backgroundType="gradient" />
+        </span>
+      {/if}
+      <span class="page-info">
+        Showing {page * size} to {page * size + members.length} of {childrenCount}
+      </span>
+    </div>
   </div>
 {/if}
 
@@ -379,9 +396,7 @@ Allows the user to modify the member list for a collection.
     grid-auto-columns: 200px;
   } */
 
-  ul {
-    box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2),
-      0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12);
+  .member-wrap {
     display: flex;
     flex-direction: column;
     border-radius: 2px;
@@ -390,21 +405,22 @@ Allows the user to modify the member list for a collection.
     max-height: 38rem;
     background-color: white;
     overflow-x: hidden;
-    list-style: none;
     padding: 0;
   }
 
-  li {
-    box-sizing: border-box;
-    transition: 0.2s all;
-  }
-
-  li:hover {
-    background-color: #eeeeee;
-  }
-
-  ul.disabled {
+  .member-wrap.disabled {
     opacity: 0.5;
     overflow: hidden;
+  }
+
+  :global(.member-wrap.disabled > *) {
+    overflow: hidden;
+  }
+
+  .member:hover {
+    background-color: #eeeeee;
+  }
+  .page-info-loader {
+    margin-right: var(--margin-sm);
   }
 </style>
