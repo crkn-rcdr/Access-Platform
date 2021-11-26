@@ -4,6 +4,7 @@
 
   export let keys: string[];
   export let value: any;
+  export let saveDisabled: boolean = false;
 
   /**
    * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.
@@ -28,6 +29,6 @@
   }
 </script>
 
-<ValueSaveForm bind:value on:save={handleSavePressed}>
+<ValueSaveForm bind:value bind:saveDisabled on:save={handleSavePressed}>
   <slot />
 </ValueSaveForm>

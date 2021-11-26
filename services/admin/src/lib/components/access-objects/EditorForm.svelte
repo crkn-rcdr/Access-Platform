@@ -89,6 +89,8 @@ This component displays the non content properties for an access editorObject an
           keys={["slug"]}
           bind:value={editorObject["slug"]}
           on:save={handleSavePressed}
+          saveDisabled={!editorObject["slug"] ||
+            editorObject["slug"].length === 0}
         >
           <div>
             <Resolver bind:slug={editorObject["slug"]} />
@@ -114,6 +116,8 @@ This component displays the non content properties for an access editorObject an
           keys={["label", "none"]}
           bind:value={editorObject["label"]["none"]}
           on:save={handleSavePressed}
+          saveDisabled={!editorObject["label"]["none"] ||
+            editorObject["label"]["none"].length === 0}
         >
           <textarea
             id="label"
