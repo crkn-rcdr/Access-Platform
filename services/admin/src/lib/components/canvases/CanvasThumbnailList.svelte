@@ -102,7 +102,8 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
 
   function setPositions() {
     positions = [];
-    for (let i = 0; i < canvases.length; i++) positions.push(i + 1);
+    for (let i = 0; i < canvases.length; i++)
+      positions.push(page * size + i + 1);
   }
 
   /**
@@ -244,30 +245,23 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
    * @param originalItemIndex
    * @returns void
    */
-  async function moveCanvas(event: any, currentItemIndex) {
+  async function moveCanvasOnInputChange(event: any, currentItemIndex) {
     if (loading) return;
     loading = true;
 
-    let destinationItemIndex = parseInt(event.detail.value) - 1;
-    console.log(
-      "destinationItemIndex",
-      destinationItemIndex,
-      "currentItemIndex",
-      currentItemIndex
-    );
+    let pagedDestinationIndex = parseInt(event.detail.value) - 1;
 
-    if (destinationItemIndex >= 0 && destinationItemIndex < canvases.length) {
-      const pagedDestinationIndex = page * size + destinationItemIndex;
-
+    if (pagedDestinationIndex >= 0 && pagedDestinationIndex < childrenCount) {
       const canvasToMove = canvases[currentItemIndex];
 
       await sendMoveRequest(canvasToMove, pagedDestinationIndex);
 
       // Highlight and move to new position
-      activeCanvasIndex = destinationItemIndex;
-
-      //jumpTo(activeCanvasIndex);
-      setActiveIndex(activeCanvasIndex);
+      if (pagedDestinationIndex < canvases.length) {
+        activeCanvasIndex = pagedDestinationIndex;
+        //jumpTo(activeCanvasIndex);
+        setActiveIndex(activeCanvasIndex);
+      }
     }
 
     loading = false;
@@ -391,7 +385,7 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
                 class:visibility-hidden={!showAddButton}
               >
                 <div class="action pos">
-                  {i + 1}
+                  {positions[i]}
                 </div>
                 <div
                   on:click={(e) => {
@@ -404,7 +398,7 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
                     max={childrenCount}
                     value={positions[i]}
                     on:changed={(e) => {
-                      moveCanvas(e, positions[i] - 1);
+                      moveCanvasOnInputChange(e, positions[i] - 1);
                     }}
                   />
                 </div>

@@ -43,6 +43,9 @@ Allows the user to modify the member list for a collection.
   const dispatch = createEventDispatcher();
   let documentSlug: any[] = [];
   let members: { id?: string; label?: Record<string, string> }[] = [];
+
+  let positions: number[] = [];
+
   /**
    * @type {string} A control for what component is displayed in the free space of the content editor.
    */
@@ -64,6 +67,12 @@ Allows the user to modify the member list for a collection.
 
   let list: HTMLElement;
 
+  function setPositions() {
+    positions = [];
+    for (let i = 0; i < members.length; i++)
+      positions.push(page * size + i + 1);
+  }
+
   function changeView(newState: string) {
     state = newState;
   }
@@ -78,13 +87,9 @@ Allows the user to modify the member list for a collection.
       currentMembers
     );
 
-    console.log("know what it retrieves", resolutions);
-    documentSlug = [
-      ...documentSlug,
-      ...resolutions.map((slug) => {
-        return { id: slug[0], result: slug[1].result };
-      }),
-    ];
+    documentSlug = resolutions.map((slug) => {
+      return { id: slug[0], result: slug[1].result };
+    });
   }
   function setActiveIndex(index: number) {
     if (index >= collection?.members?.count)
@@ -93,31 +98,87 @@ Allows the user to modify the member list for a collection.
     activeMemberIndex = index;
     dispatch("membersClicked", { index });
   }
-  function moveMember(event: any, originalItemIndex: number) {
-    //TODO: use new API to move member
 
-    // Move the member and trigger saving
-    /*let destinationItemIndex = parseInt(event.detail.value) - 1;
-    moveArrayElement(
-      collection.members,
-      originalItemIndex,
-      destinationItemIndex
-    );
-    collection.members = collection.members;*/
-    // Highlight and move to new position
-    //activeMemberIndex = destinationItemIndex;
-    //jumpTo(activeMemberIndex);
+  async function moveMemberOnInputChange(
+    event: any,
+    originalItemIndex: number
+  ) {
+    if (loading) return;
+    loading = true;
 
-    setActiveIndex(activeMemberIndex);
+    let pagedDestinationIndex = parseInt(event.detail.value) - 1;
+
+    if (pagedDestinationIndex >= 0 && pagedDestinationIndex < childrenCount) {
+      const canvasToMove = members[originalItemIndex];
+
+      await sendMoveRequest(canvasToMove, pagedDestinationIndex);
+
+      // Highlight and move to new position
+      if (pagedDestinationIndex < members.length) {
+        activeMemberIndex = pagedDestinationIndex;
+        //jumpTo(activeCanvasIndex);
+        setActiveIndex(activeMemberIndex);
+      }
+    }
+
+    loading = false;
   }
-  function deleteMemberByIndex(event: any, index: number) {
+
+  async function deleteMemberByIndex(event: any, index: number) {
     event.stopPropagation();
 
-    if (index >= 0 && index < collection?.members?.count) {
-      //TODO: use new API to delete by index
-      /*collection?.members.splice(index, 1);
-      collection.members = collection?.members;
-      setActiveIndex(activeMemberIndex);*/
+    if (index >= 0 && index < members.length) {
+      const data = {
+        id: collection.id,
+        members: [members[index].id],
+        user: $session.user,
+      };
+
+      // Shows a notification on move failure
+      await showConfirmation(
+        async () => {
+          try {
+            const response = await $session.lapin.mutation(
+              "collection.removeMembers",
+              data
+            );
+            return {
+              success: true,
+              details: "",
+            };
+          } catch (e) {
+            return {
+              success: false,
+              details: e.message,
+            };
+          }
+        },
+        "",
+        "Error: failed to delete member.",
+        true
+      );
+
+      // Shows a notification on page grab failure
+      await showConfirmation(
+        async () => {
+          try {
+            // we can just grab the current page again instead, but we need to store the previous page's last item to do so.
+            await sendCurrentPageRequest();
+            return {
+              success: true,
+              details: "",
+            };
+          } catch (e) {
+            return {
+              success: false,
+              details: e.message,
+            };
+          }
+        },
+        "",
+        "Error: failed to update page. Please refresh.",
+        true
+      );
     }
   }
 
@@ -139,17 +200,67 @@ Allows the user to modify the member list for a collection.
       } else {
         page++;
         console.log("load next");
-        const currPage = await $session.lapin.query("collection.pageAfter", {
-          id: collection.id,
-          after: members[members.length - 1].id,
-          limit: size,
-        });
-        previousLastItem = members[members.length - 1].id;
-        members = currPage.list;
-        await getMemberContext(currPage.list);
+        await sendCurrentPageRequest();
       }
     }
     loading = false;
+  }
+
+  async function sendMoveRequest(memberToMove, pagedDestinationIndex) {
+    const data = {
+      id: collection.id,
+      members: [memberToMove.id],
+      toIndex: pagedDestinationIndex,
+      user: $session.user,
+    };
+    console.log(data);
+
+    // Shows a notification on move failure
+    await showConfirmation(
+      async () => {
+        try {
+          const response = await $session.lapin.mutation(
+            "collection.moveMembers",
+            data
+          );
+          console.log("done 1");
+          return {
+            success: true,
+            details: "",
+          };
+        } catch (e) {
+          return {
+            success: false,
+            details: e.message,
+          };
+        }
+      },
+      "",
+      "Error: failed to move member.",
+      true
+    );
+
+    // Shows a notification on page grab failure
+    await showConfirmation(
+      async () => {
+        try {
+          // we can just grab the current page again instead, but we need to store the previous page's last item to do so.
+          await sendCurrentPageRequest();
+          return {
+            success: true,
+            details: "",
+          };
+        } catch (e) {
+          return {
+            success: false,
+            details: e.message,
+          };
+        }
+      },
+      "",
+      "Error: failed to update page. Please refresh.",
+      true
+    );
   }
 
   async function handleItemDropped(event: {
@@ -167,74 +278,55 @@ Allows the user to modify the member list for a collection.
 
       const memberToMove = members[event.detail.currentItemIndex];
 
-      const data = {
-        id: collection.id,
-        members: [memberToMove.id],
-        toIndex: pagedDestinationIndex,
-        user: $session.user,
-      };
-      console.log(data);
+      sendMoveRequest(memberToMove, pagedDestinationIndex);
 
-      // Shows a notification on move failure
-      await showConfirmation(
-        async () => {
-          try {
-            const response = await $session.lapin.mutation(
-              "collection.moveMembers",
-              data
-            );
-            console.log("done 1");
-            return {
-              success: true,
-              details: "",
-            };
-          } catch (e) {
-            return {
-              success: false,
-              details: e.message,
-            };
-          }
-        },
-        "",
-        "Error: failed to move member.",
-        true
-      );
-
-      // Shows a notification on page grab failure
-      await showConfirmation(
-        async () => {
-          try {
-            // we can just grab the current page again instead, but we need to store the previous page's last item to do so.
-            const currPage = await $session.lapin.query(
-              "collection.pageAfter",
-              {
-                id: collection.id,
-                after: previousLastItem,
-                limit: size,
-              }
-            );
-            members = currPage.list;
-            console.log("done 2");
-            return {
-              success: true,
-              details: "",
-            };
-          } catch (e) {
-            return {
-              success: false,
-              details: e.message,
-            };
-          }
-        },
-        "",
-        "Error: failed to update page. Please refresh.",
-        true
-      );
+      if (pagedDestinationIndex < members.length) {
+        activeMemberIndex = pagedDestinationIndex;
+        //jumpTo(activeCanvasIndex);
+        setActiveIndex(pagedDestinationIndex);
+      }
     } else {
       console.log("invalid index");
     }
 
     loading = false;
+  }
+
+  async function sendCurrentPageRequest() {
+    const currPage = await $session.lapin.query("collection.pageAfter", {
+      id: collection.id,
+      after: previousLastItem,
+      limit: size,
+    });
+    //previousLastItem = members[members.length - 1].id;
+    members = currPage.list;
+    await getMemberContext(currPage.list);
+    setActiveIndex(activeMemberIndex);
+  }
+
+  async function handleAddPressed(event: {
+    detail: {
+      selectedMembers: string[];
+    };
+  }) {
+    const response = await $session.lapin.mutation("collection.addMembers", {
+      id: collection.id,
+      members: event.detail.selectedMembers,
+      user: $session.user,
+    });
+
+    console.log(response);
+
+    await sendCurrentPageRequest();
+
+    const objectResponse = await $session.lapin.query(
+      "accessObject.getPaged",
+      collection.id
+    );
+    childrenCount = objectResponse.members.count;
+    collection = objectResponse;
+
+    state = "view";
   }
 
   onMount(async () => {
@@ -243,6 +335,11 @@ Allows the user to modify the member list for a collection.
     members = firstPage.list;
     getMemberContext(firstPage.list);
   });
+
+  $: {
+    members;
+    setPositions();
+  }
 </script>
 
 {#if collection}
@@ -251,9 +348,7 @@ Allows the user to modify the member list for a collection.
       showAddButton={state != "add"}
       bind:destinationMember={collection}
       bind:contextDisplay={documentSlug}
-      on:done={() => {
-        setActiveIndex(0);
-      }}
+      on:done={handleAddPressed}
       on:addClicked={() => {
         changeView("add");
         collection = collection;
@@ -287,7 +382,7 @@ Allows the user to modify the member list for a collection.
                   <div class="auto-align auto-align__column">
                     {#if collection.behavior !== "unordered"}
                       <div class="action pos">
-                        {i}
+                        {positions[i]}
                       </div>
                       <div
                         class="action pos-input"
@@ -298,9 +393,9 @@ Allows the user to modify the member list for a collection.
                         <AutomaticResizeNumberInput
                           name="position"
                           max={childrenCount}
-                          value={i}
+                          value={positions[i]}
                           on:changed={(e) => {
-                            moveMember(e, i);
+                            moveMemberOnInputChange(e, positions[i] - 1);
                           }}
                         />
                       </div>
@@ -383,14 +478,7 @@ Allows the user to modify the member list for a collection.
   .member-wrap:hover .pos {
     display: none;
   }
-  #grid {
-    margin-top: 1rem;
-    height: 5rem;
-    display: grid;
-    grid-template-areas: "a a";
-    gap: 10px;
-    grid-auto-columns: 200px;
-  }
+
   .member-wrap {
     display: flex;
     flex-direction: column;
@@ -398,7 +486,6 @@ Allows the user to modify the member list for a collection.
     width: 75%;
     max-width: 100%;
     max-height: 38rem;
-    background-color: white;
     overflow-x: hidden;
     padding: 0;
   }
@@ -421,5 +508,8 @@ Allows the user to modify the member list for a collection.
   }
   .page-info-loader {
     margin-right: var(--margin-sm);
+  }
+  .active {
+    background-color: white;
   }
 </style>

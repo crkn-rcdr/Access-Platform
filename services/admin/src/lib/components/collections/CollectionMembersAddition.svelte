@@ -137,46 +137,27 @@
    */
   let resultArray: string[] = [];
   function checkIfAllItemsSelected(event) {
-    if (event.target) {
+    if (!event.target.checked) {
+      const index = resultArray.indexOf(event.target.value);
+      if (index > -1) {
+        resultArray.splice(index, 1);
+      }
+    } else {
       resultArray.push(event.target.value);
     }
   }
 
   async function handleAddPressed() {
-    for (let index in resultArray) {
-      console.log("check the result array", resultArray);
-      const resolution = await $session.lapin.query(
-        "collection.viewMembersContext",
-        resultArray
-      );
-
-      resolution.map((slug) => {
-        if (slug[1].found === true) {
-          contextDisplay.push({ id: slug[0], result: slug[1].result });
-        }
-      });
-
-      // TODO: use new api to add the new member
-
-      /*if (destinationMember?.members) {
-        destinationMember?.members?.splice(destinationIndex, 0, {
-          id: resultArray[index],
-        });
-      } else {
-        destinationMember.members = [
-          {
-            id: resultArray[index],
-          },
-        ];
-      }*/
-    }
+    console.log("adding", resultArray);
+    dispatch("done", {
+      selectedMembers: resultArray,
+    });
     contextDisplay = contextDisplay;
     destinationMember = destinationMember;
 
     addedMember = false;
     showAddButton = true;
     //isMemberSelected = true;
-    //dispatch("done");
     resolutions = {};
     clearText();
   }
