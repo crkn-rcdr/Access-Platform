@@ -7,9 +7,7 @@ import { Slug } from "../../util/Slug.js";
  */
 export const Slugged = z.object({
   /**
-   * Human-readable identifier used to retrieve this object. Any such object
-   * without a slug will not be retrievable without access to the object's
-   * Noid.
+   * Human-readable identifier used to retrieve this object.
    */
-  slug: Slug.optional(),
+  slug: Slug,
 });
