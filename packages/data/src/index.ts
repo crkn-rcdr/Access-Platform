@@ -1,9 +1,7 @@
 export {
   AccessObject,
-  Alias,
   Canvas,
   Collection,
-  EditableAlias,
   EditableCanvas,
   EditableCollection,
   NewCollection,
@@ -19,7 +17,6 @@ export {
   PagedCollection,
   PagedManifest,
   TextRecord,
-  isAlias,
   isCanvas,
   isCollection,
   isManifest,
