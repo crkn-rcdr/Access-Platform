@@ -1,7 +1,6 @@
 import { z } from "zod";
 
 import { Noid } from "./Noid.js";
-import { ProcessUpdate } from "./ProcessUpdate.js";
 import { StaffUpdate } from "./StaffUpdate.js";
 import { Timestamp } from "./Timestamp.js";
 
@@ -29,10 +28,4 @@ export const Identified = z.object({
    * Record of the most recent update performed by staff.
    */
   staff: StaffUpdate.optional(),
-
-  /**
-   * Information about the most recent update to the internalmeta database
-   * made because of changes to this object.
-   */
-  updateInternalmeta: ProcessUpdate.optional(),
 });

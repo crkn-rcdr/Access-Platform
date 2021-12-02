@@ -1,7 +1,5 @@
 import { z } from "zod";
-import { Described } from "./traits/Described.js";
-import { Identified } from "../util/Identified.js";
-import { Slugged } from "./traits/Slugged.js";
+import { AccessObjectTrait } from "./AccessObject.js";
 import { FileRef } from "../util/FileRef.js";
 import {
   ObjectList,
@@ -67,9 +65,7 @@ export const Manifest = z
      */
     pageLabels: z.array(TextRecord).optional(),
   })
-  .merge(Identified)
-  .merge(Slugged)
-  .merge(Described);
+  .merge(AccessObjectTrait);
 
 export type Manifest = z.infer<typeof Manifest>;
 

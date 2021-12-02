@@ -1,7 +1,5 @@
 import { z } from "zod";
-import { Described } from "./traits/Described.js";
-import { Identified } from "../util/Identified.js";
-import { Slugged } from "./traits/Slugged.js";
+import { AccessObjectTrait } from "./AccessObject.js";
 import {
   ObjectList,
   ObjectListHandler,
@@ -27,9 +25,7 @@ export const Collection = z
      */
     members: ObjectList,
   })
-  .merge(Identified)
-  .merge(Slugged)
-  .merge(Described);
+  .merge(AccessObjectTrait);
 
 export type Collection = z.infer<typeof Collection>;
 
