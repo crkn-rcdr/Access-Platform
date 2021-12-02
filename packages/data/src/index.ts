@@ -1,14 +1,10 @@
 export {
   AccessObject,
-  Canvas,
   Collection,
-  EditableCanvas,
   EditableCollection,
   NewCollection,
   EditableManifest,
   NewManifest,
-  FileRef,
-  ImageRef,
   Manifest,
   ObjectList,
   ObjectListHandler,
@@ -17,7 +13,6 @@ export {
   PagedCollection,
   PagedManifest,
   TextRecord,
-  isCanvas,
   isCollection,
   isManifest,
   toPagedCollection,
@@ -26,6 +21,8 @@ export {
   Membership,
   Ancestry,
 } from "./access/index.js";
+
+export { Canvas, EditableCanvas } from "./canvas/index.js";
 
 export {
   LegacyPackage,
@@ -51,6 +48,8 @@ export { WipmetaObject } from "./wipmeta/index.js";
 
 export {
   CouchAttachmentRecord,
+  FileRef,
+  ImageRef,
   MD5,
   Noid,
   ProcessRequest,

@@ -1,5 +1,5 @@
 import test from "ava";
-import { tester } from "../../testHelper.js";
+import { tester } from "../testHelper.js";
 import { FileRef } from "./FileRef.js";
 
 const { isInvalid, isValid } = tester(FileRef);

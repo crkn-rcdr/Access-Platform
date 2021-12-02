@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { Described } from "./traits/Described.js";
-import { Identified } from "./traits/Identified.js";
+import { Identified } from "../util/Identified.js";
 import { Slugged } from "./traits/Slugged.js";
 import {
   ObjectList,

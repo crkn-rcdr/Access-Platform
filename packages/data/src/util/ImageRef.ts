@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { ProcessUpdate } from "../../util/ProcessUpdate.js";
-import { MD5 } from "../../util/MD5.js";
-import { UnixFilePath } from "../../util/UnixFilePath.js";
+import { ProcessUpdate } from "./ProcessUpdate.js";
+import { MD5 } from "./MD5.js";
+import { UnixFilePath } from "./UnixFilePath.js";
 
 /**
  * Reference to a stored image, which can be found in either the legacy preservation

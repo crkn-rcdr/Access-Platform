@@ -1,17 +1,12 @@
 import { z } from "zod";
 
-import { Canvas } from "./Canvas.js";
 import { Collection } from "./Collection.js";
 import { Manifest } from "./Manifest.js";
 import { Noid, Slug } from "../util/index.js";
 import { TextRecord } from "./util/TextRecord.js";
 
-export const AccessObject = z.union([Canvas, Collection, Manifest]);
+export const AccessObject = z.union([Collection, Manifest]);
 export type AccessObject = z.infer<typeof AccessObject>;
-
-export const isCanvas = (obj: AccessObject): obj is Canvas => {
-  return obj.type === "canvas";
-};
 
 export const isCollection = (obj: AccessObject): obj is Collection => {
   return obj.type === "collection";
@@ -21,7 +16,6 @@ export const isManifest = (obj: AccessObject): obj is Manifest => {
   return obj.type === "manifest";
 };
 
-export { Canvas, EditableCanvas } from "./Canvas.js";
 export {
   Collection,
   EditableCollection,
@@ -37,8 +31,6 @@ export {
   toPagedManifest,
 } from "./Manifest.js";
 
-export { FileRef } from "./util/FileRef.js";
-export { ImageRef } from "./util/ImageRef.js";
 export {
   ObjectList,
   ObjectListShort,

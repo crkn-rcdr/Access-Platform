@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { MD5 } from "../../util/MD5.js";
-import { UnixFilePath } from "../../util/UnixFilePath.js";
+import { MD5 } from "./MD5.js";
+import { UnixFilePath } from "./UnixFilePath.js";
 
 /**
  * Reference to a stored file. The location of the file will either be
