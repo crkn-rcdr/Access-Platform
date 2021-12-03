@@ -38,18 +38,20 @@ This component shows the canvases belonging to a list of canvases in a viewer/se
 *Note: See [OpenSeadragon Docs](https://openseadragon.github.io/docs/OpenSeadragon.html#.Options) for more oopenseadragon options.*
 -->
 <script lang="ts">
-  import type { ObjectList } from "@crkn-rcdr/access-data";
   import { onMount, createEventDispatcher } from "svelte";
 
   /**
    * @type {ObjectList} The canvases to be displayed for selection.
    */
-  export let canvases: ObjectList;
+  export let canvases: { id?: string; label?: Record<string, string> }[];
 
   /**
-   * @type {ObjectList} The canvases that are selected.
+   * @type {{ id?: string; label?: Record<string, string>; }[]} The canvases that are selected.
    */
-  export let selectedCanvases: ObjectList = [];
+  export let selectedCanvases: {
+    id?: string;
+    label?: Record<string, string>;
+  }[] = [];
 
   /**
    * @type {any} The openseadragon viewer options, @see https://openseadragon.github.io/docs/OpenSeadragon.html#.Options) for more oopenseadragon options.

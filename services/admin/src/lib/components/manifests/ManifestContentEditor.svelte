@@ -17,56 +17,75 @@ Allows the user to modify the canvas list for a manifest.
 -->
 <script lang="ts">
   import { onMount } from "svelte";
-  import type { Manifest } from "@crkn-rcdr/access-data/src/access/Manifest";
+  import type { PagedManifest } from "@crkn-rcdr/access-data/src/access/Manifest";
   import CanvasLabelEditor from "$lib/components/canvases/CanvasLabelEditor.svelte";
   import CanvasViewer from "$lib/components/canvases/CanvasViewer.svelte";
   import CanvasThumbnailList from "$lib/components/canvases/CanvasThumbnailList.svelte";
   import Switch from "$lib/components/shared/Switch.svelte";
   import SwitchCase from "$lib/components/shared/SwitchCase.svelte";
   import ManifestAddCanvasMenu from "$lib/components/manifests/ManifestAddCanvasMenu.svelte";
-  import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
-  import { typedChecks } from "$lib/utils/validation";
+  import type { ObjectListPage } from "@crkn-rcdr/access-data";
+  import { session } from "$app/stores";
+  //import type { ObjectList } from "@crkn-rcdr/access-data";
 
   /**
-   * @type {Manifest} The manifest thats contents should be edited.
+   * @type {PagedManifest} The manifest thats contents should be edited.
    */
-  export let manifest: Manifest;
+  export let manifest: PagedManifest;
 
   /**
-   * @type {any} The canvas being displayed in the canvas viewer.
+   * First page of members in the object.
    */
-  let activeCanvas: any;
+  export let firstPage: ObjectListPage;
+  /**
+   * The number of children in the object.
+   */
+  export let childrenCount: number;
 
   /**
-   * @type {number} The index of the canvas being displayed in the canvas viewer.
+   * @type {
+      label?: Record<string, string>;
+      id: string;
+    } The list of canvases in the manifest actively in the viewport.
+    */
+  let canvases: {
+    label?: Record<string, string>;
+    id: string;
+  }[] = [];
+
+  /**
+   * @type {{
+    label?: Record<string, string>;
+    id: string;
+  }} The canvas being displayed in the canvas viewer.
    */
-  let activeCanvasIndex = 0;
+  let activeCanvas: {
+    label?: Record<string, string>;
+    id: string;
+  };
 
   /**
    * @type {string} A control for what component is displayed in the free space of the content editor.
    */
   let state = "view";
 
-  /**
-   * Sets the @var activeCanvas to the canvas at index in the manifests canvas list.
-   * Sets the @car activeCanvasIndex to the index passed in.
-   * Calls @function triggerUpdate to make any other components aware of changes
-   * @param index
-   * @returns void
-   */
-  function setActiveCanvas(index: number) {
-    activeCanvasIndex = index;
-    activeCanvas = manifest?.canvases?.[index] || null;
-    triggerUpdate();
-  }
+  let canvasListComponent;
 
   /**
    * Changes the label of the active canvas to the event.detail property of the label editors @event changed
    * @param event
    * @returns void
    */
-  function setActiveCanvasLabel(event) {
-    manifest.canvases[activeCanvasIndex]["label"]["none"] = event.detail;
+  async function setActiveCanvasLabel(event) {
+    const response = await $session.lapin.mutation("manifest.relabelCanvas", {
+      id: manifest.id,
+      canvas: activeCanvas.id,
+      label: {
+        none: event.detail,
+      },
+      user: $session.user,
+    });
+    await canvasListComponent.grabCurrentPage();
     triggerUpdate();
   }
 
@@ -87,35 +106,53 @@ Allows the user to modify the canvas list for a manifest.
     state = newState;
   }
 
-  /**
-   * @event onMount
-   * @description When the component instance is mounted onto the dom, @var activeCanvas is set to the first canvas in the manifests canvas list, or null if the list is empty
-   */
-  onMount(() => {
-    activeCanvas = manifest?.canvases?.[0] || null;
-  });
+  async function handleAddPressed(event: {
+    detail: {
+      selectedCanvases: { id?: string; label?: Record<string, string> }[];
+    };
+  }) {
+    console.log(event.detail);
+    const canvases = event.detail?.selectedCanvases?.map((el) => el.id);
+
+    const response = await $session.lapin.mutation("manifest.addCanvases", {
+      id: manifest.id,
+      canvases,
+      user: $session.user,
+    });
+
+    console.log(response);
+
+    await canvasListComponent.grabCurrentPage();
+
+    const objectResponse = await $session.lapin.query(
+      "accessObject.getPaged",
+      manifest.id
+    );
+    childrenCount = objectResponse.canvases.count;
+    manifest = objectResponse;
+    state = "view";
+  }
+
+  function handleCancelPressed() {
+    state = "view";
+  }
 </script>
 
 {#if manifest}
   <!--NotificationBar
-    message={typedChecks.manifest.getCanvasesValidationMsg(manifest.canvases)}
+    message={typedChecks.manifest.getCanvasesValidationMsg(canvases)}
     status="fail"
   /-->
   <div class="auto-align auto-align__full content-wrapper">
     <div class="list-wrapper">
-      <!--button
-        on:click={() => {
-          manifest.canvases[activeCanvasIndex]["label"]["none"] = null;
-          triggerUpdate();
-        }}>test error</button
-      > uncomment to test canvas error -->
       <CanvasThumbnailList
+        bind:this={canvasListComponent}
+        bind:manifest
+        bind:activeCanvas
+        {firstPage}
+        {childrenCount}
         showAddButton={state != "add"}
-        bind:canvases={manifest["canvases"]}
-        on:thumbnailClicked={(e) => {
-          setActiveCanvas(e.detail.index);
-        }}
-        on:addClicked={() => {
+        on:addClicked={(event) => {
           changeView("add");
         }}
       />
@@ -130,8 +167,9 @@ Allows the user to modify the canvas list for a manifest.
               {/if}
             </div>
             <div class="label-wrap">
-              {#if activeCanvas && activeCanvas?.["label"]?.["none"]}
+              {#if activeCanvas && "none" in activeCanvas["label"] && typeof activeCanvas["label"]["none"] !== "undefined"}
                 <CanvasLabelEditor
+                  canvasID={activeCanvas["id"]}
                   bind:label={activeCanvas["label"]["none"]}
                   on:changed={setActiveCanvasLabel}
                 >
@@ -154,13 +192,9 @@ Allows the user to modify the canvas list for a manifest.
           </div>
         </SwitchCase>
         <SwitchCase caseVal="add">
-          <!--TODO: Should we add the canvases after the selected canvas or just at the begining or end of the manifest?-->
           <ManifestAddCanvasMenu
-            bind:destinationManifest={manifest}
-            on:done={() => {
-              state = "view";
-              setActiveCanvas(0);
-            }}
+            on:cancel={handleCancelPressed}
+            on:done={handleAddPressed}
           />
         </SwitchCase>
       </Switch>

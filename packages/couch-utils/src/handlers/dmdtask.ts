@@ -29,6 +29,7 @@ export class DMDTaskHandler extends DatabaseHandler<DMDTask> {
     fileName: string;
   }) {
     const { user, format, file, fileName } = args;
+
     const { message: taskId } = await this.nullUpdate({
       ddoc: "access",
       name: "create",

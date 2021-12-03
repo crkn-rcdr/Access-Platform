@@ -31,19 +31,12 @@ This component allows the user to search through other manifests and select canv
   import { isManifest, isCollection } from "@crkn-rcdr/access-data";
   import TypeAhead from "$lib/components/access-objects/TypeAhead.svelte";
   import { createEventDispatcher } from "svelte";
-  import type { Manifest } from "@crkn-rcdr/access-data/src/access/Manifest";
-  import type { ObjectList } from "@crkn-rcdr/access-data";
+  import type {
+    Manifest,
+    PagedManifest,
+  } from "@crkn-rcdr/access-data/src/access/Manifest";
+
   import CanvasesSelector from "$lib/components/canvases/CanvasesSelector.svelte";
-
-  /**
-   * @type {Manifest} The manifest to add selected canvases to.
-   */
-  export let destinationManifest: Manifest;
-
-  /**
-   * @type {number} The starting index to add the selected canvases at.
-   */
-  export let destinationIndex = 0;
 
   /**
    * @type {boolean} If the user is allowed to select multiple canvases to add.
@@ -66,9 +59,9 @@ This component allows the user to search through other manifests and select canv
   let selectedManifest: Manifest;
 
   /**
-   * @type {ObjectList} The canvases the user selects.
+   * @type {{ id?: string; label?: Record<string, string>; }[]} The canvases the user selects.
    */
-  let selectedCanvases: ObjectList = [];
+  let selectedCanvases: { id?: string; label?: Record<string, string> }[] = [];
 
   /**
    * @type {string} If a manifest is selected.
@@ -119,7 +112,7 @@ This component allows the user to search through other manifests and select canv
    */
   function handleCancelPressed() {
     selectedCanvases = [];
-    dispatch("done");
+    dispatch("cancel");
   }
 
   /**
@@ -127,14 +120,8 @@ This component allows the user to search through other manifests and select canv
    * @returns void
    */
   function handleAddPressed() {
-    destinationManifest?.canvases?.splice(
-      destinationIndex,
-      0,
-      ...selectedCanvases
-    );
-    destinationManifest = destinationManifest;
+    dispatch("done", { selectedCanvases });
     selectedCanvases = [];
-    dispatch("done");
   }
 </script>
 

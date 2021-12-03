@@ -12,13 +12,47 @@
           page.params["prefix"] as string,
           page.params["noid"] as string,
         ].join("/");
-        const response = await context.lapin.query("accessObject.get", id);
-        const serverObject = AccessObject.parse(response);
+        const response = await context.lapin.query("accessObject.getPaged", id);
+
+        const serverObject =
+          response.type === "collection"
+            ? PagedCollection.parse(response)
+            : PagedManifest.parse(response);
+
         const membership = await context.lapin.query(
           "accessObject.getMembership",
           id
         );
-        return { props: { serverObject, membership, id, error: "" } };
+
+        let firstPage: ObjectListPage;
+        let childrenCount;
+
+        if (serverObject["members"]) {
+          firstPage = await context.lapin.query("collection.pageAfter", {
+            id: serverObject.id,
+            after: null,
+            limit: 100,
+          });
+          childrenCount = serverObject["members"].count;
+        } else if (serverObject["canvases"]) {
+          firstPage = await context.lapin.query("manifest.pageAfter", {
+            id: serverObject.id,
+            after: null,
+            limit: 100,
+          });
+          childrenCount = serverObject["canvases"].count;
+        }
+
+        return {
+          props: {
+            serverObject,
+            membership,
+            id,
+            childrenCount,
+            firstPage,
+            error: "",
+          },
+        };
       }
       return { props: { error: "Could not find prefix or noid in url." } };
     } catch (e) {
@@ -33,7 +67,11 @@
    * @description This page shows the editor for the object.
    * The object is given to the page from the module above.
    */
-  import { AccessObject } from "@crkn-rcdr/access-data";
+  import {
+    ObjectListPage,
+    PagedCollection,
+    PagedManifest,
+  } from "@crkn-rcdr/access-data";
   import type { Membership, Noid } from "@crkn-rcdr/access-data";
   import Editor from "$lib/components/access-objects/Editor.svelte";
   import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
@@ -42,14 +80,24 @@
   export let id: Noid;
 
   /**
-   * @type {AccessObject} Object being edited.
+   * @type {PagedCollection | PagedManifest} Object being edited.
    */
-  export let serverObject: AccessObject;
+  export let serverObject: PagedCollection | PagedManifest;
 
   /**
    * Membership record for this object.
    */
   export let membership: Membership;
+
+  /**
+   * First page of members in the object.
+   */
+  export let firstPage: ObjectListPage;
+
+  /**
+   * The number of children in the object.
+   */
+  export let childrenCount: number;
 
   /**
    * @type {string} An error message insdicating what went wrong.
@@ -61,7 +109,7 @@
 
 {#key id}
   {#if serverObject}
-    <Editor bind:serverObject {membership} />
+    <Editor bind:serverObject {membership} {firstPage} {childrenCount} />
   {:else if error}
     <br />
     <div class="wrapper">

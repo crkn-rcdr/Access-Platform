@@ -5,7 +5,8 @@
  */
 
 import {
-  AccessObject,
+  PagedCollection,
+  PagedManifest,
   EditableAlias,
   EditableCollection,
   EditableManifest,
@@ -19,7 +20,7 @@ import isEqual from "lodash-es/isEqual";
  * @param editorObject
  * @returns boolean
  */
-function checkValidCollection(editorObject: AccessObject) {
+function checkValidCollection(editorObject: PagedCollection | PagedManifest) {
   try {
     const res = EditableCollection.parse(editorObject);
     return true;
@@ -34,7 +35,7 @@ function checkValidCollection(editorObject: AccessObject) {
  * @param editorObject
  * @returns boolean
  */
-function checkValidManifest(editorObject: AccessObject) {
+function checkValidManifest(editorObject: PagedCollection | PagedManifest) {
   try {
     const res = EditableManifest.parse(editorObject);
     return true;
@@ -49,7 +50,7 @@ function checkValidManifest(editorObject: AccessObject) {
  * @param editorObject
  * @returns boolean
  */
-function checkChangeIsValid(editorObject: AccessObject) {
+function checkChangeIsValid(editorObject: PagedCollection | PagedManifest) {
   if (editorObject["type"] === "manifest") {
     return checkValidManifest(editorObject);
   } else if (editorObject["type"] === "collection") {
@@ -65,8 +66,8 @@ function checkChangeIsValid(editorObject: AccessObject) {
  * @returns boolean
  */
 function checkModelChanged(
-  serverObject: AccessObject,
-  editorObject: AccessObject
+  serverObject: PagedCollection | PagedManifest,
+  editorObject: PagedCollection | PagedManifest
 ) {
   return !isEqual(serverObject, editorObject);
 }
@@ -78,9 +79,25 @@ function checkModelChanged(
  * @returns boolean
  */
 function checkValidDiff(
-  serverObject: AccessObject,
-  editorObject: AccessObject
+  serverObject: PagedCollection | PagedManifest,
+  editorObject: PagedCollection | PagedManifest
 ) {
+  let newObj = editorObject;
+  let oldObj = serverObject;
+
+  // Never compare array elements
+  /*for (let prop in newObj) {
+    if (Array.isArray(newObj[prop])) delete newObj[prop];
+  }
+  for (let prop in oldObj) {
+    if (Array.isArray(oldObj[prop])) delete oldObj[prop];
+  }*/
+  if ("canvases" in newObj) delete newObj["canvases"];
+  if ("members" in newObj) delete newObj["members"];
+
+  if ("canvases" in oldObj) delete oldObj["canvases"];
+  if ("members" in oldObj) delete oldObj["members"];
+
   const hasModelChanged = checkModelChanged(serverObject, editorObject);
   if (hasModelChanged) {
     const isModelValid = checkChangeIsValid(editorObject);

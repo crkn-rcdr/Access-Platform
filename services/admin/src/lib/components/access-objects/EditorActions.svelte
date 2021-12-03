@@ -16,42 +16,34 @@ The editor actions component holds functionality that is responsible for perform
 *Note: `bind:` is required for changes to the serverObject and its model to be reflected in higher level components.*
 -->
 <script lang="ts">
-  import { onMount } from "svelte";
+  import { createEventDispatcher, onMount } from "svelte";
   import type { Session } from "$lib/types";
-  import FaArchive from "svelte-icons/fa/FaArchive.svelte";
-  import {
-    AccessObject,
-    EditableManifest,
-    NewCollection,
-    NewManifest,
-  } from "@crkn-rcdr/access-data";
-  import { detailedDiff } from "deep-object-diff";
+  import type { PagedCollection, PagedManifest } from "@crkn-rcdr/access-data";
+  import type { NewCollection, NewManifest } from "@crkn-rcdr/access-data";
   import { getStores } from "$app/stores";
   import { showConfirmation } from "$lib/utils/confirmation";
-  import { checkValidDiff, checkModelChanged } from "$lib/utils/validation";
+  import { checkValidDiff } from "$lib/utils/validation";
   import Modal from "$lib/components/shared/Modal.svelte";
   import { goto } from "$app/navigation";
   import Loading from "../shared/Loading.svelte";
 
   /**
-   * @type {AccessObject} This is th$lib/utils/confirmationerObject of type AccessObject pulled from the backend, to be edited only once an action is successfully performed.
+   * @type { PagedCollection | PagedManifest } This is th$lib/utils/confirmationerObject of type AccessObject pulled from the backend, to be edited only once an action is successfully performed.
    */
-  export let serverObject: AccessObject;
-
+  export let serverObject: PagedCollection | PagedManifest;
   /**
-   * @type {AccessObject} This is a deep copy of the original serverObject, it gets edited as the user makes changes in the editor. It's purpose is to contain the form state for the editors..
+   * @type {PagedCollection | PagedManifest} The AccessObject editorObject that will be manipulated by the user, usually, a copy of an access pbject that acts as a form model.
    */
-  export let editorObject: AccessObject;
+  export let editorObject: PagedCollection | PagedManifest;
+  /**
+   * @type {"create" | "edit"} An indicator variable if the editor is in create mode or edit mode.
+   */
+  export let mode: "create" | "edit";
 
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
    */
   const { session } = getStores<Session>();
-
-  /**
-   * @type {"create" | "edit"} An indicator variable if the editor is in create mode or edit mode.
-   */
-  let mode: "create" | "edit";
 
   /**
    * @type {any} A module that quickly deep copies (clones) an serverObject.
@@ -83,12 +75,17 @@ The editor actions component holds functionality that is responsible for perform
   let isDeleteModalWaiting = false;
 
   /**
+   * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.
+   */
+  const dispatch = createEventDispatcher();
+
+  /**
    * Sets @var isSaveEnabled depending on if the editorObject is valid.
    * @returns void
    */
   function checkEnableSave() {
-    isSaveEnabled = checkValidDiff(serverObject, editorObject);
-    //console.log("isSaveEnabled", isSaveEnabled, serverObject, editorObject);
+    const diff = checkValidDiff(serverObject, editorObject);
+    isSaveEnabled = mode === "create" && diff;
   }
 
   $: {
@@ -100,82 +97,24 @@ The editor actions component holds functionality that is responsible for perform
     mode = serverObject?.id ? "edit" : "create";
   }
 
-  /**
-   * Sends the request to save changes to the backend using lapin. Uses @function showConfirmation to display a floating notification with the results of the lapin call. The result of the lapin call is returned.
-   * @param data
-   * @returns response
-   */
-  async function sendSaveRequest(data: any) {
-    return await showConfirmation(
-      async () => {
-        try {
-          if (
-            editorObject.type === "manifest" ||
-            editorObject.type === "collection"
-          ) {
-            const bodyObj = {
-              id: editorObject.id,
-              user: $session.user,
-              data,
-            };
-            const response = await $session.lapin.mutation(
-              `${editorObject.type}.edit`,
-              bodyObj
-            );
-            return {
-              success: true,
-              details: JSON.stringify(bodyObj),
-            };
-          } else
-            return {
-              success: false,
-              details: "Object not of type canvas or manifest",
-            };
-        } catch (e) {
-          return {
-            success: false,
-            details: e.message,
-          };
-        }
-      },
-      "Success! Changes saved.",
-      "Error: failed to save changes."
-    );
-  }
-
-  async function handleSaveEdit() {
-    const diff: any = detailedDiff(serverObject, editorObject);
-
-    let bodyObj = {
-      ...diff["added"],
-      ...diff["updated"],
-    };
-
-    // Arrays are handled a bit strange in the diff module. Instead, just assign the entire array to the body data serverObject
-    for (const key in bodyObj) {
-      if (Array.isArray(editorObject[key])) bodyObj[key] = editorObject[key];
-    }
-
-    const data = await sendSaveRequest(bodyObj);
-    if (data) {
-      try {
-        await pullServerObject();
-        checkModelChanged(serverObject, editorObject);
-      } catch (e) {
-        //error = e;
-        console.log(e);
-      }
-    }
-  }
-
   async function handleSaveCreate() {
     await showConfirmation(
       async () => {
         try {
           if (editorObject.type === "manifest") {
+            const data: NewManifest = {
+              slug: editorObject.slug,
+              summary: editorObject.summary,
+              behavior: editorObject.behavior,
+              canvases: [], //editorObject.canvases || [],
+              viewingDirection: editorObject.viewingDirection,
+              type: editorObject.type,
+              from: editorObject.from,
+              label: editorObject.label,
+            };
             const response = await $session.lapin.mutation(`manifest.new`, {
               user: $session.user,
-              data: editorObject as NewManifest,
+              data,
             });
             goto(`/object/${response}`);
             return {
@@ -183,9 +122,17 @@ The editor actions component holds functionality that is responsible for perform
               details: response,
             };
           } else if (editorObject.type === "collection") {
+            const data: NewCollection = {
+              slug: editorObject.slug,
+              summary: editorObject.summary,
+              type: editorObject.type,
+              label: editorObject.label,
+              behavior: editorObject.behavior,
+              members: [],
+            };
             const response = await $session.lapin.mutation(`collection.new`, {
               user: $session.user,
-              data: editorObject as NewCollection,
+              data,
             });
             goto(`/object/${response}`);
             return {
@@ -207,11 +154,6 @@ The editor actions component holds functionality that is responsible for perform
       "Success! Changes saved.",
       "Error: failed to save changes."
     );
-  }
-
-  async function handleSave() {
-    if (mode === "create") await handleSaveCreate();
-    else if (mode === "edit") await handleSaveEdit();
   }
 
   /**
@@ -234,7 +176,8 @@ The editor actions component holds functionality that is responsible for perform
                 user: $session.user,
               }
             );
-            await pullServerObject();
+            dispatch("updated");
+            //await pullServerObject();
             return { success: true, details: "" };
           } catch (e) {
             console.log(e);
@@ -266,7 +209,7 @@ The editor actions component holds functionality that is responsible for perform
           editorObject.type === "collection"
         ) {
           try {
-            if (editorObject["public"]) {
+            if (editorObject.public) {
               const response = await $session.lapin.mutation(
                 `accessObject.unpublish`,
                 {
@@ -283,7 +226,8 @@ The editor actions component holds functionality that is responsible for perform
                 }
               );
             }
-            await pullServerObject();
+            dispatch("updated");
+            //await pullServerObject();
             return {
               success: true,
               details: JSON.stringify(serverObject),
@@ -303,6 +247,22 @@ The editor actions component holds functionality that is responsible for perform
       }.`,
       `Error: could not publish ${editorObject["type"]}.`
     );
+  }
+
+  /**
+   * This method pulls the 'serverObject' from the backend. This resets the form and ensures that any problems saving changes are caught.
+   * @returns void
+   */
+  async function pullServerObject() {
+    try {
+      const response = await $session.lapin.query(
+        "accessObject.getPaged",
+        serverObject["id"]
+      );
+      serverObject = response;
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   async function setDeletionModalTextEnabled() {
@@ -364,56 +324,34 @@ The editor actions component holds functionality that is responsible for perform
   }
 
   /**
-   * This method pulls the 'serverObject' from the backend. This resets the form and ensures that any problems saving changes are caught.
-   * @returns void
-   */
-  async function pullServerObject() {
-    try {
-      const response = await $session.lapin.query(
-        "accessObject.get",
-        serverObject["id"]
-      );
-      serverObject = AccessObject.parse(response);
-    } catch (e) {
-      console.log(e);
-    }
-  }
-
-  /**
    * @event onMount
    * @description When the component instance is mounted onto the dom, the 'clone' variable is set to the rfdc module.
    */
   onMount(async () => {
     clone = (await import("rfdc")).default();
   });
-
-  /**
-   * @listens editorObject
-   * @description A reactive code block that is executed any time the @var editorObject changes. It calls @function checkEnableSave, to hide or show the save button depending on the validity of the editorObject (if nothing has been changed, the save button also gets hidden.)
-   */
-  $: {
-    editorObject;
-    checkEnableSave();
-  }
 </script>
 
 <span class="editor-actions auto-align auto-align__a-center">
   {#if isSaveEnabled}
-    <button class="save" on:click={handleSave}>Save</button>
+    <button class="save" on:click={handleSaveCreate}>Create</button>
   {/if}
-  <button class="secondary" on:click={handlePublishStatusChange}
-    >{serverObject["public"] ? "Unpublish" : "Publish"}</button
-  >
 
-  {#if serverObject["slug"] && !serverObject["public"]}
-    <button
-      class="danger"
-      data-tooltip="Delete"
-      data-tooltip-flow="bottom"
-      on:click={openDeletionModal}
-    >
-      Delete
+  {#if editorObject["id"]}
+    <button class="secondary" on:click={handlePublishStatusChange}>
+      {serverObject["public"] ? "Unpublish" : "Publish"}
     </button>
+
+    {#if serverObject["slug"] && !serverObject["public"]}
+      <button
+        class="danger"
+        data-tooltip="Delete"
+        data-tooltip-flow="bottom"
+        on:click={openDeletionModal}
+      >
+        Delete
+      </button>
+    {/if}
   {/if}
 </span>
 

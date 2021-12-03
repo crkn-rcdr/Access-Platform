@@ -63,6 +63,7 @@ A number input that automatically resizes based on its value.
    * @returns
    */
   function sanitizeInput() {
+    console.log("sanitize", value);
     let valueInt = parseInt(`${value}`.replace(/\D/g, ""));
     if (!isNaN(valueInt)) {
       value = valueInt <= max && valueInt >= 0 ? valueInt : prevValue;
