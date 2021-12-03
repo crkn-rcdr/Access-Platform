@@ -80,7 +80,6 @@ export const NewManifest = Manifest.pick({
   viewingDirection: true,
   canvases: true,
   summary: true,
-  from: true,
   type: true,
 }).refine(
   (obj) => Object.keys(obj).length > 0,
@@ -103,10 +102,8 @@ export const toPagedManifest = (m: Manifest): PagedManifest => {
     canvases: null,
   };
 
-  if (m.canvases) {
-    const handler = new ObjectListHandler(m.canvases);
-    pm.canvases = handler.shortForm();
-  }
+  const handler = new ObjectListHandler(m.canvases);
+  pm.canvases = handler.shortForm();
 
   return pm;
 };
