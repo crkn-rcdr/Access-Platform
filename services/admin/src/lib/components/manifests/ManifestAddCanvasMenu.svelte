@@ -112,7 +112,7 @@ This component allows the user to search through other manifests and select canv
    */
   function handleCancelPressed() {
     selectedCanvases = [];
-    dispatch("done");
+    dispatch("cancel");
   }
 
   /**

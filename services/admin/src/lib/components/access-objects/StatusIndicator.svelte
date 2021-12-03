@@ -23,16 +23,22 @@ This component displays the publish status of an access serverObject
   export let serverObject: PagedCollection | PagedManifest;
 </script>
 
-<span class="status">
-  <span>Status:</span>
-  <span
-    >{serverObject["public"]
-      ? `published on ${new Date(
-          parseInt(`${serverObject["public"]}`) * 1000
-        ).toLocaleString()}`
-      : "unpublished"}</span
-  >
-</span>
+{#if serverObject["id"]}
+  <span class="status">
+    <span>Status:</span>
+    <span>
+      {serverObject["public"]
+        ? `published on ${
+            typeof serverObject["public"] === "string"
+              ? serverObject["public"]
+              : new Date(
+                  parseInt(`${serverObject["public"]}`) * 1000
+                ).toLocaleString()
+          }`
+        : "unpublished"}
+    </span>
+  </span>
+{/if}
 
 <style>
   .status {

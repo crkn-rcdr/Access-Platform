@@ -260,12 +260,8 @@
   .move-button {
     display: flex;
   }
-  .exit-button {
-    padding-left: 50%;
-  }
   textarea {
     display: grid;
-
     width: 100%;
   }
 

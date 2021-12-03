@@ -249,6 +249,22 @@ The editor actions component holds functionality that is responsible for perform
     );
   }
 
+  /**
+   * This method pulls the 'serverObject' from the backend. This resets the form and ensures that any problems saving changes are caught.
+   * @returns void
+   */
+  async function pullServerObject() {
+    try {
+      const response = await $session.lapin.query(
+        "accessObject.getPaged",
+        serverObject["id"]
+      );
+      serverObject = response;
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   async function setDeletionModalTextEnabled() {
     deleteModalTitle = `Are you sure you want to delete ${serverObject["slug"]}?`;
     deleteModalMsg = `By deleting ${serverObject["slug"]}, you will be taking it out of all the collections it belongs to. You will be able to use the slug, "${serverObject["slug"]}", for future ${serverObject["type"]}s. You can add ${serverObject["slug"]} back into the access platform by importing it from preservation again.`;
@@ -318,21 +334,24 @@ The editor actions component holds functionality that is responsible for perform
 
 <span class="editor-actions auto-align auto-align__a-center">
   {#if isSaveEnabled}
-    <button class="save" on:click={handleSaveCreate}>Save</button>
+    <button class="save" on:click={handleSaveCreate}>Create</button>
   {/if}
-  <button class="secondary" on:click={handlePublishStatusChange}>
-    {serverObject["public"] ? "Unpublish" : "Publish"}
-  </button>
 
-  {#if serverObject["slug"] && !serverObject["public"]}
-    <button
-      class="danger"
-      data-tooltip="Delete"
-      data-tooltip-flow="bottom"
-      on:click={openDeletionModal}
-    >
-      Delete
+  {#if editorObject["id"]}
+    <button class="secondary" on:click={handlePublishStatusChange}>
+      {serverObject["public"] ? "Unpublish" : "Publish"}
     </button>
+
+    {#if serverObject["slug"] && !serverObject["public"]}
+      <button
+        class="danger"
+        data-tooltip="Delete"
+        data-tooltip-flow="bottom"
+        on:click={openDeletionModal}
+      >
+        Delete
+      </button>
+    {/if}
   {/if}
 </span>
 

@@ -409,16 +409,13 @@ Allows the user to modify the member list for a collection.
                   </div>
                 </div>
                 <div class="auto-align auto-align__column">
-                  <a href="/object/{collectionMember?.id}">
-                    {collectionMember?.id}
-                  </a>
                   {#each documentSlug as document}
                     {#if document["result"]?.["label"]?.["none"] && document["id"] === collectionMember?.id}
-                      <span>
+                      <a href="/object/{collectionMember?.id}" target="_blank">
                         {document["result"]["slug"]} : {document["result"][
                           "label"
                         ]["none"]}
-                      </span>
+                      </a>
                     {/if}
                   {/each}
                 </div>
@@ -466,16 +463,16 @@ Allows the user to modify the member list for a collection.
     display: none;
     margin-top: 0.5em;
   }
-  .member-wrap:hover .action.icon {
+  .member:hover .action.icon {
     display: inherit;
   }
   .pos-input {
     display: none;
   }
-  .member-wrap:hover .pos-input {
+  .member:hover .pos-input {
     display: inherit;
   }
-  .member-wrap:hover .pos {
+  .member:hover .pos {
     display: none;
   }
 
@@ -503,13 +500,18 @@ Allows the user to modify the member list for a collection.
     user-select: none;
   }
 
+  .member {
+    padding: 1rem;
+    min-height: 7rem;
+  }
+
   .member:hover {
     background-color: #eeeeee;
   }
   .page-info-loader {
     margin-right: var(--margin-sm);
   }
-  .active {
+  /*.active {
     background-color: white;
-  }
+  }*/
 </style>

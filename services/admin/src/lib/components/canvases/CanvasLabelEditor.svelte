@@ -18,13 +18,20 @@ This component holds the functionality for editing labels of canvases.
 *Note: `bind:` is required for changes to the parameters to be reflected in higher level components.*
 -->
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher, tick } from "svelte";
   import ValueSaveForm from "../shared/ValueSaveForm.svelte";
 
   /**
    * @type {string} The label to be edited for the canvas
    */
+  export let canvasID: string | undefined;
+
+  /**
+   * @type {string} The label to be edited for the canvas
+   */
   export let label: string | undefined;
+
+  let redraw: boolean = false;
 
   /**
    * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.
@@ -38,9 +45,15 @@ This component holds the functionality for editing labels of canvases.
   function changed() {
     dispatch("changed", label);
   }
+
+  $: {
+    redraw = true;
+    canvasID;
+    tick().then(() => (redraw = false));
+  }
 </script>
 
-{#if typeof label !== "undefined"}
+{#if typeof label !== "undefined" && !redraw}
   <div id="label">
     <label for="canvasLabel">Canvas Label</label>
     <ValueSaveForm bind:value={label} on:save={changed}>

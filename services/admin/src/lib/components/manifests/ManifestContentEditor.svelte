@@ -123,7 +123,6 @@ Allows the user to modify the canvas list for a manifest.
     console.log(response);
 
     await canvasListComponent.grabCurrentPage();
-    state = "view";
 
     const objectResponse = await $session.lapin.query(
       "accessObject.getPaged",
@@ -131,6 +130,11 @@ Allows the user to modify the canvas list for a manifest.
     );
     childrenCount = objectResponse.canvases.count;
     manifest = objectResponse;
+    state = "view";
+  }
+
+  function handleCancelPressed() {
+    state = "view";
   }
 </script>
 
@@ -163,8 +167,9 @@ Allows the user to modify the canvas list for a manifest.
               {/if}
             </div>
             <div class="label-wrap">
-              {#if activeCanvas && activeCanvas?.["label"]?.["none"]}
+              {#if activeCanvas && "none" in activeCanvas["label"] && typeof activeCanvas["label"]["none"] !== "undefined"}
                 <CanvasLabelEditor
+                  canvasID={activeCanvas["id"]}
                   bind:label={activeCanvas["label"]["none"]}
                   on:changed={setActiveCanvasLabel}
                 >
@@ -187,7 +192,10 @@ Allows the user to modify the canvas list for a manifest.
           </div>
         </SwitchCase>
         <SwitchCase caseVal="add">
-          <ManifestAddCanvasMenu on:done={handleAddPressed} />
+          <ManifestAddCanvasMenu
+            on:cancel={handleCancelPressed}
+            on:done={handleAddPressed}
+          />
         </SwitchCase>
       </Switch>
     </div>
