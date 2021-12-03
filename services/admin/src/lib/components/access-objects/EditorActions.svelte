@@ -265,32 +265,43 @@ The editor actions component holds functionality that is responsible for perform
     }
   }
 
-  async function setDeletionModalTextEnabled() {
+  function setDeletionModalTextEnabled() {
     deleteModalTitle = `Are you sure you want to delete ${serverObject["slug"]}?`;
     deleteModalMsg = `By deleting ${serverObject["slug"]}, you will be taking it out of all the collections it belongs to. You will be able to use the slug, "${serverObject["slug"]}", for future ${serverObject["type"]}s. You can add ${serverObject["slug"]} back into the access platform by importing it from preservation again.`;
     deleteModalActionText = `Delete`;
   }
 
-  async function setDeletionModalTextWaiting() {
+  function setDeletionModalTextWaiting() {
     deleteModalTitle = `${serverObject["slug"]} can't be deleted yet.`;
     deleteModalMsg = `There are background processes running preventing ${serverObject["slug"]} from being deleted. Please wait...`;
     deleteModalActionText = `Ok`;
   }
 
-  async function setDeletionModalTextTryAgain() {
+  function setDeletionModalTextTryAgain() {
     console.log("No tries left");
     deleteModalTitle = `${serverObject["slug"]} can not be deleted.`;
     deleteModalMsg = `Can not delete ${serverObject["slug"]}. There are background processes running on ${serverObject["slug"]}. Please wait and try again later.`;
     deleteModalActionText = `Ok`;
   }
 
+  function setDeletionModalTextError() {
+    deleteModalTitle = `${serverObject["slug"]} can't be deleted.`;
+    deleteModalMsg = `There was a problem when  background processes ran that is preventing ${serverObject["slug"]} from being deleted. Message: ${serverObject["updateInternalmeta"]?.["message"]}`;
+    deleteModalActionText = `Ok`;
+  }
+
   async function openDeletionModal() {
     if (
       !serverObject.updateInternalmeta ||
-      serverObject.updateInternalmeta?.["succeeded"]
+      "succeeded" in serverObject.updateInternalmeta
     ) {
-      isDeleteModalWaiting = false;
-      setDeletionModalTextEnabled();
+      if (serverObject.updateInternalmeta["succeeded"]) {
+        isDeleteModalWaiting = false;
+        setDeletionModalTextEnabled();
+      } else {
+        isDeleteModalWaiting = false;
+        setDeletionModalTextError();
+      }
     } else {
       isDeleteModalWaiting = true;
       setDeletionModalTextWaiting();
@@ -301,9 +312,14 @@ The editor actions component holds functionality that is responsible for perform
           console.log("pulling serverObject");
           await pullServerObject();
           console.log("pulled!", serverObject);
-          if (serverObject.updateInternalmeta?.["succeeded"]) {
-            isDeleteModalWaiting = false;
-            setDeletionModalTextEnabled();
+          if ("succeeded" in serverObject.updateInternalmeta) {
+            if (serverObject.updateInternalmeta["succeeded"]) {
+              isDeleteModalWaiting = false;
+              setDeletionModalTextEnabled();
+            } else {
+              isDeleteModalWaiting = false;
+              setDeletionModalTextError();
+            }
           } else {
             console.log("Update not done");
             //isDeleteModalWaiting = true;
