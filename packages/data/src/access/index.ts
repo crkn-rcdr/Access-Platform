@@ -2,10 +2,11 @@ import { z } from "zod";
 
 import { Collection } from "./Collection.js";
 import { Manifest } from "./Manifest.js";
+import { Pdf } from "./Pdf.js";
 import { Noid, Slug } from "../util/index.js";
 import { TextRecord } from "./util/TextRecord.js";
 
-export const AccessObject = z.union([Collection, Manifest]);
+export const AccessObject = z.union([Collection, Manifest, Pdf]);
 export type AccessObject = z.infer<typeof AccessObject>;
 
 export const isCollection = (obj: AccessObject): obj is Collection => {
@@ -14,6 +15,10 @@ export const isCollection = (obj: AccessObject): obj is Collection => {
 
 export const isManifest = (obj: AccessObject): obj is Manifest => {
   return obj.type === "manifest";
+};
+
+export const isPdf = (obj: AccessObject): obj is Pdf => {
+  return obj.type === "pdf";
 };
 
 export {
@@ -30,6 +35,7 @@ export {
   PagedManifest,
   toPagedManifest,
 } from "./Manifest.js";
+export { Pdf } from "./Pdf.js";
 
 export {
   ObjectList,
