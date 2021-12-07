@@ -54,7 +54,7 @@ services:
     container_name: access-swift
     depends_on:
       - haproxy
-    image: swiftstack/picoswiftstack:7.3.0.1
+    image: openstackswift/saio:change_820402_latest
     networks:
       access-platform:
         ipv4_address: 172.30.0.54
@@ -89,8 +89,6 @@ services:
       target: dev
     image: access-platform:dev
     command: ["-C", "./services/couchdb", "watch:docker"]
-    depends_on:
-      - couchdb
     volumes:
       - .:/repo
     networks:
@@ -103,6 +101,7 @@ services:
       - haproxy
       - couchdb
       - noid
+      - packages
     user: ${CURRENT_USER}
     container_name: access-lapin
     build:
@@ -113,9 +112,6 @@ services:
     env_file:
       - ./.env.dev
       - ./.env.secret
-    depends_on:
-      - packages
-      - couchdb
     volumes:
       - .:/repo
     networks:
@@ -137,8 +133,6 @@ services:
     env_file:
       - ./.env.dev
       - ./.env.secret
-    depends_on:
-      - lapin
     volumes:
       - .:/repo
     networks:
