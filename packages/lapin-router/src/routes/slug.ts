@@ -1,13 +1,13 @@
 import { z } from "zod";
 import { mangoStringRangeSelector } from "@crkn-rcdr/couch-utils";
-import { Noid, Slug } from "@crkn-rcdr/access-data";
+import { Noid, Slug, AccessObjectType } from "@crkn-rcdr/access-data";
 
 import { createRouter } from "../router.js";
 
 type SlugResult = {
   id: Noid;
   slug: Slug;
-  type: "manifest" | "collection";
+  type: AccessObjectType;
 };
 const SlugArray = z.array(Slug);
 const StringArray = z.array(z.string());

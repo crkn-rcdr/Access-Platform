@@ -1,4 +1,3 @@
-import { z } from "zod";
 import createHttpError from "http-errors";
 import { ServerScope } from "nano";
 
@@ -17,21 +16,16 @@ import {
   SimpleRecord,
   Membership,
   Ancestry,
+  AccessObject,
+  AccessObjectType,
 } from "@crkn-rcdr/access-data";
 
 import { DatabaseHandler } from "../DatabaseHandler.js";
 
 import { xorWith, isEqual } from "lodash-es";
 
-// Use this essentially so that `slug` is defined
-// TODO: define a Zod parser that is aware of all possible fields.
-// TODO: Re-add Alias when necessary
-const AccessDatabaseObject = z.union([Manifest, Collection]);
-
-type AccessDatabaseObject = z.infer<typeof AccessDatabaseObject>;
-
 type SlugResolution =
-  | { resolved: true; id: Noid; type: "manifest" | "collection" | "alias" }
+  | { resolved: true; id: Noid; type: AccessObjectType }
   | { resolved: false; error: SlugResolutionError };
 type SlugResolutionError =
   | "not-found" // the slug didn't resolve
@@ -47,14 +41,14 @@ export type ProcessListCommand =
 /**
  * Interact with Access Objects in their database.
  */
-export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
+export class AccessHandler extends DatabaseHandler<AccessObject> {
   /**
    * Create an AccessHandler.
    * @param client A couchdb-nano client.
    * @param suffix Suffix to append to the access database's name.
    */
   constructor(client: ServerScope, suffix?: string) {
-    super(suffix ? `access-${suffix}` : `access`, AccessDatabaseObject, client);
+    super(suffix ? `access-${suffix}` : `access`, AccessObject, client);
   }
 
   /**
@@ -124,7 +118,7 @@ export class AccessHandler extends DatabaseHandler<AccessDatabaseObject> {
     id: Noid;
     user: User;
     data: T;
-    type: "manifest" | "collection" | "alias";
+    type: AccessObjectType;
   }) {
     const typeCheck = await this.findUnique("id", args.id, ["type"] as const);
     if (!typeCheck.found)

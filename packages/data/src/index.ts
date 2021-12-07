@@ -1,5 +1,6 @@
 export {
   AccessObject,
+  AccessObjectType,
   Collection,
   EditableCollection,
   NewCollection,
@@ -10,6 +11,7 @@ export {
   ObjectListHandler,
   ObjectListPage,
   ObjectListShort,
+  PagedAccessObject,
   PagedCollection,
   PagedManifest,
   Pdf,

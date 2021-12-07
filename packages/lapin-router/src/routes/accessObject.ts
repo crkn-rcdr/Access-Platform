@@ -3,12 +3,11 @@ import { TRPCError } from "@trpc/server";
 import {
   Noid,
   User,
-  Manifest,
-  Collection,
-  PagedCollection,
-  PagedManifest,
+  PagedAccessObject,
+  Pdf,
   toPagedManifest,
   toPagedCollection,
+  AccessObject,
 } from "@crkn-rcdr/access-data";
 import { createRouter, httpErrorToTRPC } from "../router.js";
 
@@ -20,7 +19,7 @@ const NoidWithUser = z.object({
 export const accessObjectRouter = createRouter()
   .query("get", {
     input: Noid.parse,
-    async resolve({ input: id, ctx }) {
+    async resolve({ input: id, ctx }): Promise<AccessObject> {
       const response = await ctx.couch.access.getSafe(id);
       if (response.found) return response.doc;
       throw new TRPCError({
@@ -31,26 +30,17 @@ export const accessObjectRouter = createRouter()
   })
   .query("getPaged", {
     input: Noid.parse,
-    async resolve({
-      input: id,
-      ctx,
-    }): Promise<PagedCollection | PagedManifest> {
+    async resolve({ input: id, ctx }): Promise<PagedAccessObject> {
       const response = await ctx.couch.access.getSafe(id);
       if (response.found) {
-        const manifestCheck = Manifest.safeParse(response.doc);
-        if (manifestCheck.success) {
-          return toPagedManifest(manifestCheck.data);
+        switch (response.doc.type) {
+          case "manifest":
+            return toPagedManifest(response.doc);
+          case "collection":
+            return toPagedCollection(response.doc);
+          case "pdf":
+            return response.doc as Pdf;
         }
-
-        const collectionCheck = Collection.safeParse(response.doc);
-        if (collectionCheck.success) {
-          return toPagedCollection(collectionCheck.data);
-        }
-
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: `Object ${id} cannot be parsed.`,
-        });
       }
       throw new TRPCError({
         code: "PATH_NOT_FOUND",

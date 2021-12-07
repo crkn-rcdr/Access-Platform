@@ -6,7 +6,7 @@ This component displays the non content properties for an access editorObject an
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| editorObject: PagedCollection | PagedManifest | required | The PagedCollection | PagedManifest that will be manipulated by the user, usually, a copy of an access pbject that acts as a form model. |
+| editorObject: PagedAccessObject | required | The PagedAccessObject that will be manipulated by the user, usually, a copy of an access pbject that acts as a form model. |
 
 ### Usage
 ```  
@@ -20,8 +20,7 @@ This component displays the non content properties for an access editorObject an
   import type {
     Membership,
     Noid,
-    PagedCollection,
-    PagedManifest,
+    PagedAccessObject,
   } from "@crkn-rcdr/access-data";
   import { typedChecks } from "$lib/utils/validation";
   import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
@@ -32,9 +31,9 @@ This component displays the non content properties for an access editorObject an
   //import { editorObjectStore } from "$lib/stores/accessObjectEditorStore";
 
   /**
-   * @type {PagedCollection | PagedManifest} The PagedCollection | PagedManifest editorObject that will be manipulated by the user, usually, a copy of an access pbject that acts as a form model.
+   * @type {PagedAccessObject} The editorObject that will be manipulated by the user, usually, a copy of an access object that acts as a form model.
    */
-  export let editorObject: PagedCollection | PagedManifest; // Not sure if we should pass an editorObject or have a list of props (ex: slug, label, ...) that can be null, and show ones that are instantiated only?
+  export let editorObject: PagedAccessObject; // Not sure if we should pass an editorObject or have a list of props (ex: slug, label, ...) that can be null, and show ones that are instantiated only?
 
   /**
    * @type {"create" | "edit"} An indicator variable if the editor is in create mode or edit mode.

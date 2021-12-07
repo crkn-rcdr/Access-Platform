@@ -18,7 +18,7 @@ The editor actions component holds functionality that is responsible for perform
 <script lang="ts">
   import { createEventDispatcher, onMount } from "svelte";
   import type { Session } from "$lib/types";
-  import type { PagedCollection, PagedManifest } from "@crkn-rcdr/access-data";
+  import type { PagedAccessObject } from "@crkn-rcdr/access-data";
   import type { NewCollection, NewManifest } from "@crkn-rcdr/access-data";
   import { getStores } from "$app/stores";
   import { showConfirmation } from "$lib/utils/confirmation";
@@ -28,13 +28,13 @@ The editor actions component holds functionality that is responsible for perform
   import Loading from "../shared/Loading.svelte";
 
   /**
-   * @type { PagedCollection | PagedManifest } This is th$lib/utils/confirmationerObject of type AccessObject pulled from the backend, to be edited only once an action is successfully performed.
+   * This is th$lib/utils/confirmationerObject of type AccessObject pulled from the backend, to be edited only once an action is successfully performed.
    */
-  export let serverObject: PagedCollection | PagedManifest;
+  export let serverObject: PagedAccessObject;
   /**
-   * @type {PagedCollection | PagedManifest} The AccessObject editorObject that will be manipulated by the user, usually, a copy of an access pbject that acts as a form model.
+   * The AccessObject editorObject that will be manipulated by the user, usually, a copy of an access pbject that acts as a form model.
    */
-  export let editorObject: PagedCollection | PagedManifest;
+  export let editorObject: PagedAccessObject;
   /**
    * @type {"create" | "edit"} An indicator variable if the editor is in create mode or edit mode.
    */
@@ -109,7 +109,6 @@ The editor actions component holds functionality that is responsible for perform
               canvases: [], //editorObject.canvases || [],
               viewingDirection: editorObject.viewingDirection,
               type: editorObject.type,
-              from: editorObject.from,
               label: editorObject.label,
             };
             const response = await $session.lapin.mutation(`manifest.new`, {
@@ -411,7 +410,7 @@ The editor actions component holds functionality that is responsible for perform
   button {
     margin-left: var(--margin-sm);
   }
-  .centered-modal-content,
+  /* .centered-modal-content, */
   .modal-loader-wrap {
     text-align: center;
   }

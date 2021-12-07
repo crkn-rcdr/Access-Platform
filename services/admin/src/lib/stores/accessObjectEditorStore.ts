@@ -1,4 +1,4 @@
-import type { PagedCollection, PagedManifest } from "@crkn-rcdr/access-data";
+import type { PagedAccessObject } from "@crkn-rcdr/access-data";
 import { writable } from "svelte/store";
 
-export const editorObjectStore = writable<PagedCollection | PagedManifest>();
+export const editorObjectStore = writable<PagedAccessObject>();

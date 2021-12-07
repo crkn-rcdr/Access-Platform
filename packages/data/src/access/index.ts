@@ -1,13 +1,17 @@
 import { z } from "zod";
 
-import { Collection } from "./Collection.js";
-import { Manifest } from "./Manifest.js";
+import { Collection, PagedCollection } from "./Collection.js";
+import { Manifest, PagedManifest } from "./Manifest.js";
 import { Pdf } from "./Pdf.js";
 import { Noid, Slug } from "../util/index.js";
 import { TextRecord } from "./util/TextRecord.js";
 
 export const AccessObject = z.union([Collection, Manifest, Pdf]);
 export type AccessObject = z.infer<typeof AccessObject>;
+export type AccessObjectType = "collection" | "manifest" | "pdf";
+
+export const PagedAccessObject = z.union([PagedCollection, PagedManifest, Pdf]);
+export type PagedAccessObject = z.infer<typeof PagedAccessObject>;
 
 export const isCollection = (obj: AccessObject): obj is Collection => {
   return obj.type === "collection";
