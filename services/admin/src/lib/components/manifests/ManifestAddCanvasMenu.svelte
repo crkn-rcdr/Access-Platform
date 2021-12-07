@@ -31,19 +31,13 @@ This component allows the user to search through other manifests and select canv
   import { isManifest, isCollection } from "@crkn-rcdr/access-data";
   import TypeAhead from "$lib/components/access-objects/TypeAhead.svelte";
   import { createEventDispatcher } from "svelte";
-  import type { Manifest } from "@crkn-rcdr/access-data/src/access/Manifest";
-  import type { ObjectList } from "@crkn-rcdr/access-data";
+  import type {
+    Manifest,
+    PagedManifest,
+  } from "@crkn-rcdr/access-data/src/access/Manifest";
+  import FaCheckDouble from "svelte-icons/fa/FaCheckDouble.svelte";
+  import FaTimes from "svelte-icons/fa/FaTimes.svelte";
   import CanvasesSelector from "$lib/components/canvases/CanvasesSelector.svelte";
-
-  /**
-   * @type {Manifest} The manifest to add selected canvases to.
-   */
-  export let destinationManifest: Manifest;
-
-  /**
-   * @type {number} The starting index to add the selected canvases at.
-   */
-  export let destinationIndex = 0;
 
   /**
    * @type {boolean} If the user is allowed to select multiple canvases to add.
@@ -66,9 +60,9 @@ This component allows the user to search through other manifests and select canv
   let selectedManifest: Manifest;
 
   /**
-   * @type {ObjectList} The canvases the user selects.
+   * @type {{ id?: string; label?: Record<string, string>; }[]} The canvases the user selects.
    */
-  let selectedCanvases: ObjectList = [];
+  let selectedCanvases: { id?: string; label?: Record<string, string> }[] = [];
 
   /**
    * @type {string} If a manifest is selected.
@@ -119,7 +113,7 @@ This component allows the user to search through other manifests and select canv
    */
   function handleCancelPressed() {
     selectedCanvases = [];
-    dispatch("done");
+    dispatch("cancel");
   }
 
   /**
@@ -127,14 +121,8 @@ This component allows the user to search through other manifests and select canv
    * @returns void
    */
   function handleAddPressed() {
-    destinationManifest?.canvases?.splice(
-      destinationIndex,
-      0,
-      ...selectedCanvases
-    );
-    destinationManifest = destinationManifest;
+    dispatch("done", { selectedCanvases });
     selectedCanvases = [];
-    dispatch("done");
   }
 </script>
 
@@ -199,15 +187,15 @@ This component allows the user to search through other manifests and select canv
         <div
           data-tooltip={`${isAllSelected ? "Deselect" : "Select"} all`}
           data-tooltip-flow="bottom"
+          alt="select all"
+          on:click={() => (isAllSelected = !isAllSelected)}
+          class="icon select-all"
         >
-          <img
-            class="icon select-all"
-            src={`/static/icons/${
-              isAllSelected ? "deselect.png" : "select.svg"
-            }`}
-            alt="select all"
-            on:click={() => (isAllSelected = !isAllSelected)}
-          />
+          {#if isAllSelected}
+            <FaTimes />
+          {:else}
+            <FaCheckDouble />
+          {/if}
         </div>
 
         {#if selectedCanvases.length}
@@ -220,7 +208,7 @@ This component allows the user to search through other manifests and select canv
 
     {#if selectedManifest}
       {#if selectedManifest["canvases"] && selectedManifest["canvases"].length}
-        <div class="results full-page">
+        <div class="results full-page auto-align auto-align__column">
           <p class="title">
             <i
               >{selectedManifest.slug}{selectedManifest.label?.none?.length
@@ -332,7 +320,7 @@ This component allows the user to search through other manifests and select canv
   }
 
   .canvas-list-item-viewer {
-    height: 80vh;
+    flex: 10;
     width: 100%;
     position: relative;
     background: var(--darkest-bg);
@@ -345,7 +333,7 @@ This component allows the user to search through other manifests and select canv
     color: var(--secondary-light);
     background-color: var(--dark-bg);
     z-index: 1;
-    position: absolute;
+    /*position: absolute;*/
   }
 
   /*.title > h6 {
@@ -357,7 +345,7 @@ This component allows the user to search through other manifests and select canv
 
   :global(.add-menu .referencestrip) {
     left: 60px !important;
-    top: 3rem;
+    /*top: 3rem;*/
   }
 
   :global(.openseadragon-canvas) {

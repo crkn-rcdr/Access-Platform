@@ -26,17 +26,31 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
 
 -->
 <script lang="ts">
-  import type { ObjectList } from "@crkn-rcdr/access-data";
   import { createEventDispatcher, onMount } from "svelte";
-  import { moveArrayElement } from "$lib/utils/arrayUtil";
   import TiTrash from "svelte-icons/ti/TiTrash.svelte";
   import AutomaticResizeNumberInput from "$lib/components/shared/AutomaticResizeNumberInput.svelte";
-  import VirtualList from "$lib/components/shared/VirtualList.svelte";
+  import { session } from "$app/stores";
+  import type { ObjectListPage, PagedManifest } from "@crkn-rcdr/access-data";
+  import DynamicDragAndDropList from "../shared/DynamicDragAndDropList.svelte";
+  import DynamicDragAndDropListItem from "../shared/DynamicDragAndDropListItem.svelte";
+  import InfiniteScroller from "../shared/InfiniteScroller.svelte";
+  import { showConfirmation } from "$lib/utils/confirmation";
+  import Loading from "../shared/Loading.svelte";
 
   /**
-   * @type {ObjectList} An ObjectList containing canvases to be listed.
+   * @type {PagedManifest} An ObjectList containing canvases to be listed.
    */
-  export let canvases: ObjectList = [];
+  export let manifest: PagedManifest;
+
+  /**
+   * First page of canvases in the object.
+   */
+  export let firstPage: ObjectListPage;
+
+  /**
+   * The number of children in the object.
+   */
+  export let childrenCount: number;
 
   /**
    * @type {boolean} If the add button should be displayed over the list of canvases.
@@ -44,14 +58,53 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
   export let showAddButton = true;
 
   /**
+   * @type {
+      label?: Record<string, string>;
+      id: string;
+    } The list of canvases in the manifest actively in the viewport.
+    */
+  export let canvases: {
+    label?: Record<string, string>;
+    id: string;
+  }[] = [];
+
+  /**
+   * @type {{
+    label?: Record<string, string>;
+    id: string;
+  }} The canvas being displayed in the canvas viewer.
+   */
+  export let activeCanvas: any;
+
+  let positions: number[] = [];
+
+  /**
    * @type {number} The index of the selected, 'active' canvas in the canvases list.
    */
   let activeCanvasIndex = 0;
+
+  let loading: boolean = false;
+
+  /**
+   * @type {number} Shows the number of pages
+   */
+  let page: number = 0;
+  let size: number = 100;
+
+  let previousLastItem: string | null = null;
+
+  let list: HTMLElement;
 
   /**
    * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.
    */
   const dispatch = createEventDispatcher();
+
+  function setPositions() {
+    positions = [];
+    for (let i = 0; i < canvases.length; i++)
+      positions.push(page * size + i + 1);
+  }
 
   /**
    * Sets the @var activeCanvasIndex, the current 'selected' canvas. It also calls @event thumbnailClicked which outputs the index of the active canvas in the canvases list
@@ -59,10 +112,10 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
    * @returns void
    */
   function setActiveIndex(index: number) {
-    if (index >= canvases.length) index = canvases.length - 1;
+    if (index >= childrenCount) index = childrenCount - 1;
     if (index < 0) index = 0;
     activeCanvasIndex = index;
-    dispatch("thumbnailClicked", { index });
+    activeCanvas = canvases[activeCanvasIndex];
   }
 
   /**
@@ -71,13 +124,116 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
    * @param index
    * @returns void
    */
-  function deleteCanvasByIndex(event: any, index: number) {
+  async function deleteCanvasByIndex(event: any, index: number) {
     event.stopPropagation();
     if (index >= 0 && index < canvases.length) {
-      canvases.splice(index, 1);
-      canvases = canvases;
-      setActiveIndex(activeCanvasIndex);
+      const data = {
+        id: manifest.id,
+        canvases: [canvases[index].id],
+        user: $session.user,
+      };
+
+      // Shows a notification on move failure
+      await showConfirmation(
+        async () => {
+          try {
+            const response = await $session.lapin.mutation(
+              "manifest.removeCanvases",
+              data
+            );
+            return {
+              success: true,
+              details: "",
+            };
+          } catch (e) {
+            return {
+              success: false,
+              details: e.message,
+            };
+          }
+        },
+        "",
+        "Error: failed to delete canvas.",
+        true
+      );
+
+      // Shows a notification on page grab failure
+      await showConfirmation(
+        async () => {
+          try {
+            // we can just grab the current page again instead, but we need to store the previous page's last item to do so.
+            await sendCurrentPageRequest();
+            return {
+              success: true,
+              details: "",
+            };
+          } catch (e) {
+            return {
+              success: false,
+              details: e.message,
+            };
+          }
+        },
+        "",
+        "Error: failed to update page. Please refresh.",
+        true
+      );
     }
+  }
+
+  async function sendMoveRequest(canvasToMove, pagedDestinationIndex) {
+    const data = {
+      id: manifest.id,
+      canvases: [canvasToMove.id],
+      toIndex: pagedDestinationIndex,
+      user: $session.user,
+    };
+
+    // Shows a notification on move failure
+    await showConfirmation(
+      async () => {
+        try {
+          const response = await $session.lapin.mutation(
+            "manifest.moveCanvases",
+            data
+          );
+          return {
+            success: true,
+            details: "",
+          };
+        } catch (e) {
+          return {
+            success: false,
+            details: e.message,
+          };
+        }
+      },
+      "",
+      "Error: failed to move canvas.",
+      true
+    );
+
+    // Shows a notification on page grab failure
+    await showConfirmation(
+      async () => {
+        try {
+          // we can just grab the current page again instead, but we need to store the previous page's last item to do so.
+          await sendCurrentPageRequest();
+          return {
+            success: true,
+            details: "",
+          };
+        } catch (e) {
+          return {
+            success: false,
+            details: e.message,
+          };
+        }
+      },
+      "",
+      "Error: failed to update page. Please refresh.",
+      true
+    );
   }
 
   /**
@@ -89,18 +245,26 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
    * @param originalItemIndex
    * @returns void
    */
-  function moveCanvas(event: any, originalItemIndex: number) {
-    // Move the canvas and trigger saving
-    let destinationItemIndex = parseInt(event.detail.value) - 1;
-    moveArrayElement(canvases, originalItemIndex, destinationItemIndex);
+  async function moveCanvasOnInputChange(event: any, currentItemIndex) {
+    if (loading) return;
+    loading = true;
 
-    canvases = canvases;
+    let pagedDestinationIndex = parseInt(event.detail.value) - 1;
 
-    // Highlight and move to new position
-    activeCanvasIndex = destinationItemIndex;
+    if (pagedDestinationIndex >= 0 && pagedDestinationIndex < childrenCount) {
+      const canvasToMove = canvases[currentItemIndex];
 
-    //jumpTo(activeCanvasIndex);
-    setActiveIndex(activeCanvasIndex);
+      await sendMoveRequest(canvasToMove, pagedDestinationIndex);
+
+      // Highlight and move to new position
+      if (pagedDestinationIndex < canvases.length) {
+        activeCanvasIndex = pagedDestinationIndex;
+        //jumpTo(activeCanvasIndex);
+        setActiveIndex(activeCanvasIndex);
+      }
+    }
+
+    loading = false;
   }
 
   /**
@@ -111,102 +275,194 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
     dispatch("addClicked");
   }
 
+  async function handleScroll(event) {
+    {
+      if (loading) return;
+      loading = true;
+      if (event.detail.reverse) {
+        page--;
+        console.log("load prev");
+        const currPage = await $session.lapin.query("manifest.pageBefore", {
+          id: manifest.id,
+          before: canvases[0].id,
+          limit: size,
+        });
+        previousLastItem = canvases[canvases.length - 1].id;
+        canvases = currPage.list;
+      } else {
+        page++;
+        console.log("load next");
+        const currPage = await $session.lapin.query("manifest.pageAfter", {
+          id: manifest.id,
+          after: canvases[canvases.length - 1].id,
+          limit: size,
+        });
+        previousLastItem = canvases[canvases.length - 1].id;
+        canvases = currPage.list;
+      }
+    }
+    loading = false;
+  }
+
+  async function handleItemDropped(event: {
+    detail: { currentItemIndex: number; destinationItemIndex: number };
+  }) {
+    if (loading) return;
+    loading = true;
+    if (
+      event.detail.currentItemIndex >= 0 &&
+      event.detail.currentItemIndex < canvases.length
+    ) {
+      const pagedDestinationIndex =
+        page * size + event.detail.destinationItemIndex;
+
+      const canvasToMove = canvases[event.detail.currentItemIndex];
+
+      await sendMoveRequest(canvasToMove, pagedDestinationIndex);
+
+      // Highlight and move to new position
+      activeCanvasIndex = event.detail.destinationItemIndex;
+
+      //jumpTo(activeCanvasIndex);
+      setActiveIndex(activeCanvasIndex);
+    }
+    loading = false;
+  }
+
+  async function sendCurrentPageRequest() {
+    const currPage = await $session.lapin.query("manifest.pageAfter", {
+      id: manifest.id,
+      after: previousLastItem,
+      limit: size,
+    });
+    canvases = currPage.list;
+    setActiveIndex(activeCanvasIndex);
+  }
+
+  export async function grabCurrentPage() {
+    await sendCurrentPageRequest();
+  }
+
   /**
    * @event onMount
-   * @description When the component instance is mounted onto the dom, @var activeCanvasIndex is instantiated, the canvases positions model is set using @function setIndexModel(), then @var isInitialized is set to true.
+   * @description When the component instance is mounted onto the dom, @var activeCanvasIndex is instantiated, the canvases positions model is set
    */
-  onMount(() => {
-    if (canvases.length) activeCanvasIndex = 0;
+  onMount(async () => {
+    activeCanvasIndex = 0;
+    canvases = firstPage.list;
+    activeCanvas = canvases[activeCanvasIndex];
   });
+
+  $: {
+    canvases;
+    setPositions();
+  }
 </script>
 
 <div class="auto-align auto-align__full auto-align auto-align__column">
   {#if showAddButton}
     <button class="primary lg" on:click={addClicked}>Add Canvas</button>
   {/if}
-  <VirtualList
-    bind:dataList={canvases}
-    bind:activeIndex={activeCanvasIndex}
-    disabled={!showAddButton}
-    let:item
-  >
-    <div
-      class="thumbnail auto-align auto-align__full"
-      class:active={activeCanvasIndex === item.id}
-      class:new={item.new}
-      on:click={() => {
-        setActiveIndex(item.id);
-      }}
+
+  <div class="canvas-wrap" class:disabled={loading}>
+    <!-- loop through the array where items are added when scrolling -->
+    <DynamicDragAndDropList
+      bind:container={list}
+      on:itemDropped={handleItemDropped}
     >
-      <div class="actions-wrap">
-        <div
-          class="auto-align auto-align__full auto-align auto-align__column"
-          class:visibility-hidden={!showAddButton}
-        >
-          <div class="action pos">
-            {item.pos}
-          </div>
+      {#each canvases as canvas, i}
+        <DynamicDragAndDropListItem pos={i + 1}>
           <div
-            class="action pos-input"
-            on:click={(e) => {
-              e.stopPropagation();
+            class="thumbnail auto-align auto-align__full"
+            class:active={activeCanvasIndex === i}
+            on:click={() => {
+              setActiveIndex(i);
             }}
           >
-            <AutomaticResizeNumberInput
-              name="position"
-              max={canvases.length}
-              value={item.pos}
-              on:changed={(e) => {
-                moveCanvas(e, item.id);
-              }}
-            />
+            <div class="actions-wrap" class:not-loading={!loading}>
+              <div
+                class="auto-align auto-align__full auto-align auto-align__column"
+                class:visibility-hidden={!showAddButton}
+              >
+                <div class="action pos">
+                  {positions[i]}
+                </div>
+                <div
+                  on:click={(e) => {
+                    e.preventDefault();
+                  }}
+                  class="action pos-input"
+                >
+                  <AutomaticResizeNumberInput
+                    name="position"
+                    max={childrenCount}
+                    value={positions[i]}
+                    on:changed={(e) => {
+                      moveCanvasOnInputChange(e, positions[i] - 1);
+                    }}
+                  />
+                </div>
+                <div
+                  class="action icon"
+                  on:click={(e) => deleteCanvasByIndex(e, i)}
+                >
+                  <TiTrash />
+                </div>
+              </div>
+            </div>
+            <div class="image-wrap">
+              <img
+                alt={canvas?.label?.none}
+                class="thumbnail-img"
+                src={`https://image-tor.canadiana.ca/iiif/2/${encodeURIComponent(
+                  canvas?.id
+                )}/full/!425,524/0/default.jpg`}
+              />
+            </div>
           </div>
-          <div
-            class="action icon"
-            on:click={(e) => deleteCanvasByIndex(e, item.id)}
-          >
-            <TiTrash />
-          </div>
-        </div>
-      </div>
-      <div class="image-wrap">
-        <img
-          alt={item.data?.label?.none}
-          class="thumbnail-img"
-          src={`https://image-tor.canadiana.ca/iiif/2/${encodeURIComponent(
-            item.data?.id
-          )}/full/!425,524/0/default.jpg`}
-        />
-      </div>
-    </div>
-  </VirtualList>
+        </DynamicDragAndDropListItem>
+      {/each}
+    </DynamicDragAndDropList>
+    <InfiniteScroller
+      elementScroll={list}
+      hasLess={page !== 0}
+      hasMore={childrenCount > page * size + canvases.length}
+      threshold={100}
+      on:loadMore={handleScroll}
+    />
+  </div>
+  <div class="auto-align auto-align__a-center">
+    {#if loading}
+      <span class="page-info-loader">
+        <Loading size="sm" backgroundType="gradient" />
+      </span>
+    {/if}
+    <span class="page-info">
+      Showing {page * size + 1} to {page * size + canvases.length} of {childrenCount}
+    </span>
+  </div>
 </div>
 
 <style>
   button.primary {
     width: 100%;
   }
-
   .thumbnail {
     height: max(22vh, 15rem);
     width: 100%;
     background-color: var(--structural-div-bg);
     overflow: hidden;
   }
-
   .thumbnail:nth-child(1) {
     margin-top: 0px;
   }
-
   .thumbnail.active {
     filter: brightness(1.1);
   }
-
-  .thumbnail.new {
+  /*.thumbnail.new {
     animation-name: new;
     animation-duration: 4s;
-  }
-
+  }*/
   @keyframes new {
     from {
       background-color: var(--gold-light);
@@ -215,26 +471,21 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
       background-color: var(--structural-div-bg);
     }
   }
-
   .actions-wrap {
     flex: 1.8;
     margin-left: 1.5rem;
   }
-
   .action.icon {
     opacity: 0.6;
     cursor: pointer;
   }
-
   .image-wrap {
     flex: 4;
   }
-
   .actions-wrap,
   .image-wrap {
     margin-top: 1.5rem;
   }
-
   .image-wrap .thumbnail-img {
     height: max(18vh, 200px);
     width: max(13vh, 150px);
@@ -242,13 +493,11 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
     pointer-events: none;
     display: inline;
   }
-
   .pos {
     font-weight: 400;
     margin-top: 0.58rem;
     margin-left: 0.58rem;
   }
-
   .action.icon {
     display: none;
     margin-top: 0.5em;
@@ -256,16 +505,38 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
   .pos-input {
     display: none;
   }
-
-  .thumbnail:hover .action.icon {
+  .thumbnail:hover .actions-wrap.not-loading .action.icon {
     display: inherit;
   }
-
-  .thumbnail:hover .pos {
+  .thumbnail:hover .actions-wrap.not-loading .pos {
     display: none;
   }
 
-  .thumbnail:hover .pos-input {
+  .thumbnail:hover .actions-wrap.not-loading .pos-input {
     display: inherit;
+  }
+  .page-info-loader {
+    margin-right: var(--margin-sm);
+  }
+  .canvas-wrap {
+    display: flex;
+    flex-direction: column;
+    border-radius: 2px;
+    width: 100%;
+    max-height: 95%;
+    background-color: white;
+    overflow-x: hidden;
+    padding: 0;
+  }
+  .canvas-wrap.disabled {
+    opacity: 0.5;
+    overflow: hidden;
+    pointer-events: none;
+    user-select: none;
+  }
+  :global(.canvas-wrap.disabled > *) {
+    overflow: hidden;
+    pointer-events: none;
+    user-select: none;
   }
 </style>

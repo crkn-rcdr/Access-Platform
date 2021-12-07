@@ -130,7 +130,7 @@ export const manifestRouter = createRouter()
     input: z.object({
       id: Noid,
       canvases: z.array(Noid),
-      toIndex: z.number().int().positive(),
+      toIndex: z.number().int(), // makes us unable to use index 0: .positive(),
       user: User.optional(),
     }),
     async resolve({ input: { id, canvases, toIndex, user }, ctx }) {

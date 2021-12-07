@@ -14,22 +14,38 @@ Allows the user to modify the member list for a collection.
 *Note: `bind:` is required for changes to the object to be reflected in higher level components.*
 -->
 <script lang="ts">
-  import { onMount, createEventDispatcher } from "svelte";
-  import type { Collection } from "@crkn-rcdr/access-data/src/access/Collection";
+  import { onMount, createEventDispatcher, afterUpdate } from "svelte";
+  import type { PagedCollection } from "@crkn-rcdr/access-data/src/access/Collection";
   import AutomaticResizeNumberInput from "$lib/components/shared/AutomaticResizeNumberInput.svelte";
-  import VirtualList from "$lib/components/shared/VirtualList.svelte";
-  import { moveArrayElement } from "$lib/utils/arrayUtil";
   import TiTrash from "svelte-icons/ti/TiTrash.svelte";
   import CollectionMembersAddition from "./CollectionMembersAddition.svelte";
   import { session } from "$app/stores";
   import InfiniteScroller from "../shared/InfiniteScroller.svelte";
+  import type { ObjectListPage } from "@crkn-rcdr/access-data";
+  import DynamicDragAndDropList from "../shared/DynamicDragAndDropList.svelte";
+  import DynamicDragAndDropListItem from "../shared/DynamicDragAndDropListItem.svelte";
+  import { showConfirmation } from "$lib/utils/confirmation";
+  import Loading from "../shared/Loading.svelte";
 
-  export let collection: Collection;
+  export let collection: PagedCollection;
+
+  /**
+   * First page of members in the object.
+   */
+  export let firstPage: ObjectListPage;
+
+  /**
+   * The number of children in the object.
+   */
+  export let childrenCount: number;
 
   let activeMemberIndex: number = 0;
   const dispatch = createEventDispatcher();
-  let documentSlug: [] = [];
+  let documentSlug: any[] = [];
   let members: { id?: string; label?: Record<string, string> }[] = [];
+
+  let positions: number[] = [];
+
   /**
    * @type {string} A control for what component is displayed in the free space of the content editor.
    */
@@ -43,78 +59,287 @@ Allows the user to modify the member list for a collection.
    * @type {number} Shows the number of pages
    */
   let page: number = 0;
-  let size: number = 2;
-  let newBatch: {
-    id?: string;
-    label?: Record<string, string>;
-  }[] = [];
+  let size: number = 100;
+
+  let previousLastItem: string | null = null;
+
+  let loading: boolean = false;
+
+  let list: HTMLElement;
+
+  function setPositions() {
+    positions = [];
+    for (let i = 0; i < members.length; i++)
+      positions.push(page * size + i + 1);
+  }
 
   function changeView(newState: string) {
     state = newState;
   }
-  async function getMemberContext() {
-    let currentMembers = collection.members.map((members) => members.id);
+
+  async function getMemberContext(
+    newMembers: { id?: string; label?: Record<string, string> }[]
+  ) {
+    let currentMembers = newMembers.map((members) => members.id);
 
     const resolutions = await $session.lapin.query(
       "collection.viewMembersContext",
       currentMembers
     );
 
-    console.log("know what it retrieves", resolutions);
     documentSlug = resolutions.map((slug) => {
       return { id: slug[0], result: slug[1].result };
     });
   }
   function setActiveIndex(index: number) {
-    if (index >= collection.members.length)
-      index = collection.members.length - 1;
+    if (index >= collection?.members?.count)
+      index = collection.members.count - 1;
     if (index < 0) index = 0;
     activeMemberIndex = index;
     dispatch("membersClicked", { index });
   }
-  function moveMember(event: any, originalItemIndex: number) {
-    // Move the member and trigger saving
-    let destinationItemIndex = parseInt(event.detail.value) - 1;
-    moveArrayElement(
-      collection.members,
-      originalItemIndex,
-      destinationItemIndex
+
+  async function moveMemberOnInputChange(
+    event: any,
+    originalItemIndex: number
+  ) {
+    if (loading) return;
+    loading = true;
+
+    let pagedDestinationIndex = parseInt(event.detail.value) - 1;
+
+    if (pagedDestinationIndex >= 0 && pagedDestinationIndex < childrenCount) {
+      const canvasToMove = members[originalItemIndex];
+
+      await sendMoveRequest(canvasToMove, pagedDestinationIndex);
+
+      // Highlight and move to new position
+      if (pagedDestinationIndex < members.length) {
+        activeMemberIndex = pagedDestinationIndex;
+        //jumpTo(activeCanvasIndex);
+        setActiveIndex(activeMemberIndex);
+      }
+    }
+
+    loading = false;
+  }
+
+  async function deleteMemberByIndex(event: any, index: number) {
+    event.stopPropagation();
+
+    if (index >= 0 && index < members.length) {
+      const data = {
+        id: collection.id,
+        members: [members[index].id],
+        user: $session.user,
+      };
+
+      // Shows a notification on move failure
+      await showConfirmation(
+        async () => {
+          try {
+            const response = await $session.lapin.mutation(
+              "collection.removeMembers",
+              data
+            );
+            return {
+              success: true,
+              details: "",
+            };
+          } catch (e) {
+            return {
+              success: false,
+              details: e.message,
+            };
+          }
+        },
+        "",
+        "Error: failed to delete member.",
+        true
+      );
+
+      // Shows a notification on page grab failure
+      await showConfirmation(
+        async () => {
+          try {
+            // we can just grab the current page again instead, but we need to store the previous page's last item to do so.
+            await sendCurrentPageRequest();
+            return {
+              success: true,
+              details: "",
+            };
+          } catch (e) {
+            return {
+              success: false,
+              details: e.message,
+            };
+          }
+        },
+        "",
+        "Error: failed to update page. Please refresh.",
+        true
+      );
+    }
+  }
+
+  async function handleScroll(event) {
+    {
+      if (loading) return;
+      loading = true;
+      if (event.detail.reverse) {
+        page--;
+        console.log("load prev");
+        const currPage = await $session.lapin.query("collection.pageBefore", {
+          id: collection.id,
+          before: members[0].id,
+          limit: size,
+        });
+        previousLastItem = members[members.length - 1].id;
+        members = currPage.list;
+        await getMemberContext(currPage.list);
+      } else {
+        page++;
+        console.log("load next");
+        await sendCurrentPageRequest();
+      }
+    }
+    loading = false;
+  }
+
+  async function sendMoveRequest(memberToMove, pagedDestinationIndex) {
+    const data = {
+      id: collection.id,
+      members: [memberToMove.id],
+      toIndex: pagedDestinationIndex,
+      user: $session.user,
+    };
+    console.log(data);
+
+    // Shows a notification on move failure
+    await showConfirmation(
+      async () => {
+        try {
+          const response = await $session.lapin.mutation(
+            "collection.moveMembers",
+            data
+          );
+          console.log("done 1");
+          return {
+            success: true,
+            details: "",
+          };
+        } catch (e) {
+          return {
+            success: false,
+            details: e.message,
+          };
+        }
+      },
+      "",
+      "Error: failed to move member.",
+      true
     );
-    collection.members = collection.members;
-    // Highlight and move to new position
-    activeMemberIndex = destinationItemIndex;
-    //jumpTo(activeMemberIndex);
+
+    // Shows a notification on page grab failure
+    await showConfirmation(
+      async () => {
+        try {
+          // we can just grab the current page again instead, but we need to store the previous page's last item to do so.
+          await sendCurrentPageRequest();
+          return {
+            success: true,
+            details: "",
+          };
+        } catch (e) {
+          return {
+            success: false,
+            details: e.message,
+          };
+        }
+      },
+      "",
+      "Error: failed to update page. Please refresh.",
+      true
+    );
+  }
+
+  async function handleItemDropped(event: {
+    detail: { currentItemIndex: number; destinationItemIndex: number };
+  }) {
+    if (loading) return;
+    loading = true;
+    console.log("Drag info", event.detail);
+    if (
+      event.detail.currentItemIndex >= 0 &&
+      event.detail.currentItemIndex < members.length
+    ) {
+      const pagedDestinationIndex =
+        page * size + event.detail.destinationItemIndex;
+
+      const memberToMove = members[event.detail.currentItemIndex];
+
+      sendMoveRequest(memberToMove, pagedDestinationIndex);
+
+      if (pagedDestinationIndex < members.length) {
+        activeMemberIndex = pagedDestinationIndex;
+        //jumpTo(activeCanvasIndex);
+        setActiveIndex(pagedDestinationIndex);
+      }
+    } else {
+      console.log("invalid index");
+    }
+
+    loading = false;
+  }
+
+  async function sendCurrentPageRequest() {
+    const currPage = await $session.lapin.query("collection.pageAfter", {
+      id: collection.id,
+      after: previousLastItem,
+      limit: size,
+    });
+    //previousLastItem = members[members.length - 1].id;
+    members = currPage.list;
+    await getMemberContext(currPage.list);
     setActiveIndex(activeMemberIndex);
   }
-  function deleteMemberByIndex(event: any, index: number) {
-    event.stopPropagation();
-    if (index >= 0 && index < collection?.members.length) {
-      collection?.members.splice(index, 1);
-      collection.members = collection?.members;
-      setActiveIndex(activeMemberIndex);
-    }
+
+  async function handleAddPressed(event: {
+    detail: {
+      selectedMembers: string[];
+    };
+  }) {
+    const response = await $session.lapin.mutation("collection.addMembers", {
+      id: collection.id,
+      members: event.detail.selectedMembers,
+      user: $session.user,
+    });
+
+    console.log(response);
+
+    await sendCurrentPageRequest();
+
+    const objectResponse = await $session.lapin.query(
+      "accessObject.getPaged",
+      collection.id
+    );
+    childrenCount = objectResponse.members.count;
+    collection = objectResponse;
+
+    state = "view";
   }
 
-  onMount(() => {
-    if (collection.members.length) {
-      activeMemberIndex = 0;
-      newBatch = collection.members.slice(size * page, size * (page + 1));
-    }
-    getMemberContext();
+  onMount(async () => {
+    activeMemberIndex = 0;
+    console.log("firstPage", firstPage);
+    members = firstPage.list;
+    getMemberContext(firstPage.list);
   });
 
-  // Any time newBatch changes, append it to members
-  $: members = [...members, ...newBatch];
-
-  // For testing
-  $: console.log(
-    "members",
-    members,
-    "newBatch",
-    newBatch,
-    size * page,
-    size * (page + 1)
-  );
+  $: {
+    members;
+    setPositions();
+  }
 </script>
 
 {#if collection}
@@ -123,161 +348,170 @@ Allows the user to modify the member list for a collection.
       showAddButton={state != "add"}
       bind:destinationMember={collection}
       bind:contextDisplay={documentSlug}
-      on:done={() => {
-        setActiveIndex(0);
-      }}
+      on:done={handleAddPressed}
       on:addClicked={() => {
         changeView("add");
+        collection = collection;
+        console.log("collection", collection);
       }}
     />
     <br />
 
     <br />
-    <!--VirtualList
-      bind:dataList={members}
-      bind:activeIndex={activeMemberIndex}
-      draggable={collection.behavior !== "unordered"}
-      let:item
-    >
-      <div
-        class="members"
-        class:active={item?.id === activeMemberIndex}
-        on:mousedown={() => setActiveIndex(item?.id)}
-      >
-        <div class="auto-align">
-          <div class="actions-wrap">
-            <div class="auto-align auto-align__column">
-              {#if collection.behavior !== "unordered"}
-                <div class="action pos">
-                  {item.pos}
-                </div>
-                <div
-                  class="action pos-input"
-                  on:click={(e) => {
-                    e.stopPropagation();
-                  }}
-                >
-                  <AutomaticResizeNumberInput
-                    name="position"
-                    max={collection?.members.length}
-                    value={item?.pos}
-                    on:changed={(e) => {
-                      moveMember(e, item?.id);
-                    }}
-                  />
-                </div>
-              {/if}
-              <div
-                class="action icon"
-                on:click={(e) => deleteMemberByIndex(e, item.id)}
-              >
-                <TiTrash />
-              </div>
-            </div>
-          </div>
-          <div id="grid">
-            <ul>
-              <li>
-                <a href="/object/{item?.data?.id}">{item?.data?.id}</a><br />
-
-                {#each documentSlug as document}
-                  {#if document["result"]?.["label"]?.["none"] && document["id"] === item?.data?.id}
-                    {document["result"]["slug"]} : {document["result"]["label"][
-                      "none"
-                    ]}
-                  {/if}
-                {/each}
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </VirtualList-->
-    <br />
 
     <!-- I commented out the above and added the styling from the example to help me see what's going on.
     -->
-    <ul>
+
+    <div class="member-wrap" class:disabled={loading}>
       <!-- loop through the array where items are added when scrolling -->
-      {#each members as collectionmembers}
-        <li>{collectionmembers.id}</li>
-        {#each documentSlug as document}
-          {#if document["result"]?.["label"]?.["none"] && document["id"] === collectionmembers?.id}
-            {document["result"]["slug"]} : {document["result"]["label"]["none"]}
-          {/if}
+      <DynamicDragAndDropList
+        bind:container={list}
+        on:itemDropped={handleItemDropped}
+      >
+        <!--{collectionmembers.id}
+              -->
+        {#each members as collectionMember, i}
+          <DynamicDragAndDropListItem pos={i + 1}>
+            <div
+              class="member"
+              class:active={i === activeMemberIndex}
+              on:mousedown={() => setActiveIndex(i)}
+            >
+              <div class="auto-align">
+                <div class="actions-wrap">
+                  <div class="auto-align auto-align__column">
+                    {#if collection.behavior !== "unordered"}
+                      <div class="action pos">
+                        {positions[i]}
+                      </div>
+                      <div
+                        class="action pos-input"
+                        on:click={(e) => {
+                          e.stopPropagation();
+                        }}
+                      >
+                        <AutomaticResizeNumberInput
+                          name="position"
+                          max={childrenCount}
+                          value={positions[i]}
+                          on:changed={(e) => {
+                            moveMemberOnInputChange(e, positions[i] - 1);
+                          }}
+                        />
+                      </div>
+                    {/if}
+                    <div
+                      class="action icon"
+                      on:click={(e) => deleteMemberByIndex(e, i)}
+                    >
+                      <TiTrash />
+                    </div>
+                  </div>
+                </div>
+                <div class="auto-align auto-align__column">
+                  {#each documentSlug as document}
+                    {#if document["result"]?.["label"]?.["none"] && document["id"] === collectionMember?.id}
+                      <a href="/object/{collectionMember?.id}" target="_blank">
+                        {document["result"]["slug"]} : {document["result"][
+                          "label"
+                        ]["none"]}
+                      </a>
+                    {/if}
+                  {/each}
+                </div>
+              </div>
+            </div>
+          </DynamicDragAndDropListItem>
         {/each}
-      {/each}
-      <!-- collection.members.length has all the items; members gets filled as the user scrolls -->
+      </DynamicDragAndDropList>
       <InfiniteScroller
-        hasMore={collection.members.length > members.length}
+        elementScroll={list}
+        hasLess={page !== 0}
+        hasMore={childrenCount > page * size + members.length}
         threshold={100}
-        on:loadMore={() => {
-          page++;
-          // Set newBatch on scroll. This will trigger line 107
-          newBatch = collection.members.slice(size * page, size * (page + 1));
-        }}
+        on:loadMore={handleScroll}
       />
-    </ul>
+    </div>
+    <div class="auto-align auto-align__a-center">
+      {#if loading}
+        <span class="page-info-loader">
+          <Loading size="sm" backgroundType="gradient" />
+        </span>
+      {/if}
+      <span class="page-info">
+        Showing {page * size + 1} to {page * size + members.length} of {childrenCount}
+      </span>
+    </div>
   </div>
 {/if}
 
 <style>
-  /* .action.icon {
+  .action {
+    margin-right: var(--margin-sm);
+  }
+  .action.icon {
     opacity: 0.6;
     cursor: pointer;
   }
   .pos {
     font-weight: 400;
-    margin-top: 0.58rem;
-    margin-top: 2rem;
-    margin-left: 0.58rem;
+    margin-top: 0.56rem;
+    margin-left: 0.56rem;
+    min-width: 3.15rem;
   }
   .action.icon {
     display: none;
     margin-top: 0.5em;
   }
-  .members:hover .action.icon {
+  .member:hover .action.icon {
     display: inherit;
   }
   .pos-input {
     display: none;
   }
-  .members:hover .pos-input {
+  .member:hover .pos-input {
     display: inherit;
   }
-  .members:hover .pos {
+  .member:hover .pos {
     display: none;
   }
-  #grid {
-    margin-top: 1rem;
-    height: 5rem;
-    display: grid;
-    grid-template-areas: "a a";
-    gap: 10px;
-    grid-auto-columns: 200px;
-  } */
 
-  ul {
-    box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2),
-      0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12);
+  .member-wrap {
     display: flex;
     flex-direction: column;
     border-radius: 2px;
-    width: 100%;
+    width: 75%;
     max-width: 100%;
-    max-height: 100;
-    background-color: white;
-    overflow-x: auto;
-    list-style: none;
+    max-height: 38rem;
+    overflow-x: hidden;
     padding: 0;
   }
 
-  li {
-    box-sizing: border-box;
-    transition: 0.2s all;
+  .member-wrap.disabled {
+    opacity: 0.5;
+    overflow: hidden;
+    pointer-events: none;
+    user-select: none;
   }
 
-  li:hover {
+  :global(.member-wrap.disabled > *) {
+    overflow: hidden;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .member {
+    padding: 1rem;
+    min-height: 7rem;
+  }
+
+  .member:hover {
     background-color: #eeeeee;
   }
+  .page-info-loader {
+    margin-right: var(--margin-sm);
+  }
+  /*.active {
+    background-color: white;
+  }*/
 </style>

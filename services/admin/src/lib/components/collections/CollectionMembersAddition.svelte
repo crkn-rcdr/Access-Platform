@@ -2,16 +2,16 @@
   import type { Depositor, Session } from "$lib/types";
   import { getStores } from "$app/stores";
   import { createEventDispatcher } from "svelte";
-  import type { Collection } from "@crkn-rcdr/access-data/src/access/Collection";
+  import type { PagedCollection } from "@crkn-rcdr/access-data/src/access/Collection";
   import TiArrowBack from "svelte-icons/ti/TiArrowBack.svelte";
 
   import PrefixSelector from "$lib/components/access-objects/PrefixSelector.svelte";
   import ToggleButtons from "$lib/components/shared/ToggleButtons.svelte";
 
   /**
-   * @type {Collection} The Collection where the members are added to.
+   * @type {PagedCollection} The Collection where the members are added to.
    */
-  export let destinationMember: Collection;
+  export let destinationMember: PagedCollection;
   /**
    * To bind the context of members value.
    */
@@ -47,7 +47,7 @@
   /**
    * @type { string } The label for the by-slug toggle
    */
-  const LOOKUP_MEMBER = "Look_up_slugs";
+  const LOOKUP_MEMBER = "Add a member";
 
   /**
    * @type { string } The selected lookup method
@@ -89,15 +89,39 @@
     if (depositor?.prefix !== "none")
       slugArray = slugArray.map((slug) => `${depositor?.prefix}.${slug}`);
 
-    const response = await $session.lapin.query("collection.checkAdditions", {
-      id,
-      slugArray,
-    });
+    if (id) {
+      const response = await $session.lapin.query("collection.checkAdditions", {
+        id,
+        slugArray,
+      });
 
-    resolutions = response;
-    showAddButton = false;
-    // I'm returning here so that we can type `resolutions` properly (see above)
-    return response;
+      resolutions = response;
+      showAddButton = false;
+
+      // I'm returning here so that we can type `resolutions` properly (see above)
+      return response;
+    } else {
+      const response = await $session.lapin.query("slug.lookupMany", slugArray);
+
+      resolutions = Object.fromEntries(
+        response.map(([slug, r]): [string, any] => {
+          if (r.found) {
+            return [
+              slug,
+              {
+                resolved: true,
+                ...r.result,
+              },
+            ];
+          }
+          return [slug, { error: "not-found", resolved: false }];
+        })
+      );
+      showAddButton = false;
+
+      // I'm returning here so that we can type `resolutions` properly (see above)
+      return response;
+    }
   }
 
   function handleCancelPressed() {
@@ -113,35 +137,27 @@
    */
   let resultArray: string[] = [];
   function checkIfAllItemsSelected(event) {
-    if (event.target) {
+    if (!event.target.checked) {
+      const index = resultArray.indexOf(event.target.value);
+      if (index > -1) {
+        resultArray.splice(index, 1);
+      }
+    } else {
       resultArray.push(event.target.value);
     }
   }
 
   async function handleAddPressed() {
-    for (let index in resultArray) {
-      console.log("check the result array", resultArray);
-      const resolution = await $session.lapin.query(
-        "collection.viewMembersContext",
-        resultArray
-      );
-      resolution.map((slug) => {
-        if (slug[1].found === true) {
-          contextDisplay.push({ id: slug[0], result: slug[1].result });
-        }
-      });
+    console.log("adding", resultArray);
+    dispatch("done", {
+      selectedMembers: resultArray,
+    });
+    contextDisplay = contextDisplay;
+    destinationMember = destinationMember;
 
-      destinationMember?.members?.splice(destinationIndex, 0, {
-        id: resultArray[index],
-      });
-
-      contextDisplay = contextDisplay;
-      destinationMember = destinationMember;
-    }
     addedMember = false;
     showAddButton = true;
-    //isMemberSelected = true;
-    //dispatch("done");
+    resultArray = [];
     resolutions = {};
     clearText();
   }
@@ -244,12 +260,8 @@
   .move-button {
     display: flex;
   }
-  .exit-button {
-    padding-left: 50%;
-  }
   textarea {
     display: grid;
-
     width: 100%;
   }
 
