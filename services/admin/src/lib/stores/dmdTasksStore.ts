@@ -153,8 +153,7 @@ async function storeTaskItemMetadata(
           });
           console.log("access res:", res);
           items[itemSlug].updatedInAccess = "Yes";
-          items[itemSlug].updatedInAccessMsg =
-            "Metadata file updated successfully.";
+          items[itemSlug].updatedInAccessMsg = "Metadata updated successfully.";
           updateTask(dmdTaskId, "itemStates", items);
         } catch (e) {
           console.log("access e:", e);
@@ -182,7 +181,7 @@ async function storeTaskItemMetadata(
           console.log("pres r:", res);
           items[itemSlug].updatedInPreservation = "Yes";
           items[itemSlug].updatedInPreservationMsg =
-            "Metadata file updated successfully.";
+            "Metadata updated successfully.";
           updateTask(dmdTaskId, "itemStates", items);
         } catch (e) {
           console.log("pres e:", e);
