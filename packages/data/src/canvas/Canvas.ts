@@ -1,16 +1,14 @@
 import { z } from "zod";
 import { UnixFilePath } from "../util/UnixFilePath.js";
-import { Identified } from "./traits/Identified.js";
-import { FileRef } from "./util/FileRef.js";
-import { ImageRef } from "./util/ImageRef.js";
+import { Identified } from "../util/Identified.js";
+import { FileRef } from "../util/FileRef.js";
+import { ImageRef } from "../util/ImageRef.js";
 
 /**
  * The virtual representation of the space taken up by a page of a Manifest.
  */
 export const Canvas = z
   .object({
-    type: z.enum(["canvas"]).default("canvas"),
-
     /**
      * Source information for this Canvas.
      */

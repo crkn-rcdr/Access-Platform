@@ -7,7 +7,6 @@ const { isValid } = tester(Canvas);
 
 const testCanvas: Canvas = {
   id: "69429/c00000000220",
-  type: "canvas",
   ocrType: "alto",
   ocrPdf: {
     path: "oocihm.8_00006_5/data/sip/data/files/7753.pdf",

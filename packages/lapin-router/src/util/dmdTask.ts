@@ -12,6 +12,7 @@ import {
   SucceededDMDTask,
   Noid,
   isSucceededDMDTask,
+  AccessObjectType,
 } from "@crkn-rcdr/access-data";
 import { LapinContext } from "../context.js";
 import { TRPCError } from "@trpc/server";
@@ -164,7 +165,7 @@ export const updateLabelForDmdTaskItemAccessObject = async function (
   label: string,
   noid: Noid,
   user: User,
-  type: "alias" | "manifest" | "collection"
+  type: AccessObjectType
 ) {
   try {
     const itemLabel: Record<string, string> = {

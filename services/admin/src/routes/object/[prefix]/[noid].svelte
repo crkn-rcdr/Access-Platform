@@ -12,12 +12,10 @@
           page.params["prefix"] as string,
           page.params["noid"] as string,
         ].join("/");
-        const response = await context.lapin.query("accessObject.getPaged", id);
-
-        const serverObject =
-          response.type === "collection"
-            ? PagedCollection.parse(response)
-            : PagedManifest.parse(response);
+        const serverObject: PagedAccessObject = await context.lapin.query(
+          "accessObject.getPaged",
+          id
+        );
 
         const membership = await context.lapin.query(
           "accessObject.getMembership",
@@ -67,10 +65,9 @@
    * @description This page shows the editor for the object.
    * The object is given to the page from the module above.
    */
-  import {
+  import type {
     ObjectListPage,
-    PagedCollection,
-    PagedManifest,
+    PagedAccessObject,
   } from "@crkn-rcdr/access-data";
   import type { Membership, Noid } from "@crkn-rcdr/access-data";
   import Editor from "$lib/components/access-objects/Editor.svelte";
@@ -80,9 +77,9 @@
   export let id: Noid;
 
   /**
-   * @type {PagedCollection | PagedManifest} Object being edited.
+   * @type {PagedAccessObject} Object being edited.
    */
-  export let serverObject: PagedCollection | PagedManifest;
+  export let serverObject: PagedAccessObject;
 
   /**
    * Membership record for this object.

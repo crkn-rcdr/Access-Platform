@@ -16,8 +16,8 @@ Allows the user to modify the canvas list for a manifest.
 *Note: `bind:` is required for changes to the object to be reflected in higher level components.*
 -->
 <script lang="ts">
-  import { onMount } from "svelte";
-  import type { PagedManifest } from "@crkn-rcdr/access-data/src/access/Manifest";
+  import type { Session } from "$lib/types";
+  import { PagedManifest } from "@crkn-rcdr/access-data";
   import CanvasLabelEditor from "$lib/components/canvases/CanvasLabelEditor.svelte";
   import CanvasViewer from "$lib/components/canvases/CanvasViewer.svelte";
   import CanvasThumbnailList from "$lib/components/canvases/CanvasThumbnailList.svelte";
@@ -25,7 +25,9 @@ Allows the user to modify the canvas list for a manifest.
   import SwitchCase from "$lib/components/shared/SwitchCase.svelte";
   import ManifestAddCanvasMenu from "$lib/components/manifests/ManifestAddCanvasMenu.svelte";
   import type { ObjectListPage } from "@crkn-rcdr/access-data";
-  import { session } from "$app/stores";
+  import { getStores } from "$app/stores";
+
+  const { session } = getStores<Session>();
   //import type { ObjectList } from "@crkn-rcdr/access-data";
 
   /**
@@ -77,7 +79,7 @@ Allows the user to modify the canvas list for a manifest.
    * @returns void
    */
   async function setActiveCanvasLabel(event) {
-    const response = await $session.lapin.mutation("manifest.relabelCanvas", {
+    await $session.lapin.mutation("manifest.relabelCanvas", {
       id: manifest.id,
       canvas: activeCanvas.id,
       label: {
@@ -114,20 +116,18 @@ Allows the user to modify the canvas list for a manifest.
     console.log(event.detail);
     const canvases = event.detail?.selectedCanvases?.map((el) => el.id);
 
-    const response = await $session.lapin.mutation("manifest.addCanvases", {
+    await $session.lapin.mutation("manifest.addCanvases", {
       id: manifest.id,
       canvases,
       user: $session.user,
     });
 
-    console.log(response);
-
     await canvasListComponent.grabCurrentPage();
 
-    const objectResponse = await $session.lapin.query(
-      "accessObject.getPaged",
-      manifest.id
+    const objectResponse = PagedManifest.parse(
+      await $session.lapin.query("accessObject.getPaged", manifest.id)
     );
+
     childrenCount = objectResponse.canvases.count;
     manifest = objectResponse;
     state = "view";
