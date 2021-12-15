@@ -15,7 +15,7 @@ export const AccessObjectTrait = z
     /**
      * Human-readable identifier used to retrieve this object.
      */
-    slug: Slug,
+    slug: Slug.optional(),
 
     /**
      * Human-readable name or title.
