@@ -6,7 +6,13 @@
 
 import type { TRPCClient } from "@trpc/client";
 import type { LapinRouter } from "@crkn-rcdr/lapin-router";
-import type { Noid, Slug, User } from "@crkn-rcdr/access-data";
+import type {
+  DMDTask,
+  Noid,
+  Slug,
+  SucceededDMDTask,
+  User,
+} from "@crkn-rcdr/access-data";
 
 /**
  * Session exported by the `getSession` hook.
@@ -76,6 +82,7 @@ export type DmdItemState = {
 export type DmdItemStates = Map<string, DmdItemState>;
 
 export type DmdTaskState = {
+  task: SucceededDMDTask;
   updateState: "ready" | "updating" | "updated" | "error";
   itemStates: DmdItemStates;
   resultMsg: string;

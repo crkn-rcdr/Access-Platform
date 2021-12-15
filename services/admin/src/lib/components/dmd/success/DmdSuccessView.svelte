@@ -78,6 +78,7 @@ This component shows the view for a dmd task that had its metadata successfully 
         };
       }
       dmdTasksStore.initializeTask(dmdTask.id, {
+        task: dmdTask,
         updateState: "ready",
         itemStates: items,
         resultMsg: "",
