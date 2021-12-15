@@ -127,9 +127,12 @@ async function storeTaskItemMetadata(
   let index = 0;
   let numUpdated = 0;
   let failedSlugs: string[] = [];
-  for (const itemSlug in items) {
+
+  for (const item of dmdTask.task.items) {
+    // To cause the process order to always match the drawn order.
+    const itemSlug = item.id;
     // Only run on items the user selects
-    if (items[itemSlug].shouldUpdate) {
+    if (items[itemSlug]?.shouldUpdate) {
       // Shows a loader
       items[itemSlug].updatedInAccess = "Updating";
       items[itemSlug].updatedInPreservation = "Updating";
