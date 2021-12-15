@@ -1,3 +1,5 @@
+// Used by https://github.com/crkn-rcdr/CIHM-Meta/blob/main/lib/CIHM/Meta/REST/dipstaging.pm ,
+// Which is used by Smelter and RepoSync .
 module.exports = function (doc, req) {
   var data = {};
   var nowdate = new Date();
