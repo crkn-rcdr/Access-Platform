@@ -1,5 +1,5 @@
 import test from "ava";
-import { tester } from "../../testHelper.js";
+import { tester } from "../testHelper.js";
 
 import { ImageRef } from "./ImageRef.js";
 
