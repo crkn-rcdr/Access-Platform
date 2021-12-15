@@ -1,3 +1,4 @@
+// Used by https://github.com/crkn-rcdr/cap/blob/main/CAP/lib/CIHM/Access/Presentation.pm
 module.exports = {
   map: function (doc) {
     if (
