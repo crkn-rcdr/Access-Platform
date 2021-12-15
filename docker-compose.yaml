@@ -54,7 +54,7 @@ services:
     container_name: access-swift
     depends_on:
       - haproxy
-    image: openstackswift/saio:change_820402_latest
+    image: openstackswift/saio:latest
     networks:
       access-platform:
         ipv4_address: 172.30.0.54
