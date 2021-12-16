@@ -4,4 +4,5 @@ module.exports = {
       emit(doc.type || "none", null);
     }
   },
+  reduce: "_count",
 };
