@@ -6,6 +6,6 @@
   import Wizard from "$lib/components/shared/Wizard.svelte";
 </script>
 
-<Wizard title="Descriptive Metadata Updater">
+<Wizard title="Metadata Loader">
   <slot />
 </Wizard>
