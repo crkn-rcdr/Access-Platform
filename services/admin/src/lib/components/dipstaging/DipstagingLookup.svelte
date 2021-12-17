@@ -15,8 +15,7 @@ This component allows the user to find packages in the dipstaging database.
 *Note: `bind:` is required for changes to the properties to be reflected in higher level components.*
 -->
 <script lang="ts">
-  import Flatpickr from "svelte-flatpickr";
-  import { getStores } from "$app/stores";
+  import { getStores, page } from "$app/stores";
   import PrefixSelector from "$lib/components/access-objects/PrefixSelector.svelte";
   import ToggleButtons from "$lib/components/shared/ToggleButtons.svelte";
   import type { Depositor, Session } from "$lib/types";
@@ -24,6 +23,7 @@ This component allows the user to find packages in the dipstaging database.
   import LoadingButton from "$lib/components/shared/LoadingButton.svelte";
   import NotificationBar from "../shared/NotificationBar.svelte";
   import Datepicker from "../shared/Datepicker.svelte";
+  import { onMount } from "svelte";
 
   /**
    * @type {ImportStatus[]}
@@ -182,6 +182,16 @@ This component allows the user to find packages in the dipstaging database.
       }
     }
   }
+
+  onMount(async () => {
+    // if not searched then set default
+    if (startDateStr === "" && endDateStr === "") {
+      startDateStr = "2021-12-16";
+      endDateStr = "2021-12-16";
+      await sendLookupRequestDates();
+      //lookupDone = false;
+    }
+  });
 </script>
 
 <ToggleButtons
@@ -218,7 +228,9 @@ This component allows the user to find packages in the dipstaging database.
       <label for="end">End date:</label><br />
       <input type="date" id="end" name="trip-end" bind:value={endDateStr} /-->
 
-      <span class="flatpickr-date-filter-label">Select a date range:</span>
+      <span class="flatpickr-date-filter-label"
+        >Select a date range (double click for a single date):</span
+      >
       <br />
       <Datepicker
         placeholder="Select a date range"
@@ -244,9 +256,7 @@ This component allows the user to find packages in the dipstaging database.
         showLoader={loading}
         disabled={!depositor || slugListString.length === 0}
       >
-        <span slot="content">
-          {lookupDone ? "Look-up Packages Again" : "Look-up Packages"}
-        </span>
+        <span slot="content"> Look-up Packages </span>
       </LoadingButton>
     {:else if lookupView === BY_DATE_LABEL}
       <LoadingButton
@@ -255,9 +265,7 @@ This component allows the user to find packages in the dipstaging database.
         showLoader={loading}
         disabled={!startDateStr.length || !endDateStr.length}
       >
-        <span slot="content">
-          {lookupDone ? "Look-up Packages Again" : "Look-up Packages"}
-        </span>
+        <span slot="content"> Look-up Packages </span>
       </LoadingButton>
     {/if}
   </span>

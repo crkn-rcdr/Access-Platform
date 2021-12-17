@@ -34,13 +34,19 @@
 
   let dateString;
 
-  function handleDateRangeSelected(event: { detail: any[] }) {
+  function handleDateRangeSelected(event: { detail: any }) {
     if (event.detail.length === 3) {
       const dates = event.detail[1].split(" to ");
-      if (dates.length === 2) {
-        // TODO: handle other formats
+      if (Array.isArray(dates) && dates.length === 2) {
         startDateStr = dates[0];
         endDateStr = dates[1];
+        dispatch("changed", {
+          startDateStr: startDateStr,
+          endDateStr: endDateStr,
+        });
+      } else if (typeof dates === "string") {
+        startDateStr = dates;
+        endDateStr = startDateStr;
         dispatch("changed", {
           startDateStr: startDateStr,
           endDateStr: endDateStr,
