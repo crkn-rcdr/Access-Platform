@@ -86,6 +86,7 @@
     margin-top: 1rem;
     margin-right: 0.5rem;
     margin-left: 0.5rem;
+    border-radius: var(--border-radius);
   }
   a {
     text-decoration: none !important;
