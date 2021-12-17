@@ -1,22 +1,17 @@
 import { z } from "zod";
 
-import { Alias } from "./Alias.js";
-import { Canvas } from "./Canvas.js";
-import { Collection } from "./Collection.js";
-import { Manifest } from "./Manifest.js";
+import { Collection, PagedCollection } from "./Collection.js";
+import { Manifest, PagedManifest } from "./Manifest.js";
+import { Pdf } from "./Pdf.js";
 import { Noid, Slug } from "../util/index.js";
 import { TextRecord } from "./util/TextRecord.js";
 
-export const AccessObject = z.union([Alias, Canvas, Collection, Manifest]);
+export const AccessObject = z.union([Collection, Manifest, Pdf]);
 export type AccessObject = z.infer<typeof AccessObject>;
+export type AccessObjectType = "collection" | "manifest" | "pdf";
 
-export const isAlias = (obj: AccessObject): obj is Alias => {
-  return obj.type === "alias";
-};
-
-export const isCanvas = (obj: AccessObject): obj is Canvas => {
-  return obj.type === "canvas";
-};
+export const PagedAccessObject = z.union([PagedCollection, PagedManifest, Pdf]);
+export type PagedAccessObject = z.infer<typeof PagedAccessObject>;
 
 export const isCollection = (obj: AccessObject): obj is Collection => {
   return obj.type === "collection";
@@ -26,8 +21,10 @@ export const isManifest = (obj: AccessObject): obj is Manifest => {
   return obj.type === "manifest";
 };
 
-export { Alias, EditableAlias } from "./Alias.js";
-export { Canvas, EditableCanvas } from "./Canvas.js";
+export const isPdf = (obj: AccessObject): obj is Pdf => {
+  return obj.type === "pdf";
+};
+
 export {
   Collection,
   EditableCollection,
@@ -42,9 +39,8 @@ export {
   PagedManifest,
   toPagedManifest,
 } from "./Manifest.js";
+export { Pdf } from "./Pdf.js";
 
-export { FileRef } from "./util/FileRef.js";
-export { ImageRef } from "./util/ImageRef.js";
 export {
   ObjectList,
   ObjectListShort,

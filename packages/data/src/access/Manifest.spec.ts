@@ -2,42 +2,11 @@ import test from "ava";
 import { tester } from "../testHelper.js";
 
 import { Manifest, PagedManifest, toPagedManifest } from "./Manifest.js";
-import { ObjectList, ObjectListHandler } from "./util/ObjectList.js";
+import { ObjectListHandler } from "./util/ObjectList.js";
 
 const { isValid } = tester(Manifest);
 
-const testPdfManifest: Manifest = {
-  id: "69429/m0v40js9ht3k",
-  type: "manifest",
-  from: "pdf",
-  dmdType: "dc",
-  pageLabels: [
-    {
-      none: "Image 1",
-    },
-    {
-      none: "Image 2",
-    },
-  ],
-  file: {
-    size: 779098,
-    path: "numeris.RD_2009_SP00_042/data/sip/data/files/document.pdf",
-  },
-  label: {
-    none: "Just a label.",
-  },
-  slug: "numeris.RD_2009_SP00_042",
-  updateInternalmeta: {
-    succeeded: true,
-    message: "",
-    requestDate: "2021-01-14T02:28:24Z",
-    processDate: "2021-01-14T16:30:02Z",
-  },
-  updated: "2021-01-14T16:30:02Z",
-  public: "2020-08-29T23:42:13Z",
-};
-
-export const testCanvasManifest: Manifest = {
+export const testManifest: Manifest = {
   id: "69429/m02n4zg6h671",
   type: "manifest",
   public: "2020-08-29T23:26:06Z",
@@ -52,7 +21,6 @@ export const testCanvasManifest: Manifest = {
     none: "The Pacific Harbor Light: Vol. I, No. 2 (October 24, 1891)",
   },
   dmdType: "issueinfo",
-  from: "canvases",
   behavior: "paged",
   canvases: [
     {
@@ -91,7 +59,7 @@ export const testCanvasManifest: Manifest = {
 };
 
 const testPagedManifest: PagedManifest = {
-  ...testCanvasManifest,
+  ...testManifest,
   canvases: {
     first: "69429/c08s4jp15g01",
     last: "69429/c0cj87k0gq3s",
@@ -99,26 +67,21 @@ const testPagedManifest: PagedManifest = {
   },
 };
 
-test("Manifest schema validates a CanvasManifest", isValid, testCanvasManifest);
-test("Manifest schema validates a PdfManifest", isValid, testPdfManifest);
+test("Manifest schema validates a Manifest", isValid, testManifest);
 
-test("Canvasesless manifests don't get paged", (t) => {
-  t.is(toPagedManifest(testPdfManifest).canvases, null);
-});
-
-test("Canvas manifests can be paged", (t) => {
-  const pm = toPagedManifest(testCanvasManifest);
+test("Manifests can be paged", (t) => {
+  const pm = toPagedManifest(testManifest);
   t.deepEqual(pm, testPagedManifest);
 
-  const list = new ObjectListHandler(testCanvasManifest.canvases as ObjectList);
+  const list = new ObjectListHandler(testManifest.canvases);
 
   const firstPage = list.pageAfter(null, 4);
-  t.deepEqual(firstPage.list, testCanvasManifest.canvases?.slice(0, 4));
+  t.deepEqual(firstPage.list, testManifest.canvases.slice(0, 4));
   const secondPage = list.pageAfter(firstPage.last, 4);
-  t.deepEqual(secondPage.list, testCanvasManifest.canvases?.slice(4, 8));
+  t.deepEqual(secondPage.list, testManifest.canvases.slice(4, 8));
 
   const frPage = list.pageBefore(null, 5);
-  t.deepEqual(frPage.list, testCanvasManifest.canvases?.slice(3, 8));
+  t.deepEqual(frPage.list, testManifest.canvases.slice(3, 8));
   const srPage = list.pageBefore(frPage.first, 5);
-  t.deepEqual(srPage.list, testCanvasManifest.canvases?.slice(0, 3));
+  t.deepEqual(srPage.list, testManifest.canvases.slice(0, 3));
 });

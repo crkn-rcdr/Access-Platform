@@ -1,14 +1,11 @@
 import { z } from "zod";
-import { Described } from "./traits/Described.js";
-import { Identified } from "./traits/Identified.js";
-import { Slugged } from "./traits/Slugged.js";
-import { FileRef } from "./util/FileRef.js";
+import { AccessObjectTrait } from "./AccessObject.js";
+import { FileRef } from "../util/FileRef.js";
 import {
   ObjectList,
   ObjectListShort,
   ObjectListHandler,
 } from "./util/ObjectList.js";
-import { TextRecord } from "./util/TextRecord.js";
 
 /**
  * Any work primarily consisting of a sequence of images.
@@ -16,11 +13,6 @@ import { TextRecord } from "./util/TextRecord.js";
 export const Manifest = z
   .object({
     type: z.enum(["manifest"]),
-
-    /**
-     * Type of manifest source.
-     */
-    from: z.enum(["canvases", "pdf"]),
 
     /**
      * Semantics about what the order of the series of images means.
@@ -51,25 +43,11 @@ export const Manifest = z
     ocrPdf: FileRef.optional(),
 
     /**
-     * The Manifest's Canvas list. Note: optional only because Canvases have not
-     * yet been generated for `pdf` Manifests.
+     * The Manifest's Canvas list.
      */
-    canvases: ObjectList.optional(),
-
-    /**
-     * Reference to the PDF file this manifest was generated from.
-     */
-    file: FileRef.optional(),
-
-    /**
-     * Labels for this PDF's pages. Deprecated, as Canvases will be generated
-     * for `pdf` Manifests.
-     */
-    pageLabels: z.array(TextRecord).optional(),
+    canvases: ObjectList,
   })
-  .merge(Identified)
-  .merge(Slugged)
-  .merge(Described);
+  .merge(AccessObjectTrait);
 
 export type Manifest = z.infer<typeof Manifest>;
 
@@ -83,7 +61,6 @@ export const EditableManifest = Manifest.pick({
   behavior: true,
   viewingDirection: true,
   canvases: true,
-  pageLabels: true,
 })
   .partial()
   .refine(
@@ -103,7 +80,6 @@ export const NewManifest = Manifest.pick({
   viewingDirection: true,
   canvases: true,
   summary: true,
-  from: true,
   type: true,
 }).refine(
   (obj) => Object.keys(obj).length > 0,
@@ -126,10 +102,8 @@ export const toPagedManifest = (m: Manifest): PagedManifest => {
     canvases: null,
   };
 
-  if (m.canvases) {
-    const handler = new ObjectListHandler(m.canvases);
-    pm.canvases = handler.shortForm();
-  }
+  const handler = new ObjectListHandler(m.canvases);
+  pm.canvases = handler.shortForm();
 
   return pm;
 };

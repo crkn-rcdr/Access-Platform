@@ -5,13 +5,12 @@
  */
 
 import {
-  PagedCollection,
-  PagedManifest,
-  EditableAlias,
   EditableCollection,
   EditableManifest,
+  Slug,
   TextRecord,
   ObjectList,
+  PagedAccessObject,
 } from "@crkn-rcdr/access-data";
 import isEqual from "lodash-es/isEqual";
 
@@ -20,7 +19,7 @@ import isEqual from "lodash-es/isEqual";
  * @param editorObject
  * @returns boolean
  */
-function checkValidCollection(editorObject: PagedCollection | PagedManifest) {
+function checkValidCollection(editorObject: PagedAccessObject) {
   try {
     const res = EditableCollection.parse(editorObject);
     return true;
@@ -35,7 +34,7 @@ function checkValidCollection(editorObject: PagedCollection | PagedManifest) {
  * @param editorObject
  * @returns boolean
  */
-function checkValidManifest(editorObject: PagedCollection | PagedManifest) {
+function checkValidManifest(editorObject: PagedAccessObject) {
   try {
     const res = EditableManifest.parse(editorObject);
     return true;
@@ -50,7 +49,7 @@ function checkValidManifest(editorObject: PagedCollection | PagedManifest) {
  * @param editorObject
  * @returns boolean
  */
-function checkChangeIsValid(editorObject: PagedCollection | PagedManifest) {
+function checkChangeIsValid(editorObject: PagedAccessObject) {
   if (editorObject["type"] === "manifest") {
     return checkValidManifest(editorObject);
   } else if (editorObject["type"] === "collection") {
@@ -66,8 +65,8 @@ function checkChangeIsValid(editorObject: PagedCollection | PagedManifest) {
  * @returns boolean
  */
 function checkModelChanged(
-  serverObject: PagedCollection | PagedManifest,
-  editorObject: PagedCollection | PagedManifest
+  serverObject: PagedAccessObject,
+  editorObject: PagedAccessObject
 ) {
   return !isEqual(serverObject, editorObject);
 }
@@ -79,8 +78,8 @@ function checkModelChanged(
  * @returns boolean
  */
 function checkValidDiff(
-  serverObject: PagedCollection | PagedManifest,
-  editorObject: PagedCollection | PagedManifest
+  serverObject: PagedAccessObject,
+  editorObject: PagedAccessObject
 ) {
   let newObj = editorObject;
   let oldObj = serverObject;
@@ -114,7 +113,7 @@ function checkValidDiff(
  */
 function getSlugValidationMsg(slug: string) {
   try {
-    EditableAlias.pick({ slug: true }).parse({ slug });
+    Slug.parse(slug);
     return "";
   } catch (e) {
     return e["issues"][0]["message"];

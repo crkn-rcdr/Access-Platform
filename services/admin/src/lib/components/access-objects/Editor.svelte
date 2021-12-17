@@ -1,12 +1,12 @@
 <!--
 @component
 ### Overview
-The editor component allows for the editing of PagedCollection | PagedManifests. It will dynamically render the appropriate screens and options based on the PagedCollection | PagedManifest sub-type (collection, manifest...)
+The editor component allows for the editing of PagedAccessObjects. It will dynamically render the appropriate screens and options based on the PagedAccessObject type (collection, manifest...)
 
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| serverObject : PagedCollection or PagedManifest  | required | An serverObject of type PagedCollection | PagedManifest that will be editable in the editor. |
+| serverObject : PagedAccessObject | required | An serverObject of type PagedAccessObject that will be editable in the editor. |
 
 ### Usage
 ```  
@@ -16,12 +16,10 @@ The editor component allows for the editing of PagedCollection | PagedManifests.
 -->
 <script lang="ts">
   import type {
-    PagedCollection,
-    PagedManifest,
     Membership,
     ObjectListPage,
+    PagedAccessObject,
   } from "@crkn-rcdr/access-data";
-  import { isManifest, isCollection } from "@crkn-rcdr/access-data";
   import type { SideMenuPageData } from "$lib/types";
   import Toolbar from "$lib/components/shared/Toolbar.svelte";
   import ManifestContentEditor from "$lib/components/manifests/ManifestContentEditor.svelte";
@@ -30,7 +28,7 @@ The editor component allows for the editing of PagedCollection | PagedManifests.
   import EditorActions from "$lib/components/access-objects/EditorActions.svelte";
   import StatusIndicator from "$lib/components/access-objects/StatusIndicator.svelte";
   import InfoEditor from "$lib/components/access-objects/EditorForm.svelte";
-  import { getStores, page } from "$app/stores";
+  import { getStores } from "$app/stores";
   import type { Session } from "$lib/types";
   import { showConfirmation } from "$lib/utils/confirmation";
   import { editorObjectStore } from "$lib/stores/accessObjectEditorStore";
@@ -43,9 +41,9 @@ The editor component allows for the editing of PagedCollection | PagedManifests.
   const { session } = getStores<Session>();
 
   /**
-   * @type {PagedCollection | PagedManifest} Object being edited.
+   * @type {PagedAccessObject} Object being edited.
    */
-  export let serverObject: PagedCollection | PagedManifest;
+  export let serverObject: PagedAccessObject;
 
   /**
    * @type {"create" | "edit"} An indicator variable if the editor is in create mode or edit mode.
@@ -203,12 +201,10 @@ The editor component allows for the editing of PagedCollection | PagedManifests.
    * @param serverObject
    * @returns void
    */
-  async function setDataModel(serverObject: PagedCollection | PagedManifest) {
+  async function setDataModel(serverObject: PagedAccessObject) {
     if (!serverObject) return;
     rfdc = (await import("rfdc")).default();
-    editorObjectStore.set(
-      rfdc(serverObject) as PagedCollection | PagedManifest
-    ); // todo: get this done with zod
+    editorObjectStore.set(rfdc(serverObject) as PagedAccessObject); // todo: get this done with zod
     setPageList();
   }
 

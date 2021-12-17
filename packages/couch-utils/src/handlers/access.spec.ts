@@ -234,22 +234,6 @@ test.serial("Can add and remove members", async (t) => {
   });
 });
 
-test.serial("Can unassign a slug", async (t) => {
-  await t.context.access.unassignSlug({ id: MANIFEST_TWO, user: USER });
-
-  const collection = Collection.parse(await t.context.access.get(COLLECTION));
-
-  const isMember = (id: string) =>
-    collection.members.findIndex((member) => member.id === id) >= 0;
-
-  t.false(isMember(MANIFEST_TWO));
-  t.true(isMember(MANIFEST_ONE));
-
-  const manifest = Manifest.parse(await t.context.access.get(MANIFEST_TWO));
-
-  t.is(manifest.slug, undefined);
-});
-
 test.serial("Can add, move, and remove items", async (t) => {
   const CANVAS_ONE = "69429/c09s1kj9h004";
   const CANVAS_TWO = "69429/c0610vs1v70v";
@@ -358,7 +342,6 @@ test.serial("Manifest can be created", async (t) => {
         behavior: "individuals",
         viewingDirection: "bottom-to-top",
         canvases: [],
-        from: "canvases",
       },
     });
   } catch (e) {
@@ -381,7 +364,6 @@ test.serial("Manifest can be created", async (t) => {
         behavior: "individuals",
         viewingDirection: "bottom-to-top",
         canvases: [],
-        from: "canvases",
       },
     });
 
