@@ -102,14 +102,14 @@ This component allows the user to update the dmd tasks items in an access platfo
         type="radio"
         name="amount"
         value="preservation"
-      /> Upload for Saving in Preservation
+      /> Upload for Saving into Preservation
     </label>
     <!--div class="auto-align auto-align__column auto-align__a-end"-->
 
     <button class="primary" {disabled} on:click={handleUpdatePressed}>
       {$dmdTasksStore[dmdTaskId].updateState === "error"
-        ? "Try Updating Descriptive Metadata Records Again"
-        : "Update Descriptive Metadata Records"}
+        ? "Try Processing Metadata File Again"
+        : "Process Metadata File"}
     </button>
     <!--/div-->
   </div>
