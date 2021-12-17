@@ -23,6 +23,7 @@ This component shows the view for a dmd task that had its metadata successfully 
   import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
   import { dmdTasksStore } from "$lib/stores/dmdTasksStore";
   import IoMdRefresh from "svelte-icons/io/IoMdRefresh.svelte";
+  import IoMdOpen from "svelte-icons/io/IoMdOpen.svelte";
   /**
    * @type { SucceededDMDTask } The dmd task being displayed
    */
@@ -166,7 +167,7 @@ This component shows the view for a dmd task that had its metadata successfully 
     {#if !showAllInvalidError}
       {#if $dmdTasksStore[dmdTask.id].updateState === "updated"}
         <button
-          class="primary"
+          class="secondary"
           on:click={() => {
             location.reload();
           }}
@@ -176,6 +177,23 @@ This component shows the view for a dmd task that had its metadata successfully 
             Re-process File
           </span>
         </button>
+
+        <!-- if preservation update -->
+        <!-- then show button to go to old tool-->
+        {#if $dmdTasksStore[dmdTask.id].shouldUpdateInPreservation}
+          <a
+            class="finish-preservation"
+            href="https://admin.canadiana.ca/packaging "
+            target="_blank"
+          >
+            <button class="primary">
+              <span class="auto-align auto-align__a-center">
+                <span class="icon"><IoMdOpen /></span>
+                Finish Preservation Update
+              </span>
+            </button>
+          </a>
+        {/if}
       {:else}
         <DmdSuccessItemUpdater dmdTaskId={dmdTask.id} bind:depositor />
       {/if}
@@ -217,5 +235,8 @@ This component shows the view for a dmd task that had its metadata successfully 
   .disabled {
     opacity: 0.2;
     pointer-events: none;
+  }
+  .finish-preservation {
+    margin-left: 1rem;
   }
 </style>

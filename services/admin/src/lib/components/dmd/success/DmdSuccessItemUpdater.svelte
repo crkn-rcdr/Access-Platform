@@ -102,7 +102,7 @@ This component allows the user to update the dmd tasks items in an access platfo
         type="radio"
         name="amount"
         value="preservation"
-      /> Upload for Saving into Preservation
+      /> Load for Saving to Preservation
     </label>
     <!--div class="auto-align auto-align__column auto-align__a-end"-->
 

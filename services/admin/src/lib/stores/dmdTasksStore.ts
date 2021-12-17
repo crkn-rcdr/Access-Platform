@@ -105,7 +105,7 @@ async function storeTaskItemMetadata(
   const numItems = getTaskItemLength(
     dmdTaskId,
     items,
-    // Might as well reset the state fr all items to be updated in the same loop.
+    // Might as well reset the state for all items to be updated in the same loop.
     (dmdTaskId, itemSlug, items) => {
       items[itemSlug].updatedInAccessMsg = "";
       items[itemSlug].updatedInPreservationMsg = "";
