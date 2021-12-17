@@ -93,7 +93,7 @@ This component allows the user to update the dmd tasks items in an access platfo
         type="radio"
         name="amount"
         value="access"
-      /> Update in Access
+      /> Load into New Access
     </label>
     <label>
       <input
@@ -102,7 +102,7 @@ This component allows the user to update the dmd tasks items in an access platfo
         type="radio"
         name="amount"
         value="preservation"
-      /> Update in Preservation
+      /> Upload for Saving in Preservation
     </label>
     <!--div class="auto-align auto-align__column auto-align__a-end"-->
 

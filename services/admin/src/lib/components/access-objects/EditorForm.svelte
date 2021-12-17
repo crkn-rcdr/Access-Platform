@@ -163,7 +163,9 @@ This component displays the non content properties for an access editorObject an
         <ul>
           {#each membership as coll}
             <li>
-              <a href="/object/{coll.id}">{coll.label["none"]} ({coll.slug})</a>
+              <a href="/object/edit/{coll.id}"
+                >{coll.label["none"]} ({coll.slug})</a
+              >
               <button
                 class="sm danger"
                 on:click={() => removeMembership(coll.id)}>Remove</button

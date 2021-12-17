@@ -31,29 +31,26 @@ This component controls the rendering of the dipstaging menu (smelter) based on 
 </script>
 
 <SideMenuContainer
-  showHeader={true}
+  showHeader={false}
   fullPage={true}
   bind:activeIndex={activePageIndex}
 >
-  <Toolbar slot="side-menu-header" title="Smelter" />
   <SideMenuPageList>
     <a href="/smelter/find">
       <SideMenuPageListButton>Package Finder</SideMenuPageListButton>
     </a>
     <a href="/smelter/queue/1/10/all">
-      <SideMenuPageListButton>Smelter Queue</SideMenuPageListButton>
+      <SideMenuPageListButton>Queue</SideMenuPageListButton>
     </a>
     <a href="/smelter/status/1/10/all">
-      <SideMenuPageListButton
-        >Smelter Warnings and Failures</SideMenuPageListButton
-      >
+      <SideMenuPageListButton>Warnings and Failures</SideMenuPageListButton>
     </a>
     <a href="/smelter/neversmelted/1/10/all">
-      <SideMenuPageListButton>Packages Never Smelted</SideMenuPageListButton>
+      <SideMenuPageListButton>Packages Never Imported</SideMenuPageListButton>
     </a>
     <a href="/smelter/updated/1/10/all">
       <SideMenuPageListButton
-        >Packages Needing Re-Smelting</SideMenuPageListButton
+        >Packages with Recent Activity</SideMenuPageListButton
       >
     </a>
   </SideMenuPageList>

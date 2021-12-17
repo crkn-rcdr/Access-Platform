@@ -31,8 +31,9 @@
    */
   import FaRegQuestionCircle from "svelte-icons/fa/FaRegQuestionCircle.svelte";
   import FaRegUserCircle from "svelte-icons/fa/FaRegUserCircle.svelte";
-  import { getStores } from "$app/stores";
+  import { getStores, page } from "$app/stores";
   import DropdownMenu from "$lib/components/shared/DropdownMenu.svelte";
+  import { includes } from "lodash-es";
 
   /**
    * @type {TRPCClient<LapinRouter>} Allows the app to to speak to the lapin api
@@ -50,36 +51,73 @@
 
 <pre
   class="site-nav auto-align auto-align__block auto-align__a-center auto-align__j-between auto-align__wrap">
-  <a href="/"><img width="220" src="/static/canadiana-pa-tag-color.png" alt="canadiana by CRKN, par RCDR"/></a>
+  <a href="/"
+    ><img
+      width="220"
+      src="/static/canadiana-pa-tag-color.png"
+      alt="canadiana by CRKN, par RCDR"
+    /></a
+  >
 
-  <nav class="auto-align auto-align__wrap">
-    <a href="/smelter/find">Smelt Packages</a>
-    <a href="/dmd/new">Update Descriptive Metadata</a>
+  {#if $page.path !== "/"}
+    <nav class="auto-align auto-align__wrap">
 
-    <DropdownMenu direction="right">
-      <div slot="dropdown-button" class="  create-object-menu-button">
-        Create New Object
-      </div>
-      <a href="/object/new/collection">
-        Collection
+      <span
+        class="auto-align auto-align__a-center"
+        class:active-nav-item={$page.path.includes("/object/new")}>
+        <DropdownMenu direction="right">
+          <div slot="dropdown-button" class="create-object-menu-button">
+            Create in Access
+          </div>
+          <a href="/object/new/collection">
+            New Collection
+          </a>
+          <a href="/object/new/manifest">
+            New Manifest
+          </a>
+        </DropdownMenu>
+      </span>
+
+      <a
+        class="auto-align auto-align__a-center"
+        href="/smelter/find"
+        class:active-nav-item={$page.path.includes("/smelter")}>
+        Import into Access
       </a>
-      <a href="/object/new/manifest">
-        Manifest
+
+      <a
+        class="auto-align auto-align__a-center"
+        href="/dmd/new"
+        class:active-nav-item={$page.path.includes("/dmd")}>
+        Load Metadata
       </a>
-    </DropdownMenu>
-  </nav>
+
+      <a
+        class="auto-align auto-align__a-center"
+        href="/object/edit"
+        class:active-nav-item={$page.path.includes("/object/edit")}>
+        Edit in Access
+      </a>
+      
+    </nav>
+  {/if}
   
   <div class="right-menu auto-align auto-align__a-center">
-    <a href="https://github.com/crkn-rcdr/Access-Platform/issues" target="_blank" data-tooltip="Click for help!" data-tooltip-flow="bottom">
+    <a
+      href="https://github.com/crkn-rcdr/Access-Platform/issues"
+      target="_blank"
+      data-tooltip="Click for help!"
+      data-tooltip-flow="bottom">
       <div class="icon">
-        <FaRegQuestionCircle/>
+        <FaRegQuestionCircle />
       </div>
     </a>
     <DropdownMenu direction="right">
       <div slot="dropdown-button" class="icon">
-        <FaRegUserCircle/>
+        <FaRegUserCircle />
       </div>
-      <div class="disabled">Logged in as: <b>{$session.user.name}</b>, {$session.user.email}.</div>
+      <div class="disabled">Logged in as: <b>{$session.user.name}</b>, {$session
+          .user.email}.</div>
     </DropdownMenu>
   </div>
 </pre>
@@ -92,28 +130,36 @@
   }
   pre {
     position: relative;
-    /*z-index: 1;*/
   }
   .site-nav {
+    background-color: var(--nav-bg);
+    margin: 0;
     padding: 0 1rem;
-    background-color: var(--base-bg);
-    /*filter: brightness(1.1);
-    z-index: 1;*/
+    min-height: 6rem;
   }
   .icon {
     padding: 0.1rem;
   }
   nav > * {
     font-family: "Roboto";
-    margin-right: var(--perfect-fourth-4);
-    color: var(--primary) !important;
+    color: var(--secondary) !important;
     width: min-content;
+    height: 6rem;
+    padding: 0 1rem;
+    background: var(--nav-item-bg);
   }
+  a {
+    text-decoration: none !important;
+  }
+  .active-nav-item {
+    background: var(--nav-item-active-bg) !important;
+    color: var(--dark-font) !important;
+  }
+  nav > *:hover {
+    color: var(--dark-font) !important;
+  }
+
   .right-menu > * {
     margin-right: 1rem;
-  }
-  .create-object-menu-button {
-    text-decoration: underline;
-    color: var(--primary) !important;
   }
 </style>

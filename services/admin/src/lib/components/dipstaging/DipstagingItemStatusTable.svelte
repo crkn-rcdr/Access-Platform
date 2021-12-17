@@ -280,7 +280,7 @@ This component shows the results of a dipstaging find-package(s) request. It all
       on:click={handleRunSmelterPressed}
       disabled={!itemsAreSelected}
     >
-      Run Smelter on Selected Packages
+      Import Selected Packages into Access
     </button>
   </div>
 
@@ -290,10 +290,10 @@ This component shows the results of a dipstaging find-package(s) request. It all
         <th>
           <input type="checkbox" on:click={toggleAllSelected} checked />
         </th>
-        <th>Id</th>
+        <th>AIP ID</th>
         <th>Slug</th>
         <th>Ingest Date</th>
-        <th>Smelt Status</th>
+        <th>Import Status</th>
       </tr>
     </thead>
     <tbody>
@@ -345,13 +345,13 @@ This component shows the results of a dipstaging find-package(s) request. It all
             >
               <span class="status-text">
                 {#if sucessfulSmeltRequestMap[importStatus.id]}
-                  Smelter is running on the package! <a
+                  This package is being imported into access! <a
                     target="_blank"
                     href="https://access-dev.canadiana.ca/smelter/queue"
                     ><br />Track its status in the 'Queue' tab.</a
                   >
                 {:else if importStatus.status === "processing"}
-                  Smelter is running on the package! <a
+                  This package is being imported into access! <a
                     target="_blank"
                     href="https://access-dev.canadiana.ca/smelter/queue"
                     ><br />Track its status in the 'Queue' tab.</a
@@ -359,20 +359,20 @@ This component shows the results of a dipstaging find-package(s) request. It all
                 {:else if importStatus.status === "not-found"}
                   Package not found.
                 {:else if "reposManifestDate" in importStatus && importStatus["reposManifestDate"] && "processDate" in importStatus && importStatus["processDate"] && Date.parse(importStatus["reposManifestDate"]) > Date.parse(importStatus["processDate"])}
-                  Package requires re-smelting.
+                  This package has had recent activity.
                 {:else if importStatus.status === "succeeded"}
-                  Succeeded
+                  This package successfully imported.
                 {:else if importStatus.status === "failed"}
-                  Failed
+                  This package failed to import.
                 {:else if importStatus.status === "new"}
-                  Never Smelted
+                  This package was never imported.
                 {/if}
               </span>
               {#if importStatus.status === "succeeded" || importStatus.status === "failed"}
                 <span
                   class="icon"
                   on:click={() => handleItemExpanded(importStatus)}
-                  data-tooltip="Information on previous smelter run..."
+                  data-tooltip="Information on previous import attempt..."
                 >
                   {#if expandedMap[importStatus.id]}
                     <FaAngleDown />
@@ -390,7 +390,7 @@ This component shows the results of a dipstaging find-package(s) request. It all
                 <table>
                   <tbody>
                     <tr>
-                      <td class="detail-label">Smelt Status:</td>
+                      <td class="detail-label">Import Status:</td>
                       <td
                         >{importStatus.status === "succeeded"
                           ? "Succeeded"

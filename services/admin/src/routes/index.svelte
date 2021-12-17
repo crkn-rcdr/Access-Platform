@@ -3,41 +3,60 @@
    * @file
    * @description This is the main page for the app
    */
-  import TypeAhead from "$lib/components/access-objects/TypeAhead.svelte";
-  import { Noid } from "@crkn-rcdr/access-data";
+  import DropdownMenu from "$lib/components/shared/DropdownMenu.svelte";
+  import { getStores, page } from "$app/stores";
+  import type { Session } from "$lib/types";
+  /**
+   * @type {Session} The session store that contains the module for sending requests to lapin.
+   */
+  const { session } = getStores<Session>();
   //import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
-  import PrefetchLoader from "$lib/components/shared/PrefetchLoader.svelte";
+  let name = "";
 
-  /**
-   * @type {string} The link to the object selected form the search bar.
-   */
-  let objectHref: string;
-
-  /**
-   * Routes to the object the user clicks from the TypeAhead component
-   * @param event
-   * @returns void
-   */
-  async function slugSelected(event: CustomEvent<string>) {
-    const noid = event.detail;
-    try {
-      if (Noid.parse(noid)) objectHref = `/object/${noid}`;
-    } catch (e) {
-      console.log(e);
-    }
-  }
+  $: name = $session?.user?.name?.split(" ")[0];
 </script>
 
-<PrefetchLoader bind:href={objectHref}>
-  <div class="notifications">
-    <!--NotificationBar message="New fix pushed!" status="success" />
+<div class="notifications">
+  <!--NotificationBar message="New fix pushed!" status="success" />
     <NotificationBar message="There is some error!" status="fail" />
     <NotificationBar
       message="The platform is experiencing an outage."
       status="warn"
     /-->
+</div>
+
+{#if $page.path === "/"}
+  <div
+    class="home-content auto-align auto-align__column auto-align__a-center auto-align__j-center"
+  >
+    <p>Hi {name.length ? `, ${name}` : ""}. What would you like to do today?</p>
+    <nav class="auto-align auto-align__wrap">
+      <span class="auto-align auto-align__a-center">
+        <DropdownMenu direction="right">
+          <div slot="dropdown-button" class="create-object-menu-button">
+            Create in Access
+          </div>
+          <a href="/object/new/collection"> New Collection </a>
+          <a href="/object/new/manifest"> New Manifest </a>
+        </DropdownMenu>
+      </span>
+
+      <a class="auto-align auto-align__a-center" href="/smelter/find">
+        Import into Access
+      </a>
+
+      <a class="auto-align auto-align__a-center" href="/dmd/new">
+        Load Metadata
+      </a>
+
+      <a class="auto-align auto-align__a-center" href="/object/edit">
+        Edit in Access
+      </a>
+    </nav>
   </div>
-  <div class="title">
+{/if}
+
+<!--div class="title">
     <img
       class="logo"
       src="/static/canadiana-pa-tag-color.png"
@@ -49,13 +68,29 @@
       placeholder="Search for existing collections and manifests to edit..."
       on:selected={slugSelected}
     />
-  </div>
-</PrefetchLoader>
-
+  </div-->
 <style>
   .notifications {
     padding-top: var(--perfect-fourth-3);
   }
+  .home-content {
+    width: 100%;
+  }
+  nav > * {
+    font-family: "Roboto";
+    color: var(--dark-font) !important;
+    width: fit-content;
+    height: 6rem;
+    padding: 0 1rem;
+    background: var(--nav-item-bg);
+    margin-top: 1rem;
+    margin-right: 0.5rem;
+    margin-left: 0.5rem;
+  }
+  a {
+    text-decoration: none !important;
+  }
+  /*
   .title,
   .title img {
     position: relative;
@@ -80,5 +115,5 @@
     .search {
       padding-left: 5.5rem;
     }
-  }
+  }*/
 </style>

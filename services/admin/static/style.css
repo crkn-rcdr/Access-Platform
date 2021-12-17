@@ -7,7 +7,7 @@
   /* Colours */
   --teal: #1f8591;
   --teal-light: #c0d1d3;
-  --grey-light: #eee;
+  --grey-light: #eee; /*ebebeb;*/ /*;*/
   --green: #368d00;
   --green-light: #dbf1cd;
   --grey: #686868;
@@ -26,14 +26,22 @@
   --dark-font: black;
 
   /* App Theme */
-  /* Change this to set the app bg color */
+  /* Change this to set the app base bg color */
   --base-bg: white;
   /* Change this to set the app bg color */
   --light-bg: #f8f8f8;
-  /* Change this to set the toolbar, tables, menus etc. colour */
+  /* Change this to set the nav bg color */
+  --nav-bg: #f3f3f3;
+  --nav-item-bg: #f0efef;
+  --nav-item-active-bg: var(--light-bg);
+  /* Change this to set the toolbar colour */
+  --toolbar-bg: #ececec; /*e6e6e6;*/
+  /* Change this to set the tables, menus etc. colour */
   --structural-div-bg: var(--grey-light);
   /* Change this to set the bg color for components that need a darker backgrop, ex: canvas viewer */
   --backdrop-bg: #ddd;
+  /* Change this to set the wizard backdrop colour */
+  --wizard-bg: #f8f8f8;
   /* Change this to set the bg color for components of medium contrast */
   --dark-bg: #333;
   /* Change this to set the bg color for items of high contrast*/

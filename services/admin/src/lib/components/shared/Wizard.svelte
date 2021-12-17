@@ -43,7 +43,7 @@ This component displays a wizard-like view used on the smelter and dmd pages.
 <style>
   .backdrop {
     padding: var(--perfect-fourth-4);
-    background: var(--structural-div-bg); /*var(--color-gradient);*/
+    background: var(--wizard-bg); /*var(--color-gradient);*/
     height: 100%;
     min-height: calc(100vh - 7.5rem);
   }

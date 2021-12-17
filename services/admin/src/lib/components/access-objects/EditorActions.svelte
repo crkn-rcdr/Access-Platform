@@ -116,7 +116,7 @@ The editor actions component holds functionality that is responsible for perform
               user: $session.user,
               data,
             });
-            goto(`/object/${response}`);
+            goto(`/object/edit/${response}`);
             return {
               success: true,
               details: response,
@@ -134,7 +134,7 @@ The editor actions component holds functionality that is responsible for perform
               user: $session.user,
               data,
             });
-            goto(`/object/${response}`);
+            goto(`/object/edit/${response}`);
             return {
               success: true,
               details: response,

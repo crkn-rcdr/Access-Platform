@@ -48,7 +48,7 @@ This component allows the user to find packages in the dipstaging database.
   /**
    * @type { string } The label for the by-slug toggle
    */
-  const BY_SLUG_LABEL = "Look-up by Slug";
+  const BY_SLUG_LABEL = "Look-up by AIP ID";
 
   /**
    * @type { string } The label for the by-date toggle
@@ -58,7 +58,7 @@ This component allows the user to find packages in the dipstaging database.
   /**
    * @type { string } The selected lookup method
    */
-  let lookupView: string = BY_SLUG_LABEL;
+  let lookupView: string = BY_DATE_LABEL;
 
   /**
    * @type { string } The selected start date to search for items from
@@ -185,9 +185,9 @@ This component allows the user to find packages in the dipstaging database.
 </script>
 
 <ToggleButtons
-  activeIndex={lookupView === BY_SLUG_LABEL ? 0 : 1}
+  activeIndex={lookupView === BY_SLUG_LABEL ? 1 : 0}
   color={lookupDone ? "secondary" : "primary"}
-  options={[BY_SLUG_LABEL, BY_DATE_LABEL]}
+  options={[BY_DATE_LABEL, BY_SLUG_LABEL]}
   on:select={changeView}
 />
 <br />
