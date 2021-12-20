@@ -27,8 +27,6 @@
   }
 </script>
 
-<br />
-<br />
 <PrefetchLoader bind:href={objectHref}>
   <div class="search">
     <TypeAhead
