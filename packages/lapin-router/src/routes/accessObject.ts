@@ -109,4 +109,16 @@ export const accessObjectRouter = createRouter()
         throw httpErrorToTRPC(e);
       }
     },
+  })
+  .mutation("delete", {
+    input: NoidWithUser.parse,
+    async resolve({ input, ctx }) {
+      try {
+        return await ctx.couch.access.delete({
+          document: input.id,
+        });
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
   });

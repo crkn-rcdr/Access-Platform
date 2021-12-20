@@ -157,7 +157,6 @@ importers:
       jsonfn: ^0.31.0
       jsonwebtoken: ^8.5.1
       lodash-es: ^4.17.21
-      moment: ^2.29.1
       npm-run-all: ^4.1.5
       openseadragon: ^2.4.2
       promise-delay: ^2.1.0
@@ -186,7 +185,6 @@ importers:
       jsonfn: 0.31.0
       jsonwebtoken: 8.5.1
       lodash-es: 4.17.21
-      moment: 2.29.1
       openseadragon: 2.4.2
       promise-delay: 2.1.0
       queue-promise: 2.2.1
@@ -2224,10 +2222,6 @@ packages:
   /minimist/1.2.5:
     resolution: {integrity: sha512-FM9nNUYrRBAELZQT3xeZQ7fmMOBg6nWNmJKTcgsJeaLstP/UODVpGsr5OhXhhXg6f+qtJ8uiZ+PUxkDWcgIXLw==}
     dev: true
-
-  /moment/2.29.1:
-    resolution: {integrity: sha512-kHmoybcPV8Sqy59DwNDY3Jefr64lK/by/da0ViFcuA4DH0vQg5Q6Ze5VimxkfQNSC+Mls/Kx53s7TjP1RhFEDQ==}
-    dev: false
 
   /mri/1.1.6:
     resolution: {integrity: sha512-oi1b3MfbyGa7FJMP9GmLTttni5JoICpYBRlq+x5V16fZbLsnL9N3wFqqIm/nIG43FjUFkFh9Epzp/kzUGUnJxQ==}

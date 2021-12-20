@@ -115,6 +115,8 @@ This component shows the results of a dipstaging find-package(s) request or a vi
           sucessfulSmeltRequestMap[item["id"]] = true;
           selectedMap[item["id"]] = false;
           selectedMap = selectedMap;
+          item["status"] = "processing";
+          items = items;
         } catch (e) {
           sucessfulSmeltRequestMap[item["id"]] = false;
           error = e?.message;
@@ -158,8 +160,9 @@ This component shows the results of a dipstaging find-package(s) request or a vi
   function setSelectedModel() {
     if (!items) return;
     for (const item of items) {
-      if (isItemSelectable(item)) selectedMap[item["id"]] = true;
-      else selectedMap[item["id"]] = false;
+      if (!(item["id"] in selectedMap) && isItemSelectable(item))
+        selectedMap[item["id"]] = true;
+      else if (!(item["id"] in selectedMap)) selectedMap[item["id"]] = false;
     }
     selectedMap = selectedMap;
   }
@@ -271,7 +274,7 @@ This component shows the results of a dipstaging find-package(s) request or a vi
           <tr>
             <td>
               <div class="row auto-align">
-                {#if !slugUnavailableMap[item["id"]]}
+                {#if !slugUnavailableMap[item["id"]] && !("status" in item && item.status === "processing") && !("status" in item && item.status === "not-found")}
                   <div class="row-check">
                     <input
                       type="checkbox"
