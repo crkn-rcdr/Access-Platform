@@ -390,7 +390,7 @@ This component shows the results of a dipstaging package view. It allows the use
                   {#if sucessfulSmeltRequestMap[legacyPackage.id]}
                     This package is being imported into access! <a
                       target="_blank"
-                      href="https://access-dev.canadiana.ca/smelter/queue"
+                      href="/smelter/queue"
                       ><br />Track its status in the 'Queue' tab.</a
                     >
                   {:else if view === "queue"}
