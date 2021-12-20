@@ -186,8 +186,13 @@ This component allows the user to find packages in the dipstaging database.
   onMount(async () => {
     // if not searched then set default
     if (startDateStr === "" && endDateStr === "") {
-      startDateStr = "2021-12-16";
-      endDateStr = "2021-12-16";
+      let date = new Date();
+      date.setDate(date.getDate() - 1);
+      startDateStr = date.toISOString().split("T")[0];
+      endDateStr = startDateStr;
+
+      console.log("startDateStr", startDateStr, "endDateStr", endDateStr);
+
       await sendLookupRequestDates();
       //lookupDone = false;
     }
