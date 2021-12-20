@@ -6,6 +6,7 @@
   import DipstagingLookup from "$lib/components/dipstaging/DipstagingLookup.svelte";
   import type { ImportStatus } from "@crkn-rcdr/access-data";
   import DipstagingItemStatusTable from "$lib/components/dipstaging/DipstagingItemStatusTable.svelte";
+  import DipstagingTable from "$lib/components/dipstaging/DipstagingTable.svelte";
   let results: ImportStatus[];
 </script>
 
@@ -15,7 +16,10 @@
   </div>
 
   <div class="table-wrap">
-    <DipstagingItemStatusTable bind:results />
+    <DipstagingTable bind:results />
+
+    <!--DipstagingItemStatusTable bind:results /-->
+
     {#if !results}
       <div class="lookup-msg">
         <br />

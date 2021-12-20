@@ -26,10 +26,14 @@
 </div>
 
 {#if $page.path === "/"}
+  <br />
+  <br />
   <div
     class="home-content auto-align auto-align__column auto-align__a-center auto-align__j-center"
   >
-    <p>Hi {name.length ? `, ${name}` : ""}. What would you like to do today?</p>
+    <h4>
+      Hi {name.length ? `, ${name}` : ""}. What would you like to do today?
+    </h4>
     <nav class="auto-align auto-align__wrap">
       <span class="auto-align auto-align__a-center">
         <DropdownMenu direction="right">

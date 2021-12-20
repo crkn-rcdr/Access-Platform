@@ -38,6 +38,8 @@ The resolver component allows the user to enter a slug, and then a request is se
 
   export let alwaysShowIfFound: boolean = false;
 
+  export let errorMsg: string = "⚠️ Slug in use";
+
   /**
    * @type {"sm" | "rg"}
    * To display the resolve component in a small form or in full form
@@ -162,7 +164,7 @@ The resolver component allows the user to enter a slug, and then a request is se
       {:else if isFound}
         <slot name="in-use">
           <a target="_blank" href={`/object/edit/${noid}`}>
-            <NotificationBar message="⚠️ Slug in use" status="fail" />
+            <NotificationBar message={errorMsg} status="fail" />
           </a>
         </slot>
       {:else if !isFound}
