@@ -37,7 +37,10 @@
     <nav class="auto-align auto-align__wrap">
       <span class="drop-down-wrap-page auto-align auto-align__a-center">
         <DropdownMenu direction="right">
-          <div slot="dropdown-button" class="create-object-menu-button">
+          <div
+            slot="dropdown-button"
+            class="create-object-menu-button auto-align auto-align__a-center"
+          >
             Create in Access
           </div>
           <a href="/object/new/collection"> New Collection </a>
@@ -101,11 +104,11 @@
     text-decoration: none !important;
   }
   :global(.drop-down-wrap-page > div) {
-    height: 100%;
     align-items: center;
     color: var(--dark-font);
   }
   :global(.drop-down-wrap-page .create-object-menu-button) {
+    height: 6rem;
     color: var(--light-font) !important;
   }
   /*

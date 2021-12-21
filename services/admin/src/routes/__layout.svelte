@@ -60,13 +60,14 @@
   >
 
   {#if $page.path !== "/"}
-    <nav class="auto-align auto-align__wrap">
+    <nav class="navbar auto-align auto-align__wrap">
 
-      <span
-        class="drop-down-wrap auto-align auto-align__a-center"
-        class:active-nav-item={$page.path.includes("/object/new")}>
-        <DropdownMenu direction="right">
-          <div slot="dropdown-button" class="create-object-menu-button">
+      <DropdownMenu direction="right">
+          <div
+          slot="dropdown-button"
+          class={`create-object-menu-button auto-align auto-align__a-center ${
+            $page.path.includes("/object/new") ? "active-nav-item" : ""
+          }`}>
             Create in Access
           </div>
           <a href="/object/new/collection">
@@ -75,8 +76,7 @@
           <a href="/object/new/manifest">
             New Manifest
           </a>
-        </DropdownMenu>
-      </span>
+      </DropdownMenu>
 
       <a
         class="auto-align auto-align__a-center"
@@ -162,8 +162,12 @@
   .right-menu > * {
     margin-right: 1rem;
   }
-  :global(.drop-down-wrap > div) {
-    height: 100%;
-    align-items: center;
+  :global(.navbar .create-object-menu-button) {
+    height: 6rem;
+    padding: 0 1rem;
+  }
+  :global(.navbar .create-object-menu-button:hover) {
+    background: #fefefe; /*TODO: clean */
+    color: var(--dark-font) !important;
   }
 </style>
