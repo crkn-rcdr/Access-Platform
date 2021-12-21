@@ -169,7 +169,7 @@ The editor actions component holds functionality that is responsible for perform
         ) {
           try {
             const response = await $session.lapin.mutation(
-              `accessObject.unassignSlug`,
+              `accessObject.delete`,
               {
                 id: editorObject.id,
                 user: $session.user,
@@ -177,6 +177,7 @@ The editor actions component holds functionality that is responsible for perform
             );
             dispatch("updated");
             //await pullServerObject();
+            goto("/object/edit");
             return { success: true, details: "" };
           } catch (e) {
             console.log(e);
@@ -290,29 +291,42 @@ The editor actions component holds functionality that is responsible for perform
   }
 
   async function openDeletionModal() {
+    console.log(serverObject.updateInternalmeta);
     if (
       !serverObject.updateInternalmeta ||
-      "succeeded" in serverObject.updateInternalmeta
+      (serverObject.updateInternalmeta &&
+        "succeeded" in serverObject.updateInternalmeta)
     ) {
-      if (serverObject.updateInternalmeta["succeeded"]) {
+      console.log("one");
+      if (
+        serverObject.updateInternalmeta &&
+        serverObject.updateInternalmeta["succeeded"]
+      ) {
+        console.log("two");
+        isDeleteModalWaiting = false;
+        setDeletionModalTextEnabled();
+      } else if (!serverObject.updateInternalmeta) {
         isDeleteModalWaiting = false;
         setDeletionModalTextEnabled();
       } else {
+        console.log("three");
         isDeleteModalWaiting = false;
         setDeletionModalTextError();
       }
     } else {
+      console.log("four");
       isDeleteModalWaiting = true;
       setDeletionModalTextWaiting();
 
       (function requestLoop(i) {
         setTimeout(async () => {
           isDeleteModalWaiting = true;
-          console.log("pulling serverObject");
           await pullServerObject();
-          console.log("pulled!", serverObject);
-          if ("succeeded" in serverObject.updateInternalmeta) {
-            if (serverObject.updateInternalmeta["succeeded"]) {
+          if (
+            serverObject.updateInternalmeta &&
+            "succeeded" in serverObject.updateInternalmeta
+          ) {
+            if (serverObject.updateInternalmeta?.["succeeded"]) {
               isDeleteModalWaiting = false;
               setDeletionModalTextEnabled();
             } else {
@@ -320,7 +334,6 @@ The editor actions component holds functionality that is responsible for perform
               setDeletionModalTextError();
             }
           } else {
-            console.log("Update not done");
             //isDeleteModalWaiting = true;
             //setDeletionModalTextWaiting();
             if (--i) {
