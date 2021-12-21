@@ -63,7 +63,7 @@
     <nav class="auto-align auto-align__wrap">
 
       <span
-        class="auto-align auto-align__a-center"
+        class="drop-down-wrap auto-align auto-align__a-center"
         class:active-nav-item={$page.path.includes("/object/new")}>
         <DropdownMenu direction="right">
           <div slot="dropdown-button" class="create-object-menu-button">
@@ -156,10 +156,14 @@
     color: var(--dark-font) !important;
   }
   nav > *:hover {
+    filter: brightness(1.1);
     color: var(--dark-font) !important;
   }
-
   .right-menu > * {
     margin-right: 1rem;
+  }
+  :global(.drop-down-wrap > div) {
+    height: 100%;
+    align-items: center;
   }
 </style>

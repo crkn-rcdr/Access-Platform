@@ -35,7 +35,7 @@
       Hi {name.length ? `, ${name}` : ""}. What would you like to do today?
     </h4>
     <nav class="auto-align auto-align__wrap">
-      <span class="auto-align auto-align__a-center">
+      <span class="drop-down-wrap-page auto-align auto-align__a-center">
         <DropdownMenu direction="right">
           <div slot="dropdown-button" class="create-object-menu-button">
             Create in Access
@@ -82,18 +82,31 @@
   }
   nav > * {
     font-family: "Roboto";
-    color: var(--dark-font) !important;
     width: fit-content;
     height: 6rem;
     padding: 0 1rem;
     background: var(--nav-item-bg);
+    color: var(--dark-font) !important;
+    background: var(--primary);
+    color: var(--light-font) !important;
     margin-top: 1rem;
     margin-right: 0.5rem;
     margin-left: 0.5rem;
     border-radius: var(--border-radius);
   }
+  nav > *:hover {
+    filter: brightness(1.1);
+  }
   a {
     text-decoration: none !important;
+  }
+  :global(.drop-down-wrap-page > div) {
+    height: 100%;
+    align-items: center;
+    color: var(--dark-font);
+  }
+  :global(.drop-down-wrap-page .create-object-menu-button) {
+    color: var(--light-font) !important;
   }
   /*
   .title,
