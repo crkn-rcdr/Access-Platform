@@ -12,6 +12,7 @@ const MANIFEST_ONE = "69429/m0696zw19t6s";
 const MANIFEST_TWO = "69429/m02n4zg6h671";
 const MANIFEST_TWO_SLUG = "oocihm.8_06941_2";
 const NEW_MANIFEST_NOID = "69429/g04x54f1mk14";
+const DELETE_MANIFEST_NOID = "69429/g04x54f1mk15";
 const COLLECTION = "69429/s0vq2s46j98h";
 const COLLECTION_SLUG = "oocihm.8_06941";
 const NEW_COLLECTION_NOID = "69429/g0154dn3zs9c";
@@ -371,8 +372,47 @@ test.serial("Manifest can be created", async (t) => {
   } catch (e) {
     console.log(e);
   }
+}); // n.b MANIFEST_TWO is no longer a member of COLLECTION
+
+test.serial("Access object can be deleted", async (t) => {
+  try {
+    const doc = await t.context.access.createManifest({
+      id: DELETE_MANIFEST_NOID,
+      user: USER,
+      data: {
+        slug: "definitely_available_4",
+        label: {
+          none: "I will succeed",
+        },
+        type: "manifest",
+        summary: {
+          none: "Succeed I will",
+        },
+        behavior: "individuals",
+        viewingDirection: "bottom-to-top",
+        canvases: [],
+      },
+    });
+
+    t.is(doc.slug, "definitely_available_4");
+  } catch (e) {
+    console.log(e);
+  }
+
+  // DELETE_MANIFEST_NOID
+  try {
+    await t.context.access.delete({ document: DELETE_MANIFEST_NOID });
+  } catch (e) {
+    console.log(e);
+  }
+
+  // Attempt to get the deleted object should fail
+  try {
+    await t.context.access.get(DELETE_MANIFEST_NOID);
+  } catch (e) {
+    t.truthy(e);
+  }
 });
-// n.b MANIFEST_TWO is no longer a member of COLLECTION
 
 test.after.always(async (t) => {
   await t.context.testDestroy("access", "handler");
