@@ -131,7 +131,6 @@ async function storeTaskItemMetadata(
   for (const item of dmdTask.task.items) {
     // To cause the process order to always match the drawn order.
     const itemSlug = item.id;
-    if (itemSlug !== "49602") continue;
     // Only run on items the user selects
     if (items[itemSlug]?.shouldUpdate) {
       // Shows a loader
@@ -155,7 +154,7 @@ async function storeTaskItemMetadata(
             slug: items[itemSlug].slug,
             user: user,
           });
-          console.log("access res:", res);
+          //console.log("access res:", res);
           items[itemSlug].updatedInAccess = "Yes";
           items[itemSlug].updatedInAccessMsg =
             "Metadata file updated successfully.";
@@ -183,7 +182,7 @@ async function storeTaskItemMetadata(
             index,
             id: items[itemSlug].slug,
           });
-          console.log("pres r:", res);
+          //console.log("pres r:", res);
           items[itemSlug].updatedInPreservation = "Yes";
           items[itemSlug].updatedInPreservationMsg =
             "Metadata file updated successfully.";
@@ -216,9 +215,9 @@ async function storeTaskItemMetadata(
     // Update progress bar
     const percentage = Math.round((numUpdated / numItems) * 100);
     updateTask(dmdTaskId, "updatedProgressPercentage", percentage);
-    console.log("percentage ", percentage);
+    /*console.log("percentage ", percentage);
     console.log("numUpdated ", numUpdated);
-    console.log("numItems ", numItems);
+    console.log("numItems ", numItems);*/
 
     index++;
   }

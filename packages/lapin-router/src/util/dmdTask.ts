@@ -347,13 +347,13 @@ const deleteOldMetadataFileIfExists = async (
   ctx: LapinContext,
   accessObject: any
 ) => {
-  console.log(accessObject, "check", accessObject && "dmdType" in accessObject);
+  //console.log(accessObject, "check", accessObject && "dmdType" in accessObject);
   if (accessObject && "dmdType" in accessObject) {
     const type = accessObject.dmdType;
 
     const existingFileName = getDmdTaskItemXMLFileName(accessObject?.id, type);
 
-    console.log("existingFileName", existingFileName);
+    //console.log("existingFileName", existingFileName);
 
     if (existingFileName) {
       let metadataFileExists = false;
@@ -361,17 +361,17 @@ const deleteOldMetadataFileIfExists = async (
         await ctx.swift.accessMetadata.getObject(existingFileName);
         metadataFileExists = true;
       } catch (e: any) {
-        console.log(e?.message);
-        console.log("No existing metadata file in swift");
+        console.log("DMD error: ", e?.message);
+        //console.log("No existing metadata file in swift");
       }
 
       if (metadataFileExists) {
-        console.log("Existing metadata file in swift, deleting...");
+        //console.log("Existing metadata file in swift, deleting...");
         try {
           await ctx.swift.accessMetadata.deleteObject(existingFileName);
           return true;
         } catch (e: any) {
-          console.log(e?.message);
+          console.log("DMD error: ", e?.message);
           return false;
         }
       }
@@ -408,7 +408,7 @@ const updateDMDTypeInAccess = async (
       }
     }
   } catch (e: any) {
-    console.log(e?.message);
+    console.log("DMD error: ", e?.message);
     return false;
   }
   return true;
