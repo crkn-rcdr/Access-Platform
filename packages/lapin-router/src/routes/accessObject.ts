@@ -8,8 +8,10 @@ import {
   toPagedManifest,
   toPagedCollection,
   AccessObject,
+  Manifest,
 } from "@crkn-rcdr/access-data";
 import { createRouter, httpErrorToTRPC } from "../router.js";
+import { getDmdTaskItemXMLFileName } from "../util/dmdTask.js";
 
 const NoidWithUser = z.object({
   id: Noid,
@@ -115,77 +117,78 @@ export const accessObjectRouter = createRouter()
     async resolve({ input: id, ctx }) {
       try {
         const accessObj = await ctx.couch.access.get(id);
-        console.log(accessObj);
-        /* Delete from database*/
-        /*const resDb = await ctx.couch.access.delete({
-          document: id,
-        });*/
 
-        /*
-          Deleting an access object should also delete associated files in Swift; specifically, any associated descriptive metadata files and PDFs. Objects with these associated files will have fields in the database that indicate this.
-  
-          Anything associated with that OID in access-files and access-metadata should also be deleted.
-  
-          CIHM::Smelter will accept access deposit requests from a queue, retrieve the relevant data from the preservation platform, split and manipulate preservation METS records, and store the results in Swift using the following scheme.
-  
-          /v1/AUTH_crkn/access-metadata/$noid
-          /dmdMARC.xml
-          /dmdDC.xml
-          /dmdISSUEINFO.xml
-          /ocrALTO.xml
-          /ocrTXTMAP.xml
+        /* Delete files */
+        if (accessObj.type === "manifest") {
+          const manifest = Manifest.parse(accessObj);
+          if (manifest.ocrPdf?.extension) {
+            // Check if the file exists
+            let fileExistsOnSwift = false;
+            const fileName = `${manifest.id}/${manifest.ocrPdf.extension}`;
+            try {
+              await ctx.swift.accessFiles.getObject(fileName);
+              fileExistsOnSwift = true;
+            } catch (e: any) {
+              console.log(e?.message, "No files found on swift.");
+            }
 
-          /v1/AUTH_crkn/access-files/$noid.$ext
-          Couch databases for collections, manifests, and canvases will be populated with the required information to link these objects together.
-        */
+            // If it does remove it from swift
+            if (fileExistsOnSwift) {
+              console.log("Files exist on swift. Deleting...");
+              await ctx.swift.accessFiles.deleteObject(fileName);
+            }
+          } else {
+            console.log("No file to delete.");
+          }
+        } else if (accessObj.type === "pdf") {
+          const pdf = Pdf.parse(accessObj);
+          if (pdf.file?.extension) {
+            // Check if the file exists
+            let fileExistsOnSwift = false;
+            const fileName = `${pdf.id}/${pdf.file.extension}`;
+            try {
+              await ctx.swift.accessFiles.getObject(fileName);
+              fileExistsOnSwift = true;
+            } catch (e: any) {
+              console.log(e?.message, "No files found on swift.");
+            }
 
-        let filesExistOnSwift = false;
-
-        try {
-          //ocrPdf
-          //dmdType
-          /*let file = await ctx.swift.accessFiles.getObject(
-            "69429/m0000000005b.pdf"
-          );
-          console.log(file);*/
-
-          let files = await ctx.swift.accessFiles.listObjects();
-          console.log(files);
-
-          filesExistOnSwift = true;
-        } catch (e: any) {
-          console.log(e?.message, "No files on swift.");
+            // If it does remove it from swift
+            if (fileExistsOnSwift) {
+              console.log("Files exist on swift. Deleting...");
+              await ctx.swift.accessFiles.deleteObject(fileName);
+            }
+          } else {
+            console.log("No file to delete.");
+          }
         }
 
-        if (filesExistOnSwift) {
-          console.log("Files exist on swift. Deleting...");
-        }
-
+        /* Delete metadata */
         let metadataExistsOnSwift = false;
-
+        let metadataFileName: string | null = "";
         try {
-          let metadata = await ctx.swift.accessMetadata.getObject(
-            "69429/m0000000005b"
-          );
-          console.log(metadata);
-          metadataExistsOnSwift = true;
+          metadataFileName = getDmdTaskItemXMLFileName(id, accessObj.dmdType);
+          if (metadataFileName) {
+            await ctx.swift.accessMetadata.getObject(metadataFileName);
+            metadataExistsOnSwift = true;
+          } else {
+            console.log("Could not determine name of metadata file.");
+          }
         } catch (e: any) {
-          console.log(e?.message, "No metadata exists on swift.");
+          console.log(e?.message, "No metadata to delete.");
         }
 
-        if (metadataExistsOnSwift) {
+        if (metadataExistsOnSwift && metadataFileName) {
           console.log("Metadata exists on swift. Deleting...");
+          await ctx.swift.accessMetadata.deleteObject(metadataFileName);
         }
 
-        /*const resSwiftFiles = await ctx.swift.accessFiles.deleteObject(
-          input.id
-        );
+        /* Delete from database if other steps did not throw */
+        await ctx.couch.access.delete({
+          document: id,
+        });
 
-        const resSwiftMetadata = await ctx.swift.accessMetadata.deleteObject(
-          input.id
-        );*/
-        console.log("swift");
-        return { success: true }; //, resDb };
+        return { success: true };
       } catch (e: any) {
         console.log(e?.message);
         throw httpErrorToTRPC(e);

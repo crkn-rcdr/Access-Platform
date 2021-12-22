@@ -172,7 +172,7 @@ The editor actions component holds functionality that is responsible for perform
               `accessObject.delete`,
               editorObject.id
             );
-            dispatch("updated");
+            //dispatch("updated");
             //await pullServerObject();
             goto("/object/edit");
             return { success: true, details: "" };
