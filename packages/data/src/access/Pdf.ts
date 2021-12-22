@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { AccessObjectTrait } from "./AccessObject.js";
 import { FileRef } from "../util/FileRef.js";
-import { TextRecord } from "./util/TextRecord.js";
 
 /**
  * Any work primarily consisting of a sequence of images.
@@ -15,10 +14,6 @@ export const Pdf = z
      */
     file: FileRef,
 
-    /**
-     * Labels for this PDF's pages.
-     */
-    pageLabels: z.array(TextRecord),
   })
   .merge(AccessObjectTrait);
 
