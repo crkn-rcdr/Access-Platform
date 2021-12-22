@@ -170,10 +170,7 @@ The editor actions component holds functionality that is responsible for perform
           try {
             const response = await $session.lapin.mutation(
               `accessObject.delete`,
-              {
-                id: editorObject.id,
-                user: $session.user,
-              }
+              editorObject.id
             );
             dispatch("updated");
             //await pullServerObject();

@@ -38,6 +38,7 @@ export const EditableCollection = Collection.pick({
   summary: true,
   behavior: true,
   members: true,
+  dmdType: true,
 })
   .partial()
   .refine(

@@ -61,6 +61,7 @@ export const EditableManifest = Manifest.pick({
   behavior: true,
   viewingDirection: true,
   canvases: true,
+  dmdType: true,
 })
   .partial()
   .refine(

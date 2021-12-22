@@ -131,6 +131,7 @@ async function storeTaskItemMetadata(
   for (const item of dmdTask.task.items) {
     // To cause the process order to always match the drawn order.
     const itemSlug = item.id;
+    if (itemSlug !== "49602") continue;
     // Only run on items the user selects
     if (items[itemSlug]?.shouldUpdate) {
       // Shows a loader
