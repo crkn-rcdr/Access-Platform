@@ -131,7 +131,8 @@ This component allows the user to find packages in the dipstaging database.
   async function sendLookupRequestDates() {
     loading = true;
     error = "";
-    if (startDateStr?.length && endDateStr?.length) {
+    if (startDateStr?.length) {
+      if (!endDateStr?.length) endDateStr = startDateStr;
       try {
         const response = await $session.lapin.query(
           "dipstaging.listFromDates",
@@ -175,7 +176,7 @@ This component allows the user to find packages in the dipstaging database.
     loading = false;
   }
 
-  function handleDateRangeSelected(event: { detail: any[] }) {
+  /*function handleDateRangeSelected(event: { detail: any[] }) {
     console.log(event.detail);
     if (event.detail.length === 3) {
       const dates = event.detail[1].split(" to ");
@@ -184,7 +185,7 @@ This component allows the user to find packages in the dipstaging database.
         endDateStr = dates[1];
       }
     }
-  }
+  }*/
 
   onMount(async () => {
     // if not searched then set default
