@@ -1,6 +1,6 @@
 module.exports = {
   map: function (doc) {
-    if (doc.type === "manifest") {
+    if (doc.type !== "collection") {
       if (typeof doc.file == "object") {
         if (typeof doc.ocrPdf == "object") {
           emit("both", doc.slug);

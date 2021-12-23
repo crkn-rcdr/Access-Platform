@@ -9,14 +9,6 @@ const testPdf: Pdf = {
   id: "69429/m0v40js9ht3k",
   type: "pdf",
   dmdType: "dc",
-  pageLabels: [
-    {
-      none: "Image 1",
-    },
-    {
-      none: "Image 2",
-    },
-  ],
   file: {
     size: 779098,
     path: "numeris.RD_2009_SP00_042/data/sip/data/files/document.pdf",
