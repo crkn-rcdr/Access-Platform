@@ -117,18 +117,11 @@ export const accessObjectRouter = createRouter()
     async resolve({ input: id, ctx }) {
       try {
         const accessObj = await ctx.couch.access.get(id);
+        console.log(accessObj);
 
         /* Delete files */
-        if (accessObj.type === "manifest") {
+        if (accessObj?.type === "manifest") {
           const manifest = Manifest.parse(accessObj);
-          manifest["ocrPdf"] = {
-            size: 1,
-            extension: "pdf",
-          };
-          await ctx.swift.accessFiles.putObject(
-            `${manifest.id}/${manifest.ocrPdf.extension}`,
-            { data: "", contentType: "application/xml" }
-          );
           if (manifest.ocrPdf?.extension) {
             // Check if the file exists
             let fileExistsOnSwift = false;
@@ -148,7 +141,7 @@ export const accessObjectRouter = createRouter()
           } else {
             console.log("No file to delete.");
           }
-        } else if (accessObj.type === "pdf") {
+        } else if (accessObj?.type === "pdf") {
           const pdf = Pdf.parse(accessObj);
           if (pdf.file?.extension) {
             // Check if the file exists
@@ -172,26 +165,26 @@ export const accessObjectRouter = createRouter()
         }
 
         /* Delete metadata */
-        let metadataExistsOnSwift = false;
-        let metadataFileName: string | null = "";
-        try {
-          metadataFileName = getDmdTaskItemXMLFileName(id, accessObj.dmdType);
-          if (metadataFileName) {
-            await ctx.swift.accessMetadata.getObject(metadataFileName);
-            metadataExistsOnSwift = true;
-          } else {
-            console.log("Could not determine name of metadata file.");
+        if (accessObj?.dmdType) {
+          let metadataExistsOnSwift = false;
+          let metadataFileName: string | null = "";
+          try {
+            metadataFileName = getDmdTaskItemXMLFileName(id, accessObj.dmdType);
+            if (metadataFileName) {
+              await ctx.swift.accessMetadata.getObject(metadataFileName);
+              metadataExistsOnSwift = true;
+            } else {
+              console.log("Could not determine name of metadata file.");
+            }
+          } catch (e: any) {
+            console.log(e?.message, "No metadata to delete.");
           }
-        } catch (e: any) {
-          console.log(e?.message, "No metadata to delete.");
-        }
 
-        if (metadataExistsOnSwift && metadataFileName) {
-          console.log("Metadata exists on swift. Deleting...");
-          await ctx.swift.accessMetadata.deleteObject(metadataFileName);
+          if (metadataExistsOnSwift && metadataFileName) {
+            console.log("Metadata exists on swift. Deleting...");
+            await ctx.swift.accessMetadata.deleteObject(metadataFileName);
+          }
         }
-
-        await ctx.swift.accessMetadata.deleteObject("69429/m0np1wd3vd8d.pdf");
 
         /* Delete from database if other steps did not throw */
         await ctx.couch.access.delete({
