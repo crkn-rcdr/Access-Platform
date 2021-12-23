@@ -27,7 +27,7 @@ None
   li {
     padding: var(--perfect-fourth-8) var(--perfect-fourth-4);
     font-weight: 500;
-    color: var(--secondary);
+    color: var(--sidemenu-font);
     margin-bottom: var(--margin-sm);
     border-radius: var(--border-radius);
   }

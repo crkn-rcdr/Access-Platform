@@ -6,7 +6,7 @@
 :root {
   /* Colours */
   --teal: #1f8591;
-  --teal-light: #aad5da;
+  --teal-light: #579aa1;
   --grey-light: #eee; /*ebebeb;*/ /*;*/
   --green: #368d00;
   --green-light: #dbf1cd;
@@ -38,10 +38,13 @@
   --toolbar-bg: #ececec; /*e6e6e6;*/
   /* Change this to set the tables, menus etc. colour */
   --structural-div-bg: var(--grey-light);
+  /* Change this to set the side menu bg */
+  --sidemenu-bg: var(--grey-light); /*#39a27f;*/
+  --sidemenu-font: var(--secondary); /*light-font*/
   /* Change this to set the bg color for components that need a darker backgrop, ex: canvas viewer */
   --backdrop-bg: #ddd;
   /* Change this to set the wizard backdrop colour */
-  --wizard-bg: #f8f8f8;
+  --wizard-bg: var(--light-bg);
   /* Change this to set the bg color for components of medium contrast */
   --dark-bg: #333;
   /* Change this to set the bg color for items of high contrast*/
@@ -106,6 +109,7 @@
 
 html {
   height: 100%;
+  background-color: var(--light-bgg);
 }
 
 /* Font defaults */
@@ -114,7 +118,7 @@ pre {
   font-family: "Roboto", sans-serif !important;
   font-size: var(--perfect-fourth-7);
   color: var(--base-font-color);
-  background-color: var(--base-bg);
+  background-color: var(--light-bg);
 }
 
 /* Reactive margins */
@@ -271,7 +275,7 @@ Source: https://github.com/twbs/bootstrap/blob/main/scss/mixins/_visually-hidden
 }
 
 .center {
-  padding-top: var(--perfect-fourth-1);
+  padding-top: 3rem;
   text-align: center;
 }
 

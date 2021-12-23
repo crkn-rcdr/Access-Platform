@@ -153,7 +153,7 @@
   }
   .active-nav-item {
     background: var(--nav-item-active-bg) !important;
-    color: var(--dark-font) !important;
+    color: var(--primary) !important;
   }
   nav > *:hover {
     filter: brightness(1.1);
@@ -165,6 +165,8 @@
   :global(.navbar .create-object-menu-button) {
     height: 6rem;
     padding: 0 4rem;
+    color: var(--secondary);
+    background: var(--nav-item-bg);
   }
   :global(.navbar .create-object-menu-button:hover) {
     background: #fefefe; /*TODO: clean */

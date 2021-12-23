@@ -212,6 +212,7 @@ Allows the user to modify the canvas list for a manifest.
   }
 
   .list-wrapper {
+    margin-left: 0.1rem;
     background-color: var(--structural-div-bg);
     flex: 2.5;
     border-top: 1px solid rgba(100, 100, 100, 0.2);
