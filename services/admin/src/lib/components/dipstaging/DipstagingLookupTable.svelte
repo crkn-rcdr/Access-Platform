@@ -302,7 +302,8 @@ This component shows the results of a dipstaging find-package(s) request or a vi
               {:else if "status" in item && item.status === "processing"}
                 This package is currently being imported. <a
                   target="_blank"
-                  href="/smelter/queue">Track its status in the 'Queue' tab.</a
+                  href="/smelter/queue"
+                  >Track its status in the 'Import Queue' tab.</a
                 >
               {:else}
                 {#if slugUnavailableMap[item["id"]] && slugMap[item["id"]] === item["id"]}

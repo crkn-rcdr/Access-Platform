@@ -391,7 +391,7 @@ This component shows the results of a dipstaging package view. It allows the use
                     This package is being imported into access! <a
                       target="_blank"
                       href="/smelter/queue"
-                      ><br />Track its status in the 'Queue' tab.</a
+                      ><br />Track its status in the 'Import Queue' tab.</a
                     >
                   {:else if view === "queue"}
                     This package is being imported into access!

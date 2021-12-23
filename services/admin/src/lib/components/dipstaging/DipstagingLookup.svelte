@@ -39,7 +39,10 @@ This component allows the user to find packages in the dipstaging database.
   /**
    * @type { Depositor } The access platform to look for the items in.
    */
-  let depositor: Depositor | null = null;
+  let depositor: Depositor | null = {
+    prefix: "none",
+    label: "No Prefix or Prefix Already Added",
+  };
   /*{
     prefix: "none",
     label: "",

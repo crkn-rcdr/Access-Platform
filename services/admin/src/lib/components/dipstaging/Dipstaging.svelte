@@ -41,7 +41,7 @@ This component controls the rendering of the dipstaging menu (smelter) based on 
         <SideMenuPageListButton>Package Finder</SideMenuPageListButton>
       </a>
       <a href="/smelter/queue/1/10/all">
-        <SideMenuPageListButton>Queue</SideMenuPageListButton>
+        <SideMenuPageListButton>Import Queue</SideMenuPageListButton>
       </a>
       <a href="/smelter/status/1/10/all">
         <SideMenuPageListButton>Warnings and Failures</SideMenuPageListButton>

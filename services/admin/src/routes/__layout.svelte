@@ -145,7 +145,7 @@
     color: var(--secondary) !important;
     width: min-content;
     height: 6rem;
-    padding: 0 1rem;
+    padding: 0 4rem;
     background: var(--nav-item-bg);
   }
   a {
@@ -164,7 +164,7 @@
   }
   :global(.navbar .create-object-menu-button) {
     height: 6rem;
-    padding: 0 1rem;
+    padding: 0 4rem;
   }
   :global(.navbar .create-object-menu-button:hover) {
     background: #fefefe; /*TODO: clean */
