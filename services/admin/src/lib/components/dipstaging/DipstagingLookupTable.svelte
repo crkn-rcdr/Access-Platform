@@ -241,6 +241,7 @@ This component shows the results of a dipstaging find-package(s) request or a vi
 
 <NotificationBar message={error} status="fail" />
 
+<!-- check the slug resolvers are searching for slug not AIP if slug defined. -->
 {#if !loading}
   <div class="button-wrap" class:disabled={!items}>
     <button
