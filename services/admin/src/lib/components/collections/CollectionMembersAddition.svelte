@@ -84,6 +84,7 @@
   let resolutions: PromiseValue<ReturnType<typeof resolveMembers>>;
 
   async function resolveMembers() {
+    lookupDone = false;
     let slugArray = input.split(/[,|\s]/);
 
     if (depositor?.prefix !== "none")
@@ -97,6 +98,7 @@
 
       resolutions = response;
       showAddButton = false;
+      lookupDone = true;
 
       // I'm returning here so that we can type `resolutions` properly (see above)
       return response;
@@ -106,6 +108,8 @@
       resolutions = Object.fromEntries(
         response.map(([slug, r]): [string, any] => {
           if (r.found) {
+            resultArray.push(r.result.id);
+            resultArray = resultArray;
             return [
               slug,
               {
@@ -118,6 +122,7 @@
         })
       );
       showAddButton = false;
+      lookupDone = true;
 
       // I'm returning here so that we can type `resolutions` properly (see above)
       return response;
@@ -145,6 +150,7 @@
     } else {
       resultArray.push(event.target.value);
     }
+    resultArray = resultArray;
   }
 
   async function handleAddPressed() {
@@ -168,9 +174,11 @@
       label: "",
     };
   }
+
+  $: console.log(resultArray);
 </script>
 
-<div class="canvas-selector-wrap add-menu">
+<div class="member-selector-wrap add-menu">
   <div
     class="move-button auto-align auto-align__full auto-align auto-align__column"
   >
@@ -198,6 +206,11 @@
     {/if}
   </div>
   {#if addedMember}
+    <br />
+    <p>
+      Please search for items to add to your collection, then select them if
+      found.
+    </p>
     <div>
       <PrefixSelector bind:depositor />
       <textarea
@@ -205,8 +218,13 @@
         placeholder="Enter a list of slugs seperated by commas or new lines."
         bind:value={input}
       /><br /> <br />
-      <button class="primary lg" on:click={resolveMembers}>Lookup</button>
-      <button class="primary lg" on:click={clearText}>Clear Text</button>
+      <button
+        class="lg"
+        class:primary={!lookupDone}
+        class:secondary={lookupDone}
+        on:click={resolveMembers}>Search</button
+      >
+      <button class="secondary lg" on:click={clearText}>Clear Text</button>
       <br />
     </div>
     <br />
@@ -237,6 +255,7 @@
                       type="checkbox"
                       on:change={checkIfAllItemsSelected}
                       bind:value={resolution.id}
+                      checked={true}
                     />
                     {resolution.id}
                   {:else}
@@ -257,6 +276,11 @@
 </div>
 
 <style>
+  .member-selector-wrap {
+    padding: var(--perfect-fourth-6);
+    max-height: 100%;
+    overflow-y: auto;
+  }
   .move-button {
     display: flex;
   }
