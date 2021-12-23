@@ -11,7 +11,7 @@ import {
   Manifest,
 } from "@crkn-rcdr/access-data";
 import { createRouter, httpErrorToTRPC } from "../router.js";
-import { getDmdTaskItemXMLFileName } from "../util/dmdTask.js";
+import { getItemMetadataXMLFileName } from "../util/dmdTask.js";
 
 const NoidWithUser = z.object({
   id: Noid,
@@ -147,7 +147,10 @@ export const accessObjectRouter = createRouter()
         if (accessObj?.dmdType) {
           let metadataFileName: string | null = "";
           try {
-            metadataFileName = getDmdTaskItemXMLFileName(id, accessObj.dmdType);
+            metadataFileName = getItemMetadataXMLFileName(
+              id,
+              accessObj.dmdType
+            );
             if (metadataFileName) {
               await ctx.swift.accessMetadata.deleteObject(metadataFileName);
             } else {
