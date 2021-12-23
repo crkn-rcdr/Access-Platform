@@ -121,6 +121,14 @@ export const accessObjectRouter = createRouter()
         /* Delete files */
         if (accessObj.type === "manifest") {
           const manifest = Manifest.parse(accessObj);
+          manifest["ocrPdf"] = {
+            size: 1,
+            extension: "pdf",
+          };
+          await ctx.swift.accessFiles.putObject(
+            `${manifest.id}/${manifest.ocrPdf.extension}`,
+            { data: "", contentType: "application/xml" }
+          );
           if (manifest.ocrPdf?.extension) {
             // Check if the file exists
             let fileExistsOnSwift = false;
@@ -182,6 +190,8 @@ export const accessObjectRouter = createRouter()
           console.log("Metadata exists on swift. Deleting...");
           await ctx.swift.accessMetadata.deleteObject(metadataFileName);
         }
+
+        await ctx.swift.accessMetadata.deleteObject("69429/m0np1wd3vd8d.pdf");
 
         /* Delete from database if other steps did not throw */
         await ctx.couch.access.delete({
