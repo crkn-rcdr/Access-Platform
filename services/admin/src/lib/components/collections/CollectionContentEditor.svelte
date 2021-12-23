@@ -343,27 +343,25 @@ Allows the user to modify the member list for a collection.
 </script>
 
 {#if collection}
-  <div>
-    <CollectionMembersAddition
-      showAddButton={state != "add"}
-      bind:destinationMember={collection}
-      bind:contextDisplay={documentSlug}
-      on:done={handleAddPressed}
-      on:addClicked={() => {
-        changeView("add");
-        collection = collection;
-        console.log("collection", collection);
-      }}
-    />
-    <br />
+  <CollectionMembersAddition
+    showAddButton={state != "add"}
+    bind:destinationMember={collection}
+    bind:contextDisplay={documentSlug}
+    on:done={handleAddPressed}
+    on:addClicked={() => {
+      changeView("add");
+      collection = collection;
+      console.log("collection", collection);
+    }}
+  />
 
-    <br />
-
-    <!-- I commented out the above and added the styling from the example to help me see what's going on.
+  <!-- I commented out the above and added the styling from the example to help me see what's going on.
     -->
 
-    <div class="member-wrap" class:disabled={loading}>
-      <!-- loop through the array where items are added when scrolling -->
+  <div class="member-wrap" class:disabled={loading}>
+    <!-- loop through the array where items are added when scrolling -->
+
+    {#if collection.behavior !== "unordered"}
       <DynamicDragAndDropList
         bind:container={list}
         on:itemDropped={handleItemDropped}
@@ -377,29 +375,27 @@ Allows the user to modify the member list for a collection.
               class:active={i === activeMemberIndex}
               on:mousedown={() => setActiveIndex(i)}
             >
-              <div class="auto-align">
+              <div class="member-inner auto-align">
                 <div class="actions-wrap">
                   <div class="auto-align auto-align__column">
-                    {#if collection.behavior !== "unordered"}
-                      <div class="action pos">
-                        {positions[i]}
-                      </div>
-                      <div
-                        class="action pos-input"
-                        on:click={(e) => {
-                          e.stopPropagation();
+                    <div class="action pos">
+                      {positions[i]}
+                    </div>
+                    <div
+                      class="action pos-input"
+                      on:click={(e) => {
+                        e.stopPropagation();
+                      }}
+                    >
+                      <AutomaticResizeNumberInput
+                        name="position"
+                        max={childrenCount}
+                        value={positions[i]}
+                        on:changed={(e) => {
+                          moveMemberOnInputChange(e, positions[i] - 1);
                         }}
-                      >
-                        <AutomaticResizeNumberInput
-                          name="position"
-                          max={childrenCount}
-                          value={positions[i]}
-                          on:changed={(e) => {
-                            moveMemberOnInputChange(e, positions[i] - 1);
-                          }}
-                        />
-                      </div>
-                    {/if}
+                      />
+                    </div>
                     <div
                       class="action icon"
                       on:click={(e) => deleteMemberByIndex(e, i)}
@@ -427,24 +423,61 @@ Allows the user to modify the member list for a collection.
           </DynamicDragAndDropListItem>
         {/each}
       </DynamicDragAndDropList>
-      <InfiniteScroller
-        elementScroll={list}
-        hasLess={page !== 0}
-        hasMore={childrenCount > page * size + members.length}
-        threshold={100}
-        on:loadMore={handleScroll}
-      />
-    </div>
-    <div class="auto-align auto-align__a-center">
-      {#if loading}
-        <span class="page-info-loader">
-          <Loading size="sm" backgroundType="gradient" />
-        </span>
-      {/if}
-      <span class="page-info">
-        Showing {page * size + 1} to {page * size + members.length} of {childrenCount}
+    {:else}
+      <div bind:this={list}>
+        {#each members as collectionMember, i}
+          <div
+            class="member"
+            class:active={i === activeMemberIndex}
+            on:mousedown={() => setActiveIndex(i)}
+          >
+            <div class="member-inner auto-align">
+              <div class="actions-wrap">
+                <div class="auto-align auto-align__column">
+                  <div
+                    class="action icon"
+                    on:click={(e) => deleteMemberByIndex(e, i)}
+                  >
+                    <TiTrash />
+                  </div>
+                </div>
+              </div>
+              <div class="auto-align auto-align__column">
+                {#each documentSlug as document}
+                  {#if document["result"]?.["label"]?.["none"] && document["id"] === collectionMember?.id}
+                    <a
+                      href="/object/edit/{collectionMember?.id}"
+                      target="_blank"
+                    >
+                      {document["result"]["slug"]} : {document["result"][
+                        "label"
+                      ]["none"]}
+                    </a>
+                  {/if}
+                {/each}
+              </div>
+            </div>
+          </div>
+        {/each}
+      </div>
+    {/if}
+    <InfiniteScroller
+      elementScroll={list}
+      hasLess={page !== 0}
+      hasMore={childrenCount > page * size + members.length}
+      threshold={100}
+      on:loadMore={handleScroll}
+    />
+  </div>
+  <div class="auto-align auto-align__a-center">
+    {#if loading}
+      <span class="page-info-loader">
+        <Loading size="sm" backgroundType="gradient" />
       </span>
-    </div>
+    {/if}
+    <span class="page-info">
+      Showing {page * size + 1} to {page * size + members.length} of {childrenCount}
+    </span>
   </div>
 {/if}
 
@@ -458,16 +491,25 @@ Allows the user to modify the member list for a collection.
   }
   .pos {
     font-weight: 400;
-    margin-top: 0.56rem;
+    margin-bottom: 0.56rem;
     margin-left: 0.56rem;
     min-width: 3.15rem;
   }
   .action.icon {
     display: none;
-    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+  }
+  .member {
+    padding: 1rem 0;
   }
   .member:hover .action.icon {
     display: inherit;
+  }
+  .member-inner {
+    width: 100%;
+    background: var(--base-bg);
+    padding: var(--perfect-fourth-2);
+    border-radius: var(--border-radius);
   }
   .pos-input {
     display: none;
@@ -483,7 +525,7 @@ Allows the user to modify the member list for a collection.
     display: flex;
     flex-direction: column;
     border-radius: 2px;
-    width: 75%;
+    width: 100%;
     max-width: 100%;
     max-height: 38rem;
     overflow-x: hidden;
