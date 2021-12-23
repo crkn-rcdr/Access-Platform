@@ -15,8 +15,7 @@ This component allows the user to find packages in the dipstaging database.
 *Note: `bind:` is required for changes to the properties to be reflected in higher level components.*
 -->
 <script lang="ts">
-  import Flatpickr from "svelte-flatpickr";
-  import { getStores } from "$app/stores";
+  import { getStores, page } from "$app/stores";
   import PrefixSelector from "$lib/components/access-objects/PrefixSelector.svelte";
   import ToggleButtons from "$lib/components/shared/ToggleButtons.svelte";
   import type { Depositor, Session } from "$lib/types";
@@ -24,6 +23,7 @@ This component allows the user to find packages in the dipstaging database.
   import LoadingButton from "$lib/components/shared/LoadingButton.svelte";
   import NotificationBar from "../shared/NotificationBar.svelte";
   import Datepicker from "../shared/Datepicker.svelte";
+  import { onMount } from "svelte";
 
   /**
    * @type {ImportStatus[]}
@@ -39,7 +39,10 @@ This component allows the user to find packages in the dipstaging database.
   /**
    * @type { Depositor } The access platform to look for the items in.
    */
-  let depositor: Depositor | null = null;
+  let depositor: Depositor | null = {
+    prefix: "none",
+    label: "No Prefix or Prefix Already Added",
+  };
   /*{
     prefix: "none",
     label: "",
@@ -48,7 +51,7 @@ This component allows the user to find packages in the dipstaging database.
   /**
    * @type { string } The label for the by-slug toggle
    */
-  const BY_SLUG_LABEL = "Look-up by Slug";
+  const BY_SLUG_LABEL = "Look-up by AIP ID";
 
   /**
    * @type { string } The label for the by-date toggle
@@ -58,7 +61,7 @@ This component allows the user to find packages in the dipstaging database.
   /**
    * @type { string } The selected lookup method
    */
-  let lookupView: string = BY_SLUG_LABEL;
+  let lookupView: string = BY_DATE_LABEL;
 
   /**
    * @type { string } The selected start date to search for items from
@@ -128,7 +131,8 @@ This component allows the user to find packages in the dipstaging database.
   async function sendLookupRequestDates() {
     loading = true;
     error = "";
-    if (startDateStr?.length && endDateStr?.length) {
+    if (startDateStr?.length) {
+      if (!endDateStr?.length) endDateStr = startDateStr;
       try {
         const response = await $session.lapin.query(
           "dipstaging.listFromDates",
@@ -172,7 +176,7 @@ This component allows the user to find packages in the dipstaging database.
     loading = false;
   }
 
-  function handleDateRangeSelected(event: { detail: any[] }) {
+  /*function handleDateRangeSelected(event: { detail: any[] }) {
     console.log(event.detail);
     if (event.detail.length === 3) {
       const dates = event.detail[1].split(" to ");
@@ -181,13 +185,28 @@ This component allows the user to find packages in the dipstaging database.
         endDateStr = dates[1];
       }
     }
-  }
+  }*/
+
+  onMount(async () => {
+    // if not searched then set default
+    if (startDateStr === "" && endDateStr === "") {
+      let date = new Date();
+      date.setDate(date.getDate() - 1);
+      startDateStr = date.toISOString().split("T")[0];
+      endDateStr = startDateStr;
+
+      console.log("startDateStr", startDateStr, "endDateStr", endDateStr);
+
+      await sendLookupRequestDates();
+      //lookupDone = false;
+    }
+  });
 </script>
 
 <ToggleButtons
-  activeIndex={lookupView === BY_SLUG_LABEL ? 0 : 1}
+  activeIndex={lookupView === BY_SLUG_LABEL ? 1 : 0}
   color={lookupDone ? "secondary" : "primary"}
-  options={[BY_SLUG_LABEL, BY_DATE_LABEL]}
+  options={[BY_DATE_LABEL, BY_SLUG_LABEL]}
   on:select={changeView}
 />
 <br />
@@ -218,7 +237,9 @@ This component allows the user to find packages in the dipstaging database.
       <label for="end">End date:</label><br />
       <input type="date" id="end" name="trip-end" bind:value={endDateStr} /-->
 
-      <span class="flatpickr-date-filter-label">Select a date range:</span>
+      <span class="flatpickr-date-filter-label"
+        >Select a date range (double click for a single date):</span
+      >
       <br />
       <Datepicker
         placeholder="Select a date range"
@@ -244,9 +265,7 @@ This component allows the user to find packages in the dipstaging database.
         showLoader={loading}
         disabled={!depositor || slugListString.length === 0}
       >
-        <span slot="content">
-          {lookupDone ? "Look-up Packages Again" : "Look-up Packages"}
-        </span>
+        <span slot="content"> Look-up Packages </span>
       </LoadingButton>
     {:else if lookupView === BY_DATE_LABEL}
       <LoadingButton
@@ -255,9 +274,7 @@ This component allows the user to find packages in the dipstaging database.
         showLoader={loading}
         disabled={!startDateStr.length || !endDateStr.length}
       >
-        <span slot="content">
-          {lookupDone ? "Look-up Packages Again" : "Look-up Packages"}
-        </span>
+        <span slot="content"> Look-up Packages </span>
       </LoadingButton>
     {/if}
   </span>

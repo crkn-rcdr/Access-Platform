@@ -24,18 +24,17 @@ Allows the user to select one of many pre-defined depositors.
    * @type { object} The object of prefix options for the selection element.
    */
   const depositors = {
+    none: "No Prefix or Prefix Already Added",
     ams: "Shortgrass Public Library System",
+    carl: "Canadian Association of Research Libraries",
+    numeris: "Numeris - broadcast measurement and consumer behaviour data",
     omcn: "Mississauga Library System",
     oocihm: "Canadiana.org",
     ooe: "Department of Foreign Affairs Trade and Development",
-    oop: "Library of Parliament",
-    carl: "Canadian Association of Research Libraries",
-    numeris: "Numeris - broadcast measurement and consumer behaviour data",
-    osmsdga: "South Mountain",
     ooga: "Canadian Hazards Information Service",
+    oop: "Library of Parliament",
+    osmsdga: "South Mountain",
     qmma: "McGill University Archives",
-    "490": "MARC File",
-    none: "None (no prefix)",
   };
 </script>
 
@@ -50,11 +49,10 @@ Allows the user to select one of many pre-defined depositors.
     }}
     value={depositor?.["prefix"]}
   >
-    <option disabled selected value>Select a depositor:</option>
+    <option disabled selected value>Select a prefix:</option>
     {#each Object.keys(depositors) as depositorCode}
       <option value={depositorCode}>
-        {depositors[depositorCode]}
-        {depositorCode !== "none" ? `(${depositorCode})` : ""}
+        {depositorCode} ({depositors[depositorCode]})
       </option>
     {/each}
   </select>

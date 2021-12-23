@@ -35,7 +35,7 @@ A solid title/header component to break apart your pages into sections.
 
 <style>
   .toolbar {
-    background-color: var(--structural-div-bg);
+    background-color: var(--toolbar-bg);
     padding: 0.75rem 2rem;
     width: 100%;
     height: 100%;

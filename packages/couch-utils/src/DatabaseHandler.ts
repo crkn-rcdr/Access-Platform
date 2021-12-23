@@ -538,4 +538,20 @@ export class DatabaseHandler<T extends Document> {
       throw createHttpError(error.statusCode || 500, error.message);
     }
   }
+
+  /** Deletes an item from the database by id */
+  async delete(args: { document: string }): Promise<void> {
+    const { document } = args;
+    try {
+      const documentObj = await this.db.get(document);
+      if (documentObj) {
+        this.db.destroy(document, documentObj._rev);
+      }
+    } catch (e) {
+      const error = e as RequestError;
+      if (error.statusCode === 404)
+        throw createHttpError(404, `Document ${document} does not exist.`);
+      throw createHttpError(error.statusCode || 500, error.message);
+    }
+  }
 }

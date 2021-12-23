@@ -93,7 +93,7 @@ This component allows the user to update the dmd tasks items in an access platfo
         type="radio"
         name="amount"
         value="access"
-      /> Update in Access
+      /> Load into New Access
     </label>
     <label>
       <input
@@ -102,14 +102,14 @@ This component allows the user to update the dmd tasks items in an access platfo
         type="radio"
         name="amount"
         value="preservation"
-      /> Update in Preservation
+      /> Load for Saving to Preservation
     </label>
     <!--div class="auto-align auto-align__column auto-align__a-end"-->
 
     <button class="primary" {disabled} on:click={handleUpdatePressed}>
       {$dmdTasksStore[dmdTaskId].updateState === "error"
-        ? "Try Updating Descriptive Metadata Records Again"
-        : "Update Descriptive Metadata Records"}
+        ? "Try Processing Metadata File Again"
+        : "Process Metadata File"}
     </button>
     <!--/div-->
   </div>

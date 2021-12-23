@@ -22,7 +22,8 @@ This component shows the view for a dmd task that had its metadata successfully 
   import DmdSuccessItemUpdater from "$lib/components/dmd/success/DmdSuccessItemUpdater.svelte";
   import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
   import { dmdTasksStore } from "$lib/stores/dmdTasksStore";
-
+  import IoMdRefresh from "svelte-icons/io/IoMdRefresh.svelte";
+  import IoMdOpen from "svelte-icons/io/IoMdOpen.svelte";
   /**
    * @type { SucceededDMDTask } The dmd task being displayed
    */
@@ -134,11 +135,11 @@ This component shows the view for a dmd task that had its metadata successfully 
 
     {#if $dmdTasksStore[dmdTask.id].updateState === "ready"}
       <p>
-        Please take a moment to preview the metadata updates for each item in
-        the table. Then, select a depositor and choose where to apply the
-        updates to activate the 'Update Descriptive Metadata' button. You can
-        use the checkboxes in the table to control which items are updated when
-        pressing the update button.
+        Please take a moment to preview the metadata for each item in the table.
+        Then, select a prefix option and choose where to load the metadata to.
+        This will activate the 'Process Metadata File' button. You can use the
+        checkboxes in the table to control which items the metadata will be
+        applied to when pressing the button.
       </p>
       <br />
     {/if}
@@ -164,7 +165,39 @@ This component shows the view for a dmd task that had its metadata successfully 
     {/if}
 
     {#if !showAllInvalidError}
-      <DmdSuccessItemUpdater dmdTaskId={dmdTask.id} bind:depositor />
+      {#if $dmdTasksStore[dmdTask.id].updateState === "updated"}
+        <button
+          class="secondary"
+          on:click={() => {
+            location.reload();
+          }}
+        >
+          <span class="auto-align auto-align__a-center">
+            <span class="icon"><IoMdRefresh /></span>
+            Re-process File
+          </span>
+        </button>
+
+        <!-- if preservation update -->
+        <!-- then show button to go to old tool-->
+        {#if $dmdTasksStore[dmdTask.id].shouldUpdateInPreservation}
+          <a
+            class="finish-preservation"
+            href="https://admin.canadiana.ca/packaging "
+            target="_blank"
+          >
+            <button class="primary">
+              <span class="auto-align auto-align__a-center">
+                <span class="icon"><IoMdOpen /></span>
+                Finish Preservation Update
+              </span>
+            </button>
+          </a>
+        {/if}
+      {:else}
+        <DmdSuccessItemUpdater dmdTaskId={dmdTask.id} bind:depositor />
+      {/if}
+
       <br />
       <br />
     {:else}
@@ -202,5 +235,8 @@ This component shows the view for a dmd task that had its metadata successfully 
   .disabled {
     opacity: 0.2;
     pointer-events: none;
+  }
+  .finish-preservation {
+    margin-left: 1rem;
   }
 </style>

@@ -411,7 +411,10 @@ Allows the user to modify the member list for a collection.
                 <div class="auto-align auto-align__column">
                   {#each documentSlug as document}
                     {#if document["result"]?.["label"]?.["none"] && document["id"] === collectionMember?.id}
-                      <a href="/object/{collectionMember?.id}" target="_blank">
+                      <a
+                        href="/object/edit/{collectionMember?.id}"
+                        target="_blank"
+                      >
                         {document["result"]["slug"]} : {document["result"][
                           "label"
                         ]["none"]}

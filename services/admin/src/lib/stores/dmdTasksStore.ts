@@ -105,7 +105,7 @@ async function storeTaskItemMetadata(
   const numItems = getTaskItemLength(
     dmdTaskId,
     items,
-    // Might as well reset the state fr all items to be updated in the same loop.
+    // Might as well reset the state for all items to be updated in the same loop.
     (dmdTaskId, itemSlug, items) => {
       items[itemSlug].updatedInAccessMsg = "";
       items[itemSlug].updatedInPreservationMsg = "";
@@ -154,7 +154,7 @@ async function storeTaskItemMetadata(
             slug: items[itemSlug].slug,
             user: user,
           });
-          console.log("access res:", res);
+          //console.log("access res:", res);
           items[itemSlug].updatedInAccess = "Yes";
           items[itemSlug].updatedInAccessMsg =
             "Metadata file updated successfully.";
@@ -182,7 +182,7 @@ async function storeTaskItemMetadata(
             index,
             id: items[itemSlug].slug,
           });
-          console.log("pres r:", res);
+          //console.log("pres r:", res);
           items[itemSlug].updatedInPreservation = "Yes";
           items[itemSlug].updatedInPreservationMsg =
             "Metadata file updated successfully.";
@@ -215,9 +215,9 @@ async function storeTaskItemMetadata(
     // Update progress bar
     const percentage = Math.round((numUpdated / numItems) * 100);
     updateTask(dmdTaskId, "updatedProgressPercentage", percentage);
-    console.log("percentage ", percentage);
+    /*console.log("percentage ", percentage);
     console.log("numUpdated ", numUpdated);
-    console.log("numItems ", numItems);
+    console.log("numItems ", numItems);*/
 
     index++;
   }

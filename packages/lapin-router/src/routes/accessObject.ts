@@ -8,8 +8,10 @@ import {
   toPagedManifest,
   toPagedCollection,
   AccessObject,
+  Manifest,
 } from "@crkn-rcdr/access-data";
 import { createRouter, httpErrorToTRPC } from "../router.js";
+import { getItemMetadataXMLFileName } from "../util/dmdTask.js";
 
 const NoidWithUser = z.object({
   id: Noid,
@@ -106,6 +108,67 @@ export const accessObjectRouter = createRouter()
           }
         }
       } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .mutation("delete", {
+    input: Noid.parse,
+    async resolve({ input: id, ctx }) {
+      try {
+        const accessObj = await ctx.couch.access.get(id);
+
+        /* Delete files */
+        if (accessObj?.type === "manifest") {
+          const manifest = Manifest.parse(accessObj);
+          if (manifest.ocrPdf?.extension) {
+            // Check if the file exists
+            const fileName = `${manifest.id}/${manifest.ocrPdf.extension}`;
+            try {
+              await ctx.swift.accessFiles.deleteObject(fileName);
+            } catch (e: any) {
+              console.log(e?.message);
+            }
+          }
+        } else if (accessObj?.type === "pdf") {
+          const pdf = Pdf.parse(accessObj);
+          if (pdf.file?.extension) {
+            // Check if the file exists
+            const fileName = `${pdf.id}/${pdf.file.extension}`;
+            try {
+              await ctx.swift.accessFiles.deleteObject(fileName);
+            } catch (e: any) {
+              console.log(e?.message);
+            }
+          }
+        }
+
+        /* Delete metadata */
+        if (accessObj?.dmdType) {
+          let metadataFileName: string | null = "";
+          try {
+            metadataFileName = getItemMetadataXMLFileName(
+              id,
+              accessObj.dmdType
+            );
+            if (metadataFileName) {
+              await ctx.swift.accessMetadata.deleteObject(metadataFileName);
+            } else {
+              console.log("Could not determine name of metadata file.");
+            }
+          } catch (e: any) {
+            console.log(e?.message);
+          }
+        }
+
+        /* Delete from database if other steps did not throw */
+        await ctx.couch.access.delete({
+          document: id,
+        });
+
+        return { success: true };
+      } catch (e: any) {
+        console.log(e?.message);
         throw httpErrorToTRPC(e);
       }
     },

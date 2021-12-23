@@ -30,61 +30,60 @@ This component controls the rendering of the dipstaging menu (smelter) based on 
   export let activePageIndex: number = 0;
 </script>
 
-<SideMenuContainer
-  showHeader={true}
-  fullPage={true}
-  bind:activeIndex={activePageIndex}
->
-  <Toolbar slot="side-menu-header" title="Smelter" />
-  <SideMenuPageList>
-    <a href="/smelter/find">
-      <SideMenuPageListButton>Package Finder</SideMenuPageListButton>
-    </a>
-    <a href="/smelter/queue/1/10/all">
-      <SideMenuPageListButton>Smelter Queue</SideMenuPageListButton>
-    </a>
-    <a href="/smelter/status/1/10/all">
-      <SideMenuPageListButton
-        >Smelter Warnings and Failures</SideMenuPageListButton
+<div class="dipstaging-wrap">
+  <SideMenuContainer
+    showHeader={false}
+    fullPage={true}
+    bind:activeIndex={activePageIndex}
+  >
+    <SideMenuPageList>
+      <a href="/smelter/find">
+        <SideMenuPageListButton>Package Finder</SideMenuPageListButton>
+      </a>
+      <a href="/smelter/queue/1/10/all">
+        <SideMenuPageListButton>Import Queue</SideMenuPageListButton>
+      </a>
+      <a href="/smelter/status/1/10/all">
+        <SideMenuPageListButton>Warnings and Failures</SideMenuPageListButton>
+      </a>
+      <a href="/smelter/neversmelted/1/10/all">
+        <SideMenuPageListButton>Packages Never Imported</SideMenuPageListButton>
+      </a>
+      <a href="/smelter/updated/1/10/all">
+        <SideMenuPageListButton
+          >Packages with Recent Activity</SideMenuPageListButton
+        >
+      </a>
+    </SideMenuPageList>
+    <SideMenuBody>
+      <SideMenuPage>
+        <div class="page-wrap">
+          <slot />
+        </div></SideMenuPage
       >
-    </a>
-    <a href="/smelter/neversmelted/1/10/all">
-      <SideMenuPageListButton>Packages Never Smelted</SideMenuPageListButton>
-    </a>
-    <a href="/smelter/updated/1/10/all">
-      <SideMenuPageListButton
-        >Packages Needing Re-Smelting</SideMenuPageListButton
-      >
-    </a>
-  </SideMenuPageList>
-  <SideMenuBody>
-    <SideMenuPage>
-      <div class="page-wrap">
-        <slot />
-      </div></SideMenuPage
-    >
-    <SideMenuPage>
-      <div class="page-wrap">
-        <slot />
-      </div>
-    </SideMenuPage>
-    <SideMenuPage>
-      <div class="page-wrap">
-        <slot />
-      </div>
-    </SideMenuPage>
-    <SideMenuPage>
-      <div class="page-wrap">
-        <slot />
-      </div>
-    </SideMenuPage>
-    <SideMenuPage>
-      <div class="page-wrap">
-        <slot />
-      </div>
-    </SideMenuPage>
-  </SideMenuBody>
-</SideMenuContainer>
+      <SideMenuPage>
+        <div class="page-wrap">
+          <slot />
+        </div>
+      </SideMenuPage>
+      <SideMenuPage>
+        <div class="page-wrap">
+          <slot />
+        </div>
+      </SideMenuPage>
+      <SideMenuPage>
+        <div class="page-wrap">
+          <slot />
+        </div>
+      </SideMenuPage>
+      <SideMenuPage>
+        <div class="page-wrap">
+          <slot />
+        </div>
+      </SideMenuPage>
+    </SideMenuBody>
+  </SideMenuContainer>
+</div>
 
 <!--div>
   <PrefixSelector bind:prefix />
@@ -94,7 +93,10 @@ This component controls the rendering of the dipstaging menu (smelter) based on 
     text-decoration: none;
   }
   .page-wrap {
-    padding: 2rem 4rem;
+    padding: 3rem 4rem;
     height: 100%;
   }
+  /*:global(.dipstaging-wrap nav.sidemenu ul) {
+    margin-top: 1.1rem;
+  }*/
 </style>

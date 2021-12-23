@@ -107,6 +107,7 @@ export const getAccessObjectForDmdTaskItem = async function (
     const accessObjectLookup = await ctx.couch.access.findUnique("slug", slug, [
       "id",
       "type",
+      "dmdType",
     ] as const);
 
     if (accessObjectLookup.found) return accessObjectLookup.result;
@@ -131,7 +132,7 @@ export const getWipmetaObjectForDmdTaskItem = async function (
   }
 };
 
-export const getDmdTaskItemXMLFileName = function (
+export const getItemMetadataXMLFileName = function (
   noid: Noid,
   output: "dc" | "marc" | "issueinfo" | undefined
 ) {
@@ -342,6 +343,77 @@ export const storePreservation = async function (
   await ctx.routeLimiter.getLimiterSemaphore("storePreservation")?.signal();
 };
 
+const deleteOldMetadataFileIfExists = async (
+  ctx: LapinContext,
+  accessObject: any
+) => {
+  //console.log(accessObject, "check", accessObject && "dmdType" in accessObject);
+  if (accessObject && "dmdType" in accessObject) {
+    const type = accessObject.dmdType;
+
+    const existingFileName = getItemMetadataXMLFileName(accessObject?.id, type);
+
+    //console.log("existingFileName", existingFileName);
+
+    if (existingFileName) {
+      let metadataFileExists = false;
+      try {
+        await ctx.swift.accessMetadata.getObject(existingFileName);
+        metadataFileExists = true;
+      } catch (e: any) {
+        console.log("DMD error: ", e?.message);
+        //console.log("No existing metadata file in swift");
+      }
+
+      if (metadataFileExists) {
+        //console.log("Existing metadata file in swift, deleting...");
+        try {
+          await ctx.swift.accessMetadata.deleteObject(existingFileName);
+          return true;
+        } catch (e: any) {
+          console.log("DMD error: ", e?.message);
+          return false;
+        }
+      }
+    }
+  }
+  return true;
+};
+
+const updateDMDTypeInAccess = async (
+  ctx: LapinContext,
+  id: string,
+  accessObjectType: "collection" | "manifest" | "pdf",
+  dmdType: "dc" | "marc" | "issueinfo" | undefined,
+  user: User
+) => {
+  try {
+    if (dmdType) {
+      if (accessObjectType === "manifest") {
+        await ctx.couch.access.editManifest({
+          id,
+          user,
+          data: {
+            dmdType,
+          },
+        });
+      } else if (accessObjectType === "collection") {
+        await ctx.couch.access.editCollection({
+          id,
+          user,
+          data: {
+            dmdType,
+          },
+        });
+      }
+    }
+  } catch (e: any) {
+    console.log("DMD error: ", e?.message);
+    return false;
+  }
+  return true;
+};
+
 export const storeAccess = async function (
   ctx: LapinContext,
   user: User,
@@ -397,7 +469,7 @@ export const storeAccess = async function (
               task,
           });
         } else {
-          const itemXMLFileName = getDmdTaskItemXMLFileName(
+          const itemXMLFileName = getItemMetadataXMLFileName(
             accessObject?.id,
             item.output
           );
@@ -413,47 +485,93 @@ export const storeAccess = async function (
                 task,
             });
           } else {
-            const storeResult = await storeDmdTaskItemXmlFile(
+            // take current dmdTask type for item then compile old file name and delete it
+            const deleteRes = await deleteOldMetadataFileIfExists(
               ctx,
-              itemXMLFileName,
-              itemXmlFile
+              accessObject
             );
-
-            if (!storeResult) {
+            console.log("deleteRes", deleteRes);
+            if (!deleteRes) {
               await ctx.routeLimiter
                 .getLimiterSemaphore("storeAccess")
                 ?.signal();
               throw new TRPCError({
-                code: "INTERNAL_SERVER_ERROR",
+                code: "PATH_NOT_FOUND",
                 message:
-                  "Could not store metadata XML file in swift for item with id: " +
+                  "Could not delete old metadata file for item with id: " +
                   accessObject?.id +
                   " from DMD task with id: " +
                   task,
               });
-            } else if (typeof item.label === "string") {
-              const labelRes = await updateLabelForDmdTaskItemAccessObject(
+            } else {
+              const storeResult = await storeDmdTaskItemXmlFile(
                 ctx,
-                item.label,
-                accessObject?.id,
-                user,
-                accessObject?.type
+                itemXMLFileName,
+                itemXmlFile
               );
 
-              if (!labelRes) {
+              if (!storeResult) {
                 await ctx.routeLimiter
                   .getLimiterSemaphore("storeAccess")
                   ?.signal();
                 throw new TRPCError({
                   code: "INTERNAL_SERVER_ERROR",
                   message:
-                    "Could not update label to " +
-                    item.label +
-                    " for item with id: " +
+                    "Could not store metadata XML file in swift for item with id: " +
                     accessObject?.id +
                     " from DMD task with id: " +
                     task,
                 });
+              } else {
+                //Change dmdType value for item
+                const typeUpdated = await updateDMDTypeInAccess(
+                  ctx,
+                  accessObject.id,
+                  accessObject.type,
+                  item.output,
+                  user
+                );
+
+                if (!typeUpdated) {
+                  await ctx.routeLimiter
+                    .getLimiterSemaphore("storeAccess")
+                    ?.signal();
+                  throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                    message:
+                      "Could not update dmdType for item with id: " +
+                      accessObject?.id +
+                      " from DMD task with id: " +
+                      task,
+                  });
+                } else {
+                  if (typeof item.label === "string") {
+                    const labelRes =
+                      await updateLabelForDmdTaskItemAccessObject(
+                        ctx,
+                        item.label,
+                        accessObject?.id,
+                        user,
+                        accessObject?.type
+                      );
+
+                    if (!labelRes) {
+                      await ctx.routeLimiter
+                        .getLimiterSemaphore("storeAccess")
+                        ?.signal();
+                      throw new TRPCError({
+                        code: "INTERNAL_SERVER_ERROR",
+                        message:
+                          "Could not update label to " +
+                          item.label +
+                          " for item with id: " +
+                          accessObject?.id +
+                          " from DMD task with id: " +
+                          task,
+                      });
+                    }
+                  }
+                }
               }
             }
           }

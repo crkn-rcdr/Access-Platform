@@ -18,6 +18,8 @@ import {
   Ancestry,
   AccessObject,
   AccessObjectType,
+  Pdf,
+  EditablePdf,
 } from "@crkn-rcdr/access-data";
 
 import { DatabaseHandler } from "../DatabaseHandler.js";
@@ -203,6 +205,26 @@ export class AccessHandler extends DatabaseHandler<AccessObject> {
     });
     const manifest = await this.get(args.id);
     return Manifest.parse(manifest);
+  }
+
+  /**
+   * Update the staff-editable fields of a Manifest.
+   * @returns The updated Manifest.
+   */
+  async editPdf(args: {
+    id: Noid;
+    user: User;
+    data: EditablePdf;
+  }): Promise<Pdf> {
+    const data = Pdf.partial().parse(args.data);
+    await this.editObject({
+      id: args.id,
+      user: args.user,
+      data,
+      type: "pdf",
+    });
+    const pdf = await this.get(args.id);
+    return Pdf.parse(pdf);
   }
 
   async processList(args: {

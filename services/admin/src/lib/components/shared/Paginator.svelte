@@ -147,6 +147,7 @@ A card component that optionally allows for user selection
   }
   .active {
     background-color: var(--primary-light);
+    color: var(--light-font);
   }
   ul {
     flex: 1;

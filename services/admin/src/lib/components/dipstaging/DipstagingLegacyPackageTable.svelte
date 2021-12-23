@@ -291,7 +291,7 @@ This component shows the results of a dipstaging package view. It allows the use
           on:click={handleRunSmelterPressed}
           disabled={!itemsAreSelected}
         >
-          Run Smelter on Selected Packages
+          Import Selected Packages into Access
         </button>
       {/if}
     </div>
@@ -304,7 +304,7 @@ This component shows the results of a dipstaging package view. It allows the use
                 <input type="checkbox" on:click={toggleAllSelected} />
               </th>
             {/if}
-            <th>Id</th>
+            <th>AIP ID</th>
             <th>Slug</th>
             <th>
               {#if view === "status"}
@@ -315,7 +315,7 @@ This component shows the results of a dipstaging package view. It allows the use
                 Updated Date
               {/if}
             </th>
-            <th>Smelt Status</th>
+            <th>Import Status</th>
           </tr>
         </thead>
         <tbody>
@@ -388,21 +388,21 @@ This component shows the results of a dipstaging package view. It allows the use
               <td class="status auto-align align__block auto-align__a-center">
                 <span class="status-text">
                   {#if sucessfulSmeltRequestMap[legacyPackage.id]}
-                    Smelter is running on the package! <a
+                    This package is being imported into access! <a
                       target="_blank"
-                      href="https://access-dev.canadiana.ca/smelter/queue"
-                      ><br />Track its status in the 'Queue' tab.</a
+                      href="/smelter/queue"
+                      ><br />Track its status in the 'Import Queue' tab.</a
                     >
                   {:else if view === "queue"}
-                    Smelter is running on the package.
+                    This package is being imported into access!
                   {:else if view === "status"}
                     {legacyPackage.smelt?.["succeeded"]
-                      ? "Succeeded"
-                      : "Failed"}
+                      ? "This package successfully imported."
+                      : "This package failed to import."}
                   {:else if view === "neversmelted"}
-                    Never Smelted
+                    This package was never imported.
                   {:else if view === "updated"}
-                    Package requires re-smelting.
+                    This package has had recent activity.
                   {/if}
                 </span>
 
@@ -410,7 +410,7 @@ This component shows the results of a dipstaging package view. It allows the use
                   <span
                     class="icon"
                     on:click={() => handleItemExpanded(legacyPackage)}
-                    data-tooltip="Information on previous smelter run..."
+                    data-tooltip="Information on previous import attempt..."
                   >
                     {#if expandedMap[legacyPackage.id]}
                       <FaAngleDown />
@@ -427,7 +427,7 @@ This component shows the results of a dipstaging package view. It allows the use
                   <table>
                     <tbody>
                       <tr>
-                        <td class="detail-label">Smelt Status:</td>
+                        <td class="detail-label">Import Status:</td>
                         <td>
                           {legacyPackage.smelt?.["succeeded"]
                             ? "Succeeded"

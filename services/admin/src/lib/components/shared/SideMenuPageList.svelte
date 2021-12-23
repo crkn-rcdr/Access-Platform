@@ -27,7 +27,7 @@ None
 
 <style>
   .sidemenu {
-    background: var(--structural-div-bg);
+    background: var(--sidemenu-bg);
     filter: brightness(0.95);
     min-height: 100%;
     flex: 1.5;
