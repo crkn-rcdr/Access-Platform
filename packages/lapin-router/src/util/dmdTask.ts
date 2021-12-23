@@ -132,7 +132,7 @@ export const getWipmetaObjectForDmdTaskItem = async function (
   }
 };
 
-export const getDmdTaskItemXMLFileName = function (
+export const getItemMetadataXMLFileName = function (
   noid: Noid,
   output: "dc" | "marc" | "issueinfo" | undefined
 ) {
@@ -351,7 +351,7 @@ const deleteOldMetadataFileIfExists = async (
   if (accessObject && "dmdType" in accessObject) {
     const type = accessObject.dmdType;
 
-    const existingFileName = getDmdTaskItemXMLFileName(accessObject?.id, type);
+    const existingFileName = getItemMetadataXMLFileName(accessObject?.id, type);
 
     //console.log("existingFileName", existingFileName);
 
@@ -469,7 +469,7 @@ export const storeAccess = async function (
               task,
           });
         } else {
-          const itemXMLFileName = getDmdTaskItemXMLFileName(
+          const itemXMLFileName = getItemMetadataXMLFileName(
             accessObject?.id,
             item.output
           );
