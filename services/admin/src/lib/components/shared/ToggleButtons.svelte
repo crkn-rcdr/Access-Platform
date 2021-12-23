@@ -93,7 +93,6 @@ This component lets the user toggle between two or more options (ex: daily, week
   .toggle-buttons div.secondary.active {
     border: 1px solid var(--secondary);
     background: var(--secondary-light);
-    color: var(--light-font);
   }
   .toggle-buttons div:hover {
     filter: brightness(1.1);
