@@ -15,6 +15,7 @@ export {
   PagedCollection,
   PagedManifest,
   Pdf,
+  EditablePdf,
   TextRecord,
   isCollection,
   isManifest,

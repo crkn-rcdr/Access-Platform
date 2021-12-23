@@ -6,11 +6,11 @@ import { Pdf } from "./Pdf.js";
 import { Noid, Slug } from "../util/index.js";
 import { TextRecord } from "./util/TextRecord.js";
 
-export const AccessObject = z.union([Collection, Manifest, Pdf]);
+export const AccessObject = z.union([Pdf, Collection, Manifest]);
 export type AccessObject = z.infer<typeof AccessObject>;
-export type AccessObjectType = "collection" | "manifest" | "pdf";
+export type AccessObjectType = "pdf" | "collection" | "manifest";
 
-export const PagedAccessObject = z.union([PagedCollection, PagedManifest, Pdf]);
+export const PagedAccessObject = z.union([Pdf, PagedCollection, PagedManifest]);
 export type PagedAccessObject = z.infer<typeof PagedAccessObject>;
 
 export const isCollection = (obj: AccessObject): obj is Collection => {
@@ -39,7 +39,7 @@ export {
   PagedManifest,
   toPagedManifest,
 } from "./Manifest.js";
-export { Pdf } from "./Pdf.js";
+export { Pdf, EditablePdf } from "./Pdf.js";
 
 export {
   ObjectList,

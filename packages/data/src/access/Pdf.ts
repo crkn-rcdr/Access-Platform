@@ -18,8 +18,23 @@ export const Pdf = z
     /**
      * Labels for this PDF's pages.
      */
-    pageLabels: z.array(TextRecord),
+    pageLabels: z.array(TextRecord).optional(),
   })
   .merge(AccessObjectTrait);
 
 export type Pdf = z.infer<typeof Pdf>;
+
+/**
+ * The staff-editable properties of a Manifest.
+ */
+export const EditablePdf = Pdf.pick({
+  slug: true,
+  label: true,
+})
+  .partial()
+  .refine(
+    (obj) => Object.keys(obj).length > 0,
+    "Cannot edit a manifest with an empty object"
+  );
+
+export type EditablePdf = z.infer<typeof EditablePdf>;

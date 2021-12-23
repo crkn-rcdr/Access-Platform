@@ -33,7 +33,9 @@ export const accessObjectRouter = createRouter()
   .query("getPaged", {
     input: Noid.parse,
     async resolve({ input: id, ctx }): Promise<PagedAccessObject> {
+      console.log("One");
       const response = await ctx.couch.access.getSafe(id);
+      console.log("heree", response);
       if (response.found) {
         switch (response.doc.type) {
           case "manifest":

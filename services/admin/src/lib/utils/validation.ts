@@ -11,6 +11,7 @@ import {
   TextRecord,
   ObjectList,
   PagedAccessObject,
+  Pdf,
 } from "@crkn-rcdr/access-data";
 import isEqual from "lodash-es/isEqual";
 
@@ -176,8 +177,28 @@ const collection = {
 
 /**
  * @serverObject
+ * @description wrapper around the validation functions specifically for the pdf type
+ */
+const pdf = {
+  /**
+   * Validates the label passed in. Returns a message if the TextRecord is invalid.
+   * @param label
+   * @returns string
+   */
+  getLabelValidationMsg: function (label: TextRecord) {
+    try {
+      Pdf.partial().parse({ label });
+      return "";
+    } catch (e) {
+      return e["issues"][0]["message"];
+    }
+  },
+};
+
+/**
+ * @serverObject
  * @description Wrapper around the manifest and collection serverObjects
  */
-const typedChecks = { manifest, collection };
+const typedChecks = { manifest, collection, pdf };
 
 export { checkValidDiff, checkModelChanged, getSlugValidationMsg, typedChecks };

@@ -27,7 +27,6 @@ The editor component allows for the editing of PagedAccessObjects. It will dynam
   import SideMenuContainer from "$lib/components/shared/SideMenuContainer.svelte";
   import EditorActions from "$lib/components/access-objects/EditorActions.svelte";
   import StatusIndicator from "$lib/components/access-objects/StatusIndicator.svelte";
-  import InfoEditor from "$lib/components/access-objects/EditorForm.svelte";
   import { getStores } from "$app/stores";
   import type { Session } from "$lib/types";
   import { showConfirmation } from "$lib/utils/confirmation";
@@ -78,7 +77,8 @@ The editor component allows for the editing of PagedAccessObjects. It will dynam
         try {
           if (
             serverObject.type === "manifest" ||
-            serverObject.type === "collection"
+            serverObject.type === "collection" ||
+            serverObject.type === "pdf"
           ) {
             const bodyObj = {
               id: serverObject.id,
