@@ -237,12 +237,10 @@ This component allows the user to find packages in the dipstaging database.
       <label for="end">End date:</label><br />
       <input type="date" id="end" name="trip-end" bind:value={endDateStr} /-->
 
-      <span class="flatpickr-date-filter-label"
-        >Select a date range (double click for a single date):</span
-      >
+      <span class="flatpickr-date-filter-label">Select date(s):</span>
       <br />
       <Datepicker
-        placeholder="Select a date range"
+        placeholder="Select date(s)"
         bind:startDateStr
         bind:endDateStr
         options={{ mode: "range" }}
