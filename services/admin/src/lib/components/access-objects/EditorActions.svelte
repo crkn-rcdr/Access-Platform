@@ -156,7 +156,7 @@ The editor actions component holds functionality that is responsible for perform
   }
 
   /**
-   * Sends the request to the backend to unnasign a slug from the access serverObject. If it is successful, the serverObject model is deep cloned into the serverObject, and the editor state is updated to reflect the serverObject being a 'Slugless' access serverObject.
+   * Sends the request to the backend to delete the access serverObject.
    * @returns response
    */
   async function handleDelete() {
