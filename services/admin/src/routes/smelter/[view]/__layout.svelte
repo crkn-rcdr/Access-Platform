@@ -159,7 +159,7 @@
       <div class="auto-align auto-align__a-center">
         {#if dates && dates.length === 2}
           <Datepicker
-            placeholder="Select dates"
+            placeholder="Select date(s)"
             bind:startDateStr={dates[0]}
             bind:endDateStr={dates[1]}
             options={{ mode: "range" }}
