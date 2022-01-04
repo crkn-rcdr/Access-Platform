@@ -477,9 +477,9 @@ Allows the user to modify the member list for a collection.
       </span>
     {/if}
     <Paginator
-      page={0}
-      pageSize={100}
-      count={400}
+      {page}
+      bind:pageSize={size}
+      count={childrenCount}
       on:change={() => {
         console.log("change!");
       }}

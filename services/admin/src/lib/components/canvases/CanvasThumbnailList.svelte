@@ -92,8 +92,6 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
   let page: number = 0;
   let size: number = 100;
 
-  let previousLastItem: string | null = null;
-
   let list: HTMLElement;
 
   /**
@@ -276,32 +274,16 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
     dispatch("addClicked");
   }
 
-  async function handleScroll(event) {
-    {
-      if (loading) return;
-      loading = true;
-      if (event.detail.reverse) {
-        page--;
-        console.log("load prev");
-        const currPage = await $session.lapin.query("manifest.pageBefore", {
-          id: manifest.id,
-          before: canvases[0].id,
-          limit: size,
-        });
-        previousLastItem = canvases[canvases.length - 1].id;
-        canvases = currPage.list;
-      } else {
-        page++;
-        console.log("load next");
-        const currPage = await $session.lapin.query("manifest.pageAfter", {
-          id: manifest.id,
-          after: canvases[canvases.length - 1].id,
-          limit: size,
-        });
-        previousLastItem = canvases[canvases.length - 1].id;
-        canvases = currPage.list;
-      }
-    }
+  async function handlePage(event) {
+    page = event.detail.page;
+    if (loading) return;
+    loading = true;
+    const currPage = await $session.lapin.query("manifest.page", {
+      id: manifest.id,
+      page: page,
+      limit: size,
+    });
+    canvases = currPage.list;
     loading = false;
   }
 
@@ -331,9 +313,9 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
   }
 
   async function sendCurrentPageRequest() {
-    const currPage = await $session.lapin.query("manifest.pageAfter", {
+    const currPage = await $session.lapin.query("manifest.page", {
       id: manifest.id,
-      after: previousLastItem,
+      page: page,
       limit: size,
     });
     canvases = currPage.list;
@@ -424,13 +406,6 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
         </DynamicDragAndDropListItem>
       {/each}
     </DynamicDragAndDropList>
-    <InfiniteScroller
-      elementScroll={list}
-      hasLess={page !== 0}
-      hasMore={childrenCount > page * size + canvases.length}
-      threshold={100}
-      on:loadMore={handleScroll}
-    />
   </div>
   <div
     class="pagination-info auto-align auto-align__a-center auto-align auto-align__j-center"
@@ -446,12 +421,10 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
     <span class="page-info">
       <Paginator
         size="sm"
-        page={0}
-        pageSize={100}
-        count={400}
-        on:change={() => {
-          console.log("change!");
-        }}
+        {page}
+        bind:pageSize={size}
+        count={childrenCount}
+        on:change={handlePage}
       />
     </span>
   </div>

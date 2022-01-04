@@ -15,6 +15,12 @@ import { createRouter, httpErrorToTRPC } from "../router.js";
 import { TRPCError } from "@trpc/server";
 import { LapinContext } from "../context.js";
 
+const PageInput = z.object({
+  id: Noid,
+  page: z.number().int().positive(),
+  limit: z.number().int().positive().default(100),
+});
+
 const PageAfterInput = z.object({
   id: Noid,
   after: Noid.nullable(),
@@ -65,6 +71,28 @@ const checkAdditions = z.object({
 
 const id = z.array(Noid);
 export const collectionRouter = createRouter()
+  .query("page", {
+    input: PageInput.parse,
+    async resolve({ input: { id, page, limit }, ctx }) {
+      const response = await ctx.couch.access.getSafe(id);
+      if (response.found) {
+        const collectionCheck = Collection.safeParse(response.doc);
+        if (collectionCheck.success) {
+          const members = new ObjectListHandler(collectionCheck.data.members);
+          const pageData = members.page(page, limit);
+          return await expandList(ctx, pageData);
+        }
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: `Object ${id} cannot be parsed.`,
+        });
+      }
+      throw new TRPCError({
+        code: "PATH_NOT_FOUND",
+        message: `No object with id ${id} found.`,
+      });
+    },
+  })
   .query("pageAfter", {
     input: PageAfterInput.parse,
     async resolve({ input: { id, after, limit }, ctx }) {

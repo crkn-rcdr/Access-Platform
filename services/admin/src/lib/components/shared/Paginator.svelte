@@ -76,23 +76,39 @@ A card component that optionally allows for user selection
    * @description Re-sets the page count when the count or page size change.
    */
   $: pageCount = Math.floor(count / pageSize);
+
+  $: {
+    if (size === "sm") {
+      const numPages = Math.round(count / pageSize);
+      buttons = [];
+      for (let i = 0; i < numPages; i++) buttons.push(i);
+    }
+  }
 </script>
 
 {#if size === "sm"}
-  <button class="primary">Prev</button>
-  <select>
-    {#each buttons as button}
-      {#if page + button >= 0 && page + button <= pageCount}
-        <option
-          class:active={page === page + button}
-          on:click={(e) => onChange(e, page + button)}
-        >
-          {page + button + 1}
+  {#if buttons.length}
+    <button
+      class="secondary"
+      disabled={page === 0}
+      on:click={(e) => onChange(e, page - 2)}
+    >
+      Prev
+    </button>
+
+    <select bind:value={page} on:change={(e) => onChange(e, page - 1)}>
+      {#each buttons as pageNum}
+        <option value={pageNum + 1}>
+          {pageNum + 1}
         </option>
-      {/if}
-    {/each}
-  </select>
-  <button class="primary">Next</button>
+      {/each}
+    </select>
+    <button
+      class="secondary"
+      disabled={page > pageCount - 1}
+      on:click={(e) => onChange(e, page)}>Next</button
+    >
+  {/if}
 {:else}
   <span class="page-size">
     <label for="page-size">Items per page:</label>

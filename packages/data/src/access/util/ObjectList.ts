@@ -120,4 +120,23 @@ export class ObjectListHandler {
       );
     }
   }
+
+  /**
+   * Return an ObjectListPage object for a slice of the list.
+   * @param after The id after which the page should be generated. Use
+   * `null` if you want to start at the top of the list.
+   * @param limit Maximum number of items to return.
+   */
+  page(page: number | null, limit: number): ObjectListPage {
+    if (page && limit) {
+      const index = (page - 1) * limit;
+      if (index === -1) {
+        return pageFrom([]);
+      } else {
+        return pageFrom(this.list.slice(index, index + 1 + limit));
+      }
+    } else {
+      return pageFrom(this.list.slice(0, limit));
+    }
+  }
 }
