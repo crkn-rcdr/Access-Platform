@@ -112,7 +112,7 @@ This component allows the user to find packages in the dipstaging database.
    */
   async function handleLookupPressedSlugList(event) {
     event.stopPropagation();
-    await sendLookupRequestKeys();
+    await sendLookupRequestAIPIds();
   }
 
   /**
@@ -129,6 +129,7 @@ This component allows the user to find packages in the dipstaging database.
    * @returns void
    */
   async function sendLookupRequestDates() {
+    if (loading) return;
     loading = true;
     error = "";
     if (startDateStr?.length) {
@@ -154,7 +155,8 @@ This component allows the user to find packages in the dipstaging database.
    * Sends the request to look up the items by slug to the backend and saves the results
    * @returns void
    */
-  async function sendLookupRequestKeys() {
+  async function sendLookupRequestAIPIds() {
+    if (loading) return;
     loading = true;
     if (slugList.includes(",")) slugList = slugListString.split(",");
     else slugList = slugListString.split("\n");
@@ -176,6 +178,33 @@ This component allows the user to find packages in the dipstaging database.
     loading = false;
   }
 
+  /**
+   * Sends the request to look up the items by slug to the backend and saves the results
+   * @returns void
+   */
+  async function sendLookupRequestSlugs() {
+    if (loading) return;
+    loading = true;
+    if (slugListString.includes(",")) slugList = slugListString.split(",");
+    else slugList = slugListString.split("\n");
+    slugList = slugList.filter((slug) => slug.trim().length);
+    console.log("Searching", slugList);
+    if (slugList.length) {
+      if (depositor?.prefix !== "none")
+        slugList = slugList.map(
+          (slug) => `${depositor?.prefix}.${slug.trim()}`
+        );
+      else slugList = slugList.map((slug) => slug.trim());
+      const response = await $session.lapin.query(
+        "dipstaging.listFromSlugs",
+        slugList
+      );
+      if (response) results = response;
+      lookupDone = true;
+    }
+    loading = false;
+  }
+
   /*function handleDateRangeSelected(event: { detail: any[] }) {
     console.log(event.detail);
     if (event.detail.length === 3) {
@@ -188,17 +217,21 @@ This component allows the user to find packages in the dipstaging database.
   }*/
 
   onMount(async () => {
-    // if not searched then set default
-    if (startDateStr === "" && endDateStr === "") {
-      let date = new Date();
-      date.setDate(date.getDate() - 1);
-      startDateStr = date.toISOString().split("T")[0];
-      endDateStr = startDateStr;
-
-      console.log("startDateStr", startDateStr, "endDateStr", endDateStr);
-
-      await sendLookupRequestDates();
-      //lookupDone = false;
+    const slugListStrPrm = $page.query.get("slugs");
+    if (slugListStrPrm) {
+      slugListString = slugListStrPrm;
+      lookupView = BY_SLUG_LABEL;
+      await sendLookupRequestSlugs();
+    } else {
+      // if not searched then set default
+      if (startDateStr === "" && endDateStr === "") {
+        let date = new Date();
+        date.setDate(date.getDate() - 1);
+        startDateStr = date.toISOString().split("T")[0];
+        endDateStr = startDateStr;
+        await sendLookupRequestDates();
+        //lookupDone = false;
+      }
     }
   });
 </script>
