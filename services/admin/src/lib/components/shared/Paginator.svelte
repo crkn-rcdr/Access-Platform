@@ -39,6 +39,8 @@ A card component that optionally allows for user selection
    */
   export let pageSize = 10;
 
+  export let pageSizeEditable = true;
+
   /**
    * @type {number[]} A model for the visible buttons
    */
@@ -103,6 +105,7 @@ A card component that optionally allows for user selection
         </option>
       {/each}
     </select>
+
     <button
       class="secondary"
       disabled={page > pageCount - 1}
@@ -110,21 +113,23 @@ A card component that optionally allows for user selection
     >
   {/if}
 {:else}
-  <span class="page-size">
-    <label for="page-size">Items per page:</label>
-    <select
-      name="page-size"
-      bind:value={pageSize}
-      on:change={(e) => onChange(e, page)}
-    >
-      <option value={10}>10</option>
-      <option value={20}>20</option>
-      <option value={30}>30</option>
-      <option value={40}>40</option>
-      <option value={50}>50</option>
-      <option value={100}>100</option>
-    </select>
-  </span>
+  {#if pageSizeEditable}
+    <span class="page-size">
+      <label for="page-size">Items per page:</label>
+      <select
+        name="page-size"
+        bind:value={pageSize}
+        on:change={(e) => onChange(e, page)}
+      >
+        <option value={10}>10</option>
+        <option value={20}>20</option>
+        <option value={30}>30</option>
+        <option value={40}>40</option>
+        <option value={50}>50</option>
+        <option value={100}>100</option>
+      </select>
+    </span>
+  {/if}
   <ul>
     <li>
       <button
@@ -191,10 +196,6 @@ A card component that optionally allows for user selection
     display: inline-block;
     margin-top: var(--margin-sm);
   }
-  .active {
-    background-color: var(--primary-light);
-    color: var(--light-font);
-  }
   ul {
     flex: 1;
     float: right;
@@ -204,7 +205,6 @@ A card component that optionally allows for user selection
     float: left;
   }
   button.pagin-lg {
-    background: transparent;
     border: none;
     padding: 0.5rem 1em;
     margin-left: 3px;
@@ -212,6 +212,10 @@ A card component that optionally allows for user selection
     cursor: pointer;
     height: fit-content !important;
     filter: none;
+  }
+  .active {
+    background-color: var(--primary-light) !important;
+    color: var(--light-font);
   }
   .count-message {
     text-align: right;

@@ -480,6 +480,7 @@ Allows the user to modify the member list for a collection.
       {page}
       bind:pageSize={size}
       count={childrenCount}
+      pageSizeEditable={false}
       on:change={() => {
         console.log("change!");
       }}

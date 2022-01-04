@@ -33,7 +33,6 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
   import type { ObjectListPage, PagedManifest } from "@crkn-rcdr/access-data";
   import DynamicDragAndDropList from "../shared/DynamicDragAndDropList.svelte";
   import DynamicDragAndDropListItem from "../shared/DynamicDragAndDropListItem.svelte";
-  import InfiniteScroller from "../shared/InfiniteScroller.svelte";
   import { showConfirmation } from "$lib/utils/confirmation";
   import Loading from "../shared/Loading.svelte";
   import Paginator from "../shared/Paginator.svelte";
@@ -89,7 +88,7 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
   /**
    * @type {number} Shows the number of pages
    */
-  let page: number = 0;
+  let page: number = 1;
   let size: number = 100;
 
   let list: HTMLElement;
@@ -408,7 +407,8 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
     </DynamicDragAndDropList>
   </div>
   <div
-    class="pagination-info auto-align auto-align__a-center auto-align auto-align__j-center"
+    class="pagination-info auto-align auto-align__a-center auto-align auto-align__j-center
+    auto-align__wrap"
   >
     {#if loading}
       <span class="page-info-loader">
@@ -504,6 +504,8 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
   }
   .page-info-loader {
     margin-right: var(--margin-sm);
+    flex: 10;
+    text-align: center;
   }
   .canvas-wrap {
     display: flex;
