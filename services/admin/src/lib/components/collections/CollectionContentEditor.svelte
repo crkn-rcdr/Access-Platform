@@ -26,6 +26,8 @@ Allows the user to modify the member list for a collection.
   import DynamicDragAndDropListItem from "../shared/DynamicDragAndDropListItem.svelte";
   import { showConfirmation } from "$lib/utils/confirmation";
   import Loading from "../shared/Loading.svelte";
+  import Paginator from "../shared/Paginator.svelte";
+  import { loop_guard } from "svelte/internal";
 
   export let collection: PagedCollection;
 
@@ -469,23 +471,30 @@ Allows the user to modify the member list for a collection.
         {/each}
       </div>
     {/if}
-    <InfiniteScroller
-      elementScroll={list}
-      hasLess={page !== 0}
-      hasMore={childrenCount > page * size + members.length}
-      threshold={100}
-      on:loadMore={handleScroll}
-    />
   </div>
-  <div class="auto-align auto-align__a-center">
+  <div class="pagination-wrap auto-align auto-align__a-start">
     {#if loading}
       <span class="page-info-loader">
         <Loading size="sm" backgroundType="gradient" />
       </span>
     {/if}
-    <span class="page-info">
-      Showing {page * size + 1} to {page * size + members.length} of {childrenCount}
-    </span>
+    <!--
+<Paginator
+    page={pageNumber - 1}
+    {pageSize}
+    {count}
+    on:change={handlePaginatorChange}
+  />
+
+-->
+    <Paginator
+      page={0}
+      pageSize={100}
+      count={400}
+      on:change={() => {
+        console.log("change!");
+      }}
+    />
   </div>
 {/if}
 
@@ -563,6 +572,9 @@ Allows the user to modify the member list for a collection.
   }
   .page-info-loader {
     margin-right: var(--margin-sm);
+  }
+  .pagination-wrap {
+    float: right;
   }
   /*.active {
     background-color: white;
