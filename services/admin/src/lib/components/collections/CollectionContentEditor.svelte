@@ -476,15 +476,6 @@ Allows the user to modify the member list for a collection.
         <Loading size="sm" backgroundType="gradient" />
       </span>
     {/if}
-    <!--
-<Paginator
-    page={pageNumber - 1}
-    {pageSize}
-    {count}
-    on:change={handlePaginatorChange}
-  />
-
--->
     <Paginator
       page={0}
       pageSize={100}

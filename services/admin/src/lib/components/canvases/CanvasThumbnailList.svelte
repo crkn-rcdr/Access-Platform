@@ -36,6 +36,7 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
   import InfiniteScroller from "../shared/InfiniteScroller.svelte";
   import { showConfirmation } from "$lib/utils/confirmation";
   import Loading from "../shared/Loading.svelte";
+  import Paginator from "../shared/Paginator.svelte";
 
   /**
    * @type {PagedManifest} An ObjectList containing canvases to be listed.
@@ -431,14 +432,27 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
       on:loadMore={handleScroll}
     />
   </div>
-  <div class="auto-align auto-align__a-center">
+  <div
+    class="pagination-info auto-align auto-align__a-center auto-align auto-align__j-center"
+  >
     {#if loading}
       <span class="page-info-loader">
         <Loading size="sm" backgroundType="gradient" />
       </span>
     {/if}
-    <span class="page-info">
+    <!--span >
       Showing {page * size + 1} to {page * size + canvases.length} of {childrenCount}
+    </span-->
+    <span class="page-info">
+      <Paginator
+        size="sm"
+        page={0}
+        pageSize={100}
+        count={400}
+        on:change={() => {
+          console.log("change!");
+        }}
+      />
     </span>
   </div>
 </div>
@@ -533,6 +547,9 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
     overflow: hidden;
     pointer-events: none;
     user-select: none;
+  }
+  .pagination-info {
+    width: 100%;
   }
   :global(.canvas-wrap.disabled > *) {
     overflow: hidden;
