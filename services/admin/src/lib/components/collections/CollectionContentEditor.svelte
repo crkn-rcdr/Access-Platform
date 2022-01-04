@@ -58,7 +58,7 @@ Allows the user to modify the member list for a collection.
   /**
    * @type {number} Shows the number of pages
    */
-  let page: number = 0;
+  let page: number = 1;
   let size: number = 100;
 
   let previousLastItem: string | null = null;
@@ -80,6 +80,7 @@ Allows the user to modify the member list for a collection.
   async function getMemberContext(
     newMembers: { id?: string; label?: Record<string, string> }[]
   ) {
+    loading = true;
     let currentMembers = newMembers.map((members) => members.id);
 
     const resolutions = await $session.lapin.query(
@@ -90,6 +91,8 @@ Allows the user to modify the member list for a collection.
     documentSlug = resolutions.map((slug) => {
       return { id: slug[0], result: slug[1].result };
     });
+
+    loading = false;
   }
   function setActiveIndex(index: number) {
     if (index >= collection?.members?.count)
@@ -182,27 +185,18 @@ Allows the user to modify the member list for a collection.
     }
   }
 
-  async function handleScroll(event) {
-    {
-      if (loading) return;
-      loading = true;
-      if (event.detail.reverse) {
-        page--;
-        console.log("load prev");
-        const currPage = await $session.lapin.query("collection.pageBefore", {
-          id: collection.id,
-          before: members[0].id,
-          limit: size,
-        });
-        previousLastItem = members[members.length - 1].id;
-        members = currPage.list;
-        await getMemberContext(currPage.list);
-      } else {
-        page++;
-        console.log("load next");
-        await sendCurrentPageRequest();
-      }
-    }
+  async function handlePage(event) {
+    page = event.detail.page;
+    if (loading) return;
+    loading = true;
+    const currPage = await $session.lapin.query("collection.page", {
+      id: collection.id,
+      page: page,
+      limit: size,
+    });
+    members = currPage.list;
+    console.log("members", members);
+    await getMemberContext(members);
     loading = false;
   }
 
@@ -473,7 +467,7 @@ Allows the user to modify the member list for a collection.
   <div class="pagination-wrap auto-align auto-align__a-start">
     {#if loading}
       <span class="page-info-loader">
-        <Loading size="sm" backgroundType="gradient" />
+        <Loading size="md" backgroundType="gradient" />
       </span>
     {/if}
     <Paginator
@@ -481,9 +475,7 @@ Allows the user to modify the member list for a collection.
       bind:pageSize={size}
       count={childrenCount}
       pageSizeEditable={false}
-      on:change={() => {
-        console.log("change!");
-      }}
+      on:change={handlePage}
     />
   </div>
 {/if}

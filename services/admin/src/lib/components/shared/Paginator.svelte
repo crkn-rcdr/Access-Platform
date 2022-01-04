@@ -32,7 +32,7 @@ A card component that optionally allows for user selection
   /**
    * @type {number} The page number counting form zero
    */
-  export let page = 0;
+  export let page = 1;
 
   /**
    * @type {number}  The number of items in the page
@@ -154,7 +154,7 @@ A card component that optionally allows for user selection
         <li>
           <button
             class="pagin-lg"
-            class:active={page === page + button}
+            class:active={page === page + button + 1}
             on:click={(e) => onChange(e, page + button)}
           >
             {page + button + 1}
@@ -182,10 +182,9 @@ A card component that optionally allows for user selection
     </li>
     <br />
     <li class="count-message">
-      Viewing items {(page + 1) * pageSize - pageSize + 1} to {count <
-      (page + 1) * pageSize
+      Viewing items {page * pageSize - pageSize + 1} to {count < page * pageSize
         ? count
-        : (page + 1) * pageSize}
+        : page * pageSize}
       of {count}.
     </li>
   </ul>
