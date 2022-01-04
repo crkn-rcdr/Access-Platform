@@ -396,15 +396,9 @@ Allows the user to modify the member list for a collection.
                         }}
                       />
                     </div>
-                    <div
-                      class="action icon"
-                      on:click={(e) => deleteMemberByIndex(e, i)}
-                    >
-                      <TiTrash />
-                    </div>
                   </div>
                 </div>
-                <div class="auto-align auto-align__column">
+                <div class="auto-align auto-align__column label">
                   {#each documentSlug as document}
                     {#if document["result"]?.["label"]?.["none"] && document["id"] === collectionMember?.id}
                       <a
@@ -417,6 +411,18 @@ Allows the user to modify the member list for a collection.
                       </a>
                     {/if}
                   {/each}
+                </div>
+                <div class="actions-wrap">
+                  <div class="auto-align auto-align__column">
+                    <div
+                      class="action icon"
+                      data-tooltip="Remove from collection"
+                      data-tooltip-flow="bottom"
+                      on:click={(e) => deleteMemberByIndex(e, i)}
+                    >
+                      <TiTrash />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -432,17 +438,7 @@ Allows the user to modify the member list for a collection.
             on:mousedown={() => setActiveIndex(i)}
           >
             <div class="member-inner auto-align">
-              <div class="actions-wrap">
-                <div class="auto-align auto-align__column">
-                  <div
-                    class="action icon"
-                    on:click={(e) => deleteMemberByIndex(e, i)}
-                  >
-                    <TiTrash />
-                  </div>
-                </div>
-              </div>
-              <div class="auto-align auto-align__column">
+              <div class="auto-align auto-align__column label">
                 {#each documentSlug as document}
                   {#if document["result"]?.["label"]?.["none"] && document["id"] === collectionMember?.id}
                     <a
@@ -455,6 +451,18 @@ Allows the user to modify the member list for a collection.
                     </a>
                   {/if}
                 {/each}
+              </div>
+              <div class="actions-wrap">
+                <div class="auto-align auto-align__column">
+                  <div
+                    class="action icon"
+                    data-tooltip="Remove from collection"
+                    data-tooltip-flow="bottom"
+                    on:click={(e) => deleteMemberByIndex(e, i)}
+                  >
+                    <TiTrash />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -559,4 +567,7 @@ Allows the user to modify the member list for a collection.
   /*.active {
     background-color: white;
   }*/
+  .label {
+    flex: 9;
+  }
 </style>
