@@ -19,6 +19,7 @@ Allows the user to modify the member list for a collection.
   import AutomaticResizeNumberInput from "$lib/components/shared/AutomaticResizeNumberInput.svelte";
   import TiTrash from "svelte-icons/ti/TiTrash.svelte";
   import CollectionMembersAddition from "./CollectionMembersAddition.svelte";
+  import { page as pageStore } from "$app/stores";
   import { session } from "$app/stores";
   import type { ObjectListPage } from "@crkn-rcdr/access-data";
   import DynamicDragAndDropList from "../shared/DynamicDragAndDropList.svelte";
@@ -185,10 +186,18 @@ Allows the user to modify the member list for a collection.
     }
   }
 
-  async function handlePage(event) {
-    page = event.detail.page;
+  async function handlePage(event: { detail: { page: number } }) {
     if (loading) return;
     loading = true;
+
+    page = event.detail.page;
+
+    const currUrl = `${window.location}`;
+    const newUrl = currUrl.includes("page")
+      ? currUrl.replace(/\?page\=.*/, `?page=${page}`)
+      : `${currUrl}?page=${page}`;
+    history.pushState({}, null, newUrl);
+
     const currPage = await $session.lapin.query("collection.page", {
       id: collection.id,
       page: page,
@@ -325,9 +334,14 @@ Allows the user to modify the member list for a collection.
 
   onMount(async () => {
     activeMemberIndex = 0;
-    console.log("firstPage", firstPage);
-    members = firstPage.list;
-    getMemberContext(firstPage.list);
+    if ($pageStore.query.get("page")) {
+      page = parseInt($pageStore.query.get("page"));
+      handlePage({ detail: { page } });
+    } else {
+      console.log("firstPage", firstPage);
+      members = firstPage.list;
+      getMemberContext(firstPage.list);
+    }
   });
 
   $: {

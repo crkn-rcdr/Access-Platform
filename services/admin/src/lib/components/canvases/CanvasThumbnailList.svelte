@@ -31,6 +31,7 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
   import AutomaticResizeNumberInput from "$lib/components/shared/AutomaticResizeNumberInput.svelte";
   import { session } from "$app/stores";
   import type { ObjectListPage, PagedManifest } from "@crkn-rcdr/access-data";
+  import { page as pageStore } from "$app/stores";
   import DynamicDragAndDropList from "../shared/DynamicDragAndDropList.svelte";
   import DynamicDragAndDropListItem from "../shared/DynamicDragAndDropListItem.svelte";
   import { showConfirmation } from "$lib/utils/confirmation";
@@ -274,9 +275,18 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
   }
 
   async function handlePage(event) {
-    page = event.detail.page;
     if (loading) return;
+
     loading = true;
+
+    page = event.detail.page;
+
+    const currUrl = `${window.location}`;
+    const newUrl = currUrl.includes("page")
+      ? currUrl.replace(/\?page\=.*/, `?page=${page}`)
+      : `${currUrl}?page=${page}`;
+    history.pushState({}, null, newUrl);
+
     const currPage = await $session.lapin.query("manifest.page", {
       id: manifest.id,
       page: page,
@@ -331,8 +341,13 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
    */
   onMount(async () => {
     activeCanvasIndex = 0;
-    canvases = firstPage.list;
-    activeCanvas = canvases[activeCanvasIndex];
+    if ($pageStore.query.get("page")) {
+      page = parseInt($pageStore.query.get("page"));
+      handlePage({ detail: { page } });
+    } else {
+      canvases = firstPage.list;
+      activeCanvas = canvases[activeCanvasIndex];
+    }
   });
 
   $: {
