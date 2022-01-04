@@ -14,20 +14,18 @@ Allows the user to modify the member list for a collection.
 *Note: `bind:` is required for changes to the object to be reflected in higher level components.*
 -->
 <script lang="ts">
-  import { onMount, createEventDispatcher, afterUpdate } from "svelte";
+  import { onMount, createEventDispatcher } from "svelte";
   import type { PagedCollection } from "@crkn-rcdr/access-data/src/access/Collection";
   import AutomaticResizeNumberInput from "$lib/components/shared/AutomaticResizeNumberInput.svelte";
   import TiTrash from "svelte-icons/ti/TiTrash.svelte";
   import CollectionMembersAddition from "./CollectionMembersAddition.svelte";
   import { session } from "$app/stores";
-  import InfiniteScroller from "../shared/InfiniteScroller.svelte";
   import type { ObjectListPage } from "@crkn-rcdr/access-data";
   import DynamicDragAndDropList from "../shared/DynamicDragAndDropList.svelte";
   import DynamicDragAndDropListItem from "../shared/DynamicDragAndDropListItem.svelte";
   import { showConfirmation } from "$lib/utils/confirmation";
   import Loading from "../shared/Loading.svelte";
   import Paginator from "../shared/Paginator.svelte";
-  import { loop_guard } from "svelte/internal";
 
   export let collection: PagedCollection;
 
