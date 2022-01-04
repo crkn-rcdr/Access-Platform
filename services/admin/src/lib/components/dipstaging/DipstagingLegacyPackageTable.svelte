@@ -113,7 +113,7 @@ This component shows the results of a dipstaging package view. It allows the use
    */
   function toggleAllSelected(event) {
     for (const item of results) {
-      if (slugAvailableMap[item.slug])
+      if (slugAvailableMap[slugMap[item["id"]]])
         selectedMap[item.id] = event.target.checked;
       else selectedMap[item.id] = false;
     }
@@ -163,7 +163,7 @@ This component shows the results of a dipstaging package view. It allows the use
    * @returns void
    */
   function setSlugAvailability(event, item: LegacyPackage) {
-    slugAvailableMap[item.slug] = event.detail.status;
+    slugAvailableMap[slugMap[item["id"]]] = event.detail.status;
     slugAvailableMap = slugAvailableMap;
   }
 
@@ -200,7 +200,6 @@ This component shows the results of a dipstaging package view. It allows the use
    */
   function setSelectedModel() {
     if (!results) return;
-    selectedMap = {};
     for (const item of results) {
       if (!(item.id in selectedMap) && isItemSelectable(item))
         selectedMap[item.id] = false;
@@ -215,7 +214,7 @@ This component shows the results of a dipstaging package view. It allows the use
   function isItemSelectable(legacyPackage: LegacyPackage) {
     return (
       !sucessfulSmeltRequestMap[legacyPackage.id] &&
-      slugAvailableMap[legacyPackage.slug] &&
+      slugAvailableMap[slugMap[legacyPackage["id"]]] &&
       view !== "queue"
     );
   }
@@ -250,10 +249,12 @@ This component shows the results of a dipstaging package view. It allows the use
   $: {
     loading = true;
     results;
-    checkIfSlugsDefined();
-    getSlugAvailability().then(() => {
-      setExpandedModel();
-      setSelectedModel();
+    Promise.all([
+      checkIfSlugsDefined(),
+      getSlugAvailability(),
+      setExpandedModel(),
+      setSelectedModel(),
+    ]).then(() => {
       loading = false;
     });
   }
@@ -322,7 +323,7 @@ This component shows the results of a dipstaging package view. It allows the use
             <tr class:expanded={expandedMap[legacyPackage.id]}>
               {#if view !== "queue"}
                 <td>
-                  {#if sucessfulSmeltRequestMap[legacyPackage.id] || !slugAvailableMap[legacyPackage.slug] || view === "queue"}
+                  {#if sucessfulSmeltRequestMap[legacyPackage.id] || !slugAvailableMap[slugMap[legacyPackage["id"]]] || view === "queue"}
                     <input
                       type="checkbox"
                       disabled
@@ -342,17 +343,21 @@ This component shows the results of a dipstaging package view. It allows the use
               </td>
 
               <td>
-                <Resolver
-                  noid={legacyPackage.id in noidMap
-                    ? noidMap[legacyPackage.id]
-                    : null}
-                  isFound={!slugAvailableMap[legacyPackage.slug]}
-                  alwaysShowIfFound={true}
-                  runInitial={false}
-                  on:available={(e) => setSlugAvailability(e, legacyPackage)}
-                  bind:slug={slugMap[legacyPackage.id]}
-                  size="sm"
-                />
+                {#if view !== "queue"}
+                  <Resolver
+                    noid={legacyPackage.id in noidMap
+                      ? noidMap[slugMap[legacyPackage["id"]]]
+                      : null}
+                    isFound={!slugAvailableMap[slugMap[legacyPackage["id"]]]}
+                    alwaysShowIfFound={true}
+                    runInitial={false}
+                    on:available={(e) => setSlugAvailability(e, legacyPackage)}
+                    bind:slug={slugMap[legacyPackage.id]}
+                    size="sm"
+                  />
+                {:else}
+                  {slugMap[legacyPackage.id]}
+                {/if}
               </td>
 
               <td>
