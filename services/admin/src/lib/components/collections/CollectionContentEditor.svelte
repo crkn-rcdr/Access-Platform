@@ -71,7 +71,7 @@ Allows the user to modify the member list for a collection.
   function setPositions() {
     positions = [];
     for (let i = 0; i < members.length; i++)
-      positions.push(page * size + i + 1);
+      positions.push((page - 1) * size + i + 1);
   }
 
   function changeView(newState: string) {
@@ -277,7 +277,7 @@ Allows the user to modify the member list for a collection.
       event.detail.currentItemIndex < members.length
     ) {
       const pagedDestinationIndex =
-        page * size + event.detail.destinationItemIndex;
+        (page - 1) * size + event.detail.destinationItemIndex;
 
       const memberToMove = members[event.detail.currentItemIndex];
 

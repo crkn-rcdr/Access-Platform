@@ -88,11 +88,12 @@ A card component that optionally allows for user selection
   }
 </script>
 
+<!--{page} * {pageSize} - {pageSize} + 1 = {page * pageSize - pageSize + 1}-->
 {#if size === "sm"}
   {#if buttons.length}
     <button
       class="secondary"
-      disabled={page === 0}
+      disabled={page === 1}
       on:click={(e) => onChange(e, page - 2)}
     >
       Prev
@@ -134,7 +135,7 @@ A card component that optionally allows for user selection
     <li>
       <button
         class="pagin-lg"
-        disabled={page === 0}
+        disabled={page === 1}
         on:click={(e) => onChange(e, 0)}
       >
         {labels.first}
@@ -143,7 +144,7 @@ A card component that optionally allows for user selection
     <li>
       <button
         class="pagin-lg"
-        disabled={page === 0}
+        disabled={page === 1}
         on:click={(e) => onChange(e, page - 1)}
       >
         {labels.previous}

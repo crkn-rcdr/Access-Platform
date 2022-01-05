@@ -102,7 +102,7 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
   function setPositions() {
     positions = [];
     for (let i = 0; i < canvases.length; i++)
-      positions.push(page * size + i + 1);
+      positions.push((page - 1) * size + i + 1);
   }
 
   /**
@@ -306,7 +306,7 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
       event.detail.currentItemIndex < canvases.length
     ) {
       const pagedDestinationIndex =
-        page * size + event.detail.destinationItemIndex;
+        (page - 1) * size + event.detail.destinationItemIndex;
 
       const canvasToMove = canvases[event.detail.currentItemIndex];
 
