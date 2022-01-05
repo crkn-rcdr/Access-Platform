@@ -109,7 +109,7 @@ A card component that optionally allows for user selection
 
     <button
       class="secondary"
-      disabled={page > pageCount - 1}
+      disabled={page > pageCount}
       on:click={(e) => onChange(e, page)}>Next</button
     >
   {/if}
@@ -145,7 +145,7 @@ A card component that optionally allows for user selection
       <button
         class="pagin-lg"
         disabled={page === 1}
-        on:click={(e) => onChange(e, page - 1)}
+        on:click={(e) => onChange(e, page - 2)}
       >
         {labels.previous}
       </button>
@@ -166,8 +166,8 @@ A card component that optionally allows for user selection
     <li>
       <button
         class="pagin-lg"
-        disabled={page > pageCount - 1}
-        on:click={(e) => onChange(e, page + 1)}
+        disabled={page > pageCount}
+        on:click={(e) => onChange(e, page)}
       >
         {labels.next}
       </button>
@@ -175,7 +175,7 @@ A card component that optionally allows for user selection
     <li>
       <button
         class="pagin-lg"
-        disabled={page >= pageCount}
+        disabled={page > pageCount}
         on:click={(e) => onChange(e, pageCount)}
       >
         {labels.last}
