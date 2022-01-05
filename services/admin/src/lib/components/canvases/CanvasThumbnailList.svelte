@@ -395,7 +395,7 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
                     max={childrenCount}
                     value={positions[i]}
                     on:changed={(e) => {
-                      moveCanvasOnInputChange(e, positions[i] - 1);
+                      moveCanvasOnInputChange(e, i);
                     }}
                   />
                 </div>

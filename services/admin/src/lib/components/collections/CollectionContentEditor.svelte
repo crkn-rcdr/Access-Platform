@@ -400,7 +400,7 @@ Allows the user to modify the member list for a collection.
                         max={childrenCount}
                         value={positions[i]}
                         on:changed={(e) => {
-                          moveMemberOnInputChange(e, positions[i] - 1);
+                          moveMemberOnInputChange(e, i);
                         }}
                       />
                     </div>
