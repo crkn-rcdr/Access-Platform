@@ -7,7 +7,8 @@
   import type { RootLoadOutput } from "$lib/types";
   export const load: Load<RootLoadOutput> = async ({ page, context }) => {
     try {
-      if (page.path === "?slug") return { props: { activePageIndex: -1 } };
+      if (page.path.includes("/slug"))
+        return { props: { activePageIndex: -1 } };
       else if (page.path === "/smelter")
         return { props: { activePageIndex: 0 } };
       else if (page.path.includes("find"))

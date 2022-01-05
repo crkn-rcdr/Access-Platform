@@ -363,25 +363,22 @@ The editor actions component holds functionality that is responsible for perform
   {/if}
 
   {#if editorObject["id"]}
+    {#if editorObject["type"] === "manifest"}
+      <a
+        href={`/smelter/slug?slugs=${editorObject["slug"]}`}
+        data-tooltip-flow="bottom"
+        data-tooltip="Re-import the source package for this manifest (if applicable.) This will reset this manifest, making it match the preservation package it was derived from."
+      >
+        <button class="secondary">Re-import</button>
+      </a>
+    {/if}
+
     <button class="secondary" on:click={handlePublishStatusChange}>
       {serverObject["public"] ? "Unpublish" : "Publish"}
     </button>
 
-    {#if editorObject["type"] === "manifest"}
-      <a target="_blank" href={`/smelter/slug?slugs=${editorObject["slug"]}`}>
-        <button>Re-import</button>
-      </a>
-    {/if}
-
     {#if serverObject["slug"] && !serverObject["public"]}
-      <button
-        class="danger"
-        data-tooltip="Delete"
-        data-tooltip-flow="bottom"
-        on:click={openDeletionModal}
-      >
-        Delete
-      </button>
+      <button class="danger" on:click={openDeletionModal}> Delete </button>
     {/if}
   {/if}
 </span>

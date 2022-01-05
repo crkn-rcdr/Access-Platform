@@ -143,11 +143,12 @@ This component shows the results of a dipstaging find-package(s) request or a vi
    * @returns void
    */
   function checkIfSlugsDefined() {
-    items = [];
     if (!results) return;
+    items = [];
+    slugMap = {};
     for (const item of results) {
       items.push(item);
-      if (!item["slug"]) {
+      if (!item["slug"] && !isSlugSearch) {
         item["slug"] = item["id"];
         slugMap[item["id"]] = item["id"];
       } else slugMap[item["id"]] = item["slug"];
@@ -161,10 +162,10 @@ This component shows the results of a dipstaging find-package(s) request or a vi
    */
   function setSelectedModel() {
     if (!items) return;
+    selectedMap = {};
     for (const item of items) {
-      if (!(item["id"] in selectedMap) && isItemSelectable(item))
-        selectedMap[item["id"]] = true;
-      else if (!(item["id"] in selectedMap)) selectedMap[item["id"]] = false;
+      console.log(isItemSelectable(item));
+      selectedMap[item["id"]] = isItemSelectable(item);
     }
     selectedMap = selectedMap;
   }
@@ -191,11 +192,8 @@ This component shows the results of a dipstaging find-package(s) request or a vi
 
   async function getSlugAvailability() {
     if (!items) return;
-
     error = "";
-
     const slugs: string[] = Object.values(slugMap);
-
     while (slugs.length > 0) {
       const slugBatch = slugs.splice(0, 500);
       //results.map((item) => item["id"]);
@@ -208,6 +206,7 @@ This component shows the results of a dipstaging find-package(s) request or a vi
           if (result.length === 2) {
             const slug = result[0];
             const info = result[1];
+            console.log(slug, info);
             slugUnavailableMap[slug] = info.found;
             if (info.found && info.result) {
               noidMap[slug] = info.result.id;
@@ -254,7 +253,7 @@ This component shows the results of a dipstaging find-package(s) request or a vi
       )}
     >
       {isSlugSearch
-        ? "Re-import Selected Package(s)"
+        ? "Re-import Package"
         : "Import Selected Packages into Access"}
     </button>
   </div>
@@ -303,7 +302,9 @@ This component shows the results of a dipstaging find-package(s) request or a vi
           <tr class="row-detail">
             <td>
               {#if "status" in item && item.status === "not-found"}
-                '{item["id"]}' was not found.
+                '{item["id"]}' was not found. {isSlugSearch
+                  ? "Are you sure your manifest was derived from a preservation package?"
+                  : ""}
               {:else if "status" in item && item.status === "processing"}
                 This package is currently being imported. <a
                   target="_blank"
@@ -314,7 +315,9 @@ This component shows the results of a dipstaging find-package(s) request or a vi
                 {#if slugUnavailableMap[slugMap[item["id"]]] && slugMap[item["id"]] === item["slug"]}
                   <NotificationBar
                     status="fail"
-                    message={`This package is already imported as a  manifest.`}
+                    message={isSlugSearch
+                      ? `The existing manifest must be deleted before the package can be re-imported into a new manifest.`
+                      : `This package is already imported as a  manifest.`}
                   />
 
                   <p>
@@ -324,7 +327,9 @@ This component shows the results of a dipstaging find-package(s) request or a vi
                       target="_blank"
                     >
                       To replace the existing import of this package, please
-                      click here to unpublish and delete the package.
+                      click here open it in the editor. Then, unpublish the
+                      manifest if it is published. Then, press delete to delete
+                      the manifest.
                     </a> When you are done, click the button below to enable importing
                     for your package.
                   </p>
@@ -336,7 +341,7 @@ This component shows the results of a dipstaging find-package(s) request or a vi
                       slugUnavailableMap[slugMap[item["id"]]] = false;
                     }}
                   >
-                    OK, I have deleted the manifest.
+                    OK, I have deleted the existing manifest.
                   </button>
                 {:else}
                   <span
@@ -344,7 +349,7 @@ This component shows the results of a dipstaging find-package(s) request or a vi
                     manifest:
                   </span>
                   <Resolver
-                    noid={item["id"] in noidMap
+                    noid={slugMap[item["id"]] in noidMap
                       ? noidMap[slugMap[item["id"]]]
                       : null}
                     isFound={slugUnavailableMap[slugMap[item["id"]]]}

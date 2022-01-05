@@ -89,19 +89,19 @@ This component allows the user to find packages in the dipstaging database.
   <br />
   {#if loading}
     Searching for {slugListString}...
-  {/if}
+  {:else}
+    <div class="table-wrap">
+      <DipstagingLookupTable isSlugSearch={true} bind:results />
 
-  <div class="table-wrap">
-    <DipstagingLookupTable isSlugSearch={true} bind:results />
-
-    {#if !results}
-      <div class="lookup-msg">
+      {#if !results}
+        <div class="lookup-msg">
+          <br />
+          <i>Look-up results will appear here.</i>
+        </div>
+      {:else if results.length === 0}
         <br />
-        <i>Look-up results will appear here.</i>
-      </div>
-    {:else if results.length === 0}
-      <br />
-      No packages found.
-    {/if}
-  </div>
+        No packages found.
+      {/if}
+    </div>
+  {/if}
 </div>
