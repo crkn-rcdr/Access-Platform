@@ -7,7 +7,9 @@
   import type { RootLoadOutput } from "$lib/types";
   export const load: Load<RootLoadOutput> = async ({ page, context }) => {
     try {
-      if (page.path === "/smelter") return { props: { activePageIndex: 0 } };
+      if (page.path === "?slug") return { props: { activePageIndex: -1 } };
+      else if (page.path === "/smelter")
+        return { props: { activePageIndex: 0 } };
       else if (page.path.includes("find"))
         return { props: { activePageIndex: 0 } };
       else if (page.path.includes("queue"))
@@ -38,7 +40,12 @@
 {#if error}
   <NotificationBar status="fail" message={error} />
 {/if}
-{#if typeof activePageIndex !== "undefined"}
+
+{#if activePageIndex === -1}
+  <!-- For the slug based import search -->
+  <slot />
+{:else if typeof activePageIndex !== "undefined"}
+  <!-- Everything else gets embedded -->
   <Dipstaging bind:activePageIndex>
     <slot />
   </Dipstaging>

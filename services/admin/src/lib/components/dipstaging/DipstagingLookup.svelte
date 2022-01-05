@@ -15,7 +15,7 @@ This component allows the user to find packages in the dipstaging database.
 *Note: `bind:` is required for changes to the properties to be reflected in higher level components.*
 -->
 <script lang="ts">
-  import { getStores, page } from "$app/stores";
+  import { getStores } from "$app/stores";
   import PrefixSelector from "$lib/components/access-objects/PrefixSelector.svelte";
   import ToggleButtons from "$lib/components/shared/ToggleButtons.svelte";
   import type { Depositor, Session } from "$lib/types";
@@ -178,60 +178,15 @@ This component allows the user to find packages in the dipstaging database.
     loading = false;
   }
 
-  /**
-   * Sends the request to look up the items by slug to the backend and saves the results
-   * @returns void
-   */
-  async function sendLookupRequestSlugs() {
-    if (loading) return;
-    loading = true;
-    if (slugListString.includes(",")) slugList = slugListString.split(",");
-    else slugList = slugListString.split("\n");
-    slugList = slugList.filter((slug) => slug.trim().length);
-    console.log("Searching", slugList);
-    if (slugList.length) {
-      if (depositor?.prefix !== "none")
-        slugList = slugList.map(
-          (slug) => `${depositor?.prefix}.${slug.trim()}`
-        );
-      else slugList = slugList.map((slug) => slug.trim());
-      const response = await $session.lapin.query(
-        "dipstaging.listFromSlugs",
-        slugList
-      );
-      if (response) results = response;
-      lookupDone = true;
-    }
-    loading = false;
-  }
-
-  /*function handleDateRangeSelected(event: { detail: any[] }) {
-    console.log(event.detail);
-    if (event.detail.length === 3) {
-      const dates = event.detail[1].split(" to ");
-      if (dates.length === 2) {
-        startDateStr = dates[0];
-        endDateStr = dates[1];
-      }
-    }
-  }*/
-
   onMount(async () => {
-    const slugListStrPrm = $page.query.get("slugs");
-    if (slugListStrPrm) {
-      slugListString = slugListStrPrm;
-      lookupView = BY_SLUG_LABEL;
-      await sendLookupRequestSlugs();
-    } else {
-      // if not searched then set default
-      if (startDateStr === "" && endDateStr === "") {
-        let date = new Date();
-        date.setDate(date.getDate() - 1);
-        startDateStr = date.toISOString().split("T")[0];
-        endDateStr = startDateStr;
-        await sendLookupRequestDates();
-        //lookupDone = false;
-      }
+    // if not searched then set default
+    if (startDateStr === "" && endDateStr === "") {
+      let date = new Date();
+      date.setDate(date.getDate() - 1);
+      startDateStr = date.toISOString().split("T")[0];
+      endDateStr = startDateStr;
+      await sendLookupRequestDates();
+      //lookupDone = false;
     }
   });
 </script>

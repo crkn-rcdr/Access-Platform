@@ -368,8 +368,8 @@ The editor actions component holds functionality that is responsible for perform
     </button>
 
     {#if editorObject["type"] === "manifest"}
-      <a href={`/smelter/find?slugs=${editorObject["slug"]}`}>
-        <button> Open source package in importer </button>
+      <a target="_blank" href={`/smelter/slug?slugs=${editorObject["slug"]}`}>
+        <button>Re-import</button>
       </a>
     {/if}
 

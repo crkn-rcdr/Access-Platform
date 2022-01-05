@@ -31,6 +31,8 @@ This component shows the results of a dipstaging find-package(s) request or a vi
    */
   export let results: (ImportStatus | LegacyPackage)[];
 
+  export let isSlugSearch = false;
+
   /**
    * @type {boolean}
    * An indicator of if the result's item models are being processed or not
@@ -250,7 +252,9 @@ This component shows the results of a dipstaging find-package(s) request or a vi
         Object.keys(selectedMap).filter((key) => selectedMap[key]).length > 0
       )}
     >
-      Import Selected Packages into Access
+      {isSlugSearch
+        ? "Re-import Selected Package(s)"
+        : "Import Selected Packages into Access"}
     </button>
   </div>
 

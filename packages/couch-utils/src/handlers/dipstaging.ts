@@ -33,57 +33,6 @@ export class LegacyPackageHandler extends DatabaseHandler<LegacyPackage> {
     );
   }
 
-  /*async listFromSlugs(slugs: string[], access: AccessHandler) {
-    const resolutions = await access.resolveSlugs(slugs);
-    console.log(resolutions);
-    const list = await this.findUniqueArray("slug", slugs, [
-      "id",
-      "slug",
-      "label",
-      "repos",
-      "ingestDate",
-      "smelt",
-      "staff",
-    ] as const);
-    console.log("list", JSON.stringify(list));
-
-    let lps: LegacyPackage[] = [];
-    let notFound: string[] = [];
-
-    for (let res of list) {
-      const slug = res[0];
-      const lookupRes = res[1];
-      if (lookupRes.found) {
-        const lpParse = LegacyPackage.safeParse(lookupRes.result);
-        console.log("lpParse", JSON.stringify(lpParse));
-        if (lpParse.success) {
-          lps.push(lpParse.data);
-        }
-      } else {
-        notFound.push(slug);
-      }
-    }
-
-    const data = lps
-      .map((lp) => {
-        let id: string | undefined = undefined;
-        if (lp.slug) {
-          const r = resolutions[lp.slug];
-          if (r && r.resolved) {
-            id = r.id;
-          }
-        }
-        return getImportStatus(lp.id, lp, id);
-      })
-      .concat(
-        notFound.map((slug) => {
-          return getImportStatus(slug);
-        })
-      );
-    console.log("data", data);
-    return data;
-  }*/
-
   async listFromKeys(keys: Slug[], access: AccessHandler) {
     const resolutions = await access.resolveSlugs(keys);
     const list = await this.list({ include_docs: true, keys });
