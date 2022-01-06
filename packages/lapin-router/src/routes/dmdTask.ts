@@ -66,7 +66,10 @@ export const dmdTaskRouter = createRouter()
       try {
         return await ctx.couch.dmdtask.create(input);
       } catch (e) {
-        throw httpErrorToTRPC(e);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: `Code 1. Please contact the platform team for assistance.`,
+        });
       }
     },
   })
