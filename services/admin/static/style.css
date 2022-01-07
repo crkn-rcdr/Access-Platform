@@ -447,7 +447,7 @@ button.sm,
 .button.sm {
   /*padding: var(--perfect-fourth-8) var(--perfect-fourth-6);*/
   padding: 0 0.5rem;
-  height: 2.2rem;
+  height: fit-content;
 }
 
 button.lg,
