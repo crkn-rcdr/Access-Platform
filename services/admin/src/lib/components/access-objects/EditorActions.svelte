@@ -371,13 +371,17 @@ The editor actions component holds functionality that is responsible for perform
 
   {#if editorObject["id"]}
     {#if editorObject["type"] === "manifest"}
-      <a
+      <!--a
         href={`/smelter/slug?slugs=${editorObject["slug"]}`}
         data-tooltip-flow="bottom"
         data-tooltip="Re-import the source package for this manifest (if applicable.) This will reset this manifest, making it match the preservation package it was derived from."
       >
         <button class="secondary">Re-import</button>
-      </a>
+      </a-->
+      <i class="reassurance"
+        >Afraid of making changes? Don't worry. If you make a mistake you can
+        always re-import the package.</i
+      >
     {/if}
 
     <button class="secondary" on:click={handlePublishStatusChange}>
@@ -442,5 +446,8 @@ The editor actions component holds functionality that is responsible for perform
   }
   .modal-loader-wrap {
     height: 5rem;
+  }
+  .reassurance {
+    font-size: 1rem;
   }
 </style>
