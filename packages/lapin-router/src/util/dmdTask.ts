@@ -24,6 +24,8 @@ export const NewInput = z.object({
   fileName: z.string(), // any othervalidation needed?
 });
 
+export type NewInput = z.infer<typeof NewInput>;
+
 export const FetchInput = z.object({
   task: z.string(), // dmdtask uuid
   index: z.number(), // array index of the item you want to fetch
