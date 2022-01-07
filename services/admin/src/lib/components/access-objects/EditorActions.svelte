@@ -379,7 +379,7 @@ The editor actions component holds functionality that is responsible for perform
         <button class="secondary">Re-import</button>
       </a-->
       <i class="reassurance"
-        >Afriad of making changes? Don't worry. If you make a mistake you can
+        >Afraid of making changes? Don't worry. If you make a mistake you can
         always re-import the package.</i
       >
     {/if}
