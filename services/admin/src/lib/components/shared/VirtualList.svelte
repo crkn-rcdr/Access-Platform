@@ -2,6 +2,7 @@
 @component
 ### Overview
 Displays a list that when scrolls veritcally, creates and distoys children elements in the dom depending on if they are visible in the list component or not. Allows for optional reordering through drag and drop.
+
 ### Properties
 |    |    |    |
 | -- | -- | -- |
@@ -9,6 +10,7 @@ Displays a list that when scrolls veritcally, creates and distoys children eleme
 | activeIndex: number  | optional | The index of the selected, 'active' item in the dataList list  |
 | disabled: boolean  | optional | If the list is currently disabled or not |
 | draggable: boolean  | optional | If the items in the list should be draggable. |
+
 ### Usage
 ```  
   <VirtualList 
@@ -19,32 +21,39 @@ Displays a list that when scrolls veritcally, creates and distoys children eleme
   </VirtualList/>
 ```
 *Note: `bind:` is required for changes to the parameters to be reflected in higher level components.*
+
 -->
 <script lang="ts">
   import { createEventDispatcher, onMount } from "svelte";
   import DynamicDragAndDropList from "$lib/components/shared/DynamicDragAndDropList.svelte";
   import VirtualScroll from "svelte-virtual-scroll-list";
   import DynamicDragAndDropListItem from "../shared/DynamicDragAndDropListItem.svelte";
+
   /**
    * @type {boolean} If the list is currently disabled or not
    */
   export let disabled: boolean = false;
+
   /**
    * @type {boolean} If the items in the list should be draggable.
    */
   export let draggable: boolean = true;
+
   /**
    * @type {number} The index of the selected, 'active' item in the dataList list.
    */
   export let activeIndex = 0;
+
   /**
    * @type {any[]} An ObjectList containing dataList to be listed.
    */
   export let dataList: any[] = [];
+
   /**
    * @type {boolean} Used to keep track of if the openseadragon viewer has been instantiated or not yet.
    */
   let isInitialized = false;
+
   /**
    * @type {{
         id: number,
@@ -59,38 +68,47 @@ Displays a list that when scrolls veritcally, creates and distoys children eleme
     new: boolean;
     data;
   }[] = [];
+
   /**
    * @type {HTMLDivElement} The html element containing the item list.
    */
   let container: HTMLDivElement;
+
   /**
    * @type {number} The key code for the left arrow on the keyboard.
    */
   const LEFT_ARROW_CODE = 37;
+
   /**
    * @type {number} The key code for the up arrow on the keyboard.
    */
   const UP_ARROW_CODE = 38;
+
   /**
    * @type {number} The key code for the right arrow on the keyboard.
    */
   const RIGHT_ARROW_CODE = 39;
+
   /**
    * @type {number} The key code for the down arrow on the keyboard.
    */
   const DOWN_ARROW_CODE = 40;
+
   /**
    * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.
    */
   const dispatch = createEventDispatcher();
+
   /**
    * @type {any} A variable that holds the virtual scroll component
    */
   let list;
+
   /**
    * @type {any} A variable that allows the developer to interact with each individual item in @var dataList in the parent component.
    */
   let item = {};
+
   /**
    * Sets the @var indexModel to an array of numbers indicating the position of the dataList in the dataList list.
    * @returns void
@@ -108,6 +126,7 @@ Displays a list that when scrolls veritcally, creates and distoys children eleme
     }
     indexModel = indexModel;
   }
+
   /**
    * Sets the @var activeIndex, the current 'selected' canvas. It also calls @event itemClicked which outputs the index of the active canvas in the dataList list
    * @param index
@@ -120,6 +139,7 @@ Displays a list that when scrolls veritcally, creates and distoys children eleme
     dataList = dataList;
     dispatch("itemClicked", { index });
   }
+
   /**
    * Jumps to the element for the canvas at index in the dataList list drawn in the container
    * @param index
@@ -129,6 +149,7 @@ Displays a list that when scrolls veritcally, creates and distoys children eleme
     let canvasitems = container.querySelectorAll(".item");
     canvasitems?.[index]?.scrollIntoView();
   }
+
   /**
    * Sets the active canvas to the canvas before the current active canvas. It then
    * jumps to the new active canvas by calling @function jumpTo,
@@ -142,6 +163,7 @@ Displays a list that when scrolls veritcally, creates and distoys children eleme
       setActiveIndex(activeIndex);
     }
   }
+
   /**
    * Sets the active canvas to the canvas after the current active canvas. It then
    * jumps to the new active canvas by calling @function jumpTo,
@@ -155,6 +177,7 @@ Displays a list that when scrolls veritcally, creates and distoys children eleme
       setActiveIndex(activeIndex);
     }
   }
+
   /**
    * Sets the active canvas based on arrow key presses. Calls @function selectPrevious for left and up arrows, and @function selectNext for down and right arrows.
    * @param event
@@ -170,6 +193,7 @@ Displays a list that when scrolls veritcally, creates and distoys children eleme
       selectNext();
     }
   }
+
   /**
    * If the list has been drawn previously (@var isInitialized), then call @function trackNewdataList to help highlight changes, and update the psoitions displayed in the list by calling @function setIndexModel
    * @returns void
@@ -179,6 +203,7 @@ Displays a list that when scrolls veritcally, creates and distoys children eleme
       setIndexModel();
     }
   }
+
   /**
    * @event onMount
    * @description When the component instance is mounted onto the dom, @var activeIndex is instantiated, the dataList positions model is set using @function setIndexModel(), then @var isInitialized is set to true.
@@ -188,6 +213,7 @@ Displays a list that when scrolls veritcally, creates and distoys children eleme
     setIndexModel();
     isInitialized = true;
   });
+
   /**
    * @listens dataList
    * @description Watches for changes in the dataList list, then calls @function updated to re set the @var indexModel, the dataList positions model, and stores the previous size of the dataList list, to help highlight the new items.
@@ -199,11 +225,12 @@ Displays a list that when scrolls veritcally, creates and distoys children eleme
 </script>
 
 <svelte:window on:keydown={handleKeydown} />
+
 <div bind:this={container} tabindex="0" class="list" class:disabled>
   {#if indexModel.length === dataList.length}
     {#if draggable}
       <DynamicDragAndDropList
-        bind:dragList={dataList}
+        bind:container
         on:itemDropped={(e) => {
           setActiveIndex(e.detail.destinationItemIndex);
         }}
@@ -251,9 +278,11 @@ Displays a list that when scrolls veritcally, creates and distoys children eleme
     overflow-y: hidden;
     opacity: 0.5;
   }
+
   .vs-wrap {
     height: 72vh;
   }
+
   :global(.disabled .vs-wrap div) {
     overflow-y: hidden !important;
   }
