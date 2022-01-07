@@ -31,7 +31,7 @@
    * @type {string} If a Collection is selected.
    */
   let isMemberSelected = false;
-  let addedMember = false;
+  let addingMembers = false;
 
   /**
    * @type {boolean} If the add button should be displayed over the list of members.
@@ -47,12 +47,12 @@
   /**
    * @type { string } The label for the by-slug toggle
    */
-  const LOOKUP_MEMBER = "Add a member";
+  const LOOKUP_MEMBER_BUTTON_TEXT = "Add a member";
 
   /**
    * @type { string } The selected lookup method
    */
-  let memberLookup: string = LOOKUP_MEMBER;
+  let memberLookup: string = LOOKUP_MEMBER_BUTTON_TEXT;
   /**
    * @type { boolean } If the lookup has completed run once yet.
    */
@@ -68,7 +68,7 @@
    * @returns void
    */
   function addClicked() {
-    addedMember = true;
+    addingMembers = true;
     dispatch("addClicked");
   }
 
@@ -84,6 +84,7 @@
   let resolutions: PromiseValue<ReturnType<typeof resolveMembers>>;
 
   async function resolveMembers() {
+    lookupDone = false;
     let slugArray = input.split(/[,|\s]/);
 
     if (depositor?.prefix !== "none")
@@ -97,6 +98,7 @@
 
       resolutions = response;
       showAddButton = false;
+      lookupDone = true;
 
       // I'm returning here so that we can type `resolutions` properly (see above)
       return response;
@@ -106,6 +108,8 @@
       resolutions = Object.fromEntries(
         response.map(([slug, r]): [string, any] => {
           if (r.found) {
+            resultArray.push(r.result.id);
+            resultArray = resultArray;
             return [
               slug,
               {
@@ -118,6 +122,7 @@
         })
       );
       showAddButton = false;
+      lookupDone = true;
 
       // I'm returning here so that we can type `resolutions` properly (see above)
       return response;
@@ -125,7 +130,7 @@
   }
 
   function handleCancelPressed() {
-    addedMember = false;
+    addingMembers = false;
     showAddButton = true;
     clearText();
     dispatch("done");
@@ -145,6 +150,7 @@
     } else {
       resultArray.push(event.target.value);
     }
+    resultArray = resultArray;
   }
 
   async function handleAddPressed() {
@@ -155,7 +161,7 @@
     contextDisplay = contextDisplay;
     destinationMember = destinationMember;
 
-    addedMember = false;
+    addingMembers = false;
     showAddButton = true;
     resultArray = [];
     resolutions = {};
@@ -168,22 +174,20 @@
       label: "",
     };
   }
+
+  $: console.log(resultArray);
 </script>
 
-<div class="canvas-selector-wrap add-menu">
+<div class="member-selector-wrap add-menu">
   <div
     class="move-button auto-align auto-align__full auto-align auto-align__column"
   >
     {#if showAddButton}
-      <!--  <button class="primary lg" on:click={addClicked}>Member LookUp</button> -->
-      <ToggleButtons
-        activeIndex={memberLookup === LOOKUP_MEMBER ? 0 : 1}
-        color={lookupDone ? "secondary" : "primary"}
-        options={[LOOKUP_MEMBER]}
-        on:select={addClicked}
-      />
+      <button class="primary lg" on:click={addClicked}>
+        {LOOKUP_MEMBER_BUTTON_TEXT}
+      </button>
     {/if}
-    {#if addedMember}
+    {#if addingMembers}
       <div class="exit-button">
         <button
           class="secondary cancel-button auto-align auto-align__a-center"
@@ -197,66 +201,87 @@
       </div>
     {/if}
   </div>
-  {#if addedMember}
-    <div>
-      <PrefixSelector bind:depositor />
-      <textarea
-        rows="4"
-        placeholder="Enter a list of slugs seperated by commas or new lines."
-        bind:value={input}
-      /><br /> <br />
-      <button class="primary lg" on:click={resolveMembers}>Lookup</button>
-      <button class="primary lg" on:click={clearText}>Clear Text</button>
+  {#if addingMembers}
+    <div class="search-wrap">
       <br />
-    </div>
-    <br />
-    {#if !showAddButton}
-      {#if resolutions}
-        <table>
-          <thead>
-            <tr>
-              <th>Slug</th>
-              <th>Status</th>
-              <th>Select</th>
-            </tr>
-          </thead>
-          <tbody>
-            {#each Object.entries(resolutions) as [slug, resolution]}
+      <p>
+        Please search for items to add to your collection, then select them if
+        found.
+      </p>
+      <div>
+        <PrefixSelector bind:depositor />
+        <textarea
+          rows="4"
+          placeholder="Enter a list of slugs seperated by commas or new lines."
+          bind:value={input}
+        /><br /> <br />
+        <button
+          class="lg"
+          class:primary={!lookupDone}
+          class:secondary={lookupDone}
+          on:click={resolveMembers}>Search</button
+        >
+        <button class="secondary lg" on:click={clearText}>Clear Text</button>
+        <br />
+      </div>
+      <br />
+      {#if !showAddButton}
+        {#if resolutions}
+          <table>
+            <thead>
               <tr>
-                <td>{slug}</td>
-                <td>
-                  {#if resolution.resolved === true}
-                    found
-                  {:else if resolution.resolved === false}
-                    {resolution.error}
-                  {/if}
-                </td>
-                <td class="success">
-                  {#if resolution.resolved === true}
-                    <input
-                      type="checkbox"
-                      on:change={checkIfAllItemsSelected}
-                      bind:value={resolution.id}
-                    />
-                    {resolution.id}
-                  {:else}
-                    <span>No ID resolved to add</span>
-                  {/if}
-                </td>
+                <th>Slug</th>
+                <th>Status</th>
+                <th>Select</th>
               </tr>
-            {/each}
-          </tbody>
-          <br />
-          <button class="primary lg" on:click={handleAddPressed}>Add</button>
-          <br />
-          <br />
-        </table>
+            </thead>
+            <tbody>
+              {#each Object.entries(resolutions) as [slug, resolution]}
+                <tr>
+                  <td>{slug}</td>
+                  <td>
+                    {#if resolution.resolved === true}
+                      found
+                    {:else if resolution.resolved === false}
+                      {resolution.error}
+                    {/if}
+                  </td>
+                  <td class="success">
+                    {#if resolution.resolved === true}
+                      <input
+                        type="checkbox"
+                        on:change={checkIfAllItemsSelected}
+                        bind:value={resolution.id}
+                        checked={true}
+                      />
+                      {resolution.id}
+                    {:else}
+                      <span>No ID resolved to add</span>
+                    {/if}
+                  </td>
+                </tr>
+              {/each}
+            </tbody>
+            <br />
+            <button class="primary lg" on:click={handleAddPressed}>Add</button>
+            <br />
+            <br />
+          </table>
+        {/if}
       {/if}
-    {/if}
+    </div>
   {/if}
 </div>
 
 <style>
+  .member-selector-wrap {
+    padding: var(--perfect-fourth-6);
+    max-height: 100%;
+    overflow-y: auto;
+  }
+  .search-wrap {
+    min-height: 100vh;
+  }
   .move-button {
     display: flex;
   }

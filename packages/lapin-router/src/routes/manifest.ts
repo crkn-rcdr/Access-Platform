@@ -12,6 +12,12 @@ import {
 import { createRouter, httpErrorToTRPC } from "../router.js";
 import { TRPCError } from "@trpc/server";
 
+const PageInput = z.object({
+  id: Noid,
+  page: z.number().int().positive(),
+  limit: z.number().int().positive().default(100),
+});
+
 const PageAfterInput = z.object({
   id: Noid,
   after: Noid.nullable(),
@@ -36,6 +42,32 @@ const NewInput = z.object({
 });
 
 export const manifestRouter = createRouter()
+  .query("page", {
+    input: PageInput.parse,
+    async resolve({
+      input: { id, page, limit },
+      ctx,
+    }): Promise<ObjectListPage> {
+      const response = await ctx.couch.access.getSafe(id);
+      if (response.found) {
+        const manifestCheck = Manifest.safeParse(response.doc);
+        if (manifestCheck.success) {
+          const canvases = new ObjectListHandler(
+            manifestCheck.data.canvases || []
+          );
+          return canvases.page(page, limit);
+        }
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: `Object ${id} cannot be parsed.`,
+        });
+      }
+      throw new TRPCError({
+        code: "PATH_NOT_FOUND",
+        message: `No object with id ${id} found.`,
+      });
+    },
+  })
   .query("pageAfter", {
     input: PageAfterInput.parse,
     async resolve({

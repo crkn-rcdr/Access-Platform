@@ -26,6 +26,7 @@ The editor actions component holds functionality that is responsible for perform
   import Modal from "$lib/components/shared/Modal.svelte";
   import { goto } from "$app/navigation";
   import Loading from "../shared/Loading.svelte";
+  import LoadingButton from "../shared/LoadingButton.svelte";
 
   /**
    * This is th$lib/utils/confirmationerObject of type AccessObject pulled from the backend, to be edited only once an action is successfully performed.
@@ -73,6 +74,8 @@ The editor actions component holds functionality that is responsible for perform
   let deleteModalActionText = "";
 
   let isDeleteModalWaiting = false;
+
+  let isDeleting = false;
 
   /**
    * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.
@@ -156,11 +159,12 @@ The editor actions component holds functionality that is responsible for perform
   }
 
   /**
-   * Sends the request to the backend to unnasign a slug from the access serverObject. If it is successful, the serverObject model is deep cloned into the serverObject, and the editor state is updated to reflect the serverObject being a 'Slugless' access serverObject.
+   * Sends the request to the backend to delete the access serverObject.
    * @returns response
    */
   async function handleDelete() {
     showDeleteModal = false;
+    isDeleting = true;
     return await showConfirmation(
       async () => {
         if (
@@ -175,12 +179,15 @@ The editor actions component holds functionality that is responsible for perform
             //dispatch("updated");
             //await pullServerObject();
             goto("/object/edit");
+            isDeleting = false;
             return { success: true, details: "" };
           } catch (e) {
             console.log(e);
+            isDeleting = false;
             return { success: false, details: e.message };
           }
         }
+        isDeleting = false;
         return {
           success: false,
           details: "Object not of type canvas or manifest",
@@ -363,19 +370,28 @@ The editor actions component holds functionality that is responsible for perform
   {/if}
 
   {#if editorObject["id"]}
+    {#if editorObject["type"] === "manifest"}
+      <a
+        href={`/smelter/slug?slugs=${editorObject["slug"]}`}
+        data-tooltip-flow="bottom"
+        data-tooltip="Re-import the source package for this manifest (if applicable.) This will reset this manifest, making it match the preservation package it was derived from."
+      >
+        <button class="secondary">Re-import</button>
+      </a>
+    {/if}
+
     <button class="secondary" on:click={handlePublishStatusChange}>
       {serverObject["public"] ? "Unpublish" : "Publish"}
     </button>
 
     {#if serverObject["slug"] && !serverObject["public"]}
-      <button
-        class="danger"
-        data-tooltip="Delete"
-        data-tooltip-flow="bottom"
-        on:click={openDeletionModal}
+      <LoadingButton
+        buttonClass="danger"
+        on:clicked={openDeletionModal}
+        showLoader={isDeleting}
       >
-        Delete
-      </button>
+        <span slot="content">{isDeleting ? "Deleting..." : "Delete"} </span>
+      </LoadingButton>
     {/if}
   {/if}
 </span>
@@ -417,7 +433,7 @@ The editor actions component holds functionality that is responsible for perform
 </Modal>
 
 <style>
-  button {
+  :global(.editor-actions button) {
     margin-left: var(--margin-sm);
   }
   /* .centered-modal-content, */

@@ -31,11 +31,12 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
   import AutomaticResizeNumberInput from "$lib/components/shared/AutomaticResizeNumberInput.svelte";
   import { session } from "$app/stores";
   import type { ObjectListPage, PagedManifest } from "@crkn-rcdr/access-data";
+  import { page as pageStore } from "$app/stores";
   import DynamicDragAndDropList from "../shared/DynamicDragAndDropList.svelte";
   import DynamicDragAndDropListItem from "../shared/DynamicDragAndDropListItem.svelte";
-  import InfiniteScroller from "../shared/InfiniteScroller.svelte";
   import { showConfirmation } from "$lib/utils/confirmation";
   import Loading from "../shared/Loading.svelte";
+  import Paginator from "../shared/Paginator.svelte";
 
   /**
    * @type {PagedManifest} An ObjectList containing canvases to be listed.
@@ -88,10 +89,8 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
   /**
    * @type {number} Shows the number of pages
    */
-  let page: number = 0;
+  let page: number = 1;
   let size: number = 100;
-
-  let previousLastItem: string | null = null;
 
   let list: HTMLElement;
 
@@ -103,7 +102,7 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
   function setPositions() {
     positions = [];
     for (let i = 0; i < canvases.length; i++)
-      positions.push(page * size + i + 1);
+      positions.push((page - 1) * size + i + 1);
   }
 
   /**
@@ -275,32 +274,25 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
     dispatch("addClicked");
   }
 
-  async function handleScroll(event) {
-    {
-      if (loading) return;
-      loading = true;
-      if (event.detail.reverse) {
-        page--;
-        console.log("load prev");
-        const currPage = await $session.lapin.query("manifest.pageBefore", {
-          id: manifest.id,
-          before: canvases[0].id,
-          limit: size,
-        });
-        previousLastItem = canvases[canvases.length - 1].id;
-        canvases = currPage.list;
-      } else {
-        page++;
-        console.log("load next");
-        const currPage = await $session.lapin.query("manifest.pageAfter", {
-          id: manifest.id,
-          after: canvases[canvases.length - 1].id,
-          limit: size,
-        });
-        previousLastItem = canvases[canvases.length - 1].id;
-        canvases = currPage.list;
-      }
-    }
+  async function handlePage(event) {
+    if (loading) return;
+
+    loading = true;
+
+    page = event.detail.page;
+
+    const currUrl = `${window.location}`;
+    const newUrl = currUrl.includes("page")
+      ? currUrl.replace(/\?page\=.*/, `?page=${page}`)
+      : `${currUrl}?page=${page}`;
+    history.pushState({}, null, newUrl);
+
+    const currPage = await $session.lapin.query("manifest.page", {
+      id: manifest.id,
+      page: page,
+      limit: size,
+    });
+    canvases = currPage.list;
     loading = false;
   }
 
@@ -314,7 +306,7 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
       event.detail.currentItemIndex < canvases.length
     ) {
       const pagedDestinationIndex =
-        page * size + event.detail.destinationItemIndex;
+        (page - 1) * size + event.detail.destinationItemIndex;
 
       const canvasToMove = canvases[event.detail.currentItemIndex];
 
@@ -330,9 +322,9 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
   }
 
   async function sendCurrentPageRequest() {
-    const currPage = await $session.lapin.query("manifest.pageAfter", {
+    const currPage = await $session.lapin.query("manifest.page", {
       id: manifest.id,
-      after: previousLastItem,
+      page: page,
       limit: size,
     });
     canvases = currPage.list;
@@ -349,8 +341,13 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
    */
   onMount(async () => {
     activeCanvasIndex = 0;
-    canvases = firstPage.list;
-    activeCanvas = canvases[activeCanvasIndex];
+    if ($pageStore.query.get("page")) {
+      page = parseInt($pageStore.query.get("page"));
+      handlePage({ detail: { page } });
+    } else {
+      canvases = firstPage.list;
+      activeCanvas = canvases[activeCanvasIndex];
+    }
   });
 
   $: {
@@ -398,7 +395,7 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
                     max={childrenCount}
                     value={positions[i]}
                     on:changed={(e) => {
-                      moveCanvasOnInputChange(e, positions[i] - 1);
+                      moveCanvasOnInputChange(e, i);
                     }}
                   />
                 </div>
@@ -423,22 +420,27 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
         </DynamicDragAndDropListItem>
       {/each}
     </DynamicDragAndDropList>
-    <InfiniteScroller
-      elementScroll={list}
-      hasLess={page !== 0}
-      hasMore={childrenCount > page * size + canvases.length}
-      threshold={100}
-      on:loadMore={handleScroll}
-    />
   </div>
-  <div class="auto-align auto-align__a-center">
+  <div
+    class="pagination-info auto-align auto-align__a-center auto-align auto-align__j-center
+    auto-align__wrap"
+  >
     {#if loading}
       <span class="page-info-loader">
         <Loading size="sm" backgroundType="gradient" />
       </span>
     {/if}
-    <span class="page-info">
+    <!--span >
       Showing {page * size + 1} to {page * size + canvases.length} of {childrenCount}
+    </span-->
+    <span class="page-info">
+      <Paginator
+        size="sm"
+        {page}
+        bind:pageSize={size}
+        count={childrenCount}
+        on:change={handlePage}
+      />
     </span>
   </div>
 </div>
@@ -517,6 +519,8 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
   }
   .page-info-loader {
     margin-right: var(--margin-sm);
+    flex: 10;
+    text-align: center;
   }
   .canvas-wrap {
     display: flex;
@@ -533,6 +537,9 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
     overflow: hidden;
     pointer-events: none;
     user-select: none;
+  }
+  .pagination-info {
+    width: 100%;
   }
   :global(.canvas-wrap.disabled > *) {
     overflow: hidden;

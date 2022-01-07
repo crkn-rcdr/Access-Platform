@@ -23,6 +23,16 @@ const ViewInput = z.object({
 });
 
 export const dipstagingRouter = createRouter()
+  .query("listFromSlugs", {
+    input: z.array(Slug).parse,
+    async resolve({ input, ctx }) {
+      try {
+        return await ctx.couch.dipstaging.listFromSlugs(input);
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
   .query("listFromKeys", {
     input: z.array(Slug).parse,
     async resolve({ input, ctx }) {

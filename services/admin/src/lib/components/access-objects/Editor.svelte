@@ -234,7 +234,7 @@ The editor component allows for the editing of PagedAccessObjects. It will dynam
         slot="side-menu-header"
         title={serverObject?.["slug"]?.length
           ? serverObject["slug"]
-          : `Slugless ${serverObject.type}`}
+          : `New ${serverObject.type}`}
       >
         <div
           class="end-content auto-align auto-align__full auto-align auto-align__j-end auto-align auto-align__a-end auto-align auto-align__column"
