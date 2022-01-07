@@ -25,35 +25,37 @@ export const LegacyPackage = z.object({
   /**
    * The date the package's manifest was last updated.
    */
-  reposManifestDate: Timestamp,
+  reposManifestDate: Timestamp.optional(),
 
   /**
    * The date this record's `repos` fields were last updated.
    */
-  reposDate: Timestamp,
+  reposDate: Timestamp.optional(),
 
   /**
    * An array of METS (Metadata Encoding and Transmission Standard)
    * records associated with this package.
    */
-  METS: z.array(
-    z.object({
-      /**
-       * The MD5 checksum of the METS file.
-       */
-      md5: MD5,
+  METS: z
+    .array(
+      z.object({
+        /**
+         * The MD5 checksum of the METS file.
+         */
+        md5: MD5,
 
-      /**
-       * The relative path to the METS file in the package.
-       */
-      path: UnixFilePath,
-    })
-  ),
+        /**
+         * The relative path to the METS file in the package.
+         */
+        path: UnixFilePath,
+      })
+    )
+    .optional(),
 
   /**
    * Date that the package's METS records were updated in the AIP manifest.
    */
-  METSManifestDate: Timestamp,
+  METSManifestDate: Timestamp.optional(),
 
   /**
    * Date when this record's `METS` fields were last updated.
@@ -63,7 +65,7 @@ export const LegacyPackage = z.object({
   /**
    * Date when this record was last updated.
    */
-  updated: Timestamp,
+  updated: Timestamp.optional(),
 
   /**
    * The Slug chosen by staff for the associated Manifest.
@@ -78,9 +80,9 @@ export const LegacyPackage = z.object({
   /**
    * Request to extract OCR information from his package.
    */
-   ocr: SmeltProcess.optional(),
+  ocr: SmeltProcess.optional(),
 
-   /**
+  /**
    * A record of the staff member who caused this record to be updated.
    */
   staff: StaffUpdate.optional(),
@@ -97,7 +99,7 @@ interface WithDip extends WithId {
   /** The list of preservation repositories the package can be found at. */
   repos: string[];
   /** The time the package was most recently ingested into the preservation platform. */
-  ingestDate: Timestamp;
+  ingestDate: Timestamp | undefined;
   /** The result of checking if `id` resolves to a Noid. */
   noid: Noid | null;
   /** The staff member who made the last update, and when it took place. */
@@ -148,7 +150,7 @@ export type ImportStatus =
  */
 export const getImportStatus = (
   id: Slug,
-  lp: LegacyPackage | undefined,
+  lp: LegacyPackage | null = null,
   noid: Noid | null = null
 ): ImportStatus => {
   if (!lp) return { status: "not-found", id };

@@ -31,6 +31,8 @@ This component shows the results of a dipstaging find-package(s) request or a vi
    */
   export let results: (ImportStatus | LegacyPackage)[];
 
+  export let isSlugSearch = false;
+
   /**
    * @type {boolean}
    * An indicator of if the result's item models are being processed or not
@@ -88,7 +90,7 @@ This component shows the results of a dipstaging find-package(s) request or a vi
    */
   function toggleAllSelected(event) {
     for (const item of results) {
-      if (!slugUnavailableMap[item["slug"]] && isItemSelectable(item))
+      if (!slugUnavailableMap[slugMap[item["id"]]])
         selectedMap[item["id"]] = event.target.checked;
       else selectedMap[item["id"]] = false;
     }
@@ -131,7 +133,7 @@ This component shows the results of a dipstaging find-package(s) request or a vi
    * @returns void
    */
   function setSlugAvailability(event, item: ImportStatus | LegacyPackage) {
-    slugUnavailableMap[item["slug"]] = !event.detail.status;
+    slugUnavailableMap[slugMap[item["id"]]] = !event.detail.status;
     slugUnavailableMap = slugUnavailableMap;
     setSelectedModel();
   }
@@ -141,11 +143,12 @@ This component shows the results of a dipstaging find-package(s) request or a vi
    * @returns void
    */
   function checkIfSlugsDefined() {
-    items = [];
     if (!results) return;
+    items = [];
+    slugMap = {};
     for (const item of results) {
       items.push(item);
-      if (!item["slug"]) {
+      if (!item["slug"] && !isSlugSearch) {
         item["slug"] = item["id"];
         slugMap[item["id"]] = item["id"];
       } else slugMap[item["id"]] = item["slug"];
@@ -161,9 +164,8 @@ This component shows the results of a dipstaging find-package(s) request or a vi
     if (!items) return;
     selectedMap = {};
     for (const item of items) {
-      if (!(item["id"] in selectedMap) && isItemSelectable(item))
-        selectedMap[item["id"]] = true;
-      else if (!(item["id"] in selectedMap)) selectedMap[item["id"]] = false;
+      console.log(isItemSelectable(item));
+      selectedMap[item["id"]] = isItemSelectable(item);
     }
     selectedMap = selectedMap;
   }
@@ -176,25 +178,22 @@ This component shows the results of a dipstaging find-package(s) request or a vi
     if ("status" in item) {
       return (
         !sucessfulSmeltRequestMap[item["id"]] &&
-        !slugUnavailableMap[item["slug"]] &&
+        !slugUnavailableMap[slugMap[item["id"]]] &&
         item["status"] !== "not-found" &&
         item["status"] !== "processing"
       );
     } else {
       return (
         !sucessfulSmeltRequestMap[item["id"]] &&
-        !slugUnavailableMap[item["slug"]]
+        !slugUnavailableMap[slugMap[item["id"]]]
       );
     }
   }
 
   async function getSlugAvailability() {
     if (!items) return;
-
     error = "";
-
-    const slugs = Object.keys(slugMap);
-
+    const slugs: string[] = Object.values(slugMap);
     while (slugs.length > 0) {
       const slugBatch = slugs.splice(0, 500);
       //results.map((item) => item["id"]);
@@ -207,6 +206,7 @@ This component shows the results of a dipstaging find-package(s) request or a vi
           if (result.length === 2) {
             const slug = result[0];
             const info = result[1];
+            console.log(slug, info);
             slugUnavailableMap[slug] = info.found;
             if (info.found && info.result) {
               noidMap[slug] = info.result.id;
@@ -226,9 +226,11 @@ This component shows the results of a dipstaging find-package(s) request or a vi
   $: {
     loading = true;
     results;
-    checkIfSlugsDefined();
-    getSlugAvailability().then(() => {
-      setSelectedModel();
+    Promise.all([
+      checkIfSlugsDefined(),
+      getSlugAvailability(),
+      setSelectedModel(),
+    ]).then(() => {
       loading = false;
     });
   }
@@ -241,7 +243,6 @@ This component shows the results of a dipstaging find-package(s) request or a vi
 
 <NotificationBar message={error} status="fail" />
 
-<!-- check the slug resolvers are searching for slug not AIP if slug defined. -->
 {#if !loading}
   <div class="button-wrap" class:disabled={!items}>
     <button
@@ -251,7 +252,9 @@ This component shows the results of a dipstaging find-package(s) request or a vi
         Object.keys(selectedMap).filter((key) => selectedMap[key]).length > 0
       )}
     >
-      Import Selected Packages into Access
+      {isSlugSearch
+        ? "Re-import Package"
+        : "Import Selected Packages into Access"}
     </button>
   </div>
 
@@ -275,7 +278,7 @@ This component shows the results of a dipstaging find-package(s) request or a vi
           <tr>
             <td>
               <div class="row auto-align">
-                {#if !slugUnavailableMap[item["slug"]] && !("status" in item && item.status === "processing") && !("status" in item && item.status === "not-found")}
+                {#if !slugUnavailableMap[slugMap[item["id"]]] && !("status" in item && item.status === "processing") && !("status" in item && item.status === "not-found")}
                   <div class="row-check">
                     <input
                       type="checkbox"
@@ -299,7 +302,9 @@ This component shows the results of a dipstaging find-package(s) request or a vi
           <tr class="row-detail">
             <td>
               {#if "status" in item && item.status === "not-found"}
-                '{item["id"]}' was not found.
+                '{item["id"]}' was not found. {isSlugSearch
+                  ? "Are you sure your manifest was derived from a preservation package?"
+                  : ""}
               {:else if "status" in item && item.status === "processing"}
                 This package is currently being imported. <a
                   target="_blank"
@@ -307,20 +312,24 @@ This component shows the results of a dipstaging find-package(s) request or a vi
                   >Track its status in the 'Import Queue' tab.</a
                 >
               {:else}
-                {#if slugUnavailableMap[item["slug"]] && slugMap[item["id"]] === item["id"]}
+                {#if slugUnavailableMap[slugMap[item["id"]]] && slugMap[item["id"]] === item["slug"]}
                   <NotificationBar
                     status="fail"
-                    message={`The AIP ID for this package is already a slug for an existing manifest.`}
+                    message={isSlugSearch
+                      ? `The existing manifest must be deleted before the package can be re-imported into a new manifest.`
+                      : `This package is already imported as a  manifest.`}
                   />
 
                   <p>
                     <br />
                     <a
-                      href={`/object/edit/${noidMap[item["id"]]}`}
+                      href={`/object/edit/${noidMap[slugMap[item["id"]]]}`}
                       target="_blank"
                     >
                       To replace the existing import of this package, please
-                      click here to unpublish and delete the package.
+                      click here open it in the editor. Then, unpublish the
+                      manifest if it is published. Then, press delete to delete
+                      the manifest.
                     </a> When you are done, click the button below to enable importing
                     for your package.
                   </p>
@@ -329,10 +338,10 @@ This component shows the results of a dipstaging find-package(s) request or a vi
                   <button
                     class="secondary"
                     on:click={() => {
-                      slugUnavailableMap[item["slug"]] = false;
+                      slugUnavailableMap[slugMap[item["id"]]] = false;
                     }}
                   >
-                    OK, I have deleted the manifest.
+                    OK, I have deleted the existing manifest.
                   </button>
                 {:else}
                   <span
@@ -340,8 +349,10 @@ This component shows the results of a dipstaging find-package(s) request or a vi
                     manifest:
                   </span>
                   <Resolver
-                    noid={item["id"] in noidMap ? noidMap[item["id"]] : null}
-                    isFound={slugUnavailableMap[item["slug"]]}
+                    noid={slugMap[item["id"]] in noidMap
+                      ? noidMap[slugMap[item["id"]]]
+                      : null}
+                    isFound={slugUnavailableMap[slugMap[item["id"]]]}
                     alwaysShowIfFound={true}
                     runInitial={true}
                     on:available={(e) => setSlugAvailability(e, item)}

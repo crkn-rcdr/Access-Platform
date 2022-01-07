@@ -211,8 +211,7 @@
   .refine-button {
     margin-left: var(--margin-sm);
   }
-  .status-select,
-  .status-select label {
+  .status-select {
     margin-right: var(--margin-sm);
   }
   .status-select select {

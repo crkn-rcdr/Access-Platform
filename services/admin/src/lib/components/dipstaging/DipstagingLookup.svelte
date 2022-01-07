@@ -15,7 +15,7 @@ This component allows the user to find packages in the dipstaging database.
 *Note: `bind:` is required for changes to the properties to be reflected in higher level components.*
 -->
 <script lang="ts">
-  import { getStores, page } from "$app/stores";
+  import { getStores } from "$app/stores";
   import PrefixSelector from "$lib/components/access-objects/PrefixSelector.svelte";
   import ToggleButtons from "$lib/components/shared/ToggleButtons.svelte";
   import type { Depositor, Session } from "$lib/types";
@@ -112,7 +112,7 @@ This component allows the user to find packages in the dipstaging database.
    */
   async function handleLookupPressedSlugList(event) {
     event.stopPropagation();
-    await sendLookupRequestKeys();
+    await sendLookupRequestAIPIds();
   }
 
   /**
@@ -129,6 +129,7 @@ This component allows the user to find packages in the dipstaging database.
    * @returns void
    */
   async function sendLookupRequestDates() {
+    if (loading) return;
     loading = true;
     error = "";
     if (startDateStr?.length) {
@@ -154,7 +155,8 @@ This component allows the user to find packages in the dipstaging database.
    * Sends the request to look up the items by slug to the backend and saves the results
    * @returns void
    */
-  async function sendLookupRequestKeys() {
+  async function sendLookupRequestAIPIds() {
+    if (loading) return;
     loading = true;
     if (slugList.includes(",")) slugList = slugListString.split(",");
     else slugList = slugListString.split("\n");
@@ -176,29 +178,15 @@ This component allows the user to find packages in the dipstaging database.
     loading = false;
   }
 
-  /*function handleDateRangeSelected(event: { detail: any[] }) {
-    console.log(event.detail);
-    if (event.detail.length === 3) {
-      const dates = event.detail[1].split(" to ");
-      if (dates.length === 2) {
-        startDateStr = dates[0];
-        endDateStr = dates[1];
-      }
-    }
-  }*/
-
   onMount(async () => {
     // if not searched then set default
     if (startDateStr === "" && endDateStr === "") {
-      let date = new Date();
-      date.setDate(date.getDate() - 1);
-      startDateStr = date.toISOString().split("T")[0];
-      endDateStr = startDateStr;
-
-      console.log("startDateStr", startDateStr, "endDateStr", endDateStr);
-
+      let startDate = new Date();
+      startDate.setDate(startDate.getDate() - 1);
+      startDateStr = startDate.toISOString().split("T")[0];
+      let endDate = new Date();
+      endDateStr = endDate.toISOString().split("T")[0];
       await sendLookupRequestDates();
-      //lookupDone = false;
     }
   });
 </script>

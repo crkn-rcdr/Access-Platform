@@ -692,7 +692,7 @@ input[type="checkbox"]:checked {
   max-width: 21em;
   white-space: nowrap;*/
   text-align: left;
-  max-width: 9em;
+  max-width: 14em;
   min-width: 9em;
   white-space: break-spaces;
   overflow: hidden;

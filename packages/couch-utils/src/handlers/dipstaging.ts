@@ -65,6 +65,18 @@ export class LegacyPackageHandler extends DatabaseHandler<LegacyPackage> {
     return res;
   }
 
+  async listFromSlugs(slugs: string[]) {
+    const list = await this.view("access", "bySlug", {
+      keys: slugs,
+      reduce: false,
+      include_docs: true,
+    });
+    const res = list.rows.map((row): ImportStatus => {
+      return getImportStatus(row.id, row.doc);
+    });
+    return res;
+  }
+
   async listFromView(
     viewName: string,
     limit: number | null = null,
