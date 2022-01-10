@@ -10,6 +10,6 @@ This repository contains documentation, Glossary for the Canadiana Access Platfo
 
 ### [Editor Actions Guide] https://crkn.sharepoint.com/:w:/s/platform/EcbVMYIYRjtMpR9RDDSCGCYBhdRZyqiInOlAvs2jRLdCdg
 
-## Metada Helper
+## Smelter Helper
 
-### [Metadata/DMD Guide] https://crkn.sharepoint.com/:w:/s/platform/EcbVMYIYRjtMpR9RDDSCGCYBhdRZyqiInOlAvs2jRLdCdg
+### [Smelter/DMD Guide] https://crkn.sharepoint.com/:w:/s/platform/EcbVMYIYRjtMpR9RDDSCGCYBhdRZyqiInOlAvs2jRLdCdg

@@ -107,7 +107,7 @@
   <div class="right-menu auto-align auto-align__a-center">
  
     <a
-      href=" https://github.com/crkn-rcdr/Access-Platform/blob/main/Glossary.md"
+      href="https://github.com/crkn-rcdr/Access-Platform/blob/adding_help_link/Help.md"
       target="_blank"
       data-tooltip="Click for help!"
       data-tooltip-flow="bottom">
