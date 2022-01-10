@@ -109,7 +109,7 @@
     <a
       href="https://github.com/crkn-rcdr/Access-Platform/blob/adding_help_link/Help.md"
       target="_blank"
-      data-tooltip="Click for help!"
+      data-tooltip="Click for Glossary and Guides!"
       data-tooltip-flow="bottom">
       <div class="icon">
         <FaRegQuestionCircle />
