@@ -24,6 +24,7 @@ This component shows the results of a dipstaging find-package(s) request or a vi
   import NotificationBar from "../shared/NotificationBar.svelte";
   import ExpansionTile from "../shared/ExpansionTile.svelte";
   import { afterUpdate } from "svelte";
+  import ToggleButtons from "../shared/ToggleButtons.svelte";
 
   /**
    * @type {ImportStatus[]}
@@ -68,6 +69,8 @@ This component shows the results of a dipstaging find-package(s) request or a vi
    * @type {any} A map from ImportStatus.id => if the slug of the item's slug is available.
    */
   let slugMap: any = {};
+
+  let modeMap: any = {};
 
   let error = "";
 
@@ -164,10 +167,26 @@ This component shows the results of a dipstaging find-package(s) request or a vi
     if (!items) return;
     selectedMap = {};
     for (const item of items) {
-      console.log(isItemSelectable(item));
       selectedMap[item["id"]] = isItemSelectable(item);
     }
     selectedMap = selectedMap;
+  }
+
+  function setModeMap() {
+    if (!items) return;
+    if (isSlugSearch) return;
+    modeMap = {};
+    for (const item of items) {
+      if (
+        slugUnavailableMap[slugMap[item["id"]]] &&
+        slugMap[item["id"]] === item["slug"]
+      )
+        modeMap[item["id"]] = {
+          state: "Re-import",
+          originalSlug: item["slug"],
+        };
+    }
+    modeMap = modeMap;
   }
 
   /**
@@ -226,11 +245,10 @@ This component shows the results of a dipstaging find-package(s) request or a vi
   $: {
     loading = true;
     results;
-    Promise.all([
-      checkIfSlugsDefined(),
-      getSlugAvailability(),
-      setSelectedModel(),
-    ]).then(() => {
+    checkIfSlugsDefined();
+    getSlugAvailability().then(() => {
+      setSelectedModel();
+      setModeMap();
       loading = false;
     });
   }
@@ -312,37 +330,67 @@ This component shows the results of a dipstaging find-package(s) request or a vi
                   >Track its status in the 'Import Queue' tab.</a
                 >
               {:else}
-                {#if slugUnavailableMap[slugMap[item["id"]]] && slugMap[item["id"]] === item["slug"]}
+                {#if item["id"] in modeMap}
                   <NotificationBar
                     status="fail"
                     message={isSlugSearch
                       ? `The existing manifest must be deleted before the package can be re-imported into a new manifest.`
-                      : `This package is already imported as a  manifest.`}
+                      : `This package is already imported as a  manifest. You can either re-import it, or create a new copy as an additional manifest.`}
                   />
+                  <br />
+                  <ToggleButtons
+                    activeIndex={modeMap[item["id"]]["state"] === "Re-import"
+                      ? 0
+                      : 1}
+                    color="secondary"
+                    options={["Re-import", "Copy"]}
+                    on:select={(event) => {
+                      modeMap[item["id"]]["state"] = event.detail?.option;
 
+                      if (modeMap[item["id"]] === "Re-import")
+                        slugMap[item["id"]] =
+                          modeMap[item["id"]]["originalSlug"];
+                    }}
+                  />
                   <p>
                     <br />
-                    <a
-                      href={`/object/edit/${noidMap[slugMap[item["id"]]]}`}
-                      target="_blank"
-                    >
-                      To replace the existing import of this package, please
-                      click here open it in the editor. Then, unpublish the
-                      manifest if it is published. Then, press delete to delete
-                      the manifest.
-                    </a> When you are done, click the button below to enable importing
-                    for your package.
-                  </p>
+                    {#if modeMap[item["id"]]["state"] === "Re-import"}
+                      <a
+                        href={`/object/edit/${noidMap[slugMap[item["id"]]]}`}
+                        target="_blank"
+                      >
+                        To replace the existing import of this package, please
+                        click here open it in the editor. Then, unpublish the
+                        manifest if it is published. Then, press delete to
+                        delete the manifest.
+                      </a>
 
-                  <br />
-                  <button
-                    class="secondary"
-                    on:click={() => {
-                      slugUnavailableMap[slugMap[item["id"]]] = false;
-                    }}
-                  >
-                    OK, I have deleted the existing manifest.
-                  </button>
+                      When you are done, click the button below to enable
+                      importing for your package.
+
+                      <br />
+                      <br />
+                      <button
+                        class="secondary"
+                        on:click={() => {
+                          slugUnavailableMap[slugMap[item["id"]]] = false;
+                        }}
+                      >
+                        OK, I have deleted the existing manifest.
+                      </button>
+                    {:else}
+                      <Resolver
+                        noid={slugMap[item["id"]] in noidMap
+                          ? noidMap[slugMap[item["id"]]]
+                          : null}
+                        isFound={slugUnavailableMap[slugMap[item["id"]]]}
+                        alwaysShowIfFound={true}
+                        runInitial={true}
+                        on:available={(e) => setSlugAvailability(e, item)}
+                        bind:slug={slugMap[item["id"]]}
+                      />
+                    {/if}
+                  </p>
                 {:else}
                   <span
                     >Please enter the slug you would like to use for the
