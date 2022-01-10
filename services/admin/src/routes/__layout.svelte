@@ -31,9 +31,11 @@
    */
   import FaRegQuestionCircle from "svelte-icons/fa/FaRegQuestionCircle.svelte";
   import FaRegUserCircle from "svelte-icons/fa/FaRegUserCircle.svelte";
+
   import { getStores, page } from "$app/stores";
   import DropdownMenu from "$lib/components/shared/DropdownMenu.svelte";
   import { includes } from "lodash-es";
+  import Align from "$lib/components/shared/Align.svelte";
 
   /**
    * @type {TRPCClient<LapinRouter>} Allows the app to to speak to the lapin api
@@ -103,15 +105,18 @@
   {/if}
   
   <div class="right-menu auto-align auto-align__a-center">
+ 
     <a
-      href="https://github.com/crkn-rcdr/Access-Platform/issues"
+      href="https://github.com/crkn-rcdr/Access-Platform/blob/adding_help_link/Help.md"
       target="_blank"
-      data-tooltip="Click for help!"
+      data-tooltip="Click for Glossary and Guides!"
       data-tooltip-flow="bottom">
       <div class="icon">
         <FaRegQuestionCircle />
       </div>
     </a>
+    
+   
     <DropdownMenu direction="right">
       <div slot="dropdown-button" class="icon">
         <FaRegUserCircle />
