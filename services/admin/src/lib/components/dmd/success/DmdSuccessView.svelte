@@ -90,11 +90,9 @@ This component shows the view for a dmd task that had its metadata successfully 
       showAllInvalidError = allInvalidCheck;
       showAllInvalidErrorMsg = `${
         dmdTask?.items?.length
-          ? "Every item's metadata is invalid. To get an idea of what went wrong for each item, press their preview button. You can use this information to m"
-          : "No items found. M"
-      }ake changes to ${
-        dmdTask?.fileName?.length ? dmdTask?.fileName : "the file"
-      }, then try again by uploading the corrected file.`;
+          ? "Code 16. Every item's metadata is invalid. To get an idea of what went wrong for each item, press their preview button. You can use this information to m"
+          : "Code 17. No items found. M"
+      }ake changes to the file, then try again by uploading the corrected file.`;
     }
   }
 
@@ -136,10 +134,12 @@ This component shows the view for a dmd task that had its metadata successfully 
     {#if $dmdTasksStore[dmdTask.id].updateState === "ready"}
       <p>
         Please take a moment to preview the metadata for each item in the table.
-        Then, select a prefix option and choose where to load the metadata to.
-        This will activate the 'Process Metadata File' button. You can use the
-        checkboxes in the table to control which items the metadata will be
-        applied to when pressing the button.
+        Then, if your metadata file does not already include prefixes on the
+        ids, select a prefix option and choose where to load the metadata to.
+        Then, select either access or preservation as the destination for the
+        metadata update. This will activate the 'Process Metadata File' button.
+        You can use the checkboxes in the table to control which items the
+        metadata will be applied to when pressing the button.
       </p>
       <br />
     {/if}

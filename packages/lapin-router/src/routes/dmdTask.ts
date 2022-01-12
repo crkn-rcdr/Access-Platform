@@ -61,26 +61,12 @@ export const dmdTaskRouter = createRouter()
     },
   })
   .mutation("create", {
-    input: (input) => {
-      try {
-        NewInput.parse(input);
-        return input;
-      } catch (e) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: `Code 1. Please contact the platform team for assistance.`,
-        });
-      }
-    },
+    input: NewInput.parse,
     async resolve({ input, ctx }) {
       try {
-        let typed = input as NewInput;
-        return await ctx.couch.dmdtask.create(typed);
+        return await ctx.couch.dmdtask.create(input);
       } catch (e) {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: `Code 2. Please try uploading the file again. If multiple file uploads fail throughout the day, this signifies a system error, and the Platform team needs to be notified.`,
-        });
+        throw httpErrorToTRPC(e);
       }
     },
   })

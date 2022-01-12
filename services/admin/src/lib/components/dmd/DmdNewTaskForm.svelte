@@ -125,7 +125,9 @@ none
           console.log("e", e);
           return {
             success: false,
-            details: e?.message,
+            details: e?.message.includes('"path":')
+              ? "Code 1. Please contact the platform team for assistance."
+              : "Code 2-3. Please try uploading the file again. If multiple file uploads fail throughout the day, this signifies a system error, and the platform team needs to be notified.",
           };
         }
       },
