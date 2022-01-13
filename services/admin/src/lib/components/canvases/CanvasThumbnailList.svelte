@@ -409,6 +409,7 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
             </div>
             <div class="image-wrap">
               <img
+                loading="lazy"
                 alt={canvas?.label?.none}
                 class="thumbnail-img"
                 src={`https://image-tor.canadiana.ca/iiif/2/${encodeURIComponent(

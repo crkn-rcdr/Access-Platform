@@ -162,7 +162,9 @@ async function storeTaskItemMetadata(
         } catch (e) {
           console.log("access e:", e);
           items[itemSlug].updatedInAccess = "No";
-          items[itemSlug].updatedInAccessMsg = e?.message;
+          items[itemSlug].updatedInAccessMsg = e?.message.includes(`"path:"`)
+            ? "Code 18. Please contact the platform team for assistance."
+            : e?.message;
           // Make any errored items selected again upon completed
           items[itemSlug].shouldUpdate = true;
           updateTask(dmdTaskId, "itemStates", items);
@@ -190,7 +192,11 @@ async function storeTaskItemMetadata(
         } catch (e) {
           console.log("pres e:", e);
           items[itemSlug].updatedInPreservation = "No";
-          items[itemSlug].updatedInPreservationMsg = e?.message;
+          items[itemSlug].updatedInPreservationMsg = e?.message.includes(
+            `"path:"`
+          )
+            ? "Code 18. Please contact the platform team for assistance."
+            : e?.message;
           // Make any errored items selected again upon completed
           items[itemSlug].shouldUpdate = true;
           updateTask(dmdTaskId, "itemStates", items);

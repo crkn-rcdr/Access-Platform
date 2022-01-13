@@ -25,7 +25,11 @@
       }
       return { props: {} };
     } catch (e) {
-      return { props: { error: e } };
+      return {
+        props: {
+          error: "Code 15. Please contact the platform team for assistance.",
+        },
+      };
     }
   };
 </script>

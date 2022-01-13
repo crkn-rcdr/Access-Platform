@@ -19,6 +19,7 @@ Displays a dmd task in an waiting state.
   import type { WaitingDMDTask } from "@crkn-rcdr/access-data";
   import Loading from "$lib/components/shared/Loading.svelte";
   import { onDestroy } from "svelte";
+  import NotificationBar from "../shared/NotificationBar.svelte";
 
   /**
    * @type {WaitingDMDTask} The dmdtask being displayed.
@@ -40,6 +41,8 @@ Displays a dmd task in an waiting state.
    */
   let poller: NodeJS.Timeout;
 
+  let error: string = "";
+
   /**
    * Sets up the interval @var poller that calls @function doPoll
    * @returns void
@@ -54,10 +57,14 @@ Displays a dmd task in an waiting state.
    * @returns void
    */
   const doPoll = (id: string) => async () => {
-    const response = await $session.lapin.query("dmdTask.find", id);
-    if (response && "result" in response) dmdTask = response.result;
-
-    lastUpdated = new Date().toLocaleString();
+    try {
+      const response = await $session.lapin.query("dmdTask.find", id);
+      if (response && "result" in response) dmdTask = response.result;
+      else error = "Code 4. Please contact the platform team for assistance.";
+      lastUpdated = new Date().toLocaleString();
+    } catch (e) {
+      error = "Code 5. Please contact the platform team for assistance.";
+    }
   };
 
   /**
@@ -91,24 +98,27 @@ Displays a dmd task in an waiting state.
 <div
   class="auto-align auto-align__block auto-align__column auto-align__a-center"
 >
-  <div class="auto-align auto-align__block auto-align__j-center">
-    <Loading backgroundType="gradient" />
-  </div>
-  <br />
-  {#if dmdTask?.fileName}
-    <h5>{dmdTask.fileName}</h5>
+  <NotificationBar message={error} status="fail" />
+  {#if !error.length}
+    <div class="auto-align auto-align__block auto-align__j-center">
+      <Loading backgroundType="gradient" />
+    </div>
+    <br />
+    {#if dmdTask?.fileName}
+      <h5>{dmdTask.fileName}</h5>
+    {/if}
+    <!--br /-->
+    <h6>Please wait while the metadata file processes...</h6>
+    <br />
+    <p>Page last refreshed on: {lastUpdated}</p>
+    <br />
+    <p>
+      Request initiated on: {`${new Date(
+        parseInt(`${dmdTask.process["requestDate"]}`) * 1000
+      ).toLocaleString()}`}
+    </p>
+    <!--DmdTaskInfoTable {dmdTask} /-->
   {/if}
-  <!--br /-->
-  <h6>Please wait while the metadata file processes...</h6>
-  <br />
-  <p>Page last refreshed on: {lastUpdated}</p>
-  <br />
-  <p>
-    Request initiated on: {`${new Date(
-      parseInt(`${dmdTask.process["requestDate"]}`) * 1000
-    ).toLocaleString()}`}
-  </p>
-  <!--DmdTaskInfoTable {dmdTask} /-->
 </div>
 
 <style>

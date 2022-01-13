@@ -24,6 +24,8 @@ export const NewInput = z.object({
   fileName: z.string(), // any othervalidation needed?
 });
 
+export type NewInput = z.infer<typeof NewInput>;
+
 export const FetchInput = z.object({
   task: z.string(), // dmdtask uuid
   index: z.number(), // array index of the item you want to fetch
@@ -247,7 +249,9 @@ export const storePreservation = async function (
     await ctx.routeLimiter.getLimiterSemaphore("storePreservation")?.signal();
     throw new TRPCError({
       code: "PATH_NOT_FOUND",
-      message: "Item not found in preservation. Id: " + id,
+      message:
+        "Code 19. Item not found in preservation. Ensure the selected prefix or the prefix id in the metadata update file are correct. Check that there are no extra spaces in your id. Prefixed Id: " +
+        id,
     });
   } else {
     const itemXmlFile = await getDmdItemXML(ctx, task, index);
@@ -256,9 +260,9 @@ export const storePreservation = async function (
       throw new TRPCError({
         code: "PATH_NOT_FOUND",
         message:
-          "Could not get Metadata XML file for item with id: " +
+          "Code 20. Please contact the platform team for assistance. Id: " +
           id +
-          " from DMD task with id: " +
+          " Task: " +
           task,
       });
     } else {
@@ -269,7 +273,9 @@ export const storePreservation = async function (
           ?.signal();
         throw new TRPCError({
           code: "PATH_NOT_FOUND",
-          message: "Could not get DMD task with id: " + task,
+          message:
+            "Code 21. Please contact the platform team for assistance. Task: " +
+            task,
         });
       } else if (!isSucceededDMDTask(dmdTask)) {
         await ctx.routeLimiter
@@ -277,7 +283,9 @@ export const storePreservation = async function (
           ?.signal();
         throw new TRPCError({
           code: "METHOD_NOT_SUPPORTED",
-          message: "DMD task has not completed successfully yet. Id: " + task,
+          message:
+            "Code 22. Please contact the platform team for assistance. Task: " +
+            task,
         });
       } else {
         const item = await getDmdTaskItemByIndex(dmdTask, index);
@@ -289,9 +297,9 @@ export const storePreservation = async function (
           throw new TRPCError({
             code: "PATH_NOT_FOUND",
             message:
-              "Could not get item at index: " +
+              "Code 23. Please contact the platform team for assistance. Index: " +
               index +
-              " from DMD task with id: " +
+              " Task: " +
               task,
           });
         } else {
@@ -306,9 +314,9 @@ export const storePreservation = async function (
             throw new TRPCError({
               code: "INTERNAL_SERVER_ERROR",
               message:
-                "Could not store metadata XML file in preservation for item with id: " +
+                "Code 24. Please contact the platform team for assistance. Id: " +
                 id +
-                " from DMD task with id: " +
+                " Task: " +
                 task,
             });
           } else {
@@ -326,11 +334,11 @@ export const storePreservation = async function (
                 throw new TRPCError({
                   code: "INTERNAL_SERVER_ERROR",
                   message:
-                    "Could not update label to " +
+                    "Code 25. Please contact the platform team for assistance. Label: " +
                     label +
-                    " for item with id: " +
+                    " Id: " +
                     id +
-                    " from DMD task with id: " +
+                    " Task: " +
                     task,
                 });
               }
@@ -428,7 +436,9 @@ export const storeAccess = async function (
     await ctx.routeLimiter.getLimiterSemaphore("storeAccess")?.signal();
     throw new TRPCError({
       code: "PATH_NOT_FOUND",
-      message: "Item not found in access. Id: " + slug,
+      message:
+        "Code 26. Item not found in access. Ensure the selected prefix or the prefix id in the metadata update file are correct. Check that there are no extra spaces in your id. Prefixed Id: " +
+        slug,
     });
   } else {
     const dmdTask = await lookupDmdTaskForStorage(ctx, task);
@@ -436,13 +446,17 @@ export const storeAccess = async function (
       await ctx.routeLimiter.getLimiterSemaphore("storeAccess")?.signal();
       throw new TRPCError({
         code: "PATH_NOT_FOUND",
-        message: "Could not get DMD task with id: " + task,
+        message:
+          "Code 21. Please contact the platform team for assistance. Task: " +
+          task,
       });
     } else if (!isSucceededDMDTask(dmdTask)) {
       await ctx.routeLimiter.getLimiterSemaphore("storeAccess")?.signal();
       throw new TRPCError({
         code: "METHOD_NOT_SUPPORTED",
-        message: "DMD task has not completed successfully yet. Id: " + task,
+        message:
+          "Code 22. Please contact the platform team for assistance. Task: " +
+          task,
       });
     } else {
       const itemXmlFile = await getDmdItemXML(ctx, task, index);
@@ -451,9 +465,9 @@ export const storeAccess = async function (
         throw new TRPCError({
           code: "PATH_NOT_FOUND",
           message:
-            "Could not get Metadata XML file for item with id: " +
+            "Code 20. Please contact the platform team for assistance. Id: " +
             slug +
-            " from DMD task with id: " +
+            " Task: " +
             task,
         });
       } else {
@@ -463,9 +477,9 @@ export const storeAccess = async function (
           throw new TRPCError({
             code: "PATH_NOT_FOUND",
             message:
-              "Could not get item at index: " +
+              "Code 23. Please contact the platform team for assistance. Index: " +
               index +
-              " from DMD task with id: " +
+              " Task: " +
               task,
           });
         } else {
@@ -479,9 +493,9 @@ export const storeAccess = async function (
             throw new TRPCError({
               code: "PATH_NOT_FOUND",
               message:
-                "Could not compile metadata file name for item with id: " +
+                "Code 27. Please contact the platform team for assistance. Id: " +
                 accessObject?.id +
-                " from DMD task with id: " +
+                " Task: " +
                 task,
             });
           } else {
@@ -498,9 +512,9 @@ export const storeAccess = async function (
               throw new TRPCError({
                 code: "PATH_NOT_FOUND",
                 message:
-                  "Could not delete old metadata file for item with id: " +
+                  "Code 28. Please contact the platform team for assistance. Id: " +
                   accessObject?.id +
-                  " from DMD task with id: " +
+                  " Task: " +
                   task,
               });
             } else {
@@ -517,9 +531,9 @@ export const storeAccess = async function (
                 throw new TRPCError({
                   code: "INTERNAL_SERVER_ERROR",
                   message:
-                    "Could not store metadata XML file in swift for item with id: " +
+                    "Code 30. Please contact the platform team for assistance. Id: " +
                     accessObject?.id +
-                    " from DMD task with id: " +
+                    " Task: " +
                     task,
                 });
               } else {
@@ -539,9 +553,9 @@ export const storeAccess = async function (
                   throw new TRPCError({
                     code: "INTERNAL_SERVER_ERROR",
                     message:
-                      "Could not update dmdType for item with id: " +
+                      "Code 29. Please contact the platform team for assistance. Id: " +
                       accessObject?.id +
-                      " from DMD task with id: " +
+                      " Task: " +
                       task,
                   });
                 } else {
@@ -562,11 +576,11 @@ export const storeAccess = async function (
                       throw new TRPCError({
                         code: "INTERNAL_SERVER_ERROR",
                         message:
-                          "Could not update label to " +
+                          "Code 25. Please contact the platform team for assistance. Label: " +
                           item.label +
-                          " for item with id: " +
+                          " Id: " +
                           accessObject?.id +
-                          " from DMD task with id: " +
+                          " Task: " +
                           task,
                       });
                     }
