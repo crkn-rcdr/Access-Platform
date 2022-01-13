@@ -364,7 +364,7 @@ This component shows the results of a dipstaging find-package(s) request or a vi
 
                 <div class="import-history-wrap">
                   <ExpansionTile>
-                    <span slot="top">Import History</span>
+                    <span slot="top">Last Import Status</span>
                     <div slot="bottom">
                       <!-- LEGACY PACKAGE -->
                       {#if "smelt" in item}

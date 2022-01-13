@@ -414,7 +414,7 @@ This component shows the results of a dipstaging package view. It allows the use
                   <span
                     class="icon"
                     on:click={() => handleItemExpanded(legacyPackage)}
-                    data-tooltip="Information on previous import attempt..."
+                    data-tooltip="Last Import Status..."
                   >
                     {#if expandedMap[legacyPackage.id]}
                       <FaAngleDown />
@@ -431,7 +431,7 @@ This component shows the results of a dipstaging package view. It allows the use
                   <table>
                     <tbody>
                       <tr>
-                        <td class="detail-label">Import Status:</td>
+                        <td class="detail-label">Last Import Status:</td>
                         <td>
                           {legacyPackage.smelt?.["succeeded"]
                             ? "Succeeded"
