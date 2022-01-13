@@ -194,7 +194,7 @@
     </span>
   </DipstagingLegacyPackageTable>
   <Paginator
-    page={pageNumber - 1}
+    page={pageNumber}
     {pageSize}
     {count}
     on:change={handlePaginatorChange}
