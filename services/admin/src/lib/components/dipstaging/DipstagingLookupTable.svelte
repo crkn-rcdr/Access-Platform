@@ -23,7 +23,7 @@ This component shows the results of a dipstaging find-package(s) request or a vi
   import XmlViewer from "$lib/components/shared/XmlViewer.svelte";
   import NotificationBar from "../shared/NotificationBar.svelte";
   import ExpansionTile from "../shared/ExpansionTile.svelte";
-  import { afterUpdate } from "svelte";
+  import structuredClone from "@ungap/structured-clone";
 
   /**
    * @type {ImportStatus[]}
@@ -89,7 +89,7 @@ This component shows the results of a dipstaging find-package(s) request or a vi
    * @returns void
    */
   function toggleAllSelected(event) {
-    for (const item of results) {
+    for (const item of items) {
       if (!slugUnavailableMap[slugMap[item["id"]]])
         selectedMap[item["id"]] = event.target.checked;
       else selectedMap[item["id"]] = false;
@@ -103,7 +103,7 @@ This component shows the results of a dipstaging find-package(s) request or a vi
    */
   async function handleRunSmelterPressed() {
     error = "";
-    for (const item of results) {
+    for (const item of items) {
       if (selectedMap[item["id"]]) {
         try {
           const response = await $session.lapin.mutation(
@@ -147,11 +147,12 @@ This component shows the results of a dipstaging find-package(s) request or a vi
     items = [];
     slugMap = {};
     for (const item of results) {
-      items.push(item);
-      if (!item["slug"] && !isSlugSearch) {
-        item["slug"] = item["id"];
-        slugMap[item["id"]] = item["id"];
-      } else slugMap[item["id"]] = item["slug"];
+      let itemCopy = structuredClone(item);
+      items.push(itemCopy);
+      if (!itemCopy["slug"] && !isSlugSearch) {
+        itemCopy["slug"] = itemCopy["id"];
+        slugMap[itemCopy["id"]] = itemCopy["id"];
+      } else slugMap[itemCopy["id"]] = itemCopy["slug"];
     }
     items = items;
   }
@@ -164,7 +165,6 @@ This component shows the results of a dipstaging find-package(s) request or a vi
     if (!items) return;
     selectedMap = {};
     for (const item of items) {
-      console.log(isItemSelectable(item));
       selectedMap[item["id"]] = isItemSelectable(item);
     }
     selectedMap = selectedMap;
@@ -206,7 +206,6 @@ This component shows the results of a dipstaging find-package(s) request or a vi
           if (result.length === 2) {
             const slug = result[0];
             const info = result[1];
-            console.log(slug, info);
             slugUnavailableMap[slug] = info.found;
             if (info.found && info.result) {
               noidMap[slug] = info.result.id;
@@ -226,11 +225,9 @@ This component shows the results of a dipstaging find-package(s) request or a vi
   $: {
     loading = true;
     results;
-    Promise.all([
-      checkIfSlugsDefined(),
-      getSlugAvailability(),
-      setSelectedModel(),
-    ]).then(() => {
+    checkIfSlugsDefined();
+    getSlugAvailability().then(() => {
+      setSelectedModel();
       loading = false;
     });
   }
@@ -354,7 +351,7 @@ This component shows the results of a dipstaging find-package(s) request or a vi
                       : null}
                     isFound={slugUnavailableMap[slugMap[item["id"]]]}
                     alwaysShowIfFound={true}
-                    runInitial={true}
+                    runInitial={false}
                     on:available={(e) => setSlugAvailability(e, item)}
                     bind:slug={slugMap[item["id"]]}
                   />

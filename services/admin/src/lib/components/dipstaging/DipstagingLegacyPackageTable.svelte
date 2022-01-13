@@ -249,12 +249,10 @@ This component shows the results of a dipstaging package view. It allows the use
   $: {
     loading = true;
     results;
-    Promise.all([
-      checkIfSlugsDefined(),
-      getSlugAvailability(),
-      setExpandedModel(),
-      setSelectedModel(),
-    ]).then(() => {
+    checkIfSlugsDefined();
+    getSlugAvailability().then(() => {
+      setExpandedModel();
+      setSelectedModel();
       loading = false;
     });
   }
