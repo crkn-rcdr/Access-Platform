@@ -156,7 +156,6 @@ export const getImportStatus = (
   if (!lp) return { status: "not-found", id };
   const { repos, reposManifestDate: ingestDate, slug, smelt, staff } = lp;
   const response = { id, repos, ingestDate, noid: noid || null, staff };
-
   if (smelt) {
     const processResponse = {
       ...response,
