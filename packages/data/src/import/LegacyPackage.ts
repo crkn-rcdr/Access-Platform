@@ -157,7 +157,6 @@ export const getImportStatus = (
   const { repos, reposManifestDate: ingestDate, slug, smelt, staff } = lp;
   const response = { id, repos, ingestDate, noid: noid || null, staff };
 
-  console.log("lp", lp, "smelt", smelt);
   if (smelt) {
     const processResponse = {
       ...response,
