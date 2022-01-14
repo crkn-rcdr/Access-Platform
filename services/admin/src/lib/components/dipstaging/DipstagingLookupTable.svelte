@@ -24,6 +24,7 @@ This component shows the results of a dipstaging find-package(s) request or a vi
   import NotificationBar from "../shared/NotificationBar.svelte";
   import ExpansionTile from "../shared/ExpansionTile.svelte";
   import structuredClone from "@ungap/structured-clone";
+  import DipstatingImportStatus from "./DipstatingImportStatus.svelte";
 
   /**
    * @type {ImportStatus[]}
@@ -363,83 +364,7 @@ This component shows the results of a dipstaging find-package(s) request or a vi
                   <ExpansionTile>
                     <span slot="top">Last Import Status</span>
                     <div slot="bottom">
-                      <!-- LEGACY PACKAGE -->
-                      {#if "smelt" in item}
-                        <table>
-                          <tbody>
-                            <tr>
-                              <td class="detail-label">Import Status:</td>
-                              <td>
-                                {item.smelt?.["succeeded"]
-                                  ? "Succeeded"
-                                  : "Failed"}
-                              </td>
-                            </tr>
-                            <tr>
-                              <td class="detail-label">Request Date:</td>
-                              <td>
-                                {item.smelt?.requestDate
-                                  ? new Date(
-                                      item.smelt?.requestDate
-                                    ).toLocaleString()
-                                  : "N/A"}
-                              </td>
-                            </tr>
-                            <tr>
-                              <td class="detail-label">Process Date:</td>
-                              <td>
-                                {item.smelt?.["processDate"]
-                                  ? new Date(
-                                      item.smelt?.["processDate"]
-                                    ).toLocaleString()
-                                  : "N/A"}
-                              </td>
-                            </tr>
-                            <tr>
-                              <td class="detail-label">Message:</td>
-                              <td>
-                                <XmlViewer
-                                  xml={item.smelt?.["message"]?.length
-                                    ? item.smelt?.["message"]
-                                    : "N/A"}
-                                />
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      {:else}
-                        <!-- IMPORT STATUS -->
-                        <table>
-                          <tbody>
-                            <tr>
-                              <td class="detail-label">Import Status:</td>
-                              <td
-                                >{item["status"] === "succeeded"
-                                  ? "Succeeded"
-                                  : "Failed"}</td
-                              >
-                            </tr>
-                            <tr>
-                              <td class="detail-label">Request Date:</td>
-                              <td>{item["requestDate"]}</td>
-                            </tr>
-                            <tr>
-                              <td class="detail-label">Process Date:</td>
-                              <td>{item["processDate"]}</td>
-                            </tr>
-                            <tr>
-                              <td class="detail-label">Message:</td>
-                              <td>
-                                <XmlViewer
-                                  xml={item["message"]?.length
-                                    ? item["message"]
-                                    : "N/A"}
-                                />
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      {/if}
+                      <DipstatingImportStatus bind:item />
                     </div>
                   </ExpansionTile>
                 </div>

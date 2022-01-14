@@ -1,0 +1,109 @@
+<script lang="ts">
+  import { session } from "$app/stores";
+
+  import type { ImportStatus, LegacyPackage } from "@crkn-rcdr/access-data";
+  import XmlViewer from "../shared/XmlViewer.svelte";
+
+  export let item: ImportStatus | LegacyPackage;
+
+  async function clearLastImportStatus() {
+    //cancelSmelt
+    try {
+      const response = await $session.lapin.mutation(`dipstaging.cancelSmelt`, {
+        user: $session.user,
+        id: item["id"],
+      });
+      console.log(response);
+      console.log("item", item);
+      if ("smelt" in item) {
+        item["smelt"] = null;
+      } else {
+        item["status"] = null;
+        item["requestDate"] = null;
+        item["processDate"] = null;
+        item["message"] = null;
+      }
+      console.log("item", item);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+</script>
+
+<!-- LEGACY PACKAGE -->
+{#if "smelt" in item && typeof item["smelt"] !== "undefined"}
+  <table>
+    <tbody>
+      <tr>
+        <td class="detail-label">Import Status:</td>
+        <td>
+          {item.smelt?.["succeeded"] ? "Succeeded" : "Failed"}
+        </td>
+      </tr>
+      <tr>
+        <td class="detail-label">Request Date:</td>
+        <td>
+          {item.smelt?.requestDate
+            ? new Date(item.smelt?.requestDate).toLocaleString()
+            : "N/A"}
+        </td>
+      </tr>
+      <tr>
+        <td class="detail-label">Process Date:</td>
+        <td>
+          {item.smelt?.["processDate"]
+            ? new Date(item.smelt?.["processDate"]).toLocaleString()
+            : "N/A"}
+        </td>
+      </tr>
+      <tr>
+        <td class="detail-label">Message:</td>
+        <td>
+          <XmlViewer
+            xml={item.smelt?.["message"]?.length
+              ? item.smelt?.["message"]
+              : "N/A"}
+          />
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <br />
+  <button class="secondary" on:click={clearLastImportStatus}>
+    Clear Last Import Status
+  </button>
+  <br />
+{:else if "status" in item && typeof item["status"] !== "undefined"}
+  <!-- IMPORT STATUS -->
+  <table>
+    <tbody>
+      <tr>
+        <td class="detail-label">Import Status:</td>
+        <td>{item["status"] === "succeeded" ? "Succeeded" : "Failed"}</td>
+      </tr>
+      <tr>
+        <td class="detail-label">Request Date:</td>
+        <td>{item["requestDate"]}</td>
+      </tr>
+      <tr>
+        <td class="detail-label">Process Date:</td>
+        <td>{item["processDate"]}</td>
+      </tr>
+      <tr>
+        <td class="detail-label">Message:</td>
+        <td>
+          <XmlViewer xml={item["message"]?.length ? item["message"] : "N/A"} />
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <br />
+  <button class="secondary" on:click={clearLastImportStatus}>
+    Clear Last Import Status
+  </button>
+  <br />
+{:else}
+  No import status available.
+{/if}
