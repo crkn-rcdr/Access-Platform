@@ -130,7 +130,7 @@ export const accessObjectRouter = createRouter()
         }
 
         // Check if the file field exists, if so we know to delete it
-        if ("file" in accessObj && accessObj?.file?.extension) {
+        if ("file" in accessObj && accessObj.file?.extension) {
           const fileName = `${accessObj.id}/${accessObj.file.extension}`;
           try {
             await ctx.swift.accessFiles.deleteObject(fileName);
