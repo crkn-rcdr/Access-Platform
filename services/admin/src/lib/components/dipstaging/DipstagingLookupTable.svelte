@@ -20,7 +20,6 @@ This component shows the results of a dipstaging find-package(s) request or a vi
   import type { ImportStatus, LegacyPackage } from "@crkn-rcdr/access-data";
   import Resolver from "$lib/components/access-objects/Resolver.svelte";
   import Loading from "$lib/components/shared/Loading.svelte";
-  import XmlViewer from "$lib/components/shared/XmlViewer.svelte";
   import NotificationBar from "../shared/NotificationBar.svelte";
   import ExpansionTile from "../shared/ExpansionTile.svelte";
   import structuredClone from "@ungap/structured-clone";

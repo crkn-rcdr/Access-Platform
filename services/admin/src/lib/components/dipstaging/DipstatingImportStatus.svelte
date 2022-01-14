@@ -13,8 +13,6 @@
         user: $session.user,
         id: item["id"],
       });
-      console.log(response);
-      console.log("item", item);
       if ("smelt" in item) {
         item["smelt"] = null;
       } else {
@@ -31,7 +29,7 @@
 </script>
 
 <!-- LEGACY PACKAGE -->
-{#if "smelt" in item && typeof item["smelt"] !== "undefined"}
+{#if "smelt" in item && item["smelt"] !== null}
   <table>
     <tbody>
       <tr>
@@ -74,7 +72,7 @@
     Clear Last Import Status
   </button>
   <br />
-{:else if "status" in item && typeof item["status"] !== "undefined"}
+{:else if "status" in item && item["status"] !== null && item["status"] !== "new"}
   <!-- IMPORT STATUS -->
   <table>
     <tbody>
@@ -105,5 +103,6 @@
   </button>
   <br />
 {:else}
-  No import status available.
+  <br />
+  There is no import status information on record.
 {/if}
