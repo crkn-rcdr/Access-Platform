@@ -2,9 +2,12 @@
   import { session } from "$app/stores";
 
   import type { ImportStatus, LegacyPackage } from "@crkn-rcdr/access-data";
+  import NotificationBar from "../shared/NotificationBar.svelte";
   import XmlViewer from "../shared/XmlViewer.svelte";
 
   export let item: ImportStatus | LegacyPackage;
+
+  let error: string;
 
   async function clearLastImportStatus() {
     //cancelSmelt
@@ -21,9 +24,9 @@
         item["processDate"] = null;
         item["message"] = null;
       }
-      console.log("item", item);
     } catch (e) {
       console.log(e);
+      error = e?.message;
     }
   }
 </script>
@@ -67,6 +70,7 @@
     </tbody>
   </table>
 
+  <NotificationBar status="fail" message={error} />
   <br />
   <button class="secondary" on:click={clearLastImportStatus}>
     Clear Last Import Status
@@ -97,6 +101,7 @@
     </tbody>
   </table>
 
+  <NotificationBar status="fail" message={error} />
   <br />
   <button class="secondary" on:click={clearLastImportStatus}>
     Clear Last Import Status
