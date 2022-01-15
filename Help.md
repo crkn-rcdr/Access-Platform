@@ -1,6 +1,6 @@
 # Canadiana Access Platform
 
-This repository contains documentation, Glossary for the Canadiana Access Platform.
+This file contains the Glossary and helpful Guides on how to use the Canadiana Access Platform admin tools.
 
 ## [Glossary.md](https://github.com/crkn-rcdr/Access-Platform/blob/main/Glossary.md)
 
