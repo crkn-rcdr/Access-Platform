@@ -13,15 +13,6 @@
    * @type {PagedCollection} The Collection where the members are added to.
    */
   export let destinationMember: PagedCollection;
-  /**
-   * To bind the context of members value.
-   */
-  export let contextDisplay;
-
-  /**
-   * @type {number} The starting index to add the selected canvases at.
-   */
-  export let destinationIndex = 0;
 
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
@@ -176,7 +167,6 @@
     dispatch("done", {
       selectedMembers: resultArray,
     });
-    contextDisplay = contextDisplay;
     destinationMember = destinationMember;
 
     addingMembers = false;

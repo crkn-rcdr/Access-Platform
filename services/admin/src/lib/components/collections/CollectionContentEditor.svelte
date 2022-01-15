@@ -27,6 +27,7 @@ Allows the user to modify the member list for a collection.
   import { showConfirmation } from "$lib/utils/confirmation";
   import Loading from "../shared/Loading.svelte";
   import Paginator from "../shared/Paginator.svelte";
+  import CanvasLabelEditor from "../canvases/CanvasLabelEditor.svelte";
 
   export let collection: PagedCollection;
 
@@ -42,8 +43,12 @@ Allows the user to modify the member list for a collection.
 
   let activeMemberIndex: number = 0;
   const dispatch = createEventDispatcher();
-  let documentSlug: any[] = [];
-  let members: { id?: string; label?: Record<string, string> }[] = [];
+  //let documentSlug: any[] = [];
+  let members: {
+    id?: string;
+    label?: Record<string, string>;
+    slug?: string;
+  }[] = [];
 
   let positions: number[] = [];
 
@@ -78,6 +83,7 @@ Allows the user to modify the member list for a collection.
     state = newState;
   }
 
+  /*
   async function getMemberContext(
     newMembers: { id?: string; label?: Record<string, string> }[]
   ) {
@@ -114,7 +120,8 @@ Allows the user to modify the member list for a collection.
     );
 
     loading = false;
-  }
+  }*/
+
   function setActiveIndex(index: number) {
     if (index >= collection?.members?.count)
       index = collection.members.count - 1;
@@ -227,7 +234,7 @@ Allows the user to modify the member list for a collection.
           });
           members = currPage.list;
           console.log("members", members);
-          await getMemberContext(members);
+          //await getMemberContext(members);
           return {
             success: true,
             details: "",
@@ -339,7 +346,7 @@ Allows the user to modify the member list for a collection.
           });
           //previousLastItem = members[members.length - 1].id;
           members = currPage.list;
-          await getMemberContext(currPage.list);
+          //await getMemberContext(currPage.list);
           setActiveIndex(activeMemberIndex);
           return {
             success: true,
@@ -411,7 +418,7 @@ Allows the user to modify the member list for a collection.
     } else {
       console.log("firstPage", firstPage);
       members = firstPage.list;
-      getMemberContext(firstPage.list);
+      //getMemberContext(firstPage.list);
     }
   });
 
@@ -425,7 +432,6 @@ Allows the user to modify the member list for a collection.
   <CollectionMembersAddition
     showAddButton={state != "add"}
     bind:destinationMember={collection}
-    bind:contextDisplay={documentSlug}
     on:done={handleAddPressed}
     on:addClicked={() => {
       changeView("add");
@@ -478,18 +484,11 @@ Allows the user to modify the member list for a collection.
                   </div>
                 </div>
                 <div class="auto-align auto-align__column label">
-                  {#each documentSlug as document}
-                    {#if document["result"]?.["label"]?.["none"] && document["id"] === collectionMember?.id}
-                      <a
-                        href="/object/edit/{collectionMember?.id}"
-                        target="_blank"
-                      >
-                        {document["result"]["slug"]} : {document["result"][
-                          "label"
-                        ]["none"]}
-                      </a>
-                    {/if}
-                  {/each}
+                  <a href="/object/edit/{collectionMember.id}" target="_blank">
+                    {collectionMember.slug} : {collectionMember.label?.none
+                      ? collectionMember.label.none
+                      : "No label set"}
+                  </a>
                 </div>
                 <div class="actions-wrap">
                   <div class="auto-align auto-align__column">
@@ -518,18 +517,11 @@ Allows the user to modify the member list for a collection.
           >
             <div class="member-inner auto-align">
               <div class="auto-align auto-align__column label">
-                {#each documentSlug as document}
-                  {#if document["result"]?.["label"]?.["none"] && document["id"] === collectionMember?.id}
-                    <a
-                      href="/object/edit/{collectionMember?.id}"
-                      target="_blank"
-                    >
-                      {document["result"]["slug"]} : {document["result"][
-                        "label"
-                      ]["none"]}
-                    </a>
-                  {/if}
-                {/each}
+                <a href="/object/edit/{collectionMember.id}" target="_blank">
+                  {collectionMember.slug} : {collectionMember.label?.none
+                    ? collectionMember.label.none
+                    : "No label set"}
+                </a>
               </div>
               <div class="actions-wrap">
                 <div class="auto-align auto-align__column">
