@@ -2,14 +2,16 @@
 
 This repository contains documentation, Glossary for the Canadiana Access Platform.
 
-## Helper Directory
+## [Glossary.md](https://github.com/crkn-rcdr/Access-Platform/blob/main/Glossary.md)
 
-### [Glossary.md](https://github.com/crkn-rcdr/Access-Platform/blob/main/Glossary.md)
+## Guides
 
-## Editor Helper
+### [Editing in Access How-to Guide](https://crkn.sharepoint.com/:w:/s/platform/ES0qN2lChP9CtSS2mK4-EvMBtzaXlqImhyDey8LKCb8mKA)
 
-### [Editor Actions Guide](https://crkn.sharepoint.com/:w:/s/platform/EcbVMYIYRjtMpR9RDDSCGCYBhdRZyqiInOlAvs2jRLdCdg)
+### [Load Metadata How-to Guide](https://crkn.sharepoint.com/:w:/s/platform/EaBNXf21wPVAnxy2X5y7hxgBpx4UjGbCGvlCtI_10sk09A)
 
-## Smelter Helper
+### [Importing into Access How-to Guide](https://crkn.sharepoint.com/:w:/s/platform/ES5J9p09pONBith820Apc7kBnotbNSAK4tvDYERRRiOMCQ)
 
-### [Smelter/DMD Guide](https://crkn.sharepoint.com/:w:/s/platform/EcbVMYIYRjtMpR9RDDSCGCYBhdRZyqiInOlAvs2jRLdCdg)
+### [GitHub Discussions How-to Video](https://crkn.sharepoint.com/:v:/s/platform/ETWgEQzPyw1OpMXtdTq3V1wBRgCxNqoQXg-uncnqQoETbQ)
+
+### [GitHub Discussions How-to Guide](https://crkn.sharepoint.com/:w:/s/platform/EcbVMYIYRjtMpR9RDDSCGCYBhdRZyqiInOlAvs2jRLdCdg)
