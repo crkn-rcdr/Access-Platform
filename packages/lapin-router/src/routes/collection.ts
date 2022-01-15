@@ -36,18 +36,20 @@ const PageBeforeInput = z.object({
 const expandList = async (ctx: LapinContext, page: ObjectListPage) => {
   const expandedList = [];
   for (const obj of page.list) {
-    const stuff = await ctx.couch.access.findUnique("id", obj.id, [
-      "slug",
-      "label",
-      "type",
-      "behavior",
-    ] as const);
-    if (stuff.found) {
-      expandedList.push({
-        labelFromMember: stuff.result.label,
-        ...stuff.result,
-        ...obj,
-      });
+    if ("id" in obj && typeof obj.id !== "undefined") {
+      const stuff = await ctx.couch.access.findUnique("id", obj.id, [
+        "slug",
+        "label",
+        "type",
+        "behavior",
+      ] as const);
+      if (stuff.found) {
+        expandedList.push({
+          labelFromMember: stuff.result.label,
+          ...stuff.result,
+          ...obj,
+        });
+      }
     }
   }
   return { first: page.first, last: page.last, list: expandedList };
@@ -235,7 +237,8 @@ export const collectionRouter = createRouter()
         if (isCollection(collection)) {
           // Update every member of the collection. For now.
           for (const member of collection.members) {
-            await ctx.couch.access.forceUpdate(member.id);
+            if ("id" in member && typeof member.id !== "undefined")
+              await ctx.couch.access.forceUpdate(member.id);
           }
         }
       } catch (e) {

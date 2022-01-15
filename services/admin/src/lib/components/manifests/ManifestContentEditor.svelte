@@ -26,6 +26,7 @@ Allows the user to modify the canvas list for a manifest.
   import ManifestAddCanvasMenu from "$lib/components/manifests/ManifestAddCanvasMenu.svelte";
   import type { ObjectListPage } from "@crkn-rcdr/access-data";
   import { getStores } from "$app/stores";
+  import { showConfirmation } from "$lib/utils/confirmation";
 
   const { session } = getStores<Session>();
   //import type { ObjectList } from "@crkn-rcdr/access-data";
@@ -79,16 +80,34 @@ Allows the user to modify the canvas list for a manifest.
    * @returns void
    */
   async function setActiveCanvasLabel(event) {
-    await $session.lapin.mutation("manifest.relabelCanvas", {
-      id: manifest.id,
-      canvas: activeCanvas.id,
-      label: {
-        none: event.detail,
+    await showConfirmation(
+      async () => {
+        try {
+          await $session.lapin.mutation("manifest.relabelCanvas", {
+            id: manifest.id,
+            canvas: activeCanvas.id,
+            label: {
+              none: event.detail,
+            },
+            user: $session.user,
+          });
+          await canvasListComponent.grabCurrentPage();
+          triggerUpdate();
+          return {
+            success: true,
+            details: "",
+          };
+        } catch (e) {
+          return {
+            success: false,
+            details: e?.message,
+          };
+        }
       },
-      user: $session.user,
-    });
-    await canvasListComponent.grabCurrentPage();
-    triggerUpdate();
+      "Success: label saved.",
+      "Error: failed to save the label." /*,
+      true*/
+    );
   }
 
   /**
@@ -113,24 +132,41 @@ Allows the user to modify the canvas list for a manifest.
       selectedCanvases: { id?: string; label?: Record<string, string> }[];
     };
   }) {
-    console.log(event.detail);
-    const canvases = event.detail?.selectedCanvases?.map((el) => el.id);
+    await showConfirmation(
+      async () => {
+        try {
+          const canvases = event.detail?.selectedCanvases?.map((el) => el.id);
 
-    await $session.lapin.mutation("manifest.addCanvases", {
-      id: manifest.id,
-      canvases,
-      user: $session.user,
-    });
+          await $session.lapin.mutation("manifest.addCanvases", {
+            id: manifest.id,
+            canvases,
+            user: $session.user,
+          });
 
-    await canvasListComponent.grabCurrentPage();
+          await canvasListComponent.grabCurrentPage();
 
-    const objectResponse = PagedManifest.parse(
-      await $session.lapin.query("accessObject.getPaged", manifest.id)
+          const objectResponse = PagedManifest.parse(
+            await $session.lapin.query("accessObject.getPaged", manifest.id)
+          );
+
+          childrenCount = objectResponse.canvases.count;
+          manifest = objectResponse;
+          state = "view";
+          return {
+            success: true,
+            details: "",
+          };
+        } catch (e) {
+          return {
+            success: false,
+            details: e?.message,
+          };
+        }
+      },
+      "Success: canvas(es) added. Please see the last page.",
+      "Error: failed to add canvases." /*,
+      true*/
     );
-
-    childrenCount = objectResponse.canvases.count;
-    manifest = objectResponse;
-    state = "view";
   }
 
   function handleCancelPressed() {

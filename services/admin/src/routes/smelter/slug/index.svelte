@@ -63,14 +63,20 @@ This component allows the user to find packages in the dipstaging database.
     if (slugListString.includes(",")) slugList = slugListString.split(",");
     else slugList = slugListString.split("\n");
     slugList = slugList.filter((slug) => slug.trim().length);
-    console.log("Searching", slugList);
     if (slugList.length) {
       slugList = slugList.map((slug) => slug.trim());
-      const response = await $session.lapin.query(
-        "dipstaging.listFromSlugs",
-        slugList
-      );
-      if (response) results = response;
+
+      error = "";
+      try {
+        const response = await $session.lapin.query(
+          "dipstaging.listFromSlugs",
+          slugList
+        );
+        if (response) results = response;
+      } catch (e) {
+        error =
+          "Could not fetch package(s.) Please contact the platform team for assistance.";
+      }
     }
     loading = false;
   }

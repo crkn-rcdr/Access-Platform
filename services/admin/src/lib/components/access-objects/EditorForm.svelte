@@ -28,6 +28,7 @@ This component displays the non content properties for an access editorObject an
   import EditorInput from "$lib/components/access-objects/EditorInput.svelte";
   import { createEventDispatcher } from "svelte";
   import type { Writable } from "svelte/store";
+  import { showConfirmation } from "$lib/utils/confirmation";
   //import { editorObjectStore } from "$lib/stores/accessObjectEditorStore";
 
   /**
@@ -60,17 +61,32 @@ This component displays the non content properties for an access editorObject an
   }
 
   const removeMembership = async (collectionID: Noid) => {
-    try {
-      await $session.lapin.mutation("collection.removeMembers", {
-        user: $session.user,
-        id: collectionID,
-        members: [editorObject.id],
-      });
+    return await showConfirmation(
+      async () => {
+        try {
+          await $session.lapin.mutation("collection.removeMembers", {
+            user: $session.user,
+            id: collectionID,
+            members: [editorObject.id],
+          });
 
-      membership = membership.filter((record) => record.id === collectionID);
-    } catch (e) {
-      console.log(e);
-    }
+          membership = membership.filter(
+            (record) => record.id === collectionID
+          );
+          return {
+            success: true,
+            details: "",
+          };
+        } catch (e) {
+          return {
+            success: false,
+            details: e?.message,
+          };
+        }
+      },
+      "Success! Changes saved.",
+      "Error: failed to save changes."
+    );
   };
 
   $: {

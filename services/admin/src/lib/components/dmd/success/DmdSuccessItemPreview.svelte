@@ -51,11 +51,14 @@
    */
   let itemPreviewMetadataXML: string;
 
+  let error: string;
+
   /**
    * Handles showing the json preview modal for the item
    * @returns void
    */
   async function getJson() {
+    error = "";
     try {
       if (previewItemIndex !== undefined) {
         itemPreviewMetadataJSON = await $session.lapin.mutation(
@@ -69,6 +72,8 @@
       }
     } catch (e) {
       console.log(e?.message);
+      error =
+        "Could not load preview. Please contact the platform team for assistance.";
     }
   }
 
@@ -77,6 +82,7 @@
    * @returns void
    */
   async function getXml() {
+    error = "";
     try {
       if (previewItemIndex !== undefined) {
         itemPreviewMetadataXML = <string>await $session.lapin.mutation(
@@ -90,6 +96,8 @@
       }
     } catch (e) {
       console.log(e?.message);
+      error =
+        "Could not load preview. Please contact the platform team for assistance.";
     }
   }
 
@@ -117,6 +125,7 @@
       </SideMenuPageList>
       <SideMenuBody>
         <SideMenuPage>
+          <NotificationBar status="fail" message={error} />
           <NotificationBar
             status={previewNotificationStatus}
             message={previewNotificationMsg}
@@ -124,6 +133,7 @@
           <XmlViewer bind:xml={itemPreviewMetadataXML} />
         </SideMenuPage>
         <SideMenuPage>
+          <NotificationBar status="fail" message={error} />
           <NotificationBar
             status={previewNotificationStatus}
             message={previewNotificationMsg}

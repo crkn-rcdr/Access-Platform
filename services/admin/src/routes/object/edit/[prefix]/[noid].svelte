@@ -54,7 +54,12 @@
       }
       return { props: { error: "Could not find prefix or noid in url." } };
     } catch (e) {
-      return { props: { error: e?.message } };
+      return {
+        props: {
+          error:
+            "Could not get item from the server. Please contact the platform team for assistance.",
+        },
+      };
     }
   };
 </script>
