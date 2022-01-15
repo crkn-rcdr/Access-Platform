@@ -370,6 +370,7 @@ Allows the user to modify the member list for a collection.
       selectedMembers: string[];
     };
   }) {
+    if (!event.detail?.selectedMembers) return;
     await showConfirmation(
       async () => {
         try {
@@ -382,15 +383,13 @@ Allows the user to modify the member list for a collection.
             }
           );
 
-          console.log(response);
-
           await sendCurrentPageRequest();
 
           const objectResponse = await $session.lapin.query(
             "accessObject.getPaged",
             collection.id
           );
-          childrenCount = objectResponse.members.count;
+          childrenCount = objectResponse.members?.count;
           collection = objectResponse;
 
           state = "view";

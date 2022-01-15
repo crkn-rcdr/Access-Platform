@@ -85,6 +85,7 @@ This component allows the user to search through other manifests and select canv
    * @returns void
    */
   async function handleSelect(event: any) {
+    error = "";
     try {
       let prefixedNoid = event.detail;
       const response = await $session.lapin.query(

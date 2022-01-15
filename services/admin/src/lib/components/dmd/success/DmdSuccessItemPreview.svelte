@@ -58,6 +58,7 @@
    * @returns void
    */
   async function getJson() {
+    error = "";
     try {
       if (previewItemIndex !== undefined) {
         itemPreviewMetadataJSON = await $session.lapin.mutation(
@@ -81,6 +82,7 @@
    * @returns void
    */
   async function getXml() {
+    error = "";
     try {
       if (previewItemIndex !== undefined) {
         itemPreviewMetadataXML = <string>await $session.lapin.mutation(

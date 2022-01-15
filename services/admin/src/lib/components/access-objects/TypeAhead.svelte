@@ -70,6 +70,7 @@ This componenet allows the user to search the backend for any access object that
     dispatch("keypress", query);
 
     if (query && query.length) {
+      error = "";
       try {
         const response = await $session.lapin.query("slug.search", query);
         if (response && Array.isArray(response)) {

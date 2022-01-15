@@ -62,6 +62,7 @@ The resolver component allows the user to enter a slug, and then a request is se
    */
 
   async function slugSelector() {
+    error = "";
     let slugs = input.split(/[,|\s]/);
     if (depositor?.prefix !== "none") {
       slugs = slugs.map((slug) => depositor?.prefix + slug);

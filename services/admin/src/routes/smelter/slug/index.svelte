@@ -65,6 +65,8 @@ This component allows the user to find packages in the dipstaging database.
     slugList = slugList.filter((slug) => slug.trim().length);
     if (slugList.length) {
       slugList = slugList.map((slug) => slug.trim());
+
+      error = "";
       try {
         const response = await $session.lapin.query(
           "dipstaging.listFromSlugs",
