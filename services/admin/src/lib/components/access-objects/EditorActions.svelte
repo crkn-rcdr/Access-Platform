@@ -258,15 +258,29 @@ The editor actions component holds functionality that is responsible for perform
    * @returns void
    */
   async function pullServerObject() {
-    try {
-      const response = await $session.lapin.query(
-        "accessObject.getPaged",
-        serverObject["id"]
-      );
-      serverObject = response;
-    } catch (e) {
-      console.log(e);
-    }
+    await showConfirmation(
+      async () => {
+        try {
+          const response = await $session.lapin.query(
+            "accessObject.getPaged",
+            serverObject["id"]
+          );
+          serverObject = response;
+          return {
+            success: true,
+            details: "",
+          };
+        } catch (e) {
+          return {
+            success: false,
+            details: e?.message,
+          };
+        }
+      },
+      "",
+      "Error: failed to update page. Please refresh.",
+      true
+    );
   }
 
   function setDeletionModalTextEnabled() {

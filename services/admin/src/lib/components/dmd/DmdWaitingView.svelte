@@ -58,6 +58,7 @@ Displays a dmd task in an waiting state.
    */
   const doPoll = (id: string) => async () => {
     try {
+      error = "";
       const response = await $session.lapin.query("dmdTask.find", id);
       if (response && "result" in response) dmdTask = response.result;
       else error = "Code 4. Please contact the platform team for assistance.";

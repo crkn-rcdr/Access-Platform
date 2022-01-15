@@ -22,7 +22,12 @@
       else if (page.path.includes("updated"))
         return { props: { activePageIndex: 4 } };
     } catch (e) {
-      return { props: { error: e?.message } };
+      return {
+        props: {
+          error:
+            "Could not load the import tool. Please contact the platform team for assistance.",
+        },
+      };
     }
   };
 </script>

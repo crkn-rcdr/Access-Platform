@@ -85,6 +85,7 @@ This component allows the user to search through other manifests and select canv
    * @returns void
    */
   async function handleSelect(event: any) {
+    error = "";
     try {
       let prefixedNoid = event.detail;
       const response = await $session.lapin.query(
@@ -94,7 +95,8 @@ This component allows the user to search through other manifests and select canv
       if (response) {
         const object = AccessObject.parse(response);
         if (isCollection(object)) {
-          error = "Error: Object is a collection, please select another.";
+          error =
+            "Error: This is a collection, please select another item from the list.";
         } else if (isManifest(object)) {
           selectedManifest = object;
           isManifestSelected = true;
@@ -103,7 +105,7 @@ This component allows the user to search through other manifests and select canv
         error = response.toString();
       }
     } catch (e) {
-      error = e;
+      error = "Could not load item.";
     }
   }
 

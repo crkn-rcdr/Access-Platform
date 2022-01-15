@@ -8,7 +8,6 @@ import {
   toPagedManifest,
   toPagedCollection,
   AccessObject,
-  Manifest,
 } from "@crkn-rcdr/access-data";
 import { createRouter, httpErrorToTRPC } from "../router.js";
 import { getItemMetadataXMLFileName } from "../util/dmdTask.js";
@@ -118,32 +117,29 @@ export const accessObjectRouter = createRouter()
       try {
         const accessObj = await ctx.couch.access.get(id);
 
-        /* Delete files */
-        if (accessObj?.type === "manifest") {
-          const manifest = Manifest.parse(accessObj);
-          if (manifest.ocrPdf?.extension) {
-            // Check if the file exists
-            const fileName = `${manifest.id}/${manifest.ocrPdf.extension}`;
-            try {
-              await ctx.swift.accessFiles.deleteObject(fileName);
-            } catch (e: any) {
-              console.log(e?.message);
-            }
-          }
-        } else if (accessObj?.type === "pdf") {
-          const pdf = Pdf.parse(accessObj);
-          if (pdf.file?.extension) {
-            // Check if the file exists
-            const fileName = `${pdf.id}/${pdf.file.extension}`;
-            try {
-              await ctx.swift.accessFiles.deleteObject(fileName);
-            } catch (e: any) {
-              console.log(e?.message);
-            }
+        /* Delete files from access-files */
+
+        // Check if the OCR field exists, if so we know to delete it
+        if ("ocrPdf" in accessObj && accessObj.ocrPdf?.extension) {
+          const fileName = `${accessObj.id}/${accessObj.ocrPdf.extension}`;
+          try {
+            await ctx.swift.accessFiles.deleteObject(fileName);
+          } catch (e: any) {
+            console.log(e?.message);
           }
         }
 
-        /* Delete metadata */
+        // Check if the file field exists, if so we know to delete it
+        if ("file" in accessObj && accessObj.file?.extension) {
+          const fileName = `${accessObj.id}/${accessObj.file.extension}`;
+          try {
+            await ctx.swift.accessFiles.deleteObject(fileName);
+          } catch (e: any) {
+            console.log(e?.message);
+          }
+        }
+
+        /* If the dmdType exists, we know to delete metadata from access-metadata */
         if (accessObj?.dmdType) {
           let metadataFileName: string | null = "";
           try {

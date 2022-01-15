@@ -143,7 +143,7 @@ This component shows the results of a dipstaging package view. It allows the use
           selectedMap[item.id] = false;
         } catch (e) {
           sucessfulSmeltRequestMap[item.id] = false;
-          error = e?.message;
+          error = "Code 7. Please contact the platform team for assistance. ";
         }
       }
     }
@@ -244,7 +244,9 @@ This component shows the results of a dipstaging package view. It allows the use
         }
       }
     } catch (e) {
-      error = e?.message;
+      error = e?.message.includes(`"path:"`)
+        ? "Code 8. Please contact the platform team for assistance."
+        : "Code 9. Please contact the platform team for assistance. ";
     }
   }
 
