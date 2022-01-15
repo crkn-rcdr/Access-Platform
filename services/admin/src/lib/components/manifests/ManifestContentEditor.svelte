@@ -163,7 +163,7 @@ Allows the user to modify the canvas list for a manifest.
           };
         }
       },
-      "Success: canvases added to manifest. You can find them on the last page.",
+      "Success: canvas(es) added. Please see the last page.",
       "Error: failed to add canvases." /*,
       true*/
     );

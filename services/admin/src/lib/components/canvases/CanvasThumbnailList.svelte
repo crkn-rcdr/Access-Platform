@@ -151,7 +151,7 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
             };
           }
         },
-        "Success: the canvas has been deleted.",
+        "Success: canvas removed from manifest.",
         "Error: failed to delete canvas."
       );
 

@@ -177,9 +177,8 @@ Allows the user to modify the member list for a collection.
             };
           }
         },
-        "",
-        "Error: failed to remove member.",
-        true
+        "Success: member removed from collection.",
+        "Error: failed to remove member."
       );
 
       // Shows a notification on page grab failure
@@ -274,9 +273,8 @@ Allows the user to modify the member list for a collection.
           };
         }
       },
-      "",
-      "Error: failed to move member.",
-      true
+      "Success: new member position saved.",
+      "Error: failed to move member."
     );
 
     // Shows a notification on page grab failure
@@ -400,9 +398,8 @@ Allows the user to modify the member list for a collection.
           };
         }
       },
-      "",
-      "Error: failed to add member.",
-      true
+      "Success: member(s) added. Please see the last page.",
+      "Error: failed to add member."
     );
   }
 
