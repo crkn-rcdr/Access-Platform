@@ -7,6 +7,7 @@
 
   import PrefixSelector from "$lib/components/access-objects/PrefixSelector.svelte";
   import ToggleButtons from "$lib/components/shared/ToggleButtons.svelte";
+  import NotificationBar from "../shared/NotificationBar.svelte";
 
   /**
    * @type {PagedCollection} The Collection where the members are added to.
@@ -74,7 +75,8 @@
 
   let id: string = destinationMember.id;
   let slugArray: string[];
-  let input: "";
+  let input: string;
+  let error: string;
   //  let documentSlug: {} = [];
 
   // https://github.com/sindresorhus/type-fest/blob/main/source/promise-value.d.ts
@@ -91,41 +93,57 @@
       slugArray = slugArray.map((slug) => `${depositor?.prefix}.${slug}`);
 
     if (id) {
-      const response = await $session.lapin.query("collection.checkAdditions", {
-        id,
-        slugArray,
-      });
-
-      resolutions = response;
-      showAddButton = false;
-      lookupDone = true;
-
-      // I'm returning here so that we can type `resolutions` properly (see above)
-      return response;
-    } else {
-      const response = await $session.lapin.query("slug.lookupMany", slugArray);
-
-      resolutions = Object.fromEntries(
-        response.map(([slug, r]): [string, any] => {
-          if (r.found) {
-            resultArray.push(r.result.id);
-            resultArray = resultArray;
-            return [
-              slug,
-              {
-                resolved: true,
-                ...r.result,
-              },
-            ];
+      try {
+        const response = await $session.lapin.query(
+          "collection.checkAdditions",
+          {
+            id,
+            slugArray,
           }
-          return [slug, { error: "not-found", resolved: false }];
-        })
-      );
-      showAddButton = false;
-      lookupDone = true;
+        );
 
-      // I'm returning here so that we can type `resolutions` properly (see above)
-      return response;
+        resolutions = response;
+        showAddButton = false;
+        lookupDone = true;
+
+        // I'm returning here so that we can type `resolutions` properly (see above)
+        return response;
+      } catch (e) {
+        error =
+          "Could not search and check for membership. Please contact the platform team for assistance.";
+      }
+    } else {
+      try {
+        const response = await $session.lapin.query(
+          "slug.lookupMany",
+          slugArray
+        );
+
+        resolutions = Object.fromEntries(
+          response.map(([slug, r]): [string, any] => {
+            if (r.found) {
+              resultArray.push(r.result.id);
+              resultArray = resultArray;
+              return [
+                slug,
+                {
+                  resolved: true,
+                  ...r.result,
+                },
+              ];
+            }
+            return [slug, { error: "not-found", resolved: false }];
+          })
+        );
+        showAddButton = false;
+        lookupDone = true;
+
+        // I'm returning here so that we can type `resolutions` properly (see above)
+        return response;
+      } catch (e) {
+        error =
+          "Could not search. Please contact the platform team for assistance.";
+      }
     }
   }
 
@@ -225,6 +243,7 @@
         <br />
       </div>
       <br />
+      <NotificationBar status="fail" message={error} />
       {#if !showAddButton}
         {#if resolutions}
           <table>

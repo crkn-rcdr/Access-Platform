@@ -20,6 +20,7 @@ This componenet allows the user to search the backend for any access object that
   import type { Session } from "$lib/types";
   import { createEventDispatcher } from "svelte";
   import { getStores } from "$app/stores";
+  import { showConfirmation } from "$lib/utils/confirmation";
 
   /**
    * @type {string} The label for the search input.
@@ -69,14 +70,20 @@ This componenet allows the user to search the backend for any access object that
     dispatch("keypress", query);
 
     if (query && query.length) {
-      const response = await $session.lapin.query("slug.search", query);
-      if (response && Array.isArray(response)) {
-        lookupList = type
-          ? response.filter((res) => type === res["type"])
-          : response;
-        //console.log("lookupList", lookupList);
-      } else {
-        error = response.toString();
+      try {
+        const response = await $session.lapin.query("slug.search", query);
+        if (response && Array.isArray(response)) {
+          lookupList = type
+            ? response.filter((res) => type === res["type"])
+            : response;
+          //console.log("lookupList", lookupList);
+        } else {
+          error = response.toString();
+        }
+      } catch (e) {
+        console.log(e);
+        error =
+          "There was a problem with your search. Please contact the platform team for assistance.";
       }
     }
   }

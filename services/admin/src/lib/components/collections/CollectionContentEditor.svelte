@@ -82,16 +82,36 @@ Allows the user to modify the member list for a collection.
     newMembers: { id?: string; label?: Record<string, string> }[]
   ) {
     loading = true;
-    let currentMembers = newMembers.map((members) => members.id);
+    // Shows a notification on failure
+    await showConfirmation(
+      async () => {
+        try {
+          let currentMembers = newMembers.map((members) => members.id);
 
-    const resolutions = await $session.lapin.query(
-      "collection.viewMembersContext",
-      currentMembers
+          const resolutions = await $session.lapin.query(
+            "collection.viewMembersContext",
+            currentMembers
+          );
+
+          documentSlug = resolutions.map((slug) => {
+            return { id: slug[0], result: slug[1].result };
+          });
+
+          return {
+            success: true,
+            details: "",
+          };
+        } catch (e) {
+          return {
+            success: false,
+            details: e.message,
+          };
+        }
+      },
+      "",
+      "Error: failed to get member information.",
+      true
     );
-
-    documentSlug = resolutions.map((slug) => {
-      return { id: slug[0], result: slug[1].result };
-    });
 
     loading = false;
   }
@@ -158,7 +178,7 @@ Allows the user to modify the member list for a collection.
           }
         },
         "",
-        "Error: failed to delete member.",
+        "Error: failed to remove member.",
         true
       );
 
@@ -190,22 +210,40 @@ Allows the user to modify the member list for a collection.
     if (loading) return;
     loading = true;
 
-    page = event.detail.page;
+    await showConfirmation(
+      async () => {
+        try {
+          page = event.detail.page;
 
-    const currUrl = `${window.location}`;
-    const newUrl = currUrl.includes("page")
-      ? currUrl.replace(/\?page\=.*/, `?page=${page}`)
-      : `${currUrl}?page=${page}`;
-    history.pushState({}, null, newUrl);
+          const currUrl = `${window.location}`;
+          const newUrl = currUrl.includes("page")
+            ? currUrl.replace(/\?page\=.*/, `?page=${page}`)
+            : `${currUrl}?page=${page}`;
+          history.pushState({}, null, newUrl);
 
-    const currPage = await $session.lapin.query("collection.page", {
-      id: collection.id,
-      page: page,
-      limit: size,
-    });
-    members = currPage.list;
-    console.log("members", members);
-    await getMemberContext(members);
+          const currPage = await $session.lapin.query("collection.page", {
+            id: collection.id,
+            page: page,
+            limit: size,
+          });
+          members = currPage.list;
+          console.log("members", members);
+          await getMemberContext(members);
+          return {
+            success: true,
+            details: "",
+          };
+        } catch (e) {
+          return {
+            success: false,
+            details: e?.message,
+          };
+        }
+      },
+      "",
+      "Error: failed to get page.",
+      true
+    );
     loading = false;
   }
 
@@ -216,7 +254,6 @@ Allows the user to modify the member list for a collection.
       toIndex: pagedDestinationIndex,
       user: $session.user,
     };
-    console.log(data);
 
     // Shows a notification on move failure
     await showConfirmation(
@@ -226,7 +263,6 @@ Allows the user to modify the member list for a collection.
             "collection.moveMembers",
             data
           );
-          console.log("done 1");
           return {
             success: true,
             details: "",
@@ -271,7 +307,6 @@ Allows the user to modify the member list for a collection.
   }) {
     if (loading) return;
     loading = true;
-    console.log("Drag info", event.detail);
     if (
       event.detail.currentItemIndex >= 0 &&
       event.detail.currentItemIndex < members.length
@@ -296,15 +331,33 @@ Allows the user to modify the member list for a collection.
   }
 
   async function sendCurrentPageRequest() {
-    const currPage = await $session.lapin.query("collection.pageAfter", {
-      id: collection.id,
-      after: previousLastItem,
-      limit: size,
-    });
-    //previousLastItem = members[members.length - 1].id;
-    members = currPage.list;
-    await getMemberContext(currPage.list);
-    setActiveIndex(activeMemberIndex);
+    await showConfirmation(
+      async () => {
+        try {
+          const currPage = await $session.lapin.query("collection.pageAfter", {
+            id: collection.id,
+            after: previousLastItem,
+            limit: size,
+          });
+          //previousLastItem = members[members.length - 1].id;
+          members = currPage.list;
+          await getMemberContext(currPage.list);
+          setActiveIndex(activeMemberIndex);
+          return {
+            success: true,
+            details: "",
+          };
+        } catch (e) {
+          return {
+            success: false,
+            details: e?.message,
+          };
+        }
+      },
+      "",
+      "Error: failed to update page. Please refresh.",
+      true
+    );
   }
 
   async function handleAddPressed(event: {
@@ -312,24 +365,45 @@ Allows the user to modify the member list for a collection.
       selectedMembers: string[];
     };
   }) {
-    const response = await $session.lapin.mutation("collection.addMembers", {
-      id: collection.id,
-      members: event.detail.selectedMembers,
-      user: $session.user,
-    });
+    await showConfirmation(
+      async () => {
+        try {
+          const response = await $session.lapin.mutation(
+            "collection.addMembers",
+            {
+              id: collection.id,
+              members: event.detail.selectedMembers,
+              user: $session.user,
+            }
+          );
 
-    console.log(response);
+          console.log(response);
 
-    await sendCurrentPageRequest();
+          await sendCurrentPageRequest();
 
-    const objectResponse = await $session.lapin.query(
-      "accessObject.getPaged",
-      collection.id
+          const objectResponse = await $session.lapin.query(
+            "accessObject.getPaged",
+            collection.id
+          );
+          childrenCount = objectResponse.members.count;
+          collection = objectResponse;
+
+          state = "view";
+          return {
+            success: true,
+            details: "",
+          };
+        } catch (e) {
+          return {
+            success: false,
+            details: e.message,
+          };
+        }
+      },
+      "",
+      "Error: failed to add member.",
+      true
     );
-    childrenCount = objectResponse.members.count;
-    collection = objectResponse;
-
-    state = "view";
   }
 
   onMount(async () => {

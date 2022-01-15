@@ -121,7 +121,7 @@ This component shows the results of a dipstaging find-package(s) request or a vi
           items = items;
         } catch (e) {
           sucessfulSmeltRequestMap[item["id"]] = false;
-          error = e?.message;
+          error = "Code 7. Please contact the platform team for assistance.";
         }
       }
     }
@@ -214,7 +214,9 @@ This component shows the results of a dipstaging find-package(s) request or a vi
           }
         }
       } catch (e) {
-        error = e?.message;
+        error = e?.message.includes(`"path:"`)
+          ? "Code 8. Please contact the platform team for assistance."
+          : "Code 9. Please contact the platform team for assistance. ";
       }
     }
   }

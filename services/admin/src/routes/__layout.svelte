@@ -107,9 +107,9 @@
   <div class="right-menu auto-align auto-align__a-center">
  
     <a
-      href="https://github.com/crkn-rcdr/Access-Platform/blob/adding_help_link/Help.md"
+      href="https://github.com/crkn-rcdr/Access-Platform/blob/main/Help.md"
       target="_blank"
-      data-tooltip="Click for Glossary and Guides!"
+      data-tooltip="Click to read the glossary and how-to guides!"
       data-tooltip-flow="bottom">
       <div class="icon">
         <FaRegQuestionCircle />

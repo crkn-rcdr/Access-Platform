@@ -28,6 +28,7 @@ The resolver component allows the user to enter a slug, and then a request is se
   import { getStores } from "$app/stores";
 
   import PrefixSelector from "$lib/components/access-objects/PrefixSelector.svelte";
+  import NotificationBar from "../shared/NotificationBar.svelte";
 
   let depositor = {
     prefix: "none",
@@ -35,6 +36,7 @@ The resolver component allows the user to enter a slug, and then a request is se
   };
 
   let input = "";
+  let error: string;
 
   /**
    * @type {boolean}
@@ -65,10 +67,16 @@ The resolver component allows the user to enter a slug, and then a request is se
       slugs = slugs.map((slug) => depositor?.prefix + slug);
     }
 
-    const response = await $session.lapin.mutation("slug.resolveMany", slugs);
-    //console.log("response", response);
+    try {
+      const response = await $session.lapin.mutation("slug.resolveMany", slugs);
+      //console.log("response", response);
 
-    dispatch("found", response);
+      dispatch("found", response);
+    } catch (e) {
+      console.log(e);
+      error =
+        "There was a problem with your search. Please contact the platform team for assistance.";
+    }
     hideInitial = true;
   }
 
@@ -82,6 +90,7 @@ The resolver component allows the user to enter a slug, and then a request is se
 </script>
 
 <div>
+  <NotificationBar status="fail" message={error} />
   {#if !hideInitial}
     <PrefixSelector bind:depositor /><br /><br />
 

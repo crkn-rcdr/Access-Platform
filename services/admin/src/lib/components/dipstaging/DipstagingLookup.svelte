@@ -144,7 +144,9 @@ This component allows the user to find packages in the dipstaging database.
         );
         if (response) results = response;
       } catch (e) {
-        error = "There was a problem with your search. Please try again.";
+        error = e?.message.includes(`"path:"`)
+          ? "Code 3. Please contact the platform team for assistance."
+          : "Code 4. Please contact the platform team for assistance.";
       }
       lookupDone = true;
     }
@@ -168,11 +170,19 @@ This component allows the user to find packages in the dipstaging database.
           (slug) => `${depositor?.prefix}.${slug.trim()}`
         );
       else slugList = slugList.map((slug) => slug.trim());
-      const response = await $session.lapin.query(
-        "dipstaging.listFromKeys",
-        slugList
-      );
-      if (response) results = response;
+
+      try {
+        const response = await $session.lapin.query(
+          "dipstaging.listFromKeys",
+          slugList
+        );
+        if (response) results = response;
+      } catch (e) {
+        error = e?.message.includes(`"path:"`)
+          ? "Code 1. Please contact the platform team for assistance."
+          : "Code 2. Please contact the platform team for assistance.";
+      }
+
       lookupDone = true;
     }
     loading = false;

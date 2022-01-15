@@ -151,9 +151,8 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
             };
           }
         },
-        "",
-        "Error: failed to delete canvas.",
-        true
+        "Success: the canvas has been deleted.",
+        "Error: failed to delete canvas."
       );
 
       // Shows a notification on page grab failure
@@ -203,13 +202,12 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
         } catch (e) {
           return {
             success: false,
-            details: e.message,
+            details: e?.message,
           };
         }
       },
-      "",
-      "Error: failed to move canvas.",
-      true
+      "Success: the new canvas position has saved.",
+      "Error: failed to move canvas."
     );
 
     // Shows a notification on page grab failure
@@ -275,25 +273,43 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
   }
 
   async function handlePage(event) {
-    if (loading) return;
+    await showConfirmation(
+      async () => {
+        try {
+          if (loading) return;
 
-    loading = true;
+          loading = true;
 
-    page = event.detail.page;
+          page = event.detail.page;
 
-    const currUrl = `${window.location}`;
-    const newUrl = currUrl.includes("page")
-      ? currUrl.replace(/\?page\=.*/, `?page=${page}`)
-      : `${currUrl}?page=${page}`;
-    history.pushState({}, null, newUrl);
+          const currUrl = `${window.location}`;
+          const newUrl = currUrl.includes("page")
+            ? currUrl.replace(/\?page\=.*/, `?page=${page}`)
+            : `${currUrl}?page=${page}`;
+          history.pushState({}, null, newUrl);
 
-    const currPage = await $session.lapin.query("manifest.page", {
-      id: manifest.id,
-      page: page,
-      limit: size,
-    });
-    canvases = currPage.list;
-    loading = false;
+          const currPage = await $session.lapin.query("manifest.page", {
+            id: manifest.id,
+            page: page,
+            limit: size,
+          });
+          canvases = currPage.list;
+          loading = false;
+          return {
+            success: true,
+            details: "",
+          };
+        } catch (e) {
+          return {
+            success: false,
+            details: e?.message,
+          };
+        }
+      },
+      "",
+      "Error: failed to get page.",
+      true
+    );
   }
 
   async function handleItemDropped(event: {
@@ -322,13 +338,32 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
   }
 
   async function sendCurrentPageRequest() {
-    const currPage = await $session.lapin.query("manifest.page", {
-      id: manifest.id,
-      page: page,
-      limit: size,
-    });
-    canvases = currPage.list;
-    setActiveIndex(activeCanvasIndex);
+    await showConfirmation(
+      async () => {
+        try {
+          const currPage = await $session.lapin.query("manifest.page", {
+            id: manifest.id,
+            page: page,
+            limit: size,
+          });
+          canvases = currPage.list;
+          setActiveIndex(activeCanvasIndex);
+
+          return {
+            success: true,
+            details: "",
+          };
+        } catch (e) {
+          return {
+            success: false,
+            details: e?.message,
+          };
+        }
+      },
+      "",
+      "Error: failed to update page. Please refresh.",
+      true
+    );
   }
 
   export async function grabCurrentPage() {
