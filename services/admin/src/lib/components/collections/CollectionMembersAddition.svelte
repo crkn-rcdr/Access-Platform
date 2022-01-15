@@ -142,7 +142,7 @@
     addingMembers = false;
     showAddButton = true;
     clearText();
-    dispatch("done");
+    //dispatch("done");
   }
 
   /**

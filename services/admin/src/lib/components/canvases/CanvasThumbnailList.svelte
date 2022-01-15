@@ -530,6 +530,7 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
     margin: 0 1.25rem;
     pointer-events: none;
     display: inline;
+    background: var(--color-gradient);
   }
   .pos {
     font-weight: 400;
