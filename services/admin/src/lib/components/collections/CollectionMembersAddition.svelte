@@ -100,6 +100,7 @@
           if (resolutions[slug]["id"])
             selectedResults.push(resolutions[slug]["id"]);
         }
+        selectedResults = selectedResults;
         lookupDone = true;
 
         // I'm returning here so that we can type `resolutions` properly (see above)
@@ -186,8 +187,6 @@
       label: "",
     };
   }
-
-  $: console.log(selectedResults);
 </script>
 
 <div class="member-selector-wrap add-menu">
@@ -258,7 +257,10 @@
                     {resolution.error}
                   {/if}
                 </td>
-                <td class="success">
+                <td
+                  class:success={resolution.resolved === true}
+                  class:fail={resolution.resolved !== true}
+                >
                   {#if resolution.resolved === true}
                     <input
                       type="checkbox"
@@ -304,9 +306,12 @@
     display: grid;
     width: 100%;
   }
-
   .success {
     background-color: var(--success-light);
     color: var(--success);
+  }
+  .fail {
+    background-color: var(--danger-light);
+    color: var(--danger);
   }
 </style>
