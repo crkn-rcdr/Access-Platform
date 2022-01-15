@@ -438,49 +438,6 @@ This component shows the results of a dipstaging package view. It allows the use
             {#if expandedMap[legacyPackage.id]}
               <tr class="row-details">
                 <td colspan="5">
-                  <!--table>
-                    <tbody>
-                      <tr>
-                        <td class="detail-label">Last Import Status:</td>
-                        <td>
-                          {legacyPackage.smelt?.["succeeded"]
-                            ? "Succeeded"
-                            : "Failed"}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td class="detail-label">Request Date:</td>
-                        <td>
-                          {legacyPackage.smelt?.requestDate
-                            ? new Date(
-                                legacyPackage.smelt?.requestDate
-                              ).toLocaleString()
-                            : "N/A"}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td class="detail-label">Process Date:</td>
-                        <td>
-                          {legacyPackage.smelt?.["processDate"]
-                            ? new Date(
-                                legacyPackage.smelt?.["processDate"]
-                              ).toLocaleString()
-                            : "N/A"}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td class="detail-label">Message:</td>
-                        <td>
-                          <XmlViewer
-                            xml={legacyPackage.smelt?.["message"]?.length
-                              ? legacyPackage.smelt?.["message"]
-                              : "N/A"}
-                          />
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table-->
-
                   <DipstatingImportStatus bind:item={legacyPackage} />
                 </td>
               </tr>

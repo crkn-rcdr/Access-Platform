@@ -194,8 +194,8 @@ This component allows the user to find packages in the dipstaging database.
       let startDate = new Date();
       startDate.setDate(startDate.getDate() - 1);
       startDateStr = startDate.toISOString().split("T")[0];
-      let endDate = new Date();
-      endDateStr = endDate.toISOString().split("T")[0];
+      //let endDate = new Date();
+      endDateStr = startDateStr; //endDate.toISOString().split("T")[0];
       //await sendLookupRequestDates();
     }
   });

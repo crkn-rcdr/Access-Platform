@@ -10,8 +10,8 @@
       let startDate = new Date();
       startDate.setDate(startDate.getDate() - 1);
       let startDateStr = startDate.toISOString().split("T")[0];
-      let endDate = new Date();
-      let endDateStr = endDate.toISOString().split("T")[0];
+      //let endDate = new Date();
+      let endDateStr = startDateStr; //endDate.toISOString().split("T")[0];
       const response = await context.lapin.query("dipstaging.listFromDates", {
         from: startDateStr,
         to: endDateStr,
