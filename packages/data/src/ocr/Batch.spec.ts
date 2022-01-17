@@ -130,3 +130,20 @@ test(
   isValidImportSucceeded,
   goodImportSucceeded
 );
+
+const goodImportSucceededNoMessage: ImportSucceededOcrBatch = {
+  ...goodImportWaiting,
+  id: "processing-succeeded",
+  importProcess: {
+    requestDate: then,
+    processDate: now,
+    succeeded: true,
+  },
+  updated: now,
+};
+
+test(
+  "Import succeeded batch schema (with no message) parses a valid object",
+  isValidImportSucceeded,
+  goodImportSucceededNoMessage
+);

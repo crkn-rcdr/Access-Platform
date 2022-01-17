@@ -58,7 +58,7 @@ export const SucceededProcessResult = ProcessRequest.merge(
     /**
      * Error message supplied by the process.
      */
-    message: z.string(),
+    message: z.string().optional(),
   })
 ).strict();
 
