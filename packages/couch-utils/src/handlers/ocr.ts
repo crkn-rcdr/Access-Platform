@@ -13,24 +13,4 @@ export class OcrBatchHandler extends DatabaseHandler<OcrBatch> {
   constructor(client: ServerScope, suffix?: string) {
     super(suffix ? `ocr-${suffix}` : `ocr`, OcrBatch, client);
   }
-
-  /**
-   * Updates the label of a Batch object.
-   * @returns The Batch object.
-   
-  async updateLabel(args: {
-    id: string;
-    label: string;
-  }) {
-    const { id, label } = args;
-    const wipmeta = await this.update({
-      ddoc: "access",
-      name: "updateLabel",
-      docId: id,
-      body: {
-        label,
-      },
-    });
-    return wipmeta;
-  }*/
 }
