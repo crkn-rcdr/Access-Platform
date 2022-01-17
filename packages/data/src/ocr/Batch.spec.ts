@@ -63,6 +63,23 @@ test(
   goodExportFailed
 );
 
+const goodExportFailedNoMessage: ExportFailedOcrBatch = {
+  ...goodExportWaiting,
+  id: "processing-failed",
+  exportProcess: {
+    requestDate: then,
+    succeeded: false,
+    processDate: now,
+  },
+  updated: now,
+};
+
+test(
+  "Export failed batch schema (with no message) parses a valid object",
+  isValidExportFailed,
+  goodExportFailedNoMessage
+);
+
 const goodExportSucceeded: ExportSucceededOcrBatch = {
   ...goodExportWaiting,
   id: "processing-succeeded",
@@ -78,6 +95,23 @@ test(
   "Export succeeded batch schema parses a valid object",
   isValidExportSucceeded,
   goodExportSucceeded
+);
+
+const goodExportSucceededNoMessage: ExportSucceededOcrBatch = {
+  ...goodExportWaiting,
+  id: "processing-succeeded",
+  exportProcess: {
+    requestDate: then,
+    processDate: now,
+    succeeded: true,
+  },
+  updated: now,
+};
+
+test(
+  "Export succeeded batch schema (with no message) parses a valid object",
+  isValidExportSucceeded,
+  goodExportSucceededNoMessage
 );
 
 const goodImportWaiting: ImportWaitingOcrBatch = {
@@ -111,6 +145,23 @@ test(
   "Import failed batch schema parses a valid object",
   isValidImportFailed,
   goodImportFailed
+);
+
+const goodImportFailedNoMessage: ImportFailedOcrBatch = {
+  ...goodImportWaiting,
+  id: "processing-failed",
+  importProcess: {
+    requestDate: then,
+    succeeded: false,
+    processDate: now,
+  },
+  updated: now,
+};
+
+test(
+  "Import failed batch schema (with no message) parses a valid object",
+  isValidImportFailed,
+  goodImportFailedNoMessage
 );
 
 const goodImportSucceeded: ImportSucceededOcrBatch = {
