@@ -16,6 +16,7 @@ import {
   FailedProcessUpdate,
   SucceededProcessUpdate,
 } from "../util/ProcessUpdate.js";
+import { Noid } from "../util/Noid.js";
 import { Slug } from "../util/Slug.js";
 import { Timestamp } from "../util/Timestamp.js";
 import { User } from "../util/User.js";
@@ -33,7 +34,7 @@ export const OcrBatch = z.object({
   /*
    * Array of canvases (and/or manifests?)
    */
-  canvases: z.array(Slug),
+  canvases: z.array(Noid),
 
   /*
    * Priority, used to sort batches.
