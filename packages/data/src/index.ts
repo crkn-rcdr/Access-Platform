@@ -30,6 +30,16 @@ export {
 export { Canvas, EditableCanvas } from "./canvas/index.js";
 
 export {
+  OcrBatch,
+  ExportFailedOcrBatch,
+  ExportSucceededOcrBatch,
+  ExportWaitingOcrBatch,
+  ImportFailedOcrBatch,
+  ImportSucceededOcrBatch,
+  ImportWaitingOcrBatch,
+} from "./ocr/index.js";
+
+export {
   LegacyPackage,
   ImportStatus,
   getImportStatus,

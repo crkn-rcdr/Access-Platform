@@ -1,0 +1,16 @@
+{
+  "_id": "testExportSuccessBatch",
+  "canvases": ["69429/c0cj87k0gq3s"],
+  "priority": 1,
+  "user": {
+    "name": "Brittny",
+    "email": "blapierre@crkn.ca"
+  },
+  "updated": 1630639028.0,
+  "exportProcess": {
+    "requestDate": 1630639028.569,
+    "processDate": 1630639032.311,
+    "succeeded": true,
+    "message": ""
+  }
+}

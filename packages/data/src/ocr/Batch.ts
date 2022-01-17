@@ -11,12 +11,20 @@
  */
 
 import { z } from "zod";
-import { ProcessRequest, Slug, Timestamp, User } from "..";
+import {
+  ProcessRequest,
+  FailedProcessUpdate,
+  SucceededProcessUpdate,
+} from "../util/ProcessUpdate.js";
+import { Slug } from "../util/Slug.js";
+import { Timestamp } from "../util/Timestamp.js";
+import { User } from "../util/User.js";
 
 /**
- * Base Batch.
+ *
+ * Base OcrBatch.
  */
-export const Batch = z.object({
+export const OcrBatch = z.object({
   /*
    * ID is used as the name of the directory
    */
@@ -48,32 +56,88 @@ export const Batch = z.object({
   //attachments: CouchAttachmentRecord.optional(),
 });
 
-export type Batch = z.infer<typeof Batch>;
+export type OcrBatch = z.infer<typeof OcrBatch>;
 
 /**
- * Batch at the export step.
+ * OcrBatch at the export step before the process finishes.
  */
-export const ExportingBatch = z
+export const ExportWaitingOcrBatch = z
   .object({
     /*
      * processUpdate for exporting images into directory
      */
     exportProcess: ProcessRequest,
   })
-  .merge(Batch);
+  .merge(OcrBatch);
 
-export type ExportingBatch = z.infer<typeof ExportingBatch>;
+export type ExportWaitingOcrBatch = z.infer<typeof ExportWaitingOcrBatch>;
 
 /**
- * Batch at the import.
+ * OcrBatch at the export step when the process finishes successfully.
  */
-export const ImportingBatch = z
+export const ExportSucceededOcrBatch = z
   .object({
     /*
-     * processUpdate for importing XML and PDF files after OCR.
+     * processUpdate for exporting images into directory
+     */
+    exportProcess: SucceededProcessUpdate,
+  })
+  .merge(OcrBatch);
+
+export type ExportSucceededOcrBatch = z.infer<typeof ExportSucceededOcrBatch>;
+
+/**
+ * OcrBatch at the export step when the process finishes unsuccessfully.
+ */
+export const ExportFailedOcrBatch = z
+  .object({
+    /*
+     * processUpdate for exporting images into directory
+     */
+    exportProcess: FailedProcessUpdate,
+  })
+  .merge(OcrBatch);
+
+export type ExportFailedOcrBatch = z.infer<typeof ExportFailedOcrBatch>;
+
+/**
+ * OcrBatch at the export step before the process finishes.
+ */
+export const ImportWaitingOcrBatch = z
+  .object({
+    /*
+     * processUpdate for exporting images into directory
      */
     importProcess: ProcessRequest,
   })
-  .merge(ExportingBatch);
+  .merge(ExportSucceededOcrBatch);
 
-export type ImportingBatch = z.infer<typeof ImportingBatch>;
+export type ImportWaitingOcrBatch = z.infer<typeof ImportWaitingOcrBatch>;
+
+/**
+ * OcrBatch at the export step when the process finishes successfully.
+ */
+export const ImportSucceededOcrBatch = z
+  .object({
+    /*
+     * processUpdate for exporting images into directory
+     */
+    importProcess: SucceededProcessUpdate,
+  })
+  .merge(ExportSucceededOcrBatch);
+
+export type ImportSucceededOcrBatch = z.infer<typeof ImportSucceededOcrBatch>;
+
+/**
+ * OcrBatch at the export step when the process finishes unsuccessfully.
+ */
+export const ImportFailedOcrBatch = z
+  .object({
+    /*
+     * processUpdate for exporting images into directory
+     */
+    importProcess: FailedProcessUpdate,
+  })
+  .merge(ExportSucceededOcrBatch);
+
+export type ImportFailedOcrBatch = z.infer<typeof ImportFailedOcrBatch>;

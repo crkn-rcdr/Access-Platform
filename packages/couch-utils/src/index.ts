@@ -8,6 +8,7 @@ import { AccessHandler } from "./handlers/access.js";
 import { DMDTaskHandler } from "./handlers/dmdtask.js";
 import { LegacyPackageHandler } from "./handlers/dipstaging.js";
 import { WipmetaHandler } from "./handlers/wipmeta.js";
+import { OcrBatchHandler } from "./handlers/ocr.js";
 
 export { CouchAttachmentRecord } from "./DatabaseHandler.js";
 
@@ -41,5 +42,6 @@ export function connect() {
     dipstaging: new LegacyPackageHandler(c),
     dmdtask: new DMDTaskHandler(c),
     wipmeta: new WipmetaHandler(c),
+    ocr: new OcrBatchHandler(c),
   };
 }
