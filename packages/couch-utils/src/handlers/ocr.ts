@@ -6,17 +6,17 @@ import { DatabaseHandler } from "../DatabaseHandler.js";
 export class OcrBatchHandler extends DatabaseHandler<OcrBatch> {
   /**
    *
-   * Create an WipmetaHandler.
+   * Create a BatchHandler.
    * @param client A couchdb-nano client.
-   * @param suffix Suffix to append to the dmdtask database's name.
+   * @param suffix Suffix to append to the ocr batch database's name.
    */
   constructor(client: ServerScope, suffix?: string) {
     super(suffix ? `ocr-${suffix}` : `ocr`, OcrBatch, client);
   }
 
   /**
-   * Updates the label of a Wipmeta object.
-   * @returns The Wipmeta object.
+   * Updates the label of a Batch object.
+   * @returns The Batch object.
    
   async updateLabel(args: {
     id: string;
