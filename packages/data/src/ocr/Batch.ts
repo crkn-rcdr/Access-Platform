@@ -107,7 +107,7 @@ export type ExportFailedOcrBatch = z.infer<typeof ExportFailedOcrBatch>;
 export const ImportWaitingOcrBatch = z
   .object({
     /*
-     * processUpdate for exporting images into directory
+     * processUpdate for importing images from the directory
      */
     importProcess: ProcessRequest,
   })
@@ -121,7 +121,7 @@ export type ImportWaitingOcrBatch = z.infer<typeof ImportWaitingOcrBatch>;
 export const ImportSucceededOcrBatch = z
   .object({
     /*
-     * processUpdate for exporting images into directory
+     * processUpdate for importing images from the directory
      */
     importProcess: SucceededProcessUpdate,
   })
@@ -135,7 +135,7 @@ export type ImportSucceededOcrBatch = z.infer<typeof ImportSucceededOcrBatch>;
 export const ImportFailedOcrBatch = z
   .object({
     /*
-     * processUpdate for exporting images into directory
+     * processUpdate for importing images from the directory
      */
     importProcess: FailedProcessUpdate,
   })
