@@ -3,7 +3,7 @@ module.exports = function (doc, req) {
     successReturn,
     errorReturn,
     extractJSONFromBody,
-    updateGenericObject,
+    updateObject,
   } = require("views/lib/prelude");
 
   if (!doc) {
@@ -16,7 +16,7 @@ module.exports = function (doc, req) {
   }
 
   const { user } = data;
-  updateGenericObject(doc, user);
+  updateObject(doc, user);
 
   delete doc.importProcess;
 

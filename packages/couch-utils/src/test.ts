@@ -3,7 +3,13 @@ import { ServerScope } from "nano";
 import pRetry from "p-retry";
 import { client } from "./index.js";
 
-type DatabaseName = "access" | "canvas" | "dipstaging" | "dmdtask" | "wipmeta";
+type DatabaseName =
+  | "access"
+  | "canvas"
+  | "dipstaging"
+  | "dmdtask"
+  | "wipmeta"
+  | "ocr";
 
 export type BaseContext = {
   client: ServerScope;

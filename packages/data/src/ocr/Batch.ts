@@ -18,14 +18,13 @@ import {
 } from "../util/ProcessUpdate.js";
 import { Noid } from "../util/Noid.js";
 import { Slug } from "../util/Slug.js";
-import { Timestamp } from "../util/Timestamp.js";
-import { User } from "../util/User.js";
+import { StaffUpdate } from "../util/StaffUpdate.js";
 
 /**
  *
  * Base OcrBatch.
  */
-export const OcrBatch = z.object({
+export const BaseOcrBatch = z.object({
   /*
    * ID is used as the name of the directory
    */
@@ -44,20 +43,10 @@ export const OcrBatch = z.object({
   /**
    * Record of the user who created this batch.
    */
-  user: User,
-
-  /**
-   * Timestamp of the batch's most recent update.
-   */
-  updated: Timestamp,
-
-  /**
-   * CouchDB `_attachments` object.
-   */
-  //attachments: CouchAttachmentRecord.optional(),
+  staff: StaffUpdate.optional(),
 });
 
-export type OcrBatch = z.infer<typeof OcrBatch>;
+export type BaseOcrBatch = z.infer<typeof BaseOcrBatch>;
 
 /**
  * OcrBatch at the export step before the process finishes.
@@ -69,7 +58,7 @@ export const ExportWaitingOcrBatch = z
      */
     exportProcess: ProcessRequest,
   })
-  .merge(OcrBatch);
+  .merge(BaseOcrBatch);
 
 export type ExportWaitingOcrBatch = z.infer<typeof ExportWaitingOcrBatch>;
 
@@ -83,7 +72,7 @@ export const ExportSucceededOcrBatch = z
      */
     exportProcess: SucceededProcessUpdate,
   })
-  .merge(OcrBatch);
+  .merge(BaseOcrBatch);
 
 export type ExportSucceededOcrBatch = z.infer<typeof ExportSucceededOcrBatch>;
 
@@ -97,7 +86,7 @@ export const ExportFailedOcrBatch = z
      */
     exportProcess: FailedProcessUpdate,
   })
-  .merge(OcrBatch);
+  .merge(BaseOcrBatch);
 
 export type ExportFailedOcrBatch = z.infer<typeof ExportFailedOcrBatch>;
 
@@ -142,3 +131,15 @@ export const ImportFailedOcrBatch = z
   .merge(ExportSucceededOcrBatch);
 
 export type ImportFailedOcrBatch = z.infer<typeof ImportFailedOcrBatch>;
+
+export const OcrBatch = z.union([
+  ImportSucceededOcrBatch,
+  ImportFailedOcrBatch,
+  ImportWaitingOcrBatch,
+  ExportSucceededOcrBatch,
+  ExportFailedOcrBatch,
+  ExportWaitingOcrBatch,
+  BaseOcrBatch,
+]);
+
+export type OcrBatch = z.infer<typeof OcrBatch>;

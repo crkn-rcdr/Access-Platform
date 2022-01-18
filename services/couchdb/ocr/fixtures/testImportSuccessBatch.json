@@ -2,11 +2,13 @@
   "_id": "testImportSuccessBatch",
   "canvases": ["69429/c0cj87k0gq3s"],
   "priority": 7,
-  "user": {
-    "name": "Brittny",
-    "email": "blapierre@crkn.ca"
+  "staff": {
+    "by": {
+      "name": "Brittny",
+      "email": "blapierre@crkn.ca"
+    },
+    "date": 1630639028.0
   },
-  "updated": 1630639028.0,
   "exportProcess": {
     "requestDate": 1630639028.569,
     "processDate": 1630639032.311,

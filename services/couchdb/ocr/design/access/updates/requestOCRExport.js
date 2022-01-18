@@ -3,7 +3,7 @@ module.exports = function (doc, req) {
     successReturn,
     errorReturn,
     extractJSONFromBody,
-    updateGenericObject,
+    updateObject,
     timestamp,
   } = require("views/lib/prelude");
 
@@ -12,7 +12,7 @@ module.exports = function (doc, req) {
   }
 
   if (!doc.canvases || !doc.canvases.length) {
-    return errorReturn(`No canvases to ocr for batch ${req.id}`, 404);
+    return errorReturn(`No canvases to ocr for batch id ${req.id}`, 404);
   }
 
   const data = extractJSONFromBody(req);
@@ -21,7 +21,7 @@ module.exports = function (doc, req) {
   }
 
   const { user } = data;
-  updateGenericObject(doc, user);
+  updateObject(doc, user);
 
   const now = timestamp();
   doc.exportProcess = { requestDate: now };

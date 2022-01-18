@@ -3,7 +3,7 @@ module.exports = function (doc, req) {
     successReturn,
     errorReturn,
     extractJSONFromBody,
-    updateGenericObject,
+    updateObject,
     timestamp,
   } = require("views/lib/prelude");
 
@@ -24,7 +24,7 @@ module.exports = function (doc, req) {
   }
 
   const { user } = data;
-  updateGenericObject(doc, user);
+  updateObject(doc, user);
 
   const now = timestamp();
   doc.importProcess = { requestDate: now };
