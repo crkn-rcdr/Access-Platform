@@ -1,8 +1,8 @@
 // Used by Press2
 module.exports = {
   map: function (doc) {
-    if ("pkey" in doc) {
-      emit(doc.pkey, null);
+    if ("manifest_noid" in doc) {
+      emit(doc.manifest_noid, null);
     }
   },
 };
