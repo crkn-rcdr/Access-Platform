@@ -115,6 +115,7 @@ This component shows the results of a dipstaging find-package(s) request or a vi
             }
           );
           sucessfulSmeltRequestMap[item["id"]] = true;
+          sucessfulSmeltRequestMap = sucessfulSmeltRequestMap;
           selectedMap[item["id"]] = false;
           selectedMap = selectedMap;
           item["status"] = "processing";
@@ -135,7 +136,9 @@ This component shows the results of a dipstaging find-package(s) request or a vi
   function setSlugAvailability(event, item: ImportStatus | LegacyPackage) {
     slugUnavailableMap[slugMap[item["id"]]] = !event.detail.status;
     slugUnavailableMap = slugUnavailableMap;
-    setSelectedModel();
+    if (isItemSelectable(item)) selectedMap[item["id"]] = true;
+    else selectedMap[item["id"]] = false;
+    selectedMap = selectedMap;
   }
 
   /**
@@ -232,11 +235,6 @@ This component shows the results of a dipstaging find-package(s) request or a vi
       setSelectedModel();
       loading = false;
     });
-  }
-
-  $: {
-    slugUnavailableMap;
-    setSelectedModel();
   }
 </script>
 

@@ -140,7 +140,9 @@ This component shows the results of a dipstaging package view. It allows the use
             }
           );
           sucessfulSmeltRequestMap[item.id] = true;
+          sucessfulSmeltRequestMap = sucessfulSmeltRequestMap;
           selectedMap[item.id] = false;
+          selectedMap = selectedMap;
         } catch (e) {
           sucessfulSmeltRequestMap[item.id] = false;
           error = "Code 7. Please contact the platform team for assistance. ";
@@ -167,6 +169,9 @@ This component shows the results of a dipstaging package view. It allows the use
   function setSlugAvailability(event, item: LegacyPackage) {
     slugAvailableMap[slugMap[item["id"]]] = event.detail.status;
     slugAvailableMap = slugAvailableMap;
+    if (isItemSelectable(item)) selectedMap[item["id"]] = true;
+    else selectedMap[item["id"]] = false;
+    selectedMap = selectedMap;
   }
 
   /**
@@ -263,17 +268,6 @@ This component shows the results of a dipstaging package view. It allows the use
       setSelectedModel();
       loading = false;
     });
-  }
-
-  /**
-   * @listens slugAvailableMap
-   * @listens sucessfulSmeltRequestMap
-   * @description calls @function setSelectedModel to re-set what items are selected when @var slugAvailableMap or @var sucessfulSmeltRequestMap change.
-   */
-  $: {
-    slugAvailableMap;
-    sucessfulSmeltRequestMap;
-    setSelectedModel();
   }
 
   /**
