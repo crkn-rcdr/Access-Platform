@@ -89,7 +89,7 @@ test.serial("Can update ocr import", async (t) => {
   });
   t.true(ImportWaitingOcrBatch.safeParse(batch).success);
 
-  batch = await t.context.ocr.updateExport({
+  batch = await t.context.ocr.updateImport({
     id: TEST_ID,
     user: USER,
     succeeded: true,
