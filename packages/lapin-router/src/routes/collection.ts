@@ -143,7 +143,9 @@ export const collectionRouter = createRouter()
     input: EditInput.parse,
     async resolve({ input, ctx }) {
       try {
-        return await ctx.couch.access.editCollection(input);
+        const result = await ctx.couch.access.editCollection(input);
+
+        return result;
       } catch (e) {
         throw httpErrorToTRPC(e);
       }

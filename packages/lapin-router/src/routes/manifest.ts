@@ -200,7 +200,11 @@ export const manifestRouter = createRouter()
     input: EditInput.parse,
     async resolve({ input, ctx }) {
       try {
-        return await ctx.couch.access.editManifest(input);
+        const result = await ctx.couch.access.editManifest(input);
+
+        await ctx.couch.access.forceUpdate(result.id);
+
+        return result;
       } catch (e) {
         throw httpErrorToTRPC(e);
       }
