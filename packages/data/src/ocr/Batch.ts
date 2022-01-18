@@ -14,7 +14,7 @@ import { z } from "zod";
 import {
   ProcessRequest,
   SucceededOcrProcessResult,
-  FailedOcrProcessResult,
+  FailedProcessUpdate,
 } from "../util/ProcessUpdate.js";
 import { Noid } from "../util/Noid.js";
 import { Slug } from "../util/Slug.js";
@@ -84,7 +84,7 @@ export const ExportFailedOcrBatch = z
     /*
      * processUpdate for exporting images into directory
      */
-    exportProcess: FailedOcrProcessResult,
+    exportProcess: FailedProcessUpdate,
   })
   .merge(BaseOcrBatch);
 
@@ -126,7 +126,7 @@ export const ImportFailedOcrBatch = z
     /*
      * processUpdate for importing images from the directory
      */
-    importProcess: FailedOcrProcessResult,
+    importProcess: FailedProcessUpdate,
   })
   .merge(ExportSucceededOcrBatch);
 

@@ -17,12 +17,12 @@ const { isValid: isValidImportSucceeded } = tester(ImportSucceededOcrBatch);
 
 const USER: User = { name: "User McGee", email: "mcgee@crkn.ca" };
 
-const timestamp = (d: number) => {
+/*const timestamp = (d: number) => {
   return new Date(d).toISOString().replace(/.\d+Z$/g, "Z");
-};
+};*/
 
-const now = timestamp(Date.now());
-const then = timestamp(Date.now() - 100);
+const now = "2021-01-14T16:30:02Z";
+const then = "2021-01-14T15:30:02Z";
 
 const { isValid: isValidExportWaiting } = tester(ExportWaitingOcrBatch);
 const { isValid: isValidExportFailed } = tester(ExportFailedOcrBatch);
@@ -32,8 +32,10 @@ const goodExportWaiting: ExportWaitingOcrBatch = {
   id: "waiting-for-processing",
   priority: 1,
   canvases: ["69429/c0cj87k0gq3s"],
-  user: USER,
-  updated: then,
+  staff: {
+    by: USER,
+    date: then,
+  },
   exportProcess: {
     requestDate: then,
   },
@@ -54,30 +56,16 @@ const goodExportFailed: ExportFailedOcrBatch = {
     processDate: now,
     message: "none",
   },
-  updated: now,
+  staff: {
+    by: USER,
+    date: now,
+  },
 };
 
 test(
   "Export failed batch schema parses a valid object",
   isValidExportFailed,
   goodExportFailed
-);
-
-const goodExportFailedNoMessage: ExportFailedOcrBatch = {
-  ...goodExportWaiting,
-  id: "processing-failed",
-  exportProcess: {
-    requestDate: then,
-    succeeded: false,
-    processDate: now,
-  },
-  updated: now,
-};
-
-test(
-  "Export failed batch schema (with no message) parses a valid object",
-  isValidExportFailed,
-  goodExportFailedNoMessage
 );
 
 const goodExportSucceeded: ExportSucceededOcrBatch = {
@@ -88,6 +76,10 @@ const goodExportSucceeded: ExportSucceededOcrBatch = {
     processDate: now,
     succeeded: true,
     message: "Good job, everyone.",
+  },
+  staff: {
+    by: USER,
+    date: now,
   },
 };
 
@@ -105,7 +97,10 @@ const goodExportSucceededNoMessage: ExportSucceededOcrBatch = {
     processDate: now,
     succeeded: true,
   },
-  updated: now,
+  staff: {
+    by: USER,
+    date: now,
+  },
 };
 
 test(
@@ -117,7 +112,15 @@ test(
 const goodImportWaiting: ImportWaitingOcrBatch = {
   ...goodExportSucceeded,
   id: "waiting-for-processing",
-  updated: then,
+  staff: {
+    by: USER,
+    date: now,
+  },
+  exportProcess: {
+    requestDate: then,
+    processDate: now,
+    succeeded: true,
+  },
   importProcess: {
     requestDate: then,
   },
@@ -132,13 +135,21 @@ test(
 const goodImportFailed: ImportFailedOcrBatch = {
   ...goodImportWaiting,
   id: "processing-failed",
+  exportProcess: {
+    requestDate: then,
+    processDate: now,
+    succeeded: true,
+  },
   importProcess: {
     requestDate: then,
     succeeded: false,
     processDate: now,
-    message: "none",
+    message: "what went wrong",
   },
-  updated: now,
+  staff: {
+    by: USER,
+    date: now,
+  },
 };
 
 test(
@@ -147,33 +158,24 @@ test(
   goodImportFailed
 );
 
-const goodImportFailedNoMessage: ImportFailedOcrBatch = {
-  ...goodImportWaiting,
-  id: "processing-failed",
-  importProcess: {
-    requestDate: then,
-    succeeded: false,
-    processDate: now,
-  },
-  updated: now,
-};
-
-test(
-  "Import failed batch schema (with no message) parses a valid object",
-  isValidImportFailed,
-  goodImportFailedNoMessage
-);
-
 const goodImportSucceeded: ImportSucceededOcrBatch = {
   ...goodImportWaiting,
   id: "processing-succeeded",
+  exportProcess: {
+    requestDate: then,
+    processDate: now,
+    succeeded: true,
+  },
   importProcess: {
     requestDate: then,
     processDate: now,
     succeeded: true,
     message: "Good job, everyone.",
   },
-  updated: now,
+  staff: {
+    by: USER,
+    date: now,
+  },
 };
 
 test(
@@ -185,12 +187,20 @@ test(
 const goodImportSucceededNoMessage: ImportSucceededOcrBatch = {
   ...goodImportWaiting,
   id: "processing-succeeded",
+  exportProcess: {
+    requestDate: then,
+    processDate: now,
+    succeeded: true,
+  },
   importProcess: {
     requestDate: then,
     processDate: now,
     succeeded: true,
   },
-  updated: now,
+  staff: {
+    by: USER,
+    date: now,
+  },
 };
 
 test(

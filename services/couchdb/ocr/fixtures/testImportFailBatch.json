@@ -13,12 +13,12 @@
     "requestDate": 1630639028.569,
     "processDate": 1630639032.311,
     "succeeded": false,
-    "message": ""
+    "message": "oops"
   },
   "importProcess": {
     "requestDate": 1630639928.569,
     "processDate": 1630639932.311,
     "succeeded": true,
-    "message": ""
+    "message": "oops"
   }
 }
