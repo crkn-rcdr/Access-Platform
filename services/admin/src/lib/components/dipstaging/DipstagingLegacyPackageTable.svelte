@@ -26,15 +26,16 @@ This component shows the results of a dipstaging package view. It allows the use
   import type { LegacyPackage } from "@crkn-rcdr/access-data";
   import Resolver from "$lib/components/access-objects/Resolver.svelte";
   import Loading from "$lib/components/shared/Loading.svelte";
-  import XmlViewer from "$lib/components/shared/XmlViewer.svelte";
+  import structuredClone from "@ungap/structured-clone";
   import NotificationBar from "../shared/NotificationBar.svelte";
-  import { includes } from "lodash-es";
+  import DipstatingImportStatus from "./DipstatingImportStatus.svelte";
 
   /**
    * @type {LegacyPackage[]}
    * The packages in the format of LegacyPackage, to be displayed to the user
    */
   export let results: LegacyPackage[];
+  let items: LegacyPackage[];
 
   /**
    * @type {number}
@@ -113,7 +114,7 @@ This component shows the results of a dipstaging package view. It allows the use
    * @returns void
    */
   function toggleAllSelected(event) {
-    for (const item of results) {
+    for (const item of items) {
       if (slugAvailableMap[slugMap[item["id"]]])
         selectedMap[item.id] = event.target.checked;
       else selectedMap[item.id] = false;
@@ -139,7 +140,9 @@ This component shows the results of a dipstaging package view. It allows the use
             }
           );
           sucessfulSmeltRequestMap[item.id] = true;
+          sucessfulSmeltRequestMap = sucessfulSmeltRequestMap;
           selectedMap[item.id] = false;
+          selectedMap = selectedMap;
         } catch (e) {
           sucessfulSmeltRequestMap[item.id] = false;
           error = "Code 7. Please contact the platform team for assistance. ";
@@ -166,6 +169,9 @@ This component shows the results of a dipstaging package view. It allows the use
   function setSlugAvailability(event, item: LegacyPackage) {
     slugAvailableMap[slugMap[item["id"]]] = event.detail.status;
     slugAvailableMap = slugAvailableMap;
+    if (isItemSelectable(item)) selectedMap[item["id"]] = true;
+    else selectedMap[item["id"]] = false;
+    selectedMap = selectedMap;
   }
 
   /**
@@ -174,13 +180,17 @@ This component shows the results of a dipstaging package view. It allows the use
    */
   function checkIfSlugsDefined() {
     if (!results) return;
+    items = [];
+    slugMap = {};
     for (const item of results) {
-      if (!item["slug"]) {
-        item.slug = item.id;
-        slugMap[item.id] = item.id;
-      } else slugMap[item.id] = item.slug;
+      let itemCopy = structuredClone(item);
+      items.push(itemCopy);
+      if (!itemCopy["slug"]) {
+        itemCopy.slug = itemCopy.id;
+        slugMap[itemCopy.id] = itemCopy.id;
+      } else slugMap[itemCopy.id] = itemCopy.slug;
     }
-    results = results;
+    items = items;
   }
 
   /**
@@ -188,8 +198,8 @@ This component shows the results of a dipstaging package view. It allows the use
    * @returns void
    */
   function setExpandedModel() {
-    if (!results) return;
-    for (const item of results) {
+    if (!items) return;
+    for (const item of items) {
       if (!(item.id in expandedMap)) expandedMap[item.id] = false;
     }
     expandedMap = expandedMap;
@@ -200,8 +210,8 @@ This component shows the results of a dipstaging package view. It allows the use
    * @returns void
    */
   function setSelectedModel() {
-    if (!results) return;
-    for (const item of results) {
+    if (!items) return;
+    for (const item of items) {
       if (!(item.id in selectedMap) && isItemSelectable(item))
         selectedMap[item.id] = false;
     }
@@ -221,7 +231,7 @@ This component shows the results of a dipstaging package view. It allows the use
   }
 
   async function getSlugAvailability() {
-    if (!results) return;
+    if (!items) return;
     error = "";
 
     const slugs: string[] = Object.values(slugMap);
@@ -252,25 +262,12 @@ This component shows the results of a dipstaging package view. It allows the use
   $: {
     loading = true;
     results;
-    Promise.all([
-      checkIfSlugsDefined(),
-      getSlugAvailability(),
-      setExpandedModel(),
-      setSelectedModel(),
-    ]).then(() => {
+    checkIfSlugsDefined();
+    getSlugAvailability().then(() => {
+      setExpandedModel();
+      setSelectedModel();
       loading = false;
     });
-  }
-
-  /**
-   * @listens slugAvailableMap
-   * @listens sucessfulSmeltRequestMap
-   * @description calls @function setSelectedModel to re-set what items are selected when @var slugAvailableMap or @var sucessfulSmeltRequestMap change.
-   */
-  $: {
-    slugAvailableMap;
-    sucessfulSmeltRequestMap;
-    setSelectedModel();
   }
 
   /**
@@ -318,11 +315,11 @@ This component shows the results of a dipstaging package view. It allows the use
                 Updated Date
               {/if}
             </th>
-            <th>Import Status</th>
+            <th>Last Import Status</th>
           </tr>
         </thead>
         <tbody>
-          {#each results as legacyPackage, i}
+          {#each items as legacyPackage, i}
             <tr class:expanded={expandedMap[legacyPackage.id]}>
               {#if view !== "queue"}
                 <td>
@@ -403,9 +400,13 @@ This component shows the results of a dipstaging package view. It allows the use
                   {:else if view === "queue"}
                     This package is being imported into access!
                   {:else if view === "status"}
-                    {legacyPackage.smelt?.["succeeded"]
-                      ? "This package successfully imported."
-                      : "This package failed to import."}
+                    {#if legacyPackage.smelt}
+                      {legacyPackage.smelt?.["succeeded"]
+                        ? "This package successfully imported."
+                        : "This package failed to import."}
+                    {:else}
+                      No import status available
+                    {/if}
                   {:else if view === "neversmelted"}
                     This package was never imported.
                   {:else if view === "updated"}
@@ -417,7 +418,7 @@ This component shows the results of a dipstaging package view. It allows the use
                   <span
                     class="icon"
                     on:click={() => handleItemExpanded(legacyPackage)}
-                    data-tooltip="Information on previous import attempt..."
+                    data-tooltip="Last Import Status..."
                   >
                     {#if expandedMap[legacyPackage.id]}
                       <FaAngleDown />
@@ -431,48 +432,7 @@ This component shows the results of a dipstaging package view. It allows the use
             {#if expandedMap[legacyPackage.id]}
               <tr class="row-details">
                 <td colspan="5">
-                  <table>
-                    <tbody>
-                      <tr>
-                        <td class="detail-label">Import Status:</td>
-                        <td>
-                          {legacyPackage.smelt?.["succeeded"]
-                            ? "Succeeded"
-                            : "Failed"}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td class="detail-label">Request Date:</td>
-                        <td>
-                          {legacyPackage.smelt?.requestDate
-                            ? new Date(
-                                legacyPackage.smelt?.requestDate
-                              ).toLocaleString()
-                            : "N/A"}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td class="detail-label">Process Date:</td>
-                        <td>
-                          {legacyPackage.smelt?.["processDate"]
-                            ? new Date(
-                                legacyPackage.smelt?.["processDate"]
-                              ).toLocaleString()
-                            : "N/A"}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td class="detail-label">Message:</td>
-                        <td>
-                          <XmlViewer
-                            xml={legacyPackage.smelt?.["message"]?.length
-                              ? legacyPackage.smelt?.["message"]
-                              : "N/A"}
-                          />
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+                  <DipstatingImportStatus bind:item={legacyPackage} />
                 </td>
               </tr>
             {/if}

@@ -20,10 +20,10 @@ This component shows the results of a dipstaging find-package(s) request or a vi
   import type { ImportStatus, LegacyPackage } from "@crkn-rcdr/access-data";
   import Resolver from "$lib/components/access-objects/Resolver.svelte";
   import Loading from "$lib/components/shared/Loading.svelte";
-  import XmlViewer from "$lib/components/shared/XmlViewer.svelte";
   import NotificationBar from "../shared/NotificationBar.svelte";
   import ExpansionTile from "../shared/ExpansionTile.svelte";
-  import { afterUpdate } from "svelte";
+  import structuredClone from "@ungap/structured-clone";
+  import DipstatingImportStatus from "./DipstatingImportStatus.svelte";
 
   /**
    * @type {ImportStatus[]}
@@ -89,7 +89,7 @@ This component shows the results of a dipstaging find-package(s) request or a vi
    * @returns void
    */
   function toggleAllSelected(event) {
-    for (const item of results) {
+    for (const item of items) {
       if (!slugUnavailableMap[slugMap[item["id"]]])
         selectedMap[item["id"]] = event.target.checked;
       else selectedMap[item["id"]] = false;
@@ -103,7 +103,7 @@ This component shows the results of a dipstaging find-package(s) request or a vi
    */
   async function handleRunSmelterPressed() {
     error = "";
-    for (const item of results) {
+    for (const item of items) {
       if (selectedMap[item["id"]]) {
         try {
           const response = await $session.lapin.mutation(
@@ -115,6 +115,7 @@ This component shows the results of a dipstaging find-package(s) request or a vi
             }
           );
           sucessfulSmeltRequestMap[item["id"]] = true;
+          sucessfulSmeltRequestMap = sucessfulSmeltRequestMap;
           selectedMap[item["id"]] = false;
           selectedMap = selectedMap;
           item["status"] = "processing";
@@ -135,7 +136,9 @@ This component shows the results of a dipstaging find-package(s) request or a vi
   function setSlugAvailability(event, item: ImportStatus | LegacyPackage) {
     slugUnavailableMap[slugMap[item["id"]]] = !event.detail.status;
     slugUnavailableMap = slugUnavailableMap;
-    setSelectedModel();
+    if (isItemSelectable(item)) selectedMap[item["id"]] = true;
+    else selectedMap[item["id"]] = false;
+    selectedMap = selectedMap;
   }
 
   /**
@@ -147,11 +150,12 @@ This component shows the results of a dipstaging find-package(s) request or a vi
     items = [];
     slugMap = {};
     for (const item of results) {
-      items.push(item);
-      if (!item["slug"] && !isSlugSearch) {
-        item["slug"] = item["id"];
-        slugMap[item["id"]] = item["id"];
-      } else slugMap[item["id"]] = item["slug"];
+      let itemCopy = structuredClone(item);
+      items.push(itemCopy);
+      if (!itemCopy["slug"] && !isSlugSearch) {
+        itemCopy["slug"] = itemCopy["id"];
+        slugMap[itemCopy["id"]] = itemCopy["id"];
+      } else slugMap[itemCopy["id"]] = itemCopy["slug"];
     }
     items = items;
   }
@@ -164,7 +168,6 @@ This component shows the results of a dipstaging find-package(s) request or a vi
     if (!items) return;
     selectedMap = {};
     for (const item of items) {
-      console.log(isItemSelectable(item));
       selectedMap[item["id"]] = isItemSelectable(item);
     }
     selectedMap = selectedMap;
@@ -206,7 +209,6 @@ This component shows the results of a dipstaging find-package(s) request or a vi
           if (result.length === 2) {
             const slug = result[0];
             const info = result[1];
-            console.log(slug, info);
             slugUnavailableMap[slug] = info.found;
             if (info.found && info.result) {
               noidMap[slug] = info.result.id;
@@ -228,18 +230,11 @@ This component shows the results of a dipstaging find-package(s) request or a vi
   $: {
     loading = true;
     results;
-    Promise.all([
-      checkIfSlugsDefined(),
-      getSlugAvailability(),
-      setSelectedModel(),
-    ]).then(() => {
+    checkIfSlugsDefined();
+    getSlugAvailability().then(() => {
+      setSelectedModel();
       loading = false;
     });
-  }
-
-  $: {
-    slugUnavailableMap;
-    setSelectedModel();
   }
 </script>
 
@@ -356,7 +351,7 @@ This component shows the results of a dipstaging find-package(s) request or a vi
                       : null}
                     isFound={slugUnavailableMap[slugMap[item["id"]]]}
                     alwaysShowIfFound={true}
-                    runInitial={true}
+                    runInitial={false}
                     on:available={(e) => setSlugAvailability(e, item)}
                     bind:slug={slugMap[item["id"]]}
                   />
@@ -366,85 +361,9 @@ This component shows the results of a dipstaging find-package(s) request or a vi
 
                 <div class="import-history-wrap">
                   <ExpansionTile>
-                    <span slot="top">Import History</span>
+                    <span slot="top">Last Import Status</span>
                     <div slot="bottom">
-                      <!-- LEGACY PACKAGE -->
-                      {#if "smelt" in item}
-                        <table>
-                          <tbody>
-                            <tr>
-                              <td class="detail-label">Import Status:</td>
-                              <td>
-                                {item.smelt?.["succeeded"]
-                                  ? "Succeeded"
-                                  : "Failed"}
-                              </td>
-                            </tr>
-                            <tr>
-                              <td class="detail-label">Request Date:</td>
-                              <td>
-                                {item.smelt?.requestDate
-                                  ? new Date(
-                                      item.smelt?.requestDate
-                                    ).toLocaleString()
-                                  : "N/A"}
-                              </td>
-                            </tr>
-                            <tr>
-                              <td class="detail-label">Process Date:</td>
-                              <td>
-                                {item.smelt?.["processDate"]
-                                  ? new Date(
-                                      item.smelt?.["processDate"]
-                                    ).toLocaleString()
-                                  : "N/A"}
-                              </td>
-                            </tr>
-                            <tr>
-                              <td class="detail-label">Message:</td>
-                              <td>
-                                <XmlViewer
-                                  xml={item.smelt?.["message"]?.length
-                                    ? item.smelt?.["message"]
-                                    : "N/A"}
-                                />
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      {:else}
-                        <!-- IMPORT STATUS -->
-                        <table>
-                          <tbody>
-                            <tr>
-                              <td class="detail-label">Import Status:</td>
-                              <td
-                                >{item["status"] === "succeeded"
-                                  ? "Succeeded"
-                                  : "Failed"}</td
-                              >
-                            </tr>
-                            <tr>
-                              <td class="detail-label">Request Date:</td>
-                              <td>{item["requestDate"]}</td>
-                            </tr>
-                            <tr>
-                              <td class="detail-label">Process Date:</td>
-                              <td>{item["processDate"]}</td>
-                            </tr>
-                            <tr>
-                              <td class="detail-label">Message:</td>
-                              <td>
-                                <XmlViewer
-                                  xml={item["message"]?.length
-                                    ? item["message"]
-                                    : "N/A"}
-                                />
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      {/if}
+                      <DipstatingImportStatus bind:item />
                     </div>
                   </ExpansionTile>
                 </div>

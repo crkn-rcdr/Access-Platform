@@ -21,6 +21,7 @@
     "@crkn-rcdr/access-data": "workspace:*",
     "@crkn-rcdr/access-env": "workspace:*",
     "@trpc/client": "^8.4.2",
+    "@ungap/structured-clone": "^0.3.4",
     "await-timeout": "^1.1.1",
     "cookie": "^0.4.1",
     "deep-object-diff": "^1.1.0",

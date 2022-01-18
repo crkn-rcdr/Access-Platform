@@ -151,6 +151,7 @@ importers:
       '@trpc/client': ^8.4.2
       '@types/cookie': ^0.4.1
       '@types/jsonwebtoken': ^8.5.4
+      '@ungap/structured-clone': ^0.3.4
       await-timeout: ^1.1.1
       cookie: ^0.4.1
       deep-object-diff: ^1.1.0
@@ -179,6 +180,7 @@ importers:
       '@crkn-rcdr/access-data': link:../../packages/data
       '@crkn-rcdr/access-env': link:../../packages/env
       '@trpc/client': 8.4.2
+      '@ungap/structured-clone': 0.3.4
       await-timeout: 1.1.1
       cookie: 0.4.1
       deep-object-diff: 1.1.0
@@ -488,6 +490,10 @@ packages:
 
   /@types/tough-cookie/4.0.1:
     resolution: {integrity: sha512-Y0K95ThC3esLEYD6ZuqNek29lNX2EM1qxV8y2FTLUB0ff5wWrk7az+mLrnNFUnaXcgKye22+sFBRXOgpPILZNg==}
+
+  /@ungap/structured-clone/0.3.4:
+    resolution: {integrity: sha512-TSVh8CpnwNAsPC5wXcIyh92Bv1gq6E9cNDeeLu7Z4h8V4/qWtXJp7y42qljRkqcpmsve1iozwv1wr+3BNdILCg==}
+    dev: false
 
   /abbrev/1.1.1:
     resolution: {integrity: sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==}

@@ -14,6 +14,11 @@ const SmeltInput = z.object({
   slug: Slug,
 });
 
+const CancelSmeltInput = z.object({
+  user: User,
+  id: z.string(),
+});
+
 const ViewInput = z.object({
   page: z.number(),
   pageSize: z.number(),
@@ -131,6 +136,21 @@ export const dipstagingRouter = createRouter()
           name: "requestSmelt",
           docId: input.id,
           body: input,
+        });
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .mutation("cancelSmelt", {
+    input: CancelSmeltInput.parse,
+    async resolve({ input, ctx }) {
+      try {
+        return await ctx.couch.dipstaging.update({
+          ddoc: "access",
+          name: "cancelSmelt",
+          docId: input.id,
+          body: input.user,
         });
       } catch (e) {
         throw httpErrorToTRPC(e);
