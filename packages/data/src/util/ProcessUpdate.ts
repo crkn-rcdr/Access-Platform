@@ -134,3 +134,29 @@ export const ProcessUpdate = z.union([
 ]);
 
 export type ProcessUpdate = z.infer<typeof ProcessUpdate>;
+
+/**
+ * The result of a background OCR process.
+ */
+export const SucceededOcrProcessResult = ProcessRequest.merge(
+  z.object({
+    /**
+     * Most recent time the process update took place.
+     */
+    processDate: Timestamp,
+
+    /**
+     * Whether the last process was run successfully on this object.
+     */
+    succeeded: z.literal(true),
+
+    /**
+     * Error message supplied by the process.
+     */
+    message: z.string().optional(),
+  })
+).strict();
+
+export type SucceededOcrProcessResult = z.infer<
+  typeof SucceededOcrProcessResult
+>;

@@ -84,7 +84,6 @@ exports.updateObject = (doc, user) => {
   ) {
     doc.staff = { by: user, date: now };
   }
-  doc.updateInternalmeta = { requestDate: now };
   doc.updated = now;
 };
 
@@ -93,14 +92,14 @@ exports.updateObject = (doc, user) => {
  * @param {Record<string, string>} doc The Access Object's document.
  * @param {{name: string; email: string} | undefined} user The user who triggered this update, if one exists.
  */
- exports.updateGenericObject = (doc, user) => {
+exports.updateGenericObject = (doc, user) => {
   const now = exports.timestamp();
   if (
     typeof user === "object" &&
     typeof user.email === "string" &&
     typeof user.name === "string"
   ) {
-    doc.staff = { by: user, date: now };
+    doc.user = { by: user, date: now };
   }
   doc.updated = now;
 };

@@ -1,0 +1,12 @@
+{
+  "_id": "testBaseBatch",
+  "canvases": ["69429/c0cj87k0gq3s"],
+  "priority": 3,
+  "staff": {
+    "by": {
+      "name": "Brittny",
+      "email": "blapierre@crkn.ca"
+    },
+    "date": 1630639028.0
+  }
+}
