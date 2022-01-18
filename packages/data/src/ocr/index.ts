@@ -6,4 +6,5 @@ export {
   ImportFailedOcrBatch,
   ImportSucceededOcrBatch,
   ImportWaitingOcrBatch,
+  EditableOcrBatch,
 } from "./Batch.js";

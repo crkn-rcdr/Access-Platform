@@ -143,3 +143,19 @@ export const OcrBatch = z.union([
 ]);
 
 export type OcrBatch = z.infer<typeof OcrBatch>;
+
+/**
+ * The staff-editable properties of a OcrBatch.
+ */
+export const EditableOcrBatch = BaseOcrBatch.pick({
+  id: true,
+  canvases: true,
+  priority: true,
+})
+  .partial()
+  .refine(
+    (obj) => Object.keys(obj).length > 0,
+    "Cannot edit a batch with an empty object"
+  );
+
+export type EditableOcrBatch = z.infer<typeof EditableOcrBatch>;

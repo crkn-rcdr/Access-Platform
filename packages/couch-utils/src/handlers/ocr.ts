@@ -1,4 +1,4 @@
-import { OcrBatch, Slug, User } from "@crkn-rcdr/access-data";
+import { Slug, User, OcrBatch, EditableOcrBatch } from "@crkn-rcdr/access-data";
 import { ServerScope } from "nano";
 
 import { DatabaseHandler } from "../DatabaseHandler.js";
@@ -23,13 +23,13 @@ export class OcrBatchHandler extends DatabaseHandler<OcrBatch> {
     /** The batch id*/
     id: Slug;
     /** The status */
-    data: boolean;
+    data: EditableOcrBatch;
   }) {
     const { id, data, user } = args;
 
     await this.update({
       ddoc: "access",
-      name: "updateOCRImport",
+      name: "editBatch",
       docId: id,
       body: {
         data,

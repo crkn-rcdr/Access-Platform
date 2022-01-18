@@ -37,6 +37,7 @@ export {
   ImportFailedOcrBatch,
   ImportSucceededOcrBatch,
   ImportWaitingOcrBatch,
+  EditableOcrBatch,
 } from "./ocr/index.js";
 
 export {

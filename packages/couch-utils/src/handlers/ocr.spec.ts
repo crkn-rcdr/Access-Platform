@@ -1,8 +1,9 @@
 import {
   ExportWaitingOcrBatch,
-  /*ExportSucceededOcrBatch,
+  ExportSucceededOcrBatch,
   ImportSucceededOcrBatch,
-  ImportWaitingOcrBatch,*/
+  ImportWaitingOcrBatch,
+  OcrBatch,
 } from "@crkn-rcdr/access-data";
 import anyTest, { TestInterface } from "ava";
 import { BaseContext, getTestContext } from "../test.js";
@@ -29,60 +30,130 @@ test.serial("Can request ocr export", async (t) => {
     id: TEST_ID,
     user: USER,
   });
-  console.log("batch 1: ", batch);
   t.true(ExportWaitingOcrBatch.safeParse(batch).success);
 });
 
-/*
 test.serial("Can update ocr export", async (t) => {
-  await t.context.ocr.update({
-    ddoc: "access",
-    name: "updateOCRExport",
-    docId: TEST_ID,
-    body: {
-      user: USER,
-      succeeded: true,
-    },
+  let batch = await t.context.ocr.requestExport({
+    id: TEST_ID,
+    user: USER,
   });
+  t.true(ExportWaitingOcrBatch.safeParse(batch).success);
 
-  const doc = await t.context.ocr.get(TEST_ID);
-  console.log("doc 2: ", doc);
-
-  t.true(ExportSucceededOcrBatch.safeParse(doc).success);
+  batch = await t.context.ocr.updateExport({
+    id: TEST_ID,
+    user: USER,
+    succeeded: true,
+  });
+  t.true(ExportSucceededOcrBatch.safeParse(batch).success);
 });
 
 test.serial("Can request ocr import", async (t) => {
-  await t.context.ocr.update({
-    ddoc: "access",
-    name: "requestOCRImport",
-    docId: TEST_ID,
-    body: {
-      user: USER,
-    },
+  let batch = await t.context.ocr.requestExport({
+    id: TEST_ID,
+    user: USER,
   });
+  t.true(ExportWaitingOcrBatch.safeParse(batch).success);
 
-  const doc = await t.context.ocr.get(TEST_ID);
-  console.log("doc 3: ", doc);
+  batch = await t.context.ocr.updateExport({
+    id: TEST_ID,
+    user: USER,
+    succeeded: true,
+  });
+  t.true(ExportSucceededOcrBatch.safeParse(batch).success);
 
-  t.true(ImportWaitingOcrBatch.safeParse(doc).success);
+  batch = await t.context.ocr.requestImport({
+    id: TEST_ID,
+    user: USER,
+  });
+  t.true(ImportWaitingOcrBatch.safeParse(batch).success);
 });
 
 test.serial("Can update ocr import", async (t) => {
-  await t.context.ocr.update({
-    ddoc: "access",
-    name: "updateOCRImport",
-    docId: TEST_ID,
-    body: {
-      user: USER,
-      succeeded: true,
+  let batch = await t.context.ocr.requestExport({
+    id: TEST_ID,
+    user: USER,
+  });
+  t.true(ExportWaitingOcrBatch.safeParse(batch).success);
+
+  batch = await t.context.ocr.updateExport({
+    id: TEST_ID,
+    user: USER,
+    succeeded: true,
+  });
+  t.true(ExportSucceededOcrBatch.safeParse(batch).success);
+
+  batch = await t.context.ocr.requestImport({
+    id: TEST_ID,
+    user: USER,
+  });
+  t.true(ImportWaitingOcrBatch.safeParse(batch).success);
+
+  batch = await t.context.ocr.updateExport({
+    id: TEST_ID,
+    user: USER,
+    succeeded: true,
+  });
+  t.true(ImportSucceededOcrBatch.safeParse(batch).success);
+});
+
+test.serial("Can cancel ocr export", async (t) => {
+  let batch = await t.context.ocr.requestExport({
+    id: TEST_ID,
+    user: USER,
+  });
+  t.true(ExportWaitingOcrBatch.safeParse(batch).success);
+
+  batch = await t.context.ocr.cancelExport({
+    id: TEST_ID,
+    user: USER,
+  });
+  t.true(
+    OcrBatch.safeParse(batch).success &&
+      !ExportWaitingOcrBatch.safeParse(batch).success
+  );
+});
+
+test.serial("Can cancel ocr import", async (t) => {
+  let batch = await t.context.ocr.requestExport({
+    id: TEST_ID,
+    user: USER,
+  });
+  t.true(ExportWaitingOcrBatch.safeParse(batch).success);
+
+  batch = await t.context.ocr.updateExport({
+    id: TEST_ID,
+    user: USER,
+    succeeded: true,
+  });
+  t.true(ExportSucceededOcrBatch.safeParse(batch).success);
+
+  batch = await t.context.ocr.requestImport({
+    id: TEST_ID,
+    user: USER,
+  });
+  t.true(ImportWaitingOcrBatch.safeParse(batch).success);
+
+  batch = await t.context.ocr.cancelImport({
+    id: TEST_ID,
+    user: USER,
+  });
+  t.true(
+    OcrBatch.safeParse(batch).success &&
+      !ImportWaitingOcrBatch.safeParse(batch).success
+  );
+});
+
+test.serial("Can edit an ocr batch", async (t) => {
+  const batch = await t.context.ocr.editBatch({
+    id: TEST_ID,
+    user: USER,
+    data: {
+      priority: 100,
     },
   });
-
-  const doc = await t.context.ocr.get(TEST_ID);
-  console.log("doc 4: ", doc);
-
-  t.true(ImportSucceededOcrBatch.safeParse(doc).success);
-});*/
+  t.true(batch.priority === 100);
+});
 
 test.after.always(async (t) => {
   await t.context.testDestroy("ocr", "handler");
