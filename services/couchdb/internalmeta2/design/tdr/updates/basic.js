@@ -64,6 +64,10 @@ module.exports = function (doc, req) {
     doc["METSDate"] = nowdates;
     updated = true;
   }
+  if ("noid" in updatedoc && doc["noid"] !== updatedoc["noid"]) {
+    doc["noid"] = updatedoc["noid"];
+    updated = true;
+  }
   if ("type" in updatedoc && doc["type"] !== updatedoc["type"]) {
     doc["type"] = updatedoc["type"];
     updated = true;
