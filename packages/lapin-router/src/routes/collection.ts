@@ -10,6 +10,7 @@ import {
   Slug,
   ObjectListPage,
   TextRecord,
+  Timestamp,
 } from "@crkn-rcdr/access-data";
 import { createRouter, httpErrorToTRPC } from "../router.js";
 import { TRPCError } from "@trpc/server";
@@ -143,8 +144,33 @@ export const collectionRouter = createRouter()
     input: EditInput.parse,
     async resolve({ input, ctx }) {
       try {
-        return await ctx.couch.access.editCollection(input);
-      } catch (e) {
+        const res = await ctx.couch.access.editCollection(input);
+
+        const date = new Date().toISOString().replace(/.\d+Z$/g, "Z");
+        const docs: {
+          _id: Noid;
+          updateInternalmeta: {
+            requestDate: Timestamp;
+          };
+        }[] = [];
+        for (let member of res.members) {
+          if (member.id) {
+            docs.push({
+              _id: member.id,
+              updateInternalmeta: {
+                requestDate: date,
+              },
+            });
+          }
+        }
+
+        const res2 = await ctx.couch.access.forceUpdateMany(docs);
+
+        console.log("res2", res2);
+
+        return res;
+      } catch (e: any) {
+        console.log(e?.message);
         throw httpErrorToTRPC(e);
       }
     },

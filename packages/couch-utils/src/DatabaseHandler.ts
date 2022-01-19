@@ -9,9 +9,11 @@ import {
   MangoQuery,
   MangoSelector,
   RequestError,
+  DocumentBulkResponse,
 } from "nano";
 
 import { mangoEqualSelector } from "./util.js";
+import { Noid, Timestamp } from "@crkn-rcdr/access-data";
 
 /**
  * The specification for a CouchDB document's `_attachments` object.
@@ -163,6 +165,26 @@ export class DatabaseHandler<T extends Document> {
       }
       throw error;
     }
+  }
+
+  async forceUpdateMany(
+    docs: {
+      _id: Noid;
+      updateInternalmeta: {
+        requestDate: Timestamp;
+      };
+    }[]
+  ): Promise<DocumentBulkResponse[]> {
+    /**
+     * https://docs.couchdb.org/en/stable/api/database/bulk-api.html#db-bulk-docs
+     * For updating existing documents, you must provide the document ID, revision information (_rev), and new document values.
+     */
+
+    console.log("bulk: ", docs);
+
+    return await this.db.bulk({
+      docs,
+    });
   }
 
   /**
