@@ -168,22 +168,43 @@ export class DatabaseHandler<T extends Document> {
   }
 
   async forceUpdateMany(
-    docs: {
-      _id: Noid;
-      updateInternalmeta: {
-        requestDate: Timestamp;
-      };
-    }[]
+    ids: any[] // todo: make string once object list item id is not optional
   ): Promise<DocumentBulkResponse[]> {
     /**
      * https://docs.couchdb.org/en/stable/api/database/bulk-api.html#db-bulk-docs
      * For updating existing documents, you must provide the document ID, revision information (_rev), and new document values.
      */
 
-    console.log("bulk: ", docs);
+    const date = new Date().toISOString().replace(/.\d+Z$/g, "Z");
+
+    const bulkUpdateDocs: {
+      _rev: string;
+      _id: Noid;
+      updateInternalmeta: {
+        requestDate: Timestamp;
+      };
+    }[] = [];
+
+    const fetchRes = await this.db.list({ keys: ids });
+
+    fetchRes.rows.map((row) => {
+      console.log("row", row);
+      //TODO: how to get this to only replace the feilds in here not the full doc?
+      if (row.id && row.value?.rev) {
+        bulkUpdateDocs.push({
+          _id: row.id,
+          _rev: row.value.rev,
+          updateInternalmeta: {
+            requestDate: date,
+          },
+        });
+      }
+    });
+
+    console.log("bulk", bulkUpdateDocs);
 
     return await this.db.bulk({
-      docs,
+      docs: bulkUpdateDocs,
     });
   }
 

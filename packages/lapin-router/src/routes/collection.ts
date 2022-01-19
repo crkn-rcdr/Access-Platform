@@ -10,7 +10,6 @@ import {
   Slug,
   ObjectListPage,
   TextRecord,
-  Timestamp,
 } from "@crkn-rcdr/access-data";
 import { createRouter, httpErrorToTRPC } from "../router.js";
 import { TRPCError } from "@trpc/server";
@@ -146,25 +145,13 @@ export const collectionRouter = createRouter()
       try {
         const res = await ctx.couch.access.editCollection(input);
 
-        const date = new Date().toISOString().replace(/.\d+Z$/g, "Z");
-        const docs: {
-          _id: Noid;
-          updateInternalmeta: {
-            requestDate: Timestamp;
-          };
-        }[] = [];
-        for (let member of res.members) {
-          if (member.id) {
-            docs.push({
-              _id: member.id,
-              updateInternalmeta: {
-                requestDate: date,
-              },
-            });
-          }
-        }
+        //Todo: no filter needed after object list ids become required
+        const ids: any[] = res.members
+          .filter((member) => typeof member.id !== "undefined")
+          .map((member) => member.id);
+        console.log("ids", ids);
 
-        const res2 = await ctx.couch.access.forceUpdateMany(docs);
+        const res2 = await ctx.couch.access.forceUpdateMany(ids);
 
         console.log("res2", res2);
 
