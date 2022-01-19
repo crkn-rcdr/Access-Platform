@@ -13,7 +13,6 @@ import {
 } from "nano";
 
 import { mangoEqualSelector } from "./util.js";
-import { Noid, Timestamp } from "@crkn-rcdr/access-data";
 
 /**
  * The specification for a CouchDB document's `_attachments` object.
@@ -177,27 +176,18 @@ export class DatabaseHandler<T extends Document> {
 
     const date = new Date().toISOString().replace(/.\d+Z$/g, "Z");
 
-    const bulkUpdateDocs: {
-      _rev: string;
-      _id: Noid;
-      updateInternalmeta: {
-        requestDate: Timestamp;
-      };
-    }[] = [];
+    const bulkUpdateDocs: any[] = [];
 
-    const fetchRes = await this.db.list({ keys: ids });
+    // TODO: figure out a way to handle many ids... maybe take advantage of pagination...
+    const fetchRes = await this.db.list({ keys: ids, include_docs: true });
 
     fetchRes.rows.map((row) => {
-      console.log("row", row);
-      //TODO: how to get this to only replace the feilds in here not the full doc?
-      if (row.id && row.value?.rev) {
-        bulkUpdateDocs.push({
-          _id: row.id,
-          _rev: row.value.rev,
-          updateInternalmeta: {
-            requestDate: date,
-          },
-        });
+      if (row.doc) {
+        let doc: any = { ...row.doc };
+        doc["updateInternalmeta"] = {
+          requestDate: date,
+        };
+        bulkUpdateDocs.push(doc);
       }
     });
 
