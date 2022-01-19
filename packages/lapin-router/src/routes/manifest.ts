@@ -200,7 +200,17 @@ export const manifestRouter = createRouter()
     input: EditInput.parse,
     async resolve({ input, ctx }) {
       try {
-        return await ctx.couch.access.editManifest(input);
+        const res = await ctx.couch.access.editManifest(input);
+
+        const membership = await ctx.couch.access.getMembership(input.id);
+        if (membership?.length) {
+          const ids: any[] = membership
+            .filter((collection) => typeof collection.id !== "undefined")
+            .map((collection) => collection.id);
+          await ctx.couch.access.forceUpdateMany(ids);
+        }
+
+        return res;
       } catch (e) {
         throw httpErrorToTRPC(e);
       }
