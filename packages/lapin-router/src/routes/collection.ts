@@ -145,15 +145,20 @@ export const collectionRouter = createRouter()
       try {
         const res = await ctx.couch.access.editCollection(input);
 
-        //Todo: no filter needed after object list ids become required
-        const ids: any[] = res.members
-          .filter((member) => typeof member.id !== "undefined")
-          .map((member) => member.id);
-        console.log("ids", ids);
+        /**
+         * members of a multi-part collection that was edited (including label)
+         * members of an unordered collection that was edited (label doesn't matter, but public/private and slug does)
+         */
 
-        const res2 = await ctx.couch.access.forceUpdateMany(ids);
-
-        console.log("res2", res2);
+        if (
+          input.data.slug ||
+          (res.behavior === "multi-part" && input.data.label)
+        ) {
+          const ids: any[] = res.members
+            .filter((member) => typeof member.id !== "undefined")
+            .map((member) => member.id);
+          await ctx.couch.access.forceUpdateMany(ids);
+        }
 
         return res;
       } catch (e: any) {

@@ -166,14 +166,17 @@ export class DatabaseHandler<T extends Document> {
     }
   }
 
+  /**
+   * Updates all the objects in ids to add them to the hammer queue
+   * @param ids Id strings for the objects to be updated
+   * @returns the result of the bulk update
+   *
+   * See: https://docs.couchdb.org/en/stable/api/database/bulk-api.html#db-bulk-docs
+   * For updating existing documents, you must provide the document ID, revision information (_rev), and new document values.
+   */
   async forceUpdateMany(
     ids: any[] // todo: make string once object list item id is not optional
   ): Promise<DocumentBulkResponse[]> {
-    /**
-     * https://docs.couchdb.org/en/stable/api/database/bulk-api.html#db-bulk-docs
-     * For updating existing documents, you must provide the document ID, revision information (_rev), and new document values.
-     */
-
     const date = new Date().toISOString().replace(/.\d+Z$/g, "Z");
 
     const bulkUpdateDocs: any[] = [];
