@@ -8,7 +8,7 @@ import {
   EditableCollection,
   EditableManifest,
   User,
-  ObjectList,
+  //ObjectList,
   Slug,
   NewCollection,
   NewManifest,
@@ -24,7 +24,7 @@ import {
 
 import { DatabaseHandler } from "../DatabaseHandler.js";
 
-import { xorWith, isEqual } from "lodash-es";
+//import { xorWith, isEqual } from "lodash-es";
 
 type SlugResolution =
   | { resolved: true; id: Noid; type: AccessObjectType }
@@ -158,19 +158,14 @@ export class AccessHandler extends DatabaseHandler<AccessObject> {
     data: EditableCollection;
   }): Promise<Collection> {
     const data = EditableCollection.parse(args.data);
-    let filteredMembers: ObjectList = [];
 
+    /*
+    let filteredMembers: ObjectList = [];
     if (data.members) {
       const currentMembers = Collection.parse(await this.get(args.id)).members;
 
-      const filteredMembers = xorWith(data.members, currentMembers, isEqual);
-
-      for (let members of filteredMembers) {
-        if (members.id !== undefined) {
-          await this.forceUpdate(members.id);
-        }
-      }
-    }
+      filteredMembers = xorWith(data.members, currentMembers, isEqual);
+    }*/
 
     await this.editObject({
       id: args.id,
@@ -178,11 +173,13 @@ export class AccessHandler extends DatabaseHandler<AccessObject> {
       data,
       type: "collection",
     });
-    for (let members of filteredMembers) {
+
+    /*for (let members of filteredMembers) {
       if (members.id !== undefined) {
         await this.forceUpdate(members.id);
       }
-    }
+    }*/
+
     const collection = await this.get(args.id);
     return Collection.parse(collection);
   }

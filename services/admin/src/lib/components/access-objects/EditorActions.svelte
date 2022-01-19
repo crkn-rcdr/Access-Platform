@@ -398,7 +398,17 @@ The editor actions component holds functionality that is responsible for perform
       >
     {/if}
 
-    <button class="secondary" on:click={handlePublishStatusChange}>
+    <button
+      class="secondary"
+      on:click={handlePublishStatusChange}
+      disabled={!serverObject["public"] && !serverObject["dmdType"]}
+      data-tooltip={!serverObject["public"] && !serverObject["dmdType"]
+        ? `Publishing is disabled for ${serverObject["type"]}s with no metadata. Please use the "Load Metadata" tool to add metadata to your ${serverObject["type"]}.`
+        : serverObject["public"]
+        ? `Hide this ${serverObject["type"]} from the access platform.`
+        : `Make this ${serverObject["type"]} available on the access platform.`}
+      data-tooltip-flow="bottom"
+    >
       {serverObject["public"] ? "Unpublish" : "Publish"}
     </button>
 
