@@ -106,24 +106,6 @@ type BulkGetResponse<T extends Document> = {
 };
 
 /**
- * A helper method that breaks apart large arrays.
- * See: https://github.com/haio/chunk-array/blob/master/index.js
- */
-function chunkArray(array: any[], n: number) {
-  if (!array || !n) return array;
-
-  var length = array.length;
-  var slicePoint = 0;
-  var ret = [];
-
-  while (slicePoint < length) {
-    ret.push(array.slice(slicePoint, slicePoint + n));
-    slicePoint += n;
-  }
-  return ret;
-}
-
-/**
  * Handler for interactions with a CouchDB database.
  *
  * Also handles translating `_id` and `_attachments` to non-underscored versions.
@@ -146,6 +128,24 @@ export class DatabaseHandler<T extends Document> {
     this.parser = parser;
     this.client = client;
     this.db = client.use(db);
+  }
+
+  /**
+   * A helper method that breaks apart large arrays.
+   * See: https://github.com/haio/chunk-array/blob/master/index.js
+   */
+  chunkArray(array: any[], n: number) {
+    if (!array || !n) return array;
+
+    let length = array.length;
+    let slicePoint = 0;
+    let ret = [];
+
+    while (slicePoint < length) {
+      ret.push(array.slice(slicePoint, slicePoint + n));
+      slicePoint += n;
+    }
+    return ret;
   }
 
   /**
@@ -218,10 +218,10 @@ export class DatabaseHandler<T extends Document> {
   ): Promise<boolean> {
     if (ids.length) {
       // Only grab and update 100 items, max, at a time
-      const chunks = chunkArray(ids, 100);
+      const chunks = this.chunkArray(ids, 100);
 
       // Loop through the max 100 item long lists
-      for (let chunk of chunks) {
+      for (const chunk of chunks) {
         const bulkUpdateDocs: any[] = [];
 
         //Grab the items in the list

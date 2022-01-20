@@ -1,12 +1,13 @@
 <script lang="ts">
-  import type { Depositor, Session } from "$lib/types";
+  import type { Session } from "$lib/types";
   import { getStores } from "$app/stores";
   import { createEventDispatcher } from "svelte";
   import type { PagedCollection } from "@crkn-rcdr/access-data/src/access/Collection";
   import TiArrowBack from "svelte-icons/ti/TiArrowBack.svelte";
 
-  import PrefixSelector from "$lib/components/access-objects/PrefixSelector.svelte";
   import NotificationBar from "../shared/NotificationBar.svelte";
+  import PrefixSlugSearchbox from "../access-objects/PrefixSlugSearchbox.svelte";
+  import LoadingButton from "../shared/LoadingButton.svelte";
 
   /**
    * @type {PagedCollection} The Collection where the members are added to.
@@ -21,29 +22,18 @@
   /**
    * @type {string} If a Collection is selected.
    */
-  let isMemberSelected = false;
   let addingMembers = false;
 
   /**
    * @type {boolean} If the add button should be displayed over the list of members.
    */
   export let showAddButton = true;
-  /**
-   * @type {string} An prefix to the Depositor.
-   */
-  let depositor: Depositor = {
-    prefix: "none",
-    label: "",
-  };
+
   /**
    * @type { string } The label for the by-slug toggle
    */
   const LOOKUP_MEMBER_BUTTON_TEXT = "Add a member";
 
-  /**
-   * @type { string } The selected lookup method
-   */
-  let memberLookup: string = LOOKUP_MEMBER_BUTTON_TEXT;
   /**
    * @type { boolean } If the lookup has completed run once yet.
    */
@@ -66,9 +56,9 @@
   }
 
   let id: string = destinationMember.id;
-  let input: string;
+  let slugArray: string[] = [];
   let error: string;
-  //  let documentSlug: {} = [];
+  let searching: boolean = false;
 
   // https://github.com/sindresorhus/type-fest/blob/main/source/promise-value.d.ts
   type PromiseValue<PromiseType> = PromiseType extends PromiseLike<infer Value>
@@ -77,12 +67,12 @@
   let resolutions: PromiseValue<ReturnType<typeof resolveMembers>>;
 
   async function resolveMembers() {
-    lookupDone = false;
-    error = "";
-    let slugArray = input.split(/[,|\s]/);
+    console.log(slugArray);
+    if (!slugArray.length) return;
 
-    if (depositor?.prefix !== "none")
-      slugArray = slugArray.map((slug) => `${depositor?.prefix}.${slug}`);
+    lookupDone = false;
+    searching = true;
+    error = "";
 
     if (id) {
       try {
@@ -102,6 +92,7 @@
         }
         selectedResults = selectedResults;
         lookupDone = true;
+        searching = false;
 
         // I'm returning here so that we can type `resolutions` properly (see above)
         return response;
@@ -133,6 +124,7 @@
           })
         );
         lookupDone = true;
+        searching = false;
 
         // I'm returning here so that we can type `resolutions` properly (see above)
         return response;
@@ -146,7 +138,7 @@
   function handleCancelPressed() {
     addingMembers = false;
     showAddButton = true;
-    clearText();
+    slugArray = [];
     dispatch("done");
   }
 
@@ -177,15 +169,8 @@
     addingMembers = false;
     showAddButton = true;
     selectedResults = [];
+    slugArray = [];
     resolutions = {};
-    clearText();
-  }
-  function clearText() {
-    input = "";
-    depositor = {
-      prefix: "none",
-      label: "",
-    };
   }
 </script>
 
@@ -220,20 +205,26 @@
         found.
       </p>
       <div>
-        <PrefixSelector bind:depositor />
+        <!--PrefixSelector bind:depositor />
         <textarea
           rows="4"
           placeholder="Enter a list of slugs seperated by commas or new lines."
           bind:value={input}
-        /><br />
-        <button
-          class="lg"
-          class:primary={!lookupDone}
-          class:secondary={lookupDone}
-          on:click={resolveMembers}>Search</button
+        /><br /-->
+        <PrefixSlugSearchbox
+          on:slugs={(event) => {
+            console.log("slugs:", event.detail);
+            slugArray = event.detail;
+          }}
+        />
+        <LoadingButton
+          buttonClass={lookupDone ? "secondary" : "primary"}
+          disabled={slugArray.length === 0}
+          showLoader={searching}
+          on:clicked={resolveMembers}
         >
-        <button class="secondary lg" on:click={clearText}>Clear Text</button>
-        <br />
+          <span slot="content">{searching ? "Searching..." : "Search"}</span>
+        </LoadingButton>
       </div>
       <br />
       <NotificationBar status="fail" message={error} />
@@ -268,9 +259,11 @@
                       bind:value={resolution.id}
                       checked={selectedResults.includes(resolution.id)}
                     />
-                    {resolution.id}
+                    <a href={`/object/edit/${resolution.id}`} target="_blank">
+                      {resolution.id}
+                    </a>
                   {:else}
-                    <span>No ID resolved to add</span>
+                    <span>Can't add to collection</span>
                   {/if}
                 </td>
               </tr>
@@ -280,8 +273,10 @@
           <button
             class="primary"
             disabled={!selectedResults.length}
-            on:click={handleAddPressed}>Add Selected Items</button
+            on:click={handleAddPressed}
           >
+            Add Selected Items
+          </button>
           <br />
           <br />
         </table>
