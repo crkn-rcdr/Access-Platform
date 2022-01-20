@@ -207,7 +207,10 @@ export const manifestRouter = createRouter()
           const ids: any[] = membership
             .filter((collection) => typeof collection.id !== "undefined")
             .map((collection) => collection.id);
-          await ctx.couch.access.forceUpdateMany(ids);
+          // Don't hold up the response
+          ctx.couch.access.forceUpdateMany(ids).then((res) => {
+            console.log("forceUpdateMany", res);
+          });
         }
 
         return res;

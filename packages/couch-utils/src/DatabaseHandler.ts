@@ -9,7 +9,7 @@ import {
   MangoQuery,
   MangoSelector,
   RequestError,
-  DocumentBulkResponse,
+  //DocumentBulkResponse,
 } from "nano";
 
 import { mangoEqualSelector } from "./util.js";
@@ -106,6 +106,32 @@ type BulkGetResponse<T extends Document> = {
 };
 
 /**
+ * A helper method that breaks apart large arrays.
+ * See: https://github.com/haio/chunk-array/blob/master/index.js
+ */
+function chunkArray(array: any[], n: number) {
+  if (!array || !n) return array;
+
+  var length = array.length;
+  var slicePoint = 0;
+  var ret = [];
+
+  while (slicePoint < length) {
+    ret.push(array.slice(slicePoint, slicePoint + n));
+    slicePoint += n;
+  }
+  return ret;
+}
+
+/**
+ * A helper method to slow down the rate of requests going to the backend. Causes the script to pause for 'ms.'
+ * @param ms
+ */
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/**
  * Handler for interactions with a CouchDB database.
  *
  * Also handles translating `_id` and `_attachments` to non-underscored versions.
@@ -176,29 +202,38 @@ export class DatabaseHandler<T extends Document> {
    */
   async forceUpdateMany(
     ids: any[] // todo: make string once object list item id is not optional
-  ): Promise<DocumentBulkResponse[]> {
+  ): Promise<boolean> {
     const date = new Date().toISOString().replace(/.\d+Z$/g, "Z");
 
     const bulkUpdateDocs: any[] = [];
 
-    // TODO: figure out a way to handle many ids... maybe take advantage of pagination...
-    const fetchRes = await this.db.list({ keys: ids, include_docs: true });
+    if (ids.length) {
+      const chunks = chunkArray(ids, 100);
 
-    fetchRes.rows.map((row) => {
-      if (row.doc) {
-        let doc: any = { ...row.doc };
-        doc["updateInternalmeta"] = {
-          requestDate: date,
-        };
-        bulkUpdateDocs.push(doc);
+      for (let chunk of chunks) {
+        const fetchRes = await this.db.list({
+          keys: chunk,
+          include_docs: true,
+        });
+
+        fetchRes.rows.map((row) => {
+          if (row.doc) {
+            let doc: any = { ...row.doc };
+            doc["updateInternalmeta"] = {
+              requestDate: date,
+            };
+            bulkUpdateDocs.push(doc);
+          }
+        });
+
+        await this.db.bulk({
+          docs: bulkUpdateDocs,
+        });
+        sleep(10000);
       }
-    });
-
-    console.log("bulk", bulkUpdateDocs);
-
-    return await this.db.bulk({
-      docs: bulkUpdateDocs,
-    });
+      return true;
+    }
+    return false;
   }
 
   /**

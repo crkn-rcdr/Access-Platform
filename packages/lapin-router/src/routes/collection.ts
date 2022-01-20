@@ -157,7 +157,11 @@ export const collectionRouter = createRouter()
           const ids: any[] = res.members
             .filter((member) => typeof member.id !== "undefined")
             .map((member) => member.id);
-          await ctx.couch.access.forceUpdateMany(ids);
+
+          // Don't hold up the response
+          ctx.couch.access.forceUpdateMany(ids).then((res) => {
+            console.log("forceUpdateMany", res);
+          });
         }
 
         return res;
