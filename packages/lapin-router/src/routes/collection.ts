@@ -143,8 +143,44 @@ export const collectionRouter = createRouter()
     input: EditInput.parse,
     async resolve({ input, ctx }) {
       try {
-        return await ctx.couch.access.editCollection(input);
-      } catch (e) {
+        const res = await ctx.couch.access.editCollection(input);
+
+        /**
+         * members of a multi-part collection that was edited (including label)
+         * members of an unordered collection that was edited (label doesn't matter, but public/private and slug does)
+         */
+
+        if (
+          input.data.slug ||
+          (res.behavior === "multi-part" && input.data.label)
+        ) {
+          const ids: any[] = res.members
+            .filter((member) => typeof member.id !== "undefined")
+            .map((member) => member.id);
+
+          const date = new Date().toISOString().replace(/.\d+Z$/g, "Z");
+          // Don't hold up the response. This will run in the background without causing issues for end users. They don't need to be alerted about any of this in real time. The updateInternalmeta is displayed in the editor.
+          ctx.couch.access
+            .bulkChange(ids, (doc: any) => {
+              if (!doc) return [null, "Error. Old document was null."];
+              if (!doc["_id"]) return [null, "Error. Old document had no id."];
+              if (!doc["_rev"])
+                return [null, "Error. Old document had no revision."];
+
+              doc.updateInternalmeta = {
+                requestDate: date,
+              };
+
+              return [doc];
+            })
+            .then((res: any) => {
+              console.log("Forced Update Members: ", res);
+            });
+        }
+
+        return res;
+      } catch (e: any) {
+        console.log(e?.message);
         throw httpErrorToTRPC(e);
       }
     },

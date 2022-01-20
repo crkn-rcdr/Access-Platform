@@ -9,6 +9,7 @@ import {
   MangoQuery,
   MangoSelector,
   RequestError,
+  //DocumentBulkResponse,
 } from "nano";
 
 import { mangoEqualSelector } from "./util.js";
@@ -105,6 +106,24 @@ type BulkGetResponse<T extends Document> = {
 };
 
 /**
+ * A helper method that breaks apart large arrays.
+ * See: https://github.com/haio/chunk-array/blob/master/index.js
+ */
+function chunkArray(array: any[], n: number) {
+  if (!array || !n) return array;
+
+  var length = array.length;
+  var slicePoint = 0;
+  var ret = [];
+
+  while (slicePoint < length) {
+    ret.push(array.slice(slicePoint, slicePoint + n));
+    slicePoint += n;
+  }
+  return ret;
+}
+
+/**
  * Handler for interactions with a CouchDB database.
  *
  * Also handles translating `_id` and `_attachments` to non-underscored versions.
@@ -163,6 +182,58 @@ export class DatabaseHandler<T extends Document> {
       }
       throw error;
     }
+  }
+
+  /**
+   * Updates all the objects in ids
+   * @param ids Id strings for the objects to be updated
+   * @param changeMethod A function that returns the following: [<new document>, <message>]
+   * @returns the result of the bulk update
+   *
+   * See: https://docs.couchdb.org/en/stable/api/database/bulk-api.html#db-bulk-docs
+   * For updating existing documents, you must provide the document ID, revision information (_rev), and new document values.
+   */
+  async bulkChange(
+    ids: any[], // todo: make string once object list item id is not optional,
+    changeMethod: Function
+  ): Promise<boolean> {
+    if (ids.length) {
+      // Only grab and update 100 items, max, at a time
+      const chunks = chunkArray(ids, 100);
+
+      // Loop through the max 100 item long lists
+      for (let chunk of chunks) {
+        const bulkUpdateDocs: any[] = [];
+
+        //Grab the items in the list
+        const fetchRes = await this.db.list({
+          keys: chunk,
+          include_docs: true,
+        });
+
+        // Change the data as described in the change method
+        fetchRes.rows.map((row) => {
+          if (row.doc) {
+            const newDocData: any[] = changeMethod(row.doc);
+
+            // Add a document to the bulk update array for updating
+            if (newDocData.length)
+              if (newDocData[0]) bulkUpdateDocs.push(newDocData[0]);
+
+            // Log a message if one exists
+            if (newDocData.length === 2) console.log(newDocData[1]);
+          }
+        });
+
+        // Update the database if any were found
+        if (bulkUpdateDocs.length)
+          await this.db.bulk({
+            docs: bulkUpdateDocs,
+          });
+      }
+      return true;
+    }
+    return false;
   }
 
   /**

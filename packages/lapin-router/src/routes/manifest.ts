@@ -200,7 +200,35 @@ export const manifestRouter = createRouter()
     input: EditInput.parse,
     async resolve({ input, ctx }) {
       try {
-        return await ctx.couch.access.editManifest(input);
+        const res = await ctx.couch.access.editManifest(input);
+
+        const membership = await ctx.couch.access.getMembership(input.id);
+        if (membership?.length) {
+          const ids: any[] = membership
+            .filter((collection) => typeof collection.id !== "undefined")
+            .map((collection) => collection.id);
+
+          const date = new Date().toISOString().replace(/.\d+Z$/g, "Z");
+          // Don't hold up the response. This will run in the background without causing issues for end users. They don't need to be alerted about any of this in real time. The updateInternalmeta is displayed in the editor.
+          ctx.couch.access
+            .bulkChange(ids, (doc: any) => {
+              if (!doc) return [null, "Error. Old document was null."];
+              if (!doc["_id"]) return [null, "Error. Old document had no id."];
+              if (!doc["_rev"])
+                return [null, "Error. Old document had no revision."];
+
+              doc.updateInternalmeta = {
+                requestDate: date,
+              };
+
+              return [doc];
+            })
+            .then((res: any) => {
+              console.log("Forced Parent Collections:", res);
+            });
+        }
+
+        return res;
       } catch (e) {
         throw httpErrorToTRPC(e);
       }
