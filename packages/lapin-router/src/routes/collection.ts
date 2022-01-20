@@ -158,16 +158,20 @@ export const collectionRouter = createRouter()
             .filter((member) => typeof member.id !== "undefined")
             .map((member) => member.id);
 
+          const date = new Date().toISOString().replace(/.\d+Z$/g, "Z");
           // Don't hold up the response. This will run in the background without causing issues for end users. They don't need to be alerted about any of this in real time. The updateInternalmeta is displayed in the editor.
           ctx.couch.access
-            .bulkChange(ids, (olddoc: any) => {
-              const date = new Date().toISOString().replace(/.\d+Z$/g, "Z");
-              return {
-                ...olddoc,
-                updateInternalmeta: {
-                  requestDate: date,
-                },
+            .bulkChange(ids, (doc: any) => {
+              if (!doc) return [null, "Error. Old document was null."];
+              if (!doc["_id"]) return [null, "Error. Old document had no id."];
+              if (!doc["_rev"])
+                return [null, "Error. Old document had no revision."];
+
+              doc.updateInternalmeta = {
+                requestDate: date,
               };
+
+              return [doc];
             })
             .then((res: any) => {
               console.log("Forced Update Members: ", res);

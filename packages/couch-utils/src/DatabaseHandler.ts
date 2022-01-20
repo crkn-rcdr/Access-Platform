@@ -124,14 +124,6 @@ function chunkArray(array: any[], n: number) {
 }
 
 /**
- * A helper method to slow down the rate of requests going to the backend. Causes the script to pause for 'ms.'
- * @param ms
- */
-/*function sleep(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}*/
-
-/**
  * Handler for interactions with a CouchDB database.
  *
  * Also handles translating `_id` and `_attachments` to non-underscored versions.
@@ -214,6 +206,7 @@ export class DatabaseHandler<T extends Document> {
   /**
    * Updates all the objects in ids
    * @param ids Id strings for the objects to be updated
+   * @param changeMethod A function that returns the following: [<new document>, <message>]
    * @returns the result of the bulk update
    *
    * See: https://docs.couchdb.org/en/stable/api/database/bulk-api.html#db-bulk-docs
@@ -240,18 +233,22 @@ export class DatabaseHandler<T extends Document> {
         // Change the data as described in the change method
         fetchRes.rows.map((row) => {
           if (row.doc) {
-            const newDoc: any = changeMethod(row.doc);
-            if (newDoc) bulkUpdateDocs.push(newDoc);
+            const newDocData: any[] = changeMethod(row.doc);
+
+            // Add a document to the bulk update array for updating
+            if (newDocData.length)
+              if (newDocData[0]) bulkUpdateDocs.push(newDocData[0]);
+
+            // Log a message if one exists
+            if (newDocData.length === 2) console.log(newDocData[1]);
           }
         });
 
-        // Update the database
-        await this.db.bulk({
-          docs: bulkUpdateDocs,
-        });
-
-        // Avoid flooding the database
-        //await sleep(10000);
+        // Update the database if any were found
+        if (bulkUpdateDocs.length)
+          await this.db.bulk({
+            docs: bulkUpdateDocs,
+          });
       }
       return true;
     }
