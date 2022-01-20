@@ -193,6 +193,25 @@ export class DatabaseHandler<T extends Document> {
   }
 
   /**
+   * Gets a document from a database. Does not throw an error if the document isn't found.
+   * Returns a the cache status
+   * @param id ID of the document.
+   */
+  async getChacheStatus(
+    id: string
+  ): Promise<{ found: true; result: any } | { found: false }> {
+    try {
+      const doc = await this.get(id);
+      return { found: true, result: doc["updateInternalmeta"] };
+    } catch (error) {
+      if ((error as HttpError).status === 404) {
+        return { found: false };
+      }
+      throw error;
+    }
+  }
+
+  /**
    * Updates all the objects in ids
    * @param ids Id strings for the objects to be updated
    * @returns the result of the bulk update
