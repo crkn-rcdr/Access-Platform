@@ -160,14 +160,23 @@ export const collectionRouter = createRouter()
 
           // Don't hold up the response. This will run in the background without causing issues for end users. They don't need to be alerted about any of this in real time. The updateInternalmeta is displayed in the editor.
           ctx.couch.access
-            .bulkChange(ids, (olddoc: any) => {
+            .bulkChange(ids, (oldDoc: any) => {
+              if (!oldDoc) return [null, "Error. Old document was null."];
+              if (!oldDoc["_id"])
+                return [null, "Error. Old document had no id."];
+              if (!oldDoc["_rev"])
+                return [null, "Error. Old document had no revision."];
+
               const date = new Date().toISOString().replace(/.\d+Z$/g, "Z");
-              return {
-                ...olddoc,
+
+              const newDoc = {
+                ...oldDoc,
                 updateInternalmeta: {
                   requestDate: date,
                 },
               };
+
+              return [newDoc];
             })
             .then((res: any) => {
               console.log("Forced Update Members: ", res);
