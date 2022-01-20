@@ -193,61 +193,45 @@ export class DatabaseHandler<T extends Document> {
   }
 
   /**
-   * Gets a document from a database. Does not throw an error if the document isn't found.
-   * Returns a the cache status
-   * @param id ID of the document.
-   */
-  async getChacheStatus(
-    id: string
-  ): Promise<{ found: true; result: any } | { found: false }> {
-    try {
-      const doc = await this.get(id);
-      return { found: true, result: doc["updateInternalmeta"] };
-    } catch (error) {
-      if ((error as HttpError).status === 404) {
-        return { found: false };
-      }
-      throw error;
-    }
-  }
-
-  /**
-   * Updates all the objects in ids to add them to the hammer queue
+   * Updates all the objects in ids
    * @param ids Id strings for the objects to be updated
    * @returns the result of the bulk update
    *
    * See: https://docs.couchdb.org/en/stable/api/database/bulk-api.html#db-bulk-docs
    * For updating existing documents, you must provide the document ID, revision information (_rev), and new document values.
    */
-  async forceUpdateMany(
-    ids: any[] // todo: make string once object list item id is not optional
+  async bulkChange(
+    ids: any[], // todo: make string once object list item id is not optional,
+    changeMethod: Function
   ): Promise<boolean> {
-    const date = new Date().toISOString().replace(/.\d+Z$/g, "Z");
-
     if (ids.length) {
+      // Only grab and update 100 items, max, at a time
       const chunks = chunkArray(ids, 100);
 
+      // Loop through the max 100 item long lists
       for (let chunk of chunks) {
         const bulkUpdateDocs: any[] = [];
+
+        //Grab the items in the list
         const fetchRes = await this.db.list({
           keys: chunk,
           include_docs: true,
         });
 
+        // Change the data as described in the change method
         fetchRes.rows.map((row) => {
           if (row.doc) {
-            let doc: any = { ...row.doc };
-            doc["updateInternalmeta"] = {
-              requestDate: date,
-            };
-            bulkUpdateDocs.push(doc);
+            const newDoc: any = changeMethod(row.doc);
+            if (newDoc) bulkUpdateDocs.push(newDoc);
           }
         });
 
+        // Update the database
         await this.db.bulk({
           docs: bulkUpdateDocs,
         });
 
+        // Avoid flooding the database
         await sleep(10000);
       }
       return true;
