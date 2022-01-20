@@ -228,7 +228,8 @@ export class DatabaseHandler<T extends Document> {
         await this.db.bulk({
           docs: bulkUpdateDocs,
         });
-        sleep(10000);
+
+        await sleep(10000);
       }
       return true;
     }
