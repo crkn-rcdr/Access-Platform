@@ -69,6 +69,16 @@ export const accessObjectRouter = createRouter()
       }
     },
   })
+  .query("getChacheStatus", {
+    input: Noid.parse,
+    async resolve({ input: id, ctx }) {
+      try {
+        return await ctx.couch.access.getChacheStatus(id);
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
   .mutation("publish", {
     input: NoidWithUser.parse,
     async resolve({ input, ctx }) {

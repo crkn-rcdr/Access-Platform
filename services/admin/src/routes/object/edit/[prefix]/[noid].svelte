@@ -22,6 +22,11 @@
           id
         );
 
+        const chacheStatus = await context.lapin.query(
+          "accessObject.getChacheStatus",
+          id
+        );
+
         let firstPage: ObjectListPage;
         let childrenCount;
 
@@ -48,6 +53,7 @@
             id,
             childrenCount,
             firstPage,
+            chacheStatus,
             error: "",
           },
         };
@@ -106,12 +112,23 @@
    */
   export let error: string;
 
+  /**
+   * @type {{ found: true; result: any } | { found: false }} The status of the process that moves the data into the access platform databases
+   */
+  export let chacheStatus: { found: true; result: any } | { found: false };
+
   // The `key` directive below reloads this component's contents when `id` changes.
 </script>
 
 {#key id}
   {#if serverObject}
-    <Editor bind:serverObject {membership} {firstPage} {childrenCount} />
+    <Editor
+      bind:serverObject
+      {membership}
+      {firstPage}
+      {childrenCount}
+      {chacheStatus}
+    />
   {:else if error}
     <br />
     <div class="wrapper">

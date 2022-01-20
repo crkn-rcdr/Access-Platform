@@ -47,6 +47,11 @@ This component displays the non content properties for an access editorObject an
   export let membership: Membership;
 
   /**
+   * The status of the process that moves the data into the access platform databases
+   */
+  export let chacheStatus: { found: true; result: any } | { found: false };
+
+  /**
    * The session store that contains the module for sending requests to lapin.
    */
   const session = getStores<Session>().session;
@@ -96,43 +101,56 @@ This component displays the non content properties for an access editorObject an
 </script>
 
 {#if editorObject}
-  <div class="info-form">
-    <label for="slug">Slug</label>
-    {#if mode === "edit"}
-      <EditorInput
-        keys={["slug"]}
-        bind:value={editorObject["slug"]}
-        on:save={handleSavePressed}
-        saveDisabled={!editorObject["slug"] ||
-          editorObject["slug"].length === 0}
-      >
-        <div>
-          <Resolver bind:slug={editorObject["slug"]} />
-        </div>
-      </EditorInput>
-    {:else}
-      <Resolver bind:slug={editorObject["slug"]} />
-    {/if}
+  <div class="info-wrap auto-align">
+    <div class="info-form">
+      <label for="slug">Slug</label>
+      {#if mode === "edit"}
+        <EditorInput
+          keys={["slug"]}
+          bind:value={editorObject["slug"]}
+          on:save={handleSavePressed}
+          saveDisabled={!editorObject["slug"] ||
+            editorObject["slug"].length === 0}
+        >
+          <div>
+            <Resolver bind:slug={editorObject["slug"]} />
+          </div>
+        </EditorInput>
+      {:else}
+        <Resolver bind:slug={editorObject["slug"]} />
+      {/if}
 
-    <br /><br />
+      <br /><br />
 
-    <label for="label">Label</label>
-    <br />
-    <NotificationBar
-      message={typedChecks[editorObject["type"]].getLabelValidationMsg(
-        editorObject["label"]
-      )}
-      status="fail"
-    />
+      <label for="label">Label</label>
+      <br />
+      <NotificationBar
+        message={typedChecks[editorObject["type"]].getLabelValidationMsg(
+          editorObject["label"]
+        )}
+        status="fail"
+      />
 
-    {#if mode === "edit"}
-      <EditorInput
-        keys={["label", "none"]}
-        bind:value={editorObject["label"]["none"]}
-        on:save={handleSavePressed}
-        saveDisabled={!editorObject["label"]["none"] ||
-          editorObject["label"]["none"].length === 0}
-      >
+      {#if mode === "edit"}
+        <EditorInput
+          keys={["label", "none"]}
+          bind:value={editorObject["label"]["none"]}
+          on:save={handleSavePressed}
+          saveDisabled={!editorObject["label"]["none"] ||
+            editorObject["label"]["none"].length === 0}
+        >
+          <textarea
+            id="label"
+            name="label"
+            bind:value={editorObject["label"]["none"]}
+            on:keyup={() => {
+              // Triggers validation msg
+              if (editorObject?.["label"]?.["none"]?.length === 0)
+                editorObject["label"]["none"] = undefined;
+            }}
+          />
+        </EditorInput>
+      {:else}
         <textarea
           id="label"
           name="label"
@@ -143,59 +161,48 @@ This component displays the non content properties for an access editorObject an
               editorObject["label"]["none"] = undefined;
           }}
         />
-      </EditorInput>
-    {:else}
-      <textarea
-        id="label"
-        name="label"
-        bind:value={editorObject["label"]["none"]}
-        on:keyup={() => {
-          // Triggers validation msg
-          if (editorObject?.["label"]?.["none"]?.length === 0)
-            editorObject["label"]["none"] = undefined;
-        }}
-      />
-    {/if}
-    <br /><br />
+      {/if}
+      <br /><br />
 
-    {#if editorObject.type === "collection"}
-      <label for="behavior">Behaviour</label><br />
-      <select
-        id="behavior"
-        name="behavior"
-        bind:value={editorObject["behavior"]}
-      >
-        <option>multi-part</option>
-        <option>unordered</option>
-      </select><br /><br />
-    {/if}
+      {#if editorObject.type === "collection"}
+        <label for="behavior">Behaviour</label><br />
+        <select
+          id="behavior"
+          name="behavior"
+          bind:value={editorObject["behavior"]}
+        >
+          <option>multi-part</option>
+          <option>unordered</option>
+        </select><br /><br />
+      {/if}
 
-    {#if membership?.length > 0}
-      <p>
-        This {editorObject["type"]} is a member of the following collections:
-      </p>
-      <ul>
-        {#each membership as coll}
-          <li>
-            <a target="_blank" href="/object/edit/{coll.id}">
-              {coll.label["none"]
-                ? `${coll.label["none"]} (${coll.slug})`
-                : `Unlabeled collection (${coll.slug}) Warning! This collection does not have a label. Click here to open it in the editor and set a label.`}
-            </a>
-            <button class="sm danger" on:click={() => removeMembership(coll.id)}
-              >Remove</button
-            >
-          </li>
-        {/each}
-      </ul>
-    {:else}
-      <br />
-      <p>Membership</p>
-      <p>This {editorObject.type} is not a member of any collections.</p>
-    {/if}
+      {#if membership?.length > 0}
+        <p>
+          This {editorObject["type"]} is a member of the following collections:
+        </p>
+        <ul>
+          {#each membership as coll}
+            <li>
+              <a target="_blank" href="/object/edit/{coll.id}">
+                {coll.label["none"]
+                  ? `${coll.label["none"]} (${coll.slug})`
+                  : `Unlabeled collection (${coll.slug}) Warning! This collection does not have a label. Click here to open it in the editor and set a label.`}
+              </a>
+              <button
+                class="sm danger"
+                on:click={() => removeMembership(coll.id)}>Remove</button
+              >
+            </li>
+          {/each}
+        </ul>
+      {:else}
+        <br />
+        <p>Membership</p>
+        <p>This {editorObject.type} is not a member of any collections.</p>
+      {/if}
 
-    <!--Fixtures don't have this yet, causes save to be enabled on load-->
-    <!--span>
+      <!--Fixtures don't have this yet, causes save to be enabled on load-->
+      <!--span>
       <span>
         <label for="viewing-direction">Viewing Direction</label>
         <select
@@ -209,12 +216,129 @@ This component displays the non content properties for an access editorObject an
           <option>bottom-to-top</option>
         </select>
       </span><br /-->
+    </div>
+    <div class="cache-status">
+      {#if chacheStatus.found && chacheStatus.result}
+        {#if !("succeeded" in chacheStatus.result)}
+          <table>
+            <tbody>
+              <tr>
+                <td>Published On:</td>
+                <td>
+                  {#if editorObject["public"]}
+                    {typeof editorObject["public"] === "string"
+                      ? editorObject["public"]
+                      : new Date(
+                          parseInt(`${editorObject["public"]}`) * 1000
+                        ).toLocaleString()}
+                  {:else}
+                    Not published
+                  {/if}
+                </td>
+              </tr>
+              <tr>
+                <td>Access Status:</td>
+                <td>Currently updating...</td>
+              </tr>
+              <tr>
+                <td>Update Started:</td>
+                <td>{chacheStatus.result.requestDate}</td>
+              </tr>
+            </tbody>
+          </table>
+        {:else if chacheStatus.result.succeeded}
+          <table>
+            <tbody>
+              <tr>
+                <td>Published On:</td>
+                <td>
+                  {#if editorObject["public"]}
+                    {typeof editorObject["public"] === "string"
+                      ? editorObject["public"]
+                      : new Date(
+                          parseInt(`${editorObject["public"]}`) * 1000
+                        ).toLocaleString()}
+                  {:else}
+                    Not published
+                  {/if}
+                </td>
+              </tr>
+              <tr>
+                <td>Access Status:</td>
+                <td>Most recent update succeeded!</td>
+              </tr>
+              <tr>
+                <td>Update Started:</td>
+                <td>{chacheStatus.result.requestDate}</td>
+              </tr>
+              <tr>
+                <td>Update Finished:</td>
+                <td>{chacheStatus.result.processDate}</td>
+              </tr>
+            </tbody>
+          </table>
+          <br />
+          <NotificationBar
+            status="warn"
+            message={chacheStatus.result.message}
+          />
+        {:else}
+          <table>
+            <tbody>
+              <tr>
+                <td>Published On:</td>
+                <td>
+                  {#if editorObject["public"]}
+                    {typeof editorObject["public"] === "string"
+                      ? editorObject["public"]
+                      : new Date(
+                          parseInt(`${editorObject["public"]}`) * 1000
+                        ).toLocaleString()}
+                  {:else}
+                    Not published
+                  {/if}
+                </td>
+              </tr>
+              <tr>
+                <td>Access Status:</td>
+                <td>Most recent update failed.</td>
+              </tr>
+              <tr>
+                <td>Update Started:</td>
+                <td>{chacheStatus.result.requestDate}</td>
+              </tr>
+              <tr>
+                <td>Update Finished:</td>
+                <td>{chacheStatus.result.processDate}</td>
+              </tr>
+            </tbody>
+          </table>
+          <br />
+          <NotificationBar
+            status="fail"
+            message={chacheStatus.result.message}
+          />
+        {/if}
+      {/if}
+    </div>
   </div>
 {/if}
 
 <style>
+  .info-wrap {
+    width: 100%;
+  }
   .info-form {
     padding: 1.5rem;
+    flex: 8;
+    margin-right: 1rem;
+  }
+  .cache-status {
+    margin-right: 1rem;
+    padding: 0.5rem 0;
+  }
+  .cache-status tbody {
+    background: none !important;
   }
   label,
   textarea {

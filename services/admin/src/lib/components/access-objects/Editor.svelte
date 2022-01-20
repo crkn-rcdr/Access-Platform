@@ -62,6 +62,11 @@ The editor component allows for the editing of PagedAccessObjects. It will dynam
   export let childrenCount: number;
 
   /**
+   * The status of the process that moves the data into the access platform databases
+   */
+  export let chacheStatus: { found: true; result: any } | { found: false };
+
+  /**
    * @type {Array<SideMenuPageData>} This list controls the pages that appear in the side menu container, and their contents.
    */
   let pageList: Array<SideMenuPageData> = [];
@@ -127,6 +132,7 @@ The editor component allows for the editing of PagedAccessObjects. It will dynam
           mode,
           editorObject: $editorObjectStore,
           membership,
+          chacheStatus,
         },
         sideMenuPageProps: {},
         listeners: {
@@ -253,7 +259,7 @@ The editor component allows for the editing of PagedAccessObjects. It will dynam
         <div
           class="end-content auto-align auto-align__full auto-align auto-align__j-end auto-align auto-align__a-end auto-align auto-align__column"
         >
-          <StatusIndicator bind:serverObject />
+          <!--StatusIndicator bind:serverObject /-->
           <EditorActions
             bind:serverObject
             bind:editorObject={$editorObjectStore}
