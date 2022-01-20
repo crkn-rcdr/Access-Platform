@@ -208,9 +208,19 @@ export const manifestRouter = createRouter()
             .filter((collection) => typeof collection.id !== "undefined")
             .map((collection) => collection.id);
           // Don't hold up the response
-          ctx.couch.access.forceUpdateMany(ids).then((res) => {
-            console.log("forceUpdateMany", res);
-          });
+          ctx.couch.access
+            .bulkChange(ids, (olddoc: any) => {
+              const date = new Date().toISOString().replace(/.\d+Z$/g, "Z");
+              return {
+                ...olddoc,
+                updateInternalmeta: {
+                  requestDate: date,
+                },
+              };
+            })
+            .then((res: any) => {
+              console.log("forceUpdateMany", res);
+            });
         }
 
         return res;

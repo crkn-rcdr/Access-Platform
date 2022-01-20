@@ -200,35 +200,39 @@ export class DatabaseHandler<T extends Document> {
    * See: https://docs.couchdb.org/en/stable/api/database/bulk-api.html#db-bulk-docs
    * For updating existing documents, you must provide the document ID, revision information (_rev), and new document values.
    */
-  async forceUpdateMany(
-    ids: any[] // todo: make string once object list item id is not optional
+  async bulkChange(
+    ids: any[], // todo: make string once object list item id is not optional,
+    changeMethod: Function
   ): Promise<boolean> {
-    const date = new Date().toISOString().replace(/.\d+Z$/g, "Z");
-
     if (ids.length) {
+      // Only grab and update 100 items, max, at a time
       const chunks = chunkArray(ids, 100);
 
+      // Loop through the max 100 item long lists
       for (let chunk of chunks) {
         const bulkUpdateDocs: any[] = [];
+
+        //Grab the items in the list
         const fetchRes = await this.db.list({
           keys: chunk,
           include_docs: true,
         });
 
+        // Change the data as described in the change method
         fetchRes.rows.map((row) => {
           if (row.doc) {
-            let doc: any = { ...row.doc };
-            doc["updateInternalmeta"] = {
-              requestDate: date,
-            };
+            const doc: any = changeMethod(row.doc);
+            console.log(doc);
             bulkUpdateDocs.push(doc);
           }
         });
 
+        // Update the database
         await this.db.bulk({
           docs: bulkUpdateDocs,
         });
 
+        // Avoid flooding the database
         await sleep(10000);
       }
       return true;
