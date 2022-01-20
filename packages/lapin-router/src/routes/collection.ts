@@ -158,7 +158,7 @@ export const collectionRouter = createRouter()
             .filter((member) => typeof member.id !== "undefined")
             .map((member) => member.id);
 
-          // Don't hold up the response
+          // Don't hold up the response. This will run in the background without causing issues for end users. They don't need to be alerted about any of this in real time. The updateInternalmeta is displayed in the editor.
           ctx.couch.access
             .bulkChange(ids, (olddoc: any) => {
               const date = new Date().toISOString().replace(/.\d+Z$/g, "Z");
@@ -170,7 +170,7 @@ export const collectionRouter = createRouter()
               };
             })
             .then((res: any) => {
-              console.log("forceUpdateMany", res);
+              console.log("Forced Update Members: ", res);
             });
         }
 

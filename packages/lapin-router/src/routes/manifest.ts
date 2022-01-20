@@ -207,7 +207,8 @@ export const manifestRouter = createRouter()
           const ids: any[] = membership
             .filter((collection) => typeof collection.id !== "undefined")
             .map((collection) => collection.id);
-          // Don't hold up the response
+
+          // Don't hold up the response. This will run in the background without causing issues for end users. They don't need to be alerted about any of this in real time. The updateInternalmeta is displayed in the editor.
           ctx.couch.access
             .bulkChange(ids, (olddoc: any) => {
               const date = new Date().toISOString().replace(/.\d+Z$/g, "Z");

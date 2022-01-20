@@ -193,7 +193,7 @@ export class DatabaseHandler<T extends Document> {
   }
 
   /**
-   * Updates all the objects in ids to add them to the hammer queue
+   * Updates all the objects in ids
    * @param ids Id strings for the objects to be updated
    * @returns the result of the bulk update
    *
@@ -221,9 +221,8 @@ export class DatabaseHandler<T extends Document> {
         // Change the data as described in the change method
         fetchRes.rows.map((row) => {
           if (row.doc) {
-            const doc: any = changeMethod(row.doc);
-            console.log(doc);
-            bulkUpdateDocs.push(doc);
+            const newDoc: any = changeMethod(row.doc);
+            if (newDoc) bulkUpdateDocs.push(newDoc);
           }
         });
 
