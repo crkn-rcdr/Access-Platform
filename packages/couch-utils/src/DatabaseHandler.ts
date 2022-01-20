@@ -205,12 +205,11 @@ export class DatabaseHandler<T extends Document> {
   ): Promise<boolean> {
     const date = new Date().toISOString().replace(/.\d+Z$/g, "Z");
 
-    const bulkUpdateDocs: any[] = [];
-
     if (ids.length) {
       const chunks = chunkArray(ids, 100);
 
       for (let chunk of chunks) {
+        const bulkUpdateDocs: any[] = [];
         const fetchRes = await this.db.list({
           keys: chunk,
           include_docs: true,
