@@ -127,9 +127,9 @@ function chunkArray(array: any[], n: number) {
  * A helper method to slow down the rate of requests going to the backend. Causes the script to pause for 'ms.'
  * @param ms
  */
-function sleep(ms: number) {
+/*function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
-}
+}*/
 
 /**
  * Handler for interactions with a CouchDB database.
@@ -251,7 +251,7 @@ export class DatabaseHandler<T extends Document> {
         });
 
         // Avoid flooding the database
-        await sleep(10000);
+        //await sleep(10000);
       }
       return true;
     }
