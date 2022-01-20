@@ -237,12 +237,8 @@ This component displays the non content properties for an access editorObject an
                 </td>
               </tr>
               <tr>
-                <td>Cache Status:</td>
-                <td>Currently updating in Access...</td>
-              </tr>
-              <tr>
-                <td>Request Date:</td>
-                <td>{chacheStatus.result.requestDate}</td>
+                <td>Access Status:</td>
+                <td>Currently updating...</td>
               </tr>
             </tbody>
           </table>
@@ -264,17 +260,17 @@ This component displays the non content properties for an access editorObject an
                 </td>
               </tr>
               <tr>
-                <td>Cache Status:</td>
-                <td>Most recent process succeeded!</td>
+                <td>Access Status:</td>
+                <td>Most recent update succeeded!</td>
               </tr>
-              <tr>
+              <!--tr>
                 <td>Request Date:</td>
                 <td>{chacheStatus.result.requestDate}</td>
               </tr>
               <tr>
                 <td>Process Date:</td>
                 <td>{chacheStatus.result.processDate}</td>
-              </tr>
+              </tr-->
             </tbody>
           </table>
           <br />
@@ -300,17 +296,17 @@ This component displays the non content properties for an access editorObject an
                 </td>
               </tr>
               <tr>
-                <td>Cache Status:</td>
-                <td>Most recent process failed.</td>
+                <td>Access Status:</td>
+                <td>Most recent update failed.</td>
               </tr>
-              <tr>
+              <!--tr>
                 <td>Request Date:</td>
                 <td>{chacheStatus.result.requestDate}</td>
               </tr>
               <tr>
                 <td>Process Date:</td>
                 <td>{chacheStatus.result.processDate}</td>
-              </tr>
+              </tr-->
             </tbody>
           </table>
           <br />
