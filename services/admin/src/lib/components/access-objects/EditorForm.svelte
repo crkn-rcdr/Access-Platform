@@ -240,6 +240,10 @@ This component displays the non content properties for an access editorObject an
                 <td>Access Status:</td>
                 <td>Currently updating...</td>
               </tr>
+              <tr>
+                <td>Update Started:</td>
+                <td>{chacheStatus.result.requestDate}</td>
+              </tr>
             </tbody>
           </table>
         {:else if chacheStatus.result.succeeded}
@@ -263,14 +267,14 @@ This component displays the non content properties for an access editorObject an
                 <td>Access Status:</td>
                 <td>Most recent update succeeded!</td>
               </tr>
-              <!--tr>
-                <td>Request Date:</td>
+              <tr>
+                <td>Update Started:</td>
                 <td>{chacheStatus.result.requestDate}</td>
               </tr>
               <tr>
-                <td>Process Date:</td>
+                <td>Update Finished:</td>
                 <td>{chacheStatus.result.processDate}</td>
-              </tr-->
+              </tr>
             </tbody>
           </table>
           <br />
@@ -299,14 +303,14 @@ This component displays the non content properties for an access editorObject an
                 <td>Access Status:</td>
                 <td>Most recent update failed.</td>
               </tr>
-              <!--tr>
-                <td>Request Date:</td>
+              <tr>
+                <td>Update Started:</td>
                 <td>{chacheStatus.result.requestDate}</td>
               </tr>
               <tr>
-                <td>Process Date:</td>
+                <td>Update Finished:</td>
                 <td>{chacheStatus.result.processDate}</td>
-              </tr-->
+              </tr>
             </tbody>
           </table>
           <br />
