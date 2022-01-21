@@ -14,6 +14,7 @@ import {
 import { createRouter, httpErrorToTRPC } from "../router.js";
 import { TRPCError } from "@trpc/server";
 import { LapinContext } from "../context.js";
+import { xorWith, isEqual } from "lodash-es";
 
 const PageInput = z.object({
   id: Noid,
@@ -42,6 +43,7 @@ const expandList = async (ctx: LapinContext, page: ObjectListPage) => {
         "label",
         "type",
         "behavior",
+        "public",
       ] as const);
       if (stuff.found) {
         expandedList.push({
@@ -218,16 +220,26 @@ export const collectionRouter = createRouter()
     }),
     async resolve({ input: { id, members, user }, ctx }) {
       try {
-        // TODO: this assumes that every new member id is legit,
-        // i.e. that checkAdditions ran and is accurate.
-        // We might want to change this.
-        await ctx.couch.access.processList({
-          id,
-          command: ["add", members],
-          user,
-        });
-        for (const member of members) {
-          await ctx.couch.access.forceUpdate(member);
+        const collection = await ctx.couch.access.get(id);
+        // Do not add duplicates
+        let filteredMembers: string[] = [];
+        if ("members" in collection) {
+          let identifiedMembers: string[] = [];
+          for (const member of collection.members) {
+            if (member.id) identifiedMembers.push(member.id);
+          }
+          filteredMembers = xorWith(identifiedMembers, members, isEqual);
+        }
+        console.log(filteredMembers);
+        if (filteredMembers.length) {
+          await ctx.couch.access.processList({
+            id,
+            command: ["add", filteredMembers],
+            user,
+          });
+          for (const member of filteredMembers) {
+            await ctx.couch.access.forceUpdate(member);
+          }
         }
       } catch (e) {
         throw httpErrorToTRPC(e);

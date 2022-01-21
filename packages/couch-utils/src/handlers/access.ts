@@ -24,8 +24,6 @@ import {
 
 import { DatabaseHandler } from "../DatabaseHandler.js";
 
-//import { xorWith, isEqual } from "lodash-es";
-
 type SlugResolution =
   | { resolved: true; id: Noid; type: AccessObjectType }
   | { resolved: false; error: SlugResolutionError };
@@ -159,26 +157,12 @@ export class AccessHandler extends DatabaseHandler<AccessObject> {
   }): Promise<Collection> {
     const data = EditableCollection.parse(args.data);
 
-    /*
-    let filteredMembers: ObjectList = [];
-    if (data.members) {
-      const currentMembers = Collection.parse(await this.get(args.id)).members;
-
-      filteredMembers = xorWith(data.members, currentMembers, isEqual);
-    }*/
-
     await this.editObject({
       id: args.id,
       user: args.user,
       data,
       type: "collection",
     });
-
-    /*for (let members of filteredMembers) {
-      if (members.id !== undefined) {
-        await this.forceUpdate(members.id);
-      }
-    }*/
 
     const collection = await this.get(args.id);
     return Collection.parse(collection);
@@ -292,14 +276,6 @@ export class AccessHandler extends DatabaseHandler<AccessObject> {
       },
       ...data,
     });
-    // Is this required?
-    if (data.members) {
-      for (let members of data.members) {
-        if (members.id !== undefined) {
-          await this.forceUpdate(members.id);
-        }
-      }
-    }
     const collection = await this.get(args.id);
     return Collection.parse(collection);
   }

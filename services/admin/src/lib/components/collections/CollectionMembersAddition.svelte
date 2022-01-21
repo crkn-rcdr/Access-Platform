@@ -59,6 +59,7 @@
   let slugArray: string[] = [];
   let error: string;
   let searching: boolean = false;
+  let adding: boolean = false;
 
   // https://github.com/sindresorhus/type-fest/blob/main/source/promise-value.d.ts
   type PromiseValue<PromiseType> = PromiseType extends PromiseLike<infer Value>
@@ -67,7 +68,7 @@
   let resolutions: PromiseValue<ReturnType<typeof resolveMembers>>;
 
   async function resolveMembers() {
-    console.log(slugArray);
+    if (searching) return;
     if (!slugArray.length) return;
 
     lookupDone = false;
@@ -139,6 +140,8 @@
     addingMembers = false;
     showAddButton = true;
     slugArray = [];
+    adding = false;
+    searching = false;
     dispatch("done");
   }
 
@@ -160,6 +163,8 @@
   }
 
   async function handleAddPressed() {
+    if (adding) return;
+    adding = true;
     console.log("adding", selectedResults);
     dispatch("done", {
       selectedMembers: selectedResults,
@@ -171,6 +176,7 @@
     selectedResults = [];
     slugArray = [];
     resolutions = {};
+    adding = false;
   }
 </script>
 
@@ -229,47 +235,8 @@
       <br />
       <NotificationBar status="fail" message={error} />
       {#if resolutions}
-        <table>
-          <thead>
-            <tr>
-              <th>Slug</th>
-              <th>Status</th>
-              <th>Select</th>
-            </tr>
-          </thead>
-          <tbody>
-            {#each Object.entries(resolutions) as [slug, resolution]}
-              <tr>
-                <td>{slug}</td>
-                <td>
-                  {#if resolution.resolved === true}
-                    found
-                  {:else if resolution.resolved === false}
-                    {resolution.error}
-                  {/if}
-                </td>
-                <td
-                  class:success={resolution.resolved === true}
-                  class:fail={resolution.resolved !== true}
-                >
-                  {#if resolution.resolved === true}
-                    <input
-                      type="checkbox"
-                      on:change={checkIfAllItemsSelected}
-                      bind:value={resolution.id}
-                      checked={selectedResults.includes(resolution.id)}
-                    />
-                    <a href={`/object/edit/${resolution.id}`} target="_blank">
-                      {resolution.id}
-                    </a>
-                  {:else}
-                    <span>Can't add to collection</span>
-                  {/if}
-                </td>
-              </tr>
-            {/each}
-          </tbody>
-          <br />
+        <div class="auto-align auto-align__a-end title-wrap">
+          <h6>Search Results</h6>
           <button
             class="primary"
             disabled={!selectedResults.length}
@@ -277,6 +244,53 @@
           >
             Add Selected Items
           </button>
+        </div>
+        <br />
+        <table>
+          <thead>
+            <tr>
+              <th>Select</th>
+              <th>Slug</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {#each Object.entries(resolutions) as [slug, resolution]}
+              <tr>
+                <td>
+                  {#if resolution.resolved === true}
+                    <input
+                      type="checkbox"
+                      on:change={checkIfAllItemsSelected}
+                      bind:value={resolution.id}
+                      checked={selectedResults.includes(resolution.id)}
+                    />
+                  {:else}
+                    <input disabled type="checkbox" />
+                  {/if}
+                </td>
+                <td>
+                  {#if resolution.id}
+                    <a href={`/object/edit/${resolution.id}`} target="_blank">
+                      {slug}
+                    </a>
+                  {:else}
+                    {slug}
+                  {/if}
+                </td>
+                <td
+                  class:success={resolution.resolved === true}
+                  class:fail={resolution.resolved !== true}
+                >
+                  {#if resolution.resolved === true}
+                    Found
+                  {:else if resolution.resolved === false}
+                    Can't add to collection: {resolution.error}
+                  {/if}
+                </td>
+              </tr>
+            {/each}
+          </tbody>
           <br />
           <br />
         </table>
@@ -297,9 +311,11 @@
   .move-button {
     display: flex;
   }
-  textarea {
-    display: grid;
+  .title-wrap {
     width: 100%;
+  }
+  h6 {
+    flex: 9;
   }
   .success {
     background-color: var(--success-light);

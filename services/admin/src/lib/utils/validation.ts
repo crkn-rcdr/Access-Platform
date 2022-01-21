@@ -9,7 +9,6 @@ import {
   EditableManifest,
   Slug,
   TextRecord,
-  ObjectList,
   PagedAccessObject,
   Pdf,
 } from "@crkn-rcdr/access-data";
@@ -136,20 +135,6 @@ const manifest = {
       EditableManifest.parse({ label });
       return "";
     } catch (e) {
-      return e["issues"][0]["message"];
-    }
-  },
-  /**
-   * Validates the ObjectList passed in. Returns a message if the ObjectList is invalid.
-   * @param canvases
-   * @returns string
-   */
-  getCanvasesValidationMsg: function (canvases: ObjectList) {
-    try {
-      EditableManifest.parse({ canvases });
-      return "";
-    } catch (e) {
-      console.log(e?.message);
       return e["issues"][0]["message"];
     }
   },
