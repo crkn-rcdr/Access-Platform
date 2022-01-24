@@ -165,7 +165,6 @@
   async function handleAddPressed() {
     if (adding) return;
     adding = true;
-    console.log("adding", selectedResults);
     dispatch("done", {
       selectedMembers: selectedResults,
     });
@@ -219,7 +218,6 @@
         /><br /-->
         <PrefixSlugSearchbox
           on:slugs={(event) => {
-            console.log("slugs:", event.detail);
             slugArray = event.detail;
           }}
         />

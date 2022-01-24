@@ -196,7 +196,6 @@ This component allows the user to find packages in the dipstaging database.
         /-->
         <PrefixSlugSearchbox
           on:slugs={(event) => {
-            console.log("slugs:", event.detail);
             slugList = event.detail;
           }}
         />
