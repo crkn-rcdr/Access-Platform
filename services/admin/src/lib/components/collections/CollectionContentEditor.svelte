@@ -415,9 +415,7 @@ Allows the user to modify the member list for a collection.
       page = parseInt($pageStore.query.get("page"));
       handlePage({ detail: { page } });
     } else {
-      console.log("firstPage", firstPage);
-      members = firstPage.list;
-      //getMemberContext(firstPage.list);
+      members = firstPage?.list;
     }
   });
 
