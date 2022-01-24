@@ -31,7 +31,7 @@ None
     /*filter: brightness(0.95);*/
     min-height: 100%;
     flex: 1.5;
-    padding: var(--margin-sm);
+    padding: var(--margin-sm) var(--perfect-fourth-6);
     width: fit-content;
   }
   .sidemenu ul {
