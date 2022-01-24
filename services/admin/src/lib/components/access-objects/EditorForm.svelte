@@ -142,6 +142,7 @@ This component displays the non content properties for an access editorObject an
           <textarea
             id="label"
             name="label"
+            rows="6"
             bind:value={editorObject["label"]["none"]}
             on:keyup={() => {
               // Triggers validation msg

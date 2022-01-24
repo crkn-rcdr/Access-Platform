@@ -38,7 +38,7 @@
 
 <style>
   .search {
-    max-width: 50rem;
+    /*max-width: 50rem;*/
     margin: auto;
   }
 </style>
