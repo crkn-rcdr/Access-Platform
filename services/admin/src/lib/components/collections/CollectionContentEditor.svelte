@@ -622,7 +622,7 @@ Allows the user to modify the member list for a collection.
 
   .member {
     padding: 1rem;
-    min-height: 7rem;
+    min-height: 6rem;
   }
 
   .member:hover {

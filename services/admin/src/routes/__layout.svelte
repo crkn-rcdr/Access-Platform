@@ -140,7 +140,7 @@
     background-color: var(--nav-bg);
     margin: 0;
     padding: 0 1rem;
-    min-height: 7rem;
+    min-height: 6rem;
   }
   .icon {
     padding: 0.1rem;
@@ -149,8 +149,8 @@
     font-family: "Roboto";
     color: var(--secondary) !important;
     width: min-content;
-    height: 7rem;
-    padding: 0 5rem;
+    height: 6rem;
+    padding: 0 4rem;
     /*background: var(--nav-item-bg);*/
   }
   a {
@@ -167,8 +167,8 @@
     margin-right: 1rem;
   }
   :global(.navbar .create-object-menu-button) {
-    height: 7rem;
-    padding: 0 5rem;
+    height: 6rem;
+    padding: 0 4rem;
     color: var(--secondary);
     /*background: var(--nav-item-bg);*/
   }

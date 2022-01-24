@@ -86,7 +86,7 @@
   nav > * {
     font-family: "Roboto";
     width: fit-content;
-    height: 7rem;
+    height: 6rem;
     padding: 0 1rem;
     /*background: var(--nav-item-bg);*/
     color: var(--dark-font) !important;
@@ -108,7 +108,7 @@
     color: var(--dark-font);
   }
   :global(.drop-down-wrap-page .create-object-menu-button) {
-    height: 7rem;
+    height: 6rem;
     color: var(--light-font) !important;
   }
   /*
