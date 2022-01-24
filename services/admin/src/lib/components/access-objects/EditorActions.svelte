@@ -379,7 +379,7 @@ The editor actions component holds functionality that is responsible for perform
 
 <span class="editor-actions auto-align auto-align__a-center">
   {#if mode === "create"}
-    <button class="save" disabled={isSaveEnabled} on:click={handleSaveCreate}
+    <button class="save" disabled={!isSaveEnabled} on:click={handleSaveCreate}
       >Create</button
     >
   {/if}
