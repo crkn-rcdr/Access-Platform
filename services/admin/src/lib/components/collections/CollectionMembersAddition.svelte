@@ -18,7 +18,9 @@
    */
   const { session } = getStores<Session>();
 
-  export let addingMembers = false;
+  export let isCollectionEmpty = false;
+
+  let addingMembers: boolean = false;
 
   /**
    * @type {string} An prefix to the Depositor.
@@ -180,6 +182,10 @@
       label: "",
     };
   }
+
+  $: {
+    if (isCollectionEmpty === true) addingMembers = true;
+  }
 </script>
 
 <div class="member-selector-wrap add-menu">
@@ -191,7 +197,7 @@
         {LOOKUP_MEMBER_BUTTON_TEXT}
       </button>
     {/if}
-    {#if addingMembers}
+    {#if addingMembers && !isCollectionEmpty}
       <div class="exit-button">
         <button
           class="secondary cancel-button auto-align auto-align__a-center"
@@ -203,15 +209,20 @@
           Exit
         </button>
       </div>
+      <br />
     {/if}
   </div>
   {#if addingMembers}
     <div class="search-wrap">
-      <br />
+      {#if isCollectionEmpty}
+        <p>This collection has no members.</p>
+        <br />
+      {/if}
       <p>
         Please search for items to add to your collection, then select them if
         found.
       </p>
+      <br />
       <div>
         <PrefixSelector bind:depositor />
         <textarea
