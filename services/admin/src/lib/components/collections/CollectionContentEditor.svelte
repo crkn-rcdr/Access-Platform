@@ -527,6 +527,11 @@ Allows the user to modify the member list for a collection.
               </div>
               <div class="actions-wrap">
                 <div class="auto-align auto-align__column">
+                  {#if collectionMember.public}
+                    <div class="published">published</div>
+                  {:else}
+                    <div class="unpublished">unpublished</div>
+                  {/if}
                   <div
                     class="action icon"
                     data-tooltip="Remove from collection"
