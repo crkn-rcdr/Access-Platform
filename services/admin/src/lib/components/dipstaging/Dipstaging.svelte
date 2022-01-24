@@ -96,7 +96,7 @@ This component controls the rendering of the dipstaging menu (smelter) based on 
     padding: 3rem 4rem;
     height: 100%;
   }
-  /*:global(.dipstaging-wrap nav.sidemenu ul) {
-    margin-top: 1.1rem;
-  }*/
+  :global(.dipstaging-wrap nav.sidemenu ul) {
+    margin-top: 2.3rem;
+  }
 </style>

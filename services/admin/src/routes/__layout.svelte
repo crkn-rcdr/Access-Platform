@@ -140,7 +140,7 @@
     background-color: var(--nav-bg);
     margin: 0;
     padding: 0 1rem;
-    min-height: 6rem;
+    min-height: 7rem;
   }
   .icon {
     padding: 0.1rem;
@@ -149,8 +149,8 @@
     font-family: "Roboto";
     color: var(--secondary) !important;
     width: min-content;
-    height: 6rem;
-    padding: 0 4rem;
+    height: 7rem;
+    padding: 0 5rem;
     /*background: var(--nav-item-bg);*/
   }
   a {
@@ -160,15 +160,15 @@
     background: var(--nav-item-active-bg) !important;
     color: var(--primary) !important;
   }
-  nav > *:hover {
+  nav > *:not(.active-nav-item):hover {
     color: var(--dark-font) !important;
   }
   .right-menu > * {
     margin-right: 1rem;
   }
   :global(.navbar .create-object-menu-button) {
-    height: 6rem;
-    padding: 0 4rem;
+    height: 7rem;
+    padding: 0 5rem;
     color: var(--secondary);
     /*background: var(--nav-item-bg);*/
   }

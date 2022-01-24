@@ -86,7 +86,7 @@
   nav > * {
     font-family: "Roboto";
     width: fit-content;
-    height: 6rem;
+    height: 7rem;
     padding: 0 1rem;
     /*background: var(--nav-item-bg);*/
     color: var(--dark-font) !important;
@@ -98,7 +98,7 @@
     border-radius: var(--border-radius);
   }
   nav > *:hover {
-    color: var(--dark-font) !important;
+    filter: brightness(1.1);
   }
   a {
     text-decoration: none !important;
@@ -108,7 +108,7 @@
     color: var(--dark-font);
   }
   :global(.drop-down-wrap-page .create-object-menu-button) {
-    height: 6rem;
+    height: 7rem;
     color: var(--light-font) !important;
   }
   /*
