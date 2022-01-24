@@ -1,12 +1,13 @@
 <script lang="ts">
-  import type { Depositor, Session } from "$lib/types";
+  import type { Session } from "$lib/types";
   import { getStores } from "$app/stores";
   import { createEventDispatcher } from "svelte";
   import type { PagedCollection } from "@crkn-rcdr/access-data/src/access/Collection";
   import TiArrowBack from "svelte-icons/ti/TiArrowBack.svelte";
 
-  import PrefixSelector from "$lib/components/access-objects/PrefixSelector.svelte";
   import NotificationBar from "../shared/NotificationBar.svelte";
+  import PrefixSlugSearchbox from "../access-objects/PrefixSlugSearchbox.svelte";
+  import LoadingButton from "../shared/LoadingButton.svelte";
 
   /**
    * @type {PagedCollection} The Collection where the members are added to.
@@ -18,17 +19,16 @@
    */
   const { session } = getStores<Session>();
 
-  export let isCollectionEmpty = false;
-
-  let addingMembers: boolean = false;
+  /**
+   * @type {string} If a Collection is selected.
+   */
+  let addingMembers = false;
 
   /**
-   * @type {string} An prefix to the Depositor.
+   * @type {boolean} If the collection has members or not
    */
-  let depositor: Depositor = {
-    prefix: "none",
-    label: "",
-  };
+  export let isCollectionEmpty = false;
+
   /**
    * @type { string } The label for the by-slug toggle
    */
@@ -61,9 +61,10 @@
   }
 
   let id: string = destinationMember.id;
-  let input: string;
+  let slugArray: string[] = [];
   let error: string;
-  //  let documentSlug: {} = [];
+  let searching: boolean = false;
+  let adding: boolean = false;
 
   // https://github.com/sindresorhus/type-fest/blob/main/source/promise-value.d.ts
   type PromiseValue<PromiseType> = PromiseType extends PromiseLike<infer Value>
@@ -72,12 +73,12 @@
   let resolutions: PromiseValue<ReturnType<typeof resolveMembers>>;
 
   async function resolveMembers() {
-    lookupDone = false;
-    error = "";
-    let slugArray = input.split(/[,|\s]/);
+    if (searching) return;
+    if (!slugArray.length) return;
 
-    if (depositor?.prefix !== "none")
-      slugArray = slugArray.map((slug) => `${depositor?.prefix}.${slug}`);
+    lookupDone = false;
+    searching = true;
+    error = "";
 
     if (id) {
       try {
@@ -97,6 +98,7 @@
         }
         selectedResults = selectedResults;
         lookupDone = true;
+        searching = false;
 
         // I'm returning here so that we can type `resolutions` properly (see above)
         return response;
@@ -128,6 +130,7 @@
           })
         );
         lookupDone = true;
+        searching = false;
 
         // I'm returning here so that we can type `resolutions` properly (see above)
         return response;
@@ -141,7 +144,9 @@
   function handleCancelPressed() {
     addingMembers = false;
     //showAddButton = true;
-    clearText();
+    slugArray = [];
+    adding = false;
+    searching = false;
     dispatch("done");
   }
 
@@ -163,7 +168,8 @@
   }
 
   async function handleAddPressed() {
-    console.log("adding", selectedResults);
+    if (adding) return;
+    adding = true;
     dispatch("done", {
       selectedMembers: selectedResults,
     });
@@ -172,15 +178,9 @@
     addingMembers = false;
     //showAddButton = true;
     selectedResults = [];
+    slugArray = [];
     resolutions = {};
-    clearText();
-  }
-  function clearText() {
-    input = "";
-    depositor = {
-      prefix: "none",
-      label: "",
-    };
+    adding = false;
   }
 
   $: {
@@ -224,47 +224,52 @@
       </p>
       <br />
       <div>
-        <PrefixSelector bind:depositor />
+        <!--PrefixSelector bind:depositor />
         <textarea
           rows="4"
           placeholder="Enter a list of slugs seperated by commas or new lines."
           bind:value={input}
-        /><br />
-        <button
-          class="lg"
-          class:primary={!lookupDone}
-          class:secondary={lookupDone}
-          on:click={resolveMembers}>Search</button
+        /><br /-->
+        <PrefixSlugSearchbox
+          on:slugs={(event) => {
+            slugArray = event.detail;
+          }}
+        />
+        <LoadingButton
+          buttonClass={lookupDone ? "secondary" : "primary"}
+          disabled={slugArray.length === 0}
+          showLoader={searching}
+          on:clicked={resolveMembers}
         >
-        <button class="secondary lg" on:click={clearText}>Clear Text</button>
-        <br />
+          <span slot="content">{searching ? "Searching..." : "Search"}</span>
+        </LoadingButton>
       </div>
       <br />
       <NotificationBar status="fail" message={error} />
       {#if resolutions}
+        <div class="auto-align auto-align__a-end title-wrap">
+          <h6>Search Results</h6>
+          <button
+            class="primary"
+            disabled={!selectedResults.length}
+            on:click={handleAddPressed}
+          >
+            Add Selected Items
+          </button>
+        </div>
+        <br />
         <table>
           <thead>
             <tr>
+              <th>Select</th>
               <th>Slug</th>
               <th>Status</th>
-              <th>Select</th>
             </tr>
           </thead>
           <tbody>
             {#each Object.entries(resolutions) as [slug, resolution]}
               <tr>
-                <td>{slug}</td>
                 <td>
-                  {#if resolution.resolved === true}
-                    found
-                  {:else if resolution.resolved === false}
-                    {resolution.error}
-                  {/if}
-                </td>
-                <td
-                  class:success={resolution.resolved === true}
-                  class:fail={resolution.resolved !== true}
-                >
                   {#if resolution.resolved === true}
                     <input
                       type="checkbox"
@@ -272,20 +277,32 @@
                       bind:value={resolution.id}
                       checked={selectedResults.includes(resolution.id)}
                     />
-                    {resolution.id}
                   {:else}
-                    <span>No ID resolved to add</span>
+                    <input disabled type="checkbox" />
+                  {/if}
+                </td>
+                <td>
+                  {#if resolution.id}
+                    <a href={`/object/edit/${resolution.id}`} target="_blank">
+                      {slug}
+                    </a>
+                  {:else}
+                    {slug}
+                  {/if}
+                </td>
+                <td
+                  class:success={resolution.resolved === true}
+                  class:fail={resolution.resolved !== true}
+                >
+                  {#if resolution.resolved === true}
+                    Found
+                  {:else if resolution.resolved === false}
+                    Can't add to collection: {resolution.error}
                   {/if}
                 </td>
               </tr>
             {/each}
           </tbody>
-          <br />
-          <button
-            class="primary"
-            disabled={!selectedResults.length}
-            on:click={handleAddPressed}>Add Selected Items</button
-          >
           <br />
           <br />
         </table>
@@ -306,9 +323,11 @@
   .move-button {
     display: flex;
   }
-  textarea {
-    display: grid;
+  .title-wrap {
     width: 100%;
+  }
+  h6 {
+    flex: 9;
   }
   .success {
     background-color: var(--success-light);

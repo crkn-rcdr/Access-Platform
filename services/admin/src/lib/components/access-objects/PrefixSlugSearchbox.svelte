@@ -28,23 +28,7 @@ The resolver component allows the user to enter a slug, and then a request is se
   import { getStores } from "$app/stores";
 
   import PrefixSelector from "$lib/components/access-objects/PrefixSelector.svelte";
-  import NotificationBar from "../shared/NotificationBar.svelte";
-
-  let depositor = {
-    prefix: "none",
-    label: "",
-  };
-
-  let input = "";
-  let error: string;
-
-  /**
-   * @type {boolean}
-  /**
-   * Whether to hide the display when the current slug is the
-   * same as the initial slug provided.
-   */
-  let hideInitial = false;
+  import Loading from "../shared/Loading.svelte";
 
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
@@ -56,64 +40,65 @@ The resolver component allows the user to enter a slug, and then a request is se
    */
   const dispatch = createEventDispatcher();
 
+  let prefix = {
+    prefix: "none",
+    label: "",
+  };
+  let input = "";
+
+  let loading = false;
   /**
-   * Searches the backend for an object by the inputted slug. It also shows various error states to the user.
    * @returns void
    */
+  async function handleSlugsChange() {
+    loading = true;
 
-  async function slugSelector() {
-    error = "";
+    // Split the slug textbox input by space or commas
     let slugs = input.split(/[,|\s]/);
-    if (depositor?.prefix !== "none") {
-      slugs = slugs.map((slug) => depositor?.prefix + slug);
+
+    // Strip any weird characters (to handle copy pasting from documents)
+    // And do not take empty lines
+    slugs = slugs
+      .map((slug) => slug.trim().replace(/[^\x00-\x7F]/g, ""))
+      .filter((slug) => slug.length);
+
+    // Add the prefix if one is selected
+    if (prefix?.prefix !== "none") {
+      slugs = slugs.map((slug) => prefix?.prefix + slug);
     }
 
-    try {
-      const response = await $session.lapin.mutation("slug.resolveMany", slugs);
-      //console.log("response", response);
+    // Strip duplicates from the array
+    slugs = [...new Set(slugs)];
 
-      dispatch("found", response);
-    } catch (e) {
-      console.log(e);
-      error =
-        "There was a problem with your search. Please contact the platform team for assistance.";
-    }
-    hideInitial = true;
+    // Send array to parent
+    dispatch("slugs", slugs);
+    loading = false;
   }
 
-  function clear() {
-    input = "";
-    depositor = {
-      prefix: "none",
-      label: "",
-    };
+  $: {
+    input;
+    handleSlugsChange();
   }
 </script>
 
 <div>
-  <NotificationBar status="fail" message={error} />
-  {#if !hideInitial}
-    <PrefixSelector bind:depositor /><br /><br />
-
-    <div class="grid">
-      <textarea bind:value={input} />
-    </div>
-    <br />
-    <button class="primary lg" on:click={clear}>Clear</button>
-    <button class="primary lg" on:click={slugSelector}>Lookup</button> <br />
+  <PrefixSelector bind:depositor={prefix} /><br />
+  <textarea
+    rows="4"
+    placeholder="Enter a list of slugs seperated by commas or new lines."
+    bind:value={input}
+  />
+  <br />
+  {#if loading}
+    <span class="loader">
+      <Loading size="sm" backgroundType="gradient" /> Please wait, sanitizing list...
+    </span>
   {/if}
 </div>
 
 <style>
   textarea {
-    display: grid;
-    background-color: var(--primary-light);
     width: 100%;
     height: 100%;
-    grid-column: 1/2;
-  }
-  .grid {
-    display: grid;
-    grid-column: 1/1;
   }
 </style>

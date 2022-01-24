@@ -15,6 +15,10 @@ module.exports = function (doc, req) {
     return errorReturn(`Trying to publish an object that is already public`);
   }
 
+  if (!doc.dmdType) {
+    return errorReturn(`Descriptive Metadata missing`);
+  }
+
   const user = extractJSONFromBody(req);
 
   const now = timestamp();

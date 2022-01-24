@@ -303,7 +303,7 @@ The editor actions component holds functionality that is responsible for perform
 
   function setDeletionModalTextError() {
     deleteModalTitle = `${serverObject["slug"]} can't be deleted.`;
-    deleteModalMsg = `There was a problem when  background processes ran that is preventing ${serverObject["slug"]} from being deleted. Message: ${serverObject["updateInternalmeta"]?.["message"]}`;
+    deleteModalMsg = `There was a problem when background processes ran on ${serverObject["slug"]} that is preventing it from being deleted. Message: ${serverObject["updateInternalmeta"]?.["message"]}`;
     deleteModalActionText = `Ok`;
   }
 
@@ -323,6 +323,7 @@ The editor actions component holds functionality that is responsible for perform
         isDeleteModalWaiting = false;
         setDeletionModalTextEnabled();
       } else if (!serverObject.updateInternalmeta) {
+        console.log("two");
         isDeleteModalWaiting = false;
         setDeletionModalTextEnabled();
       } else {

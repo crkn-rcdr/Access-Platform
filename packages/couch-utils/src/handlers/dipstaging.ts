@@ -34,17 +34,22 @@ export class LegacyPackageHandler extends DatabaseHandler<LegacyPackage> {
   }
 
   async listFromKeys(keys: Slug[], access: AccessHandler) {
-    const resolutions = await access.resolveSlugs(keys);
-    const list = await this.list({ include_docs: true, keys });
-
-    return list.rows.map((row): ImportStatus => {
-      const r = resolutions[row.key];
-      let id: string | undefined = undefined;
-      if (r && r.resolved) {
-        id = r.id;
-      }
-      return getImportStatus(row.key, row.doc, id);
-    });
+    //Only 100 at a time.
+    const chunks = this.chunkArray(keys, 100);
+    const importStatuses: ImportStatus[] = [];
+    for (const chunk of chunks) {
+      const resolutions = await access.resolveSlugs(chunk);
+      const list = await this.list({ include_docs: true, keys: chunk });
+      list.rows.map((row) => {
+        const r = resolutions[row.key];
+        let id: string | undefined = undefined;
+        if (r && r.resolved) {
+          id = r.id;
+        }
+        importStatuses.push(getImportStatus(row.key, row.doc, id));
+      });
+    }
+    return importStatuses;
   }
 
   async listFromDates(start: string, end: string) {

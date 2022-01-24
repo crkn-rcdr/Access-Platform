@@ -24,6 +24,7 @@ This component allows the user to find packages in the dipstaging database.
   import NotificationBar from "../shared/NotificationBar.svelte";
   import Datepicker from "../shared/Datepicker.svelte";
   import { onMount } from "svelte";
+  import PrefixSlugSearchbox from "../access-objects/PrefixSlugSearchbox.svelte";
 
   /**
    * @type {ImportStatus[]}
@@ -35,18 +36,6 @@ This component allows the user to find packages in the dipstaging database.
    * @type {Session} The session store that contains the module for sending requests to lapin.
    */
   const { session } = getStores<Session>();
-
-  /**
-   * @type { Depositor } The access platform to look for the items in.
-   */
-  let depositor: Depositor | null = {
-    prefix: "none",
-    label: "No Prefix or Prefix Already Added",
-  };
-  /*{
-    prefix: "none",
-    label: "",
-  };*/
 
   /**
    * @type { string } The label for the by-slug toggle
@@ -74,12 +63,7 @@ This component allows the user to find packages in the dipstaging database.
   let endDateStr: string = "";
 
   /**
-   * @type { string } The value of the text input where users can enter slugs
-   */
-  let slugListString: string = "";
-
-  /**
-   * @type { string } The array of slugs derived from @var slugListString
+   * @type { string } The array of slugs
    */
   let slugList: string[] = [];
 
@@ -159,32 +143,22 @@ This component allows the user to find packages in the dipstaging database.
    */
   async function sendLookupRequestAIPIds() {
     if (loading) return;
+    if (!slugList.length) return;
     loading = true;
-    if (slugList.includes(",")) slugList = slugListString.split(",");
-    else slugList = slugListString.split("\n");
-    slugList = slugList.filter((slug) => slug.trim().length);
-    console.log("Searching", slugList);
-    if (slugList.length) {
-      if (depositor?.prefix !== "none")
-        slugList = slugList.map(
-          (slug) => `${depositor?.prefix}.${slug.trim()}`
-        );
-      else slugList = slugList.map((slug) => slug.trim());
 
-      try {
-        const response = await $session.lapin.query(
-          "dipstaging.listFromKeys",
-          slugList
-        );
-        if (response) results = response;
-      } catch (e) {
-        error = e?.message.includes(`"path:"`)
-          ? "Code 1. Please contact the platform team for assistance."
-          : "Code 2. Please contact the platform team for assistance.";
-      }
-
-      lookupDone = true;
+    try {
+      const response = await $session.lapin.query(
+        "dipstaging.listFromKeys",
+        slugList
+      );
+      if (response) results = response;
+    } catch (e) {
+      error = e?.message.includes(`"path:"`)
+        ? "Code 1. Please contact the platform team for assistance."
+        : "Code 2. Please contact the platform team for assistance.";
     }
+
+    lookupDone = true;
     loading = false;
   }
 
@@ -214,11 +188,16 @@ This component allows the user to find packages in the dipstaging database.
   <div class="user-input">
     {#if lookupView === BY_SLUG_LABEL}
       <div class="extra-spacing">
-        <PrefixSelector bind:depositor />
+        <!--PrefixSelector bind:depositor />
         <textarea
           rows="16"
           placeholder="Enter a list of slugs seperated by commas or new lines."
           bind:value={slugListString}
+        /-->
+        <PrefixSlugSearchbox
+          on:slugs={(event) => {
+            slugList = event.detail;
+          }}
         />
         <br />
         <br />
@@ -259,7 +238,7 @@ This component allows the user to find packages in the dipstaging database.
         buttonClass={lookupDone ? "secondary" : "primary"}
         on:clicked={handleLookupPressedSlugList}
         showLoader={loading}
-        disabled={!depositor || slugListString.length === 0}
+        disabled={slugList.length === 0}
       >
         <span slot="content"> Look-up Packages </span>
       </LoadingButton>
@@ -285,9 +264,6 @@ This component allows the user to find packages in the dipstaging database.
     flex: 9;
   }
   .extra-spacing {
-    width: 100%;
-  }
-  textarea {
     width: 100%;
   }
   .lookup-button {
