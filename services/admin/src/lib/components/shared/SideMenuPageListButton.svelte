@@ -32,11 +32,11 @@ None
     border-radius: var(--border-radius);
   }
   li:not(.active):hover {
-    background: rgba(255, 255, 255, 0.45);
+    background: rgba(255, 255, 255, 0.85);
     transition: background 0.5s ease;
   }
   :global(.side-menu-page-list-button.active) {
-    background: rgba(255, 255, 255, 0.45);
+    background: rgba(255, 255, 255, 0.85);
     color: var(--primary);
   }
 </style>

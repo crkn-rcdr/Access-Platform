@@ -249,7 +249,7 @@ Allows the user to modify the canvas list for a manifest.
 
   .list-wrapper {
     margin-left: 0.1rem;
-    background-color: var(--structural-div-bg);
+    background-color: var(--light-bg-2);
     flex: 2.5;
     min-width: 20rem;
     border-top: 1px solid rgba(100, 100, 100, 0.2);
@@ -271,7 +271,7 @@ Allows the user to modify the canvas list for a manifest.
   .view-wrap,
   .label-wrap,
   .state-wrap {
-    background-color: var(--backdrop-bg);
+    background-color: var(--light-bg-2);
   }
 
   /*.takedown {

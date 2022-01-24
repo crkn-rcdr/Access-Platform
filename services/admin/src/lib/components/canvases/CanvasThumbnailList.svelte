@@ -488,7 +488,7 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
   .thumbnail {
     height: max(22vh, 15rem);
     width: 100%;
-    background-color: var(--structural-div-bg);
+    background-color: var(--light-bg-2);
     overflow: hidden;
   }
   .thumbnail:nth-child(1) {
@@ -506,7 +506,7 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
       background-color: var(--gold-light);
     }
     to {
-      background-color: var(--structural-div-bg);
+      background-color: var(--light-bg-2);
     }
   }
   .actions-wrap {

@@ -88,7 +88,7 @@
     width: fit-content;
     height: 6rem;
     padding: 0 1rem;
-    background: var(--nav-item-bg);
+    /*background: var(--nav-item-bg);*/
     color: var(--dark-font) !important;
     background: var(--primary);
     color: var(--light-font) !important;
@@ -98,7 +98,7 @@
     border-radius: var(--border-radius);
   }
   nav > *:hover {
-    filter: brightness(1.1);
+    color: var(--dark-font) !important;
   }
   a {
     text-decoration: none !important;

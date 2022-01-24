@@ -151,7 +151,7 @@
     width: min-content;
     height: 6rem;
     padding: 0 4rem;
-    background: var(--nav-item-bg);
+    /*background: var(--nav-item-bg);*/
   }
   a {
     text-decoration: none !important;
@@ -161,7 +161,6 @@
     color: var(--primary) !important;
   }
   nav > *:hover {
-    filter: brightness(1.1);
     color: var(--dark-font) !important;
   }
   .right-menu > * {
@@ -171,10 +170,10 @@
     height: 6rem;
     padding: 0 4rem;
     color: var(--secondary);
-    background: var(--nav-item-bg);
+    /*background: var(--nav-item-bg);*/
   }
   :global(.navbar .create-object-menu-button:hover) {
-    background: #fefefe; /*TODO: clean */
+    /*background: #fefefe; */
     color: var(--dark-font) !important;
   }
 </style>
