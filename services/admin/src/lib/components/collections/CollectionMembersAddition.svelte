@@ -185,6 +185,7 @@
 
   $: {
     if (isCollectionEmpty === true) addingMembers = true;
+    else addingMembers = false;
   }
 </script>
 
