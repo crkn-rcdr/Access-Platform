@@ -218,7 +218,7 @@ This component displays the non content properties for an access editorObject an
       </span><br /-->
     </div>
     <div class="cache-status">
-      {#if chacheStatus.found && chacheStatus.result}
+      {#if chacheStatus?.found && chacheStatus.result}
         {#if !("succeeded" in chacheStatus.result)}
           <table>
             <tbody>
