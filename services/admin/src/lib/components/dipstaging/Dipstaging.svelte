@@ -93,10 +93,10 @@ This component controls the rendering of the dipstaging menu (smelter) based on 
     text-decoration: none;
   }
   .page-wrap {
-    padding: 3rem 4rem;
+    padding: 2.5rem 4rem;
     height: 100%;
   }
   :global(.dipstaging-wrap .sidemenu) {
-    margin-top: 2.3rem !important;
+    margin-top: 1.8rem !important;
   }
 </style>
