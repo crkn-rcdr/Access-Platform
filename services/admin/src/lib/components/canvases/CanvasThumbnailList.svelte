@@ -61,12 +61,12 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
   /**
    * @type {
       label?: Record<string, string>;
-      id: string;
+      id?: string;
     } The list of canvases in the manifest actively in the viewport.
     */
   export let canvases: {
     label?: Record<string, string>;
-    id: string;
+    id?: string;
   }[] = [];
 
   /**
