@@ -85,9 +85,10 @@ exports.updateObject = (doc, user) => {
     doc.staff = { by: user, date: now };
   }
 
-  if (doc.updateInternalmeta) delete doc.updateInternalmeta;
-  doc.updateInternalmeta = { requestDate: now };
-
+  if (doc.dmdType) {
+    if (doc.updateInternalmeta) delete doc.updateInternalmeta;
+    doc.updateInternalmeta = { requestDate: now };
+  }
   doc.updated = now;
 };
 

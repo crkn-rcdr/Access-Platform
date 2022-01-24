@@ -118,7 +118,7 @@
 
         resolutions = Object.fromEntries(
           response.map(([slug, r]): [string, any] => {
-            if (r.found) {
+            if (r?.found) {
               selectedResults.push(r.result.id);
               selectedResults = selectedResults;
               return [
