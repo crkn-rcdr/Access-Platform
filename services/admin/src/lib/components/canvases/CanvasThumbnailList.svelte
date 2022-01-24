@@ -293,7 +293,9 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
             page: page,
             limit: size,
           });
-          canvases = currPage.list;
+          if (currPage) canvases = currPage.list;
+          else canvases = [];
+
           loading = false;
           return {
             success: true,
@@ -346,8 +348,8 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
             page: page,
             limit: size,
           });
-          canvases = currPage.list;
-          setActiveIndex(activeCanvasIndex);
+          if (currPage) canvases = currPage.list;
+          else canvases = [];
 
           return {
             success: true,
@@ -380,8 +382,10 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
       page = parseInt($pageStore.query.get("page"));
       handlePage({ detail: { page } });
     } else {
-      canvases = firstPage.list;
-      activeCanvas = canvases[activeCanvasIndex];
+      if (firstPage) {
+        canvases = firstPage.list;
+        activeCanvas = canvases[activeCanvasIndex];
+      } else canvases = [];
     }
   });
 

@@ -234,7 +234,8 @@ Allows the user to modify the member list for a collection.
             page: page,
             limit: size,
           });
-          members = currPage.list;
+          if (currPage) members = currPage.list;
+          else members = [];
           console.log("members", members);
           //await getMemberContext(members);
           return {
@@ -347,7 +348,8 @@ Allows the user to modify the member list for a collection.
             limit: size,
           });
           //previousLastItem = members[members.length - 1].id;
-          members = currPage.list;
+          if (currPage) members = currPage.list;
+          else members = [];
           //await getMemberContext(currPage.list);
           setActiveIndex(activeMemberIndex);
           return {
@@ -418,7 +420,8 @@ Allows the user to modify the member list for a collection.
       handlePage({ detail: { page } });
     } else {
       console.log("firstPage", firstPage);
-      members = firstPage.list;
+      if (firstPage) members = firstPage.list;
+      else members = [];
       //getMemberContext(firstPage.list);
     }
   });
