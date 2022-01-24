@@ -175,10 +175,6 @@ Allows the user to modify the canvas list for a manifest.
 </script>
 
 {#if manifest}
-  <!--NotificationBar
-    message={typedChecks.manifest.getCanvasesValidationMsg(canvases)}
-    status="fail"
-  /-->
   <div class="auto-align auto-align__full content-wrapper">
     <div class="list-wrapper">
       <CanvasThumbnailList

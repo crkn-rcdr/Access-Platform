@@ -11,7 +11,6 @@ export const StorePreservationInput = z.object({
 export const wipmetaRouter = createRouter().mutation("storePreservation", {
   input: StorePreservationInput.parse,
   async resolve({ input, ctx }) {
-    console.log("preservation input: ", input);
     const { id, index, task } = input;
     // Throws user-readable TRPC errors for specific issues
     await storePreservation(ctx, id, task, index);

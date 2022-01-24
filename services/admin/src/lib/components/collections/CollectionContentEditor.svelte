@@ -21,13 +21,12 @@ Allows the user to modify the member list for a collection.
   import CollectionMembersAddition from "./CollectionMembersAddition.svelte";
   import { page as pageStore } from "$app/stores";
   import { session } from "$app/stores";
-  import type { ObjectListPage } from "@crkn-rcdr/access-data";
+  import type { ObjectListPage, Timestamp } from "@crkn-rcdr/access-data";
   import DynamicDragAndDropList from "../shared/DynamicDragAndDropList.svelte";
   import DynamicDragAndDropListItem from "../shared/DynamicDragAndDropListItem.svelte";
   import { showConfirmation } from "$lib/utils/confirmation";
   import Loading from "../shared/Loading.svelte";
   import Paginator from "../shared/Paginator.svelte";
-  import CanvasLabelEditor from "../canvases/CanvasLabelEditor.svelte";
 
   export let collection: PagedCollection;
 
@@ -48,6 +47,7 @@ Allows the user to modify the member list for a collection.
     id?: string;
     label?: Record<string, string>;
     slug?: string;
+    public?: Timestamp;
   }[] = [];
 
   let positions: number[] = [];
@@ -415,9 +415,7 @@ Allows the user to modify the member list for a collection.
       page = parseInt($pageStore.query.get("page"));
       handlePage({ detail: { page } });
     } else {
-      console.log("firstPage", firstPage);
-      members = firstPage.list;
-      //getMemberContext(firstPage.list);
+      members = firstPage?.list;
     }
   });
 
@@ -490,7 +488,12 @@ Allows the user to modify the member list for a collection.
                   </a>
                 </div>
                 <div class="actions-wrap">
-                  <div class="auto-align auto-align__column">
+                  <div class="auto-align auto-align__column auto-align__a-end">
+                    {#if collectionMember.public}
+                      <div class="published">published</div>
+                    {:else}
+                      <div class="unpublished">unpublished</div>
+                    {/if}
                     <div
                       class="action icon"
                       data-tooltip="Remove from collection"
@@ -524,6 +527,11 @@ Allows the user to modify the member list for a collection.
               </div>
               <div class="actions-wrap">
                 <div class="auto-align auto-align__column">
+                  {#if collectionMember.public}
+                    <div class="published">published</div>
+                  {:else}
+                    <div class="unpublished">unpublished</div>
+                  {/if}
                   <div
                     class="action icon"
                     data-tooltip="Remove from collection"
@@ -568,7 +576,8 @@ Allows the user to modify the member list for a collection.
     font-weight: 400;
     margin-bottom: 0.56rem;
     margin-left: 0.56rem;
-    min-width: 3.15rem;
+    min-width: 3.03rem;
+    padding-top: 0.45em;
   }
   .action.icon {
     display: none;
@@ -639,5 +648,14 @@ Allows the user to modify the member list for a collection.
   }*/
   .label {
     flex: 9;
+    padding-top: 0.45em;
+  }
+  .published {
+    color: var(--success);
+    margin-bottom: 0.5em;
+  }
+  .unpublished {
+    color: var(--secondary);
+    margin-bottom: 0.5em;
   }
 </style>
