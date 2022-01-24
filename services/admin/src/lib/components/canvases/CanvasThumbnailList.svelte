@@ -397,7 +397,7 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
 
 <div class="auto-align auto-align__full auto-align auto-align__column">
   {#if showAddButton}
-    <button class="primary lg" on:click={addClicked}>Add Canvas</button>
+    <button class="primary lg" on:click={addClicked}>Add Canvases</button>
   {/if}
 
   <div class="canvas-wrap" class:disabled={loading}>
