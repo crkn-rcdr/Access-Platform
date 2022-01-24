@@ -52,14 +52,25 @@ The resolver component allows the user to enter a slug, and then a request is se
    */
   async function handleSlugsChange() {
     loading = true;
+
+    // Split the slug textbox input by space or commas
     let slugs = input.split(/[,|\s]/);
+
+    // Strip any weird characters (to handle copy pasting from documents)
+    // And do not take empty lines
     slugs = slugs
       .map((slug) => slug.trim().replace(/[^\x00-\x7F]/g, ""))
       .filter((slug) => slug.length);
+
+    // Add the prefix if one is selected
     if (prefix?.prefix !== "none") {
       slugs = slugs.map((slug) => prefix?.prefix + slug);
     }
+
+    // Strip duplicates from the array
     slugs = [...new Set(slugs)];
+
+    // Send array to parent
     dispatch("slugs", slugs);
     loading = false;
   }
