@@ -336,6 +336,7 @@ This component displays the non content properties for an access editorObject an
   .cache-status {
     margin-right: 1rem;
     padding: 0.5rem 0;
+    color: var(--secondary);
   }
   .cache-status tbody {
     background: none !important;

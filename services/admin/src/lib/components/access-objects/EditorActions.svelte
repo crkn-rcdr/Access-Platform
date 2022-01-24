@@ -476,5 +476,6 @@ The editor actions component holds functionality that is responsible for perform
   .reassurance {
     font-size: 1rem;
     min-width: 16rem;
+    color: var(--secondary);
   }
 </style>

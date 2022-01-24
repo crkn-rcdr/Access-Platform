@@ -93,12 +93,12 @@ none
     display: none;
     position: absolute;
     background-color: var(--base-bg);
-    min-width: 160px;
+    min-width: 16rem;
     filter: var(--shadow);
     z-index: 1;
+    left: 0;
     top: 100%;
-    border-bottom-left-radius: var(--border-radius);
-    border-bottom-right-radius: var(--border-radius);
+    border-radius: var(--border-radius);
   }
   :global(.dropdown-content.dropdown-content-left) {
     left: 0;
