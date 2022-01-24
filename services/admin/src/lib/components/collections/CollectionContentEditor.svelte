@@ -49,6 +49,7 @@ Allows the user to modify the member list for a collection.
     label?: Record<string, string>;
     slug?: string;
   }[] = [];
+  let isMemberListEmpty = false;
 
   let positions: number[] = [];
 
@@ -424,12 +425,13 @@ Allows the user to modify the member list for a collection.
   $: {
     members;
     setPositions();
+    isMemberListEmpty = members.length === 0;
   }
 </script>
 
 {#if collection}
   <CollectionMembersAddition
-    showAddButton={state != "add"}
+    addingMembers={isMemberListEmpty}
     bind:destinationMember={collection}
     on:done={handleAddPressed}
     on:addClicked={() => {

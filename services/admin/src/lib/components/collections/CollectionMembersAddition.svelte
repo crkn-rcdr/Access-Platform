@@ -18,16 +18,8 @@
    */
   const { session } = getStores<Session>();
 
-  /**
-   * @type {string} If a Collection is selected.
-   */
-  let isMemberSelected = false;
-  let addingMembers = false;
+  export let addingMembers = false;
 
-  /**
-   * @type {boolean} If the add button should be displayed over the list of members.
-   */
-  export let showAddButton = true;
   /**
    * @type {string} An prefix to the Depositor.
    */
@@ -41,17 +33,19 @@
   const LOOKUP_MEMBER_BUTTON_TEXT = "Add a member";
 
   /**
-   * @type { string } The selected lookup method
-   */
-  let memberLookup: string = LOOKUP_MEMBER_BUTTON_TEXT;
-  /**
    * @type { boolean } If the lookup has completed run once yet.
    */
   let lookupDone: boolean = false;
+
   /**
    * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.
    */
   const dispatch = createEventDispatcher();
+
+  /**
+   * @type {boolean} If the add button should be displayed over the list of members.
+   */
+  //let showAddButton = true;
 
   /**
    * When a collection is selected from the table of search results, grab its details from the backend.
@@ -59,7 +53,6 @@
    * @returns void
    */
   function showAddClicked() {
-    showAddButton = false;
     addingMembers = true;
     resolutions = null;
     dispatch("addClicked");
@@ -145,7 +138,7 @@
 
   function handleCancelPressed() {
     addingMembers = false;
-    showAddButton = true;
+    //showAddButton = true;
     clearText();
     dispatch("done");
   }
@@ -175,7 +168,7 @@
     destinationMember = destinationMember;
 
     addingMembers = false;
-    showAddButton = true;
+    //showAddButton = true;
     selectedResults = [];
     resolutions = {};
     clearText();
@@ -193,7 +186,7 @@
   <div
     class="move-button auto-align auto-align__full auto-align auto-align__column"
   >
-    {#if showAddButton}
+    {#if !addingMembers}
       <button class="primary lg" on:click={showAddClicked}>
         {LOOKUP_MEMBER_BUTTON_TEXT}
       </button>
