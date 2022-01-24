@@ -26,7 +26,7 @@ A solid title/header component to break apart your pages into sections.
 
 <div class="toolbar">
   <div class="auto-align auto-align__full auto-align auto-align__a-center">
-    <h5>{title}</h5>
+    <h5>{@html title}</h5>
     <div class="toolbar-content">
       <slot />
     </div>

@@ -542,7 +542,7 @@ Allows the user to modify the member list for a collection.
                     <div class="unpublished">unpublished</div>
                   {/if}
                   <div
-                    class="action icon"
+                    class="action icon delete"
                     data-tooltip="Remove from collection"
                     data-tooltip-flow="bottom"
                     on:click={(e) => deleteMemberByIndex(e, i)}
@@ -658,13 +658,17 @@ Allows the user to modify the member list for a collection.
   .label {
     flex: 9;
     padding-top: 0.45em;
+    padding-right: 1rem;
   }
   .published {
+    padding-top: 0.45em;
     color: var(--success);
-    margin-bottom: 0.5em;
   }
   .unpublished {
+    padding-top: 0.45em;
     color: var(--secondary);
+  }
+  .delete {
     margin-bottom: 0.5em;
   }
 </style>
