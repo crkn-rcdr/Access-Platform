@@ -266,7 +266,7 @@ A component that shows a navigable set of pages with a side menu to allow the us
     max-width: 156rem;
     */
 
-    height: calc(100vh - 7rem - var(--viewport-scaling));
+    height: calc(100vh - 8rem - var(--viewport-scaling));
   }
 
   /*@media (max-width: 997px) {

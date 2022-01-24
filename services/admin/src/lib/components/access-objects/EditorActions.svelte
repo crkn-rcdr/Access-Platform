@@ -87,8 +87,7 @@ The editor actions component holds functionality that is responsible for perform
    * @returns void
    */
   function checkEnableSave() {
-    const diff = checkValidDiff(serverObject, editorObject);
-    isSaveEnabled = mode === "create" && diff;
+    isSaveEnabled = checkValidDiff(serverObject, editorObject);
   }
 
   $: {
@@ -379,8 +378,10 @@ The editor actions component holds functionality that is responsible for perform
 </script>
 
 <span class="editor-actions auto-align auto-align__a-center">
-  {#if isSaveEnabled}
-    <button class="save" on:click={handleSaveCreate}>Create</button>
+  {#if mode === "create"}
+    <button class="save" disabled={isSaveEnabled} on:click={handleSaveCreate}
+      >Create</button
+    >
   {/if}
 
   {#if editorObject["id"]}
