@@ -230,7 +230,6 @@ export const collectionRouter = createRouter()
           }
           filteredMembers = xorWith(identifiedMembers, members, isEqual);
         }
-        console.log(filteredMembers);
         if (filteredMembers.length) {
           await ctx.couch.access.processList({
             id,
