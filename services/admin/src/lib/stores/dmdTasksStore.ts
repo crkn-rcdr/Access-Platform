@@ -111,7 +111,7 @@ async function storeTaskItemMetadata(
       items[itemSlug].updatedInPreservationMsg = "";
 
       const prefixedSlug =
-        prefix !== "none" ? `${prefix}.${itemSlug}` : itemSlug;
+        prefix !== "none" ? `${prefix}.${itemSlug.trim()}` : itemSlug.trim(); // Trim because people frequently add extra spaces to the front of ids.
       items[itemSlug].slug = prefixedSlug;
 
       updateTask(dmdTaskId, "itemStates", items);
