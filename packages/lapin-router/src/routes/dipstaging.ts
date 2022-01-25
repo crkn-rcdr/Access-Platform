@@ -38,7 +38,7 @@ export const dipstagingRouter = createRouter()
       }
     },
   })
-  .query("listFromKeys", {
+  .mutation("listFromKeys", {
     input: z.array(Slug).parse,
     async resolve({ input, ctx }) {
       try {

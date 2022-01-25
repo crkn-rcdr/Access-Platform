@@ -147,7 +147,7 @@ This component allows the user to find packages in the dipstaging database.
     loading = true;
 
     try {
-      const response = await $session.lapin.query(
+      const response = await $session.lapin.mutation(
         "dipstaging.listFromKeys",
         slugList
       );
