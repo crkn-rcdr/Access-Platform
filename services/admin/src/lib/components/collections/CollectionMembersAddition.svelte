@@ -5,9 +5,9 @@
   import type { PagedCollection } from "@crkn-rcdr/access-data/src/access/Collection";
   import TiArrowBack from "svelte-icons/ti/TiArrowBack.svelte";
 
-  import NotificationBar from "../shared/NotificationBar.svelte";
-  import PrefixSlugSearchBox from "../access-objects/PrefixSlugSearchBox.svelte";
-  import LoadingButton from "../shared/LoadingButton.svelte";
+  import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
+  import PrefixSlugSearchBox from "$lib/components/access-objects/PrefixSlugSearchBox.svelte";
+  import LoadingButton from "$lib/components/shared/LoadingButton.svelte";
 
   /**
    * @type {PagedCollection} The Collection where the members are added to.

@@ -32,11 +32,11 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
   import { session } from "$app/stores";
   import type { ObjectListPage, PagedManifest } from "@crkn-rcdr/access-data";
   import { page as pageStore } from "$app/stores";
-  import DynamicDragAndDropList from "../shared/DynamicDragAndDropList.svelte";
-  import DynamicDragAndDropListItem from "../shared/DynamicDragAndDropListItem.svelte";
+  import DynamicDragAndDropList from "$lib/components/shared/DynamicDragAndDropList.svelte";
+  import DynamicDragAndDropListItem from "$lib/components/shared/DynamicDragAndDropListItem.svelte";
   import { showConfirmation } from "$lib/utils/confirmation";
-  import Loading from "../shared/Loading.svelte";
-  import Paginator from "../shared/Paginator.svelte";
+  import Loading from "$lib/components/shared/Loading.svelte";
+  import Paginator from "$lib/components/shared/Paginator.svelte";
 
   /**
    * @type {PagedManifest} An ObjectList containing canvases to be listed.

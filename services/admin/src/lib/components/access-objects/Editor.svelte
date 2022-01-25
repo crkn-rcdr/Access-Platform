@@ -26,7 +26,6 @@ The editor component allows for the editing of PagedAccessObjects. It will dynam
   import CollectionContentEditor from "$lib/components/collections/CollectionContentEditor.svelte";
   import SideMenuContainer from "$lib/components/shared/SideMenuContainer.svelte";
   import EditorActions from "$lib/components/access-objects/EditorActions.svelte";
-  import StatusIndicator from "$lib/components/access-objects/StatusIndicator.svelte";
   import { getStores } from "$app/stores";
   import type { Session } from "$lib/types";
   import { showConfirmation } from "$lib/utils/confirmation";

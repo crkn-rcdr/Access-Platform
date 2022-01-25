@@ -20,10 +20,10 @@ This component shows the results of a dipstaging find-package(s) request or a vi
   import type { ImportStatus, LegacyPackage } from "@crkn-rcdr/access-data";
   import Resolver from "$lib/components/access-objects/Resolver.svelte";
   import Loading from "$lib/components/shared/Loading.svelte";
-  import NotificationBar from "../shared/NotificationBar.svelte";
-  import ExpansionTile from "../shared/ExpansionTile.svelte";
+  import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
+  import ExpansionTile from "$lib/components/shared/ExpansionTile.svelte";
   import structuredClone from "@ungap/structured-clone";
-  import DipstatingImportStatus from "./DipstatingImportStatus.svelte";
+  import DipstatingImportStatus from "$lib/components/dipstaging/DipstatingImportStatus.svelte";
 
   /**
    * @type {ImportStatus[]}

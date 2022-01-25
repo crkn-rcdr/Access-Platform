@@ -19,7 +19,7 @@ Displays a dmd task in an waiting state.
   import type { WaitingDMDTask } from "@crkn-rcdr/access-data";
   import Loading from "$lib/components/shared/Loading.svelte";
   import { onDestroy } from "svelte";
-  import NotificationBar from "../shared/NotificationBar.svelte";
+  import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
 
   /**
    * @type {WaitingDMDTask} The dmdtask being displayed.

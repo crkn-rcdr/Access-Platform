@@ -18,15 +18,15 @@ Allows the user to modify the member list for a collection.
   import type { PagedCollection } from "@crkn-rcdr/access-data/src/access/Collection";
   import AutomaticResizeNumberInput from "$lib/components/shared/AutomaticResizeNumberInput.svelte";
   import TiTrash from "svelte-icons/ti/TiTrash.svelte";
-  import CollectionMembersAddition from "./CollectionMembersAddition.svelte";
+  import CollectionMembersAddition from "$lib/components/collections/CollectionMembersAddition.svelte";
   import { page as pageStore } from "$app/stores";
   import { session } from "$app/stores";
   import type { ObjectListPage, Timestamp } from "@crkn-rcdr/access-data";
-  import DynamicDragAndDropList from "../shared/DynamicDragAndDropList.svelte";
-  import DynamicDragAndDropListItem from "../shared/DynamicDragAndDropListItem.svelte";
+  import DynamicDragAndDropList from "$lib/components/shared/DynamicDragAndDropList.svelte";
+  import DynamicDragAndDropListItem from "$lib/components/shared/DynamicDragAndDropListItem.svelte";
   import { showConfirmation } from "$lib/utils/confirmation";
-  import Loading from "../shared/Loading.svelte";
-  import Paginator from "../shared/Paginator.svelte";
+  import Loading from "$lib/components/shared/Loading.svelte";
+  import Paginator from "$lib/components/shared/Paginator.svelte";
 
   export let collection: PagedCollection;
 
