@@ -545,6 +545,7 @@ button:disabled {
   color: var(--grey) !important;
   filter: none !important;
   cursor: not-allowed !important;
+  opacity: 0.5;
 }
 
 label {
