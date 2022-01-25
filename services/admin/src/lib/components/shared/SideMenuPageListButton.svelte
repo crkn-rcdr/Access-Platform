@@ -36,7 +36,7 @@ None
     transition: background 0.5s ease;
   }
   :global(.side-menu-page-list-button.active) {
-    background: var(--secondary-light);
+    background: #fff; /*--backdrop-bg*/
     color: var(--primary);
   }
 </style>
