@@ -58,8 +58,8 @@ The resolver component allows the user to enter a slug, and then a request is se
       .filter((slug) => slug.length);
 
     // Add the prefix if one is selected
-    if (prefix?.prefix !== "none") {
-      slugs = slugs.map((slug) => prefix?.prefix + slug);
+    if (prefix && prefix.prefix !== "none") {
+      slugs = slugs.map((slug) => `${prefix.prefix}.${slug}`);
     }
 
     // Strip duplicates from the array
@@ -72,6 +72,11 @@ The resolver component allows the user to enter a slug, and then a request is se
 
   $: {
     input;
+    handleSlugsChange();
+  }
+
+  $: {
+    prefix;
     handleSlugsChange();
   }
 </script>

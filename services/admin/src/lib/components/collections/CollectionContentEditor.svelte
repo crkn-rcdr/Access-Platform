@@ -490,7 +490,11 @@ Allows the user to modify the member list for a collection.
                   </div>
                 </div>
                 <div class="auto-align auto-align__column label">
-                  <a href="/object/edit/{collectionMember.id}" target="_blank">
+                  <a
+                    class="member-link"
+                    href="/object/edit/{collectionMember.id}"
+                    target="_blank"
+                  >
                     {collectionMember.slug} : {collectionMember.label?.none
                       ? collectionMember.label.none
                       : "No label set"}
@@ -528,7 +532,11 @@ Allows the user to modify the member list for a collection.
           >
             <div class="member-inner auto-align">
               <div class="auto-align auto-align__column label">
-                <a href="/object/edit/{collectionMember.id}" target="_blank">
+                <a
+                  class="member-link"
+                  href="/object/edit/{collectionMember.id}"
+                  target="_blank"
+                >
                   {collectionMember.slug} : {collectionMember.label?.none
                     ? collectionMember.label.none
                     : "No label set"}
@@ -670,5 +678,12 @@ Allows the user to modify the member list for a collection.
   }
   .delete {
     margin-bottom: 0.5em;
+  }
+  .member-link {
+    white-space: pre-wrap; /* CSS3 */
+    white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+    white-space: -pre-wrap; /* Opera 4-6 */
+    white-space: -o-pre-wrap; /* Opera 7 */
+    word-wrap: break-word; /* Internet Explorer 5.5+ */
   }
 </style>
