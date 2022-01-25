@@ -249,6 +249,7 @@ Allows the user to modify the canvas list for a manifest.
     flex: 2.5;
     min-width: 20rem;
     border-top: 1px solid rgba(100, 100, 100, 0.2);
+    border-right: 1px solid rgba(100, 100, 100, 0.2);
   }
 
   .view-wrap {
