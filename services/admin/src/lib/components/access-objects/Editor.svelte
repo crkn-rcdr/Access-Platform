@@ -252,7 +252,7 @@ The editor component allows for the editing of PagedAccessObjects. It will dynam
       <Toolbar
         slot="side-menu-header"
         title={serverObject?.["slug"]?.length
-          ? `<span style="text-transform: capitalize;">Edit ${serverObject.type}:</span> ${serverObject["slug"]}`
+          ? `<span style="text-transform: capitalize;">${serverObject.type}:</span> ${serverObject["slug"]}`
           : `<span style="text-transform: capitalize;">New ${serverObject.type}</span>`}
       >
         <div
