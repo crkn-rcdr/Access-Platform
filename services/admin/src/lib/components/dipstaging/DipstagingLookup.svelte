@@ -24,7 +24,7 @@ This component allows the user to find packages in the dipstaging database.
   import NotificationBar from "../shared/NotificationBar.svelte";
   import Datepicker from "../shared/Datepicker.svelte";
   import { onMount } from "svelte";
-  import PrefixSlugSearchbox from "../access-objects/PrefixSlugSearchbox.svelte";
+  import PrefixSlugSearchBox from "../access-objects/PrefixSlugSearchBox.svelte";
 
   /**
    * @type {ImportStatus[]}
@@ -194,7 +194,8 @@ This component allows the user to find packages in the dipstaging database.
           placeholder="Enter a list of slugs seperated by commas or new lines."
           bind:value={slugListString}
         /-->
-        <PrefixSlugSearchbox
+        <PrefixSlugSearchBox
+          label={"AIP ids"}
           on:slugs={(event) => {
             slugList = event.detail;
           }}

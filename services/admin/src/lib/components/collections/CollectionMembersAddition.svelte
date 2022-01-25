@@ -6,7 +6,7 @@
   import TiArrowBack from "svelte-icons/ti/TiArrowBack.svelte";
 
   import NotificationBar from "../shared/NotificationBar.svelte";
-  import PrefixSlugSearchbox from "../access-objects/PrefixSlugSearchbox.svelte";
+  import PrefixSlugSearchBox from "../access-objects/PrefixSlugSearchBox.svelte";
   import LoadingButton from "../shared/LoadingButton.svelte";
 
   /**
@@ -231,7 +231,7 @@
           placeholder="Enter a list of slugs seperated by commas or new lines."
           bind:value={input}
         /><br /-->
-        <PrefixSlugSearchbox
+        <PrefixSlugSearchBox
           on:slugs={(event) => {
             slugArray = event.detail;
           }}

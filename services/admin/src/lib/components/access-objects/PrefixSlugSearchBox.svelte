@@ -24,16 +24,11 @@ The resolver component allows the user to enter a slug, and then a request is se
 -->
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
-  import type { Session } from "$lib/types";
-  import { getStores } from "$app/stores";
 
   import PrefixSelector from "$lib/components/access-objects/PrefixSelector.svelte";
   import Loading from "../shared/Loading.svelte";
 
-  /**
-   * @type {Session} The session store that contains the module for sending requests to lapin.
-   */
-  const { session } = getStores<Session>();
+  export let label: string = "slugs";
 
   /**
    * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.
@@ -85,7 +80,7 @@ The resolver component allows the user to enter a slug, and then a request is se
   <PrefixSelector bind:depositor={prefix} /><br />
   <textarea
     rows="4"
-    placeholder="Enter a list of slugs seperated by commas or new lines."
+    placeholder={`Enter a list of ${label} seperated by commas or new lines.`}
     bind:value={input}
   />
   <br />
