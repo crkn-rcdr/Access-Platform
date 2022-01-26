@@ -14,6 +14,7 @@ Allows the user to modify the member list for a collection.
 *Note: `bind:` is required for changes to the object to be reflected in higher level components.*
 -->
 <script lang="ts">
+  import TiArrowShuffle from "svelte-icons/ti/TiArrowShuffle.svelte";
   import { onMount, createEventDispatcher } from "svelte";
   import type { PagedCollection } from "@crkn-rcdr/access-data/src/access/Collection";
   import AutomaticResizeNumberInput from "$lib/components/shared/AutomaticResizeNumberInput.svelte";
@@ -29,6 +30,8 @@ Allows the user to modify the member list for a collection.
   import Paginator from "$lib/components/shared/Paginator.svelte";
   import LoadingButton from "$lib/components/shared/LoadingButton.svelte";
   import DropdownMenu from "$lib/components/shared/DropdownMenu.svelte";
+  import Modal from "$lib/components/shared/Modal.svelte";
+  import PrefixSlugSearchBox from "../access-objects/PrefixSlugSearchBox.svelte";
 
   export let collection: PagedCollection;
 
@@ -75,6 +78,11 @@ Allows the user to modify the member list for a collection.
 
   let loading: boolean = false;
   let bulkLoading: boolean = false;
+  let showManyShuffleModal: boolean = false;
+  let showSingleShuffleModal: boolean = false;
+  let slugsToShuffle: string[];
+  let shuffleOption: string;
+  let shuffleToSlug: string;
 
   let list: HTMLElement;
 
@@ -310,10 +318,8 @@ Allows the user to modify the member list for a collection.
             after: previousLastItem,
             limit: size,
           });
-          //previousLastItem = members[members.length - 1].id;
           if (currPage) members = currPage.list;
           else members = [];
-          //await getMemberContext(currPage.list);
           setActiveIndex(activeMemberIndex);
           return {
             success: true,
@@ -352,12 +358,13 @@ Allows the user to modify the member list for a collection.
 
           await sendCurrentPageRequest();
 
+          /*
           const objectResponse = await $session.lapin.query(
             "accessObject.getPaged",
             collection.id
           );
           childrenCount = objectResponse.members?.count;
-          collection = objectResponse;
+          collection = objectResponse;*/
 
           state = "view";
           return {
@@ -428,7 +435,6 @@ Allows the user to modify the member list for a collection.
             }
           );
           await sendCurrentPageRequest();
-
           bulkLoading = false;
 
           if (failedUpdates?.length) {
@@ -495,6 +501,7 @@ Allows the user to modify the member list for a collection.
             <span slot="content"> Bulk Member Operations </span>
           </LoadingButton>
         </span>
+        <span on:click={() => (showManyShuffleModal = true)}>Move Many</span>
         <span on:click={handlePublishPressed}> Publish All </span>
         <span on:click={handleUnpublishPressed}> Unpublish All </span>
       </DropdownMenu>
@@ -516,6 +523,25 @@ Allows the user to modify the member list for a collection.
               on:mousedown={() => setActiveIndex(i)}
             >
               <div class="member-inner auto-align">
+                <div
+                  class="shuffle icon"
+                  on:click={() => {
+                    showSingleShuffleModal = true;
+                    slugsToShuffle = [collectionMember.slug];
+                  }}
+                >
+                  <!--DropdownMenu direction="right">
+                    <span slot="dropdown-button"-->
+                  <TiArrowShuffle />
+                  <!--/span>
+                    <span>
+                      Add before: <input />
+                    </span>
+                    <span>
+                      Add after: <input />
+                    </span>
+                  </DropdownMenu-->
+                </div>
                 <div class="actions-wrap">
                   <div class="auto-align auto-align__column">
                     <div class="action pos">
@@ -632,6 +658,81 @@ Allows the user to modify the member list for a collection.
   <Loading size="md" backgroundType="gradient" />
 {/if}
 
+<Modal bind:open={showSingleShuffleModal} title="Move Member">
+  <div slot="body">
+    <!--Enter slug(s) to move (in desired order):
+    <br />
+    <textarea value={slugsToShuffleStr}/>
+    <br /-->
+    Move {slugsToShuffle.toString()}
+    <select bind:value={shuffleOption}>
+      <option>before</option>
+      <option>after</option>
+    </select>
+    <input bind:value={shuffleToSlug} placeholder="the member with this slug" />
+    <br />
+  </div>
+  <div slot="footer">
+    <button
+      class="secondary"
+      on:click={() => {
+        showSingleShuffleModal = false;
+        slugsToShuffle = [];
+      }}
+    >
+      Cancel
+    </button>
+    <button
+      class="primary"
+      on:click={() => {
+        showSingleShuffleModal = false;
+        slugsToShuffle = [];
+      }}
+    >
+      Move Member
+    </button>
+  </div>
+</Modal>
+
+<Modal bind:open={showManyShuffleModal} title="Move Members" size="md">
+  <div slot="body">
+    Enter slug(s) to move (in desired order):
+    <br />
+    <PrefixSlugSearchBox
+      on:slugs={(event) => {
+        slugsToShuffle = event.detail;
+      }}
+    />
+    <br />
+    <select bind:value={shuffleOption}>
+      <option value="moveBefore">move before</option>
+      <option value="moveAfter">move after</option>
+    </select>
+    <input bind:value={shuffleToSlug} placeholder="the member with this slug" />
+    <br />
+  </div>
+  <div slot="footer">
+    <button
+      class="secondary"
+      on:click={() => {
+        showManyShuffleModal = false;
+        slugsToShuffle = [];
+      }}
+    >
+      Cancel
+    </button>
+    <button
+      class="primary"
+      on:click={() => {
+        showManyShuffleModal = false;
+        slugsToShuffle = [];
+      }}
+    >
+      Move Members
+    </button>
+  </div>
+</Modal>
+
 <style>
   .action {
     margin-right: var(--margin-sm);
@@ -742,5 +843,10 @@ Allows the user to modify the member list for a collection.
     padding-right: 1rem;
     margin-bottom: 1rem;
     margin-top: 1.7rem;
+  }
+  .shuffle {
+    margin-top: 0.4rem;
+    color: var(--secondary);
+    margin-right: var(--margin-sm);
   }
 </style>

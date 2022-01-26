@@ -77,6 +77,35 @@ module.exports = function (doc, req) {
           newIndex += 1;
         }
       }
+    } else if (command === "moveAfter" || command === "moveBefore") {
+      if (!Array.isArray(input) || input.length !== 2) {
+        throw new Error(
+          "`move` expects a list with a list of ids and an index"
+        );
+      }
+
+      const [ids, refMember] = input;
+
+      if (!Array.isArray(ids)) throw new Error("`move` expects a list of ids");
+
+      let refIndex = findIndex(refMember);
+      if (!Number.isInteger(refIndex) || toIndex < 0) {
+        throw new Error("invalid slug specified for `move`: " + refMember);
+      }
+
+      let newIndex = command === "moveAfter" ? refIndex + 1 : refIndex - 1;
+
+      if (newIndex < 0) newIndex = 0;
+      else if (newIndex >= doc.members.length)
+        newIndex = doc.members.length - 1;
+
+      for (const id of ids) {
+        const fromIndex = findIndex(id);
+        if (fromIndex > -1) {
+          list.splice(newIndex, 0, list.splice(fromIndex, 1)[0]);
+          newIndex += 1;
+        }
+      }
     } else if (command === "relabel") {
       if (!Array.isArray(input) || input.length !== 2) {
         throw new Error(

@@ -199,8 +199,6 @@ This component allows the user to find packages in the dipstaging database.
             slugList = event.detail;
           }}
         />
-        <br />
-        <br />
       </div>
     {:else}
       <!--label for="start">Start date:</label><br />
