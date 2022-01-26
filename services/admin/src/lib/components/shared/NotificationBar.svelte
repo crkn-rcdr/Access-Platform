@@ -22,7 +22,7 @@ A component tha tis used to highlight important messages to the user
 *Note: `message` must be non-empty to have the notification display.*
 -->
 <script lang="ts">
-  import ExpansionTile from "./ExpansionTile.svelte";
+  import ExpansionTile from "$lib/components/shared/ExpansionTile.svelte";
 
   /**
    * @type {string} The message to be displayed on the notification bar, must be a non-empty string.

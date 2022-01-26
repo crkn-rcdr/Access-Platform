@@ -16,15 +16,14 @@ This component allows the user to find packages in the dipstaging database.
 -->
 <script lang="ts">
   import { getStores } from "$app/stores";
-  import PrefixSelector from "$lib/components/access-objects/PrefixSelector.svelte";
   import ToggleButtons from "$lib/components/shared/ToggleButtons.svelte";
-  import type { Depositor, Session } from "$lib/types";
+  import type { Session } from "$lib/types";
   import type { ImportStatus } from "@crkn-rcdr/access-data";
   import LoadingButton from "$lib/components/shared/LoadingButton.svelte";
-  import NotificationBar from "../shared/NotificationBar.svelte";
-  import Datepicker from "../shared/Datepicker.svelte";
+  import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
+  import Datepicker from "$lib/components/shared/Datepicker.svelte";
   import { onMount } from "svelte";
-  import PrefixSlugSearchbox from "../access-objects/PrefixSlugSearchbox.svelte";
+  import PrefixSlugSearchBox from "$lib/components/access-objects/PrefixSlugSearchBox.svelte";
 
   /**
    * @type {ImportStatus[]}
@@ -147,7 +146,7 @@ This component allows the user to find packages in the dipstaging database.
     loading = true;
 
     try {
-      const response = await $session.lapin.query(
+      const response = await $session.lapin.mutation(
         "dipstaging.listFromKeys",
         slugList
       );
@@ -194,7 +193,8 @@ This component allows the user to find packages in the dipstaging database.
           placeholder="Enter a list of slugs seperated by commas or new lines."
           bind:value={slugListString}
         /-->
-        <PrefixSlugSearchbox
+        <PrefixSlugSearchBox
+          label={"AIP ids"}
           on:slugs={(event) => {
             slugList = event.detail;
           }}

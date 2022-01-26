@@ -358,6 +358,58 @@ export class AccessHandler extends DatabaseHandler<AccessObject> {
     return rv;
   }
 
+  async publishAllMembers(
+    id: Noid,
+    user: User
+  ): Promise<{ id: Noid; status: string }[]> {
+    const collection = await this.get(id);
+    const results: { id: Noid; status: string }[] = [];
+    if ("members" in collection && collection.members?.length) {
+      for (const m of collection.members) {
+        if (!m.id) continue;
+        try {
+          const member = await this.get(m.id);
+          if (member && !member.public) {
+            await this.publish({ id: m.id, user });
+          }
+        } catch (e) {
+          results.push({
+            id: m.id,
+            status:
+              "Request to publish failed. Does this member have metadata?",
+          });
+        }
+      }
+    }
+    return results;
+  }
+
+  async unpublishAllMembers(
+    id: Noid,
+    user: User
+  ): Promise<{ id: Noid; status: string }[]> {
+    const collection = await this.get(id);
+    const results: { id: Noid; status: string }[] = [];
+    if ("members" in collection && collection.members?.length) {
+      for (const m of collection.members) {
+        if (!m.id) continue;
+        try {
+          const member = await this.get(m.id);
+          if (member && member.public) {
+            await this.unpublish({ id: m.id, user });
+          }
+        } catch (e) {
+          results.push({
+            id: m.id,
+            status:
+              "Request to unpublish failed. Does this member have metadata?",
+          });
+        }
+      }
+    }
+    return results;
+  }
+
   async getAncestry(id: Noid): Promise<Ancestry> {
     const parentMemo = new Map<Noid, Noid[]>();
     const recordMemo = new Map<Noid, SimpleRecord>();

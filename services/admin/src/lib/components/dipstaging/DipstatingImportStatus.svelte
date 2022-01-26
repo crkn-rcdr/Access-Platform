@@ -1,6 +1,5 @@
 <script lang="ts">
   import { session } from "$app/stores";
-
   import type { ImportStatus, LegacyPackage } from "@crkn-rcdr/access-data";
   import NotificationBar from "../shared/NotificationBar.svelte";
   import XmlViewer from "../shared/XmlViewer.svelte";

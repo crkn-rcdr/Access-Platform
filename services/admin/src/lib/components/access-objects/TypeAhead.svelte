@@ -20,7 +20,6 @@ This componenet allows the user to search the backend for any access object that
   import type { Session } from "$lib/types";
   import { createEventDispatcher } from "svelte";
   import { getStores } from "$app/stores";
-  import { showConfirmation } from "$lib/utils/confirmation";
 
   /**
    * @type {string} The label for the search input.

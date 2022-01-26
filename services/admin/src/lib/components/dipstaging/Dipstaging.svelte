@@ -22,8 +22,6 @@ This component controls the rendering of the dipstaging menu (smelter) based on 
   import SideMenuPageListButton from "$lib/components/shared/SideMenuPageListButton.svelte";
   import SideMenuBody from "$lib/components/shared/SideMenuBody.svelte";
   import SideMenuPage from "$lib/components/shared/SideMenuPage.svelte";
-  import Toolbar from "../shared/Toolbar.svelte";
-
   /**
    * @type {number} The index of the page to be displayed in the list of pages in the SideMenuContainer. This is set based of of the URL in the layout.
    */
@@ -93,10 +91,10 @@ This component controls the rendering of the dipstaging menu (smelter) based on 
     text-decoration: none;
   }
   .page-wrap {
-    padding: 3rem 4rem;
+    padding: 2.5rem 4rem;
     height: 100%;
   }
-  /*:global(.dipstaging-wrap nav.sidemenu ul) {
-    margin-top: 1.1rem;
-  }*/
+  :global(.dipstaging-wrap .sidemenu) {
+    margin-top: 1.8rem !important;
+  }
 </style>

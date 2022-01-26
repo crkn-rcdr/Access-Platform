@@ -18,15 +18,17 @@ Allows the user to modify the member list for a collection.
   import type { PagedCollection } from "@crkn-rcdr/access-data/src/access/Collection";
   import AutomaticResizeNumberInput from "$lib/components/shared/AutomaticResizeNumberInput.svelte";
   import TiTrash from "svelte-icons/ti/TiTrash.svelte";
-  import CollectionMembersAddition from "./CollectionMembersAddition.svelte";
+  import CollectionMembersAddition from "$lib/components/collections/CollectionMembersAddition.svelte";
   import { page as pageStore } from "$app/stores";
   import { session } from "$app/stores";
   import type { ObjectListPage, Timestamp } from "@crkn-rcdr/access-data";
-  import DynamicDragAndDropList from "../shared/DynamicDragAndDropList.svelte";
-  import DynamicDragAndDropListItem from "../shared/DynamicDragAndDropListItem.svelte";
+  import DynamicDragAndDropList from "$lib/components/shared/DynamicDragAndDropList.svelte";
+  import DynamicDragAndDropListItem from "$lib/components/shared/DynamicDragAndDropListItem.svelte";
   import { showConfirmation } from "$lib/utils/confirmation";
-  import Loading from "../shared/Loading.svelte";
-  import Paginator from "../shared/Paginator.svelte";
+  import Loading from "$lib/components/shared/Loading.svelte";
+  import Paginator from "$lib/components/shared/Paginator.svelte";
+  import LoadingButton from "$lib/components/shared/LoadingButton.svelte";
+  import DropdownMenu from "$lib/components/shared/DropdownMenu.svelte";
 
   export let collection: PagedCollection;
 
@@ -48,7 +50,9 @@ Allows the user to modify the member list for a collection.
     label?: Record<string, string>;
     slug?: string;
     public?: Timestamp;
-  }[] = [];
+  }[];
+
+  let isMemberListEmpty = false;
 
   let positions: number[] = [];
 
@@ -70,10 +74,12 @@ Allows the user to modify the member list for a collection.
   let previousLastItem: string | null = null;
 
   let loading: boolean = false;
+  let bulkLoading: boolean = false;
 
   let list: HTMLElement;
 
   function setPositions() {
+    if (!members?.length) return;
     positions = [];
     for (let i = 0; i < members.length; i++)
       positions.push((page - 1) * size + i + 1);
@@ -82,45 +88,6 @@ Allows the user to modify the member list for a collection.
   function changeView(newState: string) {
     state = newState;
   }
-
-  /*
-  async function getMemberContext(
-    newMembers: { id?: string; label?: Record<string, string> }[]
-  ) {
-    loading = true;
-    // Shows a notification on failure
-    await showConfirmation(
-      async () => {
-        try {
-          let currentMembers = newMembers.map((members) => members.id);
-
-          const resolutions = await $session.lapin.query(
-            "collection.viewMembersContext",
-            currentMembers
-          );
-
-          documentSlug = resolutions.map((slug) => {
-            return { id: slug[0], result: slug[1].result };
-          });
-
-          return {
-            success: true,
-            details: "",
-          };
-        } catch (e) {
-          return {
-            success: false,
-            details: e.message,
-          };
-        }
-      },
-      "",
-      "Error: failed to get member information.",
-      true
-    );
-
-    loading = false;
-  }*/
 
   function setActiveIndex(index: number) {
     if (index >= collection?.members?.count)
@@ -232,9 +199,8 @@ Allows the user to modify the member list for a collection.
             page: page,
             limit: size,
           });
-          members = currPage.list;
-          console.log("members", members);
-          //await getMemberContext(members);
+          if (currPage) members = currPage.list;
+          else members = [];
           return {
             success: true,
             details: "",
@@ -345,7 +311,8 @@ Allows the user to modify the member list for a collection.
             limit: size,
           });
           //previousLastItem = members[members.length - 1].id;
-          members = currPage.list;
+          if (currPage) members = currPage.list;
+          else members = [];
           //await getMemberContext(currPage.list);
           setActiveIndex(activeMemberIndex);
           return {
@@ -409,40 +376,131 @@ Allows the user to modify the member list for a collection.
     );
   }
 
+  async function handleUnpublishPressed() {
+    bulkLoading = true;
+    await showConfirmation(
+      async () => {
+        try {
+          const failedUpdates = await $session.lapin.mutation(
+            "collection.unpublishAllMembers",
+            {
+              id: collection.id,
+              user: $session.user,
+            }
+          );
+          await sendCurrentPageRequest();
+          bulkLoading = false;
+
+          if (failedUpdates?.length) {
+            return {
+              success: false,
+              details: "Please contact the platform team for assistance.",
+            };
+          } else {
+            return {
+              success: true,
+              details: "",
+            };
+          }
+        } catch (e) {
+          bulkLoading = false;
+          return {
+            success: false,
+            details: e.message,
+          };
+        }
+      },
+      "Success: all members unpublished.",
+      "Error: failed to unpublish one or more members."
+    );
+  }
+
+  async function handlePublishPressed() {
+    bulkLoading = true;
+    await showConfirmation(
+      async () => {
+        try {
+          const failedUpdates = await $session.lapin.mutation(
+            "collection.publishAllMembers",
+            {
+              id: collection.id,
+              user: $session.user,
+            }
+          );
+          await sendCurrentPageRequest();
+
+          bulkLoading = false;
+
+          if (failedUpdates?.length) {
+            return {
+              success: false,
+              details: "Please contact the platform team for assistance.",
+            };
+          } else {
+            return {
+              success: true,
+              details: "",
+            };
+          }
+        } catch (e) {
+          bulkLoading = false;
+          return {
+            success: false,
+            details: e.message,
+          };
+        }
+      },
+      "Success: all members published.",
+      "Error: failed to publish one or more members."
+    );
+  }
+
   onMount(async () => {
     activeMemberIndex = 0;
     if ($pageStore.query.get("page")) {
       page = parseInt($pageStore.query.get("page"));
       handlePage({ detail: { page } });
     } else {
-      members = firstPage?.list;
+      if (firstPage) members = firstPage.list;
+      else members = [];
+      //getMemberContext(firstPage.list);
     }
   });
 
   $: {
-    members;
+    if (members && !loading) isMemberListEmpty = members?.length === 0;
     setPositions();
   }
 </script>
 
-{#if collection}
+{#if collection && members}
   <CollectionMembersAddition
-    showAddButton={state != "add"}
+    isCollectionEmpty={isMemberListEmpty}
     bind:destinationMember={collection}
     on:done={handleAddPressed}
     on:addClicked={() => {
       changeView("add");
       collection = collection;
-      console.log("collection", collection);
     }}
   />
-
-  <!-- I commented out the above and added the styling from the example to help me see what's going on.
-    -->
-
+  {#if members.length}
+    <span class="bulk-wrap">
+      <DropdownMenu direction="right">
+        <span slot="dropdown-button">
+          <LoadingButton
+            backgroundType="gradient"
+            buttonClass=""
+            showLoader={bulkLoading}
+          >
+            <span slot="content"> Bulk Member Operations </span>
+          </LoadingButton>
+        </span>
+        <span on:click={handlePublishPressed}> Publish All </span>
+        <span on:click={handleUnpublishPressed}> Unpublish All </span>
+      </DropdownMenu>
+    </span>
+  {/if}
   <div class="member-wrap" class:disabled={loading}>
-    <!-- loop through the array where items are added when scrolling -->
-
     {#if collection.behavior !== "unordered"}
       <DynamicDragAndDropList
         bind:container={list}
@@ -481,7 +539,11 @@ Allows the user to modify the member list for a collection.
                   </div>
                 </div>
                 <div class="auto-align auto-align__column label">
-                  <a href="/object/edit/{collectionMember.id}" target="_blank">
+                  <a
+                    class="member-link"
+                    href="/object/edit/{collectionMember.id}"
+                    target="_blank"
+                  >
                     {collectionMember.slug} : {collectionMember.label?.none
                       ? collectionMember.label.none
                       : "No label set"}
@@ -519,7 +581,11 @@ Allows the user to modify the member list for a collection.
           >
             <div class="member-inner auto-align">
               <div class="auto-align auto-align__column label">
-                <a href="/object/edit/{collectionMember.id}" target="_blank">
+                <a
+                  class="member-link"
+                  href="/object/edit/{collectionMember.id}"
+                  target="_blank"
+                >
                   {collectionMember.slug} : {collectionMember.label?.none
                     ? collectionMember.label.none
                     : "No label set"}
@@ -533,7 +599,7 @@ Allows the user to modify the member list for a collection.
                     <div class="unpublished">unpublished</div>
                   {/if}
                   <div
-                    class="action icon"
+                    class="action icon delete"
                     data-tooltip="Remove from collection"
                     data-tooltip-flow="bottom"
                     on:click={(e) => deleteMemberByIndex(e, i)}
@@ -562,6 +628,8 @@ Allows the user to modify the member list for a collection.
       on:change={handlePage}
     />
   </div>
+{:else}
+  <Loading size="md" backgroundType="gradient" />
 {/if}
 
 <style>
@@ -604,7 +672,6 @@ Allows the user to modify the member list for a collection.
   .member:hover .pos {
     display: none;
   }
-
   .member-wrap {
     display: flex;
     flex-direction: column;
@@ -631,7 +698,7 @@ Allows the user to modify the member list for a collection.
 
   .member {
     padding: 1rem;
-    min-height: 7rem;
+    min-height: 6rem;
   }
 
   .member:hover {
@@ -649,13 +716,31 @@ Allows the user to modify the member list for a collection.
   .label {
     flex: 9;
     padding-top: 0.45em;
+    padding-right: 1rem;
   }
   .published {
+    padding-top: 0.45em;
     color: var(--success);
-    margin-bottom: 0.5em;
   }
   .unpublished {
+    padding-top: 0.45em;
     color: var(--secondary);
+  }
+  .delete {
     margin-bottom: 0.5em;
+  }
+  .member-link {
+    padding-right: 1rem;
+    white-space: pre-wrap; /* CSS3 */
+    white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+    white-space: -pre-wrap; /* Opera 4-6 */
+    white-space: -o-pre-wrap; /* Opera 7 */
+    word-wrap: break-word; /* Internet Explorer 5.5+ */
+  }
+  .bulk-wrap {
+    float: right;
+    padding-right: 1rem;
+    margin-bottom: 1rem;
+    margin-top: 1.7rem;
   }
 </style>

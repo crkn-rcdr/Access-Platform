@@ -87,8 +87,7 @@ The editor actions component holds functionality that is responsible for perform
    * @returns void
    */
   function checkEnableSave() {
-    const diff = checkValidDiff(serverObject, editorObject);
-    isSaveEnabled = mode === "create" && diff;
+    isSaveEnabled = checkValidDiff(serverObject, editorObject);
   }
 
   $: {
@@ -380,8 +379,10 @@ The editor actions component holds functionality that is responsible for perform
 </script>
 
 <span class="editor-actions auto-align auto-align__a-center">
-  {#if isSaveEnabled}
-    <button class="save" on:click={handleSaveCreate}>Create</button>
+  {#if mode === "create"}
+    <button class="save" disabled={!isSaveEnabled} on:click={handleSaveCreate}
+      >Create</button
+    >
   {/if}
 
   {#if editorObject["id"]}
@@ -408,7 +409,7 @@ The editor actions component holds functionality that is responsible for perform
         : serverObject["public"]
         ? `Hide this ${serverObject["type"]} from the access platform.`
         : `Make this ${serverObject["type"]} available on the access platform.`}
-      data-tooltip-flow="bottom"
+      data-tooltip-flow="left"
     >
       {serverObject["public"] ? "Unpublish" : "Publish"}
     </button>
@@ -474,5 +475,7 @@ The editor actions component holds functionality that is responsible for perform
   }
   .reassurance {
     font-size: 1rem;
+    min-width: 16rem;
+    color: var(--secondary);
   }
 </style>

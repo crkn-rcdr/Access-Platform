@@ -30,16 +30,17 @@
   --base-bg: white;
   /* Change this to set the app bg color */
   --light-bg: #f8f8f8;
+  --light-bg-2: #f1f1f1;
   /* Change this to set the nav bg color */
   --nav-bg: #f3f3f3;
   --nav-item-bg: #f0efef;
   --nav-item-active-bg: var(--light-bg);
   /* Change this to set the toolbar colour */
-  --toolbar-bg: #ececec; /*e6e6e6;*/
+  --toolbar-bg: #f8f8f8; /*e6e6e6;*/
   /* Change this to set the tables, menus etc. colour */
   --structural-div-bg: var(--grey-light);
   /* Change this to set the side menu bg */
-  --sidemenu-bg: var(--grey-light); /*#39a27f;*/
+  --sidemenu-bg: var(--light-bg); /*#39a27f;*/
   --sidemenu-font: var(--secondary); /*light-font*/
   /* Change this to set the bg color for components that need a darker backgrop, ex: canvas viewer */
   --backdrop-bg: #ddd;
@@ -544,6 +545,7 @@ button:disabled {
   color: var(--grey) !important;
   filter: none !important;
   cursor: not-allowed !important;
+  opacity: 0.5;
 }
 
 label {

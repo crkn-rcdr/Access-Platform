@@ -15,7 +15,7 @@ none
   import type { Session } from "$lib/types";
   import FileSelector from "$lib/components/shared/FileSelector.svelte";
   import { getStores } from "$app/stores";
-  import NotificationBar from "../shared/NotificationBar.svelte";
+  import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
   import { goto } from "$app/navigation";
   import { showConfirmation } from "$lib/utils/confirmation";
   import LoadingButton from "$lib/components/shared/LoadingButton.svelte";

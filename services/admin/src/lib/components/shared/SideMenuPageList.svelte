@@ -28,10 +28,10 @@ None
 <style>
   .sidemenu {
     background: var(--sidemenu-bg);
-    filter: brightness(0.95);
+    /*filter: brightness(0.95);*/
     min-height: 100%;
     flex: 1.5;
-    padding: var(--margin-sm);
+    padding: var(--margin-sm) var(--perfect-fourth-6);
     width: fit-content;
   }
   .sidemenu ul {

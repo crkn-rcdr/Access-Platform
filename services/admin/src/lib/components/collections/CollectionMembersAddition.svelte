@@ -4,10 +4,9 @@
   import { createEventDispatcher } from "svelte";
   import type { PagedCollection } from "@crkn-rcdr/access-data/src/access/Collection";
   import TiArrowBack from "svelte-icons/ti/TiArrowBack.svelte";
-
-  import NotificationBar from "../shared/NotificationBar.svelte";
-  import PrefixSlugSearchbox from "../access-objects/PrefixSlugSearchbox.svelte";
-  import LoadingButton from "../shared/LoadingButton.svelte";
+  import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
+  import PrefixSlugSearchBox from "$lib/components/access-objects/PrefixSlugSearchBox.svelte";
+  import LoadingButton from "$lib/components/shared/LoadingButton.svelte";
 
   /**
    * @type {PagedCollection} The Collection where the members are added to.
@@ -25,23 +24,29 @@
   let addingMembers = false;
 
   /**
-   * @type {boolean} If the add button should be displayed over the list of members.
+   * @type {boolean} If the collection has members or not
    */
-  export let showAddButton = true;
+  export let isCollectionEmpty = false;
 
   /**
    * @type { string } The label for the by-slug toggle
    */
-  const LOOKUP_MEMBER_BUTTON_TEXT = "Add a member";
+  const LOOKUP_MEMBER_BUTTON_TEXT = "Add Members";
 
   /**
    * @type { boolean } If the lookup has completed run once yet.
    */
   let lookupDone: boolean = false;
+
   /**
    * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.
    */
   const dispatch = createEventDispatcher();
+
+  /**
+   * @type {boolean} If the add button should be displayed over the list of members.
+   */
+  //let showAddButton = true;
 
   /**
    * When a collection is selected from the table of search results, grab its details from the backend.
@@ -49,7 +54,6 @@
    * @returns void
    */
   function showAddClicked() {
-    showAddButton = false;
     addingMembers = true;
     resolutions = null;
     dispatch("addClicked");
@@ -138,10 +142,11 @@
 
   function handleCancelPressed() {
     addingMembers = false;
-    showAddButton = true;
+    //showAddButton = true;
     slugArray = [];
     adding = false;
     searching = false;
+    resolutions = null;
     dispatch("done");
   }
 
@@ -169,26 +174,29 @@
       selectedMembers: selectedResults,
     });
     destinationMember = destinationMember;
-
     addingMembers = false;
-    showAddButton = true;
     selectedResults = [];
     slugArray = [];
-    resolutions = {};
+    resolutions = null;
     adding = false;
+  }
+
+  $: {
+    if (isCollectionEmpty === true) addingMembers = true;
+    else addingMembers = false;
   }
 </script>
 
-<div class="member-selector-wrap add-menu">
+<div class="member-selector-wrap add-menu" class:unexpanded={!addingMembers}>
   <div
     class="move-button auto-align auto-align__full auto-align auto-align__column"
   >
-    {#if showAddButton}
+    {#if !addingMembers}
       <button class="primary lg" on:click={showAddClicked}>
         {LOOKUP_MEMBER_BUTTON_TEXT}
       </button>
     {/if}
-    {#if addingMembers}
+    {#if addingMembers && !isCollectionEmpty}
       <div class="exit-button">
         <button
           class="secondary cancel-button auto-align auto-align__a-center"
@@ -200,15 +208,20 @@
           Exit
         </button>
       </div>
+      <br />
     {/if}
   </div>
   {#if addingMembers}
     <div class="search-wrap">
-      <br />
+      {#if isCollectionEmpty}
+        <p>This collection has no members.</p>
+        <br />
+      {/if}
       <p>
         Please search for items to add to your collection, then select them if
         found.
       </p>
+      <br />
       <div>
         <!--PrefixSelector bind:depositor />
         <textarea
@@ -216,7 +229,7 @@
           placeholder="Enter a list of slugs seperated by commas or new lines."
           bind:value={input}
         /><br /-->
-        <PrefixSlugSearchbox
+        <PrefixSlugSearchBox
           on:slugs={(event) => {
             slugArray = event.detail;
           }}
@@ -302,6 +315,10 @@
     padding: var(--perfect-fourth-6);
     max-height: 100%;
     overflow-y: auto;
+  }
+  .member-selector-wrap.unexpanded {
+    display: inline-block;
+    width: fit-content;
   }
   .search-wrap {
     min-height: 100vh;

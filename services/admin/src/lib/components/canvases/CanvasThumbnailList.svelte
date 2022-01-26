@@ -32,11 +32,11 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
   import { session } from "$app/stores";
   import type { ObjectListPage, PagedManifest } from "@crkn-rcdr/access-data";
   import { page as pageStore } from "$app/stores";
-  import DynamicDragAndDropList from "../shared/DynamicDragAndDropList.svelte";
-  import DynamicDragAndDropListItem from "../shared/DynamicDragAndDropListItem.svelte";
+  import DynamicDragAndDropList from "$lib/components/shared/DynamicDragAndDropList.svelte";
+  import DynamicDragAndDropListItem from "$lib/components/shared/DynamicDragAndDropListItem.svelte";
   import { showConfirmation } from "$lib/utils/confirmation";
-  import Loading from "../shared/Loading.svelte";
-  import Paginator from "../shared/Paginator.svelte";
+  import Loading from "$lib/components/shared/Loading.svelte";
+  import Paginator from "$lib/components/shared/Paginator.svelte";
 
   /**
    * @type {PagedManifest} An ObjectList containing canvases to be listed.
@@ -61,12 +61,12 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
   /**
    * @type {
       label?: Record<string, string>;
-      id: string;
+      id?: string;
     } The list of canvases in the manifest actively in the viewport.
     */
   export let canvases: {
     label?: Record<string, string>;
-    id: string;
+    id?: string;
   }[] = [];
 
   /**
@@ -293,7 +293,9 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
             page: page,
             limit: size,
           });
-          canvases = currPage.list;
+          if (currPage) canvases = currPage.list;
+          else canvases = [];
+
           loading = false;
           return {
             success: true,
@@ -346,8 +348,8 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
             page: page,
             limit: size,
           });
-          canvases = currPage.list;
-          setActiveIndex(activeCanvasIndex);
+          if (currPage) canvases = currPage.list;
+          else canvases = [];
 
           return {
             success: true,
@@ -380,8 +382,10 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
       page = parseInt($pageStore.query.get("page"));
       handlePage({ detail: { page } });
     } else {
-      canvases = firstPage.list;
-      activeCanvas = canvases[activeCanvasIndex];
+      if (firstPage) {
+        canvases = firstPage.list;
+        activeCanvas = canvases[activeCanvasIndex];
+      } else canvases = [];
     }
   });
 
@@ -393,7 +397,7 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
 
 <div class="auto-align auto-align__full auto-align auto-align__column">
   {#if showAddButton}
-    <button class="primary lg" on:click={addClicked}>Add Canvas</button>
+    <button class="primary lg" on:click={addClicked}>Add Canvases</button>
   {/if}
 
   <div class="canvas-wrap" class:disabled={loading}>
@@ -488,7 +492,7 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
   .thumbnail {
     height: max(22vh, 15rem);
     width: 100%;
-    background-color: var(--structural-div-bg);
+    background-color: var(--light-bg-2);
     overflow: hidden;
   }
   .thumbnail:nth-child(1) {
@@ -506,7 +510,7 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
       background-color: var(--gold-light);
     }
     to {
-      background-color: var(--structural-div-bg);
+      background-color: var(--light-bg-2);
     }
   }
   .actions-wrap {

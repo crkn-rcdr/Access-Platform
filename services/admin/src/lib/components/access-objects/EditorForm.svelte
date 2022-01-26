@@ -27,7 +27,6 @@ This component displays the non content properties for an access editorObject an
   import Resolver from "$lib/components/access-objects/Resolver.svelte";
   import EditorInput from "$lib/components/access-objects/EditorInput.svelte";
   import { createEventDispatcher } from "svelte";
-  import type { Writable } from "svelte/store";
   import { showConfirmation } from "$lib/utils/confirmation";
   //import { editorObjectStore } from "$lib/stores/accessObjectEditorStore";
 
@@ -142,6 +141,7 @@ This component displays the non content properties for an access editorObject an
           <textarea
             id="label"
             name="label"
+            rows="6"
             bind:value={editorObject["label"]["none"]}
             on:keyup={() => {
               // Triggers validation msg
@@ -336,6 +336,7 @@ This component displays the non content properties for an access editorObject an
   .cache-status {
     margin-right: 1rem;
     padding: 0.5rem 0;
+    color: var(--secondary);
   }
   .cache-status tbody {
     background: none !important;

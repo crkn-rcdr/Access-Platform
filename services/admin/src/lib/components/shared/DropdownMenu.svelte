@@ -92,11 +92,13 @@ none
   .dropdown-content {
     display: none;
     position: absolute;
-    background-color: var(--backdrop-bg);
-    min-width: 160px;
+    background-color: var(--base-bg);
+    min-width: 16rem;
     filter: var(--shadow);
     z-index: 1;
+    left: 0;
     top: 100%;
+    border-radius: var(--border-radius);
   }
   :global(.dropdown-content.dropdown-content-left) {
     left: 0;
@@ -108,7 +110,7 @@ none
   /* Links inside the dropdown */
   :global(.dropdown-content > *) {
     color: var(--dark-font);
-    padding: var(--perfect-fourth-8) !important;
+    padding: var(--perfect-fourth-6) var(--perfect-fourth-4) !important;
     text-decoration: none;
     display: block;
     width: 100%;

@@ -27,8 +27,9 @@ This component shows the results of a dipstaging package view. It allows the use
   import Resolver from "$lib/components/access-objects/Resolver.svelte";
   import Loading from "$lib/components/shared/Loading.svelte";
   import structuredClone from "@ungap/structured-clone";
-  import NotificationBar from "../shared/NotificationBar.svelte";
-  import DipstatingImportStatus from "./DipstatingImportStatus.svelte";
+  import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
+  import DipstatingImportStatus from "$lib/components/dipstaging/DipstatingImportStatus.svelte";
+  import LoadingButton from "$lib/components/shared/LoadingButton.svelte";
 
   /**
    * @type {LegacyPackage[]}
@@ -98,6 +99,8 @@ This component shows the results of a dipstaging package view. It allows the use
 
   let error = "";
 
+  let running: boolean = false;
+
   /**
    * Keeps track if @param item is selected or not
    * @param item
@@ -128,6 +131,7 @@ This component shows the results of a dipstaging package view. It allows the use
    */
   async function handleRunSmelterPressed() {
     error = "";
+    running = true;
     for (const item of results) {
       if (selectedMap[item.id]) {
         try {
@@ -149,6 +153,7 @@ This component shows the results of a dipstaging package view. It allows the use
         }
       }
     }
+    running = false;
   }
 
   /**
@@ -286,13 +291,18 @@ This component shows the results of a dipstaging package view. It allows the use
     <div class="table-actions auto-align auto-align__a-center">
       <slot name="actions" />
       {#if view !== "queue"}
-        <button
-          class="primary"
-          on:click={handleRunSmelterPressed}
+        <LoadingButton
+          buttonClass="primary"
+          showLoader={running}
+          on:clicked={handleRunSmelterPressed}
           disabled={!itemsAreSelected}
         >
-          Import Selected Packages into Access
-        </button>
+          <span slot="content">
+            {running
+              ? "Importing Selected Packages into Access..."
+              : "Import Selected Packages into Access"}
+          </span>
+        </LoadingButton>
       {/if}
     </div>
     <div class="table-wrap">

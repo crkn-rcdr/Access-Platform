@@ -19,7 +19,7 @@ This component holds the functionality for editing labels of canvases.
 -->
 <script lang="ts">
   import { createEventDispatcher, tick } from "svelte";
-  import ValueSaveForm from "../shared/ValueSaveForm.svelte";
+  import ValueSaveForm from "$lib/components/shared/ValueSaveForm.svelte";
 
   /**
    * @type {string} The label to be edited for the canvas

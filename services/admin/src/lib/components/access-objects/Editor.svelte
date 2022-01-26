@@ -26,7 +26,6 @@ The editor component allows for the editing of PagedAccessObjects. It will dynam
   import CollectionContentEditor from "$lib/components/collections/CollectionContentEditor.svelte";
   import SideMenuContainer from "$lib/components/shared/SideMenuContainer.svelte";
   import EditorActions from "$lib/components/access-objects/EditorActions.svelte";
-  import StatusIndicator from "$lib/components/access-objects/StatusIndicator.svelte";
   import { getStores } from "$app/stores";
   import type { Session } from "$lib/types";
   import { showConfirmation } from "$lib/utils/confirmation";
@@ -253,8 +252,8 @@ The editor component allows for the editing of PagedAccessObjects. It will dynam
       <Toolbar
         slot="side-menu-header"
         title={serverObject?.["slug"]?.length
-          ? serverObject["slug"]
-          : `New ${serverObject.type}`}
+          ? `<span style="text-transform: capitalize;">${serverObject.type}:</span> ${serverObject["slug"]}`
+          : `<span style="text-transform: capitalize;">New ${serverObject.type}</span>`}
       >
         <div
           class="end-content auto-align auto-align__full auto-align auto-align__j-end auto-align auto-align__a-end auto-align auto-align__column"

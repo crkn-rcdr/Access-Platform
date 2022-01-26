@@ -27,7 +27,7 @@ Displays a list that when scrolls veritcally, creates and distoys children eleme
   import { createEventDispatcher, onMount } from "svelte";
   import DynamicDragAndDropList from "$lib/components/shared/DynamicDragAndDropList.svelte";
   import VirtualScroll from "svelte-virtual-scroll-list";
-  import DynamicDragAndDropListItem from "../shared/DynamicDragAndDropListItem.svelte";
+  import DynamicDragAndDropListItem from "$lib/components/shared/DynamicDragAndDropListItem.svelte";
 
   /**
    * @type {boolean} If the list is currently disabled or not
