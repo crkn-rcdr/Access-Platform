@@ -24,6 +24,7 @@ This component shows the results of a dipstaging find-package(s) request or a vi
   import ExpansionTile from "$lib/components/shared/ExpansionTile.svelte";
   import structuredClone from "@ungap/structured-clone";
   import DipstatingImportStatus from "$lib/components/dipstaging/DipstatingImportStatus.svelte";
+  import LoadingButton from "$lib/components/shared/LoadingButton.svelte";
 
   /**
    * @type {ImportStatus[]}
@@ -73,6 +74,7 @@ This component shows the results of a dipstaging find-package(s) request or a vi
 
   let items: (ImportStatus | LegacyPackage)[] = [];
 
+  let running: boolean = false;
   /**
    * Keeps track if @param item is selected or not
    * @param item
@@ -103,6 +105,7 @@ This component shows the results of a dipstaging find-package(s) request or a vi
    */
   async function handleRunSmelterPressed() {
     error = "";
+    running = true;
     for (const item of items) {
       if (selectedMap[item["id"]]) {
         try {
@@ -126,6 +129,7 @@ This component shows the results of a dipstaging find-package(s) request or a vi
         }
       }
     }
+    running = false;
   }
 
   /**
@@ -242,17 +246,20 @@ This component shows the results of a dipstaging find-package(s) request or a vi
 
 {#if !loading}
   <div class="button-wrap" class:disabled={!items}>
-    <button
-      class="primary"
-      on:click={handleRunSmelterPressed}
+    <LoadingButton
+      buttonClass="primary"
+      showLoader={running}
+      on:clicked={handleRunSmelterPressed}
       disabled={!(
         Object.keys(selectedMap).filter((key) => selectedMap[key]).length > 0
       )}
     >
-      {isSlugSearch
-        ? "Re-import Package"
-        : "Import Selected Packages into Access"}
-    </button>
+      <span slot="content">
+        {running
+          ? "Importing Selected Packages into Access..."
+          : "Import Selected Packages into Access"}
+      </span>
+    </LoadingButton>
   </div>
 
   <table class:disabled={!items}>

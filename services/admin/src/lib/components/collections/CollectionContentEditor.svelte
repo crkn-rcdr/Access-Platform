@@ -28,7 +28,7 @@ Allows the user to modify the member list for a collection.
   import Loading from "$lib/components/shared/Loading.svelte";
   import Paginator from "$lib/components/shared/Paginator.svelte";
   import LoadingButton from "$lib/components/shared/LoadingButton.svelte";
-  import DropdownMenu from "../shared/DropdownMenu.svelte";
+  import DropdownMenu from "$lib/components/shared/DropdownMenu.svelte";
 
   export let collection: PagedCollection;
 
@@ -50,7 +50,7 @@ Allows the user to modify the member list for a collection.
     label?: Record<string, string>;
     slug?: string;
     public?: Timestamp;
-  }[] = [];
+  }[];
 
   let isMemberListEmpty = false;
 
@@ -88,45 +88,6 @@ Allows the user to modify the member list for a collection.
   function changeView(newState: string) {
     state = newState;
   }
-
-  /*
-  async function getMemberContext(
-    newMembers: { id?: string; label?: Record<string, string> }[]
-  ) {
-    loading = true;
-    // Shows a notification on failure
-    await showConfirmation(
-      async () => {
-        try {
-          let currentMembers = newMembers.map((members) => members.id);
-
-          const resolutions = await $session.lapin.query(
-            "collection.viewMembersContext",
-            currentMembers
-          );
-
-          documentSlug = resolutions.map((slug) => {
-            return { id: slug[0], result: slug[1].result };
-          });
-
-          return {
-            success: true,
-            details: "",
-          };
-        } catch (e) {
-          return {
-            success: false,
-            details: e.message,
-          };
-        }
-      },
-      "",
-      "Error: failed to get member information.",
-      true
-    );
-
-    loading = false;
-  }*/
 
   function setActiveIndex(index: number) {
     if (index >= collection?.members?.count)
@@ -240,8 +201,6 @@ Allows the user to modify the member list for a collection.
           });
           if (currPage) members = currPage.list;
           else members = [];
-          console.log("members", members);
-          //await getMemberContext(members);
           return {
             success: true,
             details: "",
@@ -378,7 +337,6 @@ Allows the user to modify the member list for a collection.
       selectedMembers: string[];
     };
   }) {
-    console.log(event.detail?.selectedMembers);
     if (!event.detail?.selectedMembers) return;
     await showConfirmation(
       async () => {
@@ -503,7 +461,6 @@ Allows the user to modify the member list for a collection.
       page = parseInt($pageStore.query.get("page"));
       handlePage({ detail: { page } });
     } else {
-      console.log("firstPage", firstPage);
       if (firstPage) members = firstPage.list;
       else members = [];
       //getMemberContext(firstPage.list);
@@ -511,9 +468,8 @@ Allows the user to modify the member list for a collection.
   });
 
   $: {
-    members;
+    if (members && !loading) isMemberListEmpty = members?.length === 0;
     setPositions();
-    isMemberListEmpty = members?.length === 0;
   }
 </script>
 
@@ -525,24 +481,25 @@ Allows the user to modify the member list for a collection.
     on:addClicked={() => {
       changeView("add");
       collection = collection;
-      console.log("collection", collection);
     }}
   />
-  <span class="bulk-wrap">
-    <DropdownMenu direction="right">
-      <span slot="dropdown-button">
-        <LoadingButton
-          backgroundType="gradient"
-          buttonClass=""
-          showLoader={bulkLoading}
-        >
-          <span slot="content"> Bulk Member Operations </span>
-        </LoadingButton>
-      </span>
-      <span on:click={handlePublishPressed}> Publish All </span>
-      <span on:click={handleUnpublishPressed}> Unpublish All </span>
-    </DropdownMenu>
-  </span>
+  {#if members.length}
+    <span class="bulk-wrap">
+      <DropdownMenu direction="right">
+        <span slot="dropdown-button">
+          <LoadingButton
+            backgroundType="gradient"
+            buttonClass=""
+            showLoader={bulkLoading}
+          >
+            <span slot="content"> Bulk Member Operations </span>
+          </LoadingButton>
+        </span>
+        <span on:click={handlePublishPressed}> Publish All </span>
+        <span on:click={handleUnpublishPressed}> Unpublish All </span>
+      </DropdownMenu>
+    </span>
+  {/if}
   <div class="member-wrap" class:disabled={loading}>
     {#if collection.behavior !== "unordered"}
       <DynamicDragAndDropList
@@ -671,6 +628,8 @@ Allows the user to modify the member list for a collection.
       on:change={handlePage}
     />
   </div>
+{:else}
+  <Loading size="md" backgroundType="gradient" />
 {/if}
 
 <style>
