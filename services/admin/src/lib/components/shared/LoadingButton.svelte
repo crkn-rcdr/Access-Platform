@@ -40,6 +40,17 @@ This component is a button that shows a loading indicator when its property, sho
    * @type { boolean } If the user should be able to use the button or not
    */
   export let disabled: boolean = false;
+
+  /**
+   * The background for the loader
+   */
+  export let backgroundType:
+    | "light"
+    | "dark"
+    | "primary"
+    | "secondary"
+    | "gradient" = "light";
+
   /**
    * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.
    */
@@ -61,7 +72,7 @@ This component is a button that shows a loading indicator when its property, sho
     class:loading-button={showLoader}
   >
     {#if showLoader}
-      <Loading size="sm" />
+      <Loading size="sm" {backgroundType} />
     {/if}
     <span class="content">
       <slot name="content" />

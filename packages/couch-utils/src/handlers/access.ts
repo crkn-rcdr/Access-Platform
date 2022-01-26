@@ -363,18 +363,16 @@ export class AccessHandler extends DatabaseHandler<AccessObject> {
     user: User
   ): Promise<{ id: Noid; status: string }[]> {
     const collection = await this.get(id);
-
     const results: { id: Noid; status: string }[] = [];
-
     if ("members" in collection && collection.members?.length) {
-      console.log(collection.members);
       for (const m of collection.members) {
         if (!m.id) continue;
         try {
-          await this.publish({ id: m.id, user });
-          console.log(true, { id: m.id, user });
+          const member = await this.get(m.id);
+          if (member && !member.public) {
+            await this.publish({ id: m.id, user });
+          }
         } catch (e) {
-          console.log(false, { id: m.id, user }, e?.message);
           results.push({
             id: m.id,
             status:
@@ -383,7 +381,6 @@ export class AccessHandler extends DatabaseHandler<AccessObject> {
         }
       }
     }
-
     return results;
   }
 
@@ -391,20 +388,25 @@ export class AccessHandler extends DatabaseHandler<AccessObject> {
     id: Noid,
     user: User
   ): Promise<{ id: Noid; status: string }[]> {
-    const memberships = await this.isMemberOf(id);
-
+    const collection = await this.get(id);
     const results: { id: Noid; status: string }[] = [];
-    for (const m of memberships) {
-      try {
-        await this.unpublish({ id: m, user });
-      } catch (e) {
-        results.push({
-          id: m,
-          status: "Request to unpublish failed.",
-        });
+    if ("members" in collection && collection.members?.length) {
+      for (const m of collection.members) {
+        if (!m.id) continue;
+        try {
+          const member = await this.get(m.id);
+          if (member && member.public) {
+            await this.unpublish({ id: m.id, user });
+          }
+        } catch (e) {
+          results.push({
+            id: m.id,
+            status:
+              "Request to unpublish failed. Does this member have metadata?",
+          });
+        }
       }
     }
-
     return results;
   }
 

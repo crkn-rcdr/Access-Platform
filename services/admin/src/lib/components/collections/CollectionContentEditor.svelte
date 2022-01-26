@@ -74,8 +74,7 @@ Allows the user to modify the member list for a collection.
   let previousLastItem: string | null = null;
 
   let loading: boolean = false;
-  let publishingAllMembers: boolean = false;
-  let unpublishingAllMembers: boolean = false;
+  let bulkLoading: boolean = false;
 
   let list: HTMLElement;
 
@@ -420,6 +419,7 @@ Allows the user to modify the member list for a collection.
   }
 
   async function handleUnpublishPressed() {
+    bulkLoading = true;
     await showConfirmation(
       async () => {
         try {
@@ -431,6 +431,7 @@ Allows the user to modify the member list for a collection.
             }
           );
           await sendCurrentPageRequest();
+          bulkLoading = false;
 
           if (failedUpdates?.length) {
             return {
@@ -444,6 +445,7 @@ Allows the user to modify the member list for a collection.
             };
           }
         } catch (e) {
+          bulkLoading = false;
           return {
             success: false,
             details: e.message,
@@ -456,6 +458,7 @@ Allows the user to modify the member list for a collection.
   }
 
   async function handlePublishPressed() {
+    bulkLoading = true;
     await showConfirmation(
       async () => {
         try {
@@ -467,6 +470,8 @@ Allows the user to modify the member list for a collection.
             }
           );
           await sendCurrentPageRequest();
+
+          bulkLoading = false;
 
           if (failedUpdates?.length) {
             return {
@@ -480,6 +485,7 @@ Allows the user to modify the member list for a collection.
             };
           }
         } catch (e) {
+          bulkLoading = false;
           return {
             success: false,
             details: e.message,
@@ -524,7 +530,15 @@ Allows the user to modify the member list for a collection.
   />
   <span class="bulk-wrap">
     <DropdownMenu direction="right">
-      <button slot="dropdown-button">Bulk Member Operations</button>
+      <span slot="dropdown-button">
+        <LoadingButton
+          backgroundType="gradient"
+          buttonClass=""
+          showLoader={bulkLoading}
+        >
+          <span slot="content"> Bulk Member Operations </span>
+        </LoadingButton>
+      </span>
       <span on:click={handlePublishPressed}> Publish All </span>
       <span on:click={handleUnpublishPressed}> Unpublish All </span>
     </DropdownMenu>
