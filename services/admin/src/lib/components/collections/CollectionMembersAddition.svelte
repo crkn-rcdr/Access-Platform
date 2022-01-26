@@ -31,7 +31,7 @@
   /**
    * @type { string } The label for the by-slug toggle
    */
-  const LOOKUP_MEMBER_BUTTON_TEXT = "Add a member";
+  const LOOKUP_MEMBER_BUTTON_TEXT = "Add Members";
 
   /**
    * @type { boolean } If the lookup has completed run once yet.
@@ -174,9 +174,7 @@
       selectedMembers: selectedResults,
     });
     destinationMember = destinationMember;
-
     addingMembers = false;
-    //showAddButton = true;
     selectedResults = [];
     slugArray = [];
     resolutions = null;
@@ -189,7 +187,7 @@
   }
 </script>
 
-<div class="member-selector-wrap add-menu">
+<div class="member-selector-wrap add-menu" class:unexpanded={!addingMembers}>
   <div
     class="move-button auto-align auto-align__full auto-align auto-align__column"
   >
@@ -317,6 +315,10 @@
     padding: var(--perfect-fourth-6);
     max-height: 100%;
     overflow-y: auto;
+  }
+  .member-selector-wrap.unexpanded {
+    display: inline-block;
+    width: fit-content;
   }
   .search-wrap {
     min-height: 100vh;

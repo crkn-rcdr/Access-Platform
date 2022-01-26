@@ -14,7 +14,6 @@ import {
 import { createRouter, httpErrorToTRPC } from "../router.js";
 import { TRPCError } from "@trpc/server";
 import { LapinContext } from "../context.js";
-import { xorWith, isEqual } from "lodash-es";
 
 const PageInput = z.object({
   id: Noid,
@@ -224,11 +223,13 @@ export const collectionRouter = createRouter()
         // Do not add duplicates
         let filteredMembers: string[] = [];
         if ("members" in collection) {
-          let identifiedMembers: string[] = [];
+          let currentMembers: string[] = [];
           for (const member of collection.members) {
-            if (member.id) identifiedMembers.push(member.id);
+            if (member.id) currentMembers.push(member.id);
           }
-          filteredMembers = xorWith(identifiedMembers, members, isEqual);
+          filteredMembers = members.filter(
+            (member) => !currentMembers.includes(member)
+          );
         }
         if (filteredMembers.length) {
           await ctx.couch.access.processList({
@@ -312,6 +313,33 @@ export const collectionRouter = createRouter()
       }
     },
   })
+  .mutation("unpublishAllMembers", {
+    input: z.object({
+      id: Noid,
+      user: User,
+    }),
+    async resolve({ input, ctx }) {
+      try {
+        return await ctx.couch.access.unpublishAllMembers(input.id, input.user);
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .mutation("publishAllMembers", {
+    input: z.object({
+      id: Noid,
+      user: User,
+    }),
+    async resolve({ input, ctx }) {
+      try {
+        return await ctx.couch.access.publishAllMembers(input.id, input.user);
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+
   .query("viewMembersContext", {
     input: id.parse,
     async resolve({ input, ctx }) {

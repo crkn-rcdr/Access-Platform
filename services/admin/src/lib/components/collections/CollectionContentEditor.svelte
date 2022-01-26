@@ -27,6 +27,8 @@ Allows the user to modify the member list for a collection.
   import { showConfirmation } from "$lib/utils/confirmation";
   import Loading from "$lib/components/shared/Loading.svelte";
   import Paginator from "$lib/components/shared/Paginator.svelte";
+  import LoadingButton from "$lib/components/shared/LoadingButton.svelte";
+  import DropdownMenu from "../shared/DropdownMenu.svelte";
 
   export let collection: PagedCollection;
 
@@ -72,6 +74,8 @@ Allows the user to modify the member list for a collection.
   let previousLastItem: string | null = null;
 
   let loading: boolean = false;
+  let publishingAllMembers: boolean = false;
+  let unpublishingAllMembers: boolean = false;
 
   let list: HTMLElement;
 
@@ -375,6 +379,7 @@ Allows the user to modify the member list for a collection.
       selectedMembers: string[];
     };
   }) {
+    console.log(event.detail?.selectedMembers);
     if (!event.detail?.selectedMembers) return;
     await showConfirmation(
       async () => {
@@ -414,6 +419,78 @@ Allows the user to modify the member list for a collection.
     );
   }
 
+  async function handleUnpublishPressed() {
+    await showConfirmation(
+      async () => {
+        try {
+          const failedUpdates = await $session.lapin.mutation(
+            "collection.unpublishAllMembers",
+            {
+              id: collection.id,
+              user: $session.user,
+            }
+          );
+          await sendCurrentPageRequest();
+
+          if (failedUpdates?.length) {
+            return {
+              success: false,
+              details: "Please contact the platform team for assistance.",
+            };
+          } else {
+            return {
+              success: true,
+              details: "",
+            };
+          }
+        } catch (e) {
+          return {
+            success: false,
+            details: e.message,
+          };
+        }
+      },
+      "Success: all members unpublished.",
+      "Error: failed to unpublish one or more members."
+    );
+  }
+
+  async function handlePublishPressed() {
+    await showConfirmation(
+      async () => {
+        try {
+          const failedUpdates = await $session.lapin.mutation(
+            "collection.publishAllMembers",
+            {
+              id: collection.id,
+              user: $session.user,
+            }
+          );
+          await sendCurrentPageRequest();
+
+          if (failedUpdates?.length) {
+            return {
+              success: false,
+              details: "Please contact the platform team for assistance.",
+            };
+          } else {
+            return {
+              success: true,
+              details: "",
+            };
+          }
+        } catch (e) {
+          return {
+            success: false,
+            details: e.message,
+          };
+        }
+      },
+      "Success: all members published.",
+      "Error: failed to publish one or more members."
+    );
+  }
+
   onMount(async () => {
     activeMemberIndex = 0;
     if ($pageStore.query.get("page")) {
@@ -445,13 +522,14 @@ Allows the user to modify the member list for a collection.
       console.log("collection", collection);
     }}
   />
-
-  <!-- I commented out the above and added the styling from the example to help me see what's going on.
-    -->
-
+  <span class="bulk-wrap">
+    <DropdownMenu direction="right">
+      <button slot="dropdown-button">Bulk Member Operations</button>
+      <span on:click={handlePublishPressed}> Publish All </span>
+      <span on:click={handleUnpublishPressed}> Unpublish All </span>
+    </DropdownMenu>
+  </span>
   <div class="member-wrap" class:disabled={loading}>
-    <!-- loop through the array where items are added when scrolling -->
-
     {#if collection.behavior !== "unordered"}
       <DynamicDragAndDropList
         bind:container={list}
@@ -621,7 +699,6 @@ Allows the user to modify the member list for a collection.
   .member:hover .pos {
     display: none;
   }
-
   .member-wrap {
     display: flex;
     flex-direction: column;
@@ -680,10 +757,17 @@ Allows the user to modify the member list for a collection.
     margin-bottom: 0.5em;
   }
   .member-link {
+    padding-right: 1rem;
     white-space: pre-wrap; /* CSS3 */
     white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
     white-space: -pre-wrap; /* Opera 4-6 */
     white-space: -o-pre-wrap; /* Opera 7 */
     word-wrap: break-word; /* Internet Explorer 5.5+ */
+  }
+  .bulk-wrap {
+    float: right;
+    padding-right: 1rem;
+    margin-bottom: 1rem;
+    margin-top: 1.7rem;
   }
 </style>

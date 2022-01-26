@@ -409,7 +409,7 @@ The editor actions component holds functionality that is responsible for perform
         : serverObject["public"]
         ? `Hide this ${serverObject["type"]} from the access platform.`
         : `Make this ${serverObject["type"]} available on the access platform.`}
-      data-tooltip-flow="bottom"
+      data-tooltip-flow="left"
     >
       {serverObject["public"] ? "Unpublish" : "Publish"}
     </button>
