@@ -80,6 +80,11 @@ module.exports = function (doc, req) {
     doc["parent"] = updatedoc["parent"];
     updated = true;
   }
+  if ("noparent" in updatedoc) {
+    // Temporary: The old platform didn't really have monographs becoming series and back.
+    delete doc["parent"];
+    updated = true;
+  }
   if ("pageinfo" in updatedoc) {
     // This parameter sent as JSON encoded string
     var pageinfo = JSON.parse(updatedoc["pageinfo"]);
