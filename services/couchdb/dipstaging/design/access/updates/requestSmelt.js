@@ -24,6 +24,9 @@ module.exports = function (doc, req) {
     doc.slug = slug;
   }
 
+  // When launching new smelt, clear past OCR data processing.
+  delete doc.ocr;
+
   const now = timestamp();
   doc.smelt = { requestDate: now };
 
