@@ -29,6 +29,8 @@ The resolver component allows the user to enter a slug, and then a request is se
   import Loading from "../shared/Loading.svelte";
 
   export let label: string = "slugs";
+  export let input = "";
+  export let rows = 4;
 
   /**
    * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.
@@ -39,7 +41,6 @@ The resolver component allows the user to enter a slug, and then a request is se
     prefix: "none",
     label: "",
   };
-  let input = "";
 
   let loading = false;
   /**
@@ -84,7 +85,7 @@ The resolver component allows the user to enter a slug, and then a request is se
 <div>
   <PrefixSelector bind:depositor={prefix} /><br />
   <textarea
-    rows="4"
+    {rows}
     placeholder={`Enter a list of ${label} seperated by commas or new lines.`}
     bind:value={input}
   />

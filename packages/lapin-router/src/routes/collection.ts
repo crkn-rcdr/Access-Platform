@@ -201,7 +201,7 @@ export const collectionRouter = createRouter()
       }
     },
   })
-  .query("checkAdditions", {
+  .mutation("checkAdditions", {
     input: checkAdditions.parse,
     async resolve({ input, ctx }) {
       try {
@@ -393,7 +393,28 @@ export const collectionRouter = createRouter()
       }
     },
   })
+  .query("getMemberSlugs", {
+    input: Noid,
+    async resolve({ input, ctx }) {
+      try {
+        const collection = await ctx.couch.access.get(input);
 
+        const slugs: Slug[] = [];
+        if (isCollection(collection)) {
+          for (const member of collection.members) {
+            if ("id" in member && typeof member.id !== "undefined") {
+              const memberObj = await ctx.couch.access.get(member.id);
+              if (memberObj?.slug) slugs.push(memberObj.slug);
+            }
+          }
+        }
+
+        return slugs;
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
   .query("viewMembersContext", {
     input: id.parse,
     async resolve({ input, ctx }) {

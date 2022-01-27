@@ -64,6 +64,7 @@
   let error: string;
   let searching: boolean = false;
   let adding: boolean = false;
+  let overwrite: boolean = false;
 
   // https://github.com/sindresorhus/type-fest/blob/main/source/promise-value.d.ts
   type PromiseValue<PromiseType> = PromiseType extends PromiseLike<infer Value>

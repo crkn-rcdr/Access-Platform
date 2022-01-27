@@ -19,12 +19,9 @@ Allows the user to modify the member list for a collection.
   import type { PagedCollection } from "@crkn-rcdr/access-data/src/access/Collection";
   import AutomaticResizeNumberInput from "$lib/components/shared/AutomaticResizeNumberInput.svelte";
   import TiTrash from "svelte-icons/ti/TiTrash.svelte";
-  import CollectionMembersAddition from "$lib/components/collections/CollectionMembersAddition.svelte";
   import { page as pageStore } from "$app/stores";
   import { session } from "$app/stores";
   import type { ObjectListPage, Timestamp } from "@crkn-rcdr/access-data";
-  import DynamicDragAndDropList from "$lib/components/shared/DynamicDragAndDropList.svelte";
-  import DynamicDragAndDropListItem from "$lib/components/shared/DynamicDragAndDropListItem.svelte";
   import { showConfirmation } from "$lib/utils/confirmation";
   import Loading from "$lib/components/shared/Loading.svelte";
   import Paginator from "$lib/components/shared/Paginator.svelte";
@@ -32,6 +29,7 @@ Allows the user to modify the member list for a collection.
   import DropdownMenu from "$lib/components/shared/DropdownMenu.svelte";
   import Modal from "$lib/components/shared/Modal.svelte";
   import PrefixSlugSearchBox from "../access-objects/PrefixSlugSearchBox.svelte";
+  import CollectionMemberListManager from "./CollectionMemberListManager.svelte";
 
   export let collection: PagedCollection;
 
@@ -245,7 +243,7 @@ Allows the user to modify the member list for a collection.
             data
           );
 
-          await sendCurrentPageRequest();
+          //await sendCurrentPageRequest();
 
           return {
             success: true,
@@ -507,7 +505,7 @@ Allows the user to modify the member list for a collection.
 </script>
 
 {#if collection && members}
-  <CollectionMembersAddition
+  <!--CollectionMembersAddition
     isCollectionEmpty={isMemberListEmpty}
     bind:destinationMember={collection}
     on:done={handleAddPressed}
@@ -515,7 +513,12 @@ Allows the user to modify the member list for a collection.
       changeView("add");
       collection = collection;
     }}
+  /-->
+  <CollectionMemberListManager
+    bind:destinationCollection={collection}
+    isCollectionEmpty={isMemberListEmpty}
   />
+
   {#if members.length}
     <span class="bulk-wrap">
       <DropdownMenu direction="right">
@@ -528,7 +531,7 @@ Allows the user to modify the member list for a collection.
             <span slot="content"> Bulk Member Operations </span>
           </LoadingButton>
         </span>
-        <span on:click={() => (showManyShuffleModal = true)}>Move Many</span>
+        <!--span on:click={() => (showManyShuffleModal = true)}>Move Many</span-->
         <span on:click={handlePublishPressed}> Publish All </span>
         <span on:click={handleUnpublishPressed}> Unpublish All </span>
       </DropdownMenu>
