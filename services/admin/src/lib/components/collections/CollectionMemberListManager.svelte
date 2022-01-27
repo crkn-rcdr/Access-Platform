@@ -150,17 +150,19 @@
             </label>
           </span>
 
-          <LoadingButton
-            buttonClass="secondary"
-            on:clicked={handleFillPressed}
-            showLoader={loading}
-          >
-            <span slot="content"
-              >{loading
-                ? "Loading members listing..."
-                : "Auto-fill Current Members"}
-            </span>
-          </LoadingButton>
+          {#if action !== 1}
+            <LoadingButton
+              buttonClass="secondary"
+              on:clicked={handleFillPressed}
+              showLoader={loading}
+            >
+              <span slot="content"
+                >{loading
+                  ? "Loading members listing..."
+                  : "Auto-fill Current Members"}
+              </span>
+            </LoadingButton>
+          {/if}
         </div>
 
         {#if action === 1}
@@ -258,7 +260,7 @@
         {:else if action === 2}
           Remove Members
         {:else if action === 3}
-          Save Member List
+          Overwrite Member List
         {/if}
       </button>
     </div>
