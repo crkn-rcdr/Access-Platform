@@ -44,11 +44,14 @@
   let validating = false;
   let opened = false;
   let action = 1;
+  let addOption = 1;
+  let refSlug = "";
 
   async function handleFillPressed() {
     if (loading) return;
     loading = true;
     if (destinationCollection?.id && slugArray.length == 0) {
+      error = "";
       slugArray = await $session.lapin.query(
         "collection.getMemberSlugs",
         destinationCollection.id
@@ -159,6 +162,55 @@
             </span>
           </LoadingButton>
         </div>
+
+        {#if action === 1}
+          <br />
+          <br />
+          <div>
+            <label>
+              <input
+                type="radio"
+                bind:group={addOption}
+                name="addOption"
+                value={1}
+              />
+              At Begining of List
+            </label>
+
+            <label>
+              <input
+                type="radio"
+                bind:group={addOption}
+                name="addOption"
+                value={2}
+              />
+              At End of List
+            </label>
+
+            <label>
+              <input
+                type="radio"
+                bind:group={addOption}
+                name="addOption"
+                value={3}
+              />
+              Before Slug {#if addOption === 3}
+                <input bind:value={refSlug} /><br />{/if}
+            </label>
+
+            <label>
+              <input
+                type="radio"
+                bind:group={addOption}
+                name="addOption"
+                value={4}
+              />
+              After Slug {#if addOption === 4}
+                <input bind:value={refSlug} />{/if}
+            </label>
+          </div>
+        {/if}
+
         <br />
 
         {#if validating}
