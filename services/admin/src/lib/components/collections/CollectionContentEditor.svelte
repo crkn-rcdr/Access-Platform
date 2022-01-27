@@ -244,6 +244,9 @@ Allows the user to modify the member list for a collection.
             "collection.moveMembers",
             data
           );
+
+          await sendCurrentPageRequest();
+
           return {
             success: true,
             details: "",
@@ -257,28 +260,6 @@ Allows the user to modify the member list for a collection.
       },
       "Success: new member position saved.",
       "Error: failed to move member."
-    );
-
-    // Shows a notification on page grab failure
-    await showConfirmation(
-      async () => {
-        try {
-          // we can just grab the current page again instead, but we need to store the previous page's last item to do so.
-          await sendCurrentPageRequest();
-          return {
-            success: true,
-            details: "",
-          };
-        } catch (e) {
-          return {
-            success: false,
-            details: e.message,
-          };
-        }
-      },
-      "",
-      "Error: failed to update page. Please refresh.",
-      true
     );
   }
 
@@ -306,6 +287,9 @@ Allows the user to modify the member list for a collection.
           slugsToShuffle = [];
           shuffleToSlug = "";
           shuffleLoading = false;
+
+          await sendCurrentPageRequest();
+
           return {
             success: true,
             details: "",
@@ -325,30 +309,9 @@ Allows the user to modify the member list for a collection.
       "Success: new member position saved.",
       "Error: failed to move member."
     );
-
-    // Shows a notification on page grab failure
-    await showConfirmation(
-      async () => {
-        try {
-          // we can just grab the current page again instead, but we need to store the previous page's last item to do so.
-          await sendCurrentPageRequest();
-          return {
-            success: true,
-            details: "",
-          };
-        } catch (e) {
-          return {
-            success: false,
-            details: e.message,
-          };
-        }
-      },
-      "",
-      "Error: failed to update page. Please refresh.",
-      true
-    );
   }
 
+  /*
   async function handleItemDropped(event: {
     detail: { currentItemIndex: number; destinationItemIndex: number };
   }) {
@@ -375,7 +338,7 @@ Allows the user to modify the member list for a collection.
     }
 
     loading = false;
-  }
+  }*/
 
   async function sendCurrentPageRequest() {
     if (loading) return;
@@ -429,14 +392,6 @@ Allows the user to modify the member list for a collection.
           );
 
           await sendCurrentPageRequest();
-
-          /*
-          const objectResponse = await $session.lapin.query(
-            "accessObject.getPaged",
-            collection.id
-          );
-          childrenCount = objectResponse.members?.count;
-          collection = objectResponse;*/
 
           state = "view";
           return {
@@ -581,31 +536,31 @@ Allows the user to modify the member list for a collection.
   {/if}
   <div class="member-wrap" class:disabled={loading}>
     {#if collection.behavior !== "unordered"}
-      <DynamicDragAndDropList
+      <!--DynamicDragAndDropList
         bind:container={list}
         on:itemDropped={handleItemDropped}
-      >
-        <!--{collectionmembers.id}
+      -->
+      <!--{collectionmembers.id}
               -->
-        {#each members as collectionMember, i}
-          <DynamicDragAndDropListItem pos={i + 1}>
+      {#each members as collectionMember, i}
+        <!--DynamicDragAndDropListItem pos={i + 1}-->
+        <div
+          class="member"
+          class:active={i === activeMemberIndex}
+          on:mousedown={() => setActiveIndex(i)}
+        >
+          <div class="member-inner auto-align">
             <div
-              class="member"
-              class:active={i === activeMemberIndex}
-              on:mousedown={() => setActiveIndex(i)}
+              class="shuffle icon"
+              on:click={() => {
+                showSingleShuffleModal = true;
+                slugsToShuffle = [collectionMember.slug];
+              }}
             >
-              <div class="member-inner auto-align">
-                <div
-                  class="shuffle icon"
-                  on:click={() => {
-                    showSingleShuffleModal = true;
-                    slugsToShuffle = [collectionMember.slug];
-                  }}
-                >
-                  <!--DropdownMenu direction="right">
+              <!--DropdownMenu direction="right">
                     <span slot="dropdown-button"-->
-                  <TiArrowShuffle />
-                  <!--/span>
+              <TiArrowShuffle />
+              <!--/span>
                     <span>
                       Add before: <input />
                     </span>
@@ -613,62 +568,62 @@ Allows the user to modify the member list for a collection.
                       Add after: <input />
                     </span>
                   </DropdownMenu-->
+            </div>
+            <div class="actions-wrap">
+              <div class="auto-align auto-align__column">
+                <div class="action pos">
+                  {positions[i]}
                 </div>
-                <div class="actions-wrap">
-                  <div class="auto-align auto-align__column">
-                    <div class="action pos">
-                      {positions[i]}
-                    </div>
-                    <div
-                      class="action pos-input"
-                      on:click={(e) => {
-                        e.stopPropagation();
-                      }}
-                    >
-                      <AutomaticResizeNumberInput
-                        name="position"
-                        max={childrenCount}
-                        value={positions[i]}
-                        on:changed={(e) => {
-                          moveMemberOnInputChange(e, i);
-                        }}
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div class="auto-align auto-align__column label">
-                  <a
-                    class="member-link"
-                    href="/object/edit/{collectionMember.id}"
-                    target="_blank"
-                  >
-                    {collectionMember.slug} : {collectionMember.label?.none
-                      ? collectionMember.label.none
-                      : "No label set"}
-                  </a>
-                </div>
-                <div class="actions-wrap">
-                  <div class="auto-align auto-align__column auto-align__a-end">
-                    {#if collectionMember.public}
-                      <div class="published">published</div>
-                    {:else}
-                      <div class="unpublished">unpublished</div>
-                    {/if}
-                    <div
-                      class="action icon"
-                      data-tooltip="Remove from collection"
-                      data-tooltip-flow="bottom"
-                      on:click={(e) => deleteMemberByIndex(e, i)}
-                    >
-                      <TiTrash />
-                    </div>
-                  </div>
+                <div
+                  class="action pos-input"
+                  on:click={(e) => {
+                    e.stopPropagation();
+                  }}
+                >
+                  <AutomaticResizeNumberInput
+                    name="position"
+                    max={childrenCount}
+                    value={positions[i]}
+                    on:changed={(e) => {
+                      moveMemberOnInputChange(e, i);
+                    }}
+                  />
                 </div>
               </div>
             </div>
-          </DynamicDragAndDropListItem>
-        {/each}
-      </DynamicDragAndDropList>
+            <div class="auto-align auto-align__column label">
+              <a
+                class="member-link"
+                href="/object/edit/{collectionMember.id}"
+                target="_blank"
+              >
+                {collectionMember.slug} : {collectionMember.label?.none
+                  ? collectionMember.label.none
+                  : "No label set"}
+              </a>
+            </div>
+            <div class="actions-wrap">
+              <div class="auto-align auto-align__column auto-align__a-end">
+                {#if collectionMember.public}
+                  <div class="published">published</div>
+                {:else}
+                  <div class="unpublished">unpublished</div>
+                {/if}
+                <div
+                  class="action icon"
+                  data-tooltip="Remove from collection"
+                  data-tooltip-flow="bottom"
+                  on:click={(e) => deleteMemberByIndex(e, i)}
+                >
+                  <TiTrash />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--/DynamicDragAndDropListItem-->
+      {/each}
+      <!--/DynamicDragAndDropList-->
     {:else}
       <div bind:this={list}>
         {#each members as collectionMember, i}
@@ -864,8 +819,6 @@ Allows the user to modify the member list for a collection.
     display: none;
   }
   .member-wrap {
-    display: flex;
-    flex-direction: column;
     border-radius: 2px;
     width: 100%;
     max-width: 100%;
@@ -889,12 +842,14 @@ Allows the user to modify the member list for a collection.
 
   .member {
     padding: 1rem;
-    min-height: 6rem;
+    min-height: 13rem;
+  }
+  /*  min-height: 6rem;
   }
 
   .member:hover {
     background-color: #eeeeee;
-  }
+  }*/
   .page-info-loader {
     margin-right: var(--margin-sm);
   }
