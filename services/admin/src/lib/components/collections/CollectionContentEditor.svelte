@@ -531,7 +531,7 @@ Allows the user to modify the member list for a collection.
             <span slot="content"> Bulk Member Operations </span>
           </LoadingButton>
         </span>
-        <!--span on:click={() => (showManyShuffleModal = true)}>Move Many</span-->
+        <span on:click={() => (showManyShuffleModal = true)}>Move Many</span>
         <span on:click={handlePublishPressed}> Publish All </span>
         <span on:click={handleUnpublishPressed}> Unpublish All </span>
       </DropdownMenu>

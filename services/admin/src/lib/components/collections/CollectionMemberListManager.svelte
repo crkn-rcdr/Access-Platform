@@ -167,7 +167,6 @@
 
         {#if action === 1}
           <br />
-          <br />
           <div>
             <label>
               <input
@@ -295,6 +294,7 @@
   }
   .options-wrap {
     width: 100%;
+    min-height: 5rem;
   }
   .action-wrap {
     flex: 9;
