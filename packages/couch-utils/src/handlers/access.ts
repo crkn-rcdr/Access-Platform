@@ -36,7 +36,9 @@ export type ProcessListCommand =
   | ["add", Noid[]]
   | ["remove", Noid[]]
   | ["move", [Noid[], number]]
-  | ["relabel", [Noid, TextRecord]];
+  | ["relabel", [Noid, TextRecord]]
+  | ["moveAfter", [Noid[], Noid]]
+  | ["moveBefore", [Noid[], Noid]];
 
 /**
  * Interact with Access Objects in their database.

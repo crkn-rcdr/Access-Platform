@@ -81,8 +81,9 @@ Allows the user to modify the member list for a collection.
   let showManyShuffleModal: boolean = false;
   let showSingleShuffleModal: boolean = false;
   let slugsToShuffle: string[];
-  let shuffleOption: string;
+  let shuffleOption: "moveBefore" | "moveAfter" = "moveBefore";
   let shuffleToSlug: string;
+  let shuffleLoading: boolean = false;
 
   let list: HTMLElement;
 
@@ -281,6 +282,73 @@ Allows the user to modify the member list for a collection.
     );
   }
 
+  async function sendShuffleRequest() {
+    if (shuffleLoading) return;
+    shuffleLoading = true;
+    const data = {
+      id: collection.id,
+      members: slugsToShuffle,
+      refMember: shuffleToSlug,
+      user: $session.user,
+      operation: shuffleOption,
+    };
+
+    // Shows a notification on move failure
+    await showConfirmation(
+      async () => {
+        try {
+          const response = await $session.lapin.mutation(
+            "collection.moveBySlug",
+            data
+          );
+          showSingleShuffleModal = false;
+          showManyShuffleModal = false;
+          slugsToShuffle = [];
+          shuffleToSlug = "";
+          shuffleLoading = false;
+          return {
+            success: true,
+            details: "",
+          };
+        } catch (e) {
+          showSingleShuffleModal = false;
+          showManyShuffleModal = false;
+          slugsToShuffle = [];
+          shuffleToSlug = "";
+          shuffleLoading = false;
+          return {
+            success: false,
+            details: e.message,
+          };
+        }
+      },
+      "Success: new member position saved.",
+      "Error: failed to move member."
+    );
+
+    // Shows a notification on page grab failure
+    await showConfirmation(
+      async () => {
+        try {
+          // we can just grab the current page again instead, but we need to store the previous page's last item to do so.
+          await sendCurrentPageRequest();
+          return {
+            success: true,
+            details: "",
+          };
+        } catch (e) {
+          return {
+            success: false,
+            details: e.message,
+          };
+        }
+      },
+      "",
+      "Error: failed to update page. Please refresh.",
+      true
+    );
+  }
+
   async function handleItemDropped(event: {
     detail: { currentItemIndex: number; destinationItemIndex: number };
   }) {
@@ -310,6 +378,8 @@ Allows the user to modify the member list for a collection.
   }
 
   async function sendCurrentPageRequest() {
+    if (loading) return;
+    loading = true;
     await showConfirmation(
       async () => {
         try {
@@ -321,11 +391,13 @@ Allows the user to modify the member list for a collection.
           if (currPage) members = currPage.list;
           else members = [];
           setActiveIndex(activeMemberIndex);
+          loading = false;
           return {
             success: true,
             details: "",
           };
         } catch (e) {
+          loading = false;
           return {
             success: false,
             details: e?.message,
@@ -660,21 +732,27 @@ Allows the user to modify the member list for a collection.
 
 <Modal bind:open={showSingleShuffleModal} title="Move Member">
   <div slot="body">
-    <!--Enter slug(s) to move (in desired order):
-    <br />
-    <textarea value={slugsToShuffleStr}/>
-    <br /-->
-    Move {slugsToShuffle.toString()}
-    <select bind:value={shuffleOption}>
-      <option>before</option>
-      <option>after</option>
-    </select>
-    <input bind:value={shuffleToSlug} placeholder="the member with this slug" />
-    <br />
+    {#if !shuffleLoading}
+      Move {slugsToShuffle.toString()}
+      <select bind:value={shuffleOption}>
+        <option value="moveBefore">move before</option>
+        <option value="moveAfter">move after</option>
+      </select>
+      <input
+        bind:value={shuffleToSlug}
+        placeholder="the member with this slug"
+      />
+      <br />
+    {:else}
+      <div class="modal-loader-wrap">
+        <Loading backgroundType="gradient" />
+      </div>
+    {/if}
   </div>
   <div slot="footer">
     <button
       class="secondary"
+      disabled={shuffleLoading}
       on:click={() => {
         showSingleShuffleModal = false;
         slugsToShuffle = [];
@@ -684,10 +762,11 @@ Allows the user to modify the member list for a collection.
     </button>
     <button
       class="primary"
-      on:click={() => {
-        showSingleShuffleModal = false;
-        slugsToShuffle = [];
-      }}
+      disabled={!slugsToShuffle?.length ||
+        !shuffleOption?.length ||
+        !shuffleToSlug?.length ||
+        shuffleLoading}
+      on:click={sendShuffleRequest}
     >
       Move Member
     </button>
@@ -696,23 +775,33 @@ Allows the user to modify the member list for a collection.
 
 <Modal bind:open={showManyShuffleModal} title="Move Members" size="md">
   <div slot="body">
-    Enter slug(s) to move (in desired order):
-    <br />
-    <PrefixSlugSearchBox
-      on:slugs={(event) => {
-        slugsToShuffle = event.detail;
-      }}
-    />
-    <br />
-    <select bind:value={shuffleOption}>
-      <option value="moveBefore">move before</option>
-      <option value="moveAfter">move after</option>
-    </select>
-    <input bind:value={shuffleToSlug} placeholder="the member with this slug" />
-    <br />
+    {#if !shuffleLoading}
+      Enter slug(s) to move (in desired order):
+      <br />
+      <PrefixSlugSearchBox
+        on:slugs={(event) => {
+          slugsToShuffle = event.detail;
+        }}
+      />
+      <br />
+      <select bind:value={shuffleOption}>
+        <option value="moveBefore">move before</option>
+        <option value="moveAfter">move after</option>
+      </select>
+      <input
+        bind:value={shuffleToSlug}
+        placeholder="the member with this slug"
+      />
+      <br />
+    {:else}
+      <div class="modal-loader-wrap">
+        <Loading backgroundType="gradient" />
+      </div>
+    {/if}
   </div>
   <div slot="footer">
     <button
+      disabled={shuffleLoading}
       class="secondary"
       on:click={() => {
         showManyShuffleModal = false;
@@ -723,10 +812,11 @@ Allows the user to modify the member list for a collection.
     </button>
     <button
       class="primary"
-      on:click={() => {
-        showManyShuffleModal = false;
-        slugsToShuffle = [];
-      }}
+      disabled={!slugsToShuffle?.length ||
+        !shuffleOption?.length ||
+        !shuffleToSlug?.length ||
+        shuffleLoading}
+      on:click={sendShuffleRequest}
     >
       Move Members
     </button>

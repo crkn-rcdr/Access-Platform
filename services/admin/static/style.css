@@ -1786,3 +1786,7 @@ span.flatpickr-day.nextMonthDay.selected {
 .flatpickr-date-filter-label {
   margin-right: var(--margin-sm);
 }
+
+.modal-loader-wrap {
+  text-align: center;
+}

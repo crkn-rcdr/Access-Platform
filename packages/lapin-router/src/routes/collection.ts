@@ -294,6 +294,60 @@ export const collectionRouter = createRouter()
       }
     },
   })
+  .mutation("moveBySlug", {
+    input: z.object({
+      id: Noid,
+      members: z.array(Slug),
+      refMember: z.string(), // .positive() doesn't accept 0
+      user: User.optional(),
+      operation: z.enum(["moveBefore", "moveAfter"]),
+    }),
+    async resolve({ input: { id, members, refMember, user, operation }, ctx }) {
+      try {
+        // Get the noid for the member to use as a reference to put the members list around
+        const refMemberResolution = await ctx.couch.access.findUnique(
+          "slug",
+          refMember,
+          ["id"] as const
+        );
+
+        if (refMemberResolution.found) {
+          // Try to get the noid of the members to move around
+          const memberResolutions = await ctx.couch.access.resolveSlugs(
+            members
+          );
+          const memberIds: Noid[] = [];
+          members.forEach((slug) => {
+            const r = memberResolutions[slug];
+            let id: string | undefined = undefined;
+            if (r && r.resolved) {
+              id = r.id;
+              memberIds.push(id);
+            }
+          });
+          const refMemberId = refMemberResolution.result.id;
+
+          // Do the move
+          await ctx.couch.access.processList({
+            id,
+            command: [operation, [memberIds, refMemberId]],
+            user,
+          });
+
+          // Update every member of the collection. For now.
+          const collection = await ctx.couch.access.get(id);
+          if (isCollection(collection)) {
+            for (const member of collection.members) {
+              if ("id" in member && typeof member.id !== "undefined")
+                await ctx.couch.access.forceUpdate(member.id);
+            }
+          }
+        }
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
   .mutation("relabelMember", {
     input: z.object({
       id: Noid,

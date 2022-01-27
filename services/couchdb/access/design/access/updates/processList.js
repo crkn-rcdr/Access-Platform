@@ -18,7 +18,14 @@ module.exports = function (doc, req) {
   const processList = (list, instruction) => {
     const findIndex = (id) => list.findIndex((entry) => entry.id === id);
 
-    const itypes = ["add", "remove", "move", "relabel"];
+    const itypes = [
+      "add",
+      "remove",
+      "move",
+      "relabel",
+      "moveBefore",
+      "moveAfter",
+    ];
     if (
       !Array.isArray(instruction) ||
       instruction.length !== 2 ||
@@ -89,7 +96,7 @@ module.exports = function (doc, req) {
       if (!Array.isArray(ids)) throw new Error("`move` expects a list of ids");
 
       let refIndex = findIndex(refMember);
-      if (!Number.isInteger(refIndex) || toIndex < 0) {
+      if (!Number.isInteger(refIndex) || refIndex < 0) {
         throw new Error("invalid slug specified for `move`: " + refMember);
       }
 

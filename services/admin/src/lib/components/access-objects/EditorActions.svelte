@@ -468,9 +468,6 @@ The editor actions component holds functionality that is responsible for perform
   }
   /* .centered-modal-content, */
   .modal-loader-wrap {
-    text-align: center;
-  }
-  .modal-loader-wrap {
     height: 5rem;
   }
   .reassurance {
