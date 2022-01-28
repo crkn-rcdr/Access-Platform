@@ -64,11 +64,12 @@
   }
 
   async function validateSlugList(slugs: Slug[]) {
+    // Return if nothing changed
+    if (isEqual(slugs, slugArray)) return;
+
     let newSlugs = slugs.filter((x) => !slugArray.includes(x));
 
-    if (!newSlugs.length) return;
-
-    validating = true;
+    if (newSlugs.length) validating = true;
 
     if (timer) clearTimeout(timer);
 
@@ -76,27 +77,28 @@
       error = "";
       if (destinationCollection?.id) {
         try {
-          const resolutions = await $session.lapin.mutation(
-            "slug.lookupMany",
-            newSlugs
-          );
-
           const invalidSlugs: Slug[] = [];
+          if (newSlugs.length) {
+            const resolutions = await $session.lapin.mutation(
+              "slug.lookupMany",
+              newSlugs
+            );
 
-          for (const result of resolutions) {
-            if (result.length) {
-              const slug = result[0];
-              if (
-                result.length === 2 &&
-                result[1].found &&
-                "result" in result[1]
-              ) {
-                slugNoidMap[slug] = result[1].result.id;
-              } else invalidSlugs.push(slug);
+            for (const result of resolutions) {
+              if (result.length) {
+                const slug = result[0];
+                if (
+                  result.length === 2 &&
+                  result[1].found &&
+                  "result" in result[1]
+                ) {
+                  slugNoidMap[slug] = result[1].result.id;
+                } else invalidSlugs.push(slug);
+              }
             }
           }
 
-          slugArray = newSlugs; /*.filter((x) => !invalidSlugs.includes(x));
+          slugArray = slugs; /*.filter((x) => !invalidSlugs.includes(x));
           slugTextValue = slugArray.join("\n");*/
 
           if (invalidSlugs.length) {
@@ -273,7 +275,7 @@
                 name="addOption"
                 value={1}
               />
-              At begining of list
+              At beginning of list
             </label>
 
             <label>
