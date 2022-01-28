@@ -242,9 +242,7 @@ Allows the user to modify the member list for a collection.
             "collection.moveMembers",
             data
           );
-
           //await sendCurrentPageRequest();
-
           return {
             success: true,
             details: "",
@@ -258,6 +256,28 @@ Allows the user to modify the member list for a collection.
       },
       "Success: new member position saved.",
       "Error: failed to move member."
+    );
+
+    // Shows a notification on page grab failure
+    await showConfirmation(
+      async () => {
+        try {
+          // we can just grab the current page again instead, but we need to store the previous page's last item to do so.
+          await sendCurrentPageRequest();
+          return {
+            success: true,
+            details: "",
+          };
+        } catch (e) {
+          return {
+            success: false,
+            details: e.message,
+          };
+        }
+      },
+      "",
+      "Error: failed to update page. Please refresh.",
+      true
     );
   }
 
@@ -339,7 +359,7 @@ Allows the user to modify the member list for a collection.
   }*/
 
   async function sendCurrentPageRequest() {
-    if (loading) return;
+    //if (loading) return;
     loading = true;
     await showConfirmation(
       async () => {

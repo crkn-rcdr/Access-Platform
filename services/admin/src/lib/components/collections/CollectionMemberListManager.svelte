@@ -196,7 +196,7 @@
                 value={3}
               />
               Before Slug {#if addOption === 3}
-                <input bind:value={refSlug} /><br />{/if}
+                <input bind:value={refSlug} />{/if}
             </label>
 
             <label>
