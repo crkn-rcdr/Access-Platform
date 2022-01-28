@@ -34,6 +34,10 @@ type SlugResolutionError =
 
 export type ProcessListCommand =
   | ["add", Noid[]]
+  | ["prepend", Noid[]]
+  | ["addAfter", [Noid[], Noid]]
+  | ["addBefore", [Noid[], Noid]]
+  | ["overwrite", Noid[]]
   | ["remove", Noid[]]
   | ["move", [Noid[], number]]
   | ["relabel", [Noid, TextRecord]]

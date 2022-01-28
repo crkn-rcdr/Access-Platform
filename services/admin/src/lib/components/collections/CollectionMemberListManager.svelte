@@ -10,6 +10,7 @@
   import Toggle from "../shared/Toggle.svelte";
   import Loading from "../shared/Loading.svelte";
   import { isEqual } from "lodash-es";
+  import { showConfirmation } from "$lib/utils/confirmation";
 
   /**
    * @type {PagedCollection} The Collection where the members are added to.
@@ -45,7 +46,8 @@
   let opened = false;
   let action = 1;
   let addOption = 1;
-  let refSlug = "";
+  let beforeRefSlug = "";
+  let afterRefSlug = "";
 
   async function handleFillPressed() {
     if (loading) return;
@@ -94,7 +96,7 @@
             }
           }
 
-          /*slugArray = slugArray.filter((x) => !invalidSlugs.includes(x));
+          slugArray = newSlugs; /*.filter((x) => !invalidSlugs.includes(x));
           slugTextValue = slugArray.join("\n");*/
 
           if (invalidSlugs.length) {
@@ -112,7 +114,103 @@
     }, 5000);
   }
 
-  function handleSavePressed() {}
+  function getRequestData() {
+    /*
+     { request : "prependMembers" | "appendMembers" | "addBySlug" | , data: any }
+    */
+    let request:
+      | "prependMembers"
+      | "appendMembers"
+      | "addBySlug"
+      | "removeMembersBySlug"
+      | "overwriteMembers"
+      | null;
+    let data: any = {
+      id: destinationCollection.id,
+      members: slugArray,
+      user: $session.user, //.optional(),
+    };
+    if (action === 1) {
+      // add
+      if (addOption === 1) {
+        request = "prependMembers";
+      } else if (addOption === 2) {
+        request = "appendMembers";
+      } else if (addOption === 3) {
+        request = "addBySlug";
+        data = {
+          ...data,
+          refMember: beforeRefSlug,
+          operation: "addBefore",
+        };
+      } else if (addOption === 4) {
+        request = "addBySlug";
+        data = {
+          ...data,
+          refMember: afterRefSlug,
+          operation: "addAfter",
+        };
+      }
+    } else if (action === 2) {
+      // remove
+      request = "removeMembersBySlug";
+    } else if (action === 3) {
+      // overwrite
+      request = "overwriteMembers";
+    }
+
+    return { request, data };
+  }
+
+  async function handleSavePressed() {
+    if (!slugArray.length) return;
+    await showConfirmation(
+      async () => {
+        try {
+          const requestInfo = getRequestData();
+          console.log(requestInfo);
+          if (requestInfo.request) {
+            const response = await $session.lapin.mutation(
+              `collection.${requestInfo.request}`,
+              requestInfo.data
+            );
+            dispatch("operationComplete");
+
+            return {
+              success: true,
+              details: "",
+            };
+          } else {
+            return {
+              success: false,
+              details: "Could not make request.",
+            };
+          }
+        } catch (e) {
+          return {
+            success: false,
+            details: e.message,
+          };
+        }
+      },
+      "Success: member list updated.",
+      "Error: failed to update member list."
+    );
+  }
+
+  function handleCancelPressed() {
+    slugArray = [];
+    slugTextValue = "";
+    slugNoidMap = {};
+    error = "";
+    loading = false;
+    validating = false;
+    action = 1;
+    addOption = 1;
+    beforeRefSlug = "";
+    afterRefSlug = "";
+    opened = false;
+  }
 
   $: {
     if (isCollectionEmpty) opened = true;
@@ -175,7 +273,7 @@
                 name="addOption"
                 value={1}
               />
-              At Begining of List
+              At begining of list
             </label>
 
             <label>
@@ -185,7 +283,7 @@
                 name="addOption"
                 value={2}
               />
-              At End of List
+              At end of list
             </label>
 
             <label>
@@ -195,8 +293,8 @@
                 name="addOption"
                 value={3}
               />
-              Before Slug {#if addOption === 3}
-                <input bind:value={refSlug} />{/if}
+              Before slug {#if addOption === 3}
+                <input bind:value={beforeRefSlug} />{/if}
             </label>
 
             <label>
@@ -206,8 +304,8 @@
                 name="addOption"
                 value={4}
               />
-              After Slug {#if addOption === 4}
-                <input bind:value={refSlug} />{/if}
+              After slug {#if addOption === 4}
+                <input bind:value={afterRefSlug} />{/if}
             </label>
           </div>
         {/if}
@@ -235,13 +333,7 @@
 
     <div>
       {#if !isCollectionEmpty}
-        <button
-          class="secondary"
-          on:click={() => {
-            //showDeleteModal = false
-            opened = false;
-          }}
-        >
+        <button class="secondary" on:click={handleCancelPressed}>
           Cancel
         </button>
       {/if}

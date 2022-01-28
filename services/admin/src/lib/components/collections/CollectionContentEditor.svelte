@@ -391,43 +391,6 @@ Allows the user to modify the member list for a collection.
     );
   }
 
-  async function handleAddPressed(event: {
-    detail: {
-      selectedMembers: string[];
-    };
-  }) {
-    if (!event.detail?.selectedMembers) return;
-    await showConfirmation(
-      async () => {
-        try {
-          const response = await $session.lapin.mutation(
-            "collection.addMembers",
-            {
-              id: collection.id,
-              members: event.detail.selectedMembers,
-              user: $session.user,
-            }
-          );
-
-          await sendCurrentPageRequest();
-
-          state = "view";
-          return {
-            success: true,
-            details: "",
-          };
-        } catch (e) {
-          return {
-            success: false,
-            details: e.message,
-          };
-        }
-      },
-      "Success: member(s) added. Please see the last page.",
-      "Error: failed to add member."
-    );
-  }
-
   async function handleUnpublishPressed() {
     bulkLoading = true;
     await showConfirmation(
