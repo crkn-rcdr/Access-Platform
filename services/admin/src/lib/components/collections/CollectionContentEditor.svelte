@@ -83,7 +83,7 @@ Allows the user to modify the member list for a collection.
   let shuffleToSlug: string;
   let shuffleLoading: boolean = false;
 
-  let list: HTMLElement;
+  //let list: HTMLElement;
 
   function setPositions() {
     if (!members?.length) return;
@@ -498,6 +498,7 @@ Allows the user to modify the member list for a collection.
     }}
   /-->
   <CollectionMemberListManager
+    on:operationComplete={sendCurrentPageRequest}
     bind:destinationCollection={collection}
     isCollectionEmpty={isMemberListEmpty}
   />
@@ -611,7 +612,8 @@ Allows the user to modify the member list for a collection.
       {/each}
       <!--/DynamicDragAndDropList-->
     {:else}
-      <div bind:this={list}>
+      <div>
+        <!--bind:this={list}-->
         {#each members as collectionMember, i}
           <div
             class="member"

@@ -46,6 +46,7 @@
   let opened = false;
   let action = 1;
   let addOption = 1;
+  let saving = false;
   let beforeRefSlug = "";
   let afterRefSlug = "";
 
@@ -64,12 +65,13 @@
   }
 
   async function validateSlugList(slugs: Slug[]) {
-    // Return if nothing changed
-    if (isEqual(slugs, slugArray)) return;
+    // Return if nothing changed ~ too buggy
+    // if (isEqual(slugs, slugArray)) return;
+    // just validate new things...
+    //let newSlugs = slugs.filter((x) => !slugArray.includes(x));
+    if (!slugs.length) return;
 
-    let newSlugs = slugs.filter((x) => !slugArray.includes(x));
-
-    if (newSlugs.length) validating = true;
+    validating = true;
 
     if (timer) clearTimeout(timer);
 
@@ -78,25 +80,25 @@
       if (destinationCollection?.id) {
         try {
           const invalidSlugs: Slug[] = [];
-          if (newSlugs.length) {
-            const resolutions = await $session.lapin.mutation(
-              "slug.lookupMany",
-              newSlugs
-            );
+          //if (newSlugs.length) {
+          const resolutions = await $session.lapin.mutation(
+            "slug.lookupMany",
+            slugs
+          );
 
-            for (const result of resolutions) {
-              if (result.length) {
-                const slug = result[0];
-                if (
-                  result.length === 2 &&
-                  result[1].found &&
-                  "result" in result[1]
-                ) {
-                  slugNoidMap[slug] = result[1].result.id;
-                } else invalidSlugs.push(slug);
-              }
+          for (const result of resolutions) {
+            if (result.length) {
+              const slug = result[0];
+              if (
+                result.length === 2 &&
+                result[1].found &&
+                "result" in result[1]
+              ) {
+                slugNoidMap[slug] = result[1].result.id;
+              } else invalidSlugs.push(slug);
             }
           }
+          //}
 
           slugArray = slugs; /*.filter((x) => !invalidSlugs.includes(x));
           slugTextValue = slugArray.join("\n");*/
@@ -177,6 +179,7 @@
               requestInfo.data
             );
             dispatch("operationComplete");
+            handleCancelPressed();
 
             return {
               success: true,
@@ -211,6 +214,7 @@
     addOption = 1;
     beforeRefSlug = "";
     afterRefSlug = "";
+    saving = false;
     opened = false;
   }
 
@@ -227,136 +231,159 @@
   {/if}
 
   {#if opened}
-    <div class="edit-wrap auto-align auto-align__wrap">
-      <div class="member-editor">
-        <b>Manage Member List</b>
-        <div
-          class="options-wrap auto-align auto-align__wrap auto-align__a-center"
-        >
-          <span class="action-wrap">
-            <label>
-              <input type="radio" bind:group={action} name="action" value={1} />
-              Add
-            </label>
-
-            <label>
-              <input type="radio" bind:group={action} name="action" value={2} />
-              Remove
-            </label>
-
-            <label>
-              <input type="radio" bind:group={action} name="action" value={3} />
-              Overwrite
-            </label>
-          </span>
-
-          {#if action !== 1}
-            <LoadingButton
-              buttonClass="secondary"
-              on:clicked={handleFillPressed}
-              showLoader={loading}
-            >
-              <span slot="content"
-                >{loading
-                  ? "Loading members listing..."
-                  : "Auto-fill Current Members"}
-              </span>
-            </LoadingButton>
-          {/if}
-        </div>
-
-        {#if action === 1}
-          <br />
-          <div>
-            <label>
-              <input
-                type="radio"
-                bind:group={addOption}
-                name="addOption"
-                value={1}
-              />
-              At beginning of list
-            </label>
-
-            <label>
-              <input
-                type="radio"
-                bind:group={addOption}
-                name="addOption"
-                value={2}
-              />
-              At end of list
-            </label>
-
-            <label>
-              <input
-                type="radio"
-                bind:group={addOption}
-                name="addOption"
-                value={3}
-              />
-              Before slug {#if addOption === 3}
-                <input bind:value={beforeRefSlug} />{/if}
-            </label>
-
-            <label>
-              <input
-                type="radio"
-                bind:group={addOption}
-                name="addOption"
-                value={4}
-              />
-              After slug {#if addOption === 4}
-                <input bind:value={afterRefSlug} />{/if}
-            </label>
-          </div>
-        {/if}
-
+    {#if saving}
+      <div class="saving-loader-wrap">
+        <Loading backgroundType="gradient" />
         <br />
+        Saving changes, please wait...
+      </div>
+    {:else}
+      <div class="edit-wrap auto-align auto-align__wrap">
+        <div class="member-editor">
+          <b>Manage Member List</b>
+          <div
+            class="options-wrap auto-align auto-align__wrap auto-align__a-center"
+          >
+            <span class="action-wrap">
+              <label>
+                <input
+                  type="radio"
+                  bind:group={action}
+                  name="action"
+                  value={1}
+                />
+                Add
+              </label>
 
-        {#if validating}
-          <div>
-            <Loading size="sm" backgroundType="gradient" />
-            Validing slugs...
+              <label>
+                <input
+                  type="radio"
+                  bind:group={action}
+                  name="action"
+                  value={2}
+                />
+                Remove
+              </label>
+
+              <label>
+                <input
+                  type="radio"
+                  bind:group={action}
+                  name="action"
+                  value={3}
+                />
+                Overwrite
+              </label>
+            </span>
+
+            {#if action !== 1}
+              <LoadingButton
+                buttonClass="secondary"
+                on:clicked={handleFillPressed}
+                showLoader={loading}
+              >
+                <span slot="content"
+                  >{loading
+                    ? "Loading members listing..."
+                    : "Auto-fill Current Members"}
+                </span>
+              </LoadingButton>
+            {/if}
           </div>
-        {/if}
-        <div class:disabled={loading}>
-          <PrefixSlugSearchBox
-            rows={15}
-            input={slugTextValue}
-            on:slugs={(event) => validateSlugList(event.detail)}
-          />
+
+          {#if action === 1}
+            <br />
+            <div>
+              <label>
+                <input
+                  type="radio"
+                  bind:group={addOption}
+                  name="addOption"
+                  value={1}
+                />
+                At beginning of list
+              </label>
+
+              <label>
+                <input
+                  type="radio"
+                  bind:group={addOption}
+                  name="addOption"
+                  value={2}
+                />
+                At end of list
+              </label>
+
+              <label>
+                <input
+                  type="radio"
+                  bind:group={addOption}
+                  name="addOption"
+                  value={3}
+                />
+                Before slug {#if addOption === 3}
+                  <input bind:value={beforeRefSlug} />{/if}
+              </label>
+
+              <label>
+                <input
+                  type="radio"
+                  bind:group={addOption}
+                  name="addOption"
+                  value={4}
+                />
+                After slug {#if addOption === 4}
+                  <input bind:value={afterRefSlug} />{/if}
+              </label>
+            </div>
+          {/if}
+
+          <br />
+
+          {#if validating}
+            <div>
+              <Loading size="sm" backgroundType="gradient" />
+              Validing slugs...
+            </div>
+          {/if}
+          <div class:disabled={loading}>
+            <PrefixSlugSearchBox
+              rows={15}
+              input={slugTextValue}
+              on:slugs={(event) => validateSlugList(event.detail)}
+            />
+          </div>
+        </div>
+        <div class="member-errors">
+          <NotificationBar status="fail" message={error} />
         </div>
       </div>
-      <div class="member-errors">
-        <NotificationBar status="fail" message={error} />
-      </div>
-    </div>
 
-    <div>
-      {#if !isCollectionEmpty}
-        <button class="secondary" on:click={handleCancelPressed}>
-          Cancel
-        </button>
-      {/if}
-      <button
-        disabled={loading ||
-          validating ||
-          error.length !== 0 ||
-          slugArray.length === 0}
-        class:save={action === 1}
-        class:danger={action !== 1}
-        on:click={handleSavePressed}
-      >
-        {#if action === 1}
-          Add Members
-        {:else if action === 2}
-          Remove Members
-        {:else if action === 3}
-          Overwrite Member List
+      <div>
+        {#if !isCollectionEmpty}
+          <button class="secondary" on:click={handleCancelPressed}>
+            Cancel
+          </button>
         {/if}
-      </button>
-    </div>
+        <button
+          disabled={loading ||
+            validating ||
+            error.length !== 0 ||
+            slugArray.length === 0}
+          class:save={action === 1}
+          class:danger={action !== 1}
+          on:click={handleSavePressed}
+        >
+          {#if action === 1}
+            Add Members
+          {:else if action === 2}
+            Remove Members
+          {:else if action === 3}
+            Overwrite Member List
+          {/if}
+        </button>
+      </div>
+    {/if}
   {/if}
 </div>
 
@@ -393,5 +420,8 @@
   .action-wrap {
     flex: 9;
     width: 100%;
+  }
+  .saving-loader-wrap {
+    text-align: center;
   }
 </style>
