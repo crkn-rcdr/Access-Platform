@@ -100,7 +100,7 @@ module.exports = function (doc, req) {
         throw new Error("invalid slug specified for `move`: " + refMember);
       }
 
-      let newIndex = command === "moveAfter" ? refIndex + 1 : refIndex - 1;
+      let newIndex = command === "moveAfter" ? refIndex : refIndex - 1;
 
       if (newIndex < 0) newIndex = 0;
       else if (newIndex >= doc.members.length)
