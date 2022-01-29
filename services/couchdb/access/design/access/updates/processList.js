@@ -87,7 +87,7 @@ module.exports = function (doc, req) {
       let index = command === "addAfter" ? refIndex + 1 : refIndex - 1;
 
       if (index < 0) index = 0;
-      else if (index >= doc.members.length) index = doc.members.length - 1;
+      else if (index > doc.members.length) index = doc.members.length;
 
       let newMembers = ids.map((id) => {
         return { id };
