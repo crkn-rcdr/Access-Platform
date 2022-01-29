@@ -167,6 +167,8 @@
   }
 
   async function handleSavePressed() {
+    if (saving) return;
+    saving = true;
     if (!slugArray.length) return;
     await showConfirmation(
       async () => {
