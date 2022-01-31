@@ -92,6 +92,9 @@ module.exports = function (doc, req) {
       let newMembers = ids.map((id) => {
         return { id };
       });
+
+      if (command === "addBefore") newMembers.reverse();
+
       list.splice(index, 0, ...newMembers);
     } else if (command === "overwrite") {
       if (!Array.isArray(input)) {
