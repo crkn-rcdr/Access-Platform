@@ -61,13 +61,14 @@ module.exports = function (doc, req) {
         throw new Error("`prepend` expects a list of ids");
       }
 
-      input.forEach((id) => {
+      for (let i = input.length - 1; i >= 0; i--) {
+        const id = input[i];
         const entry = { id: id };
         if (doc.type === "manifest") {
           entry.label = { none: "Image " + (list.length + 1) };
         }
         list.unshift(entry);
-      });
+      }
     } else if (command === "addAfter" || command === "addBefore") {
       if (!Array.isArray(input) || input.length !== 2) {
         throw new Error(
@@ -92,8 +93,6 @@ module.exports = function (doc, req) {
       let newMembers = ids.map((id) => {
         return { id };
       });
-
-      if (command === "addBefore") newMembers.reverse();
 
       list.splice(index, 0, ...newMembers);
     } else if (command === "overwrite") {
