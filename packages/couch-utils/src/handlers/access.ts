@@ -247,27 +247,31 @@ export class AccessHandler extends DatabaseHandler<AccessObject> {
     });
   }
 
-  async unassignSlug(args: { id: Noid; user: User }): Promise<void> {
-    const { id, user } = args;
-    const collections = await this.isMemberOf(id);
+  /**
+   * Forces an update on all members of a Collection.
+   * @returns void
+   */
+  async bulkForceUpdateAllMembers(id: string): Promise<void> {
+    // Update all other members
+    const collection = await this.get(id);
+    if ("members" in collection) {
+      const memberIds: string[] = [];
+      for (const member of collection.members) {
+        if ("id" in member && typeof member.id !== "undefined")
+          memberIds.push(member.id);
+      }
 
-    for (const collection of collections) {
-      await this.removeMember({ id: collection, member: id, user });
+      // Don't hold up the response but force update to these new members
+      this.bulkForceUpdate(memberIds).then((res: any) => {
+        console.log("Forced Update Members: ", res);
+      });
     }
-
-    await this.update({
-      ddoc: "access",
-      name: "unassignSlug",
-      docId: id,
-      body: user,
-    });
   }
 
   /**
    * Creates a new Collection.
    * @returns The created Collection.
    */
-
   async createCollection(args: {
     id: Noid;
     user: User;
