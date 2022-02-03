@@ -53,6 +53,7 @@ This component displays a wizard-like view used on the smelter and dmd pages.
     min-height: 52rem;
     border-radius: var(--border-radius);
     padding: var(--perfect-fourth-4);
+    position: relative;
   }
   p {
     color: var(--secondary);
