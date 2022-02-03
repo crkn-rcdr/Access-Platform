@@ -15,6 +15,7 @@ This component displays the non content properties for an access editorObject an
 *Note: `bind:` is required for changes to the editorObject to be reflected in higher level components.*
 -->
 <script lang="ts">
+  import TiWarning from "svelte-icons/ti/TiWarning.svelte";
   import { getStores } from "$app/stores";
   import type { Session } from "$lib/types";
   import type {
@@ -75,7 +76,7 @@ This component displays the non content properties for an access editorObject an
           });
 
           membership = membership.filter(
-            (record) => record.id === collectionID
+            (record) => record.id !== collectionID
           );
           return {
             success: true,
@@ -176,30 +177,50 @@ This component displays the non content properties for an access editorObject an
         </select><br /><br />
       {/if}
 
-      {#if membership?.length > 0}
-        <p>
-          This {editorObject["type"]} is a member of the following collections:
-        </p>
-        <ul>
-          {#each membership as coll}
-            <li>
-              <a target="_blank" href="/object/edit/{coll.id}">
-                {coll.label["none"]
-                  ? `${coll.label["none"]} (${coll.slug})`
-                  : `Unlabeled collection (${coll.slug}) Warning! This collection does not have a label. Click here to open it in the editor and set a label.`}
-              </a>
-              <button
-                class="sm danger"
-                on:click={() => removeMembership(coll.id)}>Remove</button
+      <table>
+        <thead>
+          <th colspan={4}>Membership</th>
+        </thead>
+        <tbody>
+          {#if membership?.length > 0}
+            {#each membership as coll}
+              <tr>
+                <td colspan={3}>
+                  <a
+                    target="_blank"
+                    href="/object/edit/{coll.id}"
+                    class="auto-align auto-align__a-center"
+                  >
+                    {coll.slug}
+                    {#if coll.label["none"]}
+                      : {coll.label["none"]}
+                    {:else}
+                      <span
+                        class="icon not-success"
+                        data-tooltip={`Warning! This collection does not have a label. Click here to open it in the editor and set a label.`}
+                      >
+                        <TiWarning />
+                      </span>
+                    {/if}
+                  </a>
+                </td>
+                <td class="remove-button">
+                  <button
+                    class="sm danger"
+                    on:click={() => removeMembership(coll.id)}>Remove</button
+                  >
+                </td>
+              </tr>
+            {/each}
+          {:else}
+            <tr>
+              <td colspan={4}
+                >This {editorObject.type} is not a member of any collections.</td
               >
-            </li>
-          {/each}
-        </ul>
-      {:else}
-        <br />
-        <p>Membership</p>
-        <p>This {editorObject.type} is not a member of any collections.</p>
-      {/if}
+            </tr>
+          {/if}
+        </tbody>
+      </table>
 
       <!--Fixtures don't have this yet, causes save to be enabled on load-->
       <!--span>
@@ -345,7 +366,10 @@ This component displays the non content properties for an access editorObject an
   textarea {
     width: 100%;
   }
-  li button {
-    margin-left: 0.5ch;
+  .not-success.icon {
+    color: var(--danger);
+  }
+  .remove-button {
+    text-align: right;
   }
 </style>
