@@ -191,10 +191,10 @@ This component displays the non content properties for an access editorObject an
                     href="/object/edit/{coll.id}"
                     class="auto-align auto-align__a-center"
                   >
-                    {coll.slug}
                     {#if coll.label["none"]}
-                      : {coll.label["none"]}
+                      {coll.slug}: {coll.label["none"]}
                     {:else}
+                      {coll.slug}
                       <span
                         class="icon not-success"
                         data-tooltip={`Warning! This collection does not have a label. Click here to open it in the editor and set a label.`}
@@ -368,6 +368,7 @@ This component displays the non content properties for an access editorObject an
   }
   .not-success.icon {
     color: var(--danger);
+    margin-left: 1rem;
   }
   .remove-button {
     text-align: right;
