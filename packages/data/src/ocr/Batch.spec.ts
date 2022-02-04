@@ -29,7 +29,8 @@ const { isValid: isValidExportFailed } = tester(ExportFailedOcrBatch);
 const { isValid: isValidExportSucceeded } = tester(ExportSucceededOcrBatch);
 
 const goodExportWaiting: ExportWaitingOcrBatch = {
-  id: "waiting-for-processing",
+  id: "123",
+  name: "waiting-for-processing",
   priority: 1,
   canvases: ["69429/c0cj87k0gq3s"],
   staff: {
@@ -49,7 +50,7 @@ test(
 
 const goodExportFailed: ExportFailedOcrBatch = {
   ...goodExportWaiting,
-  id: "processing-failed",
+  name: "processing-failed",
   exportProcess: {
     requestDate: then,
     succeeded: false,
@@ -70,7 +71,7 @@ test(
 
 const goodExportSucceeded: ExportSucceededOcrBatch = {
   ...goodExportWaiting,
-  id: "processing-succeeded",
+  name: "processing-succeeded",
   exportProcess: {
     requestDate: then,
     processDate: now,
@@ -91,7 +92,7 @@ test(
 
 const goodExportSucceededNoMessage: ExportSucceededOcrBatch = {
   ...goodExportWaiting,
-  id: "processing-succeeded",
+  name: "processing-succeeded",
   exportProcess: {
     requestDate: then,
     processDate: now,
@@ -111,7 +112,7 @@ test(
 
 const goodImportWaiting: ImportWaitingOcrBatch = {
   ...goodExportSucceeded,
-  id: "waiting-for-processing",
+  name: "waiting-for-processing",
   staff: {
     by: USER,
     date: now,
@@ -134,7 +135,7 @@ test(
 
 const goodImportFailed: ImportFailedOcrBatch = {
   ...goodImportWaiting,
-  id: "processing-failed",
+  name: "processing-failed",
   exportProcess: {
     requestDate: then,
     processDate: now,
@@ -160,7 +161,7 @@ test(
 
 const goodImportSucceeded: ImportSucceededOcrBatch = {
   ...goodImportWaiting,
-  id: "processing-succeeded",
+  name: "processing-succeeded",
   exportProcess: {
     requestDate: then,
     processDate: now,
@@ -186,7 +187,7 @@ test(
 
 const goodImportSucceededNoMessage: ImportSucceededOcrBatch = {
   ...goodImportWaiting,
-  id: "processing-succeeded",
+  name: "processing-succeeded",
   exportProcess: {
     requestDate: then,
     processDate: now,

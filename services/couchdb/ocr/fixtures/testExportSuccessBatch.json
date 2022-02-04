@@ -1,5 +1,6 @@
 {
   "_id": "testExportSuccessBatch",
+  "name": "testExportSuccessBatch",
   "canvases": ["69429/c0cj87k0gq3s"],
   "priority": 5,
   "staff": {

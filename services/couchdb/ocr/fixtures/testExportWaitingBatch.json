@@ -1,5 +1,6 @@
 {
-  "_id": "testExportFailBatch",
+  "_id": "testExportWaitingBatch",
+  "name": "testExportWaitingBatch",
   "canvases": ["69429/c0cj87k0gq3s"],
   "priority": 4,
   "staff": {

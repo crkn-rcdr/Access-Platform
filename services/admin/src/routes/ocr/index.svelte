@@ -5,19 +5,93 @@
    */
   import type { Load } from "@sveltejs/kit";
   import type { RootLoadOutput } from "$lib/types";
-  import type { OcrBatch } from "@crkn-rcdr/access-data";
+  import {
+    ExportFailedOcrBatch,
+    ExportSucceededOcrBatch,
+    ExportWaitingOcrBatch,
+    ImportFailedOcrBatch,
+    ImportSucceededOcrBatch,
+    ImportWaitingOcrBatch,
+    OcrBatch,
+  } from "@crkn-rcdr/access-data";
 
   export const load: Load<RootLoadOutput> = async ({ page, context }) => {
     try {
-      const batchList = await context.lapin.query("ocr.list");
+      let batchList = await context.lapin.query("ocr.list");
 
-      const gert = await context.lapin.query("ocr.get", "testBaseBatch");
-      console.log(gert);
+      const base: OcrBatch[] = [];
+      const exportWaiting: ExportWaitingOcrBatch[] = [];
+      const exportDone: (ExportSucceededOcrBatch | ExportFailedOcrBatch)[] = [];
+      const importWaiting: ImportWaitingOcrBatch[] = [];
+      const importDone: (ImportSucceededOcrBatch | ImportFailedOcrBatch)[] = [];
+
+      for (const batch of batchList) {
+        console.log(batch);
+        if (ImportSucceededOcrBatch.safeParse(batch).success) {
+          importDone.push(batch as ImportSucceededOcrBatch);
+          console.log("1");
+        } else if (ImportFailedOcrBatch.safeParse(batch).success) {
+          importDone.push(batch as ImportFailedOcrBatch);
+          console.log("2");
+        } else if (ImportWaitingOcrBatch.safeParse(batch).success) {
+          importWaiting.push(batch as ImportWaitingOcrBatch);
+          console.log("3");
+        } else if (ExportSucceededOcrBatch.safeParse(batch).success) {
+          exportDone.push(batch as ExportSucceededOcrBatch);
+          console.log("4");
+        } else if (ExportFailedOcrBatch.safeParse(batch).success) {
+          exportDone.push(batch as ExportFailedOcrBatch);
+          console.log("5");
+        } else if (ExportWaitingOcrBatch.safeParse(batch).success) {
+          exportWaiting.push(batch as ExportWaitingOcrBatch);
+          console.log("6");
+        } else {
+          base.push(batch);
+          console.log("7");
+        }
+      }
 
       return {
         props: {
-          batchList,
-          error: "",
+          base,
+          exportWaiting: exportWaiting.sort((a, b) => {
+            if (a.exportProcess.requestDate > b.exportProcess.requestDate)
+              return 1;
+            else if (a.exportProcess.requestDate < b.exportProcess.requestDate)
+              return -1;
+            return 0;
+          }),
+          exportDone: exportDone.sort((a, b) => {
+            if (
+              "processDate" in a.exportProcess &&
+              "processDate" in b.exportProcess
+            ) {
+              if (a.exportProcess.processDate > b.exportProcess.processDate)
+                return 1;
+              if (a.exportProcess.processDate < b.exportProcess.processDate)
+                return -1;
+            }
+            return 0;
+          }),
+          importWaiting: importWaiting.sort((a, b) => {
+            if (a.importProcess.requestDate > b.importProcess.requestDate)
+              return 1;
+            else if (a.importProcess.requestDate < b.importProcess.requestDate)
+              return -1;
+            return 0;
+          }),
+          importDone: importDone.sort((a, b) => {
+            if (
+              "processDate" in a.importProcess &&
+              "processDate" in b.importProcess
+            ) {
+              if (a.importProcess.processDate > b.importProcess.processDate)
+                return 1;
+              if (a.importProcess.processDate < b.importProcess.processDate)
+                return -1;
+            }
+            return 0;
+          }),
         },
       };
     } catch (e) {
@@ -33,7 +107,13 @@
 
 <script lang="ts">
   // script
-  export let batchList: OcrBatch[];
+  export let base: OcrBatch[] = [];
+  export let exportWaiting: ExportWaitingOcrBatch[] = [];
+  export let exportDone: (ExportSucceededOcrBatch | ExportFailedOcrBatch)[] =
+    [];
+  export let importWaiting: ImportWaitingOcrBatch[] = [];
+  export let importDone: (ImportSucceededOcrBatch | ImportFailedOcrBatch)[] =
+    [];
 </script>
 
 <br />
@@ -44,27 +124,52 @@
     <button class="create-button primary">Create New OCR Batch</button>
   </div>
   <br />
-
-  {#if batchList}
-    {JSON.stringify(batchList)}
-  {:else}
-    no
-  {/if}
-  <!--
-    export queue<br />
-    exported<br />
-    import queue<br />
-    imported<br />-->
   <table>
     <thead>
       <th> Name </th>
+      <th> # Canvases </th>
       <th> Status </th>
     </thead>
     <tbody>
-      <tr>
-        <td> onetwothree </td>
-        <td> Success </td>
-      </tr>
+      {#each base as batch}
+        <tr>
+          <td> {batch.name} </td>
+          <td> {batch.canvases.length} </td>
+          <td> N/A </td>
+        </tr>
+      {/each}
+
+      {#each exportWaiting as batch}
+        <tr>
+          <td> {batch.name} </td>
+          <td> {batch.canvases.length} </td>
+          <td> exporting... </td>
+        </tr>
+      {/each}
+
+      {#each exportDone as batch}
+        <tr>
+          <td> {batch.name} </td>
+          <td> {batch.canvases.length} </td>
+          <td> button if success or if fail </td>
+        </tr>
+      {/each}
+
+      {#each importWaiting as batch}
+        <tr>
+          <td> {batch.name} </td>
+          <td> {batch.canvases.length} </td>
+          <td> importing... </td>
+        </tr>
+      {/each}
+
+      {#each importDone as batch}
+        <tr>
+          <td> {batch.name} </td>
+          <td> {batch.canvases.length} </td>
+          <td> success or not </td>
+        </tr>
+      {/each}
     </tbody>
   </table>
 </div>

@@ -416,6 +416,7 @@ export class DatabaseHandler<T extends Document> {
       fieldSet.delete("id");
       fieldSet.add("_id");
     }
+    if (!fields) hasId = true;
 
     const query: any = {
       selector,

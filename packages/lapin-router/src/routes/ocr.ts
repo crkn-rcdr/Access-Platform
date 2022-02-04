@@ -28,7 +28,6 @@ export const ocrRouter = createRouter()
             $ne: "_design/access",
           },
         };
-
         return await ctx.couch.ocr.find(q);
       } catch (e: any) {
         console.log("err", e?.message);

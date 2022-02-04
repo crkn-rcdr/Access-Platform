@@ -26,9 +26,14 @@ import { StaffUpdate } from "../util/StaffUpdate.js";
  */
 export const BaseOcrBatch = z.object({
   /*
-   * ID is used as the name of the directory
+   * The id is used as an opaque identifier
    */
-  id: Slug,
+  id: z.string(),
+
+  /*
+   * Name is used as the transparent id of the directory
+   */
+  name: Slug,
 
   /*
    * Array of canvases (and/or manifests?)
