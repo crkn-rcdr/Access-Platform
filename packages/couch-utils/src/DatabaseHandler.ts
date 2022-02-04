@@ -405,7 +405,7 @@ export class DatabaseHandler<T extends Document> {
    */
   async find<Fields extends readonly (keyof T & string)[]>(
     selector: MangoSelector,
-    fields: Fields,
+    fields: Fields | null = null,
     options: MangoOptions = {}
   ): Promise<FindResult<T, Fields>[]> {
     // Switch id and _id
@@ -417,15 +417,18 @@ export class DatabaseHandler<T extends Document> {
       fieldSet.add("_id");
     }
 
-    const query = {
+    const query: any = {
       selector,
-      fields: [...fieldSet.values()],
       ...options,
     };
+    if (fields) query["fields"] = [...fieldSet.values()];
+
+    console.log(query);
 
     try {
       const response = await this.db.find(query);
 
+      console.log(response);
       if (hasId) {
         return response.docs.map((doc) => {
           const r: Record<string, unknown> = { ...doc };
