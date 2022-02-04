@@ -26,28 +26,20 @@
       const importDone: (ImportSucceededOcrBatch | ImportFailedOcrBatch)[] = [];
 
       for (const batch of batchList) {
-        console.log(batch);
         if (ImportSucceededOcrBatch.safeParse(batch).success) {
           importDone.push(batch as ImportSucceededOcrBatch);
-          console.log("1");
         } else if (ImportFailedOcrBatch.safeParse(batch).success) {
           importDone.push(batch as ImportFailedOcrBatch);
-          console.log("2");
         } else if (ImportWaitingOcrBatch.safeParse(batch).success) {
           importWaiting.push(batch as ImportWaitingOcrBatch);
-          console.log("3");
         } else if (ExportSucceededOcrBatch.safeParse(batch).success) {
           exportDone.push(batch as ExportSucceededOcrBatch);
-          console.log("4");
         } else if (ExportFailedOcrBatch.safeParse(batch).success) {
           exportDone.push(batch as ExportFailedOcrBatch);
-          console.log("5");
         } else if (ExportWaitingOcrBatch.safeParse(batch).success) {
           exportWaiting.push(batch as ExportWaitingOcrBatch);
-          console.log("6");
         } else {
           base.push(batch);
-          console.log("7");
         }
       }
 
@@ -106,7 +98,7 @@
 </script>
 
 <script lang="ts">
-  // script
+  // Typed arrays lets us avoid checks in the front end
   export let base: OcrBatch[] = [];
   export let exportWaiting: ExportWaitingOcrBatch[] = [];
   export let exportDone: (ExportSucceededOcrBatch | ExportFailedOcrBatch)[] =

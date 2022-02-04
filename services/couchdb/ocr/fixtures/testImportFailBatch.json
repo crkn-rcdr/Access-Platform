@@ -13,13 +13,13 @@
   "exportProcess": {
     "requestDate": 1630639028.569,
     "processDate": 1630639032.311,
-    "succeeded": false,
-    "message": "oops"
+    "succeeded": true,
+    "message": "yep"
   },
   "importProcess": {
     "requestDate": 1630639928.569,
     "processDate": 1630639932.311,
-    "succeeded": true,
+    "succeeded": false,
     "message": "oops"
   }
 }
