@@ -113,7 +113,9 @@
 <div class="wrapper">
   <div class="title">
     <!--h6>OCR Batches</h6-->
-    <button class="create-button primary">Create New OCR Batch</button>
+    <a href="/ocr/new">
+      <button class="create-button primary">Create New OCR Batch</button>
+    </a>
   </div>
   <table class="ocr-table">
     <thead>
@@ -136,7 +138,7 @@
           <!--td> {batch.staff.by.name} </td>
           <td> {batch.canvases.length} </td-->
         </tr>
-        <tr class="row-details">
+        <tr class="row-details waiting">
           <td> Exporting {batch.canvases.length} canvases... </td>
         </tr>
       {/each}
@@ -190,7 +192,7 @@
           <!--td> {batch.staff.by.name} </td>
           <td> {batch.canvases.length} </td-->
         </tr>
-        <tr class="row-details">
+        <tr class="row-details waiting">
           <td> Importing {batch.canvases.length} canvases... </td>
         </tr>
       {/each}
@@ -256,6 +258,10 @@
   .warn {
     background-color: var(--warn-light);
     color: var(--warn);
+  }
+  .waiting {
+    color: var(--secondary);
+    font-style: italic;
   }
   .not-success {
     background-color: var(--danger-light);
