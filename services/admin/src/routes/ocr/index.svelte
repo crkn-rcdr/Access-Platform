@@ -4,7 +4,7 @@
    * @description loads in the object from the backend using the params in the route of the page
    */
   import type { Load } from "@sveltejs/kit";
-  import type { RootLoadOutput } from "$lib/types";
+  import type { RootLoadOutput, Session } from "$lib/types";
   import {
     ExportFailedOcrBatch,
     ExportSucceededOcrBatch,
@@ -13,6 +13,7 @@
     ImportSucceededOcrBatch,
     ImportWaitingOcrBatch,
     OcrBatch,
+    Slug,
   } from "@crkn-rcdr/access-data";
 
   export const load: Load<RootLoadOutput> = async ({ page, context }) => {
@@ -98,6 +99,8 @@
 </script>
 
 <script lang="ts">
+  import { getStores } from "$app/stores";
+  import { showConfirmation } from "$lib/utils/confirmation";
   // Typed arrays lets us avoid checks in the front end
   export let base: OcrBatch[] = [];
   export let exportWaiting: ExportWaitingOcrBatch[] = [];
@@ -106,6 +109,41 @@
   export let importWaiting: ImportWaitingOcrBatch[] = [];
   export let importDone: (ImportSucceededOcrBatch | ImportFailedOcrBatch)[] =
     [];
+
+  /**
+   * @type {Session} The session store that contains the module for sending requests to lapin.
+   */
+  const { session } = getStores<Session>();
+
+  async function requestImport(batch: OcrBatch) {
+    await showConfirmation(
+      async () => {
+        try {
+          const response = await $session.lapin.mutation(`ocr.requestImport`, {
+            user: $session.user,
+            id: batch.id,
+          });
+          if (response) {
+            batch = response;
+            exportDone = exportDone.filter((el) => el.id !== batch.id);
+            importWaiting.push(batch as ImportWaitingOcrBatch);
+            importWaiting = importWaiting;
+          }
+          return {
+            success: true,
+            details: "",
+          };
+        } catch (e) {
+          return {
+            success: false,
+            details: e.message,
+          };
+        }
+      },
+      "Success: batch queued for importing.",
+      "Error: failed queue batch for importing."
+    );
+  }
 </script>
 
 <br />
@@ -167,7 +205,10 @@
                         <span class="success-status">
                           {batch.canvases.length} canavases successfully exported!
                         </span>
-                        <button class="import-button save">
+                        <button
+                          on:click={() => requestImport(batch)}
+                          class="import-button save"
+                        >
                           Import Canvases
                         </button>
                       </span>

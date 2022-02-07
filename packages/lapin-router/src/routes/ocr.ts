@@ -1,13 +1,17 @@
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { createRouter, httpErrorToTRPC } from "../router.js";
-import { Noid, User } from "@crkn-rcdr/access-data";
+import { Noid, User, Slug } from "@crkn-rcdr/access-data";
 
 const CreateInput = z.object({
   user: User,
   canvases: z.array(Noid),
 });
 
+const RequestInput = z.object({
+  user: User,
+  id: Slug,
+});
 export const ocrRouter = createRouter()
   .query("get", {
     input: z.string(),
@@ -40,6 +44,36 @@ export const ocrRouter = createRouter()
     async resolve({ input, ctx }) {
       try {
         return await ctx.couch.ocr.create(input);
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .mutation("export", {
+    input: CreateInput.parse,
+    async resolve({ input, ctx }) {
+      try {
+        return await ctx.couch.ocr.create(input);
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .mutation("requestExport", {
+    input: RequestInput.parse,
+    async resolve({ input, ctx }) {
+      try {
+        return await ctx.couch.ocr.requestExport(input);
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .mutation("requestImport", {
+    input: RequestInput.parse,
+    async resolve({ input, ctx }) {
+      try {
+        return await ctx.couch.ocr.requestImport(input);
       } catch (e) {
         throw httpErrorToTRPC(e);
       }
