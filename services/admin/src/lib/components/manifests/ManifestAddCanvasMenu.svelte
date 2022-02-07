@@ -151,7 +151,6 @@ This component allows the user to search through other manifests and select canv
       {/if}
 
       <div>
-        <!--Todo: ask how best to limit to only manifests-->
         <TypeAhead
           placeholder="Search for a manifest to add canvases from..."
           type="manifest"

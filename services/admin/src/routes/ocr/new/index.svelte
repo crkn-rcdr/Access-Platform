@@ -2,7 +2,7 @@
 </script>
 
 <script lang="ts">
-  import PrefixSlugSearchBox from "$lib/components/access-objects/PrefixSlugSearchBox.svelte";
+  import ManifestSelector from "$lib/components/manifests/ManifestSelector.svelte";
   import Wizard from "$lib/components/shared/Wizard.svelte";
 </script>
 
@@ -16,7 +16,7 @@
 
   <h6>Search for Canvases by Manifest</h6>
   <div class="auto-align canvas-select">
-    <div class="auto-align auto-align__column auto-align__a-end search-box">
+    <!--div class="auto-align auto-align__column auto-align__a-end search-box">
       <PrefixSlugSearchBox rows={9} />
       <button class="primary">Search</button>
     </div>
@@ -79,7 +79,8 @@
           </tbody>
         </table>
       </div>
-    </div>
+    </div-->
+    <ManifestSelector />
   </div>
 
   <div class="wizard-buttons">
