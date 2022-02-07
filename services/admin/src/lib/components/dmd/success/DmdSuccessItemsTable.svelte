@@ -104,7 +104,7 @@ This component displays the items in the dmd task throughout the various stages 
 </script>
 
 {#if itemsToShow.length && dmdTasksStore && $dmdTasksStore[dmdTaskId]}
-  <table class="box-shadow">
+  <table>
     <thead>
       <tr>
         {#if $dmdTasksStore[dmdTaskId].shouldUpdateInAccess || $dmdTasksStore[dmdTaskId].shouldUpdateInPreservation}

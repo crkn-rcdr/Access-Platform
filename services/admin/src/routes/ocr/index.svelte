@@ -111,123 +111,137 @@
 <br />
 <br />
 <div class="wrapper">
-  <div class="title auto-align auto-align__a-center">
-    <h6>OCR Batches</h6>
+  <div class="title">
+    <!--h6>OCR Batches</h6-->
     <button class="create-button primary">Create New OCR Batch</button>
   </div>
-  <br />
-  <table class="box-shadow ocr-table">
+  <table class="ocr-table">
     <thead>
-      <th> Name </th>
-      <th> # Canvases </th>
-      <th> Status </th>
+      <th> OCR Batches </th>
+      <!--th> Updated By </th>
+      <th> # Canvases </th-->
     </thead>
     <tbody>
-      {#each base as batch}
+      <!--{#each base as batch}
         <tr>
           <td> {batch.name} </td>
+          <td> {batch.staff.by.name} </td>
           <td> {batch.canvases.length} </td>
-          <td> N/A </td>
         </tr>
-      {/each}
+      {/each}-->
 
       {#each exportWaiting as batch}
         <tr>
           <td> {batch.name} </td>
-          <td> {batch.canvases.length} </td>
-          <td> Exporting canvases... </td>
+          <!--td> {batch.staff.by.name} </td>
+          <td> {batch.canvases.length} </td-->
+        </tr>
+        <tr class="row-details">
+          <td> Exporting {batch.canvases.length} canvases... </td>
         </tr>
       {/each}
 
       {#each exportDone as batch}
         <tr>
           <td> {batch.name} </td>
-          <td> {batch.canvases.length} </td>
-          <td>
-            {#if batch.exportProcess["succeeded"]}
-              <span class="export-success-wrap auto-align auto-align__a-center">
-                <span class="success-status">
-                  Canavases successfully exported!
-                </span>
-                <button class="import-button save"> Import Canvases </button>
-              </span>
-            {:else}
-              Export failed.
-            {/if}
-          </td>
+          <!--td> {batch.staff.by.name} </td>
+          <td> {batch.canvases.length} </td-->
         </tr>
-
-        {#if batch.exportProcess["message"]?.length}
-          <tr class="row-details">
-            <td class="result-cell" colspan="3">
-              <table>
-                <tbody>
-                  <tr
-                    class:warn={batch.exportProcess["succeeded"]}
-                    class:not-success={!batch.exportProcess["succeeded"]}
-                  >
+        <tr class="row-details">
+          <td class="result-cell">
+            <table>
+              <tbody>
+                <tr
+                  class:success={batch.exportProcess["succeeded"]}
+                  class:warn={batch.exportProcess["message"]?.length &&
+                    batch.exportProcess["succeeded"]}
+                  class:not-success={!batch.exportProcess["succeeded"]}
+                >
+                  {#if batch.exportProcess["succeeded"]}
                     <td colspan="3">
+                      <span
+                        class="export-success-wrap auto-align auto-align__a-center"
+                      >
+                        <span class="success-status">
+                          {batch.canvases.length} canavases successfully exported!
+                        </span>
+                        <button class="import-button save">
+                          Import Canvases
+                        </button>
+                      </span>
+                      <br />
                       {batch.exportProcess["message"]}
                     </td>
-                  </tr>
-                </tbody>
-              </table>
-            </td>
-          </tr>
-        {/if}
+                  {:else}
+                    <td colspan="3">
+                      Export failed: {batch.exportProcess["message"]}
+                    </td>
+                  {/if}
+                </tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
       {/each}
 
       {#each importWaiting as batch}
         <tr>
           <td> {batch.name} </td>
-          <td> {batch.canvases.length} </td>
-          <td> Importing canvases... </td>
+          <!--td> {batch.staff.by.name} </td>
+          <td> {batch.canvases.length} </td-->
+        </tr>
+        <tr class="row-details">
+          <td> Importing {batch.canvases.length} canvases... </td>
         </tr>
       {/each}
 
       {#each importDone as batch}
         <tr>
           <td> {batch.name} </td>
-          <td> {batch.canvases.length} </td>
-          <td>
-            {#if batch.importProcess["succeeded"]}
-              Canavases have been imported into access.
-            {:else}
-              Import failed.
-            {/if}
+          <!--td> {batch.staff.by.name} </td>
+          <td> {batch.canvases.length} </td-->
+        </tr>
+        <tr class="row-details">
+          <td class="result-cell">
+            <table>
+              <tbody>
+                <tr
+                  class:success={batch.importProcess["succeeded"]}
+                  class:warn={batch.importProcess["message"]?.length &&
+                    batch.importProcess["succeeded"]}
+                  class:not-success={!batch.importProcess["succeeded"]}
+                >
+                  <td>
+                    {#if batch.importProcess["succeeded"]}
+                      {batch.canvases.length} canavases have been imported into access.
+                      <br />
+                      {batch.importProcess["message"]}
+                    {:else}
+                      Import failed: {batch.importProcess["message"]}
+                    {/if}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </td>
         </tr>
-        {#if batch.importProcess["message"]?.length}
-          <tr class="row-details">
-            <td class="result-cell" colspan="3">
-              <table>
-                <tbody>
-                  <tr
-                    class:warn={batch.importProcess["succeeded"]}
-                    class:not-success={!batch.importProcess["succeeded"]}
-                  >
-                    <td>
-                      {batch.importProcess["message"]}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </td>
-          </tr>
-        {/if}
       {/each}
     </tbody>
   </table>
 </div>
+<br />
+<br />
+<br />
 
 <style>
   .title {
     width: 100%;
+    text-align: right;
   }
-  h6 {
+  /*h6 {
     flex: 9;
     margin: 0 !important;
-  }
+  }*/
   .create-button {
     flex: 2;
   }
@@ -255,6 +269,7 @@
     flex: 9;
   }
   .row-details {
+    background: white;
     filter: brightness(0.98);
   }
   .row-details table {
