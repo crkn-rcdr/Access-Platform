@@ -306,7 +306,7 @@ This component shows the results of a dipstaging package view. It allows the use
       {/if}
     </div>
     <div class="table-wrap">
-      <table>
+      <table class="box-shadow">
         <thead>
           <tr>
             {#if view !== "queue"}
@@ -486,7 +486,6 @@ This component shows the results of a dipstaging package view. It allows the use
   }
   .row-details {
     color: var(--secondary);
-    background: var(--light-bg);
     filter: brightness(0.98);
   }
   .row-details table {

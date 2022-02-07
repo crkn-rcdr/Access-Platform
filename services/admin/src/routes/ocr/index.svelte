@@ -116,7 +116,7 @@
     <button class="create-button primary">Create New OCR Batch</button>
   </div>
   <br />
-  <table>
+  <table class="box-shadow ocr-table">
     <thead>
       <th> Name </th>
       <th> # Canvases </th>
@@ -135,7 +135,7 @@
         <tr>
           <td> {batch.name} </td>
           <td> {batch.canvases.length} </td>
-          <td> exporting... </td>
+          <td> Exporting canvases... </td>
         </tr>
       {/each}
 
@@ -143,15 +143,45 @@
         <tr>
           <td> {batch.name} </td>
           <td> {batch.canvases.length} </td>
-          <td> button if success or if fail </td>
+          <td>
+            {#if batch.exportProcess["succeeded"]}
+              <span class="export-success-wrap auto-align auto-align__a-center">
+                <span class="success-status">
+                  Canavases successfully exported!
+                </span>
+                <button class="import-button save"> Import Canvases </button>
+              </span>
+            {:else}
+              Export failed.
+            {/if}
+          </td>
         </tr>
+
+        {#if batch.exportProcess["message"]?.length}
+          <tr class="row-details">
+            <td class="result-cell" colspan="3">
+              <table>
+                <tbody>
+                  <tr
+                    class:warn={batch.exportProcess["succeeded"]}
+                    class:not-success={!batch.exportProcess["succeeded"]}
+                  >
+                    <td colspan="3">
+                      {batch.exportProcess["message"]}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        {/if}
       {/each}
 
       {#each importWaiting as batch}
         <tr>
           <td> {batch.name} </td>
           <td> {batch.canvases.length} </td>
-          <td> importing... </td>
+          <td> Importing canvases... </td>
         </tr>
       {/each}
 
@@ -159,8 +189,32 @@
         <tr>
           <td> {batch.name} </td>
           <td> {batch.canvases.length} </td>
-          <td> success or not </td>
+          <td>
+            {#if batch.importProcess["succeeded"]}
+              Canavases have been imported into access.
+            {:else}
+              Import failed.
+            {/if}
+          </td>
         </tr>
+        {#if batch.importProcess["message"]?.length}
+          <tr class="row-details">
+            <td class="result-cell" colspan="3">
+              <table>
+                <tbody>
+                  <tr
+                    class:warn={batch.importProcess["succeeded"]}
+                    class:not-success={!batch.importProcess["succeeded"]}
+                  >
+                    <td>
+                      {batch.importProcess["message"]}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        {/if}
       {/each}
     </tbody>
   </table>
@@ -176,5 +230,37 @@
   }
   .create-button {
     flex: 2;
+  }
+
+  .ocr-table {
+    margin-top: 1rem;
+  }
+  /*.success {
+    background-color: var(--success-light);
+    color: var(--success);
+  }*/
+  .warn {
+    background-color: var(--warn-light);
+    color: var(--warn);
+  }
+  .not-success {
+    background-color: var(--danger-light);
+    color: var(--danger);
+  }
+  .export-success-wrap {
+    width: 100%;
+  }
+  .success-status {
+    width: 100%;
+    flex: 9;
+  }
+  .row-details {
+    filter: brightness(0.98);
+  }
+  .row-details table {
+    margin-top: 0;
+  }
+  .row-details tbody {
+    background: none;
   }
 </style>
