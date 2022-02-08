@@ -51,6 +51,7 @@ This componenet allows the user to search the backend for any access object that
   let loading: boolean = false;
   let allSelected = true;
   let searchMade = false;
+  let numCanvases = 0;
 
   /**
    * Dispatches the @event on:keypress with the query set as the event.detail. It then sends a request to the backend to get the objects whos slug contains the query, if the query is not empty. If the request was successful, the results are stored in @var lookupList. Otherwise @var error is set and displayed to the user.
@@ -75,6 +76,8 @@ This componenet allows the user to search the backend for any access object that
             if (info.found && info.result) {
               manifestSlugObjMap[slug] = info.result;
               selectedManifestNoids.push(manifestSlugObjMap[slug].id);
+              if (manifestSlugObjMap[slug].canvases)
+                numCanvases += manifestSlugObjMap[slug].canvases.length;
             }
           }
         }
@@ -95,23 +98,33 @@ This componenet allows the user to search the backend for any access object that
 
   function handleItemSelected(manifest: any) {
     console.log(manifest);
-    if (selectedManifestNoids.includes(manifest.id))
+    if (selectedManifestNoids.includes(manifest.id)) {
       selectedManifestNoids = selectedManifestNoids.filter(
         (item) => item !== manifest.id
       );
-    else selectedManifestNoids.push(manifest.id);
+      if (manifest.canvases) numCanvases -= manifest.canvases.length;
+    } else {
+      selectedManifestNoids.push(manifest.id);
+      if (manifest.canvases) numCanvases += manifest.canvases.length;
+    }
     selectedManifestNoids = selectedManifestNoids;
   }
 
   function toggleAllSelected() {
     allSelected = !allSelected;
     if (allSelected) {
+      numCanvases = 0;
       let allList = [];
       for (let slug of foundSlugs) {
         allList.push(manifestSlugObjMap[slug].id);
+        if (manifestSlugObjMap[slug].canvases)
+          numCanvases += manifestSlugObjMap[slug].canvases.length;
       }
       selectedManifestNoids = allList;
-    } else selectedManifestNoids = [];
+    } else {
+      selectedManifestNoids = [];
+      numCanvases = 0;
+    }
   }
 
   $: {
@@ -132,6 +145,10 @@ This componenet allows the user to search the backend for any access object that
     </div>
   {:else if searchMade}
     <div class="table-wrap">
+      <div class="canvas-count">
+        {numCanvases} Canvases Selected
+      </div>
+
       <table>
         <thead>
           <tr>
@@ -208,19 +225,29 @@ This componenet allows the user to search the backend for any access object that
 
 <style>
   .table-wrap {
+    position: relative;
     max-height: 43vh;
     overflow-y: auto;
     overflow-x: hidden;
+    margin-left: 1rem;
   }
   table {
-    margin-left: 1rem;
     position: relative;
+  }
+  .canvas-count {
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 2;
+    height: 2rem;
+    font-size: 1.22rem !important;
   }
   th {
     position: sticky;
     top: 0;
     background: var(--backdrop-bg);
     z-index: 1;
+    top: 2rem;
   }
   .not-success {
     background-color: var(--danger-light);
