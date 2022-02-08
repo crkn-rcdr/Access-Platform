@@ -3,6 +3,7 @@
   import { getStores } from "$app/stores";
 
   import ManifestSelector from "$lib/components/manifests/ManifestSelector.svelte";
+  import Loading from "$lib/components/shared/Loading.svelte";
   import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
   import Wizard from "$lib/components/shared/Wizard.svelte";
   import type { Session } from "$lib/types";
@@ -17,6 +18,7 @@
   let selectedManifests: any[] = [];
   let batchName: Slug = "";
   let validSlug = true;
+  let loading: boolean = false;
 
   function handleManifestSelectionChange(event: any) {
     selectedManifests = event.detail;
@@ -27,6 +29,7 @@
   }
 
   async function handleCreatePressed() {
+    loading = true;
     await showConfirmation(
       async () => {
         try {
@@ -38,11 +41,13 @@
           if (response) {
             goto("/ocr");
           }
+          loading = false;
           return {
             success: true,
             details: "",
           };
         } catch (e) {
+          loading = false;
           return {
             success: false,
             details: e.message,
@@ -58,34 +63,40 @@
 </script>
 
 <Wizard title="Create OCR Batch">
-  <label>
-    <h6>Enter an Identifiable Batch Name</h6>
-    {#if !validSlug}
-      <NotificationBar
-        status="fail"
-        message="Batch name can only contain letters, numbers, and the following symbols: _ - ."
-      />
-    {/if}
-    <input bind:value={batchName} />
-  </label>
-  <br />
-  <br />
+  {#if loading}
+    <div class="loader">
+      <Loading backgroundType="gradient" />
+    </div>
+  {:else}
+    <label>
+      <h6>Enter an Identifiable Batch Name</h6>
+      {#if !validSlug}
+        <NotificationBar
+          status="fail"
+          message="Batch name can only contain letters, numbers, and the following symbols: _ - ."
+        />
+      {/if}
+      <input bind:value={batchName} />
+    </label>
+    <br />
+    <br />
 
-  <h6>Search for Canvases by Manifest</h6>
-  <div class="auto-align canvas-select">
-    <ManifestSelector on:change={handleManifestSelectionChange} />
-  </div>
+    <h6>Search for Canvases by Manifest</h6>
+    <div class="auto-align canvas-select">
+      <ManifestSelector on:change={handleManifestSelectionChange} />
+    </div>
 
-  <div class="wizard-buttons">
-    <button class="secondary" on:click={handleCancelPressed}>Cancel</button>
-    <button
-      on:click={handleCreatePressed}
-      class="save"
-      disabled={!selectedManifests?.length || !batchName.length || !validSlug}
-    >
-      Create OCR Batch
-    </button>
-  </div>
+    <div class="wizard-buttons">
+      <button class="secondary" on:click={handleCancelPressed}>Cancel</button>
+      <button
+        on:click={handleCreatePressed}
+        class="save"
+        disabled={!selectedManifests?.length || !batchName.length || !validSlug}
+      >
+        Create OCR Batch
+      </button>
+    </div>
+  {/if}
 </Wizard>
 
 <style>
@@ -102,5 +113,9 @@
     background: white;
     width: 100%;
     text-align: right;
+  }
+  .loader {
+    width: 100%;
+    text-align: center;
   }
 </style>
