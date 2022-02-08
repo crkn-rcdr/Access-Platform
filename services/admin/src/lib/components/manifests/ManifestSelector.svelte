@@ -23,7 +23,6 @@ This componenet allows the user to search the backend for any access object that
   import PrefixSlugSearchBox from "../access-objects/PrefixSlugSearchBox.svelte";
   import type { Noid, Slug } from "@crkn-rcdr/access-data";
   import Loading from "../shared/Loading.svelte";
-  import Toggle from "../shared/Toggle.svelte";
 
   /**
    * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.
@@ -116,6 +115,8 @@ This componenet allows the user to search the backend for any access object that
   $: {
     foundSlugs = manifestSlugObjMap ? Object.keys(manifestSlugObjMap) : [];
   }
+
+  $: dispatch("change", selectedManifestNoids);
 </script>
 
 <div class="auto-align auto-align__full">
