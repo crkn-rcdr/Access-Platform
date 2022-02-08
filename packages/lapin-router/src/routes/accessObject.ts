@@ -99,31 +99,9 @@ export const accessObjectRouter = createRouter()
       }
     },
   })
-  .mutation("unassignSlug", {
-    input: NoidWithUser.parse,
-    async resolve({ input, ctx }) {
-      try {
-        await ctx.couch.access.unassignSlug({
-          id: input.id,
-          user: input.user,
-        });
-        const response = await ctx.couch.access.getSafe(input.id);
-        if (response.found) {
-          if (response.doc.public) {
-            await ctx.couch.access.unpublish({
-              id: input.id,
-              user: input.user,
-            });
-          }
-        }
-      } catch (e) {
-        throw httpErrorToTRPC(e);
-      }
-    },
-  })
   .mutation("delete", {
-    input: Noid.parse,
-    async resolve({ input: id, ctx }) {
+    input: z.object({ id: Noid, user: User }).parse,
+    async resolve({ input: { id, user }, ctx }) {
       try {
         const accessObj = await ctx.couch.access.get(id);
 
@@ -167,10 +145,28 @@ export const accessObjectRouter = createRouter()
           }
         }
 
+        const membership = await ctx.couch.access.getMembership(id);
+
         /* Delete from database if other steps did not throw */
         await ctx.couch.access.delete({
           document: id,
         });
+
+        if (membership?.length) {
+          const ids: string[] = membership
+            .filter((collection) => typeof collection.id !== "undefined")
+            .map((collection) => collection.id);
+
+          for (const collectionId of ids) {
+            await ctx.couch.access.processList({
+              id: collectionId,
+              command: ["remove", [id]],
+              user,
+            });
+
+            await ctx.couch.access.bulkForceUpdateAllMembers(collectionId);
+          }
+        }
 
         return { success: true };
       } catch (e: any) {

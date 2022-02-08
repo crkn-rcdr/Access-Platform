@@ -256,6 +256,27 @@ export class DatabaseHandler<T extends Document> {
   }
 
   /**
+   * Forces an update on a list of ids.
+   * @returns void
+   */
+  async bulkForceUpdate(ids: any[]): Promise<boolean> {
+    const date = new Date().toISOString().replace(/.\d+Z$/g, "Z");
+    return await this.bulkChange(ids, (doc: any) => {
+      if (!doc) return [null, "Error. Old document was null."];
+      if (!doc["_id"]) return [null, "Error. Old document had no id."];
+      if (!doc["_rev"]) return [null, "Error. Old document had no revision."];
+      if (!doc["dmdType"])
+        return [null, "Error. Old document had no dmd type."];
+
+      doc.updateInternalmeta = {
+        requestDate: date,
+      };
+
+      return [doc];
+    });
+  }
+
+  /**
    * Queries the `_all_docs` view for this database.
    * @param options View query options.
    * @returns the view output. Check `docs`.
