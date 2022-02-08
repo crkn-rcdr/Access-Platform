@@ -50,6 +50,7 @@ This componenet allows the user to search the backend for any access object that
   let selectedManifestNoids: Noid[] = [];
   let loading: boolean = false;
   let allSelected = true;
+  let searchMade = false;
 
   /**
    * Dispatches the @event on:keypress with the query set as the event.detail. It then sends a request to the backend to get the objects whos slug contains the query, if the query is not empty. If the request was successful, the results are stored in @var lookupList. Otherwise @var error is set and displayed to the user.
@@ -80,6 +81,7 @@ This componenet allows the user to search the backend for any access object that
         manifestSlugObjMap = manifestSlugObjMap;
         selectedManifestNoids = selectedManifestNoids;
         loading = false;
+        searchMade = true;
       } catch (e) {
         console.log(e);
       }
@@ -128,7 +130,7 @@ This componenet allows the user to search the backend for any access object that
     <div class="loader">
       <Loading backgroundType="gradient" />
     </div>
-  {:else if foundSlugs?.length}
+  {:else if searchMade}
     <div class="table-wrap">
       <table>
         <thead>
@@ -142,7 +144,7 @@ This componenet allows the user to search the backend for any access object that
           </tr>
         </thead>
         <tbody>
-          {#each foundSlugs as slug}
+          {#each searchedSlugs as slug}
             {#if !(slug in manifestSlugObjMap)}
               <tr>
                 <td>
@@ -191,7 +193,7 @@ This componenet allows the user to search the backend for any access object that
               </tr>
             {/if}
           {:else}
-            <tr><td>No results.</td></tr>
+            <tr><td colspan="4">No results.</td></tr>
           {/each}
         </tbody>
       </table>
