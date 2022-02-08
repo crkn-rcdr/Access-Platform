@@ -104,7 +104,7 @@
   import { getStores } from "$app/stores";
   import { showConfirmation } from "$lib/utils/confirmation";
   import timer from "$lib/stores/timer";
-  import { onMount } from "svelte";
+  import { onDestroy, onMount } from "svelte";
   // Typed arrays lets us avoid checks in the front end
   export let base: OcrBatch[] = [];
   export let exportWaiting: ExportWaitingOcrBatch[] = [];
@@ -113,6 +113,8 @@
   export let importWaiting: ImportWaitingOcrBatch[] = [];
   export let importDone: (ImportSucceededOcrBatch | ImportFailedOcrBatch)[] =
     [];
+
+  let unsubscribe;
   const interval = timer({ interval: 60000 }); // 1x per min
 
   /**
@@ -151,12 +153,16 @@
   }
 
   onMount(() => {
-    interval.subscribe(async () => {
+    unsubscribe = interval.subscribe(async () => {
       let batchList = await $session.lapin.query("ocr.list");
       const results = getOcrBatches(batchList);
       ({ base, exportWaiting, exportDone, importWaiting, importDone } =
         results.props);
     });
+  });
+
+  onDestroy(() => {
+    if (unsubscribe) unsubscribe();
   });
 </script>
 
