@@ -1,17 +1,57 @@
-<script context="module" lang="ts">
-</script>
-
 <script lang="ts">
+  import { goto } from "$app/navigation";
+  import { getStores } from "$app/stores";
+
   import ManifestSelector from "$lib/components/manifests/ManifestSelector.svelte";
   import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
   import Wizard from "$lib/components/shared/Wizard.svelte";
+  import type { Session } from "$lib/types";
+  import { showConfirmation } from "$lib/utils/confirmation";
   import { Slug } from "@crkn-rcdr/access-data";
 
+  /**
+   * @type {Session} The session store that contains the module for sending requests to lapin.
+   */
+  const { session } = getStores<Session>();
+
   let selectedManifests: any[] = [];
-  let batchName = "";
+  let batchName: Slug = "";
   let validSlug = true;
+
   function handleManifestSelectionChange(event: any) {
     selectedManifests = event.detail;
+  }
+
+  function handleCancelPressed() {
+    goto("/ocr");
+  }
+
+  async function handleCreatePressed() {
+    await showConfirmation(
+      async () => {
+        try {
+          const response = await $session.lapin.mutation(`ocr.create`, {
+            user: $session.user,
+            name: batchName,
+            manifests: selectedManifests,
+          });
+          if (response) {
+            goto("/ocr");
+          }
+          return {
+            success: true,
+            details: "",
+          };
+        } catch (e) {
+          return {
+            success: false,
+            details: e.message,
+          };
+        }
+      },
+      "Success: batch created and queued for exporting.",
+      "Error: failed create and queue batch for exporting."
+    );
   }
 
   $: validSlug = batchName.length ? Slug.safeParse(batchName).success : true;
@@ -37,8 +77,9 @@
   </div>
 
   <div class="wizard-buttons">
-    <button class="secondary">Cancel</button>
+    <button class="secondary" on:click={handleCancelPressed}>Cancel</button>
     <button
+      on:click={handleCreatePressed}
       class="save"
       disabled={!selectedManifests?.length || !batchName.length || !validSlug}
     >

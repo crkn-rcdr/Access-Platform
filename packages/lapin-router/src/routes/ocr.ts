@@ -4,8 +4,9 @@ import { createRouter, httpErrorToTRPC } from "../router.js";
 import { Noid, User, Slug } from "@crkn-rcdr/access-data";
 
 const CreateInput = z.object({
+  name: Slug,
+  manifests: z.array(Noid),
   user: User,
-  canvases: z.array(Noid),
 });
 
 const RequestInput = z.object({
@@ -43,18 +44,22 @@ export const ocrRouter = createRouter()
     input: CreateInput.parse,
     async resolve({ input, ctx }) {
       try {
-        return await ctx.couch.ocr.create(input);
-      } catch (e) {
-        throw httpErrorToTRPC(e);
-      }
-    },
-  })
-  .mutation("export", {
-    input: CreateInput.parse,
-    async resolve({ input, ctx }) {
-      try {
-        return await ctx.couch.ocr.create(input);
-      } catch (e) {
+        const { name, manifests, user } = input;
+        let canvases: Noid[] = [];
+        for (const id of manifests) {
+          const manifest = await ctx.couch.access.get(id);
+          if (manifest && manifest.type === "manifest") {
+            for (const canvas of manifest.canvases) {
+              if (!canvas.id) continue;
+              if (!canvases.includes(canvas.id)) {
+                canvases.push(canvas.id);
+              }
+            }
+          }
+        }
+        return await ctx.couch.ocr.create({ name, user, canvases });
+      } catch (e: any) {
+        console.log(e?.message);
         throw httpErrorToTRPC(e);
       }
     },

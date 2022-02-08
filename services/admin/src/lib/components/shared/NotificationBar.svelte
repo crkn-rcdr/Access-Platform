@@ -114,6 +114,7 @@ A component tha tis used to highlight important messages to the user
     min-width: 20rem;
     max-width: 36rem;
     display: inline-block;
+    z-index: 2;
   }
 
   .notification-bar-secondary {

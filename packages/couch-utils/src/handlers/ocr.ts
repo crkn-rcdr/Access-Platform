@@ -23,21 +23,23 @@ export class OcrBatchHandler extends DatabaseHandler<OcrBatch> {
   /**
    * Creates an OCR Batch and renders it available for processing.
    * @returns The auto-generated id of the OCR Batch.
+   *
+   *
    */
-  async create(args: {
-    /** User who uploaded the file */
-    user: User;
-    /** Descriptive metadata type of the file's contents */
-    canvases: Noid[];
-  }) {
-    const { user, canvases } = args;
+  async create(args: { user: User; name: Slug; canvases: Noid[] }) {
+    const { user, canvases, name } = args;
 
     const { message: id } = await this.nullUpdate({
       ddoc: "access",
       name: "create",
       body: {
-        user,
+        staff: {
+          by: user,
+          date: new Date(Date.now()).toISOString().replace(/.\d+Z$/g, "Z"),
+        },
+        name,
         canvases,
+        priority: 0, // todo
       },
     });
 
