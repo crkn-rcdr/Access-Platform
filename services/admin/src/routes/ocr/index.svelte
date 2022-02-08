@@ -13,80 +13,82 @@
     ImportSucceededOcrBatch,
     ImportWaitingOcrBatch,
     OcrBatch,
-    Slug,
   } from "@crkn-rcdr/access-data";
+
+  function getOcrBatches(batchList) {
+    const base: OcrBatch[] = [];
+    const exportWaiting: ExportWaitingOcrBatch[] = [];
+    const exportDone: (ExportSucceededOcrBatch | ExportFailedOcrBatch)[] = [];
+    const importWaiting: ImportWaitingOcrBatch[] = [];
+    const importDone: (ImportSucceededOcrBatch | ImportFailedOcrBatch)[] = [];
+
+    for (const batch of batchList) {
+      if (ImportSucceededOcrBatch.safeParse(batch).success) {
+        importDone.push(batch as ImportSucceededOcrBatch);
+      } else if (ImportFailedOcrBatch.safeParse(batch).success) {
+        importDone.push(batch as ImportFailedOcrBatch);
+      } else if (ImportWaitingOcrBatch.safeParse(batch).success) {
+        importWaiting.push(batch as ImportWaitingOcrBatch);
+      } else if (ExportSucceededOcrBatch.safeParse(batch).success) {
+        exportDone.push(batch as ExportSucceededOcrBatch);
+      } else if (ExportFailedOcrBatch.safeParse(batch).success) {
+        exportDone.push(batch as ExportFailedOcrBatch);
+      } else if (ExportWaitingOcrBatch.safeParse(batch).success) {
+        exportWaiting.push(batch as ExportWaitingOcrBatch);
+      } else {
+        base.push(batch);
+      }
+    }
+
+    return {
+      props: {
+        base,
+        exportWaiting: exportWaiting.sort((a, b) => {
+          if (a.exportProcess.requestDate > b.exportProcess.requestDate)
+            return 1;
+          else if (a.exportProcess.requestDate < b.exportProcess.requestDate)
+            return -1;
+          return 0;
+        }),
+        exportDone: exportDone.sort((a, b) => {
+          if (
+            "processDate" in a.exportProcess &&
+            "processDate" in b.exportProcess
+          ) {
+            if (a.exportProcess.processDate > b.exportProcess.processDate)
+              return 1;
+            if (a.exportProcess.processDate < b.exportProcess.processDate)
+              return -1;
+          }
+          return 0;
+        }),
+        importWaiting: importWaiting.sort((a, b) => {
+          if (a.importProcess.requestDate > b.importProcess.requestDate)
+            return 1;
+          else if (a.importProcess.requestDate < b.importProcess.requestDate)
+            return -1;
+          return 0;
+        }),
+        importDone: importDone.sort((a, b) => {
+          if (
+            "processDate" in a.importProcess &&
+            "processDate" in b.importProcess
+          ) {
+            if (a.importProcess.processDate > b.importProcess.processDate)
+              return 1;
+            if (a.importProcess.processDate < b.importProcess.processDate)
+              return -1;
+          }
+          return 0;
+        }),
+      },
+    };
+  }
 
   export const load: Load<RootLoadOutput> = async ({ page, context }) => {
     try {
       let batchList = await context.lapin.query("ocr.list");
-
-      const base: OcrBatch[] = [];
-      const exportWaiting: ExportWaitingOcrBatch[] = [];
-      const exportDone: (ExportSucceededOcrBatch | ExportFailedOcrBatch)[] = [];
-      const importWaiting: ImportWaitingOcrBatch[] = [];
-      const importDone: (ImportSucceededOcrBatch | ImportFailedOcrBatch)[] = [];
-
-      for (const batch of batchList) {
-        if (ImportSucceededOcrBatch.safeParse(batch).success) {
-          importDone.push(batch as ImportSucceededOcrBatch);
-        } else if (ImportFailedOcrBatch.safeParse(batch).success) {
-          importDone.push(batch as ImportFailedOcrBatch);
-        } else if (ImportWaitingOcrBatch.safeParse(batch).success) {
-          importWaiting.push(batch as ImportWaitingOcrBatch);
-        } else if (ExportSucceededOcrBatch.safeParse(batch).success) {
-          exportDone.push(batch as ExportSucceededOcrBatch);
-        } else if (ExportFailedOcrBatch.safeParse(batch).success) {
-          exportDone.push(batch as ExportFailedOcrBatch);
-        } else if (ExportWaitingOcrBatch.safeParse(batch).success) {
-          exportWaiting.push(batch as ExportWaitingOcrBatch);
-        } else {
-          base.push(batch);
-        }
-      }
-
-      return {
-        props: {
-          base,
-          exportWaiting: exportWaiting.sort((a, b) => {
-            if (a.exportProcess.requestDate > b.exportProcess.requestDate)
-              return 1;
-            else if (a.exportProcess.requestDate < b.exportProcess.requestDate)
-              return -1;
-            return 0;
-          }),
-          exportDone: exportDone.sort((a, b) => {
-            if (
-              "processDate" in a.exportProcess &&
-              "processDate" in b.exportProcess
-            ) {
-              if (a.exportProcess.processDate > b.exportProcess.processDate)
-                return 1;
-              if (a.exportProcess.processDate < b.exportProcess.processDate)
-                return -1;
-            }
-            return 0;
-          }),
-          importWaiting: importWaiting.sort((a, b) => {
-            if (a.importProcess.requestDate > b.importProcess.requestDate)
-              return 1;
-            else if (a.importProcess.requestDate < b.importProcess.requestDate)
-              return -1;
-            return 0;
-          }),
-          importDone: importDone.sort((a, b) => {
-            if (
-              "processDate" in a.importProcess &&
-              "processDate" in b.importProcess
-            ) {
-              if (a.importProcess.processDate > b.importProcess.processDate)
-                return 1;
-              if (a.importProcess.processDate < b.importProcess.processDate)
-                return -1;
-            }
-            return 0;
-          }),
-        },
-      };
+      return getOcrBatches(batchList);
     } catch (e) {
       return {
         props: {
@@ -101,6 +103,8 @@
 <script lang="ts">
   import { getStores } from "$app/stores";
   import { showConfirmation } from "$lib/utils/confirmation";
+  import timer from "$lib/stores/timer";
+  import { onMount } from "svelte";
   // Typed arrays lets us avoid checks in the front end
   export let base: OcrBatch[] = [];
   export let exportWaiting: ExportWaitingOcrBatch[] = [];
@@ -109,6 +113,7 @@
   export let importWaiting: ImportWaitingOcrBatch[] = [];
   export let importDone: (ImportSucceededOcrBatch | ImportFailedOcrBatch)[] =
     [];
+  const interval = timer({ interval: 60000 }); // 1x per min
 
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
@@ -144,6 +149,15 @@
       "Error: failed queue batch for importing."
     );
   }
+
+  onMount(() => {
+    interval.subscribe(async () => {
+      let batchList = await $session.lapin.query("ocr.list");
+      const results = getOcrBatches(batchList);
+      ({ base, exportWaiting, exportDone, importWaiting, importDone } =
+        results.props);
+    });
+  });
 </script>
 
 <br />
