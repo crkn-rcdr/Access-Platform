@@ -23,6 +23,7 @@ This componenet allows the user to search the backend for any access object that
   import PrefixSlugSearchBox from "../access-objects/PrefixSlugSearchBox.svelte";
   import type { Noid, Slug } from "@crkn-rcdr/access-data";
   import Loading from "../shared/Loading.svelte";
+  import Toggle from "../shared/Toggle.svelte";
 
   /**
    * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.
@@ -46,9 +47,10 @@ This componenet allows the user to search the backend for any access object that
 
   let searchedSlugs: Slug[] = [];
   let foundSlugs: Slug[];
-  let manifestSlugIdMap: any;
+  let manifestSlugObjMap: any;
   let selectedManifestNoids: Noid[] = [];
   let loading: boolean = false;
+  let allSelected = true;
 
   /**
    * Dispatches the @event on:keypress with the query set as the event.detail. It then sends a request to the backend to get the objects whos slug contains the query, if the query is not empty. If the request was successful, the results are stored in @var lookupList. Otherwise @var error is set and displayed to the user.
@@ -60,7 +62,8 @@ This componenet allows the user to search the backend for any access object that
     loading = true;
     timer = setTimeout(async () => {
       try {
-        manifestSlugIdMap = {};
+        manifestSlugObjMap = {};
+        selectedManifestNoids = [];
         const response = await $session.lapin.mutation(`manifest.search`, {
           slugs: searchedSlugs,
           fields: ["id", "label", "canvases"],
@@ -70,11 +73,13 @@ This componenet allows the user to search the backend for any access object that
             const slug = result[0];
             const info = result[1];
             if (info.found && info.result) {
-              manifestSlugIdMap[slug] = info.result;
+              manifestSlugObjMap[slug] = info.result;
+              selectedManifestNoids.push(manifestSlugObjMap[slug].id);
             }
           }
         }
-        manifestSlugIdMap = manifestSlugIdMap;
+        manifestSlugObjMap = manifestSlugObjMap;
+        selectedManifestNoids = selectedManifestNoids;
         loading = false;
       } catch (e) {
         console.log(e);
@@ -88,24 +93,34 @@ This componenet allows the user to search the backend for any access object that
   }
 
   function handleItemSelected(manifest: any) {
+    console.log(manifest);
     if (selectedManifestNoids.includes(manifest.id))
       selectedManifestNoids = selectedManifestNoids.filter(
-        (item) => item === manifest.id
+        (item) => item !== manifest.id
       );
     else selectedManifestNoids.push(manifest.id);
     selectedManifestNoids = selectedManifestNoids;
   }
 
+  function toggleAllSelected() {
+    allSelected = !allSelected;
+    if (allSelected) {
+      let allList = [];
+      for (let slug of foundSlugs) {
+        allList.push(manifestSlugObjMap[slug].id);
+      }
+      selectedManifestNoids = allList;
+    } else selectedManifestNoids = [];
+  }
+
   $: {
-    foundSlugs = manifestSlugIdMap ? Object.keys(manifestSlugIdMap) : [];
+    foundSlugs = manifestSlugObjMap ? Object.keys(manifestSlugObjMap) : [];
   }
 </script>
 
 <div class="auto-align auto-align__full">
   <div>
     <PrefixSlugSearchBox rows={12} on:slugs={handleSlugListChange} />
-    <!--button class="search primary" on:click={handleSearchPressed}>Search</button
-    -->
   </div>
 
   {#if loading}
@@ -117,7 +132,9 @@ This componenet allows the user to search the backend for any access object that
       <table>
         <thead>
           <tr>
-            <th> <input type="checkbox" /> </th>
+            <th>
+              <input type="checkbox" checked on:click={toggleAllSelected} />
+            </th>
             <th> Slug </th>
             <th> Label </th>
             <th class="canvases-row"> # Canvases </th>
@@ -125,7 +142,7 @@ This componenet allows the user to search the backend for any access object that
         </thead>
         <tbody>
           {#each foundSlugs as slug}
-            {#if !(slug in manifestSlugIdMap)}
+            {#if !(slug in manifestSlugObjMap)}
               <tr>
                 <td>
                   <input type="checkbox" disabled />
@@ -137,7 +154,7 @@ This componenet allows the user to search the backend for any access object that
               <tr class="not-success">
                 <td colspan="4">Not found</td>
               </tr>
-            {:else if !manifestSlugIdMap[slug]["canvases"]?.length}
+            {:else if !manifestSlugObjMap[slug]["canvases"]?.length}
               <tr>
                 <td>
                   <input type="checkbox" disabled />
@@ -154,17 +171,21 @@ This componenet allows the user to search the backend for any access object that
                 <td>
                   <input
                     type="checkbox"
-                    on:click={() => handleItemSelected(manifestSlugIdMap[slug])}
+                    checked={selectedManifestNoids.includes(
+                      manifestSlugObjMap[slug].id
+                    )}
+                    on:click={() =>
+                      handleItemSelected(manifestSlugObjMap[slug])}
                   />
                 </td>
                 <td>
                   {slug}
                 </td>
                 <td>
-                  {manifestSlugIdMap[slug]["label"]?.["none"]}
+                  {manifestSlugObjMap[slug]["label"]?.["none"]}
                 </td>
                 <td>
-                  {manifestSlugIdMap[slug]["canvases"]?.length}
+                  {manifestSlugObjMap[slug]["canvases"]?.length}
                 </td>
               </tr>
             {/if}
@@ -176,6 +197,7 @@ This componenet allows the user to search the backend for any access object that
     </div>
   {/if}
 </div>
+<br />
 
 {#if error}
   <p class="danger">{error}</p>
