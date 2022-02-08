@@ -22,6 +22,7 @@ This componenet allows the user to search the backend for any access object that
   import { getStores } from "$app/stores";
   import PrefixSlugSearchBox from "../access-objects/PrefixSlugSearchBox.svelte";
   import type { Noid, Slug } from "@crkn-rcdr/access-data";
+  import Loading from "../shared/Loading.svelte";
 
   /**
    * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.
@@ -38,35 +39,52 @@ This componenet allows the user to search the backend for any access object that
    */
   let error = "";
 
+  /**
+   * @type {NodeJS.Timeout | null} Used to debounce the searching of slugs.
+   */
+  let timer: NodeJS.Timeout | null = null;
+
   let searchedSlugs: Slug[] = [];
   let foundSlugs: Slug[];
   let manifestSlugIdMap: any;
   let selectedManifestNoids: Noid[] = [];
+  let loading: boolean = false;
 
   /**
    * Dispatches the @event on:keypress with the query set as the event.detail. It then sends a request to the backend to get the objects whos slug contains the query, if the query is not empty. If the request was successful, the results are stored in @var lookupList. Otherwise @var error is set and displayed to the user.
    * @returns void
    */
   async function handleSearchPressed() {
-    try {
-      manifestSlugIdMap = {};
-      const response = await $session.lapin.mutation(`manifest.search`, {
-        slugs: searchedSlugs,
-        fields: ["id", "label", "canvases"],
-      });
-      for (const result of response) {
-        if (result.length === 2) {
-          const slug = result[0];
-          const info = result[1];
-          if (info.found && info.result) {
-            manifestSlugIdMap[slug] = info.result;
+    if (!searchedSlugs.length) return;
+    if (timer) clearTimeout(timer);
+    loading = true;
+    timer = setTimeout(async () => {
+      try {
+        manifestSlugIdMap = {};
+        const response = await $session.lapin.mutation(`manifest.search`, {
+          slugs: searchedSlugs,
+          fields: ["id", "label", "canvases"],
+        });
+        for (const result of response) {
+          if (result.length === 2) {
+            const slug = result[0];
+            const info = result[1];
+            if (info.found && info.result) {
+              manifestSlugIdMap[slug] = info.result;
+            }
           }
         }
+        manifestSlugIdMap = manifestSlugIdMap;
+        loading = false;
+      } catch (e) {
+        console.log(e);
       }
-      manifestSlugIdMap = manifestSlugIdMap;
-    } catch (e) {
-      console.log(e);
-    }
+    }, 5000);
+  }
+
+  async function handleSlugListChange(event) {
+    searchedSlugs = event.detail;
+    await handleSearchPressed();
   }
 
   function handleItemSelected(manifest: any) {
@@ -85,25 +103,24 @@ This componenet allows the user to search the backend for any access object that
 
 <div class="auto-align auto-align__full">
   <div>
-    <PrefixSlugSearchBox
-      rows={9}
-      on:slugs={(event) => {
-        searchedSlugs = event.detail;
-      }}
-    />
-    <button class="search primary" on:click={handleSearchPressed}>Search</button
-    >
+    <PrefixSlugSearchBox rows={12} on:slugs={handleSlugListChange} />
+    <!--button class="search primary" on:click={handleSearchPressed}>Search</button
+    -->
   </div>
 
-  {#if foundSlugs?.length}
+  {#if loading}
+    <div class="loader">
+      <Loading backgroundType="gradient" />
+    </div>
+  {:else if foundSlugs?.length}
     <div class="table-wrap">
       <table>
         <thead>
           <tr>
-            <th> Select </th>
+            <th> <input type="checkbox" /> </th>
             <th> Slug </th>
             <th> Label </th>
-            <th> # Canvases </th>
+            <th class="canvases-row"> # Canvases </th>
           </tr>
         </thead>
         <tbody>
@@ -172,12 +189,23 @@ This componenet allows the user to search the backend for any access object that
   }
   table {
     margin-left: 1rem;
+    position: relative;
+  }
+  th {
+    position: sticky;
+    top: 0;
+    background: var(--backdrop-bg);
+    z-index: 1;
   }
   .not-success {
     background-color: var(--danger-light);
     color: var(--danger);
   }
-  .search {
-    float: right;
+  .loader {
+    width: 100%;
+    text-align: center;
+  }
+  .canvases-row {
+    min-width: 9rem;
   }
 </style>
