@@ -167,7 +167,7 @@ This componenet allows the user to search the backend for any access object that
                 </td>
               </tr>
               <tr class="not-success">
-                <td colspan="4">Not canvases to add</td>
+                <td colspan="4">No canvases to OCR</td>
               </tr>
             {:else}
               <tr class="clickable">
