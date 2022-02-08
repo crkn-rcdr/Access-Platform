@@ -158,24 +158,10 @@ export const collectionRouter = createRouter()
             .filter((member) => typeof member.id !== "undefined")
             .map((member) => member.id);
 
-          const date = new Date().toISOString().replace(/.\d+Z$/g, "Z");
           // Don't hold up the response. This will run in the background without causing issues for end users. They don't need to be alerted about any of this in real time. The updateInternalmeta is displayed in the editor.
-          ctx.couch.access
-            .bulkChange(ids, (doc: any) => {
-              if (!doc) return [null, "Error. Old document was null."];
-              if (!doc["_id"]) return [null, "Error. Old document had no id."];
-              if (!doc["_rev"])
-                return [null, "Error. Old document had no revision."];
-
-              doc.updateInternalmeta = {
-                requestDate: date,
-              };
-
-              return [doc];
-            })
-            .then((res: any) => {
-              console.log("Forced Update Members: ", res);
-            });
+          ctx.couch.access.bulkForceUpdate(ids).then((res: any) => {
+            console.log("Forced Update Members: ", res);
+          });
         }
 
         return res;
@@ -242,16 +228,20 @@ export const collectionRouter = createRouter()
             (member) => !currentMembers.includes(member)
           );
         }
+
+        // If valid list
         if (filteredMembers.length) {
           await ctx.couch.access.processList({
             id,
             command: ["add", filteredMembers],
             user,
           });
-          for (const member of filteredMembers) {
-            await ctx.couch.access.forceUpdate(member);
-          }
         }
+
+        // Don't hold up the response but force update to these new members
+        ctx.couch.access.bulkForceUpdate(filteredMembers).then((res: any) => {
+          console.log("Forced Update Members: ", res);
+        });
       } catch (e) {
         throw httpErrorToTRPC(e);
       }
@@ -295,17 +285,9 @@ export const collectionRouter = createRouter()
             command: ["prepend", filteredMembers],
             user,
           });
-          /*for (const member of filteredMembers) {
-            await ctx.couch.access.forceUpdate(member);
-          }*/
-          // Update every member of the collection. For now.
-          const collection = await ctx.couch.access.get(id);
-          if ("members" in collection) {
-            for (const member of collection.members) {
-              if ("id" in member && typeof member.id !== "undefined")
-                await ctx.couch.access.forceUpdate(member.id);
-            }
-          }
+
+          // Update every member of the collection
+          await ctx.couch.access.bulkForceUpdateAllMembers(id);
         }
       } catch (e) {
         throw httpErrorToTRPC(e);
@@ -353,13 +335,7 @@ export const collectionRouter = createRouter()
           });
 
           // Update every member of the collection. For now.
-          const collection = await ctx.couch.access.get(id);
-          if ("members" in collection) {
-            for (const member of collection.members) {
-              if ("id" in member && typeof member.id !== "undefined")
-                await ctx.couch.access.forceUpdate(member.id);
-            }
-          }
+          await ctx.couch.access.bulkForceUpdateAllMembers(id);
         }
       } catch (e: any) {
         console.log(e?.message);
@@ -399,12 +375,16 @@ export const collectionRouter = createRouter()
           for (const member of collection.members) {
             if (member.id) collectionMemberIds.push(member.id);
           }
-          const allObjectsToUpdate = new Set([
-            ...memberIds,
-            ...collectionMemberIds,
-          ]);
-          for (const objectId of allObjectsToUpdate)
-            await ctx.couch.access.forceUpdate(objectId);
+          const allObjectsToUpdate = [
+            ...new Set([...memberIds, ...collectionMemberIds]),
+          ];
+
+          // Don't hold up the response but force update to all old and new members
+          ctx.couch.access
+            .bulkForceUpdate(allObjectsToUpdate)
+            .then((res: any) => {
+              console.log("Forced Update Members: ", res);
+            });
         }
       } catch (e) {
         throw httpErrorToTRPC(e);
@@ -424,9 +404,11 @@ export const collectionRouter = createRouter()
           command: ["remove", members],
           user,
         });
-        for (const member of members) {
-          await ctx.couch.access.forceUpdate(member);
-        }
+
+        // Don't hold up the response but force update to these new members
+        ctx.couch.access.bulkForceUpdate(members).then((res: any) => {
+          console.log("Forced Update Members: ", res);
+        });
       } catch (e: any) {
         console.log(e?.message);
         throw httpErrorToTRPC(e);
@@ -456,9 +438,10 @@ export const collectionRouter = createRouter()
           command: ["remove", memberIds],
           user,
         });
-        for (const member of memberIds) {
-          await ctx.couch.access.forceUpdate(member);
-        }
+        // Don't hold up the response but force update to these new members
+        ctx.couch.access.bulkForceUpdate(memberIds).then((res: any) => {
+          console.log("Forced Update Members: ", res);
+        });
       } catch (e: any) {
         console.log(e?.message);
         throw httpErrorToTRPC(e);
@@ -479,14 +462,7 @@ export const collectionRouter = createRouter()
           command: ["move", [members, toIndex]],
           user,
         });
-        const collection = await ctx.couch.access.get(id);
-        if ("members" in collection) {
-          // Update every member of the collection. For now.
-          for (const member of collection.members) {
-            if ("id" in member && typeof member.id !== "undefined")
-              await ctx.couch.access.forceUpdate(member.id);
-          }
-        }
+        await ctx.couch.access.bulkForceUpdateAllMembers(id);
       } catch (e) {
         throw httpErrorToTRPC(e);
       }
@@ -532,14 +508,8 @@ export const collectionRouter = createRouter()
             user,
           });
 
-          // Update every member of the collection. For now.
-          const collection = await ctx.couch.access.get(id);
-          if ("members" in collection) {
-            for (const member of collection.members) {
-              if ("id" in member && typeof member.id !== "undefined")
-                await ctx.couch.access.forceUpdate(member.id);
-            }
-          }
+          // Update every member of the collection.
+          await ctx.couch.access.bulkForceUpdateAllMembers(id);
         }
       } catch (e) {
         throw httpErrorToTRPC(e);
