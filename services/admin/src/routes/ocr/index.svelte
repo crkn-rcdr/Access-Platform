@@ -105,6 +105,8 @@
   import { showConfirmation } from "$lib/utils/confirmation";
   import timer from "$lib/stores/timer";
   import { onDestroy, onMount } from "svelte";
+  import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
+  import ExpansionTile from "$lib/components/shared/ExpansionTile.svelte";
   // Typed arrays lets us avoid checks in the front end
   export let base: OcrBatch[] = [];
   export let exportWaiting: ExportWaitingOcrBatch[] = [];
@@ -166,141 +168,240 @@
   });
 </script>
 
-<br />
-<br />
 <div class="wrapper">
+  <br />
+  <br />
+  <br />
   <div class="title">
     <!--h6>OCR Batches</h6-->
     <a href="/ocr/new">
       <button class="create-button primary">Create New OCR Batch</button>
     </a>
   </div>
-  <table class="ocr-table">
-    <thead>
-      <th> OCR Batches </th>
-      <!--th> Updated By </th>
-      <th> # Canvases </th-->
-    </thead>
-    <tbody>
-      <!--{#each base as batch}
-        <tr>
-          <td> {batch.name} </td>
-          <td> {batch.staff.by.name} </td>
-          <td> {batch.canvases.length} </td>
-        </tr>
-      {/each}-->
+  <br />
 
-      {#each exportWaiting as batch}
-        <tr>
-          <td> {batch.name} </td>
-          <!--td> {batch.staff.by.name} </td>
-          <td> {batch.canvases.length} </td-->
-        </tr>
-        <tr class="row-details waiting">
-          <td> Exporting {batch.canvases.length} canvases... </td>
-        </tr>
-      {/each}
+  {#if base.length}
+    <ExpansionTile toggled={true} topClass="toggle-title">
+      <span slot="top">Awaiting Export ({base.length})</span>
+      <div class="toggle-list" slot="bottom">
+        {#each base as batch}
+          <div class="ocr-card">
+            {batch.name}
 
-      {#each exportDone as batch}
-        <tr>
-          <td> {batch.name} </td>
-          <!--td> {batch.staff.by.name} </td>
-          <td> {batch.canvases.length} </td-->
-        </tr>
-        <tr class="row-details">
-          <td class="result-cell">
-            <table>
-              <tbody>
-                <tr
-                  class:success={batch.exportProcess["succeeded"]}
-                  class:warn={batch.exportProcess["message"]?.length &&
-                    batch.exportProcess["succeeded"]}
-                  class:not-success={!batch.exportProcess["succeeded"]}
-                >
-                  {#if batch.exportProcess["succeeded"]}
-                    <td colspan="3">
-                      <span
-                        class="export-success-wrap auto-align auto-align__a-center"
-                      >
-                        <span class="success-status">
-                          {batch.canvases.length} canavases successfully exported!
-                        </span>
-                        <button
-                          on:click={() => requestImport(batch)}
-                          class="import-button save"
-                        >
-                          Import Canvases
-                        </button>
-                      </span>
-                      <br />
-                      {batch.exportProcess["message"]}
-                    </td>
-                  {:else}
-                    <td colspan="3">
-                      Export failed: {batch.exportProcess["message"]}
-                    </td>
-                  {/if}
-                </tr>
-              </tbody>
-            </table>
-          </td>
-        </tr>
-      {/each}
+            <div class="button-bar">
+              <button class="danger"> Delete </button>
+            </div>
+          </div>
+        {/each}
+      </div>
+    </ExpansionTile>
+  {/if}
 
-      {#each importWaiting as batch}
-        <tr>
-          <td> {batch.name} </td>
-          <!--td> {batch.staff.by.name} </td>
-          <td> {batch.canvases.length} </td-->
-        </tr>
-        <tr class="row-details waiting">
-          <td> Importing {batch.canvases.length} canvases... </td>
-        </tr>
-      {/each}
+  <br />
+  <br />
+  <br />
 
-      {#each importDone as batch}
-        <tr>
-          <td> {batch.name} </td>
-          <!--td> {batch.staff.by.name} </td>
+  <ExpansionTile toggled={true} topClass="toggle-title">
+    <span slot="top">
+      Exporting ({exportWaiting.length})
+    </span>
+    <div class="toggle-list" slot="bottom">
+      {#if exportWaiting.length}
+        <p>No batches are exporting.</p>
+      {:else}
+        {#each exportWaiting as batch}
+          <div class="ocr-card">
+            {batch.name}
+
+            <NotificationBar
+              status="secondary"
+              message={`Exporting ${batch.canvases.length} canvases...`}
+            />
+            <div class="button-bar">
+              <button class="secondary"> Cancel Export </button>
+              <button class="danger"> Delete </button>
+            </div>
+          </div>
+        {/each}
+      {/if}
+    </div>
+  </ExpansionTile>
+
+  <br />
+  <br />
+  <br />
+
+  <ExpansionTile toggled={true} topClass="toggle-title">
+    <span slot="top">
+      Done Exporting ({exportDone.length})
+    </span>
+    <div class="toggle-list" slot="bottom">
+      {#if !exportDone.length}
+        <p>No batches are done exporting.</p>
+      {:else}
+        {#each exportDone as batch}
+          <div class="ocr-card">
+            {batch.name}
+
+            <div
+              class:success={batch.exportProcess["succeeded"]}
+              class:warn={batch.exportProcess["message"]?.length &&
+                batch.exportProcess["succeeded"]}
+              class:not-success={!batch.exportProcess["succeeded"]}
+            >
+              {#if batch.exportProcess["succeeded"]}
+                <NotificationBar
+                  message={`${batch.canvases.length} canavases successfully exported! You can now run OCR on them with Abby. Return here once completed, and press 'Import Canvases.'`}
+                />
+                <NotificationBar
+                  message={batch.exportProcess["message"]?.length
+                    ? `Warning: ${batch.exportProcess["message"]}`
+                    : ""}
+                  status="warn"
+                />
+              {:else}
+                <NotificationBar
+                  message={`Export failed: ${batch.exportProcess["message"]}`}
+                  status="fail"
+                />
+              {/if}
+            </div>
+            <div class="button-bar">
+              {#if batch.exportProcess["succeeded"]}
+                <button on:click={() => requestImport(batch)} class="save">
+                  Import Canvases
+                </button>
+              {:else}
+                <button class="secondary"> Retry Export </button>
+              {/if}
+              <button class="danger"> Delete </button>
+            </div>
+          </div>
+        {/each}
+      {/if}
+    </div>
+  </ExpansionTile>
+
+  <br />
+  <br />
+  <br />
+
+  <ExpansionTile toggled={true} topClass="toggle-title">
+    <span slot="top">
+      Importing ({importWaiting.length})
+    </span>
+    <div class="toggle-list" slot="bottom">
+      {#if !importWaiting.length}
+        <p>No batches are importing.</p>
+      {:else}
+        {#each importWaiting as batch}
+          <div class="ocr-card">
+            {batch.name}
+            <!--td> {batch.staff.by.name} </td>
           <td> {batch.canvases.length} </td-->
-        </tr>
-        <tr class="row-details">
-          <td class="result-cell">
-            <table>
-              <tbody>
-                <tr
-                  class:success={batch.importProcess["succeeded"]}
-                  class:warn={batch.importProcess["message"]?.length &&
-                    batch.importProcess["succeeded"]}
-                  class:not-success={!batch.importProcess["succeeded"]}
-                >
-                  <td>
-                    {#if batch.importProcess["succeeded"]}
-                      {batch.canvases.length} canavases have been imported into access.
-                      <br />
-                      {batch.importProcess["message"]}
-                    {:else}
-                      Import failed: {batch.importProcess["message"]}
-                    {/if}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </td>
-        </tr>
-      {/each}
-    </tbody>
-  </table>
+
+            <NotificationBar
+              status="secondary"
+              message={`Importing ${batch.canvases.length} canvases...`}
+            />
+            <div class="button-bar">
+              <button class="secondary"> Cancel Import </button>
+              <button class="danger"> Delete </button>
+            </div>
+          </div>
+        {/each}
+      {/if}
+    </div>
+  </ExpansionTile>
+
+  <br />
+  <br />
+  <br />
+
+  <ExpansionTile toggled={true} topClass="toggle-title">
+    <span slot="top">
+      Done Importing ({importDone.length})
+    </span>
+    <div class="toggle-list" slot="bottom">
+      {#if !importDone.length}
+        <p>No batches are done importing.</p>
+      {:else}
+        {#each importDone as batch}
+          <div class="ocr-card">
+            {batch.name}
+
+            <div
+              class:success={batch.importProcess["succeeded"]}
+              class:warn={batch.importProcess["message"]?.length &&
+                batch.importProcess["succeeded"]}
+              class:not-success={!batch.importProcess["succeeded"]}
+            >
+              {#if batch.importProcess["succeeded"]}
+                <NotificationBar
+                  message={`${batch.canvases.length} canavases have been imported into access.`}
+                />
+
+                <NotificationBar
+                  message={batch.importProcess["message"]?.length
+                    ? `Warning: ${batch.importProcess["message"]}`
+                    : ""}
+                  status="warn"
+                />
+              {:else}
+                <NotificationBar
+                  message={`Import failed: ${batch.importProcess["message"]}`}
+                  status="fail"
+                />
+              {/if}
+            </div>
+            <div class="button-bar">
+              {#if !batch.importProcess["succeeded"]}
+                <button class="secondary"> Retry Import</button>
+              {/if}
+              <button class="danger"> Delete </button>
+            </div>
+          </div>
+        {/each}
+      {/if}
+    </div>
+  </ExpansionTile>
+  <br />
+  <br />
+  <br />
 </div>
-<br />
-<br />
-<br />
 
 <style>
   .title {
     width: 100%;
     text-align: right;
   }
+
+  .ocr-card {
+    width: 100%;
+    background: var(--base-bg);
+    padding: var(--perfect-fourth-4) var(--perfect-fourth-2);
+    border-radius: var(--border-radius);
+    margin-bottom: 1rem;
+    display: grid;
+    grid-gap: 1rem;
+  }
+  p {
+    margin-bottom: 1rem;
+  }
+
+  :global(.toggle-title) {
+    background: var(--structural-div-bg);
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    font-size: var(--perfect-fourth-6);
+  }
+
+  .toggle-list {
+    margin-top: 1rem;
+  }
+  /*.button-bar {
+    text-align: right;
+  }*/
   /*h6 {
     flex: 9;
     margin: 0 !important;
@@ -309,9 +410,9 @@
     flex: 2;
   }
 
-  .ocr-table {
+  /*.ocr-table {
     margin-top: 1rem;
-  }
+  }*/
   /*.success {
     background-color: var(--success-light);
     color: var(--success);
