@@ -1,4 +1,7 @@
 <script lang="ts">
+  import TiWarning from "svelte-icons/ti/TiWarning.svelte";
+  import TiDelete from "svelte-icons/ti/TiDelete.svelte";
+  import FaCheckCircle from "svelte-icons/fa/FaCheckCircle.svelte";
   import { getStores } from "$app/stores";
   import type { Session } from "$lib/types";
   import { showConfirmation } from "$lib/utils/confirmation";
@@ -182,6 +185,21 @@
     </span>
     <span class="auto-align auto-align__a-center">
       {#if status !== "N/A" && status !== "waiting"}
+        {#if status === "succeeded"}
+          {#if message.length}
+            <span class="icon warning">
+              <TiWarning />
+            </span>
+          {:else}
+            <span class="icon success">
+              <FaCheckCircle />
+            </span>
+          {/if}
+        {:else if status === "failed"}
+          <span class="icon not-success">
+            <TiDelete />
+          </span>
+        {/if}
         {stage}
         {status}{#if message?.length}{#if status === "succeeded"}
             with warnings{/if}:
@@ -241,5 +259,22 @@
   }
   button {
     min-width: 10rem;
+  }
+
+  .success.icon {
+    color: var(--success);
+    background-color: transparent;
+    width: 1.4rem;
+    height: 1.4rem;
+    margin-left: 0.3rem;
+    margin-right: 0.4rem;
+  }
+  .not-success.icon {
+    color: var(--danger);
+    background-color: transparent;
+  }
+  .warning.icon {
+    color: var(--warn);
+    background-color: transparent;
   }
 </style>
