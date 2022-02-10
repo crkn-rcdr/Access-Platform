@@ -115,6 +115,8 @@
   export let importDone: (ImportSucceededOcrBatch | ImportFailedOcrBatch)[] =
     [];
 
+  let loading = false;
+
   let unsubscribe;
   const interval = timer({ interval: 60000 }); // 1x per min
 
@@ -124,10 +126,12 @@
   const { session } = getStores<Session>();
 
   async function getBatches() {
+    loading = true;
     let batchList = await $session.lapin.query("ocr.list");
     const results = getOcrBatches(batchList);
     ({ base, exportWaiting, exportDone, importWaiting, importDone } =
       results.props);
+    loading = false;
   }
 
   onMount(() => {
@@ -159,6 +163,7 @@
         {#each base as batch}
           <OcrBatchListItem
             {batch}
+            isListLoading={loading}
             stage="N/A"
             status="N/A"
             on:export={getBatches}
@@ -173,12 +178,13 @@
       Exporting ({exportWaiting.length})
     </span>
     <div class="toggle-list" slot="bottom">
-      {#if exportWaiting.length}
+      {#if !exportWaiting.length}
         <div class="ocr-card">No batches are exporting.</div>
       {:else}
         {#each exportWaiting as batch}
           <OcrBatchListItem
             {batch}
+            isListLoading={loading}
             stage="export"
             status={"waiting"}
             on:cancel={getBatches}
@@ -199,6 +205,7 @@
         {#each exportDone as batch}
           <OcrBatchListItem
             {batch}
+            isListLoading={loading}
             stage="export"
             status={batch.exportProcess["succeeded"] ? "succeeded" : "failed"}
             message={batch.exportProcess["message"]}
@@ -221,6 +228,7 @@
         {#each importWaiting as batch}
           <OcrBatchListItem
             {batch}
+            isListLoading={loading}
             stage="import"
             status={"waiting"}
             on:cancel={getBatches}
@@ -241,6 +249,7 @@
         {#each importDone as batch}
           <OcrBatchListItem
             {batch}
+            isListLoading={loading}
             stage="import"
             status={batch.importProcess["succeeded"] ? "succeeded" : "failed"}
             message={batch.importProcess["message"]}

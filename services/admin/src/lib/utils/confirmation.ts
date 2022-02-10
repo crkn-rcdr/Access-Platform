@@ -43,7 +43,7 @@ async function showConfirmation(
         status: res["success"] ? "success" : "fail",
         expandable: true,
         float: true,
-        notificationPosition: numVisibleNotifications,
+        notificationPosition: 0, //numVisibleNotifications,
         dismissFunction: () => {
           notification.$destroy();
           numVisibleNotifications--;
@@ -67,7 +67,7 @@ async function showConfirmation(
         status: "fail",
         expandable: true,
         float: true,
-        notificationPosition: numVisibleNotifications,
+        notificationPosition: 0, //numVisibleNotifications,
         dismissFunction: () => {
           notification.$destroy();
           numVisibleNotifications--;

@@ -11,6 +11,7 @@
   export let stage: "export" | "import" | "N/A";
   export let status: "failed" | "waiting" | "succeeded" | "N/A";
   export let message: string = "";
+  export let isListLoading: boolean = false;
 
   /**
    * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.
@@ -24,20 +25,27 @@
 
   let loading = false;
 
+  /**
+   * A helper method to slow down the rate of requests going to the backend. Causes the script to pause for 'ms.'
+   * @param ms
+   */
+  function sleep(ms: number) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
   async function handleDeletePressed() {
     loading = true;
     await showConfirmation(
       async () => {
         try {
           await $session.lapin.mutation("ocr.delete", batch.id);
+          await sleep(1000);
           dispatch("delete", batch);
-          loading = false;
           return {
             success: true,
             details: "",
           };
         } catch (e) {
-          loading = false;
           return {
             success: false,
             details: e.message,
@@ -60,9 +68,9 @@
             user: $session.user,
             id: batch.id,
           });
-          loading = false;
           if (response) {
             batch = response;
+            await sleep(1000);
             dispatch("cancel", batch);
             return {
               success: true,
@@ -76,7 +84,6 @@
             };
           }
         } catch (e) {
-          loading = false;
           return {
             success: false,
             details: e.message,
@@ -97,9 +104,9 @@
             user: $session.user,
             id: batch.id,
           });
-          loading = false;
           if (response) {
             batch = response;
+            await sleep(1000);
             dispatch("export", batch);
             return {
               success: true,
@@ -113,7 +120,6 @@
             };
           }
         } catch (e) {
-          loading = false;
           return {
             success: false,
             details: e.message,
@@ -134,9 +140,9 @@
             user: $session.user,
             id: batch.id,
           });
-          loading = false;
           if (response) {
             batch = response;
+            await sleep(1000);
             dispatch("import", batch);
             return {
               success: true,
@@ -150,7 +156,6 @@
             };
           }
         } catch (e) {
-          loading = false;
           return {
             success: false,
             details: e.message,
@@ -166,6 +171,8 @@
     if (stage === "export") await handleExportPressed();
     else await handleImportPressed();
   }
+
+  $: if (!isListLoading) loading = false;
 </script>
 
 {#if batch}
@@ -174,9 +181,11 @@
       {batch.name}
     </span>
     <span class="auto-align auto-align__a-center">
-      {stage}
-      {#if status !== "N/A"}
-        {status}{#if message?.length}: {message}{/if}
+      {#if status !== "N/A" && status !== "waiting"}
+        {stage}
+        {status}{#if message?.length}{#if status === "succeeded"}
+            with warnings{/if}:
+          {message}{/if}
       {/if}
     </span>
     <span class="auto-align auto-align__a-center">
