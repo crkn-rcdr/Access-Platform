@@ -13,6 +13,7 @@ const RequestInput = z.object({
   user: User,
   id: z.string(),
 });
+
 export const ocrRouter = createRouter()
   .query("get", {
     input: z.string(),
@@ -99,6 +100,16 @@ export const ocrRouter = createRouter()
     async resolve({ input, ctx }) {
       try {
         return await ctx.couch.ocr.cancelImport(input);
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .mutation("delete", {
+    input: z.string(),
+    async resolve({ input, ctx }) {
+      try {
+        return await ctx.couch.ocr.delete({ document: input });
       } catch (e) {
         throw httpErrorToTRPC(e);
       }

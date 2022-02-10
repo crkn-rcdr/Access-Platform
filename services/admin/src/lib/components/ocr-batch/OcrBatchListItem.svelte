@@ -21,6 +21,28 @@
    */
   const { session } = getStores<Session>();
 
+  async function handleDeletePressed() {
+    await showConfirmation(
+      async () => {
+        try {
+          await $session.lapin.mutation("ocr.delete", batch.id);
+          dispatch("delete", batch);
+          return {
+            success: true,
+            details: "",
+          };
+        } catch (e) {
+          return {
+            success: false,
+            details: e.message,
+          };
+        }
+      },
+      `Success: batch deleted.`,
+      `Error: failed to delete batch.`
+    );
+  }
+
   async function handleCancelPressed() {
     await showConfirmation(
       async () => {
@@ -53,7 +75,7 @@
         }
       },
       `Success: batch ${stage} canceled.`,
-      `Error: failed to cancel ${stage} batch.`
+      `Error: failed to cancel batch  ${stage}.`
     );
   }
 
@@ -165,7 +187,7 @@
         </button>
       {/if}
 
-      <div class="action icon">
+      <div class="action icon" on:click={handleDeletePressed}>
         <TiTrash />
       </div>
     </span>

@@ -163,6 +163,7 @@
             stage="N/A"
             status="N/A"
             on:export={getBatches}
+            on:delete={getBatches}
           />
         {/each}
       </div>
@@ -182,6 +183,7 @@
             stage="export"
             status={"waiting"}
             on:cancel={getBatches}
+            on:delete={getBatches}
           />
         {/each}
       {/if}
@@ -199,10 +201,11 @@
           <OcrBatchListItem
             {batch}
             stage="export"
-            on:export={getBatches}
-            on:import={getBatches}
             status={batch.exportProcess["succeeded"] ? "succeeded" : "failed"}
             message={batch.exportProcess["message"]}
+            on:export={getBatches}
+            on:import={getBatches}
+            on:delete={getBatches}
           />
         {/each}
       {/if}
@@ -222,6 +225,7 @@
             stage="import"
             status={"waiting"}
             on:cancel={getBatches}
+            on:delete={getBatches}
           />
         {/each}
       {/if}
@@ -238,10 +242,11 @@
         {#each importDone as batch}
           <OcrBatchListItem
             {batch}
-            on:import={getBatches}
             stage="import"
             status={batch.importProcess["succeeded"] ? "succeeded" : "failed"}
             message={batch.importProcess["message"]}
+            on:import={getBatches}
+            on:delete={getBatches}
           />
         {/each}
       {/if}
