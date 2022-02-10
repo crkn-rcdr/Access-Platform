@@ -11,7 +11,7 @@ A component tha tis used to highlight important messages to the user
 | detail : string                                 | optional | Any detailed information that will be shown in the expandable portion |
 | expandable : boolean                            | optional| If there will be an expandible portion or not |
 | float : boolean                                 | optional | If the notification bar should be drawn independant of the rest of the dom, floating on the bottom right, or if it should be drawn in-place |
-| dissmissFunction : Function                     | optional | A function that will run when the user presses the 'dismiss' button |
+| dismissFunction : Function                     | optional | A function that will run when the user presses the 'dismiss' button |
 | notificationPosition : number                   | optional | The position of the notifciation in the list of notifications on the bottom right corner |
 
 ### Usage
@@ -53,7 +53,7 @@ A component tha tis used to highlight important messages to the user
   /**
    * @type {Function} A function that will run when the user presses the 'dismiss' button.
    */
-  export let dissmissFunction = null;
+  export let dismissFunction = null;
 
   /**
    * @type {number} The position of the notifciation in the list of notifications on the bottom right corner.
@@ -85,8 +85,8 @@ A component tha tis used to highlight important messages to the user
       <ExpansionTile useInfoIcon={true}>
         <div slot="top">
           {@html message}
-          {#if dissmissFunction}
-            <button class="dismiss sm ghost dark" on:click={dissmissFunction}
+          {#if dismissFunction}
+            <button class="dismiss sm ghost dark" on:click={dismissFunction}
               >dismiss</button
             >
           {/if}

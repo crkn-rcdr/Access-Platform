@@ -34,8 +34,6 @@
 
   import { getStores, page } from "$app/stores";
   import DropdownMenu from "$lib/components/shared/DropdownMenu.svelte";
-  import { includes } from "lodash-es";
-  import Align from "$lib/components/shared/Align.svelte";
 
   /**
    * @type {TRPCClient<LapinRouter>} Allows the app to to speak to the lapin api
@@ -99,6 +97,14 @@
         href="/object/edit"
         class:active-nav-item={$page.path.includes("/object/edit")}>
         Edit in Access
+      </a>
+
+
+      <a
+        class="auto-align auto-align__a-center"
+        href="/ocr"
+        class:active-nav-item={$page.path.includes("/ocr")}>
+        Load OCR
       </a>
       
     </nav>

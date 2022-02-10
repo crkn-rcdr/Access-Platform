@@ -59,6 +59,8 @@
       <a class="auto-align auto-align__a-center" href="/object/edit">
         Edit in Access
       </a>
+
+      <a class="auto-align auto-align__a-center" href="/ocr"> Load OCR </a>
     </nav>
   </div>
 {/if}

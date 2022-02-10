@@ -145,13 +145,12 @@
   <br />
   <br />
   <br />
-  <div class="title">
-    <!--h6>OCR Batches</h6-->
+  <div class="title auto-align auto-align__a-center">
+    <h6>OCR Batches</h6>
     <a href="/ocr/new">
       <button class="create-button primary">Create New OCR Batch</button>
     </a>
   </div>
-  <br />
 
   {#if base.length}
     <ExpansionTile toggled={true} topClass="toggle-title">
@@ -260,9 +259,10 @@
 <style>
   .title {
     width: 100%;
-    text-align: right;
   }
-
+  .title h6 {
+    flex: 10;
+  }
   :global(.toggle-title) {
     background: var(--structural-div-bg);
     padding: 1rem;
@@ -275,29 +275,13 @@
     background: var(--base-bg);
     background: var(--structural-div-bg);
     padding: 1rem;
-    /*margin-bottom: 1rem;*/
     display: grid;
     grid-gap: 1rem;
   }
-  /*.button-bar {
-    text-align: right;
-  }*/
-  /*h6 {
-    flex: 9;
-    margin: 0 !important;
-  }*/
   .create-button {
     flex: 2;
   }
-
-  /*.ocr-table {
-    margin-top: 1rem;
-  }*/
-  /*.success {
-    background-color: var(--success-light);
-    color: var(--success);
-  }*/
-  .warn {
+  /*.warn {
     background-color: var(--warn-light);
     color: var(--warn);
   }
@@ -308,22 +292,5 @@
   .not-success {
     background-color: var(--danger-light);
     color: var(--danger);
-  }
-  .export-success-wrap {
-    width: 100%;
-  }
-  .success-status {
-    width: 100%;
-    flex: 9;
-  }
-  .row-details {
-    background: white;
-    filter: brightness(0.98);
-  }
-  .row-details table {
-    margin-top: 0;
-  }
-  .row-details tbody {
-    background: none;
-  }
+  }*/
 </style>

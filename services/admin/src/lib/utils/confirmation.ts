@@ -9,7 +9,7 @@ import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
 /**
  * @type {number} The length of time the notification should be displayed on the screen.
  */
-const DISPLAY_TIME = 10000;
+const DISPLAY_TIME = 5000;
 
 /**
  * @type {number} A counter of the number of notifications visible on the screen.
@@ -44,12 +44,10 @@ async function showConfirmation(
         expandable: true,
         float: true,
         notificationPosition: numVisibleNotifications,
-        dissmissFunction: res["success"]
-          ? null
-          : () => {
-              notification.$destroy();
-              numVisibleNotifications--;
-            },
+        dismissFunction: () => {
+          notification.$destroy();
+          numVisibleNotifications--;
+        },
       },
     });
     if (res["success"]) {
@@ -70,7 +68,7 @@ async function showConfirmation(
         expandable: true,
         float: true,
         notificationPosition: numVisibleNotifications,
-        dissmissFunction: () => {
+        dismissFunction: () => {
           notification.$destroy();
           numVisibleNotifications--;
         },

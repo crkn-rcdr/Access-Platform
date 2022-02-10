@@ -5,6 +5,7 @@
   import type { OcrBatch } from "@crkn-rcdr/access-data";
   import { createEventDispatcher } from "svelte";
   import TiTrash from "svelte-icons/ti/TiTrash.svelte";
+  import Loading from "../shared/Loading.svelte";
 
   export let batch: OcrBatch;
   export let stage: "export" | "import" | "N/A";
@@ -21,17 +22,22 @@
    */
   const { session } = getStores<Session>();
 
+  let loading = false;
+
   async function handleDeletePressed() {
+    loading = true;
     await showConfirmation(
       async () => {
         try {
           await $session.lapin.mutation("ocr.delete", batch.id);
           dispatch("delete", batch);
+          loading = false;
           return {
             success: true,
             details: "",
           };
         } catch (e) {
+          loading = false;
           return {
             success: false,
             details: e.message,
@@ -44,6 +50,7 @@
   }
 
   async function handleCancelPressed() {
+    loading = true;
     await showConfirmation(
       async () => {
         try {
@@ -53,6 +60,7 @@
             user: $session.user,
             id: batch.id,
           });
+          loading = false;
           if (response) {
             batch = response;
             dispatch("cancel", batch);
@@ -68,6 +76,7 @@
             };
           }
         } catch (e) {
+          loading = false;
           return {
             success: false,
             details: e.message,
@@ -80,6 +89,7 @@
   }
 
   async function handleExportPressed() {
+    loading = true;
     await showConfirmation(
       async () => {
         try {
@@ -87,6 +97,7 @@
             user: $session.user,
             id: batch.id,
           });
+          loading = false;
           if (response) {
             batch = response;
             dispatch("export", batch);
@@ -102,6 +113,7 @@
             };
           }
         } catch (e) {
+          loading = false;
           return {
             success: false,
             details: e.message,
@@ -114,6 +126,7 @@
   }
 
   async function handleImportPressed() {
+    loading = true;
     await showConfirmation(
       async () => {
         try {
@@ -121,6 +134,7 @@
             user: $session.user,
             id: batch.id,
           });
+          loading = false;
           if (response) {
             batch = response;
             dispatch("import", batch);
@@ -136,6 +150,7 @@
             };
           }
         } catch (e) {
+          loading = false;
           return {
             success: false,
             details: e.message,
@@ -169,27 +184,31 @@
     </span>
 
     <span class="actions auto-align auto-align__a-center auto-align__j-end">
-      {#if status === "waiting"}
-        <button class="action secondary" on:click={handleCancelPressed}>
-          Cancel
-        </button>
-      {:else if status === "failed"}
-        <button class="action secondary" on:click={handleRetryPressed}>
-          Retry
-        </button>
-      {:else if status === "succeeded" && stage === "export"}
-        <button class="action save" on:click={handleImportPressed}>
-          Import
-        </button>
-      {:else if status === "N/A"}
-        <button class="action save" on:click={handleExportPressed}>
-          Export
-        </button>
-      {/if}
+      {#if loading}
+        <Loading backgroundType="gradient" size="sm" />
+      {:else}
+        {#if status === "waiting"}
+          <button class="action secondary" on:click={handleCancelPressed}>
+            Cancel
+          </button>
+        {:else if status === "failed"}
+          <button class="action secondary" on:click={handleRetryPressed}>
+            Retry
+          </button>
+        {:else if status === "succeeded" && stage === "export"}
+          <button class="action save" on:click={handleImportPressed}>
+            Import
+          </button>
+        {:else if status === "N/A"}
+          <button class="action save" on:click={handleExportPressed}>
+            Export
+          </button>
+        {/if}
 
-      <div class="action icon" on:click={handleDeletePressed}>
-        <TiTrash />
-      </div>
+        <div class="action icon" on:click={handleDeletePressed}>
+          <TiTrash />
+        </div>
+      {/if}
     </span>
   </div>
 {/if}
