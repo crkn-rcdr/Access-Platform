@@ -35,7 +35,9 @@
       Hi {name.length ? `, ${name}` : ""}. What would you like to do today?
     </h4>
     <nav class="auto-align auto-align__wrap">
-      <span class="drop-down-wrap-page auto-align auto-align__a-center">
+      <span
+        class="drop-down-wrap-page auto-align auto-align__a-center auto-align__j-center"
+      >
         <DropdownMenu direction="right">
           <div
             slot="dropdown-button"
@@ -48,19 +50,33 @@
         </DropdownMenu>
       </span>
 
-      <a class="auto-align auto-align__a-center" href="/smelter/find">
+      <a
+        class="auto-align auto-align__a-center auto-align__j-center"
+        href="/smelter/find"
+      >
         Import into Access
       </a>
 
-      <a class="auto-align auto-align__a-center" href="/dmd/new">
+      <a
+        class="auto-align auto-align__a-center auto-align__j-center"
+        href="/dmd/new"
+      >
         Load Metadata
       </a>
 
-      <a class="auto-align auto-align__a-center" href="/object/edit">
+      <a
+        class="auto-align auto-align__a-center auto-align__j-center"
+        href="/object/edit"
+      >
         Edit in Access
       </a>
 
-      <a class="auto-align auto-align__a-center" href="/ocr"> Load OCR </a>
+      <a
+        class="auto-align auto-align__a-center auto-align__j-center"
+        href="/ocr"
+      >
+        Load OCR
+      </a>
     </nav>
   </div>
 {/if}
@@ -98,6 +114,7 @@
     margin-right: 0.5rem;
     margin-left: 0.5rem;
     border-radius: var(--border-radius);
+    min-width: 13rem;
   }
   nav > *:hover {
     filter: brightness(1.1);
