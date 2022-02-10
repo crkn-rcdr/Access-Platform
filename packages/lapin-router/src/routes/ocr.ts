@@ -11,7 +11,7 @@ const CreateInput = z.object({
 
 const RequestInput = z.object({
   user: User,
-  id: Slug,
+  id: z.string(),
 });
 export const ocrRouter = createRouter()
   .query("get", {
@@ -79,6 +79,26 @@ export const ocrRouter = createRouter()
     async resolve({ input, ctx }) {
       try {
         return await ctx.couch.ocr.requestImport(input);
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .mutation("cancelExport", {
+    input: RequestInput,
+    async resolve({ input, ctx }) {
+      try {
+        return await ctx.couch.ocr.cancelExport(input);
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .mutation("cancelImport", {
+    input: RequestInput,
+    async resolve({ input, ctx }) {
+      try {
+        return await ctx.couch.ocr.cancelImport(input);
       } catch (e) {
         throw httpErrorToTRPC(e);
       }

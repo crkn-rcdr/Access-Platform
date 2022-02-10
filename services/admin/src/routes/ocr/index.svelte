@@ -102,10 +102,8 @@
 
 <script lang="ts">
   import { getStores } from "$app/stores";
-  import { showConfirmation } from "$lib/utils/confirmation";
   import timer from "$lib/stores/timer";
   import { onDestroy, onMount } from "svelte";
-  import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
   import ExpansionTile from "$lib/components/shared/ExpansionTile.svelte";
   import OcrBatchListItem from "$lib/components/ocr-batch/OcrBatchListItem.svelte";
   // Typed arrays lets us avoid checks in the front end
@@ -125,34 +123,18 @@
    */
   const { session } = getStores<Session>();
 
-  async function requestImport(batch: OcrBatch) {
-    await showConfirmation(
-      async () => {
-        try {
-          const response = await $session.lapin.mutation(`ocr.requestImport`, {
-            user: $session.user,
-            id: batch.id,
-          });
-          if (response) {
-            batch = response;
-            exportDone = exportDone.filter((el) => el.id !== batch.id);
-            importWaiting.push(batch as ImportWaitingOcrBatch);
-            importWaiting = importWaiting;
-          }
-          return {
-            success: true,
-            details: "",
-          };
-        } catch (e) {
-          return {
-            success: false,
-            details: e.message,
-          };
-        }
-      },
-      "Success: batch queued for importing.",
-      "Error: failed queue batch for importing."
-    );
+  function handleImport(event) {
+    const batch = event.detail;
+    exportDone = exportDone.filter((el) => el.id !== batch.id);
+    importWaiting.push(batch as ImportWaitingOcrBatch);
+    importWaiting = importWaiting;
+  }
+
+  function handleExport(event) {
+    const batch = event.detail;
+    base = base.filter((el) => el.id !== batch.id);
+    exportWaiting.push(batch as ExportWaitingOcrBatch);
+    exportWaiting = exportWaiting;
   }
 
   onMount(() => {
@@ -186,7 +168,12 @@
       <span slot="top">Awaiting Export ({base.length})</span>
       <div class="toggle-list" slot="bottom">
         {#each base as batch}
-          <OcrBatchListItem {batch} stage="N/A" status="N/A" />
+          <OcrBatchListItem
+            {batch}
+            stage="N/A"
+            status="N/A"
+            on:export={handleExport}
+          />
         {/each}
       </div>
     </ExpansionTile>
@@ -217,6 +204,7 @@
           <OcrBatchListItem
             {batch}
             stage="export"
+            on:import={handleImport}
             status={batch.exportProcess["succeeded"] ? "succeeded" : "failed"}
             message={batch.exportProcess["message"]}
           />
