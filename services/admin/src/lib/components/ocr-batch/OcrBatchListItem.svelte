@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { OcrBatch } from "@crkn-rcdr/access-data";
+  import TiTrash from "svelte-icons/ti/TiTrash.svelte";
 
   export let batch: OcrBatch;
   export let stage: "export" | "import" | "N/A";
@@ -9,28 +10,31 @@
 
 {#if batch}
   <div class="item-wrap auto-grid">
-    <span>
+    <span class="auto-align auto-align__a-center">
       {batch.name}
     </span>
-    <span>
+    <span class="auto-align auto-align__a-center">
       {stage}
       {#if status !== "N/A"}
         {status}{#if message?.length}: {message}{/if}
       {/if}
     </span>
-    <span>
+    <span class="auto-align auto-align__a-center">
       {batch.canvases?.length} Canvases
     </span>
 
-    <span class="actions">
+    <span class="actions auto-align auto-align__a-center auto-align__j-end">
       {#if status === "waiting"}
-        cancel
+        <button class="action secondary"> Cancel </button>
       {:else if status === "failed"}
-        retry
+        <button class="action secondary"> Retry </button>
       {:else if status === "succeeded" && stage === "export"}
-        import
+        <button class="action save"> Import </button>
       {/if}
-      delete
+
+      <div class="action icon">
+        <TiTrash />
+      </div>
     </span>
   </div>
 {/if}
@@ -44,5 +48,15 @@
   }
   .actions {
     text-align: right;
+  }
+  .action {
+    margin-left: 1rem;
+  }
+  .action.icon {
+    opacity: 0.6;
+    cursor: pointer;
+  }
+  button {
+    min-width: 10rem;
   }
 </style>
