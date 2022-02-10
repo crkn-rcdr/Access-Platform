@@ -33,6 +33,7 @@
           });
           if (response) {
             batch = response;
+            dispatch("cancel", batch);
             return {
               success: true,
               details: "",

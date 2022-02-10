@@ -123,26 +123,16 @@
    */
   const { session } = getStores<Session>();
 
-  function handleImport(event) {
-    const batch = event.detail;
-    exportDone = exportDone.filter((el) => el.id !== batch.id);
-    importWaiting.push(batch as ImportWaitingOcrBatch);
-    importWaiting = importWaiting;
-  }
-
-  function handleExport(event) {
-    const batch = event.detail;
-    base = base.filter((el) => el.id !== batch.id);
-    exportWaiting.push(batch as ExportWaitingOcrBatch);
-    exportWaiting = exportWaiting;
+  async function getBatches() {
+    let batchList = await $session.lapin.query("ocr.list");
+    const results = getOcrBatches(batchList);
+    ({ base, exportWaiting, exportDone, importWaiting, importDone } =
+      results.props);
   }
 
   onMount(() => {
     unsubscribe = interval.subscribe(async () => {
-      let batchList = await $session.lapin.query("ocr.list");
-      const results = getOcrBatches(batchList);
-      ({ base, exportWaiting, exportDone, importWaiting, importDone } =
-        results.props);
+      await getBatches();
     });
   });
 
@@ -172,7 +162,7 @@
             {batch}
             stage="N/A"
             status="N/A"
-            on:export={handleExport}
+            on:export={getBatches}
           />
         {/each}
       </div>
@@ -187,7 +177,12 @@
         <div class="ocr-card">No batches are exporting.</div>
       {:else}
         {#each exportWaiting as batch}
-          <OcrBatchListItem {batch} stage="export" status={"waiting"} />
+          <OcrBatchListItem
+            {batch}
+            stage="export"
+            status={"waiting"}
+            on:cancel={getBatches}
+          />
         {/each}
       {/if}
     </div>
@@ -204,48 +199,11 @@
           <OcrBatchListItem
             {batch}
             stage="export"
-            on:import={handleImport}
+            on:export={getBatches}
+            on:import={getBatches}
             status={batch.exportProcess["succeeded"] ? "succeeded" : "failed"}
             message={batch.exportProcess["message"]}
           />
-
-          <!--div class="ocr-card">
-            {batch.name}
-
-            <div
-              class:success={batch.exportProcess["succeeded"]}
-              class:warn={batch.exportProcess["message"]?.length &&
-                batch.exportProcess["succeeded"]}
-              class:not-success={!batch.exportProcess["succeeded"]}
-            >
-              {#if batch.exportProcess["succeeded"]}
-                <NotificationBar
-                  message={`${batch.canvases.length} canavases successfully exported! You can now run OCR on them with Abby. Return here once completed, and press 'Import Canvases.'`}
-                />
-                <NotificationBar
-                  message={batch.exportProcess["message"]?.length
-                    ? `Warning: ${batch.exportProcess["message"]}`
-                    : ""}
-                  status="warn"
-                />
-              {:else}
-                <NotificationBar
-                  message={`Export failed: ${batch.exportProcess["message"]}`}
-                  status="fail"
-                />
-              {/if}
-            </div>
-            <div class="button-bar">
-              {#if batch.exportProcess["succeeded"]}
-                <button on:click={() => requestImport(batch)} class="save">
-                  Import Canvases
-                </button>
-              {:else}
-                <button class="secondary"> Retry Export </button>
-              {/if}
-              <button class="danger"> Delete </button>
-            </div>
-          </div-->
         {/each}
       {/if}
     </div>
@@ -259,7 +217,12 @@
         <div class="ocr-card">No batches are importing.</div>
       {:else}
         {#each importWaiting as batch}
-          <OcrBatchListItem {batch} stage="import" status={"waiting"} />
+          <OcrBatchListItem
+            {batch}
+            stage="import"
+            status={"waiting"}
+            on:cancel={getBatches}
+          />
         {/each}
       {/if}
     </div>
@@ -275,44 +238,11 @@
         {#each importDone as batch}
           <OcrBatchListItem
             {batch}
+            on:import={getBatches}
             stage="import"
             status={batch.importProcess["succeeded"] ? "succeeded" : "failed"}
             message={batch.importProcess["message"]}
           />
-          <!--div class="ocr-card">
-            {batch.name}
-
-            <div
-              class:success={batch.importProcess["succeeded"]}
-              class:warn={batch.importProcess["message"]?.length &&
-                batch.importProcess["succeeded"]}
-              class:not-success={!batch.importProcess["succeeded"]}
-            >
-              {#if batch.importProcess["succeeded"]}
-                <NotificationBar
-                  message={`${batch.canvases.length} canavases have been imported into access.`}
-                />
-
-                <NotificationBar
-                  message={batch.importProcess["message"]?.length
-                    ? `Warning: ${batch.importProcess["message"]}`
-                    : ""}
-                  status="warn"
-                />
-              {:else}
-                <NotificationBar
-                  message={`Import failed: ${batch.importProcess["message"]}`}
-                  status="fail"
-                />
-              {/if}
-            </div>
-            <div class="button-bar">
-              {#if !batch.importProcess["succeeded"]}
-                <button class="secondary"> Retry Import</button>
-              {/if}
-              <button class="danger"> Delete </button>
-            </div>
-          </div-->
         {/each}
       {/if}
     </div>
