@@ -9,6 +9,7 @@
   import { createEventDispatcher } from "svelte";
   import TiTrash from "svelte-icons/ti/TiTrash.svelte";
   import Loading from "../shared/Loading.svelte";
+  import XmlViewer from "../shared/XmlViewer.svelte";
 
   export let batch: OcrBatch;
   export let stage: "export" | "import" | "N/A";
@@ -186,8 +187,8 @@
     <span class="auto-align auto-align__a-center">
       {#if status !== "N/A" && status !== "waiting"}
         {#if status === "succeeded"}
-          {#if message.length}
-            <span class="icon warning">
+          {#if message?.length}
+            <span data-tooltip="See message below" class="icon warning">
               <TiWarning />
             </span>
           {:else}
@@ -196,14 +197,12 @@
             </span>
           {/if}
         {:else if status === "failed"}
-          <span class="icon not-success">
+          <span data-tooltip="See message below" class="icon not-success">
             <TiDelete />
           </span>
         {/if}
         {stage}
-        {status}{#if message?.length}{#if status === "succeeded"}
-            with warnings{/if}:
-          {message}{/if}
+        {status}
       {/if}
     </span>
     <span class="auto-align auto-align__a-center">
@@ -238,6 +237,13 @@
       {/if}
     </span>
   </div>
+  {#if message?.length}
+    <div class="status-wrap">
+      <div class={`status-message ${status}`}>
+        <XmlViewer xml={message} />
+      </div>
+    </div>
+  {/if}
 {/if}
 
 <style>
@@ -246,6 +252,17 @@
     grid-template-columns: 1fr 1fr 1fr 1fr;
     background: var(--structural-div-bg);
     padding: 1rem;
+  }
+  .status-message {
+    padding: 1rem;
+  }
+  .status-message.succeeded {
+    background-color: var(--warn-light);
+    color: var(--warn);
+  }
+  .status-message.failed {
+    background-color: var(--danger-light);
+    color: var(--danger);
   }
   .actions {
     text-align: right;
@@ -260,10 +277,10 @@
   button {
     min-width: 10rem;
   }
-
   .success.icon {
     color: var(--success);
     background-color: transparent;
+    /*For FA size*/
     width: 1.4rem;
     height: 1.4rem;
     margin-left: 0.3rem;
@@ -271,10 +288,16 @@
   }
   .not-success.icon {
     color: var(--danger);
+    cursor: pointer;
     background-color: transparent;
   }
   .warning.icon {
     color: var(--warn);
     background-color: transparent;
+    width: 1.7rem;
+    height: 1.7rem;
+    margin-left: 0.2rem;
+    margin-right: 0.3rem;
+    cursor: pointer;
   }
 </style>
