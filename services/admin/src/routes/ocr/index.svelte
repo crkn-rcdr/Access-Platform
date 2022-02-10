@@ -107,6 +107,7 @@
   import { onDestroy, onMount } from "svelte";
   import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
   import ExpansionTile from "$lib/components/shared/ExpansionTile.svelte";
+  import OcrBatchListItem from "$lib/components/ocr-batch/OcrBatchListItem.svelte";
   // Typed arrays lets us avoid checks in the front end
   export let base: OcrBatch[] = [];
   export let exportWaiting: ExportWaitingOcrBatch[] = [];
@@ -185,62 +186,42 @@
       <span slot="top">Awaiting Export ({base.length})</span>
       <div class="toggle-list" slot="bottom">
         {#each base as batch}
-          <div class="ocr-card">
-            {batch.name}
-
-            <div class="button-bar">
-              <button class="danger"> Delete </button>
-            </div>
-          </div>
+          <OcrBatchListItem {batch} stage="N/A" status="N/A" />
         {/each}
       </div>
     </ExpansionTile>
   {/if}
-
-  <br />
-  <br />
-  <br />
-
   <ExpansionTile toggled={true} topClass="toggle-title">
     <span slot="top">
       Exporting ({exportWaiting.length})
     </span>
     <div class="toggle-list" slot="bottom">
       {#if exportWaiting.length}
-        <p>No batches are exporting.</p>
+        <div class="ocr-card">No batches are exporting.</div>
       {:else}
         {#each exportWaiting as batch}
-          <div class="ocr-card">
-            {batch.name}
-
-            <NotificationBar
-              status="secondary"
-              message={`Exporting ${batch.canvases.length} canvases...`}
-            />
-            <div class="button-bar">
-              <button class="secondary"> Cancel Export </button>
-              <button class="danger"> Delete </button>
-            </div>
-          </div>
+          <OcrBatchListItem {batch} stage="export" status={"waiting"} />
         {/each}
       {/if}
     </div>
   </ExpansionTile>
-
-  <br />
-  <br />
-  <br />
-
   <ExpansionTile toggled={true} topClass="toggle-title">
     <span slot="top">
       Done Exporting ({exportDone.length})
     </span>
     <div class="toggle-list" slot="bottom">
       {#if !exportDone.length}
-        <p>No batches are done exporting.</p>
+        <div class="ocr-card">No batches are done exporting.</div>
       {:else}
         {#each exportDone as batch}
-          <div class="ocr-card">
+          <OcrBatchListItem
+            {batch}
+            stage="export"
+            status={batch.exportProcess["succeeded"] ? "succeeded" : "failed"}
+            message={batch.exportProcess["message"]}
+          />
+
+          <!--div class="ocr-card">
             {batch.name}
 
             <div
@@ -276,58 +257,41 @@
               {/if}
               <button class="danger"> Delete </button>
             </div>
-          </div>
+          </div-->
         {/each}
       {/if}
     </div>
   </ExpansionTile>
-
-  <br />
-  <br />
-  <br />
-
   <ExpansionTile toggled={true} topClass="toggle-title">
     <span slot="top">
       Importing ({importWaiting.length})
     </span>
     <div class="toggle-list" slot="bottom">
       {#if !importWaiting.length}
-        <p>No batches are importing.</p>
+        <div class="ocr-card">No batches are importing.</div>
       {:else}
         {#each importWaiting as batch}
-          <div class="ocr-card">
-            {batch.name}
-            <!--td> {batch.staff.by.name} </td>
-          <td> {batch.canvases.length} </td-->
-
-            <NotificationBar
-              status="secondary"
-              message={`Importing ${batch.canvases.length} canvases...`}
-            />
-            <div class="button-bar">
-              <button class="secondary"> Cancel Import </button>
-              <button class="danger"> Delete </button>
-            </div>
-          </div>
+          <OcrBatchListItem {batch} stage="import" status={"waiting"} />
         {/each}
       {/if}
     </div>
   </ExpansionTile>
-
-  <br />
-  <br />
-  <br />
-
   <ExpansionTile toggled={true} topClass="toggle-title">
     <span slot="top">
       Done Importing ({importDone.length})
     </span>
     <div class="toggle-list" slot="bottom">
       {#if !importDone.length}
-        <p>No batches are done importing.</p>
+        <div class="ocr-card">No batches are done importing.</div>
       {:else}
         {#each importDone as batch}
-          <div class="ocr-card">
+          <OcrBatchListItem
+            {batch}
+            stage="import"
+            status={batch.importProcess["succeeded"] ? "succeeded" : "failed"}
+            message={batch.importProcess["message"]}
+          />
+          <!--div class="ocr-card">
             {batch.name}
 
             <div
@@ -360,7 +324,7 @@
               {/if}
               <button class="danger"> Delete </button>
             </div>
-          </div>
+          </div-->
         {/each}
       {/if}
     </div>
@@ -376,28 +340,21 @@
     text-align: right;
   }
 
-  .ocr-card {
-    width: 100%;
-    background: var(--base-bg);
-    padding: var(--perfect-fourth-4) var(--perfect-fourth-2);
-    border-radius: var(--border-radius);
-    margin-bottom: 1rem;
-    display: grid;
-    grid-gap: 1rem;
-  }
-  p {
-    margin-bottom: 1rem;
-  }
-
   :global(.toggle-title) {
     background: var(--structural-div-bg);
     padding: 1rem;
-    border-radius: var(--border-radius);
-    font-size: var(--perfect-fourth-6);
-  }
-
-  .toggle-list {
+    /*font-size: var(--perfect-fourth-6);*/
+    background: var(--backdrop-bg);
     margin-top: 1rem;
+  }
+  .ocr-card {
+    width: 100%;
+    background: var(--base-bg);
+    background: var(--structural-div-bg);
+    padding: 1rem;
+    /*margin-bottom: 1rem;*/
+    display: grid;
+    grid-gap: 1rem;
   }
   /*.button-bar {
     text-align: right;
