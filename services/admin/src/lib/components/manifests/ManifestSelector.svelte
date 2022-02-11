@@ -45,8 +45,8 @@ This componenet allows the user to search the backend for any access object that
   let timer: NodeJS.Timeout | null = null;
 
   let searchedSlugs: Slug[] = [];
-  let foundSlugs: Slug[];
-  let manifestSlugObjMap: any;
+  let foundSlugs: Slug[] = [];
+  let manifestSlugObjMap: any = {};
   let selectedManifestNoids: Noid[] = [];
   let loading: boolean = false;
   let allSelected = true;
@@ -88,7 +88,7 @@ This componenet allows the user to search the backend for any access object that
       } catch (e) {
         console.log(e);
       }
-    }, 5000);
+    }, 1000);
   }
 
   async function handleSlugListChange(event) {
@@ -139,83 +139,90 @@ This componenet allows the user to search the backend for any access object that
     <PrefixSlugSearchBox rows={12} on:slugs={handleSlugListChange} />
   </div>
 
-  {#if loading}
-    <div class="loader">
-      <Loading backgroundType="gradient" />
-    </div>
-  {:else if searchMade}
-    <div class="table-wrap">
-      <div class="canvas-count">
+  <div class="table-wrap">
+    <div class="canvas-count">
+      {#if loading}
+        <span class="loader">
+          <Loading size="sm" backgroundType="gradient" />
+        </span>
+      {:else}
         {numCanvases} Canvases Selected
-      </div>
-
-      <table>
-        <thead>
-          <tr>
-            <th>
-              <input type="checkbox" checked on:click={toggleAllSelected} />
-            </th>
-            <th> Slug </th>
-            <th> Label </th>
-            <th class="canvases-row"> # Canvases </th>
-          </tr>
-        </thead>
-        <tbody>
-          {#each searchedSlugs as slug}
-            {#if !(slug in manifestSlugObjMap)}
-              <tr>
-                <td>
-                  <input type="checkbox" disabled />
-                </td>
-                <td colspan="3">
-                  {slug}
-                </td>
-              </tr>
-              <tr class="not-success">
-                <td colspan="4">Not found</td>
-              </tr>
-            {:else if !manifestSlugObjMap[slug]["canvases"]?.length}
-              <tr>
-                <td>
-                  <input type="checkbox" disabled />
-                </td>
-                <td colspan="3">
-                  {slug}
-                </td>
-              </tr>
-              <tr class="not-success">
-                <td colspan="4">No canvases to OCR</td>
-              </tr>
-            {:else}
-              <tr class="clickable">
-                <td>
-                  <input
-                    type="checkbox"
-                    checked={selectedManifestNoids.includes(
-                      manifestSlugObjMap[slug].id
-                    )}
-                    on:click={() =>
-                      handleItemSelected(manifestSlugObjMap[slug])}
-                  />
-                </td>
-                <td>
-                  {slug}
-                </td>
-                <td>
-                  {manifestSlugObjMap[slug]["label"]?.["none"]}
-                </td>
-                <td>
-                  {manifestSlugObjMap[slug]["canvases"]?.length}
-                </td>
-              </tr>
-            {/if}
-          {:else}
-            <tr><td colspan="4">No results.</td></tr>
-          {/each}
-        </tbody>
-      </table>
+      {/if}
     </div>
-  {/if}
+
+    <table>
+      <thead>
+        <tr>
+          <th>
+            <input type="checkbox" checked on:click={toggleAllSelected} />
+          </th>
+          <th> Slug </th>
+          <th> Label </th>
+          <th class="canvases-row"> # Canvases </th>
+        </tr>
+      </thead>
+      <tbody>
+        {#each searchedSlugs as slug}
+          {#if !(slug in manifestSlugObjMap)}
+            <tr>
+              <td>
+                <input type="checkbox" disabled />
+              </td>
+              <td colspan="3">
+                {slug}
+              </td>
+            </tr>
+            <tr class="not-success">
+              <td colspan="4">Not found</td>
+            </tr>
+          {:else if !manifestSlugObjMap[slug]["canvases"]?.length}
+            <tr>
+              <td>
+                <input type="checkbox" disabled />
+              </td>
+              <td colspan="3">
+                {slug}
+              </td>
+            </tr>
+            <tr class="not-success">
+              <td colspan="4">No canvases to OCR</td>
+            </tr>
+          {:else}
+            <tr class="clickable">
+              <td>
+                <input
+                  type="checkbox"
+                  checked={selectedManifestNoids.includes(
+                    manifestSlugObjMap[slug].id
+                  )}
+                  on:click={() => handleItemSelected(manifestSlugObjMap[slug])}
+                />
+              </td>
+              <td>
+                {slug}
+              </td>
+              <td>
+                {manifestSlugObjMap[slug]["label"]?.["none"]}
+              </td>
+              <td>
+                {manifestSlugObjMap[slug]["canvases"]?.length}
+              </td>
+            </tr>
+          {/if}
+        {:else}
+          <tr
+            ><td colspan="4">
+              {#if searchMade}
+                No results.
+              {:else}
+                Search results will appear here.
+              {/if}
+            </td></tr
+          >
+        {/each}
+      </tbody>
+    </table>
+  </div>
 </div>
 <br />
 
@@ -230,6 +237,7 @@ This componenet allows the user to search the backend for any access object that
     overflow-y: auto;
     overflow-x: hidden;
     margin-left: 1rem;
+    width: 100%;
   }
   table {
     position: relative;
@@ -254,8 +262,7 @@ This componenet allows the user to search the backend for any access object that
     color: var(--danger);
   }
   .loader {
-    width: 100%;
-    text-align: center;
+    text-align: right;
   }
   .canvases-row {
     min-width: 9rem;
