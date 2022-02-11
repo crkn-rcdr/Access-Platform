@@ -61,10 +61,10 @@ This componenet allows the user to search the backend for any access object that
     if (!searchedSlugs.length) return;
     if (timer) clearTimeout(timer);
     loading = true;
+    manifestSlugObjMap = {};
+    selectedManifestNoids = [];
     timer = setTimeout(async () => {
       try {
-        manifestSlugObjMap = {};
-        selectedManifestNoids = [];
         const response = await $session.lapin.mutation(`manifest.search`, {
           slugs: searchedSlugs,
           fields: ["id", "label", "canvases"],
@@ -81,10 +81,10 @@ This componenet allows the user to search the backend for any access object that
             }
           }
         }
-        manifestSlugObjMap = manifestSlugObjMap;
-        selectedManifestNoids = selectedManifestNoids;
         loading = false;
         searchMade = true;
+        manifestSlugObjMap = manifestSlugObjMap;
+        selectedManifestNoids = selectedManifestNoids;
       } catch (e) {
         console.log(e);
       }
@@ -163,7 +163,16 @@ This componenet allows the user to search the backend for any access object that
       </thead>
       <tbody>
         {#each searchedSlugs as slug}
-          {#if !(slug in manifestSlugObjMap)}
+          {#if loading}
+            <tr>
+              <td>
+                <input type="checkbox" disabled />
+              </td>
+              <td colspan="3">
+                {slug}
+              </td>
+            </tr>
+          {:else if !(slug in manifestSlugObjMap)}
             <tr>
               <td>
                 <input type="checkbox" disabled />
@@ -209,17 +218,13 @@ This componenet allows the user to search the backend for any access object that
               </td>
             </tr>
           {/if}
-        {:else}
-          <tr
-            ><td colspan="4">
-              {#if searchMade}
-                No results.
-              {:else}
-                Search results will appear here.
-              {/if}
-            </td></tr
-          >
         {/each}
+
+        {#if !searchMade}
+          <tr>
+            <td colspan="4"> Search results will appear here. </td>
+          </tr>
+        {/if}
       </tbody>
     </table>
   </div>
