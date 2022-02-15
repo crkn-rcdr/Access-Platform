@@ -1,5 +1,6 @@
 {
   "_id": "testExportSuccessBatch",
+  "name": "testExportSuccessBatch",
   "canvases": ["69429/c0cj87k0gq3s"],
   "priority": 5,
   "staff": {
@@ -13,6 +14,6 @@
     "requestDate": 1630639028.569,
     "processDate": 1630639032.311,
     "succeeded": true,
-    "message": ""
+    "message": "a warning msg that is long enough to test a long message"
   }
 }

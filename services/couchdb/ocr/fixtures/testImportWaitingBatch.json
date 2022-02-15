@@ -1,5 +1,6 @@
 {
-  "_id": "testImportSuccessBatch",
+  "_id": "testImportWaitingBatch",
+  "name": "testImportWaitingBatch",
   "canvases": ["69429/c0cj87k0gq3s"],
   "priority": 1,
   "staff": {

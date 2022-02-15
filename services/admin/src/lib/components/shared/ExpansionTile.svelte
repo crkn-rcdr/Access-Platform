@@ -30,14 +30,16 @@ A container that expands to show more content when the user clicks the expand ic
    */
   export let useInfoIcon = false;
 
+  export let topClass = "";
+
   /**
    * @type {boolean} If the bottom section is toggled open or not.
    */
-  let toggled = false;
+  export let toggled = false;
 </script>
 
 <div>
-  <div>
+  <div class={topClass}>
     <slot name="top" />
     {#if !toggled}
       <div

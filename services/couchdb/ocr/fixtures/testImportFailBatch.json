@@ -1,5 +1,6 @@
 {
   "_id": "testImportFailBatch",
+  "name": "testImportFailBatch",
   "canvases": ["69429/c0cj87k0gq3s"],
   "priority": 6,
   "staff": {
@@ -12,13 +13,13 @@
   "exportProcess": {
     "requestDate": 1630639028.569,
     "processDate": 1630639032.311,
-    "succeeded": false,
-    "message": "oops"
+    "succeeded": true,
+    "message": "yep"
   },
   "importProcess": {
     "requestDate": 1630639928.569,
     "processDate": 1630639932.311,
-    "succeeded": true,
-    "message": "oops"
+    "succeeded": false,
+    "message": "A message that is long enough to test a long message"
   }
 }

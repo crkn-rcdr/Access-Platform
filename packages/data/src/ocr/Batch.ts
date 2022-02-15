@@ -14,7 +14,7 @@ import { z } from "zod";
 import {
   ProcessRequest,
   SucceededOcrProcessResult,
-  FailedProcessUpdate,
+  FailedProcessResult,
 } from "../util/ProcessUpdate.js";
 import { Noid } from "../util/Noid.js";
 import { Slug } from "../util/Slug.js";
@@ -26,9 +26,14 @@ import { StaffUpdate } from "../util/StaffUpdate.js";
  */
 export const BaseOcrBatch = z.object({
   /*
-   * ID is used as the name of the directory
+   * The id is used as an opaque identifier
    */
-  id: Slug,
+  id: z.string(),
+
+  /*
+   * Name is used as the transparent id of the directory
+   */
+  name: Slug,
 
   /*
    * Array of canvases (and/or manifests?)
@@ -84,7 +89,7 @@ export const ExportFailedOcrBatch = z
     /*
      * processUpdate for exporting images into directory
      */
-    exportProcess: FailedProcessUpdate,
+    exportProcess: FailedProcessResult,
   })
   .merge(BaseOcrBatch);
 
@@ -126,7 +131,7 @@ export const ImportFailedOcrBatch = z
     /*
      * processUpdate for importing images from the directory
      */
-    importProcess: FailedProcessUpdate,
+    importProcess: FailedProcessResult,
   })
   .merge(ExportSucceededOcrBatch);
 

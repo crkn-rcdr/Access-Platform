@@ -260,11 +260,6 @@ This component displays the items in the dmd task throughout the various stages 
     color: var(--warn);
     background-color: transparent;
   }
-  /*.row-details {
-    color: var(--secondary);
-    background: var(--light-bg);
-    filter: brightness(0.98);
-  }*/
   .row-details table {
     margin-top: 0;
   }

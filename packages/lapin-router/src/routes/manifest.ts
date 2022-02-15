@@ -6,6 +6,7 @@ import {
   Noid,
   ObjectListHandler,
   ObjectListPage,
+  Slug,
   TextRecord,
   User,
 } from "@crkn-rcdr/access-data";
@@ -41,7 +42,28 @@ const NewInput = z.object({
   data: NewManifest,
 });
 
+const SearchInput = z.object({
+  fields: z.array(z.string()),
+  slugs: z.array(Slug),
+});
+
 export const manifestRouter = createRouter()
+  .mutation("search", {
+    input: SearchInput.parse,
+    async resolve({ input, ctx }) {
+      return (
+        await ctx.couch.access.findUniqueArray("slug", input.slugs, [
+          ...input.fields,
+          "type",
+        ])
+      ).filter((result) => {
+        if (result.length == 2 && result[1].found) {
+          return result[1].result["type"] === "manifest";
+        }
+        return false;
+      });
+    },
+  })
   .query("page", {
     input: PageInput.parse,
     async resolve({

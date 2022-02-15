@@ -1,4 +1,10 @@
-import { Slug, User, OcrBatch, EditableOcrBatch } from "@crkn-rcdr/access-data";
+import {
+  Slug,
+  User,
+  OcrBatch,
+  EditableOcrBatch,
+  Noid,
+} from "@crkn-rcdr/access-data";
 import { ServerScope } from "nano";
 
 import { DatabaseHandler } from "../DatabaseHandler.js";
@@ -12,6 +18,34 @@ export class OcrBatchHandler extends DatabaseHandler<OcrBatch> {
    */
   constructor(client: ServerScope, suffix?: string) {
     super(suffix ? `ocr-${suffix}` : `ocr`, OcrBatch, client);
+  }
+
+  /**
+   * Creates an OCR Batch and renders it available for processing.
+   * @returns The auto-generated id of the OCR Batch.
+   *
+   *
+   */
+  async create(args: { user: User; name: Slug; canvases: Noid[] }) {
+    const { user, canvases, name } = args;
+
+    const { message: id } = await this.nullUpdate({
+      ddoc: "access",
+      name: "create",
+      body: {
+        staff: {
+          by: user,
+          date: new Date(Date.now()).toISOString().replace(/.\d+Z$/g, "Z"),
+        },
+        name,
+        canvases,
+        priority: 0, // todo
+      },
+    });
+
+    this.requestExport({ user, id });
+
+    return id;
   }
 
   /**

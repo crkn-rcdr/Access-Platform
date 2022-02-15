@@ -89,6 +89,7 @@ exports.updateObject = (doc, user) => {
     if (doc.updateInternalmeta) delete doc.updateInternalmeta;
     doc.updateInternalmeta = { requestDate: now };
   }
+
   doc.updated = now;
 };
 
