@@ -1,17 +1,14 @@
 {
-  "_id": "test",
+  "_id": "queued",
   "updated": 1631200365.22,
   "process": {
-    "requestDate": 1631199874.161,
-    "processDate": 1631200365.22,
-    "succeeded": true,
-    "message": ""
+    "requestDate": 1631199874.161
   },
   "user": {
     "name": "Brittny Lapierre",
     "email": "blapierre@crkn.ca"
   },
-  "fileName": "dmd_test.mrc",
+  "fileName": "queued.mrc",
   "format": "marc490",
   "items": [
     {
@@ -19,21 +16,24 @@
       "id": "8_06941",
       "message": "",
       "parsed": true,
-      "label": "Testing collection"
+      "label": "Testing collection",
+      "destination": "access"
     },
     {
       "output": "marc",
       "id": "8_06941_1",
       "message": "Should not be found in preservation test",
       "parsed": true,
-      "label": "Testing manifest 1"
+      "label": "Testing manifest 1",
+      "destination": "access"
     },
     {
       "output": "marc",
       "id": "8_06941_2",
       "message": "Parse failed to generate xml and json test",
       "parsed": false,
-      "label": "Testing manifest 2"
+      "label": "Testing manifest 2",
+      "destination": "access"
     }
   ]
 }

@@ -41,7 +41,7 @@
    */
   import {
     DMDTask,
-    isWaitingDMDTask,
+    isValidatingDMDTask,
     isFailedDMDTask,
     isSucceededDMDTask,
   } from "@crkn-rcdr/access-data";
@@ -52,7 +52,7 @@
   /**
    * @type {DMDTask} The dmdtask being displayed by the page.
    */
-  export let dmdTask: DMDTask; //WaitingDMDTask | FailedDMDTask | SucceededDMDTask;
+  export let dmdTask: DMDTask; //ValidatingDMDTask | FailedDMDTask | SucceededDMDTask;
 
   export let error: any;
 </script>
@@ -66,7 +66,7 @@
     <DmdSuccessView {dmdTask} />
   {:else if isFailedDMDTask(dmdTask)}
     <DmdFailureView {dmdTask} message={dmdTask.process.message} />
-  {:else if isWaitingDMDTask(dmdTask)}
+  {:else if isValidatingDMDTask(dmdTask)}
     <DmdWaitingView bind:dmdTask />
   {:else}
     <!--JUST In Case All Else Fails-->

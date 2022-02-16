@@ -2,9 +2,9 @@ import test from "ava";
 import { tester } from "../testHelper.js";
 import { User } from "../util/User.js";
 
-import { WaitingDMDTask, FailedDMDTask, SucceededDMDTask } from "./Task.js";
+import { ValidatingDMDTask, FailedDMDTask, SucceededDMDTask } from "./Task.js";
 
-const { isValid: isValidWaiting } = tester(WaitingDMDTask);
+const { isValid: isValidWaiting } = tester(ValidatingDMDTask);
 const { isValid: isValidFailed } = tester(FailedDMDTask);
 const { isValid: isValidSucceeded, isInvalid: isInvalidSucceeded } =
   tester(SucceededDMDTask);
@@ -36,7 +36,7 @@ const xmlAttachment = {
   content_type: "application/xml",
 };
 
-const goodWaiting: WaitingDMDTask = {
+const goodWaiting: ValidatingDMDTask = {
   id: "waiting-for-processing",
   attachments: {
     metadata: metadataAttachment,
@@ -48,7 +48,7 @@ const goodWaiting: WaitingDMDTask = {
 };
 
 test(
-  "WaitingDMDTask schema parses a valid object",
+  "ValidatingDMDTask schema parses a valid object",
   isValidWaiting,
   goodWaiting
 );

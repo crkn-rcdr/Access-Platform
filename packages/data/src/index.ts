@@ -52,12 +52,16 @@ export {
   DMDOUTPUTS,
   DMDOutput,
   DMDTask,
-  WaitingDMDTask,
-  FailedDMDTask,
   SucceededDMDTask,
-  isWaitingDMDTask,
+  FailedDMDTask,
+  QueuedDMDTask,
+  ValidatedDMDTask,
+  ValidatingDMDTask,
+  isValidatingDMDTask,
   isFailedDMDTask,
   isSucceededDMDTask,
+  isQueuedDMDTask,
+  isValidatedDMDTask,
 } from "./dmd/index.js";
 
 export { WipmetaObject } from "./wipmeta/index.js";

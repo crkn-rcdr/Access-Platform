@@ -20,6 +20,21 @@ export const dmdTaskRouter = createRouter()
       });
     },
   })
+  .query("list", {
+    async resolve({ ctx }) {
+      try {
+        const q = {
+          _id: {
+            $ne: "_design/access",
+          },
+        };
+        return await ctx.couch.dmdtask.find(q);
+      } catch (e: any) {
+        console.log("err", e?.message);
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
   .query("find", {
     input: z.string(),
     async resolve({ input: id, ctx }) {

@@ -6,7 +6,7 @@ Displays a dmd task in an waiting state.
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| dmdTask: WaitingDMDTask | required | The dmd task to be displayed. |
+| dmdTask: ValidatingDMDTask | required | The dmd task to be displayed. |
 
 ### Usage
 ```
@@ -16,15 +16,15 @@ Displays a dmd task in an waiting state.
 <script lang="ts">
   import type { Session } from "$lib/types";
   import { getStores } from "$app/stores";
-  import type { WaitingDMDTask } from "@crkn-rcdr/access-data";
+  import type { ValidatingDMDTask } from "@crkn-rcdr/access-data";
   import Loading from "$lib/components/shared/Loading.svelte";
   import { onDestroy } from "svelte";
   import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
 
   /**
-   * @type {WaitingDMDTask} The dmdtask being displayed.
+   * @type {ValidatingDMDTask} The dmdtask being displayed.
    */
-  export let dmdTask: WaitingDMDTask;
+  export let dmdTask: ValidatingDMDTask;
 
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
