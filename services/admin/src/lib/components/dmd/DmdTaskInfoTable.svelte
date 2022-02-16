@@ -15,7 +15,7 @@ Displays a dmd task's information in a table.
 ```
 -->
 <script lang="ts">
-  import { DMDTask, SucceededDMDTask } from "@crkn-rcdr/access-data";
+  import { DMDTask, UpdateSucceededDMDTask } from "@crkn-rcdr/access-data";
   /**
    * @type {DMDTask} The dmdtask being displayed.
    */
@@ -35,7 +35,7 @@ Displays a dmd task's information in a table.
         : "grid grid__col_1 restrict-width"
     }`}
   >
-    {#if SucceededDMDTask.safeParse(dmdTask).success}
+    {#if UpdateSucceededDMDTask.safeParse(dmdTask).success}
       <div class="grid grid__col_2">
         {#if dmdTask?.id}
           <span>id:</span>

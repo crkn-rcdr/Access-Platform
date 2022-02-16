@@ -1,38 +1,42 @@
 import {
   DMDTask,
-  SucceededDMDTask,
-  FailedDMDTask,
-  QueuedDMDTask,
-  ValidatedDMDTask,
-  ValidatingDMDTask,
+  UpdateSucceededDMDTask,
+  UpdateFailedDMDTask,
+  UpdatingDMDTask,
+  ParsedDMDTask,
+  ParsingDMDTask,
 } from "./Task.js";
 
-export const isQueuedDMDTask = (obj: DMDTask): obj is QueuedDMDTask => {
-  return QueuedDMDTask.safeParse(obj).success;
+export const isUpdatingDMDTask = (obj: DMDTask): obj is UpdatingDMDTask => {
+  return UpdatingDMDTask.safeParse(obj).success;
 };
 
-export const isValidatedDMDTask = (obj: DMDTask): obj is ValidatedDMDTask => {
-  return ValidatedDMDTask.safeParse(obj).success;
+export const isParsedDMDTask = (obj: DMDTask): obj is ParsedDMDTask => {
+  return ParsedDMDTask.safeParse(obj).success;
 };
 
-export const isValidatingDMDTask = (obj: DMDTask): obj is ValidatingDMDTask => {
-  return ValidatingDMDTask.safeParse(obj).success;
+export const isParsingDMDTask = (obj: DMDTask): obj is ParsingDMDTask => {
+  return ParsingDMDTask.safeParse(obj).success;
 };
 
-export const isFailedDMDTask = (obj: DMDTask): obj is FailedDMDTask => {
-  return FailedDMDTask.safeParse(obj).success;
+export const isUpdateFailedDMDTask = (
+  obj: DMDTask
+): obj is UpdateFailedDMDTask => {
+  return UpdateFailedDMDTask.safeParse(obj).success;
 };
 
-export const isSucceededDMDTask = (obj: DMDTask): obj is SucceededDMDTask => {
-  return SucceededDMDTask.safeParse(obj).success;
+export const isUpdateSucceededDMDTask = (
+  obj: DMDTask
+): obj is UpdateSucceededDMDTask => {
+  return UpdateSucceededDMDTask.safeParse(obj).success;
 };
 
 export {
   DMDTask,
-  SucceededDMDTask,
-  FailedDMDTask,
-  QueuedDMDTask,
-  ValidatedDMDTask,
-  ValidatingDMDTask,
+  UpdateSucceededDMDTask,
+  UpdateFailedDMDTask,
+  UpdatingDMDTask,
+  ParsedDMDTask,
+  ParsingDMDTask,
 } from "./Task.js";
 export { DMDFORMATS, DMDFormat, DMDOUTPUTS, DMDOutput } from "./types.js";

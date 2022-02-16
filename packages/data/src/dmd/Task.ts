@@ -16,81 +16,57 @@ import { DMDFORMATS, DMDOUTPUTS } from "./types.js";
  * The result of attempting to parse an individual metadata
  * record, after it has been split from the task's file.
  */
-const ItemProcessRecord = z.object({
-  /**
-   * Whether this record's metadata has been parsed successfully.
-   */
-  parsed: z.boolean().optional(),
+const ItemProcessRecord = z
+  .object({
+    /**
+     * Whether this record's metadata has been parsed successfully.
+     */
+    parsed: z.boolean().optional(),
 
-  /**
-   * The type of output parsed for this record. Required when the record's
-   * metadata has been parsed successfully.
-   */
-  output: z.enum(DMDOUTPUTS).optional(),
+    /**
+     * The type of output parsed for this record. Required when the record's
+     * metadata has been parsed successfully.
+     */
+    output: z.enum(DMDOUTPUTS).optional(),
 
-  /**
-   * The id extracted for this record. When the record's metadata has been
-   * parsed successfully, this must be provided.
-   */
-  id: z.string().optional(), //Slug
+    /**
+     * The id extracted for this record. When the record's metadata has been
+     * parsed successfully, this must be provided.
+     */
+    id: z.string().optional(), //Slug
 
-  /**
-   * The label extracted for this record. Also required for a successfully
-   * parsed record.
-   */
-  label: z.string().optional(),
+    /**
+     * The label extracted for this record. Also required for a successfully
+     * parsed record.
+     */
+    label: z.string().optional(),
 
-  /**
-   * Any message returned by the metadata processor.
-   */
-  message: z.string().optional(),
-});
-export type ItemProcessRecord = z.infer<typeof ItemProcessRecord>;
+    /**
+     * Any message returned by the metadata processor.
+     */
+    message: z.string().optional(),
 
-/**
- * DMD Task is being added to the queue for storing each item's new metadata file.
- * (Process Metadata File Step: in-queue)
- */
-export const QueuedItemProcessRecord = ItemProcessRecord.merge(
-  z.object({
+    /**
+     * Whether this record's metadata has been stored successfully.
+     */
+    stored: z.boolean().optional(),
+
     /**
      * This field tells the metadata processor where to store the new metadata to.
      */
     destination: z.enum(["access", "preservation"]).optional(), // if not defined, then  not yet at the "Process Metadata File" stage.
   })
-);
-
-export type QueuedItemProcessRecord = z.infer<typeof ItemProcessRecord>;
-
-/**
- * DMD Task is being added to the queue for storing each item's new metadata file.
- * (Process Metadata File Step: in-queue)
- */
-export const StoredItemProcessRecord = QueuedItemProcessRecord.merge(
-  z.object({
-    /**
-     * Whether this record's metadata has been stored successfully.
-     */
-    stored: z.boolean(), // not sure if we need this for a per-item status
-  })
-);
-
-export type StoredItemProcessRecord = z.infer<typeof StoredItemProcessRecord>;
-
-export const SucceededItemProcessRecord = StoredItemProcessRecord.refine(
-  (record) => !record.parsed || (record.id && record.output && record.label),
-  "A successfully parsed record must provide: output, id, label."
-);
-
-export type SucceededItemProcessRecord = z.infer<
-  typeof SucceededItemProcessRecord
->;
+  .refine(
+    (record) => !record.parsed || (record.id && record.output && record.label),
+    "A successfully parsed record must provide: output, id, label."
+  );
+export type ItemProcessRecord = z.infer<typeof ItemProcessRecord>;
 
 /**
  * DMDTask file is being uploaded to split, validate, and flatten the metadata in the attached file.
  * (Upload Attachment Step: waiting)
  */
-export const ValidatingDMDTask = z.object({
+export const ParsingDMDTask = z.object({
   /**
    * Unique ID assigned to the task.
    */
@@ -119,7 +95,7 @@ export const ValidatingDMDTask = z.object({
   /**
    * The request to split, validate, and flatten the metadata in the attached file.
    */
-  validationProcess: ProcessRequest,
+  process: ProcessRequest,
 
   /**
    * Timestamp of the task's most recent update.
@@ -127,18 +103,19 @@ export const ValidatingDMDTask = z.object({
   updated: Timestamp,
 });
 
-export type ValidatingDMDTask = z.infer<typeof ValidatingDMDTask>;
+export type ParsingDMDTask = z.infer<typeof ParsingDMDTask>;
 
 /**
  * DMD Task is being added to the queue for storing each item's new metadata file.
  * (Process Metadata File Step: in-queue)
  */
-export const ValidatedDMDTask = ValidatingDMDTask.merge(
+export const ParsedDMDTask = ParsingDMDTask.merge(
   z.object({
     /**
      * The items in the file have had their metadata processed.
      */
-    validationProcess: ProcessResult,
+    process: ProcessResult,
+
     /**
      * List of individual items found in the metadata file.
      * Successfully parsed records will be attached to the
@@ -148,90 +125,97 @@ export const ValidatedDMDTask = ValidatingDMDTask.merge(
   })
 );
 
-export type ValidatedDMDTask = z.infer<typeof ValidatedDMDTask>;
+const ParsedDMDTaskListCheck = ParsedDMDTask.refine(
+  (task) =>
+    task.items?.[0] &&
+    !("destination" in task.items[0]) &&
+    !("stored" in task.items[0]),
+  "A validated task has items without a destination property and without a stored property."
+);
+
+export type ParsedDMDTask = z.infer<typeof ParsedDMDTaskListCheck>;
 
 /**
  * DMD Task is being added to the queue for storing each item's new metadata file.
  * (Process Metadata File Step: in-queue)
  */
-export const QueuedDMDTask = ValidatedDMDTask.merge(
+export const UpdatingDMDTask = ParsedDMDTask.merge(
   z.object({
     /**
      * The request to queue the items for storage.
      */
-    storeProcess: ProcessRequest,
-
-    /**
-     * List of individual items found in the metadata file.
-     */
-    items: z.array(QueuedItemProcessRecord),
+    process: ProcessRequest,
   })
 );
 
-export type QueuedDMDTask = z.infer<typeof QueuedDMDTask>;
+const UpdatingDMDTaskListCheck = UpdatingDMDTask.refine(
+  (task) =>
+    task.items?.[0] &&
+    "destination" in task.items[0] &&
+    !("stored" in task.items[0]),
+  "A queued task has items with a destination property but without a stored property."
+);
+
+export type UpdatingDMDTask = z.infer<typeof UpdatingDMDTaskListCheck>;
 
 /**
  * DMDTask whose metadata file could not be processed into individual records.
  * (Final Results Step: fail)
  */
-export const FailedDMDTask = QueuedDMDTask.merge(
+export const UpdateFailedDMDTask = UpdatingDMDTask.merge(
   z.object({
     /**
      * The items in the file have not had their metadata stored
      */
-    storeProcess: FailedProcessResult,
-
-    /**
-     * List of individual items found in the metadata file.
-     * Successfully stored records will be attached to the
-     * document, by the record's index in this array.
-     */
-    items: z.array(StoredItemProcessRecord),
+    process: FailedProcessResult,
   })
+).refine(
+  (task) =>
+    task.items?.[0] &&
+    "destination" in task.items[0] &&
+    "stored" in task.items[0],
+  "A failed task has items with a destination property and a stored property."
 );
-
-export type FailedDMDTask = z.infer<typeof FailedDMDTask>;
+export type UpdateFailedDMDTask = z.infer<typeof UpdateFailedDMDTask>;
 
 /**
  * DMDTask whose metadata file could be processed into individual records.
  * (Final Results Step: warning/success)
  */
-export const SucceededDMDTask = QueuedDMDTask.merge(
+export const UpdateSucceededDMDTask = UpdatingDMDTask.merge(
   z.object({
     /**
      * The items in the file have had their metadata stored.
      */
-    storeProcess: SucceededProcessResult,
-
-    /**
-     * List of individual items found in the metadata file.
-     * Successfully stored records will be attached to the
-     * document, by the record's index in this array.
-     */
-    items: z.array(SucceededItemProcessRecord),
+    process: SucceededProcessResult,
   })
+).refine(
+  (task) =>
+    task.items?.[0] &&
+    "destination" in task.items[0] &&
+    "stored" in task.items[0],
+  "A succeeded task has items with a destination property and a stored property."
 );
-
-export type SucceededDMDTask = z.infer<typeof SucceededDMDTask>;
+export type UpdateSucceededDMDTask = z.infer<typeof UpdateSucceededDMDTask>;
 
 /**
  * A descriptive metadata task (DMDTask) can be in three states:
  *
  * 1. Waiting(=undefined)
- * 2. In-queue
+ * 2. Queued
  * 3. Success/warning/fail
  *
  *
- * 1. Waiting for background processing to complete (ValidatingDMDTask). An uploaded metadata file in a format hopefully matching `mdType` has been attached to the task.
- * 2. Reporting that background processing could not split or validate the metadata file (FailedDMDTask).
+ * 1. Waiting for background processing to complete (ParsingDMDTask).
+ * 2. Reporting that background processing could not split or validate the metadata file (UpdateFailedDMDTask).
  * 3. Reporting that background processing could split or validate the metadata file. The processor attempted to parse each individual item it extracted from the file; those items that parsed successfully have their own attachments added to the document.
  */
 export const DMDTask = z.union([
-  SucceededDMDTask,
-  FailedDMDTask,
-  QueuedDMDTask,
-  ValidatedDMDTask,
-  ValidatingDMDTask,
+  UpdateSucceededDMDTask,
+  UpdateFailedDMDTask,
+  UpdatingDMDTask,
+  ParsedDMDTask,
+  ParsingDMDTask,
 ]);
 
 export type DMDTask = z.infer<typeof DMDTask>;

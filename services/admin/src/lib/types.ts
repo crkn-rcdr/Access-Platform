@@ -10,7 +10,7 @@ import type {
   DMDTask,
   Noid,
   Slug,
-  SucceededDMDTask,
+  UpdateSucceededDMDTask,
   User,
 } from "@crkn-rcdr/access-data";
 
@@ -82,7 +82,7 @@ export type DmdItemState = {
 export type DmdItemStates = Map<string, DmdItemState>;
 
 export type DmdTaskState = {
-  task: SucceededDMDTask;
+  task: UpdateSucceededDMDTask;
   updateState: "ready" | "updating" | "updated" | "error";
   itemStates: DmdItemStates;
   resultMsg: string;

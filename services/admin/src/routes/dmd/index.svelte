@@ -6,55 +6,46 @@
   import type { Load } from "@sveltejs/kit";
   import type { RootLoadOutput, Session } from "$lib/types";
   import {
-    SucceededDMDTask,
-    FailedDMDTask,
-    QueuedDMDTask,
-    ValidatedDMDTask,
-    ValidatingDMDTask,
+    UpdateSucceededDMDTask,
+    UpdateFailedDMDTask,
+    UpdatingDMDTask,
+    ParsedDMDTask,
+    ParsingDMDTask,
     DMDTask,
   } from "@crkn-rcdr/access-data";
 
   function getDMDTasks(taskList) {
     const base: DMDTask[] = [];
-    const validating: ValidatingDMDTask[] = [];
-    const validated: ValidatedDMDTask[] = [];
-    const queued: QueuedDMDTask[] = [];
-    const complete: (SucceededDMDTask | FailedDMDTask)[] = [];
+    const parsing: ParsingDMDTask[] = [];
+    const parsed: ParsedDMDTask[] = [];
+    const updating: UpdatingDMDTask[] = [];
+    const updated: (UpdateSucceededDMDTask | UpdateFailedDMDTask)[] = [];
 
     // todo test
     const list = taskList.sort((a, b) => {
-      if (a.storedProcess?.requestDate > b.storedProcess?.requestDate) return 1;
-      else if (a.storedProcess?.requestDate < b.storedProcess?.requestDate)
-        return -1;
-      else if (
-        a.validationProcess?.requestDate > b.validationProcess?.requestDate
-      )
-        return 1;
-      else if (
-        a.validationProcess?.requestDate < b.validationProcess?.requestDate
-      )
-        return -1;
+      if (a.process?.requestDate > b.process?.requestDate) return 1;
+      else if (a.process?.requestDate < b.process?.requestDate) return -1;
       return 0;
     });
 
     for (const task of list) {
-      if (SucceededDMDTask.safeParse(task).success) {
-        complete.push(task as SucceededDMDTask);
-      } else if (FailedDMDTask.safeParse(task).success) {
-        complete.push(task as FailedDMDTask);
-      } else if (QueuedDMDTask.safeParse(task).success) {
-        queued.push(task as QueuedDMDTask);
-      } else if (ValidatedDMDTask.safeParse(task).success) {
-        validated.push(task as ValidatedDMDTask);
-      } else if (ValidatingDMDTask.safeParse(task).success) {
-        validating.push(task as ValidatingDMDTask);
+      if (UpdateSucceededDMDTask.safeParse(task).success) {
+        updated.push(task as UpdateSucceededDMDTask);
+      } else if (UpdateFailedDMDTask.safeParse(task).success) {
+        updated.push(task as UpdateFailedDMDTask);
+      } else if (UpdatingDMDTask.safeParse(task).success) {
+        updating.push(task as UpdatingDMDTask);
+      } else if (ParsedDMDTask.safeParse(task).success) {
+        parsed.push(task as ParsedDMDTask);
+      } else if (ParsingDMDTask.safeParse(task).success) {
+        parsing.push(task as ParsingDMDTask);
       } else {
         base.push(task as DMDTask);
       }
     }
 
     return {
-      props: { base, validated, validating, queued, complete },
+      props: { base, parsed, parsing, updating, updated },
     };
   }
 
@@ -80,10 +71,10 @@
 
   // Typed arrays lets us avoid checks in the front end
   export let base: DMDTask[] = [];
-  export let validating: ValidatingDMDTask[] = [];
-  export let validated: ValidatedDMDTask[] = [];
-  export let queued: QueuedDMDTask[] = [];
-  export let complete: (SucceededDMDTask | FailedDMDTask)[] = [];
+  export let parsing: ParsingDMDTask[] = [];
+  export let parsed: ParsedDMDTask[] = [];
+  export let updating: UpdatingDMDTask[] = [];
+  export let updated: (UpdateSucceededDMDTask | UpdateFailedDMDTask)[] = [];
 
   let loading = false;
 
@@ -99,7 +90,7 @@
     loading = true;
     let batchList = await $session.lapin.query("dmdTask.list");
     const results = getDMDTasks(batchList);
-    ({ base, validated, validating, queued, complete } = results.props);
+    ({ base, parsed, parsing, updating, updated } = results.props);
     loading = false;
   }
 
@@ -125,36 +116,36 @@ Base:
 
 <br />
 <br />
-Validating:
+Parsing:
 <br />
-{#each validating as task}
+{#each parsing as task}
   {task.fileName}
   <br />
 {/each}
 
 <br />
 <br />
-Validated:
+Parse Completed:
 <br />
-{#each validated as task}
+{#each parsed as task}
   {task.fileName}
   <br />
 {/each}
 
 <br />
 <br />
-Queued:
+Updating:
 <br />
-{#each queued as task}
+{#each updating as task}
   {task.fileName}
   <br />
 {/each}
 
 <br />
 <br />
-Complete:
+Update Completed:
 <br />
-{#each complete as task}
+{#each updated as task}
   {task.fileName}
   <br />
 {/each}

@@ -41,9 +41,9 @@
    */
   import {
     DMDTask,
-    isValidatingDMDTask,
-    isFailedDMDTask,
-    isSucceededDMDTask,
+    isParsingDMDTask,
+    isUpdateFailedDMDTask,
+    isUpdateSucceededDMDTask,
   } from "@crkn-rcdr/access-data";
   import DmdWaitingView from "$lib/components/dmd/DmdWaitingView.svelte";
   import DmdFailureView from "$lib/components/dmd/DmdFailureView.svelte";
@@ -52,7 +52,7 @@
   /**
    * @type {DMDTask} The dmdtask being displayed by the page.
    */
-  export let dmdTask: DMDTask; //ValidatingDMDTask | FailedDMDTask | SucceededDMDTask;
+  export let dmdTask: DMDTask; //ParsingDMDTask | UpdateFailedDMDTask | UpdateSucceededDMDTask;
 
   export let error: any;
 </script>
@@ -62,11 +62,11 @@
     {error?.message}
   {:else if !dmdTask}
     Loading...
-  {:else if isSucceededDMDTask(dmdTask)}
+  {:else if isUpdateSucceededDMDTask(dmdTask)}
     <DmdSuccessView {dmdTask} />
-  {:else if isFailedDMDTask(dmdTask)}
+  {:else if isUpdateFailedDMDTask(dmdTask)}
     <DmdFailureView {dmdTask} message={dmdTask.process.message} />
-  {:else if isValidatingDMDTask(dmdTask)}
+  {:else if isParsingDMDTask(dmdTask)}
     <DmdWaitingView bind:dmdTask />
   {:else}
     <!--JUST In Case All Else Fails-->

@@ -9,9 +9,9 @@ import {
   DMDFORMATS,
   User,
   Slug,
-  SucceededDMDTask,
+  UpdateSucceededDMDTask,
   Noid,
-  isSucceededDMDTask,
+  isUpdateSucceededDMDTask,
   AccessObjectType,
 } from "@crkn-rcdr/access-data";
 import { LapinContext } from "../context.js";
@@ -93,7 +93,7 @@ export const getDmdItemXML = async function (
 };
 
 export const getDmdTaskItemByIndex = async function (
-  dmdTask: SucceededDMDTask,
+  dmdTask: UpdateSucceededDMDTask,
   index: number
 ) {
   const item = dmdTask?.items?.[index];
@@ -277,7 +277,7 @@ export const storePreservation = async function (
             "Code 21. Please contact the platform team for assistance. Task: " +
             task,
         });
-      } else if (!isSucceededDMDTask(dmdTask)) {
+      } else if (!isUpdateSucceededDMDTask(dmdTask)) {
         await ctx.routeLimiter
           .getLimiterSemaphore("storePreservation")
           ?.signal();
@@ -450,7 +450,7 @@ export const storeAccess = async function (
           "Code 21. Please contact the platform team for assistance. Task: " +
           task,
       });
-    } else if (!isSucceededDMDTask(dmdTask)) {
+    } else if (!isUpdateSucceededDMDTask(dmdTask)) {
       await ctx.routeLimiter.getLimiterSemaphore("storeAccess")?.signal();
       throw new TRPCError({
         code: "METHOD_NOT_SUPPORTED",

@@ -1,13 +1,7 @@
 {
   "_id": "failed",
   "updated": 1631200365.22,
-  "validationProcess": {
-    "requestDate": 1631199874.161,
-    "processDate": 1631200365.22,
-    "succeeded": true,
-    "message": ""
-  },
-  "storeProcess": {
+  "process": {
     "requestDate": 1631199874.161,
     "processDate": 1631200365.22,
     "succeeded": false,

@@ -6,7 +6,7 @@ Displays a dmd task in an error state.
 ### Properties
 |    |    |    |
 | -- | -- | -- |
-| dmdTask: FailedDMDTask or undefined | optional | The dmd task to be displayed. |
+| dmdTask: UpdateFailedDMDTask or undefined | optional | The dmd task to be displayed. |
 | message: string | required | The message to be displayed in the error notification bar. |
 
 ### Usage
@@ -18,14 +18,14 @@ Displays a dmd task in an error state.
 ```
 -->
 <script lang="ts">
-  import type { FailedDMDTask } from "@crkn-rcdr/access-data";
+  import type { UpdateFailedDMDTask } from "@crkn-rcdr/access-data";
   import DmdTaskInfoTable from "$lib/components/dmd/DmdTaskInfoTable.svelte";
   import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
 
   /**
-   * @type {FailedDMDTask | undefined} The dmdtask being displayed.
+   * @type {UpdateFailedDMDTask | undefined} The dmdtask being displayed.
    */
-  export let dmdTask: FailedDMDTask | undefined = undefined;
+  export let dmdTask: UpdateFailedDMDTask | undefined = undefined;
 
   /**
    * @type {string} The message to be displayed in the error notification bar.
