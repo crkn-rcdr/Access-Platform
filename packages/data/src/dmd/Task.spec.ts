@@ -2,9 +2,20 @@ import test from "ava";
 import { tester } from "../testHelper.js";
 import { User } from "../util/User.js";
 
-import { ValidatingDMDTask, FailedDMDTask, SucceededDMDTask } from "./Task.js";
+import {
+  ValidatingDMDTask,
+  FailedDMDTask,
+  SucceededDMDTask,
+  QueuedDMDTask,
+  ValidatedDMDTask,
+} from "./Task.js";
 
-const { isValid: isValidWaiting } = tester(ValidatingDMDTask);
+const { isValid: isValidValidating, isInvalid: isInvalidValidating } =
+  tester(ValidatingDMDTask);
+const { isValid: isValidValidated, isInvalid: isInvalidValidated } =
+  tester(ValidatedDMDTask);
+const { isValid: isValidQueued, isInvalid: isInvalidQueued } =
+  tester(QueuedDMDTask);
 const { isValid: isValidFailed } = tester(FailedDMDTask);
 const { isValid: isValidSucceeded, isInvalid: isInvalidSucceeded } =
   tester(SucceededDMDTask);
@@ -36,36 +47,122 @@ const xmlAttachment = {
   content_type: "application/xml",
 };
 
-const goodWaiting: ValidatingDMDTask = {
+const goodValidating: ValidatingDMDTask = {
   id: "waiting-for-processing",
   attachments: {
     metadata: metadataAttachment,
   },
   user: USER,
   format: "csvissueinfo",
-  process: { requestDate: then },
+  validationProcess: { requestDate: then },
   updated: then,
 };
 
 test(
   "ValidatingDMDTask schema parses a valid object",
-  isValidWaiting,
-  goodWaiting
+  isValidValidating,
+  goodValidating
 );
 
+test(
+  "ValidatingDMDTask schema does not parse as Validated",
+  isInvalidValidated,
+  goodValidating
+);
+
+const goodValidated: ValidatedDMDTask = {
+  ...goodValidating,
+  validationProcess: {
+    requestDate: then,
+    processDate: now,
+    succeeded: true,
+    message: "Work.",
+  },
+  items: [
+    {
+      parsed: true,
+      output: "issueinfo",
+      id: "good.id",
+      label: "nice label",
+      message: "Figured this one out",
+    },
+    {
+      parsed: false,
+      message: "This one not so much.",
+    },
+  ],
+};
+
+test(
+  "ValidatedDMDTask schema parses a valid object",
+  isValidValidated,
+  goodValidated
+);
+
+test(
+  "ValidatedDMDTask schema does not parse as Validating",
+  isInvalidValidating,
+  goodValidated
+);
+
+const goodQueued: QueuedDMDTask = {
+  ...goodValidated,
+  storeProcess: { requestDate: then },
+  items: [
+    {
+      parsed: true,
+      output: "issueinfo",
+      id: "good.id",
+      label: "nice label",
+      message: "Figured this one out",
+      destination: "access",
+    },
+    {
+      parsed: false,
+      message: "This one not so much.",
+      destination: "access",
+    },
+  ],
+};
+
+test("QueuedDMDTask schema parses a valid object.", isValidQueued, goodQueued);
+
 const goodFailed: FailedDMDTask = {
-  ...goodWaiting,
+  ...goodQueued,
   id: "processing-failed",
-  process: {
+  storeProcess: {
     requestDate: then,
     processDate: now,
     succeeded: false,
     message: "Didn't work.",
   },
   updated: now,
+  items: [
+    {
+      parsed: true,
+      output: "issueinfo",
+      id: "good.id",
+      label: "nice label",
+      message: "Not stored",
+      stored: false,
+      destination: "access",
+    },
+    {
+      parsed: false,
+      stored: false,
+      destination: "access",
+      message: "This one not so much.",
+    },
+  ],
 };
 
 test("FailedDMDTask schema parses a valid object", isValidFailed, goodFailed);
+
+test(
+  "FailedDMDTask schema does not parse as queued.",
+  isInvalidQueued,
+  goodFailed
+);
 
 const goodSucceeded: SucceededDMDTask = {
   ...goodFailed,
@@ -75,7 +172,7 @@ const goodSucceeded: SucceededDMDTask = {
     "0.json": jsonAttachment,
     "0.xml": xmlAttachment,
   },
-  process: {
+  storeProcess: {
     requestDate: then,
     processDate: now,
     succeeded: true,
@@ -88,14 +185,27 @@ const goodSucceeded: SucceededDMDTask = {
       id: "good.id",
       label: "nice label",
       message: "Figured this one out",
+      stored: true,
+      destination: "access",
     },
-    { parsed: false, message: "This one not so much" },
+    {
+      parsed: false,
+      stored: false,
+      destination: "access",
+      message: "This one not so much.",
+    },
   ],
 };
 
 test(
   "SucceededDMDTask schema parses a valid object",
   isValidSucceeded,
+  goodSucceeded
+);
+
+test(
+  "SucceededDMDTask schema does not parse as queued.",
+  isInvalidQueued,
   goodSucceeded
 );
 
@@ -125,13 +235,13 @@ test(
 );
 
 test(
-  "SucceededDMDTask schema does not parse when a parsed item lacks an output",
+  "SucceededDMDTask schema does not parse when a parsed item lacks an output.",
   isInvalidSucceeded,
   itemWithout("output")
 );
 
 test(
-  "SucceededDMDTask schema does not parse when a parsed item lacks a label",
+  "SucceededDMDTask schema does not parse when a parsed item lacks a label.",
   isInvalidSucceeded,
   itemWithout("label")
 );

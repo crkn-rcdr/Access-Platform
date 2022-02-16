@@ -1,7 +1,7 @@
 {
   "_id": "validated",
   "updated": 1631200365.22,
-  "process": {
+  "validationProcess": {
     "requestDate": 1631199874.161,
     "processDate": 1631200365.22,
     "succeeded": true,

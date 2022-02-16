@@ -7,7 +7,6 @@ import {
   SucceededProcessResult,
   FailedProcessResult,
 } from "../util/ProcessUpdate.js";
-//import { Slug } from "../util/Slug.js";
 import { Timestamp } from "../util/Timestamp.js";
 import { User } from "../util/User.js";
 
@@ -21,7 +20,7 @@ const ParseRecord = z.object({
   /**
    * Whether this record's metadata has been parsed successfully.
    */
-  parsed: z.boolean(),
+  parsed: z.boolean().optional(),
 
   /**
    * The type of output parsed for this record. Required when the record's
@@ -78,6 +77,13 @@ export const StoredParseRecord = QueuedParseRecord.merge(
 
 export type StoredParseRecord = z.infer<typeof StoredParseRecord>;
 
+export const SucceededParseRecord = StoredParseRecord.refine(
+  (record) => !record.parsed || (record.id && record.output && record.label),
+  "A successfully parsed record must provide: output, id, label."
+);
+
+export type SucceededParseRecord = z.infer<typeof SucceededParseRecord>;
+
 /**
  * DMDTask file is being uploaded to split, validate, and flatten the metadata in the attached file.
  * (Upload Attachment Step: waiting)
@@ -111,7 +117,7 @@ export const ValidatingDMDTask = z.object({
   /**
    * The request to split, validate, and flatten the metadata in the attached file.
    */
-  process: ProcessRequest,
+  validationProcess: ProcessRequest,
 
   /**
    * Timestamp of the task's most recent update.
@@ -130,7 +136,7 @@ export const ValidatedDMDTask = ValidatingDMDTask.merge(
     /**
      * The items in the file have had their metadata processed.
      */
-    process: ProcessResult,
+    validationProcess: ProcessResult,
     /**
      * List of individual items found in the metadata file.
      * Successfully parsed records will be attached to the
@@ -151,7 +157,7 @@ export const QueuedDMDTask = ValidatedDMDTask.merge(
     /**
      * The request to queue the items for storage.
      */
-    process: ProcessRequest,
+    storeProcess: ProcessRequest,
 
     /**
      * List of individual items found in the metadata file.
@@ -171,7 +177,7 @@ export const FailedDMDTask = QueuedDMDTask.merge(
     /**
      * The items in the file have not had their metadata stored
      */
-    process: FailedProcessResult,
+    storeProcess: FailedProcessResult,
 
     /**
      * List of individual items found in the metadata file.
@@ -193,14 +199,14 @@ export const SucceededDMDTask = QueuedDMDTask.merge(
     /**
      * The items in the file have had their metadata stored.
      */
-    process: SucceededProcessResult,
+    storeProcess: SucceededProcessResult,
 
     /**
      * List of individual items found in the metadata file.
      * Successfully stored records will be attached to the
      * document, by the record's index in this array.
      */
-    items: z.array(StoredParseRecord),
+    items: z.array(SucceededParseRecord),
   })
 );
 

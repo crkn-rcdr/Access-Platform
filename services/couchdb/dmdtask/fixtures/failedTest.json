@@ -1,11 +1,17 @@
 {
   "_id": "failed",
   "updated": 1631200365.22,
-  "process": {
+  "validationProcess": {
     "requestDate": 1631199874.161,
     "processDate": 1631200365.22,
     "succeeded": true,
-    "message": "Store failed for item with id: 8_06941_2 "
+    "message": ""
+  },
+  "storeProcess": {
+    "requestDate": 1631199874.161,
+    "processDate": 1631200365.22,
+    "succeeded": false,
+    "message": "Store failed"
   },
   "user": {
     "name": "Brittny Lapierre",
