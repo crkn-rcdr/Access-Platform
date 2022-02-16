@@ -21,9 +21,19 @@
     const queued: QueuedDMDTask[] = [];
     const complete: (SucceededDMDTask | FailedDMDTask)[] = [];
 
+    // todo test
     const list = taskList.sort((a, b) => {
-      if (a.process.requestDate > b.process.requestDate) return 1;
-      else if (a.process.requestDate < b.process.requestDate) return -1;
+      if (a.storedProcess?.requestDate > b.storedProcess?.requestDate) return 1;
+      else if (a.storedProcess?.requestDate < b.storedProcess?.requestDate)
+        return -1;
+      else if (
+        a.validationProcess?.requestDate > b.validationProcess?.requestDate
+      )
+        return 1;
+      else if (
+        a.validationProcess?.requestDate < b.validationProcess?.requestDate
+      )
+        return -1;
       return 0;
     });
 
