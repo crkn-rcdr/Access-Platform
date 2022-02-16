@@ -199,16 +199,13 @@ export const UpdateSucceededDMDTask = UpdatingDMDTask.merge(
 export type UpdateSucceededDMDTask = z.infer<typeof UpdateSucceededDMDTask>;
 
 /**
- * A descriptive metadata task (DMDTask) can be in three states:
+ * A descriptive metadata task (DMDTask) can be in four states:
  *
- * 1. Waiting(=undefined)
- * 2. Queued
- * 3. Success/warning/fail
+ * 1. Parsing
+ * 2. Parsed (Reporting that background processing could split or validate the metadata file. The processor attempted to parse each individual item it extracted from the file; those items that parsed successfully have their own attachments added to the document.)
+ * 3. Updating
+ * 4. Update Success/warning/fail (Reporting that each item's metadata file was updated, or not.)
  *
- *
- * 1. Waiting for background processing to complete (ParsingDMDTask).
- * 2. Reporting that background processing could not split or validate the metadata file (UpdateFailedDMDTask).
- * 3. Reporting that background processing could split or validate the metadata file. The processor attempted to parse each individual item it extracted from the file; those items that parsed successfully have their own attachments added to the document.
  */
 export const DMDTask = z.union([
   UpdateSucceededDMDTask,
