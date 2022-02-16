@@ -48,7 +48,7 @@ export class DMDTaskHandler extends DatabaseHandler<DMDTask> {
 
     await this.update({
       ddoc: "access",
-      name: "canProcess",
+      name: "canProcessValidation",
       docId: taskId,
     });
 

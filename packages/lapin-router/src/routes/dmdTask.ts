@@ -42,7 +42,7 @@ export const dmdTaskRouter = createRouter()
         "id",
         "user",
         "format",
-        "process",
+        //"process",
         "updated",
         "items",
         "fileName",

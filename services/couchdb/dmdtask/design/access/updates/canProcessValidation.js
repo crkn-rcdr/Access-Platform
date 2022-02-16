@@ -12,7 +12,7 @@ module.exports = function (doc, req) {
   const now = timestamp();
 
   doc.updated = now;
-  doc.process = { requestDate: now };
+  doc.validationProcess = { requestDate: now };
 
   return successReturn(doc, "ok");
 };

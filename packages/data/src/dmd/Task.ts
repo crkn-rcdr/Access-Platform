@@ -16,7 +16,7 @@ import { DMDFORMATS, DMDOUTPUTS } from "./types.js";
  * The result of attempting to parse an individual metadata
  * record, after it has been split from the task's file.
  */
-const ParseRecord = z.object({
+const ItemProcessRecord = z.object({
   /**
    * Whether this record's metadata has been parsed successfully.
    */
@@ -45,13 +45,13 @@ const ParseRecord = z.object({
    */
   message: z.string().optional(),
 });
-export type ParseRecord = z.infer<typeof ParseRecord>;
+export type ItemProcessRecord = z.infer<typeof ItemProcessRecord>;
 
 /**
  * DMD Task is being added to the queue for storing each item's new metadata file.
  * (Process Metadata File Step: in-queue)
  */
-export const QueuedParseRecord = ParseRecord.merge(
+export const QueuedItemProcessRecord = ItemProcessRecord.merge(
   z.object({
     /**
      * This field tells the metadata processor where to store the new metadata to.
@@ -60,13 +60,13 @@ export const QueuedParseRecord = ParseRecord.merge(
   })
 );
 
-export type QueuedParseRecord = z.infer<typeof ParseRecord>;
+export type QueuedItemProcessRecord = z.infer<typeof ItemProcessRecord>;
 
 /**
  * DMD Task is being added to the queue for storing each item's new metadata file.
  * (Process Metadata File Step: in-queue)
  */
-export const StoredParseRecord = QueuedParseRecord.merge(
+export const StoredItemProcessRecord = QueuedItemProcessRecord.merge(
   z.object({
     /**
      * Whether this record's metadata has been stored successfully.
@@ -75,14 +75,16 @@ export const StoredParseRecord = QueuedParseRecord.merge(
   })
 );
 
-export type StoredParseRecord = z.infer<typeof StoredParseRecord>;
+export type StoredItemProcessRecord = z.infer<typeof StoredItemProcessRecord>;
 
-export const SucceededParseRecord = StoredParseRecord.refine(
+export const SucceededItemProcessRecord = StoredItemProcessRecord.refine(
   (record) => !record.parsed || (record.id && record.output && record.label),
   "A successfully parsed record must provide: output, id, label."
 );
 
-export type SucceededParseRecord = z.infer<typeof SucceededParseRecord>;
+export type SucceededItemProcessRecord = z.infer<
+  typeof SucceededItemProcessRecord
+>;
 
 /**
  * DMDTask file is being uploaded to split, validate, and flatten the metadata in the attached file.
@@ -142,7 +144,7 @@ export const ValidatedDMDTask = ValidatingDMDTask.merge(
      * Successfully parsed records will be attached to the
      * document, by the record's index in this array.
      */
-    items: z.array(ParseRecord),
+    items: z.array(ItemProcessRecord),
   })
 );
 
@@ -162,7 +164,7 @@ export const QueuedDMDTask = ValidatedDMDTask.merge(
     /**
      * List of individual items found in the metadata file.
      */
-    items: z.array(QueuedParseRecord),
+    items: z.array(QueuedItemProcessRecord),
   })
 );
 
@@ -184,7 +186,7 @@ export const FailedDMDTask = QueuedDMDTask.merge(
      * Successfully stored records will be attached to the
      * document, by the record's index in this array.
      */
-    items: z.array(StoredParseRecord),
+    items: z.array(StoredItemProcessRecord),
   })
 );
 
@@ -206,7 +208,7 @@ export const SucceededDMDTask = QueuedDMDTask.merge(
      * Successfully stored records will be attached to the
      * document, by the record's index in this array.
      */
-    items: z.array(SucceededParseRecord),
+    items: z.array(SucceededItemProcessRecord),
   })
 );
 
