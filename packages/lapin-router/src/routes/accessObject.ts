@@ -164,6 +164,7 @@ export const accessObjectRouter = createRouter()
               user,
             });
 
+            // I think that I have to call this even for unordered collections
             await ctx.couch.access.bulkForceUpdateAllMembers(collectionId);
           }
         }
