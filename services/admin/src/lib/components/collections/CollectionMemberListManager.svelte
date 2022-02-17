@@ -350,7 +350,7 @@
           {/if}
           <div class:disabled={loading}>
             <PrefixSlugSearchBox
-              rows={15}
+              rows={10}
               input={slugTextValue}
               on:slugs={(event) => validateSlugList(event.detail)}
             />
