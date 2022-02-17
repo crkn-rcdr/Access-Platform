@@ -164,8 +164,13 @@ export const accessObjectRouter = createRouter()
               user,
             });
 
-            // I think that I have to call this even for unordered collections
-            await ctx.couch.access.bulkForceUpdateAllMembers(collectionId);
+            const collection = await ctx.couch.access.get(collectionId);
+            if (
+              "behavior" in collection &&
+              collection.behavior === "multi-part"
+            ) {
+              await ctx.couch.access.bulkForceUpdateAllMembers(collectionId);
+            }
           }
         }
 
