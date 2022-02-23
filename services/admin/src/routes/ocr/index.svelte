@@ -180,21 +180,6 @@
         </ExpansionListItem>
       {/each}
     </ExpansionList>
-    <!--ExpansionTile toggled={true} topClass="toggle-title">
-      <span slot="top">Awaiting Export ({base.length})</span>
-      <div class="toggle-list" slot="bottom">
-        {#each base as batch}
-          <OcrBatchListItem
-            {batch}
-            isListLoading={loading}
-            stage="N/A"
-            status="N/A"
-            on:export={getBatches}
-            on:delete={getBatches}
-          />
-        {/each}
-      </div>
-    </ExpansionTile-->
   {/if}
 
   <ExpansionList
@@ -319,16 +304,4 @@
   .create-button {
     flex: 2;
   }
-  /*.warn {
-    background-color: var(--warn-light);
-    color: var(--warn);
-  }
-  .waiting {
-    color: var(--secondary);
-    font-style: italic;
-  }
-  .not-success {
-    background-color: var(--danger-light);
-    color: var(--danger);
-  }*/
 </style>

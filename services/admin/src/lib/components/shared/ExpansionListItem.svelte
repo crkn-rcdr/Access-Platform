@@ -24,10 +24,11 @@
           <TiDelete />
         </span>
       {/if}
-      <slot name="stage" />
-      &nbsp;
-      {status}
-      {#if status === "waiting"}...{/if}
+      <span>
+        <slot name="stage" />
+        {status}
+        {#if status === "waiting"}...{/if}
+      </span>
     </span>
   {/if}
 

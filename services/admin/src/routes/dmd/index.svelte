@@ -68,6 +68,9 @@
   import { getStores } from "$app/stores";
   import timer from "$lib/stores/timer";
   import { onDestroy, onMount } from "svelte";
+  import ExpansionList from "$lib/components/shared/ExpansionList.svelte";
+  import ExpansionListItem from "$lib/components/shared/ExpansionListItem.svelte";
+  import ExpansionListMessage from "$lib/components/shared/ExpansionListMessage.svelte";
 
   // Typed arrays lets us avoid checks in the front end
   export let base: DMDTask[] = [];
@@ -105,47 +108,107 @@
   });
 </script>
 
-<br />
-<br />
-Base:
-<br />
-{#each base as task}
-  {task.fileName}
+<div class="wrapper">
   <br />
-{/each}
+  <br />
+  <br />
+  <div class="title auto-align auto-align__a-center">
+    <h6>Metadata Tasks</h6>
+    <a href="/ocr/new">
+      <button class="create-button primary">Parse New Metadata File</button>
+    </a>
+  </div>
+  {#if base.length}
+    <ExpansionList showMessage={base?.length === 0} message="">
+      <span slot="title">Awaiting Parsing ({base.length})</span>
+      {#each base as task}
+        <ExpansionListItem status="N/A">
+          <span slot="title">{task.fileName}</span>
+          <span slot="stage">N/A</span>
+          <span slot="actions"> todo </span>
+        </ExpansionListItem>
+      {/each}
+    </ExpansionList>
+  {/if}
 
-<br />
-<br />
-Parsing:
-<br />
-{#each parsing as task}
-  {task.fileName}
-  <br />
-{/each}
+  <ExpansionList
+    showMessage={parsing?.length === 0}
+    message="No batches are exporting."
+  >
+    <span slot="title">Parsing ({parsing.length})</span>
+    {#each parsing as task}
+      <ExpansionListItem status="waiting">
+        <span slot="title">{task.fileName}</span>
+        <span slot="stage">parse</span>
+        <span slot="actions"> todo </span>
+      </ExpansionListItem>
+    {/each}
+  </ExpansionList>
 
-<br />
-<br />
-Parse Completed:
-<br />
-{#each parsed as task}
-  {task.fileName}
-  <br />
-{/each}
+  <ExpansionList
+    showMessage={parsing?.length === 0}
+    message="No batches are exporting."
+  >
+    <span slot="title">Parsed ({parsed.length})</span>
+    {#each parsed as task}
+      <ExpansionListItem
+        status={task.process.succeeded ? "succeeded" : "failed"}
+      >
+        <span slot="title">{task.fileName}</span>
+        <span slot="stage">parse</span>
+        <span slot="actions"> todo </span>
+      </ExpansionListItem>
+      <ExpansionListMessage
+        status={task.process.succeeded ? "succeeded" : "failed"}
+        message={task.process.message}
+      />
+    {/each}
+  </ExpansionList>
 
-<br />
-<br />
-Updating:
-<br />
-{#each updating as task}
-  {task.fileName}
-  <br />
-{/each}
+  <ExpansionList
+    showMessage={updating?.length === 0}
+    message="No batches are exporting."
+  >
+    <span slot="title">Loading ({updating.length})</span>
+    {#each updating as task}
+      <ExpansionListItem status="waiting">
+        <span slot="title">{task.fileName}</span>
+        <span slot="stage">load</span>
+        <span slot="actions"> todo </span>
+      </ExpansionListItem>
+    {/each}
+  </ExpansionList>
 
-<br />
-<br />
-Update Completed:
-<br />
-{#each updated as task}
-  {task.fileName}
-  <br />
-{/each}
+  <ExpansionList
+    showMessage={updated?.length === 0}
+    message="No batches are exporting."
+  >
+    <span slot="title">Load Completed ({updated.length})</span>
+    {#each updated as task}
+      <ExpansionListItem
+        status={task.process.succeeded ? "succeeded" : "failed"}
+      >
+        <span slot="title">{task.fileName}</span>
+        <span slot="stage">load</span>
+        <span slot="actions"> todo </span>
+      </ExpansionListItem>
+      <ExpansionListMessage
+        status={task.process.succeeded ? "succeeded" : "failed"}
+        message={task.process.message}
+      />
+    {/each}
+  </ExpansionList>
+</div>
+
+<style>
+  .title {
+    width: 100%;
+  }
+  .title h6 {
+    flex: 10;
+  }
+
+  .create-button {
+    flex: 2;
+  }
+</style>
