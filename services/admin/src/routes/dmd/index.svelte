@@ -114,7 +114,7 @@
   <br />
   <div class="title auto-align auto-align__a-center">
     <h6>Metadata Tasks</h6>
-    <a href="/ocr/new">
+    <a href="/dmd/new">
       <button class="create-button primary">Parse New Metadata File</button>
     </a>
   </div>
