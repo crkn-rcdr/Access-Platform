@@ -18,8 +18,8 @@ This component shows the view for a dmd task that had its metadata successfully 
   import type { UpdateSucceededDMDTask } from "@crkn-rcdr/access-data";
   import type { Depositor, DmdItemStates, DmdItemState } from "$lib/types";
   import ProgressBar from "$lib/components/shared/ProgressBar.svelte";
-  import DmdSuccessItemsTable from "$lib/components/dmd/success/DmdSuccessItemsTable.svelte";
-  import DmdSuccessItemUpdater from "$lib/components/dmd/success/DmdSuccessItemUpdater.svelte";
+  import DmdSuccessItemsTable from "$lib/components/dmd/old/success/DmdSuccessItemsTable.svelte";
+  import DmdSuccessItemUpdater from "$lib/components/dmd/old/success/DmdSuccessItemUpdater.svelte";
   import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
   import { dmdTasksStore } from "$lib/stores/dmdTasksStore";
   import IoMdRefresh from "svelte-icons/io/IoMdRefresh.svelte";

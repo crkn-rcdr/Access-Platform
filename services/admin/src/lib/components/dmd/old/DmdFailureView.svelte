@@ -19,7 +19,7 @@ Displays a dmd task in an error state.
 -->
 <script lang="ts">
   import type { UpdateFailedDMDTask } from "@crkn-rcdr/access-data";
-  import DmdTaskInfoTable from "$lib/components/dmd/DmdTaskInfoTable.svelte";
+  import DmdTaskInfoTable from "$lib/components/dmd/old/DmdTaskInfoTable.svelte";
   import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
 
   /**

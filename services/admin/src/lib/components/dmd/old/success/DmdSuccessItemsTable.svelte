@@ -26,7 +26,7 @@ This component displays the items in the dmd task throughout the various stages 
   import type { Depositor } from "$lib/types";
   import type { ParseRecord } from "@crkn-rcdr/access-data/dist/esm/dmd/Task";
   import { dmdTasksStore } from "$lib/stores/dmdTasksStore";
-  import DmdSuccessItemPreview from "$lib/components/dmd/success/DmdSuccessItemPreview.svelte";
+  import DmdSuccessItemPreview from "$lib/components/dmd/old/success/DmdSuccessItemPreview.svelte";
   import XmlViewer from "$lib/components/shared/XmlViewer.svelte";
   import Loading from "$lib/components/shared/Loading.svelte";
 

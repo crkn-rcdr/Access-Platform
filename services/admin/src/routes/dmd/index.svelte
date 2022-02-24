@@ -71,6 +71,7 @@
   import ExpansionList from "$lib/components/shared/ExpansionList.svelte";
   import ExpansionListItem from "$lib/components/shared/ExpansionListItem.svelte";
   import ExpansionListMessage from "$lib/components/shared/ExpansionListMessage.svelte";
+  import DmdTaskActions from "$lib/components/dmd/DmdTaskActions.svelte";
 
   // Typed arrays lets us avoid checks in the front end
   export let base: DMDTask[] = [];
@@ -125,7 +126,15 @@
         <ExpansionListItem status="N/A">
           <span slot="title">{task.fileName}</span>
           <span slot="stage">N/A</span>
-          <span slot="actions"> todo </span>
+          <span slot="actions">
+            <DmdTaskActions
+              {task}
+              isListLoading={loading}
+              stage="N/A"
+              status="N/A"
+              on:delete={getDMDTasks}
+            />
+          </span>
         </ExpansionListItem>
       {/each}
     </ExpansionList>
@@ -140,7 +149,15 @@
       <ExpansionListItem status="waiting">
         <span slot="title">{task.fileName}</span>
         <span slot="stage">parse</span>
-        <span slot="actions"> todo </span>
+        <span slot="actions">
+          <DmdTaskActions
+            {task}
+            isListLoading={loading}
+            stage="parse"
+            status="waiting"
+            on:delete={getDMDTasks}
+          />
+        </span>
       </ExpansionListItem>
     {/each}
   </ExpansionList>
@@ -157,7 +174,15 @@
         <span slot="title">{task.fileName}</span>
         <span slot="stage">parse</span>
         <span slot="details">{task.items.length} items</span>
-        <span slot="actions"> todo </span>
+        <span slot="actions">
+          <DmdTaskActions
+            {task}
+            isListLoading={loading}
+            stage="parse"
+            status={task.process["succeeded"] ? "succeeded" : "failed"}
+            on:delete={getDMDTasks}
+          />
+        </span>
       </ExpansionListItem>
       <ExpansionListMessage
         status={task.process.succeeded ? "succeeded" : "failed"}
@@ -176,7 +201,15 @@
         <span slot="title">{task.fileName}</span>
         <span slot="stage">load</span>
         <span slot="details">{task.items.length} items</span>
-        <span slot="actions"> todo </span>
+        <span slot="actions">
+          <DmdTaskActions
+            {task}
+            isListLoading={loading}
+            stage="load"
+            status="waiting"
+            on:delete={getDMDTasks}
+          />
+        </span>
       </ExpansionListItem>
     {/each}
   </ExpansionList>
@@ -193,7 +226,15 @@
         <span slot="title">{task.fileName}</span>
         <span slot="stage">load</span>
         <span slot="details">{task.items.length} items</span>
-        <span slot="actions"> todo </span>
+        <span slot="actions">
+          <DmdTaskActions
+            {task}
+            isListLoading={loading}
+            stage="load"
+            status={task.process["succeeded"] ? "succeeded" : "failed"}
+            on:delete={getDMDTasks}
+          />
+        </span>
       </ExpansionListItem>
       <ExpansionListMessage
         status={task.process.succeeded ? "succeeded" : "failed"}

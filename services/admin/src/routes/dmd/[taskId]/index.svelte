@@ -45,9 +45,9 @@
     isUpdateFailedDMDTask,
     isUpdateSucceededDMDTask,
   } from "@crkn-rcdr/access-data";
-  import DmdWaitingView from "$lib/components/dmd/DmdWaitingView.svelte";
-  import DmdFailureView from "$lib/components/dmd/DmdFailureView.svelte";
-  import DmdSuccessView from "$lib/components/dmd/success/DmdSuccessView.svelte";
+  import DmdWaitingView from "$lib/components/dmd/old/DmdWaitingView.svelte";
+  import DmdFailureView from "$lib/components/dmd/old/DmdFailureView.svelte";
+  import DmdSuccessView from "$lib/components/dmd/old/success/DmdSuccessView.svelte";
 
   /**
    * @type {DMDTask} The dmdtask being displayed by the page.
