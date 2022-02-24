@@ -32,7 +32,7 @@ This component displays a wizard-like view used on the smelter and dmd pages.
 <div class="backdrop">
   <div class={`wrapper ${size}`}>
     <div class="title">
-      <p>{title}</p>
+      <p>{@html title}</p>
     </div>
     <div class="form">
       <slot />

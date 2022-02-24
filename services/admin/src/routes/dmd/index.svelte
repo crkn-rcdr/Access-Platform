@@ -146,7 +146,7 @@
   </ExpansionList>
 
   <ExpansionList
-    showMessage={parsing?.length === 0}
+    showMessage={parsed?.length === 0}
     message="No batches are exporting."
   >
     <span slot="title">Parsed ({parsed.length})</span>
@@ -156,6 +156,7 @@
       >
         <span slot="title">{task.fileName}</span>
         <span slot="stage">parse</span>
+        <span slot="details">{task.items.length} items</span>
         <span slot="actions"> todo </span>
       </ExpansionListItem>
       <ExpansionListMessage
@@ -174,6 +175,7 @@
       <ExpansionListItem status="waiting">
         <span slot="title">{task.fileName}</span>
         <span slot="stage">load</span>
+        <span slot="details">{task.items.length} items</span>
         <span slot="actions"> todo </span>
       </ExpansionListItem>
     {/each}
@@ -190,6 +192,7 @@
       >
         <span slot="title">{task.fileName}</span>
         <span slot="stage">load</span>
+        <span slot="details">{task.items.length} items</span>
         <span slot="actions"> todo </span>
       </ExpansionListItem>
       <ExpansionListMessage
@@ -198,6 +201,9 @@
       />
     {/each}
   </ExpansionList>
+  <br />
+  <br />
+  <br />
 </div>
 
 <style>

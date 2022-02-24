@@ -104,8 +104,6 @@
   import { getStores } from "$app/stores";
   import timer from "$lib/stores/timer";
   import { onDestroy, onMount } from "svelte";
-  import ExpansionTile from "$lib/components/shared/ExpansionTile.svelte";
-  import OcrBatchListItem from "$lib/components/ocr-batch/OcrBatchActions.svelte";
   import ExpansionList from "$lib/components/shared/ExpansionList.svelte";
   import ExpansionListItem from "$lib/components/shared/ExpansionListItem.svelte";
   import OcrBatchActions from "$lib/components/ocr-batch/OcrBatchActions.svelte";
@@ -167,6 +165,7 @@
         <ExpansionListItem status="N/A">
           <span slot="title">{batch.name}</span>
           <span slot="stage">N/A</span>
+          <span slot="details">{batch.canvases.length} canvases</span>
           <span slot="actions">
             <OcrBatchActions
               {batch}
@@ -191,6 +190,7 @@
       <ExpansionListItem status="waiting">
         <span slot="title">{batch.name}</span>
         <span slot="stage">export</span>
+        <span slot="details">{batch.canvases.length} canvases</span>
         <span slot="actions">
           <OcrBatchActions
             {batch}
@@ -216,6 +216,7 @@
       >
         <span slot="title">{batch.name}</span>
         <span slot="stage">export</span>
+        <span slot="details">{batch.canvases.length} canvases</span>
         <span slot="actions">
           <OcrBatchActions
             {batch}
@@ -246,6 +247,7 @@
       <ExpansionListItem status="waiting">
         <span slot="title">{batch.name}</span>
         <span slot="stage">import</span>
+        <span slot="details">{batch.canvases.length} canvases</span>
         <span slot="actions">
           <OcrBatchActions
             {batch}
@@ -271,6 +273,7 @@
       <ExpansionListItem status="waiting">
         <span slot="title">{batch.name}</span>
         <span slot="stage">import</span>
+        <span slot="details">{batch.canvases.length} canvases</span>
         <span slot="actions">
           <OcrBatchActions
             {batch}

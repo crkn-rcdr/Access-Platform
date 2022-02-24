@@ -6,6 +6,10 @@
   import Wizard from "$lib/components/shared/Wizard.svelte";
 </script>
 
-<Wizard title="Metadata Loader">
+<Wizard
+  title={`
+  <a href="/dmd" style="color:var(--primary) !important">&#x2B05; Back to all metadata tasks</a>
+  `}
+>
   <slot />
 </Wizard>

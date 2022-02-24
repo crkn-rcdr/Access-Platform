@@ -28,7 +28,7 @@ export const dmdTaskRouter = createRouter()
             $ne: "_design/access",
           },
         };
-        return await ctx.couch.dmdtask.find(q);
+        return await ctx.couch.dmdtask.find(q, null, { limit: 200 });
       } catch (e: any) {
         console.log("err", e?.message);
         throw httpErrorToTRPC(e);

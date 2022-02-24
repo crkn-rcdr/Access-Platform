@@ -22,7 +22,7 @@ Displays a dmd task in an waiting state.
   import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
 
   /**
-   * @type {ParsingDMDTask} The dmdtask being displayed.
+   * @type {DMDTask} The dmdtask being displayed.
    */
   export let dmdTask: ParsingDMDTask;
 
@@ -59,8 +59,8 @@ Displays a dmd task in an waiting state.
   const doPoll = (id: string) => async () => {
     try {
       error = "";
-      const response = await $session.lapin.query("dmdTask.find", id);
-      if (response && "result" in response) dmdTask = response.result;
+      const response = await $session.lapin.query("dmdTask.get", id);
+      if (response) dmdTask = response;
       else error = "Code 4. Please contact the platform team for assistance.";
       lastUpdated = new Date().toLocaleString();
     } catch (e) {
@@ -109,7 +109,7 @@ Displays a dmd task in an waiting state.
       <h5>{dmdTask.fileName}</h5>
     {/if}
     <!--br /-->
-    <h6>Please wait while the metadata file processes...</h6>
+    <h6>Please wait while the metadata file parses...</h6>
     <br />
     <p>Page last refreshed on: {lastUpdated}</p>
     <br />

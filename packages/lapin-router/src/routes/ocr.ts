@@ -34,7 +34,7 @@ export const ocrRouter = createRouter()
             $ne: "_design/access",
           },
         };
-        return await ctx.couch.ocr.find(q);
+        return await ctx.couch.ocr.find(q, null, { limit: 200 });
       } catch (e: any) {
         console.log("err", e?.message);
         throw httpErrorToTRPC(e);
