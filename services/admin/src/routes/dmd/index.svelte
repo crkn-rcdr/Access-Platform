@@ -92,8 +92,8 @@
 
   async function getDMDTasksList() {
     loading = true;
-    let batchList = await $session.lapin.query("dmdTask.list");
-    const results = getDMDTasks(batchList);
+    let taskList = await $session.lapin.query("dmdTask.list");
+    const results = getDMDTasks(taskList);
     ({ base, parsed, parsing, updating, updated } = results.props);
     loading = false;
   }
@@ -132,7 +132,7 @@
               isListLoading={loading}
               stage="N/A"
               status="N/A"
-              on:delete={getDMDTasks}
+              on:delete={getDMDTasksList}
             />
           </span>
         </ExpansionListItem>
@@ -155,7 +155,7 @@
             isListLoading={loading}
             stage="parse"
             status="waiting"
-            on:delete={getDMDTasks}
+            on:delete={getDMDTasksList}
           />
         </span>
       </ExpansionListItem>
@@ -180,7 +180,7 @@
             isListLoading={loading}
             stage="parse"
             status={task.process["succeeded"] ? "succeeded" : "failed"}
-            on:delete={getDMDTasks}
+            on:delete={getDMDTasksList}
           />
         </span>
       </ExpansionListItem>
@@ -207,7 +207,7 @@
             isListLoading={loading}
             stage="load"
             status="waiting"
-            on:delete={getDMDTasks}
+            on:delete={getDMDTasksList}
           />
         </span>
       </ExpansionListItem>
@@ -232,7 +232,7 @@
             isListLoading={loading}
             stage="load"
             status={task.process["succeeded"] ? "succeeded" : "failed"}
-            on:delete={getDMDTasks}
+            on:delete={getDMDTasksList}
           />
         </span>
       </ExpansionListItem>
