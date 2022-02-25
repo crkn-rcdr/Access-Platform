@@ -18,8 +18,13 @@ const FetchInput = z.object({
 
 const StoreInput = z.object({
   task: z.string(), // dmdtask uuid
+  user: User,
   items: z.array(Slug),
   destination: z.enum(["access", "preservation"]),
+});
+
+const ResetInput = z.object({
+  task: z.string(), // dmdtask uuid
   user: User,
 });
 
@@ -101,6 +106,16 @@ export const dmdTaskRouter = createRouter()
     async resolve({ input, ctx }) {
       try {
         return await ctx.couch.dmdtask.store(input);
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .mutation("resetStorageResult", {
+    input: ResetInput,
+    async resolve({ input, ctx }) {
+      try {
+        return await ctx.couch.dmdtask.resetStorageResult(input);
       } catch (e) {
         throw httpErrorToTRPC(e);
       }

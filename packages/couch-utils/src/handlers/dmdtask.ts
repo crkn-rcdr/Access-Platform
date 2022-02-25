@@ -104,4 +104,41 @@ export class DMDTaskHandler extends DatabaseHandler<DMDTask> {
       return await this.get(task);
     } else throw "Can not store a metadata task before it has been parsed.";
   }
+
+  async resetStorageResult(args: {
+    /** User who triggered storage */
+    user: User;
+    /** Descriptive metadata task id */
+    task: string;
+  }) {
+    const { user, task } = args;
+
+    const dmdTask = await this.get(task);
+
+    if ("items" in dmdTask) {
+      const now = new Date().toISOString().replace(/.\d+Z$/g, "Z");
+
+      await this.update({
+        ddoc: "access",
+        name: "editObject",
+        docId: task,
+        body: {
+          user,
+          data: {
+            process: {
+              requestDate: now,
+              processDate: now,
+              message: "",
+              succeeded: true,
+            },
+            items: dmdTask.items.map((item) => {
+              if ("stored" in item) delete item["stored"];
+              if ("destination" in item) delete item["destination"];
+              return item;
+            }),
+          },
+        },
+      });
+    }
+  }
 }

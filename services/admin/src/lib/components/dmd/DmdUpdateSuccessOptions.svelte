@@ -19,8 +19,13 @@
 
   let githubLink = "";
 
-  function handleReProcessClicked() {
+  async function handleReProcessClicked() {
     // reset task to validated and refresh
+    await $session.lapin.mutation("dmdTask.resetStorageResult", {
+      task: dmdTask.id,
+      user: $session.user,
+    });
+    window.location.reload();
   }
 
   onMount(() => {

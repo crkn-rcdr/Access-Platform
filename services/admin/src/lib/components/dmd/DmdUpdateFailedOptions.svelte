@@ -17,6 +17,15 @@
 
   let githubLink = "";
 
+  async function handleTryAgainPressed() {
+    // reset task to validated and refresh
+    await $session.lapin.mutation("dmdTask.resetStorageResult", {
+      task: dmdTask.id,
+      user: $session.user,
+    });
+    window.location.reload();
+  }
+
   onMount(() => {
     let failedSlugs: string[] = [];
 
@@ -53,9 +62,7 @@
     status="fail"
   />
   <br />
-  <a href="/dmd/new" class="dmd-task-try-again">
-    <button class="secondary">Try Again</button>
-  </a>
+  <button on:click={handleTryAgainPressed} class="secondary">Try Again</button>
   <br />
   <br />
 {/if}

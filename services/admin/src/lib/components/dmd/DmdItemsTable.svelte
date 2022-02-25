@@ -56,7 +56,7 @@
   function toggleAllItemsSelected() {
     shouldUpdateAllItems = !shouldUpdateAllItems;
     for (let item of dmdTask.items) {
-      item.shouldStore = shouldUpdateAllItems;
+      if (item.parsed) item.shouldStore = shouldUpdateAllItems;
     }
     dmdTask = dmdTask;
   }
@@ -83,7 +83,6 @@
     } else if (isParsedDMDTask(dmdTask)) {
       state = "parsed";
     }
-    console.log(state);
   }
 
   $: {
@@ -120,7 +119,7 @@
         <tr>
           {#if state !== "updated"}
             <td>
-              {#if !("succeeded" in dmdTask.process) && !item.stored}
+              {#if item.shouldStore && !("succeeded" in dmdTask.process) && !item.stored}
                 <Loading size="sm" backgroundType="gradient" />
               {:else if item.parsed}
                 <input
