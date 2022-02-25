@@ -70,15 +70,15 @@
   {:else if isUpdateSucceededDMDTask(dmdTask)}
     <DmdUpdateSuccessOptions />
     <DmdItemsTable {dmdTask} />
-  {:else if isParsedDMDTask(dmdTask)}
-    <DmdUpdateOptions />
+  {:else if isUpdateFailedDMDTask(dmdTask)}
+    <DmdUpdateFailedOptions />
+    <!--DmdFailureView {dmdTask} message={dmdTask.process.message} /-->
     <DmdItemsTable {dmdTask} />
   {:else if isUpdatingDMDTask(dmdTask)}
     <DmdUpdateProgress />
     <DmdItemsTable {dmdTask} />
-  {:else if isUpdateFailedDMDTask(dmdTask)}
-    <DmdUpdateFailedOptions />
-    <DmdFailureView {dmdTask} message={dmdTask.process.message} />
+  {:else if isParsedDMDTask(dmdTask)}
+    <DmdUpdateOptions />
     <DmdItemsTable {dmdTask} />
   {:else if isParsingDMDTask(dmdTask)}
     <DmdWaitingView bind:dmdTask />
