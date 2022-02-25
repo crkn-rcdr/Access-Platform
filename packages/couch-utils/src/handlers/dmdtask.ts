@@ -50,6 +50,9 @@ export class DMDTaskHandler extends DatabaseHandler<DMDTask> {
       ddoc: "access",
       name: "canProcessValidation",
       docId: taskId,
+      body: {
+        user,
+      },
     });
 
     return taskId;

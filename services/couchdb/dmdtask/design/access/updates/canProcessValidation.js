@@ -11,10 +11,7 @@ module.exports = function (doc, req) {
   }
 
   const input = extractJSONFromBody(req);
-  if (!input) {
-    return errorReturn(`Could not parse request body as JSON: ${req.body}`);
-  }
-  if (input.user) doc.user = input.user;
+  if (input && input.user) doc.user = input.user;
 
   const now = timestamp();
   doc.updated = now;

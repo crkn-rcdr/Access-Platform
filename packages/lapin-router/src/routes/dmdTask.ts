@@ -80,7 +80,8 @@ export const dmdTaskRouter = createRouter()
     async resolve({ input, ctx }) {
       try {
         return await ctx.couch.dmdtask.create(input);
-      } catch (e) {
+      } catch (e: any) {
+        console.log(e?.message);
         throw httpErrorToTRPC(e);
       }
     },
