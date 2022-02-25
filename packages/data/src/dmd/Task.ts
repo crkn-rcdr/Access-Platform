@@ -130,13 +130,11 @@ export const ParsedDMDTask = ParsingDMDTask.merge(
   })
 );
 
-const ParsedDMDTaskListCheck = ParsedDMDTask.refine(
-  (task) =>
-    task.items?.[0] &&
+const ParsedDMDTaskListCheck = ParsedDMDTask.refine((task) => {
+  task.items?.[0] &&
     !("destination" in task.items[0]) &&
-    !("stored" in task.items[0]),
-  "A validated task has items without a destination property and without a stored property."
-);
+    !("stored" in task.items[0]);
+}, "A validated task has items without a destination property and without a stored property.");
 
 export type ParsedDMDTask = z.infer<typeof ParsedDMDTaskListCheck>;
 

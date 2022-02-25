@@ -18,7 +18,8 @@
       "parsed": true,
       "label": "Testing collection",
       "destination": "access",
-      "shouldStore": true
+      "shouldStore": true,
+      "stored": true
     },
     {
       "output": "marc",
