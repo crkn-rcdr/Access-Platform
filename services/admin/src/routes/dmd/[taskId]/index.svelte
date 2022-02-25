@@ -77,7 +77,8 @@
     <DmdUpdateProgress />
     <DmdItemsTable {dmdTask} />
   {:else if isParsedDMDTask(dmdTask)}
-    <DmdUpdateOptions />
+    <DmdUpdateOptions {dmdTask} />
+    <br /><br />
     <DmdItemsTable {dmdTask} />
   {:else if isParsingDMDTask(dmdTask)}
     <DmdParseTracker bind:dmdTask />

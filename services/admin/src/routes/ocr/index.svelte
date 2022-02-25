@@ -16,8 +16,6 @@
   } from "@crkn-rcdr/access-data";
 
   function getOcrBatches(batchList) {
-    if (!batchList) return {};
-
     const base: OcrBatch[] = [];
     const exportWaiting: ExportWaitingOcrBatch[] = [];
     const exportDone: (ExportSucceededOcrBatch | ExportFailedOcrBatch)[] = [];
