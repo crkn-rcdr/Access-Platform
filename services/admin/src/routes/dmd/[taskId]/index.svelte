@@ -49,6 +49,10 @@
   import DmdWaitingView from "$lib/components/dmd/old/DmdWaitingView.svelte";
   import DmdFailureView from "$lib/components/dmd/old/DmdFailureView.svelte";
   import DmdItemsTable from "$lib/components/dmd/DmdItemsTable.svelte";
+  import DmdUpdateSuccessOptions from "$lib/components/dmd/DmdUpdateSuccessOptions.svelte";
+  import DmdUpdateOptions from "$lib/components/dmd/DmdUpdateOptions.svelte";
+  import DmdUpdateProgress from "$lib/components/dmd/DmdUpdateProgress.svelte";
+  import DmdUpdateFailedOptions from "$lib/components/dmd/DmdUpdateFailedOptions.svelte";
 
   /**
    * @type {DMDTask} The dmdtask being displayed by the page.
@@ -64,15 +68,16 @@
   {:else if !dmdTask}
     Loading...
   {:else if isUpdateSucceededDMDTask(dmdTask)}
-    results
+    <DmdUpdateSuccessOptions />
     <DmdItemsTable {dmdTask} />
   {:else if isParsedDMDTask(dmdTask)}
-    options
+    <DmdUpdateOptions />
     <DmdItemsTable {dmdTask} />
   {:else if isUpdatingDMDTask(dmdTask)}
-    progress
+    <DmdUpdateProgress />
     <DmdItemsTable {dmdTask} />
   {:else if isUpdateFailedDMDTask(dmdTask)}
+    <DmdUpdateFailedOptions />
     <DmdFailureView {dmdTask} message={dmdTask.process.message} />
     <DmdItemsTable {dmdTask} />
   {:else if isParsingDMDTask(dmdTask)}
