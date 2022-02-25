@@ -21,7 +21,8 @@
       "parsed": true,
       "label": "Testing collection",
       "destination": "access",
-      "stored": true
+      "stored": true,
+      "shouldStore": true
     },
     {
       "output": "marc",
@@ -30,7 +31,8 @@
       "parsed": true,
       "label": "Testing manifest 1",
       "destination": "access",
-      "stored": true
+      "stored": true,
+      "shouldStore": true
     },
     {
       "output": "marc",
@@ -39,7 +41,8 @@
       "parsed": true,
       "label": "Testing manifest 2",
       "destination": "access",
-      "stored": true
+      "stored": true,
+      "shouldStore": true
     }
   ]
 }

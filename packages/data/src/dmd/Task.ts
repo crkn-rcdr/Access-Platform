@@ -16,7 +16,7 @@ import { DMDFORMATS, DMDOUTPUTS } from "./types.js";
  * The result of attempting to parse an individual metadata
  * record, after it has been split from the task's file.
  */
-const ItemProcessRecord = z
+export const ItemProcessRecord = z
   .object({
     /**
      * Whether this record's metadata has been parsed successfully.
@@ -55,6 +55,11 @@ const ItemProcessRecord = z
      * This field tells the metadata processor where to store the new metadata to.
      */
     destination: z.enum(["access", "preservation"]).optional(), // if not defined, then  not yet at the "Process Metadata File" stage.
+
+    /**
+     * Tells the back end script if the item has been selected for storage.
+     */
+    shouldStore: z.boolean().optional(),
   })
   .refine(
     (record) => !record.parsed || (record.id && record.output && record.label),

@@ -15,7 +15,11 @@ This component shows the view for a dmd task that had its metadata successfully 
 *Note: `bind:` is required for changes to the parameters to be reflected in higher level components.*
 -->
 <script lang="ts">
-  import type { UpdateSucceededDMDTask } from "@crkn-rcdr/access-data";
+  import type {
+    ParsedDMDTask,
+    UpdateSucceededDMDTask,
+    UpdatingDMDTask,
+  } from "@crkn-rcdr/access-data";
   import type { Depositor, DmdItemStates, DmdItemState } from "$lib/types";
   import ProgressBar from "$lib/components/shared/ProgressBar.svelte";
   import DmdSuccessItemsTable from "$lib/components/dmd/old/success/DmdSuccessItemsTable.svelte";
@@ -25,9 +29,9 @@ This component shows the view for a dmd task that had its metadata successfully 
   import IoMdRefresh from "svelte-icons/io/IoMdRefresh.svelte";
   import IoMdOpen from "svelte-icons/io/IoMdOpen.svelte";
   /**
-   * @type { UpdateSucceededDMDTask } The dmd task being displayed
+   * @type { UpdateSucceededDMDTask | ParsedDMDTask | UpdatingDMDTask } The dmd task being displayed
    */
-  export let dmdTask: UpdateSucceededDMDTask;
+  export let dmdTask: UpdateSucceededDMDTask | ParsedDMDTask | UpdatingDMDTask;
 
   /**
    *  @type { Depositor } The access platform to look for the items in.

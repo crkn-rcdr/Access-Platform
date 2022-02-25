@@ -37,13 +37,13 @@
     await showConfirmation(
       async () => {
         try {
-          /*await $session.lapin.mutation("dmd.delete", task.id);
+          await $session.lapin.mutation("dmdTask.delete", task.id);
           await sleep(1000);
           dispatch("delete", task);
           return {
             success: true,
             details: "",
-          };*/
+          };
         } catch (e) {
           return {
             success: false,

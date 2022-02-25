@@ -254,7 +254,6 @@
   .title h6 {
     flex: 10;
   }
-
   .create-button {
     flex: 2;
   }

@@ -9,11 +9,10 @@
     try {
       if (page?.params?.["taskId"]) {
         const response = await context.lapin.query(
-          "dmdTask.find",
+          "dmdTask.get",
           page.params["taskId"]
         );
-        if (response && "result" in response)
-          return { props: { dmdTask: response.result } };
+        if (response) return { props: { dmdTask: response } };
         else
           return {
             props: {
@@ -41,13 +40,15 @@
    */
   import {
     DMDTask,
+    isParsedDMDTask,
     isParsingDMDTask,
     isUpdateFailedDMDTask,
     isUpdateSucceededDMDTask,
+    isUpdatingDMDTask,
   } from "@crkn-rcdr/access-data";
   import DmdWaitingView from "$lib/components/dmd/old/DmdWaitingView.svelte";
   import DmdFailureView from "$lib/components/dmd/old/DmdFailureView.svelte";
-  import DmdSuccessView from "$lib/components/dmd/old/success/DmdSuccessView.svelte";
+  import DmdItemsTable from "$lib/components/dmd/DmdItemsTable.svelte";
 
   /**
    * @type {DMDTask} The dmdtask being displayed by the page.
@@ -63,13 +64,20 @@
   {:else if !dmdTask}
     Loading...
   {:else if isUpdateSucceededDMDTask(dmdTask)}
-    <DmdSuccessView {dmdTask} />
+    results
+    <DmdItemsTable {dmdTask} />
+  {:else if isParsedDMDTask(dmdTask)}
+    options
+    <DmdItemsTable {dmdTask} />
+  {:else if isUpdatingDMDTask(dmdTask)}
+    progress
+    <DmdItemsTable {dmdTask} />
   {:else if isUpdateFailedDMDTask(dmdTask)}
     <DmdFailureView {dmdTask} message={dmdTask.process.message} />
+    <DmdItemsTable {dmdTask} />
   {:else if isParsingDMDTask(dmdTask)}
     <DmdWaitingView bind:dmdTask />
   {:else}
-    <!--JUST In Case All Else Fails-->
     <DmdFailureView message="Something went wrong." />
   {/if}
 </div>

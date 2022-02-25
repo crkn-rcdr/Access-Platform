@@ -92,4 +92,14 @@ export const dmdTaskRouter = createRouter()
       // Throws user-readable TRPC errors for specific issues
       await storeAccess(ctx, user, task, index, slug);
     },
+  })
+  .mutation("delete", {
+    input: z.string(),
+    async resolve({ input, ctx }) {
+      try {
+        return await ctx.couch.dmdtask.delete({ document: input });
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
   });
