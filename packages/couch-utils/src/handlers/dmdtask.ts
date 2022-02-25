@@ -1,4 +1,4 @@
-import { DMDFormat, DMDTask, User } from "@crkn-rcdr/access-data";
+import { DMDFormat, DMDTask, Slug, User } from "@crkn-rcdr/access-data";
 import { ServerScope } from "nano";
 
 import { DatabaseHandler } from "../DatabaseHandler.js";
@@ -53,5 +53,52 @@ export class DMDTaskHandler extends DatabaseHandler<DMDTask> {
     });
 
     return taskId;
+  }
+
+  async store(args: {
+    /** User who triggered storage */
+    user: User;
+    /** Descriptive metadata task id */
+    task: string;
+    /** Items to enable storage on */
+    items: Slug[];
+    /** Destination for storage request */
+    destination: "access" | "preservation";
+  }) {
+    const { user, task, items, destination } = args;
+
+    const dmdTask = await this.get(task);
+
+    if ("items" in dmdTask) {
+      for (let item of dmdTask.items) {
+        if (item.id && items.includes(item.id)) {
+          item["shouldStore"] = true;
+          item["destination"] = destination;
+        } else item["shouldStore"] = false;
+      }
+
+      await this.update({
+        ddoc: "access",
+        name: "editObject",
+        docId: task,
+        body: {
+          user,
+          data: {
+            items: dmdTask.items,
+          },
+        },
+      });
+
+      await this.update({
+        ddoc: "access",
+        name: "canProcessStorage",
+        docId: task,
+        body: {
+          user,
+        },
+      });
+
+      return await this.get(task);
+    } else throw "Can not store a metadata task before it has been parsed.";
   }
 }

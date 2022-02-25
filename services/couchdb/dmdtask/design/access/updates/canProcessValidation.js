@@ -3,16 +3,22 @@ module.exports = function (doc, req) {
     successReturn,
     errorReturn,
     timestamp,
+    extractJSONFromBody,
   } = require("views/lib/prelude");
 
   if (!doc) {
     return errorReturn(`No document found with id ${req.id}`, 404);
   }
 
-  const now = timestamp();
+  const input = extractJSONFromBody(req);
+  if (!input) {
+    return errorReturn(`Could not parse request body as JSON: ${req.body}`);
+  }
+  if (input.user) doc.user = input.user;
 
+  const now = timestamp();
   doc.updated = now;
-  doc.validationProcess = { requestDate: now };
+  doc.process = { requestDate: now };
 
   return successReturn(doc, "ok");
 };

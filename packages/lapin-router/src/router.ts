@@ -8,7 +8,6 @@ import { manifestRouter } from "./routes/manifest.js";
 import { pdfRouter } from "./routes/pdf.js";
 import { slugRouter } from "./routes/slug.js";
 import { dmdTaskRouter } from "./routes/dmdTask.js";
-import { wipmetaRouter } from "./routes/wipmeta.js";
 import { dipstagingRouter } from "./routes/dipstaging.js";
 import { ocrRouter } from "./routes/ocr.js";
 
@@ -62,7 +61,6 @@ export const router = trpcRouter<LapinContext>()
   .merge("pdf.", pdfRouter)
   .merge("dmdTask.", dmdTaskRouter)
   .merge("dipstaging.", dipstagingRouter)
-  .merge("wipmeta.", wipmetaRouter)
   .merge("ocr.", ocrRouter);
 
 export type LapinRouter = typeof router;

@@ -18,9 +18,11 @@ This component allows the user to update the dmd tasks items in an access platfo
 -->
 <script lang="ts">
   import type { Depositor } from "$lib/types";
+  import { getStores } from "$app/stores";
   import type { Session } from "$lib/types";
   import PrefixSelector from "$lib/components/access-objects/PrefixSelector.svelte";
   import type { ParsedDMDTask } from "@crkn-rcdr/access-data";
+
   /**
    *  @type { Depositor } The access platform to look for the items in.
    */
@@ -34,8 +36,13 @@ This component allows the user to update the dmd tasks items in an access platfo
    */
   export let dmdTask: ParsedDMDTask;
 
+  /**
+   * @type {Session} The session store that contains the module for sending requests to lapin.
+   */
+  const { session } = getStores<Session>();
+
   let disabled: boolean = true;
-  let updatingIn: "access" | "preservation";
+  let destination: "access" | "preservation";
 
   /**
    * Passes on the work of updating the metadata of the items in the task to the dmdTasksStore
@@ -43,6 +50,17 @@ This component allows the user to update the dmd tasks items in an access platfo
    */
   async function handleUpdatePressed() {
     // save item info, call proccess on dmdtask
+    // should update item ids
+    // destination
+    const result = await $session.lapin.mutation("dmdTask.store", {
+      task: dmdTask.id,
+      destination,
+      items: dmdTask.items
+        .filter((item) => item.shouldStore)
+        .map((item) => item.id),
+      user: $session.user,
+    });
+    if (result) window.location.reload();
   }
 
   $: {
@@ -53,17 +71,17 @@ This component allows the user to update the dmd tasks items in an access platfo
     disabled =
       depositor === null ||
       numItems === 0 ||
-      !(updatingIn === "access" || updatingIn === "preservation");
+      !(destination === "access" || destination === "preservation");
   }
 
   function setDestinationForItems() {
     for (let item of dmdTask.items) {
-      item.destination = updatingIn;
+      item.destination = destination;
     }
   }
 
   function onChange(event) {
-    updatingIn = event.currentTarget.value;
+    destination = event.currentTarget.value;
     setDestinationForItems();
   }
 </script>
@@ -89,7 +107,7 @@ This component allows the user to update the dmd tasks items in an access platfo
     <PrefixSelector bind:depositor />
     <label>
       <input
-        checked={updatingIn === "access"}
+        checked={destination === "access"}
         on:change={onChange}
         type="radio"
         name="amount"
@@ -98,7 +116,7 @@ This component allows the user to update the dmd tasks items in an access platfo
     </label>
     <label>
       <input
-        checked={updatingIn === "preservation"}
+        checked={destination === "preservation"}
         on:change={onChange}
         type="radio"
         name="amount"

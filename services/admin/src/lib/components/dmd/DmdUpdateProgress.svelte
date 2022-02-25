@@ -1,6 +1,5 @@
 <script lang="ts">
   import { session } from "$app/stores";
-
   import timer from "$lib/stores/timer";
   import type { UpdatingDMDTask } from "@crkn-rcdr/access-data";
   import { onDestroy, onMount } from "svelte";

@@ -2,7 +2,6 @@ module.exports = function (doc, req) {
   const {
     successReturn,
     errorReturn,
-    timestamp,
     extractJSONFromBody,
   } = require("views/lib/prelude");
 
@@ -14,11 +13,10 @@ module.exports = function (doc, req) {
   if (!input) {
     return errorReturn(`Could not parse request body as JSON: ${req.body}`);
   }
-  if (input.user) doc.user = input.user;
 
-  const now = timestamp();
-  doc.updated = now;
-  doc.process = { requestDate: now };
+  doc = Object.assign(doc, input.data);
 
-  return successReturn(doc, "ok");
+  doc.user = input.user;
+
+  return successReturn(doc, `${doc.slug ? doc.slug : doc.id} updated`);
 };

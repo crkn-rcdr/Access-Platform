@@ -1,12 +1,27 @@
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { createRouter, httpErrorToTRPC } from "../router.js";
-import {
-  StoreAccessInput,
-  storeAccess,
-  NewInput,
-  FetchInput,
-} from "../util/dmdTask.js";
+import { DMDFORMATS, Slug, User } from "@crkn-rcdr/access-data";
+
+const NewInput = z.object({
+  user: User,
+  format: z.enum(DMDFORMATS),
+  file: z.string(), // any othervalidation needed?
+  fileName: z.string(), // any othervalidation needed?
+});
+
+const FetchInput = z.object({
+  task: z.string(), // dmdtask uuid
+  index: z.number(), // array index of the item you want to fetch
+  type: z.enum(["xml", "json"]), // type of attachment to return
+});
+
+const StoreInput = z.object({
+  task: z.string(), // dmdtask uuid
+  items: z.array(Slug),
+  destination: z.enum(["access", "preservation"]),
+  user: User,
+});
 
 export const dmdTaskRouter = createRouter()
   .query("get", {
@@ -33,21 +48,6 @@ export const dmdTaskRouter = createRouter()
         console.log("err", e?.message);
         throw httpErrorToTRPC(e);
       }
-    },
-  })
-  .query("find", {
-    input: z.string(),
-    async resolve({ input: id, ctx }) {
-      const fields = [
-        "id",
-        "user",
-        "format",
-        //"process",
-        "updated",
-        "items",
-        "fileName",
-      ] as const;
-      return await ctx.couch.dmdtask.findUnique("id", id, fields);
     },
   })
   .mutation("fetchResult", {
@@ -85,19 +85,21 @@ export const dmdTaskRouter = createRouter()
       }
     },
   })
-  .mutation("storeAccess", {
-    input: StoreAccessInput.parse,
-    async resolve({ input, ctx }) {
-      const { user, task, index, slug } = input;
-      // Throws user-readable TRPC errors for specific issues
-      await storeAccess(ctx, user, task, index, slug);
-    },
-  })
   .mutation("delete", {
     input: z.string(),
     async resolve({ input, ctx }) {
       try {
         return await ctx.couch.dmdtask.delete({ document: input });
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .mutation("store", {
+    input: StoreInput,
+    async resolve({ input, ctx }) {
+      try {
+        return await ctx.couch.dmdtask.store(input);
       } catch (e) {
         throw httpErrorToTRPC(e);
       }
