@@ -46,13 +46,13 @@
     isUpdateSucceededDMDTask,
     isUpdatingDMDTask,
   } from "@crkn-rcdr/access-data";
-  import DmdWaitingView from "$lib/components/dmd/old/DmdWaitingView.svelte";
   import DmdItemsTable from "$lib/components/dmd/DmdItemsTable.svelte";
   import DmdUpdateSuccessOptions from "$lib/components/dmd/DmdUpdateSuccessOptions.svelte";
   import DmdUpdateOptions from "$lib/components/dmd/DmdUpdateOptions.svelte";
   import DmdUpdateProgress from "$lib/components/dmd/DmdUpdateProgress.svelte";
   import DmdUpdateFailedOptions from "$lib/components/dmd/DmdUpdateFailedOptions.svelte";
   import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
+  import DmdParseTracker from "$lib/components/dmd/DmdParseTracker.svelte";
 
   /**
    * @type {DMDTask} The dmdtask being displayed by the page.
@@ -80,7 +80,7 @@
     <DmdUpdateOptions />
     <DmdItemsTable {dmdTask} />
   {:else if isParsingDMDTask(dmdTask)}
-    <DmdWaitingView bind:dmdTask />
+    <DmdParseTracker bind:dmdTask />
   {:else}
     <NotificationBar message="Something went wrong." status="fail" />
   {/if}
