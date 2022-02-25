@@ -12,8 +12,8 @@
   import Loading from "$lib/components/shared/Loading.svelte";
   import TiWarning from "svelte-icons/ti/TiWarning.svelte";
   import TiDelete from "svelte-icons/ti/TiDelete.svelte";
-  import XmlViewer from "../shared/XmlViewer.svelte";
-  import DmdSuccessItemPreview from "./old/success/DmdSuccessItemPreview.svelte";
+  import XmlViewer from "$lib/components/shared/XmlViewer.svelte";
+  import DmdItemMetadataPreview from "$lib/components/dmd/DmdItemMetadataPreview.svelte";
   import type { ItemProcessRecord } from "@crkn-rcdr/access-data/dist/esm/dmd/Task";
 
   /**
@@ -55,6 +55,10 @@
 
   function toggleAllItemsSelected() {
     shouldUpdateAllItems = !shouldUpdateAllItems;
+    for (let item of dmdTask.items) {
+      item.shouldStore = shouldUpdateAllItems;
+    }
+    dmdTask = dmdTask;
   }
 
   function checkIfAllItemsSelected() {
@@ -81,6 +85,7 @@
     }
     console.log(state);
   }
+
   $: {
     dmdTask;
     setState();
@@ -204,7 +209,7 @@
   No items.
 {/if}
 
-<DmdSuccessItemPreview
+<DmdItemMetadataPreview
   dmdTaskId={previewingDmdTaskId}
   bind:openPreviewModal
   bind:previewItemIndex
