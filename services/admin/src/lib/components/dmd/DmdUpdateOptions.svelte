@@ -110,6 +110,8 @@ This component allows the user to update the dmd tasks items in an access platfo
     </button>
     <!--"Try Processing Metadata File Again"-->
   </div>
+
+  <br /><br />
 {/if}
 
 <style>

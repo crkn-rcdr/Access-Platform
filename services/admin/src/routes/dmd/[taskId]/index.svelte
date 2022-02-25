@@ -68,18 +68,17 @@
   {:else if !dmdTask}
     Loading...
   {:else if isUpdateSucceededDMDTask(dmdTask)}
-    <DmdUpdateSuccessOptions />
-    <DmdItemsTable {dmdTask} />
+    <DmdUpdateSuccessOptions bind:dmdTask />
+    <DmdItemsTable bind:dmdTask />
   {:else if isUpdateFailedDMDTask(dmdTask)}
-    <DmdUpdateFailedOptions />
-    <DmdItemsTable {dmdTask} />
+    <DmdUpdateFailedOptions bind:dmdTask />
+    <DmdItemsTable bind:dmdTask />
   {:else if isUpdatingDMDTask(dmdTask)}
-    <DmdUpdateProgress />
-    <DmdItemsTable {dmdTask} />
+    <DmdUpdateProgress bind:dmdTask />
+    <DmdItemsTable bind:dmdTask />
   {:else if isParsedDMDTask(dmdTask)}
-    <DmdUpdateOptions {dmdTask} />
-    <br /><br />
-    <DmdItemsTable {dmdTask} />
+    <DmdUpdateOptions bind:dmdTask />
+    <DmdItemsTable bind:dmdTask />
   {:else if isParsingDMDTask(dmdTask)}
     <DmdParseTracker bind:dmdTask />
   {:else}
