@@ -94,7 +94,7 @@ The resolver component allows the user to enter a slug, and then a request is se
    * @returns void
    */
   async function resolve() {
-    if (slug !== previous && slug !== intitalSlug) {
+    if (runInitial || (slug !== previous && slug !== intitalSlug)) {
       if (timer) clearTimeout(timer);
       timer = setTimeout(async () => {
         status = "LOADING";

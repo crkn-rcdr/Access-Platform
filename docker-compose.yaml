@@ -42,7 +42,7 @@ services:
     container_name: access-noid
     depends_on:
       - haproxy
-    image: docker.c7a.ca/noid:20210226
+    image: d948bd40f1fc
     volumes:
       - /noid/dbs
     networks:

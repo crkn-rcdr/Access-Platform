@@ -19,6 +19,7 @@ This component shows the results of a dipstaging find-package(s) request or a vi
   import type { Session } from "$lib/types";
   import type { ImportStatus, LegacyPackage } from "@crkn-rcdr/access-data";
   import Resolver from "$lib/components/access-objects/Resolver.svelte";
+  import SlugSearch from "$lib/components/access-objects/SlugSearch.svelte";
   import Loading from "$lib/components/shared/Loading.svelte";
   import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
   import ExpansionTile from "$lib/components/shared/ExpansionTile.svelte";
@@ -138,7 +139,7 @@ This component shows the results of a dipstaging find-package(s) request or a vi
    * @returns void
    */
   function setSlugAvailability(event, item: ImportStatus | LegacyPackage) {
-    slugUnavailableMap[slugMap[item["id"]]] = !event.detail.status;
+    slugUnavailableMap[slugMap[item["id"]]] = !event.detail;
     slugUnavailableMap = slugUnavailableMap;
     if (isItemSelectable(item)) selectedMap[item["id"]] = true;
     else selectedMap[item["id"]] = false;
@@ -240,6 +241,15 @@ This component shows the results of a dipstaging find-package(s) request or a vi
       loading = false;
     });
   }
+
+  /*$: {
+    loading = true;
+    slugUnavailableMap;
+    getSlugAvailability().then(() => {
+      setSelectedModel();
+      loading = false;
+    });
+  }*/
 </script>
 
 <NotificationBar message={error} status="fail" />
@@ -316,11 +326,11 @@ This component shows the results of a dipstaging find-package(s) request or a vi
                   >Track its status in the 'Import Queue' tab.</a
                 >
               {:else}
-                {#if slugUnavailableMap[slugMap[item["id"]]] && slugMap[item["id"]] === item["slug"]}
+                <!--{#if slugUnavailableMap[slugMap[item["id"]]] && slugMap[item["id"]] === item["slug"]}
                   <NotificationBar
                     status="fail"
                     message={isSlugSearch
-                      ? `The existing manifest must be deleted before the package can be re-imported into a new manifest.`
+                      ? `The existing manifest must be  before the package can be re-imported into a new manifest.`
                       : `This package is already imported as a  manifest.`}
                   />
 
@@ -343,6 +353,7 @@ This component shows the results of a dipstaging find-package(s) request or a vi
                     class="secondary"
                     on:click={() => {
                       slugUnavailableMap[slugMap[item["id"]]] = false;
+                      slugUnavailableMap = slugUnavailableMap;
                     }}
                   >
                     OK, I have deleted the existing manifest.
@@ -351,18 +362,26 @@ This component shows the results of a dipstaging find-package(s) request or a vi
                   <span
                     >Please enter the slug you would like to use for the
                     manifest:
-                  </span>
-                  <Resolver
+                  </span-->
+                <!--Resolver
                     noid={slugMap[item["id"]] in noidMap
                       ? noidMap[slugMap[item["id"]]]
                       : null}
                     isFound={slugUnavailableMap[slugMap[item["id"]]]}
                     alwaysShowIfFound={true}
-                    runInitial={false}
+                    runInitial={true}
                     on:available={(e) => setSlugAvailability(e, item)}
                     bind:slug={slugMap[item["id"]]}
                   />
-                {/if}
+
+                {/if} -->
+                <SlugSearch
+                  foundErrorMessage={"⚠️ Slug in use. Please enter a new slug here, edit the slug of the existing manifest, or delete the existing manifest to continue."}
+                  slug={slugMap[item["id"]]}
+                  on:slugValidity={(e) => {
+                    setSlugAvailability(e, item);
+                  }}
+                />
 
                 <br /><br />
 
