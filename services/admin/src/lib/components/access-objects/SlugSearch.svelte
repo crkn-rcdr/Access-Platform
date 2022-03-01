@@ -62,7 +62,7 @@
 <div class="input-wrap auto-align auto-align__a-center">
   <input placeholder="Type in a slug..." bind:value={slug} on:input={search} />
   {#if found}
-    <button class="secondary" on:click={search}>Try Again</button>
+    <button class="secondary" on:click={search}>Look-up Again</button>
   {/if}
 </div>
 

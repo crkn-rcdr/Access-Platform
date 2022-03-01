@@ -374,9 +374,9 @@ This component shows the results of a dipstaging find-package(s) request or a vi
                   Please enter the slug you would like to use for the manifest:
                 </p>
                 <SlugSearch
-                  foundErrorMessage={`⚠️ Slug in use. Please enter a new slug here, <a href ="/object/edit/${
+                  foundErrorMessage={` <a href ="/object/edit/${
                     noidMap[slugMap[item["id"]]]
-                  }" target="_blank">edit the slug of the existing manifest, or delete the existing manifest to continue.</a>`}
+                  }" target="_blank">⚠️ Slug in use.</a>`}
                   bind:slug={slugMap[item["id"]]}
                   noid={slugMap[item["id"]] in noidMap
                     ? noidMap[slugMap[item["id"]]]
@@ -385,9 +385,15 @@ This component shows the results of a dipstaging find-package(s) request or a vi
                     setSlugAvailability(e, item);
                   }}
                 />
-
-                <br /><br />
-
+                <div class="slug-error-instructions">
+                  The slug entered is currently in use. To resolve this issue,
+                  you can either:
+                  <ol type="1">
+                    <li>Enter a new slug above</li>
+                    <li>Edit the slug of the existing manifest</li>
+                    <li>Delete the existing manifest</li>
+                  </ol>
+                </div>
                 <div class="import-history-wrap">
                   <ExpansionTile>
                     <span slot="top">Last Import Status</span>
@@ -446,5 +452,9 @@ This component shows the results of a dipstaging find-package(s) request or a vi
   }
   .slug-label {
     margin-bottom: 1rem;
+  }
+  .slug-error-instructions {
+    margin-top: 1rem;
+    color: var(--secondary);
   }
 </style>
