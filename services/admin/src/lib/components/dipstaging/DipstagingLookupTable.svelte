@@ -370,11 +370,14 @@ This component shows the results of a dipstaging find-package(s) request or a vi
                   />
 
                 {/if} -->
+                <p class="slug-label">
+                  Please enter the slug you would like to use for the manifest:
+                </p>
                 <SlugSearch
                   foundErrorMessage={`⚠️ Slug in use. Please enter a new slug here, <a href ="/object/edit/${
                     noidMap[slugMap[item["id"]]]
                   }" target="_blank">edit the slug of the existing manifest, or delete the existing manifest to continue.</a>`}
-                  slug={slugMap[item["id"]]}
+                  bind:slug={slugMap[item["id"]]}
                   noid={slugMap[item["id"]] in noidMap
                     ? noidMap[slugMap[item["id"]]]
                     : null}
@@ -440,5 +443,8 @@ This component shows the results of a dipstaging find-package(s) request or a vi
     border-radius: var(--border-radius);
     border: 1px solid var(--border-color);
     padding: 1rem;
+  }
+  .slug-label {
+    margin-bottom: 1rem;
   }
 </style>

@@ -69,12 +69,12 @@
 <style>
   .input-wrap {
     width: 100%;
-    margin-top: 1rem;
   }
   input {
     flex: 9;
   }
   button {
     margin-left: 1rem;
+    margin-top: 1rem;
   }
 </style>
