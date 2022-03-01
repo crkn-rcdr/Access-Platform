@@ -8,6 +8,7 @@
   export let invalidErrorMessage =
     "Slugs can only contain letters, numbers, and the following symbols: _ - .";
   export let foundErrorMessage = "⚠️ Slug in use";
+  export let noid;
 
   /**
    * @type {NodeJS.Timeout | null} Used to debounce the searching of slugs.
@@ -42,6 +43,7 @@
     timer = setTimeout(async () => {
       const response = await $session.lapin.query("slug.resolve", slug);
       found = response.found;
+      if (response.found) noid = response.result.id;
       dispatch("slugValidity", !found && valid);
     }, 50);
   }
@@ -52,16 +54,27 @@
 </script>
 
 {#if !valid}
-  woo
   <NotificationBar status="fail" message={invalidErrorMessage} />
 {/if}
 {#if found}
   <NotificationBar status="fail" message={foundErrorMessage} />
 {/if}
-<input placeholder="Type in a slug..." bind:value={slug} on:input={search} />
+<div class="input-wrap auto-align auto-align__a-center">
+  <input placeholder="Type in a slug..." bind:value={slug} on:input={search} />
+  {#if found}
+    <button class="secondary" on:click={search}>Try Again</button>
+  {/if}
+</div>
 
 <style>
-  input {
+  .input-wrap {
     width: 100%;
+    margin-top: 1rem;
+  }
+  input {
+    flex: 9;
+  }
+  button {
+    margin-left: 1rem;
   }
 </style>

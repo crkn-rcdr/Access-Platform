@@ -157,10 +157,8 @@ This component shows the results of a dipstaging find-package(s) request or a vi
     for (const item of results) {
       let itemCopy = structuredClone(item);
       items.push(itemCopy);
-      if (!itemCopy["slug"] && !isSlugSearch) {
-        itemCopy["slug"] = itemCopy["id"];
-        slugMap[itemCopy["id"]] = itemCopy["id"];
-      } else slugMap[itemCopy["id"]] = itemCopy["slug"];
+      itemCopy["slug"] = itemCopy["id"]; // Ignore old slugs
+      slugMap[itemCopy["id"]] = itemCopy["id"];
     }
     items = items;
   }
@@ -364,9 +362,6 @@ This component shows the results of a dipstaging find-package(s) request or a vi
                     manifest:
                   </span-->
                 <!--Resolver
-                    noid={slugMap[item["id"]] in noidMap
-                      ? noidMap[slugMap[item["id"]]]
-                      : null}
                     isFound={slugUnavailableMap[slugMap[item["id"]]]}
                     alwaysShowIfFound={true}
                     runInitial={true}
@@ -376,8 +371,13 @@ This component shows the results of a dipstaging find-package(s) request or a vi
 
                 {/if} -->
                 <SlugSearch
-                  foundErrorMessage={"⚠️ Slug in use. Please enter a new slug here, edit the slug of the existing manifest, or delete the existing manifest to continue."}
+                  foundErrorMessage={`⚠️ Slug in use. Please enter a new slug here, <a href ="/object/edit/${
+                    noidMap[slugMap[item["id"]]]
+                  }" target="_blank">edit the slug of the existing manifest, or delete the existing manifest to continue.</a>`}
                   slug={slugMap[item["id"]]}
+                  noid={slugMap[item["id"]] in noidMap
+                    ? noidMap[slugMap[item["id"]]]
+                    : null}
                   on:slugValidity={(e) => {
                     setSlugAvailability(e, item);
                   }}
