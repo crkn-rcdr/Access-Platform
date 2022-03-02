@@ -324,59 +324,10 @@ This component shows the results of a dipstaging find-package(s) request or a vi
                   >Track its status in the 'Import Queue' tab.</a
                 >
               {:else}
-                <!--{#if slugUnavailableMap[slugMap[item["id"]]] && slugMap[item["id"]] === item["slug"]}
-                  <NotificationBar
-                    status="fail"
-                    message={isSlugSearch
-                      ? `The existing manifest must be  before the package can be re-imported into a new manifest.`
-                      : `This package is already imported as a  manifest.`}
-                  />
-
-                  <p>
-                    <br />
-                    <a
-                      href={`/object/edit/${noidMap[slugMap[item["id"]]]}`}
-                      target="_blank"
-                    >
-                      To replace the existing import of this package, please
-                      click here open it in the editor. Then, unpublish the
-                      manifest if it is published. Then, press delete to delete
-                      the manifest.
-                    </a> When you are done, click the button below to enable importing
-                    for your package.
-                  </p>
-
-                  <br />
-                  <button
-                    class="secondary"
-                    on:click={() => {
-                      slugUnavailableMap[slugMap[item["id"]]] = false;
-                      slugUnavailableMap = slugUnavailableMap;
-                    }}
-                  >
-                    OK, I have deleted the existing manifest.
-                  </button>
-                {:else}
-                  <span
-                    >Please enter the slug you would like to use for the
-                    manifest:
-                  </span-->
-                <!--Resolver
-                    isFound={slugUnavailableMap[slugMap[item["id"]]]}
-                    alwaysShowIfFound={true}
-                    runInitial={true}
-                    on:available={(e) => setSlugAvailability(e, item)}
-                    bind:slug={slugMap[item["id"]]}
-                  />
-
-                {/if} -->
                 <p class="slug-label">
-                  Please enter the slug you would like to use for the manifest:
+                  Please enter the slug for the manifest that will be created:
                 </p>
                 <SlugSearch
-                  foundErrorMessage={` <a href ="/object/edit/${
-                    noidMap[slugMap[item["id"]]]
-                  }" target="_blank">⚠️ Slug in use.</a>`}
                   bind:slug={slugMap[item["id"]]}
                   noid={slugMap[item["id"]] in noidMap
                     ? noidMap[slugMap[item["id"]]]

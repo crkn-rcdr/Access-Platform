@@ -3,12 +3,14 @@
   import type { Session } from "$lib/types";
   import { getStores } from "$app/stores";
   import NotificationBar from "../shared/NotificationBar.svelte";
+  import IoMdRefresh from "svelte-icons/io/IoMdRefresh.svelte";
 
+  export let searchOnLoad: boolean = true;
   export let slug;
-  export let invalidErrorMessage =
+  export let noid = "";
+  let invalidErrorMessage =
     "Slugs can only contain letters, numbers, and the following symbols: _ - .";
-  export let foundErrorMessage = "⚠️ Slug in use";
-  export let noid;
+  let foundErrorMessage = "⚠️ Slug in use";
 
   /**
    * @type {NodeJS.Timeout | null} Used to debounce the searching of slugs.
@@ -30,11 +32,17 @@
    */
   const dispatch = createEventDispatcher();
 
-  let found = true;
+  let found = false;
   let valid = true;
+  let initital = "";
 
   function search() {
     if (!slug?.length) return;
+    if (slug === initital && !searchOnLoad) {
+      found = false;
+      valid = true;
+      return;
+    }
 
     valid = regex.test(slug);
 
@@ -43,13 +51,17 @@
     timer = setTimeout(async () => {
       const response = await $session.lapin.query("slug.resolve", slug);
       found = response.found;
-      if (response.found) noid = response.result.id;
+      if (response.found) {
+        noid = response.result.id;
+        foundErrorMessage = `<a href ="/object/edit/${noid}" target="_blank">⚠️ Slug in use.</a>`;
+      }
       dispatch("slugValidity", !found && valid);
     }, 50);
   }
 
   onMount(() => {
-    search();
+    initital = slug;
+    if (searchOnLoad) search();
   });
 </script>
 
@@ -60,10 +72,17 @@
   <NotificationBar status="fail" message={foundErrorMessage} />
 {/if}
 <div class="input-wrap auto-align auto-align__a-center">
-  <input placeholder="Type in a slug..." bind:value={slug} on:input={search} />
   {#if found}
-    <button class="secondary" on:click={search}>Look-up Again</button>
+    <span
+      on:click={search}
+      class="icon"
+      data-tooltip="Retry look-up"
+      data-tooltip-flow="right"
+    >
+      <IoMdRefresh />
+    </span>
   {/if}
+  <input placeholder="Type in a slug..." bind:value={slug} on:keyup={search} />
 </div>
 
 <style>
@@ -73,8 +92,9 @@
   input {
     flex: 9;
   }
-  button {
-    margin-left: 1rem;
-    margin-top: 1rem;
+  .icon {
+    margin-right: 1rem;
+    cursor: pointer;
+    color: var(--secondary);
   }
 </style>
