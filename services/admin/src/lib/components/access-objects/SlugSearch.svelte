@@ -5,10 +5,13 @@
   import NotificationBar from "../shared/NotificationBar.svelte";
   import IoMdRefresh from "svelte-icons/io/IoMdRefresh.svelte";
   import Loading from "../shared/Loading.svelte";
+  import { initial } from "lodash-es";
 
   export let searchOnLoad: boolean = true;
   export let slug;
   export let noid = "";
+  export let found = false;
+
   let invalidErrorMessage =
     "Slugs can only contain letters, numbers, and the following symbols: _ - .";
   let foundErrorMessage = "⚠️ Slug in use";
@@ -33,10 +36,10 @@
    */
   const dispatch = createEventDispatcher();
 
-  let found = false;
   let valid = true;
   let initital = "";
   let loading = false;
+  let hasSearched = false;
 
   function search() {
     if (!slug?.length) return;
@@ -45,6 +48,7 @@
       valid = true;
       return;
     }
+    if (!initital.length) initital = slug;
     loading = true;
 
     valid = regex.test(slug);
@@ -65,12 +69,12 @@
 
   onMount(() => {
     initital = slug;
-    //if (searchOnLoad) search();
   });
 
   $: {
     slug;
-    if (initital.length) search();
+    if (searchOnLoad || hasSearched) search();
+    hasSearched = true;
   }
 </script>
 

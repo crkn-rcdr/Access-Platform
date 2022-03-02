@@ -329,6 +329,8 @@ This component shows the results of a dipstaging find-package(s) request or a vi
                 </p>
                 <SlugSearch
                   bind:slug={slugMap[item["id"]]}
+                  searchOnLoad={false}
+                  found={slugUnavailableMap[slugMap[item["id"]]]}
                   noid={slugMap[item["id"]] in noidMap
                     ? noidMap[slugMap[item["id"]]]
                     : null}
