@@ -4,6 +4,7 @@
   import { getStores } from "$app/stores";
   import NotificationBar from "../shared/NotificationBar.svelte";
   import IoMdRefresh from "svelte-icons/io/IoMdRefresh.svelte";
+  import Loading from "../shared/Loading.svelte";
 
   export let searchOnLoad: boolean = true;
   export let slug;
@@ -35,6 +36,7 @@
   let found = false;
   let valid = true;
   let initital = "";
+  let loading = false;
 
   function search() {
     if (!slug?.length) return;
@@ -43,6 +45,7 @@
       valid = true;
       return;
     }
+    loading = true;
 
     valid = regex.test(slug);
 
@@ -56,13 +59,19 @@
         foundErrorMessage = `<a href ="/object/edit/${noid}" target="_blank">⚠️ Slug in use.</a>`;
       }
       dispatch("slugValidity", !found && valid);
+      loading = false;
     }, 50);
   }
 
   onMount(() => {
     initital = slug;
-    if (searchOnLoad) search();
+    //if (searchOnLoad) search();
   });
+
+  $: {
+    slug;
+    if (initital.length) search();
+  }
 </script>
 
 {#if !valid}
@@ -72,7 +81,11 @@
   <NotificationBar status="fail" message={foundErrorMessage} />
 {/if}
 <div class="input-wrap auto-align auto-align__a-center">
-  {#if found}
+  {#if loading}
+    <span class="loader">
+      <Loading size="sm" backgroundType="gradient" />
+    </span>
+  {:else if found}
     <span
       on:click={search}
       class="icon"
@@ -82,7 +95,7 @@
       <IoMdRefresh />
     </span>
   {/if}
-  <input placeholder="Type in a slug..." bind:value={slug} on:keyup={search} />
+  <input placeholder="Type in a slug..." bind:value={slug} />
 </div>
 
 <style>
@@ -96,5 +109,8 @@
     margin-right: 1rem;
     cursor: pointer;
     color: var(--secondary);
+  }
+  .loader {
+    margin-right: 1rem;
   }
 </style>
