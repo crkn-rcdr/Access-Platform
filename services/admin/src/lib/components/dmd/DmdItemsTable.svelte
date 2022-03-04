@@ -20,6 +20,7 @@
    * @type { UpdateSucceededDMDTask | ParsedDMDTask | UpdatingDMDTask } The dmd task being displayed
    */
   export let dmdTask: UpdateSucceededDMDTask | ParsedDMDTask | UpdatingDMDTask;
+  export let lookupResultsMap = {};
 
   let state: "parsed" | "updating" | "updated" = "parsed";
 
@@ -89,6 +90,21 @@
     dmdTask;
     setState();
   }
+
+  function setItemSelectedFromSearchResult() {
+    console.log("setItemSelectedFromSearchResult");
+    for (const item of dmdTask.items) {
+      item.shouldStore = lookupResultsMap[item.id] && item.shouldStore;
+      console.log(item.shouldStore);
+    }
+    dmdTask = dmdTask;
+    checkIfAllItemsSelected();
+  }
+
+  $: {
+    if (lookupResultsMap && Object.keys(lookupResultsMap).length)
+      setItemSelectedFromSearchResult();
+  }
 </script>
 
 {#if dmdTask}
@@ -121,7 +137,7 @@
             <td>
               {#if item.shouldStore && !("succeeded" in dmdTask.process) && !item.stored}
                 <Loading size="sm" backgroundType="gradient" />
-              {:else if item.parsed}
+              {:else if item.parsed && lookupResultsMap[item.id]}
                 <input
                   type="checkbox"
                   bind:checked={item.shouldStore}
@@ -132,7 +148,10 @@
               {/if}
             </td>
           {/if}
-          <td>
+          <td
+            class:success={lookupResultsMap[item.id]}
+            class:not-success={!lookupResultsMap[item.id]}
+          >
             {item.id}
           </td>
           <td>{item.label}</td>

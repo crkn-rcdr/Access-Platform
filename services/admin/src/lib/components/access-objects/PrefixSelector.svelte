@@ -14,11 +14,17 @@ Allows the user to select one of many pre-defined depositors.
 -->
 <script lang="ts">
   import type { Depositor } from "$lib/types";
+  import { createEventDispatcher } from "svelte";
 
   /**
    * @type {Depositor} The access platform information that is selected in the selection element
    */
-  export let depositor: Depositor | null = null;
+  export let depositor: Depositor;
+
+  /**
+   * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.
+   */
+  const dispatch = createEventDispatcher();
 
   /**
    * @type { object} The object of prefix options for the selection element.
@@ -46,6 +52,7 @@ Allows the user to select one of many pre-defined depositors.
         prefix: e.target["value"],
         label: depositors[e.target["value"]],
       };
+      dispatch("depositorSelected", depositor);
     }}
     value={depositor?.["prefix"]}
   >

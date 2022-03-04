@@ -24,17 +24,15 @@ This component allows the user to update the dmd tasks items in an access platfo
   import type { ParsedDMDTask } from "@crkn-rcdr/access-data";
 
   /**
-   *  @type { Depositor } The access platform to look for the items in.
-   */
-  export let depositor: Depositor = {
-    prefix: "oocihm",
-    label: "Canadiana.org",
-  };
-
-  /**
    *  @type { string } The 'id' of the DMDTask being processed.
    */
   export let dmdTask: ParsedDMDTask;
+  export let lookupResultsMap = {};
+
+  /**
+   *  @type { Depositor } The access platform to look for the items in.
+   */
+  let depositor: Depositor;
 
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
@@ -84,6 +82,68 @@ This component allows the user to update the dmd tasks items in an access platfo
     destination = event.currentTarget.value;
     setDestinationForItems();
   }
+
+  /**
+   * Whenever a prefix is changed, do a bulk lookup and change the "id" column to show the new ID. I suggest something like "green" for found and "red" for not found, with the checkbox set accordingly. This makes it nice and visible for users as they change the prefix. Avoid ZOD messages entirely for anything relating to IDs as all you care about is if they exist in the appropriate database or not (ZOD errors probably should never be shown to non-developers, as it's debugging output).
+   */
+
+  function chunkArray(array: any[], n: number) {
+    if (!array || !n) return array;
+
+    let length = array.length;
+    let slicePoint = 0;
+    let ret = [];
+
+    while (slicePoint < length) {
+      ret.push(array.slice(slicePoint, slicePoint + n));
+      slicePoint += n;
+    }
+    return ret;
+  }
+
+  function setItemIds() {
+    for (let item of dmdTask.items) {
+      item.id = `${depositor.prefix !== "none" ? depositor.prefix + "." : ""}${
+        item.id
+      }`;
+    }
+    dmdTask = dmdTask;
+  }
+
+  async function lookupItems() {
+    // Only grab and update 100 items, max, at a time
+    const chunks = chunkArray(dmdTask.items, 1000);
+    console.log("look at me");
+    // Loop through the max 100 item long lists
+    for (const chunk of chunks) {
+      const slugBatch = chunk.map((item) => item.id);
+      try {
+        const response = await $session.lapin.mutation(
+          `slug.resolveMany`,
+          slugBatch
+        );
+        for (const result of response) {
+          if (result.length === 2) {
+            const slug = result[0];
+            const info = result[1];
+            lookupResultsMap[slug] = info.found;
+          }
+        }
+      } catch (e) {
+        console.log(e?.message);
+        for (let id of slugBatch) lookupResultsMap[id] = false;
+        /*error = e?.message.includes(`"path:"`)
+          ? "Code 8. Please contact the platform team for assistance."
+          : "Code 9. Please contact the platform team for assistance. ";*/
+      }
+    }
+  }
+
+  async function handleDepositorChanged(e) {
+    depositor = e.detail;
+    setItemIds();
+    await lookupItems();
+  }
 </script>
 
 {#if dmdTask}
@@ -104,7 +164,7 @@ This component allows the user to update the dmd tasks items in an access platfo
   <div
     class="update-wrap auto-align auto-align__a-center auto-align__j-between"
   >
-    <PrefixSelector bind:depositor />
+    <PrefixSelector {depositor} on:depositorSelected={handleDepositorChanged} />
     <label>
       <input
         checked={destination === "access"}

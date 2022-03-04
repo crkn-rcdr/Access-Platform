@@ -59,6 +59,8 @@
    */
   export let dmdTask: DMDTask; //ParsingDMDTask | UpdateFailedDMDTask | UpdateSucceededDMDTask;
 
+  export let lookupResultsMap = {};
+
   export let error: any;
 </script>
 
@@ -77,8 +79,8 @@
     <DmdUpdateProgress bind:dmdTask />
     <DmdItemsTable bind:dmdTask />
   {:else if isParsedDMDTask(dmdTask)}
-    <DmdUpdateOptions bind:dmdTask />
-    <DmdItemsTable bind:dmdTask />
+    <DmdUpdateOptions bind:dmdTask bind:lookupResultsMap />
+    <DmdItemsTable bind:dmdTask bind:lookupResultsMap />
   {:else if isParsingDMDTask(dmdTask)}
     <DmdParseTracker bind:dmdTask />
   {:else}
