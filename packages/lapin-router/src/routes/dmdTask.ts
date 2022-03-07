@@ -120,4 +120,22 @@ export const dmdTaskRouter = createRouter()
         throw httpErrorToTRPC(e);
       }
     },
+  })
+  .mutation("updateStorageResults", {
+    input: z.object({
+      id: z.string(), // dmdtask uuid
+      array: z.array(z.any()),
+    }),
+    async resolve({ input, ctx }) {
+      try {
+        return await ctx.couch.dmdtask.update({
+          ddoc: "access",
+          name: "updateStorageResults",
+          docId: input.id,
+          body: input.array,
+        });
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
   });
