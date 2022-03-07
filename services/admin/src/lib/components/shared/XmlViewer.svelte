@@ -51,11 +51,11 @@
   {xml}
 </code>
 {#if shouldClip}
-  {#if clipped}
+  {#if clipped === true}
     <span class="toggler" on:click={() => (clipped = !clipped)}>
       show more...
     </span>
-  {:else}
+  {:else if clipped === false}
     <span class="toggler" on:click={() => (clipped = !clipped)}>
       show less
     </span>
