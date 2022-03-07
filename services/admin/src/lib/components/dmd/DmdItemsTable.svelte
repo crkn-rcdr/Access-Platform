@@ -149,8 +149,10 @@
             </td>
           {/if}
           <td
-            class:success={lookupResultsMap[item.id]}
-            class:not-success={!lookupResultsMap[item.id]}
+            class:success={item.id in lookupResultsMap &&
+              lookupResultsMap[item.id]}
+            class:not-success={item.id in lookupResultsMap &&
+              !lookupResultsMap[item.id]}
           >
             {item.id}
           </td>

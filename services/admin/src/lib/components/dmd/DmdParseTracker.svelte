@@ -102,9 +102,13 @@ Displays a dmd task in an waiting state.
     <p>Page last refreshed on: {lastUpdated}</p>
     <br />
     <p>
-      Request initiated on: {`${new Date(
-        parseInt(`${dmdTask.process["requestDate"]}`) * 1000
-      ).toLocaleString()}`}
+      Request initiated on: {`${
+        typeof dmdTask.process["requestDate"] === "string"
+          ? dmdTask.process["requestDate"]
+          : new Date(
+              parseInt(`${dmdTask.process["requestDate"]}`) * 1000
+            ).toLocaleString()
+      }`}
     </p>
     <!--DmdTaskInfoTable {dmdTask} /-->
   {/if}
