@@ -8,7 +8,7 @@
 {#if message?.length}
   <div class="status-wrap">
     <div class={`status-message ${status}`}>
-      <XmlViewer xml={message} />
+      <XmlViewer xml={message} shouldClip={true} />
     </div>
   </div>
 {/if}
