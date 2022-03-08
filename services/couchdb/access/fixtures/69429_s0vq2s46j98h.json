@@ -1,26 +1,34 @@
 {
   "_id": "69429/s0vq2s46j98h",
-  "_rev": "2-4f6540a308c71bdfeec15d5f725174b0",
-  "updateInternalmeta": {
-    "requestDate": "2020-09-17T04:22:24Z",
-    "message": "",
-    "processDate": "2020-09-17T06:01:50Z",
-    "succeeded": true
-  },
+  "_rev": "12-ef8e41f1824f7ae1a83e41cfe3cbeb8e",
+  "type": "collection",
   "label": {
     "none": "The Pacific harbor light"
   },
-  "type": "collection",
-  "public": "2020-03-03T18:43:17Z",
-  "dmdType": "dc",
+  "staff": {
+    "by": {
+      "email": "rmcormond@crkn.ca",
+      "name": "Russell McOrmond"
+    },
+    "date": "2021-11-17T16:58:06Z"
+  },
   "slug": "oocihm.8_06941",
+  "updated": "2022-01-19T15:37:38Z",
   "members": [
     {
       "id": "69429/m0696zw19t6s"
     },
     {
-      "id": "69429/m02n4zg6h671"
+      "id": "69429/m0ht2g73cg95"
     }
   ],
-  "behavior": "multi-part"
+  "dmdType": "dc",
+  "behavior": "multi-part",
+  "public": "2020-03-03T18:43:17Z",
+  "updateInternalmeta": {
+    "requestDate": "2022-01-19T15:37:38Z",
+    "processDate": "2022-01-19T15:38:27Z",
+    "succeeded": true,
+    "message": ""
+  }
 }

@@ -1,15 +1,22 @@
 {
   "_id": "69429/c0dz0311c62f",
-  "source": {
-    "path": "oocihm.45116/data/sip/data/files/oocihm.45116.0007.tif",
-    "from": "cihm"
+  "_rev": "4-04231637308636c969ffb4da5ac91059",
+  "ocrPdf": {
+    "extension": "pdf",
+    "size": 8707,
+    "md5": "44e25e8e6011619d4b5b53d06508788d"
   },
-  "ocrType": "txtmap",
+  "source": {
+    "from": "cihm",
+    "path": "oocihm.45116/data/sip/data/files/oocihm.45116.0007.tif"
+  },
   "master": {
-    "extension": "tif",
     "size": 7537,
     "height": 3590,
     "mime": "image/tiff",
-    "width": 2099
-  }
+    "width": 2099,
+    "md5": "9319858337268aefcbc3e709d137d3f7",
+    "extension": "tif"
+  },
+  "ocrType": "txtmap"
 }

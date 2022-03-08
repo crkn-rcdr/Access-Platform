@@ -23,7 +23,7 @@ module.exports.pullFixtures = async () => {
 
   const client = getNano(url, { user, password });
 
-  const queue = ["oocihm.8_06941"];
+  const queue = ["oocihm.8_06941", "oocihm.45116"];
 
   while (queue.length > 0) {
     const item = queue.shift();

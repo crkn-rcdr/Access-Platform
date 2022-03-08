@@ -1,0 +1,69 @@
+{
+  "_id": "69429/m0ht2g73cg95",
+  "_rev": "9-cb62553cf652848ebd6b972ecdf848ad",
+  "slug": "oocihm.8_06941_2",
+  "from": "canvases",
+  "type": "manifest",
+  "canvases": [
+    {
+      "id": "69429/c08s4jp15g01",
+      "label": {
+        "none": "Image 1"
+      }
+    },
+    {
+      "id": "69429/c02b8vd6q98z",
+      "label": {
+        "none": "Image 2"
+      }
+    },
+    {
+      "label": {
+        "none": "Image 3"
+      },
+      "id": "69429/c0183435vx78"
+    },
+    {
+      "id": "69429/c0sx64748c9n",
+      "label": {
+        "none": "Image 4"
+      }
+    },
+    {
+      "label": {
+        "none": "Image 5"
+      },
+      "id": "69429/c0p55df6mm85"
+    },
+    {
+      "label": {
+        "none": "Image 6"
+      },
+      "id": "69429/c0jd4pn8zv4m"
+    },
+    {
+      "id": "69429/c0dn3zw1b32v",
+      "label": {
+        "none": "Image 7"
+      }
+    },
+    {
+      "id": "69429/c0xk84m9323g",
+      "label": {
+        "none": "Image 8"
+      }
+    }
+  ],
+  "dmdType": "issueinfo",
+  "label": {
+    "none": "Vol. I, No. 2 (October 24, 1891)"
+  },
+  "public": "2021-11-18T17:38:44Z",
+  "updated": "2022-01-22T16:57:11Z",
+  "updateInternalmeta": {
+    "requestDate": "2022-01-22T16:57:11Z",
+    "processDate": "2022-01-23T01:01:05Z",
+    "succeeded": true,
+    "message": ""
+  }
+}

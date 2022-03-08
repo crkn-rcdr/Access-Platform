@@ -1,12 +1,7 @@
 {
   "_id": "69429/m0bz6154gh7n",
+  "_rev": "11-c4e5509555678c958de81d080891fbb9",
   "type": "manifest",
-  "updateInternalmeta": {
-    "requestDate": 1630639028.569,
-    "processDate": 1630639032.311,
-    "succeeded": true,
-    "message": ""
-  },
   "dmdType": "marc",
   "ocrPdf": {
     "size": 1099206,
@@ -62,5 +57,11 @@
   ],
   "from": "canvases",
   "slug": "oocihm.45116",
-  "updated": 1630639028.569
+  "updated": "2022-01-21T01:24:12Z",
+  "updateInternalmeta": {
+    "requestDate": "2022-02-17T13:04:55Z",
+    "processDate": "2022-02-17T20:17:25Z",
+    "succeeded": true,
+    "message": ""
+  }
 }

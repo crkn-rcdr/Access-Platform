@@ -1,12 +1,6 @@
 {
   "_id": "69429/m0696zw19t6s",
-  "_rev": "1-ea1f9f2304d194cd9b6f46e4f59d8d04",
-  "updateInternalmeta": {
-    "processDate": "2021-01-17T06:42:37Z",
-    "requestDate": "2021-01-13T20:00:34Z",
-    "message": "",
-    "succeeded": true
-  },
+  "_rev": "9-10900e09c7e5e08c01bbdb6052926077",
   "dmdType": "issueinfo",
   "from": "canvases",
   "type": "manifest",
@@ -64,5 +58,12 @@
   "slug": "oocihm.8_06941_1",
   "label": {
     "none": "Vol. I, No. 1 (October 17, 1891)"
+  },
+  "updated": "2022-01-22T16:57:10Z",
+  "updateInternalmeta": {
+    "requestDate": "2022-01-22T16:57:10Z",
+    "processDate": "2022-01-23T01:01:03Z",
+    "succeeded": true,
+    "message": ""
   }
 }
