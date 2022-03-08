@@ -49,7 +49,7 @@
     };
   }
 
-  export const load: Load<RootLoadOutput> = async ({ page, context }) => {
+  /*export const load: Load<RootLoadOutput> = async ({ page, context }) => {
     try {
       let taskList = await context.lapin.query("dmdTask.list");
       return getDMDTasks(taskList);
@@ -57,11 +57,11 @@
       return {
         props: {
           error:
-            "Could not get item from the server. Please contact the platform team for assistance.",
+            "Could not get dmd update tasks from the server. Please contact the platform team for assistance.",
         },
       };
     }
-  };
+  };*/
 </script>
 
 <script lang="ts">
@@ -72,6 +72,7 @@
   import ExpansionListItem from "$lib/components/shared/ExpansionListItem.svelte";
   import ExpansionListMessage from "$lib/components/shared/ExpansionListMessage.svelte";
   import DmdTaskActions from "$lib/components/dmd/DmdTaskActions.svelte";
+  import Loading from "$lib/components/shared/Loading.svelte";
 
   // Typed arrays lets us avoid checks in the front end
   export let base: DMDTask[] = [];
@@ -80,7 +81,7 @@
   export let updating: UpdatingDMDTask[] = [];
   export let updated: (UpdateSucceededDMDTask | UpdateFailedDMDTask)[] = [];
 
-  let loading = false;
+  let loading = true;
 
   let unsubscribe;
   const interval = timer({ interval: 60000 }); // 1x per min
@@ -91,7 +92,6 @@
   const { session } = getStores<Session>();
 
   async function getDMDTasksList() {
-    loading = true;
     let taskList = await $session.lapin.query("dmdTask.list");
     const results = getDMDTasks(taskList);
     ({ base, parsed, parsing, updating, updated } = results.props);
@@ -99,8 +99,10 @@
   }
 
   onMount(() => {
-    unsubscribe = interval.subscribe(async () => {
-      await getDMDTasksList();
+    getDMDTasksList().then(() => {
+      unsubscribe = interval.subscribe(async () => {
+        await getDMDTasksList();
+      });
     });
   });
 
@@ -109,167 +111,179 @@
   });
 </script>
 
-<div class="wrapper">
+{#if loading}
   <br />
   <br />
   <br />
-  <div class="title auto-align auto-align__a-center">
-    <h6>Metadata Tasks</h6>
-    <a href="/dmd/new">
-      <button class="create-button primary">Parse New Metadata File</button>
-    </a>
+  <div
+    class="auto-align auto-align__column auto-align__block auto-align__a-center"
+  >
+    <Loading backgroundType="gradient" />
+    <p>Fetching metadata tasks...</p>
   </div>
-  {#if base.length}
-    <ExpansionList showMessage={base?.length === 0} message="">
-      <span slot="title">Awaiting Parsing ({base.length})</span>
-      {#each base as task}
-        <ExpansionListItem status="N/A">
+{:else}
+  <div class="wrapper">
+    <br />
+    <br />
+    <br />
+    <div class="title auto-align auto-align__a-center">
+      <h6>Metadata Tasks</h6>
+      <a href="/dmd/new">
+        <button class="create-button primary">Parse New Metadata File</button>
+      </a>
+    </div>
+    {#if base.length}
+      <ExpansionList showMessage={base?.length === 0} message="">
+        <span slot="title">Awaiting Parsing ({base.length})</span>
+        {#each base as task}
+          <ExpansionListItem status="N/A">
+            <span slot="title">{task.fileName}</span>
+            <span slot="stage">N/A</span>
+            <span slot="actions">
+              <DmdTaskActions
+                {task}
+                isListLoading={loading}
+                stage="N/A"
+                status="N/A"
+                on:delete={getDMDTasksList}
+              />
+            </span>
+          </ExpansionListItem>
+        {/each}
+      </ExpansionList>
+    {/if}
+
+    <ExpansionList
+      showMessage={parsing?.length === 0}
+      message="No batches are exporting."
+    >
+      <span slot="title">Parsing ({parsing.length})</span>
+      {#each parsing as task}
+        <ExpansionListItem status="waiting">
           <span slot="title">{task.fileName}</span>
-          <span slot="stage">N/A</span>
+          <span slot="date"
+            >{new Date(task.updated)
+              .toLocaleString()
+              .replace(/:[0-9][0-9]$/, "")}</span
+          >
           <span slot="actions">
             <DmdTaskActions
               {task}
               isListLoading={loading}
-              stage="N/A"
-              status="N/A"
+              stage="parse"
+              status="waiting"
               on:delete={getDMDTasksList}
             />
           </span>
         </ExpansionListItem>
       {/each}
     </ExpansionList>
-  {/if}
 
-  <ExpansionList
-    showMessage={parsing?.length === 0}
-    message="No batches are exporting."
-  >
-    <span slot="title">Parsing ({parsing.length})</span>
-    {#each parsing as task}
-      <ExpansionListItem status="waiting">
-        <span slot="title">{task.fileName}</span>
-        <span slot="date"
-          >{new Date(task.updated)
-            .toLocaleString()
-            .replace(/:[0-9][0-9]$/, "")}</span
+    <ExpansionList
+      showMessage={parsed?.length === 0}
+      message="No batches are exporting."
+    >
+      <span slot="title">Parsed ({parsed.length})</span>
+      {#each parsed as task}
+        <ExpansionListItem
+          status={task.process["succeeded"]
+            ? task.process.message?.length
+              ? "warning"
+              : "succeeded"
+            : "failed"}
         >
-        <span slot="actions">
-          <DmdTaskActions
-            {task}
-            isListLoading={loading}
-            stage="parse"
-            status="waiting"
-            on:delete={getDMDTasksList}
-          />
-        </span>
-      </ExpansionListItem>
-    {/each}
-  </ExpansionList>
+          <span slot="title">{task.fileName}</span>
+          <span slot="date"
+            >{new Date(task.updated)
+              .toLocaleString()
+              .replace(/:[0-9][0-9]$/, "")}</span
+          >
+          <span slot="details">{task.items.length} items</span>
+          <span slot="actions">
+            <DmdTaskActions
+              {task}
+              isListLoading={loading}
+              stage="parse"
+              status={task.process["succeeded"] ? "succeeded" : "failed"}
+              on:delete={getDMDTasksList}
+            />
+          </span>
+        </ExpansionListItem>
+        <ExpansionListMessage
+          status={task.process.succeeded ? "succeeded" : "failed"}
+          message={task.process.message}
+        />
+      {/each}
+    </ExpansionList>
 
-  <ExpansionList
-    showMessage={parsed?.length === 0}
-    message="No batches are exporting."
-  >
-    <span slot="title">Parsed ({parsed.length})</span>
-    {#each parsed as task}
-      <ExpansionListItem
-        status={task.process["succeeded"]
-          ? task.process.message?.length
-            ? "warning"
-            : "succeeded"
-          : "failed"}
-      >
-        <span slot="title">{task.fileName}</span>
-        <span slot="date"
-          >{new Date(task.updated)
-            .toLocaleString()
-            .replace(/:[0-9][0-9]$/, "")}</span
-        >
-        <span slot="details">{task.items.length} items</span>
-        <span slot="actions">
-          <DmdTaskActions
-            {task}
-            isListLoading={loading}
-            stage="parse"
-            status={task.process["succeeded"] ? "succeeded" : "failed"}
-            on:delete={getDMDTasksList}
-          />
-        </span>
-      </ExpansionListItem>
-      <ExpansionListMessage
-        status={task.process.succeeded ? "succeeded" : "failed"}
-        message={task.process.message}
-      />
-    {/each}
-  </ExpansionList>
+    <ExpansionList
+      showMessage={updating?.length === 0}
+      message="No batches are exporting."
+    >
+      <span slot="title">Loading ({updating.length})</span>
+      {#each updating as task}
+        <ExpansionListItem status="waiting">
+          <span slot="title">{task.fileName}</span>
+          <span slot="date"
+            >{new Date(task.updated)
+              .toLocaleString()
+              .replace(/:[0-9][0-9]$/, "")}</span
+          >
+          <span slot="details">{task.items.length} items</span>
+          <span slot="actions">
+            <DmdTaskActions
+              {task}
+              isListLoading={loading}
+              stage="load"
+              status="waiting"
+              on:delete={getDMDTasksList}
+            />
+          </span>
+        </ExpansionListItem>
+      {/each}
+    </ExpansionList>
 
-  <ExpansionList
-    showMessage={updating?.length === 0}
-    message="No batches are exporting."
-  >
-    <span slot="title">Loading ({updating.length})</span>
-    {#each updating as task}
-      <ExpansionListItem status="waiting">
-        <span slot="title">{task.fileName}</span>
-        <span slot="date"
-          >{new Date(task.updated)
-            .toLocaleString()
-            .replace(/:[0-9][0-9]$/, "")}</span
+    <ExpansionList
+      showMessage={updated?.length === 0}
+      message="No batches are exporting."
+    >
+      <span slot="title">Load Completed ({updated.length})</span>
+      {#each updated as task}
+        <ExpansionListItem
+          status={task.process["succeeded"]
+            ? task.process.message?.length
+              ? "warning"
+              : "succeeded"
+            : "failed"}
         >
-        <span slot="details">{task.items.length} items</span>
-        <span slot="actions">
-          <DmdTaskActions
-            {task}
-            isListLoading={loading}
-            stage="load"
-            status="waiting"
-            on:delete={getDMDTasksList}
-          />
-        </span>
-      </ExpansionListItem>
-    {/each}
-  </ExpansionList>
-
-  <ExpansionList
-    showMessage={updated?.length === 0}
-    message="No batches are exporting."
-  >
-    <span slot="title">Load Completed ({updated.length})</span>
-    {#each updated as task}
-      <ExpansionListItem
-        status={task.process["succeeded"]
-          ? task.process.message?.length
-            ? "warning"
-            : "succeeded"
-          : "failed"}
-      >
-        <span slot="title">{task.fileName}</span>
-        <span slot="date"
-          >{new Date(task.updated)
-            .toLocaleString()
-            .replace(/:[0-9][0-9]$/, "")}</span
-        >
-        <span slot="details">{task.items.length} items</span>
-        <span slot="actions">
-          <DmdTaskActions
-            {task}
-            isListLoading={loading}
-            stage="load"
-            status={task.process["succeeded"] ? "succeeded" : "failed"}
-            on:delete={getDMDTasksList}
-          />
-        </span>
-      </ExpansionListItem>
-      <ExpansionListMessage
-        status={task.process.succeeded ? "succeeded" : "failed"}
-        message={task.process.message}
-      />
-    {/each}
-  </ExpansionList>
-  <br />
-  <br />
-  <br />
-</div>
+          <span slot="title">{task.fileName}</span>
+          <span slot="date"
+            >{new Date(task.updated)
+              .toLocaleString()
+              .replace(/:[0-9][0-9]$/, "")}</span
+          >
+          <span slot="details">{task.items.length} items</span>
+          <span slot="actions">
+            <DmdTaskActions
+              {task}
+              isListLoading={loading}
+              stage="load"
+              status={task.process["succeeded"] ? "succeeded" : "failed"}
+              on:delete={getDMDTasksList}
+            />
+          </span>
+        </ExpansionListItem>
+        <ExpansionListMessage
+          status={task.process.succeeded ? "succeeded" : "failed"}
+          message={task.process.message}
+        />
+      {/each}
+    </ExpansionList>
+    <br />
+    <br />
+    <br />
+  </div>
+{/if}
 
 <style>
   .title {
