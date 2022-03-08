@@ -59,7 +59,7 @@
 
       <a
         class="auto-align auto-align__a-center auto-align__j-center"
-        href="/dmd/new"
+        href="/dmd"
       >
         Load Metadata
       </a>

@@ -87,7 +87,7 @@
 
       <a
         class="auto-align auto-align__a-center"
-        href="/dmd/new"
+        href="/dmd"
         class:active-nav-item={$page.path.includes("/dmd")}>
         Load Metadata
       </a>
