@@ -104,7 +104,7 @@ Displays a dmd task in an waiting state.
     <p>
       Request initiated on: {`${
         typeof dmdTask.process["requestDate"] === "string"
-          ? dmdTask.process["requestDate"]
+          ? new Date(dmdTask.process["requestDate"]).toLocaleString()
           : new Date(
               parseInt(`${dmdTask.process["requestDate"]}`) * 1000
             ).toLocaleString()
