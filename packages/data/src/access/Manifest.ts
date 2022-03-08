@@ -6,6 +6,8 @@ import {
   ObjectListShort,
   ObjectListHandler,
 } from "./util/ObjectList.js";
+import { LabelledFileRef } from "./util/LabelledFileRef.js";
+import { ProcessUpdate } from "../util/ProcessUpdate.js";
 
 /**
  * Any work primarily consisting of a sequence of images.
@@ -41,6 +43,20 @@ export const Manifest = z
      * access object store at $id.pdf
      */
     ocrPdf: FileRef.optional(),
+
+    /**
+     * Array of labelled file references pointing to multi-page PDFs
+     * generated for this manifest.
+     *
+     * Called `rendering` because that's what the corresponding IIIF property
+     * is called: https://iiif.io/api/presentation/3.0/#rendering
+     */
+    rendering: z.array(LabelledFileRef).optional(),
+
+    /**
+     * Status of multi-page PDF generation.
+     */
+    renderingTask: ProcessUpdate.optional(),
 
     /**
      * The Manifest's Canvas list.
