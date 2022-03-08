@@ -85,7 +85,7 @@
     };
   }
 
-  export const load: Load<RootLoadOutput> = async ({ page, context }) => {
+  /*export const load: Load<RootLoadOutput> = async ({ page, context }) => {
     try {
       let batchList = await context.lapin.query("ocr.list");
       return getOcrBatches(batchList);
@@ -97,7 +97,7 @@
         },
       };
     }
-  };
+  };*/
 </script>
 
 <script lang="ts">
@@ -108,6 +108,7 @@
   import ExpansionListItem from "$lib/components/shared/ExpansionListItem.svelte";
   import OcrBatchActions from "$lib/components/ocr-batch/OcrBatchActions.svelte";
   import ExpansionListMessage from "$lib/components/shared/ExpansionListMessage.svelte";
+  import Loading from "$lib/components/shared/Loading.svelte";
   // Typed arrays lets us avoid checks in the front end
   export let base: OcrBatch[] = [];
   export let exportWaiting: ExportWaitingOcrBatch[] = [];
@@ -117,7 +118,7 @@
   export let importDone: (ImportSucceededOcrBatch | ImportFailedOcrBatch)[] =
     [];
 
-  let loading = false;
+  let loading = true;
 
   let unsubscribe;
   const interval = timer({ interval: 60000 }); // 1x per min
@@ -128,7 +129,6 @@
   const { session } = getStores<Session>();
 
   async function getBatches() {
-    loading = true;
     let batchList = await $session.lapin.query("ocr.list");
     const results = getOcrBatches(batchList);
     ({ base, exportWaiting, exportDone, importWaiting, importDone } =
@@ -137,8 +137,10 @@
   }
 
   onMount(() => {
-    unsubscribe = interval.subscribe(async () => {
-      await getBatches();
+    getBatches().then(() => {
+      unsubscribe = interval.subscribe(async () => {
+        await getBatches();
+      });
     });
   });
 
@@ -147,31 +149,71 @@
   });
 </script>
 
-<div class="wrapper">
+{#if loading}
   <br />
   <br />
   <br />
-  <div class="title auto-align auto-align__a-center">
-    <h6>OCR Batches</h6>
-    <a href="/ocr/new">
-      <button class="create-button primary">Create New OCR Batch</button>
-    </a>
+  <div
+    class="auto-align auto-align__column auto-align__block auto-align__a-center"
+  >
+    <Loading backgroundType="gradient" />
+    <p>Fetching OCR batches...</p>
   </div>
+{:else}
+  <div class="wrapper">
+    <br />
+    <br />
+    <br />
+    <div class="title auto-align auto-align__a-center">
+      <h6>OCR Batches</h6>
+      <a href="/ocr/new">
+        <button class="create-button primary">Create New OCR Batch</button>
+      </a>
+    </div>
 
-  {#if base.length}
-    <ExpansionList showMessage={base?.length === 0} message="">
-      <span slot="title">Awaiting Export ({base.length})</span>
-      {#each base as batch}
-        <ExpansionListItem status="N/A">
+    {#if base.length}
+      <ExpansionList showMessage={base?.length === 0} message="">
+        <span slot="title">Awaiting Export ({base.length})</span>
+        {#each base as batch}
+          <ExpansionListItem status="N/A">
+            <span slot="title">{batch.name}</span>
+            <span slot="stage">N/A</span>
+            <span slot="details">{batch.canvases.length} canvases</span>
+            <span slot="actions">
+              <OcrBatchActions
+                {batch}
+                isListLoading={loading}
+                stage="N/A"
+                status="N/A"
+                on:export={getBatches}
+                on:delete={getBatches}
+              />
+            </span>
+          </ExpansionListItem>
+        {/each}
+      </ExpansionList>
+    {/if}
+
+    <ExpansionList
+      showMessage={exportWaiting?.length === 0}
+      message="No batches are exporting."
+    >
+      <span slot="title">Exporting ({exportWaiting.length})</span>
+      {#each exportWaiting as batch}
+        <ExpansionListItem status="waiting">
           <span slot="title">{batch.name}</span>
-          <span slot="stage">N/A</span>
+          <span slot="date"
+            >{new Date(batch.staff.date)
+              .toLocaleString()
+              .replace(/:[0-9][0-9]$/, "")}</span
+          >
           <span slot="details">{batch.canvases.length} canvases</span>
           <span slot="actions">
             <OcrBatchActions
               {batch}
               isListLoading={loading}
-              stage="N/A"
-              status="N/A"
+              stage="export"
+              status="waiting"
               on:export={getBatches}
               on:delete={getBatches}
             />
@@ -179,148 +221,120 @@
         </ExpansionListItem>
       {/each}
     </ExpansionList>
-  {/if}
 
-  <ExpansionList
-    showMessage={exportWaiting?.length === 0}
-    message="No batches are exporting."
-  >
-    <span slot="title">Exporting ({exportWaiting.length})</span>
-    {#each exportWaiting as batch}
-      <ExpansionListItem status="waiting">
-        <span slot="title">{batch.name}</span>
-        <span slot="date"
-          >{new Date(batch.staff.date)
-            .toLocaleString()
-            .replace(/:[0-9][0-9]$/, "")}</span
+    <ExpansionList
+      showMessage={exportDone?.length === 0}
+      message="No batches are done exporting."
+    >
+      <span slot="title">Done Exporting ({exportDone.length})</span>
+      {#each exportDone as batch}
+        <ExpansionListItem
+          status={batch.exportProcess["succeeded"]
+            ? batch.exportProcess.message?.length
+              ? "warning"
+              : "succeeded"
+            : "failed"}
         >
-        <span slot="details">{batch.canvases.length} canvases</span>
-        <span slot="actions">
-          <OcrBatchActions
-            {batch}
-            isListLoading={loading}
-            stage="export"
-            status="waiting"
-            on:export={getBatches}
-            on:delete={getBatches}
-          />
-        </span>
-      </ExpansionListItem>
-    {/each}
-  </ExpansionList>
+          <span slot="title">{batch.name}</span>
+          <span slot="date"
+            >{new Date(batch.staff.date)
+              .toLocaleString()
+              .replace(/:[0-9][0-9]$/, "")}</span
+          >
+          <span slot="details">{batch.canvases.length} canvases</span>
+          <span slot="actions">
+            <OcrBatchActions
+              {batch}
+              isListLoading={loading}
+              stage="export"
+              status={batch.exportProcess["succeeded"] ? "succeeded" : "failed"}
+              on:export={getBatches}
+              on:import={getBatches}
+              on:delete={getBatches}
+            />
+          </span>
+        </ExpansionListItem>
+        <ExpansionListMessage
+          status={batch.exportProcess["succeeded"] ? "succeeded" : "failed"}
+          message={batch.exportProcess["message"]}
+        />
+      {/each}
+    </ExpansionList>
 
-  <ExpansionList
-    showMessage={exportDone?.length === 0}
-    message="No batches are done exporting."
-  >
-    <span slot="title">Done Exporting ({exportDone.length})</span>
-    {#each exportDone as batch}
-      <ExpansionListItem
-        status={batch.exportProcess["succeeded"]
-          ? batch.exportProcess.message?.length
-            ? "warning"
-            : "succeeded"
-          : "failed"}
-      >
-        <span slot="title">{batch.name}</span>
-        <span slot="date"
-          >{new Date(batch.staff.date)
-            .toLocaleString()
-            .replace(/:[0-9][0-9]$/, "")}</span
-        >
-        <span slot="details">{batch.canvases.length} canvases</span>
-        <span slot="actions">
-          <OcrBatchActions
-            {batch}
-            isListLoading={loading}
-            stage="export"
-            status={batch.exportProcess["succeeded"] ? "succeeded" : "failed"}
-            on:export={getBatches}
-            on:import={getBatches}
-            on:delete={getBatches}
-          />
-        </span>
-      </ExpansionListItem>
-      <ExpansionListMessage
-        status={batch.exportProcess["succeeded"] ? "succeeded" : "failed"}
-        message={batch.exportProcess["message"]}
-      />
-    {/each}
-  </ExpansionList>
+    <ExpansionList
+      showMessage={importWaiting?.length === 0}
+      message="No batches are importing."
+    >
+      <span slot="title">
+        Importing ({importWaiting.length})
+      </span>
+      {#each importWaiting as batch}
+        <ExpansionListItem status="waiting">
+          <span slot="title">{batch.name}</span>
+          <span slot="date"
+            >{new Date(batch.staff.date)
+              .toLocaleString()
+              .replace(/:[0-9][0-9]$/, "")}</span
+          >
+          <span slot="details">{batch.canvases.length} canvases</span>
+          <span slot="actions">
+            <OcrBatchActions
+              {batch}
+              isListLoading={loading}
+              stage="import"
+              status={"waiting"}
+              on:cancel={getBatches}
+              on:delete={getBatches}
+            />
+          </span>
+        </ExpansionListItem>
+      {/each}
+    </ExpansionList>
 
-  <ExpansionList
-    showMessage={importWaiting?.length === 0}
-    message="No batches are importing."
-  >
-    <span slot="title">
-      Importing ({importWaiting.length})
-    </span>
-    {#each importWaiting as batch}
-      <ExpansionListItem status="waiting">
-        <span slot="title">{batch.name}</span>
-        <span slot="date"
-          >{new Date(batch.staff.date)
-            .toLocaleString()
-            .replace(/:[0-9][0-9]$/, "")}</span
+    <ExpansionList
+      showMessage={importDone?.length === 0}
+      message="No batches are done importing."
+    >
+      <span slot="title">
+        Done Importing ({importDone.length})
+      </span>
+      {#each importDone as batch}
+        <ExpansionListItem
+          status={batch.importProcess["succeeded"]
+            ? batch.importProcess.message?.length
+              ? "warning"
+              : "succeeded"
+            : "failed"}
         >
-        <span slot="details">{batch.canvases.length} canvases</span>
-        <span slot="actions">
-          <OcrBatchActions
-            {batch}
-            isListLoading={loading}
-            stage="import"
-            status={"waiting"}
-            on:cancel={getBatches}
-            on:delete={getBatches}
-          />
-        </span>
-      </ExpansionListItem>
-    {/each}
-  </ExpansionList>
-
-  <ExpansionList
-    showMessage={importDone?.length === 0}
-    message="No batches are done importing."
-  >
-    <span slot="title">
-      Done Importing ({importDone.length})
-    </span>
-    {#each importDone as batch}
-      <ExpansionListItem
-        status={batch.importProcess["succeeded"]
-          ? batch.importProcess.message?.length
-            ? "warning"
-            : "succeeded"
-          : "failed"}
-      >
-        <span slot="title">{batch.name}</span>
-        <span slot="date"
-          >{new Date(batch.staff.date)
-            .toLocaleString()
-            .replace(/:[0-9][0-9]$/, "")}</span
-        >
-        <span slot="details">{batch.canvases.length} canvases</span>
-        <span slot="actions">
-          <OcrBatchActions
-            {batch}
-            isListLoading={loading}
-            stage="import"
-            status={batch.importProcess["succeeded"] ? "succeeded" : "failed"}
-            on:import={getBatches}
-            on:delete={getBatches}
-          />
-        </span>
-      </ExpansionListItem>
-      <ExpansionListMessage
-        status={batch.importProcess["succeeded"] ? "succeeded" : "failed"}
-        message={batch.importProcess["message"]}
-      />
-    {/each}
-  </ExpansionList>
-  <br />
-  <br />
-  <br />
-</div>
+          <span slot="title">{batch.name}</span>
+          <span slot="date"
+            >{new Date(batch.staff.date)
+              .toLocaleString()
+              .replace(/:[0-9][0-9]$/, "")}</span
+          >
+          <span slot="details">{batch.canvases.length} canvases</span>
+          <span slot="actions">
+            <OcrBatchActions
+              {batch}
+              isListLoading={loading}
+              stage="import"
+              status={batch.importProcess["succeeded"] ? "succeeded" : "failed"}
+              on:import={getBatches}
+              on:delete={getBatches}
+            />
+          </span>
+        </ExpansionListItem>
+        <ExpansionListMessage
+          status={batch.importProcess["succeeded"] ? "succeeded" : "failed"}
+          message={batch.importProcess["message"]}
+        />
+      {/each}
+    </ExpansionList>
+    <br />
+    <br />
+    <br />
+  </div>
+{/if}
 
 <style>
   .title {
