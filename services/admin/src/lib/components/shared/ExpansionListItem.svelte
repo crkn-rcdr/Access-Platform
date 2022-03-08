@@ -33,6 +33,10 @@
   {/if}
 
   <span class="auto-align auto-align__a-center">
+    <slot name="date" />
+  </span>
+
+  <span class="auto-align auto-align__a-center">
     <slot name="details" />
   </span>
 
@@ -44,7 +48,7 @@
 <style>
   .item-wrap {
     width: 100%;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-columns: 2fr 1fr 1fr 1fr 2fr;
     background: var(--structural-div-bg);
     padding: 1rem;
   }
@@ -83,5 +87,9 @@
     margin-left: 0.2rem;
     margin-right: 0.3rem;
     cursor: pointer;
+  }
+
+  span {
+    word-break: break-all;
   }
 </style>

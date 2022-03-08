@@ -189,7 +189,11 @@
     {#each exportWaiting as batch}
       <ExpansionListItem status="waiting">
         <span slot="title">{batch.name}</span>
-        <span slot="stage">export</span>
+        <span slot="date"
+          >{new Date(batch.staff.date)
+            .toLocaleString()
+            .replace(/:[0-9][0-9]$/, "")}</span
+        >
         <span slot="details">{batch.canvases.length} canvases</span>
         <span slot="actions">
           <OcrBatchActions
@@ -215,7 +219,11 @@
         status={batch.exportProcess["succeeded"] ? "succeeded" : "failed"}
       >
         <span slot="title">{batch.name}</span>
-        <span slot="stage">export</span>
+        <span slot="date"
+          >{new Date(batch.staff.date)
+            .toLocaleString()
+            .replace(/:[0-9][0-9]$/, "")}</span
+        >
         <span slot="details">{batch.canvases.length} canvases</span>
         <span slot="actions">
           <OcrBatchActions
@@ -246,7 +254,11 @@
     {#each importWaiting as batch}
       <ExpansionListItem status="waiting">
         <span slot="title">{batch.name}</span>
-        <span slot="stage">import</span>
+        <span slot="date"
+          >{new Date(batch.staff.date)
+            .toLocaleString()
+            .replace(/:[0-9][0-9]$/, "")}</span
+        >
         <span slot="details">{batch.canvases.length} canvases</span>
         <span slot="actions">
           <OcrBatchActions
@@ -272,7 +284,11 @@
     {#each importDone as batch}
       <ExpansionListItem status="waiting">
         <span slot="title">{batch.name}</span>
-        <span slot="stage">import</span>
+        <span slot="date"
+          >{new Date(batch.staff.date)
+            .toLocaleString()
+            .replace(/:[0-9][0-9]$/, "")}</span
+        >
         <span slot="details">{batch.canvases.length} canvases</span>
         <span slot="actions">
           <OcrBatchActions

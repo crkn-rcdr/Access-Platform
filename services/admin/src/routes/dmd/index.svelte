@@ -148,7 +148,11 @@
     {#each parsing as task}
       <ExpansionListItem status="waiting">
         <span slot="title">{task.fileName}</span>
-        <span slot="stage">parse</span>
+        <span slot="date"
+          >{new Date(task.updated)
+            .toLocaleString()
+            .replace(/:[0-9][0-9]$/, "")}</span
+        >
         <span slot="actions">
           <DmdTaskActions
             {task}
@@ -172,7 +176,11 @@
         status={task.process.succeeded ? "succeeded" : "failed"}
       >
         <span slot="title">{task.fileName}</span>
-        <span slot="stage">parse</span>
+        <span slot="date"
+          >{new Date(task.updated)
+            .toLocaleString()
+            .replace(/:[0-9][0-9]$/, "")}</span
+        >
         <span slot="details">{task.items.length} items</span>
         <span slot="actions">
           <DmdTaskActions
@@ -199,7 +207,11 @@
     {#each updating as task}
       <ExpansionListItem status="waiting">
         <span slot="title">{task.fileName}</span>
-        <span slot="stage">load</span>
+        <span slot="date"
+          >{new Date(task.updated)
+            .toLocaleString()
+            .replace(/:[0-9][0-9]$/, "")}</span
+        >
         <span slot="details">{task.items.length} items</span>
         <span slot="actions">
           <DmdTaskActions
@@ -224,7 +236,11 @@
         status={task.process.succeeded ? "succeeded" : "failed"}
       >
         <span slot="title">{task.fileName}</span>
-        <span slot="stage">load</span>
+        <span slot="date"
+          >{new Date(task.updated)
+            .toLocaleString()
+            .replace(/:[0-9][0-9]$/, "")}</span
+        >
         <span slot="details">{task.items.length} items</span>
         <span slot="actions">
           <DmdTaskActions
