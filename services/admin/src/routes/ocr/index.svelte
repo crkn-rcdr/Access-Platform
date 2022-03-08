@@ -216,7 +216,11 @@
     <span slot="title">Done Exporting ({exportDone.length})</span>
     {#each exportDone as batch}
       <ExpansionListItem
-        status={batch.exportProcess["succeeded"] ? "succeeded" : "failed"}
+        status={batch.exportProcess["succeeded"]
+          ? batch.exportProcess.message?.length
+            ? "warning"
+            : "succeeded"
+          : "failed"}
       >
         <span slot="title">{batch.name}</span>
         <span slot="date"
@@ -282,7 +286,13 @@
       Done Importing ({importDone.length})
     </span>
     {#each importDone as batch}
-      <ExpansionListItem status="waiting">
+      <ExpansionListItem
+        status={batch.importProcess["succeeded"]
+          ? batch.importProcess.message?.length
+            ? "warning"
+            : "succeeded"
+          : "failed"}
+      >
         <span slot="title">{batch.name}</span>
         <span slot="date"
           >{new Date(batch.staff.date)

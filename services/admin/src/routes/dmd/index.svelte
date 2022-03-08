@@ -173,7 +173,11 @@
     <span slot="title">Parsed ({parsed.length})</span>
     {#each parsed as task}
       <ExpansionListItem
-        status={task.process.succeeded ? "succeeded" : "failed"}
+        status={task.process["succeeded"]
+          ? task.process.message?.length
+            ? "warning"
+            : "succeeded"
+          : "failed"}
       >
         <span slot="title">{task.fileName}</span>
         <span slot="date"
@@ -233,7 +237,11 @@
     <span slot="title">Load Completed ({updated.length})</span>
     {#each updated as task}
       <ExpansionListItem
-        status={task.process.succeeded ? "succeeded" : "failed"}
+        status={task.process["succeeded"]
+          ? task.process.message?.length
+            ? "warning"
+            : "succeeded"
+          : "failed"}
       >
         <span slot="title">{task.fileName}</span>
         <span slot="date"

@@ -48,7 +48,7 @@
 <style>
   .item-wrap {
     width: 100%;
-    grid-template-columns: 2fr 1fr 1fr 1fr 2fr;
+    grid-template-columns: 2.4fr 1fr 1fr 1fr 1.8fr;
     background: var(--structural-div-bg);
     padding: 1rem;
   }

@@ -42,13 +42,13 @@
 
   let height;
   onMount(() => {
-    shouldClip = shouldClip && height > 30;
+    shouldClip = shouldClip && height > 50;
     if (shouldClip) clipped = true;
   });
 </script>
 
 <code class:clip={shouldClip && clipped} bind:clientHeight={height}>
-  {xml}
+  {xml.trim()}
 </code>
 {#if shouldClip}
   {#if clipped === true}
