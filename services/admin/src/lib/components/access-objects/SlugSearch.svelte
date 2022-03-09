@@ -37,15 +37,28 @@
   const dispatch = createEventDispatcher();
 
   let valid = true;
-  let initital = "";
+  let initital: string = "";
+  let inititalResult;
   let loading = false;
   let hasSearched = false;
+
+  async function sendSearchRequest() {
+    loading = true;
+    const response = await $session.lapin.query("slug.resolve", slug);
+    found = response.found;
+    if (response.found) {
+      noid = response.result.id;
+      foundErrorMessage = `<a href ="/object/edit/${noid}" target="_blank">⚠️ Slug in use.</a>`;
+    }
+    dispatch("slugValidity", !found && valid);
+    loading = false;
+  }
 
   function search() {
     if (!slug?.length) return;
     if (slug === initital && !searchOnLoad) {
-      found = false;
-      valid = true;
+      found = inititalResult;
+      valid = regex.test(slug);
       return;
     }
     if (!initital.length) initital = slug;
@@ -56,19 +69,13 @@
     if (timer) clearTimeout(timer);
 
     timer = setTimeout(async () => {
-      const response = await $session.lapin.query("slug.resolve", slug);
-      found = response.found;
-      if (response.found) {
-        noid = response.result.id;
-        foundErrorMessage = `<a href ="/object/edit/${noid}" target="_blank">⚠️ Slug in use.</a>`;
-      }
-      dispatch("slugValidity", !found && valid);
-      loading = false;
+      await sendSearchRequest();
     }, 50);
   }
 
   onMount(() => {
     initital = slug;
+    inititalResult = found;
   });
 
   $: {
@@ -91,7 +98,7 @@
     </span>
   {:else if found}
     <span
-      on:click={search}
+      on:click={sendSearchRequest}
       class="icon"
       data-tooltip="Retry look-up"
       data-tooltip-flow="right"
