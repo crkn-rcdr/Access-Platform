@@ -346,7 +346,8 @@ The slug entered is currently in use. To resolve this issue, you can either:
                     setSlugAvailability(e, item);
                   }}
                 />
-
+                <br />
+                <br />
                 <div class="import-history-wrap">
                   <ExpansionTile>
                     <span slot="top">Last Import Status</span>
