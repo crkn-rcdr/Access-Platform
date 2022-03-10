@@ -329,6 +329,14 @@ This component shows the results of a dipstaging find-package(s) request or a vi
                 </p>
                 <SlugSearch
                   bind:slug={slugMap[item["id"]]}
+                  tooltip={`
+The slug entered is currently in use. To resolve this issue, you can either:
+  1. Enter a new slug below 
+  2. Edit the slug of the 
+       existing manifest
+  3. Delete the existing 
+       manifest
+                  `}
                   searchOnLoad={false}
                   found={slugUnavailableMap[slugMap[item["id"]]]}
                   noid={slugMap[item["id"]] in noidMap
@@ -338,15 +346,7 @@ This component shows the results of a dipstaging find-package(s) request or a vi
                     setSlugAvailability(e, item);
                   }}
                 />
-                <div class="slug-error-instructions">
-                  The slug entered is currently in use. To resolve this issue,
-                  you can either:
-                  <ol type="1">
-                    <li>Enter a new slug above</li>
-                    <li>Edit the slug of the existing manifest</li>
-                    <li>Delete the existing manifest</li>
-                  </ol>
-                </div>
+
                 <div class="import-history-wrap">
                   <ExpansionTile>
                     <span slot="top">Last Import Status</span>

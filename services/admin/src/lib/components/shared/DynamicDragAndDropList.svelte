@@ -159,9 +159,7 @@ A container that enables the dragging and dropping of it's children elements.
     const config = { attributes: false, childList: true, subtree: false };
     // Create an observer instance linked to the callback function
     const observer = new MutationObserver(function (mutationsList, observer) {
-      console.log("updating dragger");
       enableDraggingOnChildren();
-      console.log(mutationsList, observer);
     });
     // Start observing the target node for configured mutations
     observer.observe(container, config);

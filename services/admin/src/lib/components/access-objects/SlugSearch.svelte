@@ -5,12 +5,12 @@
   import NotificationBar from "../shared/NotificationBar.svelte";
   import IoMdRefresh from "svelte-icons/io/IoMdRefresh.svelte";
   import Loading from "../shared/Loading.svelte";
-  import { initial } from "lodash-es";
 
   export let searchOnLoad: boolean = true;
   export let slug;
   export let noid = "";
   export let found = false;
+  export let tooltip = "";
 
   let invalidErrorMessage =
     "Slugs can only contain letters, numbers, and the following symbols: _ - .";
@@ -48,7 +48,6 @@
     found = response.found;
     if (response.found) {
       noid = response.result.id;
-      foundErrorMessage = `<a href ="/object/edit/${noid}" target="_blank">⚠️ Slug in use.</a>`;
     }
     dispatch("slugValidity", !found && valid);
     loading = false;
@@ -83,14 +82,27 @@
     if (searchOnLoad || hasSearched) search();
     hasSearched = true;
   }
+
+  $: {
+    if (noid)
+      foundErrorMessage = `<a href ="/object/edit/${noid}" target="_blank">⚠️ Slug in use.</a>`;
+  }
 </script>
 
 {#if !valid}
   <NotificationBar status="fail" message={invalidErrorMessage} />
 {/if}
+
 {#if found}
-  <NotificationBar status="fail" message={foundErrorMessage} />
+  {#if tooltip.length}
+    <div data-tooltip={tooltip}>
+      <NotificationBar status="fail" message={foundErrorMessage} />
+    </div>
+  {:else}
+    <NotificationBar status="fail" message={foundErrorMessage} />
+  {/if}
 {/if}
+
 <div class="input-wrap auto-align auto-align__a-center">
   {#if loading}
     <span class="loader">
