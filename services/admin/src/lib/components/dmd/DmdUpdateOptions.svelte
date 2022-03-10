@@ -33,6 +33,7 @@ This component allows the user to update the dmd tasks items in an access platfo
    *  @type { Depositor } The access platform to look for the items in.
    */
   let depositor: Depositor;
+  let prevPrefix: string;
 
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
@@ -104,7 +105,7 @@ This component allows the user to update the dmd tasks items in an access platfo
   function setItemIds() {
     for (let item of dmdTask.items) {
       item.id = `${depositor.prefix !== "none" ? depositor.prefix + "." : ""}${
-        item.id
+        prevPrefix ? item.id.replace(`${prevPrefix}.`, "") : item.id
       }`;
     }
     dmdTask = dmdTask;
@@ -143,6 +144,7 @@ This component allows the user to update the dmd tasks items in an access platfo
     depositor = e.detail;
     setItemIds();
     await lookupItems();
+    prevPrefix = depositor.prefix;
   }
 </script>
 
