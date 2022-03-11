@@ -110,11 +110,22 @@ export const ParsingDMDTask = z.object({
 
 export type ParsingDMDTask = z.infer<typeof ParsingDMDTask>;
 
+export const ParseFailedDMDTask = ParsingDMDTask.merge(
+  z.object({
+    /**
+     * The items in the file have not had their metadata processed.
+     */
+    process: FailedProcessResult,
+  })
+);
+
+export type ParseFailedDMDTask = z.infer<typeof ParseFailedDMDTask>;
+
 /**
  * DMD Task is being added to the queue for storing each item's new metadata file.
  * (Process Metadata File Step: in-queue)
  */
-export const ParsedDMDTask = ParsingDMDTask.merge(
+export const ParseSucceededDMDTask = ParsingDMDTask.merge(
   z.object({
     /**
      * The items in the file have had their metadata processed.
@@ -130,19 +141,21 @@ export const ParsedDMDTask = ParsingDMDTask.merge(
   })
 );
 
-const ParsedDMDTaskListCheck = ParsedDMDTask.refine((task) => {
+const ParseSucceededDMDTaskListCheck = ParseSucceededDMDTask.refine((task) => {
   task.items?.[0] &&
     !("destination" in task.items[0]) &&
     !("stored" in task.items[0]);
 }, "A validated task has items without a destination property and without a stored property.");
 
-export type ParsedDMDTask = z.infer<typeof ParsedDMDTaskListCheck>;
+export type ParseSucceededDMDTask = z.infer<
+  typeof ParseSucceededDMDTaskListCheck
+>;
 
 /**
  * DMD Task is being added to the queue for storing each item's new metadata file.
  * (Process Metadata File Step: in-queue)
  */
-export const UpdatingDMDTask = ParsedDMDTask.merge(
+export const UpdatingDMDTask = ParseSucceededDMDTask.merge(
   z.object({
     /**
      * The request to queue the items for storage.
@@ -214,7 +227,7 @@ export const DMDTask = z.union([
   UpdateSucceededDMDTask,
   UpdateFailedDMDTask,
   UpdatingDMDTask,
-  ParsedDMDTask,
+  ParseSucceededDMDTask,
   ParsingDMDTask,
 ]);
 

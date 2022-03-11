@@ -9,15 +9,16 @@
     UpdateSucceededDMDTask,
     UpdateFailedDMDTask,
     UpdatingDMDTask,
-    ParsedDMDTask,
+    ParseSucceededDMDTask,
     ParsingDMDTask,
     DMDTask,
+    ParseFailedDMDTask,
   } from "@crkn-rcdr/access-data";
 
   function getDMDTasks(taskList) {
     const base: DMDTask[] = [];
     const parsing: ParsingDMDTask[] = [];
-    const parsed: ParsedDMDTask[] = [];
+    const parsed: (ParseSucceededDMDTask | ParseFailedDMDTask)[] = [];
     const updating: UpdatingDMDTask[] = [];
     const updated: (UpdateSucceededDMDTask | UpdateFailedDMDTask)[] = [];
 
@@ -35,8 +36,10 @@
         updated.push(task as UpdateFailedDMDTask);
       } else if (UpdatingDMDTask.safeParse(task).success) {
         updating.push(task as UpdatingDMDTask);
-      } else if (ParsedDMDTask.safeParse(task).success) {
-        parsed.push(task as ParsedDMDTask);
+      } else if (ParseSucceededDMDTask.safeParse(task).success) {
+        parsed.push(task as ParseSucceededDMDTask);
+      } else if (ParseFailedDMDTask.safeParse(task).success) {
+        parsed.push(task as ParseFailedDMDTask);
       } else if (ParsingDMDTask.safeParse(task).success) {
         parsing.push(task as ParsingDMDTask);
       } else {
@@ -77,7 +80,7 @@
   // Typed arrays lets us avoid checks in the front end
   export let base: DMDTask[] = [];
   export let parsing: ParsingDMDTask[] = [];
-  export let parsed: ParsedDMDTask[] = [];
+  export let parsed: (ParseSucceededDMDTask | ParseFailedDMDTask)[] = [];
   export let updating: UpdatingDMDTask[] = [];
   export let updated: (UpdateSucceededDMDTask | UpdateFailedDMDTask)[] = [];
 
@@ -198,7 +201,11 @@
               .toLocaleString()
               .replace(/:[0-9][0-9]$/, "")}</span
           >
-          <span slot="details">{task.items.length} items</span>
+          <span slot="details">
+            {#if "items" in task}
+              {task.items.length} items
+            {/if}
+          </span>
           <span slot="actions">
             <DmdTaskActions
               {task}

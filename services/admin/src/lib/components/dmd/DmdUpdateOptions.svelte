@@ -21,12 +21,12 @@ This component allows the user to update the dmd tasks items in an access platfo
   import { getStores } from "$app/stores";
   import type { Session } from "$lib/types";
   import PrefixSelector from "$lib/components/access-objects/PrefixSelector.svelte";
-  import type { ParsedDMDTask } from "@crkn-rcdr/access-data";
+  import type { ParseSucceededDMDTask } from "@crkn-rcdr/access-data";
 
   /**
    *  @type { string } The 'id' of the DMDTask being processed.
    */
-  export let dmdTask: ParsedDMDTask;
+  export let dmdTask: ParseSucceededDMDTask;
   export let lookupResultsMap = {};
 
   /**

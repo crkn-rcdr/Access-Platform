@@ -1,10 +1,11 @@
 <script lang="ts">
   import {
-    isParsedDMDTask,
+    isParseSucceededDMDTask,
+    isParseFailedDMDTask,
     isUpdateSucceededDMDTask,
     isUpdateFailedDMDTask,
     isUpdatingDMDTask,
-    ParsedDMDTask,
+    ParseSucceededDMDTask,
     UpdateSucceededDMDTask,
     UpdatingDMDTask,
     UpdateFailedDMDTask,
@@ -17,9 +18,12 @@
   import type { ItemProcessRecord } from "@crkn-rcdr/access-data/dist/esm/dmd/Task";
 
   /**
-   * @type { UpdateSucceededDMDTask | ParsedDMDTask | UpdatingDMDTask } The dmd task being displayed
+   * @type { UpdateSucceededDMDTask | ParseSucceededDMDTask | UpdatingDMDTask } The dmd task being displayed
    */
-  export let dmdTask: UpdateSucceededDMDTask | ParsedDMDTask | UpdatingDMDTask;
+  export let dmdTask:
+    | UpdateSucceededDMDTask
+    | ParseSucceededDMDTask
+    | UpdatingDMDTask;
   export let lookupResultsMap = {};
 
   let state: "parsed" | "updating" | "updated" = "parsed";
@@ -81,7 +85,10 @@
       state = "updated";
     } else if (isUpdatingDMDTask(dmdTask)) {
       state = "updating";
-    } else if (isParsedDMDTask(dmdTask)) {
+    } else if (
+      isParseFailedDMDTask(dmdTask) ||
+      isParseSucceededDMDTask(dmdTask)
+    ) {
       state = "parsed";
     }
   }

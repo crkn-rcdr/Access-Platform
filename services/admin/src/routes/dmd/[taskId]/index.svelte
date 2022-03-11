@@ -40,7 +40,8 @@
    */
   import {
     DMDTask,
-    isParsedDMDTask,
+    isParseSucceededDMDTask,
+    isParseFailedDMDTask,
     isParsingDMDTask,
     isUpdateFailedDMDTask,
     isUpdateSucceededDMDTask,
@@ -53,6 +54,7 @@
   import DmdUpdateFailedOptions from "$lib/components/dmd/DmdUpdateFailedOptions.svelte";
   import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
   import DmdParseTracker from "$lib/components/dmd/DmdParseTracker.svelte";
+  import DmdParseFailedOptions from "$lib/components/dmd/DmdParseFailedOptions.svelte";
 
   /**
    * @type {DMDTask} The dmdtask being displayed by the page.
@@ -78,9 +80,11 @@
   {:else if isUpdatingDMDTask(dmdTask)}
     <DmdUpdateProgress bind:dmdTask />
     <DmdItemsTable bind:dmdTask />
-  {:else if isParsedDMDTask(dmdTask)}
+  {:else if isParseSucceededDMDTask(dmdTask)}
     <DmdUpdateOptions bind:dmdTask bind:lookupResultsMap />
     <DmdItemsTable bind:dmdTask bind:lookupResultsMap />
+  {:else if isParseFailedDMDTask(dmdTask)}
+    <DmdParseFailedOptions bind:dmdTask />
   {:else if isParsingDMDTask(dmdTask)}
     <DmdParseTracker bind:dmdTask />
   {:else}

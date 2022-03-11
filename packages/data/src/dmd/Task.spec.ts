@@ -7,13 +7,14 @@ import {
   UpdateFailedDMDTask,
   UpdateSucceededDMDTask,
   UpdatingDMDTask,
-  ParsedDMDTask,
+  ParseSucceededDMDTask,
 } from "./Task.js";
 
 const { isValid: isValidParsing, isInvalid: isInvalidParsing } =
   tester(ParsingDMDTask);
-const { isValid: isValidParsed, isInvalid: isInvalidParsed } =
-  tester(ParsedDMDTask);
+const { isValid: isValidParsed, isInvalid: isInvalidParsed } = tester(
+  ParseSucceededDMDTask
+);
 const { isValid: isValidUpdating, isInvalid: isInvalidUpdating } =
   tester(UpdatingDMDTask);
 const { isValid: isValidFailed } = tester(UpdateFailedDMDTask);
@@ -71,7 +72,7 @@ test(
   goodParsing
 );
 
-const goodValidated: ParsedDMDTask = {
+const goodValidated: ParseSucceededDMDTask = {
   ...goodParsing,
   process: {
     requestDate: then,
@@ -95,13 +96,13 @@ const goodValidated: ParsedDMDTask = {
 };
 
 test(
-  "ParsedDMDTask schema parses a valid object.",
+  "ParseSucceededDMDTask schema parses a valid object.",
   isValidParsed,
   goodValidated
 );
 
 test(
-  "ParsedDMDTask schema does not parse as Parsing.",
+  "ParseSucceededDMDTask schema does not parse as Parsing.",
   isInvalidParsing,
   goodValidated
 );
