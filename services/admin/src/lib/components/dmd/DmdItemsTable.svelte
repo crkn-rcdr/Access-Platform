@@ -75,6 +75,7 @@
 
   function handlePreviewItemPressed(index: number, item: ItemProcessRecord) {
     openPreviewModal = true;
+    previewingDmdTaskId = dmdTask.id;
     previewItemIndex = index;
     if (item.message) previewNotificationMsg = item.message;
     previewNotificationStatus = item.parsed ? "warn" : "fail";
