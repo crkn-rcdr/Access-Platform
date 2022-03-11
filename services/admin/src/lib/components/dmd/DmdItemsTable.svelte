@@ -92,10 +92,8 @@
   }
 
   function setItemSelectedFromSearchResult() {
-    console.log("setItemSelectedFromSearchResult");
     for (const item of dmdTask.items) {
       item.shouldStore = lookupResultsMap[item.id] && item.shouldStore;
-      console.log(item.shouldStore);
     }
     dmdTask = dmdTask;
     checkIfAllItemsSelected();
