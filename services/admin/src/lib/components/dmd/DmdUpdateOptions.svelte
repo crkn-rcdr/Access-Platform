@@ -58,7 +58,7 @@ This component allows the user to update the dmd tasks items in an access platfo
       destination,
       items: dmdTask.items
         .filter((item) => item.shouldStore)
-        .map((item) => item.id),
+        .map((item) => item.id.replace(`${depositor.prefix}.`, "")),
       user: $session.user,
     });
     if (result) window.location.reload();
