@@ -1,5 +1,5 @@
 {
-  "_id": "validated",
+  "_id": "parsingSucceededTest",
   "updated": 1631200365.22,
   "process": {
     "requestDate": 1631199874.161,
@@ -11,7 +11,7 @@
     "name": "Brittny Lapierre",
     "email": "blapierre@crkn.ca"
   },
-  "fileName": "validated.mrc",
+  "fileName": "parsingSucceededTest.mrc",
   "format": "marc490",
   "items": [
     {
