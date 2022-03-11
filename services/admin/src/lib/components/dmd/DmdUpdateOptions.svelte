@@ -56,6 +56,7 @@ This component allows the user to update the dmd tasks items in an access platfo
     const result = await $session.lapin.mutation("dmdTask.store", {
       task: dmdTask.id,
       destination,
+      prefix: depositor.prefix,
       items: dmdTask.items
         .filter((item) => item.shouldStore)
         .map((item) => item.id.replace(`${depositor.prefix}.`, "")),

@@ -19,6 +19,7 @@ const FetchInput = z.object({
 const StoreInput = z.object({
   task: z.string(), // dmdtask uuid
   user: User,
+  prefix: z.string(),
   items: z.array(Slug),
   destination: z.enum(["access", "preservation"]),
 });

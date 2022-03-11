@@ -63,21 +63,27 @@ export class DMDTaskHandler extends DatabaseHandler<DMDTask> {
     user: User;
     /** Descriptive metadata task id */
     task: string;
+    /** The prefix of the items */
+    prefix: string;
     /** Items to enable storage on */
     items: Slug[];
     /** Destination for storage request */
     destination: "access" | "preservation";
   }) {
-    const { user, task, items, destination } = args;
+    const { user, task, items, destination, prefix } = args;
 
     const dmdTask = await this.get(task);
 
     if ("items" in dmdTask) {
       for (let item of dmdTask.items) {
-        if (item.id && items.includes(item.id)) {
-          item["shouldStore"] = true;
-          item["destination"] = destination;
-        } else item["shouldStore"] = false;
+        if (item.id) {
+          item["shouldStore"] = items.includes(item.id);
+          item["id"] =
+            prefix === "none" ? item["id"] : `${prefix}.${item["id"]}`;
+        } else {
+          item["shouldStore"] = false;
+        }
+        item["destination"] = destination;
       }
 
       await this.update({
