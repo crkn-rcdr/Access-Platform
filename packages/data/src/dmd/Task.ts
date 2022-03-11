@@ -228,6 +228,7 @@ export const DMDTask = z.union([
   UpdateFailedDMDTask,
   UpdatingDMDTask,
   ParseSucceededDMDTask,
+  ParseFailedDMDTask,
   ParsingDMDTask,
 ]);
 
