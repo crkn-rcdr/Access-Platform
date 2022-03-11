@@ -22,6 +22,7 @@ This component allows the user to update the dmd tasks items in an access platfo
   import type { Session } from "$lib/types";
   import PrefixSelector from "$lib/components/access-objects/PrefixSelector.svelte";
   import type { ParseSucceededDMDTask } from "@crkn-rcdr/access-data";
+  import Loading from "../shared/Loading.svelte";
 
   /**
    *  @type { string } The 'id' of the DMDTask being processed.
@@ -42,6 +43,7 @@ This component allows the user to update the dmd tasks items in an access platfo
 
   let disabled: boolean = true;
   let destination: "access" | "preservation";
+  let lookingUp: boolean = false;
 
   /**
    * Passes on the work of updating the metadata of the items in the task to the dmdTasksStore
@@ -79,9 +81,10 @@ This component allows the user to update the dmd tasks items in an access platfo
     }
   }
 
-  function onChange(event) {
+  async function onChange(event) {
     destination = event.currentTarget.value;
     setDestinationForItems();
+    await lookupItems();
   }
 
   /**
@@ -112,22 +115,37 @@ This component allows the user to update the dmd tasks items in an access platfo
   }
 
   async function lookupItems() {
+    lookingUp = true;
+    lookupResultsMap = {};
     // Only grab and update 100 items, max, at a time
     const chunks = chunkArray(dmdTask.items, 1000);
-    console.log("look at me");
     // Loop through the max 100 item long lists
     for (const chunk of chunks) {
       const slugBatch = chunk.map((item) => item.id);
       try {
-        const response = await $session.lapin.mutation(
-          `slug.resolveMany`,
-          slugBatch
-        );
-        for (const result of response) {
-          if (result.length === 2) {
-            const slug = result[0];
-            const info = result[1];
-            lookupResultsMap[slug] = info.found;
+        if (destination === "access") {
+          const response = await $session.lapin.mutation(
+            `slug.resolveMany`,
+            slugBatch
+          );
+          for (const result of response) {
+            if (result.length === 2) {
+              const slug = result[0];
+              const info = result[1];
+              lookupResultsMap[slug] = info.found;
+            }
+          }
+        } else if (destination === "preservation") {
+          const response = await $session.lapin.mutation(
+            `wipmeta.resolveMany`,
+            slugBatch
+          );
+          for (const result of response) {
+            if (result.length === 2) {
+              const slug = result[0];
+              const info = result[1];
+              lookupResultsMap[slug] = info.found;
+            }
           }
         }
       } catch (e) {
@@ -138,12 +156,19 @@ This component allows the user to update the dmd tasks items in an access platfo
           : "Code 9. Please contact the platform team for assistance. ";*/
       }
     }
+
+    for (const item of dmdTask.items) {
+      item.shouldStore = lookupResultsMap[item.id] ? true : false;
+    }
+
+    dmdTask = dmdTask;
+    lookingUp = false;
   }
 
   async function handleDepositorChanged(e) {
     depositor = e.detail;
     setItemIds();
-    await lookupItems();
+    if (destination) await lookupItems();
     prevPrefix = depositor.prefix;
   }
 </script>
@@ -167,24 +192,38 @@ This component allows the user to update the dmd tasks items in an access platfo
     class="update-wrap auto-align auto-align__a-center auto-align__j-between"
   >
     <PrefixSelector {depositor} on:depositorSelected={handleDepositorChanged} />
-    <label>
-      <input
-        checked={destination === "access"}
-        on:change={onChange}
-        type="radio"
-        name="amount"
-        value="access"
-      /> Load into New Access
-    </label>
-    <label>
-      <input
-        checked={destination === "preservation"}
-        on:change={onChange}
-        type="radio"
-        name="amount"
-        value="preservation"
-      /> Load for Saving to Preservation
-    </label>
+    <span>
+      {#if destination === "preservation" || !lookingUp}
+        <input
+          checked={destination === "access"}
+          on:change={onChange}
+          type="radio"
+          name="amount"
+          value="access"
+        />
+      {/if}
+
+      {#if destination === "access" && lookingUp}
+        <Loading size="sm" backgroundType="gradient" />
+      {/if}
+
+      Load into Access
+    </span>
+    <span>
+      {#if destination === "access" || !lookingUp}
+        <input
+          checked={destination === "preservation"}
+          on:change={onChange}
+          type="radio"
+          name="amount"
+          value="preservation"
+        />
+      {/if}
+      {#if destination === "preservation" && lookingUp}
+        <Loading size="sm" backgroundType="gradient" />
+      {/if}
+      Load into OAIS Packaging Database
+    </span>
     <button class="primary" {disabled} on:click={handleUpdatePressed}>
       Load Metadata
     </button>
@@ -207,7 +246,7 @@ This component allows the user to update the dmd tasks items in an access platfo
   :global(.update-wrap > div) {
     flex: 3;
   }
-  label:first-child {
+  span:first-child {
     margin-right: var(--margin-sm);
   }
 </style>
