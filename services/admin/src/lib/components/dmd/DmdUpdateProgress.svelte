@@ -3,6 +3,7 @@
   import timer from "$lib/stores/timer";
   import type { UpdatingDMDTask } from "@crkn-rcdr/access-data";
   import { onDestroy, onMount } from "svelte";
+  import NotificationBar from "../shared/NotificationBar.svelte";
   import ProgressBar from "../shared/ProgressBar.svelte";
 
   /**
@@ -25,7 +26,11 @@
       }
     }
     if (numComplete !== 0)
-      progress = Math.round((numComplete / dmdTask.items.length) * 100);
+      progress = Math.round(
+        (numComplete /
+          dmdTask.items.filter((item) => item.shouldStore).length) *
+          100
+      );
     else progress = 0;
   }
 
@@ -47,11 +52,16 @@
   {#if dmdTask?.fileName}
     <h5>{dmdTask.fileName}</h5>
   {/if}
-  <p>Loading Metadata</p>
+
+  <NotificationBar
+    status="secondary"
+    message="Please wait while the metadata is loaded..."
+  />
 
   <ProgressBar
     {progress}
     progressText={progress === 100 ? "done!" : "loaded..."}
   />
+  <br />
   <br />
 {/if}

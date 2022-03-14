@@ -66,7 +66,6 @@ This component allows the user to update the dmd tasks items in an access platfo
         .map((item) => item.id.replace(`${depositor.prefix}.`, "")),
       user: $session.user,
     });
-    sendingStoreRequest = false;
     if (result) window.location.reload();
     sendingStoreRequest = false;
   }
@@ -94,24 +93,6 @@ This component allows the user to update the dmd tasks items in an access platfo
     await lookupItems();
   }
 
-  /**
-   * Whenever a prefix is changed, do a bulk lookup and change the "id" column to show the new ID. I suggest something like "green" for found and "red" for not found, with the checkbox set accordingly. This makes it nice and visible for users as they change the prefix. Avoid ZOD messages entirely for anything relating to IDs as all you care about is if they exist in the appropriate database or not (ZOD errors probably should never be shown to non-developers, as it's debugging output).
-   */
-
-  function chunkArray(array: any[], n: number) {
-    if (!array || !n) return array;
-
-    let length = array.length;
-    let slicePoint = 0;
-    let ret = [];
-
-    while (slicePoint < length) {
-      ret.push(array.slice(slicePoint, slicePoint + n));
-      slicePoint += n;
-    }
-    return ret;
-  }
-
   function setItemIds() {
     for (let item of dmdTask.items) {
       item.id = `${depositor.prefix !== "none" ? depositor.prefix + "." : ""}${
@@ -124,10 +105,6 @@ This component allows the user to update the dmd tasks items in an access platfo
   async function lookupItems() {
     lookingUp = true;
     lookupResultsMap = {};
-    // Only grab and update 100 items, max, at a time
-    //const chunks = chunkArray(dmdTask.items, 1000);
-    // Loop through the max 100 item long lists
-    //for (const chunk of chunks) {
     const slugBatch = dmdTask.items.map((item) => item.id);
     try {
       if (destination === "access") {
@@ -162,7 +139,6 @@ This component allows the user to update the dmd tasks items in an access platfo
           ? "Code 8. Please contact the platform team for assistance."
           : "Code 9. Please contact the platform team for assistance. ";*/
     }
-    // }
 
     for (const item of dmdTask.items) {
       item.shouldStore = lookupResultsMap[item.id] ? true : false;
@@ -227,15 +203,16 @@ This component allows the user to update the dmd tasks items in an access platfo
       {/if}
       Load into OAIS Packaging Database
     </span>
-    <LoadingButton
-      buttonClass="primary"
-      on:clicked={handleUpdatePressed}
-      showLoader={sendingStoreRequest}
-      {disabled}
-    >
-      <span slot="content"> Load Metadata </span>
-    </LoadingButton>
-    <!--"Try Processing Metadata File Again"-->
+    <span>
+      <LoadingButton
+        buttonClass="primary"
+        on:clicked={handleUpdatePressed}
+        showLoader={sendingStoreRequest}
+        {disabled}
+      >
+        <span slot="content"> Load Metadata </span>
+      </LoadingButton>
+    </span>
   </div>
 
   <br /><br />

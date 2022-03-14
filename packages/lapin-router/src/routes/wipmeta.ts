@@ -18,9 +18,8 @@ export const wipmetaRouter = createRouter()
     input: SlugArray.parse,
     async resolve({ input, ctx }) {
       const list = await ctx.couch.wipmeta.bulkLookup(input);
-      return list.rows.map((row: any) => {
-        console.log(row);
-        return row.key;
-      });
+      return list.rows
+        .filter((row: any) => "id" in row)
+        .map((row: any) => row.key);
     },
   });
