@@ -280,7 +280,6 @@ export class DatabaseHandler<T extends Document> {
     const res = await this.db.fetch({
       keys: ids,
     });
-    console.log(res);
     return res;
   }
 

@@ -24,6 +24,7 @@ This component allows the user to update the dmd tasks items in an access platfo
   import type { ParseSucceededDMDTask } from "@crkn-rcdr/access-data";
   import Loading from "../shared/Loading.svelte";
   import NotificationBar from "../shared/NotificationBar.svelte";
+  import LoadingButton from "../shared/LoadingButton.svelte";
 
   /**
    *  @type { string } The 'id' of the DMDTask being processed.
@@ -45,6 +46,7 @@ This component allows the user to update the dmd tasks items in an access platfo
   let disabled: boolean = true;
   let destination: "access" | "preservation";
   let lookingUp: boolean = false;
+  let sendingStoreRequest: boolean = false;
 
   /**
    * Passes on the work of updating the metadata of the items in the task to the dmdTasksStore
@@ -54,6 +56,7 @@ This component allows the user to update the dmd tasks items in an access platfo
     // save item info, call proccess on dmdtask
     // should update item ids
     // destination
+    sendingStoreRequest = true;
     const result = await $session.lapin.mutation("dmdTask.store", {
       task: dmdTask.id,
       destination,
@@ -63,7 +66,9 @@ This component allows the user to update the dmd tasks items in an access platfo
         .map((item) => item.id.replace(`${depositor.prefix}.`, "")),
       user: $session.user,
     });
+    sendingStoreRequest = false;
     if (result) window.location.reload();
+    sendingStoreRequest = false;
   }
 
   $: {
@@ -139,14 +144,14 @@ This component allows the user to update the dmd tasks items in an access platfo
         }
       } else if (destination === "preservation") {
         const response = await $session.lapin.mutation(
-          `wipmeta.resolveMany`,
+          `wipmeta.bulkLookup`,
           slugBatch
         );
-        for (const result of response) {
-          if (result.length === 2) {
-            const slug = result[0];
-            const info = result[1];
-            lookupResultsMap[slug] = info.found;
+        for (const item of dmdTask.items) {
+          if (response.includes(item.id)) {
+            lookupResultsMap[item.id] = true;
+          } else {
+            lookupResultsMap[item.id] = false;
           }
         }
       }
@@ -222,9 +227,14 @@ This component allows the user to update the dmd tasks items in an access platfo
       {/if}
       Load into OAIS Packaging Database
     </span>
-    <button class="primary" {disabled} on:click={handleUpdatePressed}>
-      Load Metadata
-    </button>
+    <LoadingButton
+      buttonClass="primary"
+      on:clicked={handleUpdatePressed}
+      showLoader={sendingStoreRequest}
+      {disabled}
+    >
+      <span slot="content"> Load Metadata </span>
+    </LoadingButton>
     <!--"Try Processing Metadata File Again"-->
   </div>
 

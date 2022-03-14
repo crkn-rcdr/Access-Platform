@@ -78,12 +78,11 @@ export class DMDTaskHandler extends DatabaseHandler<DMDTask> {
       for (let item of dmdTask.items) {
         if (item.id) {
           item["shouldStore"] = items.includes(item.id);
-          item["id"] =
-            prefix === "none" ? item["id"] : `${prefix}.${item["id"]}`;
         } else {
           item["shouldStore"] = false;
         }
         item["destination"] = destination;
+        item["id"] = prefix === "none" ? item["id"] : `${prefix}.${item["id"]}`;
       }
 
       await this.update({
