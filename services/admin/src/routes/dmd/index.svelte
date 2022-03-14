@@ -252,7 +252,7 @@
 
     <ExpansionList
       showMessage={updated?.length === 0}
-      message="No tasks have been loaded."
+      message="No tasks have been completed."
     >
       <span slot="title">Load Completed ({updated.length})</span>
       {#each updated as task}
