@@ -67,7 +67,6 @@ This component allows the user to update the dmd tasks items in an access platfo
       user: $session.user,
     });
     if (result) window.location.reload();
-    sendingStoreRequest = false;
   }
 
   $: {
