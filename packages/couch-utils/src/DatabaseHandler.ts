@@ -276,6 +276,14 @@ export class DatabaseHandler<T extends Document> {
     });
   }
 
+  async bulkLookup(ids: any[]): Promise<any> {
+    const res = await this.db.fetch({
+      keys: ids,
+    });
+    console.log(res);
+    return res;
+  }
+
   /**
    * Queries the `_all_docs` view for this database.
    * @param options View query options.

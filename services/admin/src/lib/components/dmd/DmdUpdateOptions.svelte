@@ -23,6 +23,7 @@ This component allows the user to update the dmd tasks items in an access platfo
   import PrefixSelector from "$lib/components/access-objects/PrefixSelector.svelte";
   import type { ParseSucceededDMDTask } from "@crkn-rcdr/access-data";
   import Loading from "../shared/Loading.svelte";
+  import NotificationBar from "../shared/NotificationBar.svelte";
 
   /**
    *  @type { string } The 'id' of the DMDTask being processed.
@@ -119,44 +120,44 @@ This component allows the user to update the dmd tasks items in an access platfo
     lookingUp = true;
     lookupResultsMap = {};
     // Only grab and update 100 items, max, at a time
-    const chunks = chunkArray(dmdTask.items, 1000);
+    //const chunks = chunkArray(dmdTask.items, 1000);
     // Loop through the max 100 item long lists
-    for (const chunk of chunks) {
-      const slugBatch = chunk.map((item) => item.id);
-      try {
-        if (destination === "access") {
-          const response = await $session.lapin.mutation(
-            `slug.resolveMany`,
-            slugBatch
-          );
-          for (const result of response) {
-            if (result.length === 2) {
-              const slug = result[0];
-              const info = result[1];
-              lookupResultsMap[slug] = info.found;
-            }
-          }
-        } else if (destination === "preservation") {
-          const response = await $session.lapin.mutation(
-            `wipmeta.resolveMany`,
-            slugBatch
-          );
-          for (const result of response) {
-            if (result.length === 2) {
-              const slug = result[0];
-              const info = result[1];
-              lookupResultsMap[slug] = info.found;
-            }
+    //for (const chunk of chunks) {
+    const slugBatch = dmdTask.items.map((item) => item.id);
+    try {
+      if (destination === "access") {
+        const response = await $session.lapin.mutation(
+          `slug.bulkLookup`,
+          slugBatch
+        );
+        for (const item of dmdTask.items) {
+          if (response.includes(item.id)) {
+            lookupResultsMap[item.id] = true;
+          } else {
+            lookupResultsMap[item.id] = false;
           }
         }
-      } catch (e) {
-        console.log(e?.message);
-        for (let id of slugBatch) lookupResultsMap[id] = false;
-        /*error = e?.message.includes(`"path:"`)
+      } else if (destination === "preservation") {
+        const response = await $session.lapin.mutation(
+          `wipmeta.resolveMany`,
+          slugBatch
+        );
+        for (const result of response) {
+          if (result.length === 2) {
+            const slug = result[0];
+            const info = result[1];
+            lookupResultsMap[slug] = info.found;
+          }
+        }
+      }
+    } catch (e) {
+      console.log(e?.message);
+      for (let id of slugBatch) lookupResultsMap[id] = false;
+      /*error = e?.message.includes(`"path:"`)
           ? "Code 8. Please contact the platform team for assistance."
           : "Code 9. Please contact the platform team for assistance. ";*/
-      }
     }
+    // }
 
     for (const item of dmdTask.items) {
       item.shouldStore = lookupResultsMap[item.id] ? true : false;
@@ -178,15 +179,11 @@ This component allows the user to update the dmd tasks items in an access platfo
   {#if dmdTask?.fileName}
     <h5>{dmdTask.fileName}</h5>
   {/if}
-  <p>
-    Please take a moment to preview the metadata for each item in the table.
-    Then, if your metadata file does not already include prefixes on the ids,
-    select a prefix option and choose where to load the metadata to. Then,
-    select either access or preservation as the destination for the metadata
-    update. This will activate the 'Process Metadata File' button. You can use
-    the checkboxes in the table to control which items the metadata will be
-    applied to when pressing the button.
-  </p>
+  <NotificationBar
+    status="secondary"
+    message="To confirm the metadata looks correct, click the 'Preview Metadata' buttons in the table below. Then, fill out the form and press 'Load Metadata' to set each selected item's metadata."
+  />
+  <!--p>Review Metadata</p-->
   <br />
 
   <div

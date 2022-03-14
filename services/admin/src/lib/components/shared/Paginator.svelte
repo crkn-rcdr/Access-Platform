@@ -65,9 +65,10 @@ A card component that optionally allows for user selection
    * Dispatches the pageChange event
    * @returns void
    */
-  function onChange(event, page) {
+  function onChange(event, newPage) {
+    page = newPage + 1;
     dispatch("change", {
-      page: page + 1,
+      page,
       pageSize,
     });
   }

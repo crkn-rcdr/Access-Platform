@@ -12,6 +12,6 @@
   {#if dmdTask?.fileName}
     <h5>{dmdTask.fileName}</h5>
   {/if}
-
+  <p>Invalid Metadata File</p>
   <NotificationBar message={dmdTask.process.message} status="fail" />
 {/if}

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { paginate } from "svelte-paginate";
   import {
     isParseSucceededDMDTask,
     isParseFailedDMDTask,
@@ -16,6 +17,7 @@
   import XmlViewer from "$lib/components/shared/XmlViewer.svelte";
   import DmdItemMetadataPreview from "$lib/components/dmd/DmdItemMetadataPreview.svelte";
   import type { ItemProcessRecord } from "@crkn-rcdr/access-data/dist/esm/dmd/Task";
+  import Paginator from "../shared/Paginator.svelte";
 
   /**
    * @type { UpdateSucceededDMDTask | ParseSucceededDMDTask | UpdatingDMDTask } The dmd task being displayed
@@ -111,6 +113,10 @@
     if (lookupResultsMap && Object.keys(lookupResultsMap).length)
       setItemSelectedFromSearchResult();
   }
+
+  let currentPage = 1;
+  let pageSize = 50;
+  $: paginatedItems = paginate({ items: dmdTask.items, pageSize, currentPage });
 </script>
 
 {#if dmdTask}
@@ -137,7 +143,7 @@
       </tr>
     </thead>
     <tbody>
-      {#each dmdTask.items as item, i}
+      {#each paginatedItems as item, i}
         <tr>
           {#if state !== "updated"}
             <td>
@@ -231,6 +237,11 @@
       {/each}
     </tbody>
   </table>
+  <Paginator
+    bind:page={currentPage}
+    bind:pageSize
+    count={dmdTask.items.length}
+  />
 {:else}
   No items.
 {/if}

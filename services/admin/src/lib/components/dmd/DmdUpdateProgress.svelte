@@ -47,6 +47,7 @@
   {#if dmdTask?.fileName}
     <h5>{dmdTask.fileName}</h5>
   {/if}
+  <p>Loading Metadata</p>
 
   <ProgressBar
     {progress}
