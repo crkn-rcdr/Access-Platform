@@ -75,7 +75,7 @@
   />
   <br />
 
-  <div>
+  <!--div>
     <LoadingButton
       buttonClass="secondary"
       on:clicked={handlePausePressed}
@@ -83,7 +83,7 @@
     >
       <span slot="content">Pause Metadata Load</span>
     </LoadingButton>
-  </div>
+  </div-->
 {/if}
 
 <style>
