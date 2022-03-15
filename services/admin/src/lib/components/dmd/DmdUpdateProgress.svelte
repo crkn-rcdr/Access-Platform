@@ -3,6 +3,7 @@
   import timer from "$lib/stores/timer";
   import type { UpdatingDMDTask } from "@crkn-rcdr/access-data";
   import { onDestroy, onMount } from "svelte";
+  import LoadingButton from "../shared/LoadingButton.svelte";
   import NotificationBar from "../shared/NotificationBar.svelte";
   import ProgressBar from "../shared/ProgressBar.svelte";
 
@@ -15,6 +16,7 @@
   const interval = timer({ interval: 30000 }); // 2x per min
 
   let progress = 0;
+  let sendingPauseRequest = false;
 
   // every so often poll dmdtask
   // track status each item update progress
@@ -32,6 +34,15 @@
           100
       );
     else progress = 0;
+  }
+
+  async function handlePausePressed() {
+    sendingPauseRequest = true;
+    await $session.lapin.mutation("dmdTask.pauseStorage", {
+      task: dmdTask.id,
+      user: $session.user,
+    });
+    window.location.reload();
   }
 
   onMount(() => {
@@ -63,5 +74,20 @@
     progressText={progress === 100 ? "done!" : "loaded..."}
   />
   <br />
-  <br />
+
+  <div>
+    <LoadingButton
+      buttonClass="secondary"
+      on:clicked={handlePausePressed}
+      showLoader={sendingPauseRequest}
+    >
+      <span slot="content">Pause Metadata Load</span>
+    </LoadingButton>
+  </div>
 {/if}
+
+<style>
+  div {
+    margin-bottom: 1rem;
+  }
+</style>

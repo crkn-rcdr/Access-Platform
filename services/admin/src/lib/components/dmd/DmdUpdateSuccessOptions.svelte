@@ -6,6 +6,7 @@
   import type { UpdateSucceededDMDTask } from "@crkn-rcdr/access-data";
   import { onMount } from "svelte";
   import NotificationBar from "../shared/NotificationBar.svelte";
+  import LoadingButton from "../shared/LoadingButton.svelte";
 
   /**
    *  @type { string } The 'id' of the DMDTask being processed.
@@ -18,9 +19,11 @@
   const { session } = getStores<Session>();
 
   let githubLink = "";
+  let sendingReProcessRequest = false;
 
   async function handleReProcessClicked() {
     // reset task to validated and refresh
+    sendingReProcessRequest = true;
     await $session.lapin.mutation("dmdTask.resetStorageResult", {
       task: dmdTask.id,
       user: $session.user,
@@ -66,7 +69,6 @@
   />
   <br />
   <NotificationBar message={dmdTask.process.message} status="warn" />
-  <br />
   <!-- if preservation update -->
   <!-- then show button to go to old tool-->
   {#if dmdTask.items?.length && dmdTask.items[0].destination === "preservation"}
@@ -82,13 +84,26 @@
         </span>
       </button>
     </a>
+
+    <br />
   {/if}
-  <button class="secondary" on:click={handleReProcessClicked}>
-    <span class="auto-align auto-align__a-center">
-      <span class="icon"><IoMdRefresh /></span>
-      Re-process File
-    </span>
-  </button>
-  <br />
-  <br />
+
+  <div class="button-wrap">
+    <LoadingButton
+      buttonClass="primary"
+      on:clicked={handleReProcessClicked}
+      showLoader={sendingReProcessRequest}
+    >
+      <span slot="content" class="auto-align auto-align__a-center">
+        <span class="icon"><IoMdRefresh /></span>
+        Re-process File
+      </span>
+    </LoadingButton>
+  </div>
 {/if}
+
+<style>
+  .button-wrap {
+    margin-bottom: 1rem;
+  }
+</style>

@@ -122,6 +122,16 @@ export const dmdTaskRouter = createRouter()
       }
     },
   })
+  .mutation("pauseStorage", {
+    input: ResetInput,
+    async resolve({ input, ctx }) {
+      try {
+        return await ctx.couch.dmdtask.pauseStorage(input);
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
   .mutation("updateStorageResults", {
     input: z.object({
       id: z.string(), // dmdtask uuid

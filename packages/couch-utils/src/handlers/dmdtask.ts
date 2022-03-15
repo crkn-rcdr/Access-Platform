@@ -146,4 +146,32 @@ export class DMDTaskHandler extends DatabaseHandler<DMDTask> {
       });
     }
   }
+
+  async pauseStorage(args: {
+    /** User who triggered storage */
+    user: User;
+    /** Descriptive metadata task id */
+    task: string;
+  }) {
+    const { user, task } = args;
+
+    const now = new Date().toISOString().replace(/.\d+Z$/g, "Z");
+
+    await this.update({
+      ddoc: "access",
+      name: "editObject",
+      docId: task,
+      body: {
+        user,
+        data: {
+          process: {
+            requestDate: now,
+            processDate: now,
+            message: "",
+            succeeded: true,
+          },
+        },
+      },
+    });
+  }
 }
