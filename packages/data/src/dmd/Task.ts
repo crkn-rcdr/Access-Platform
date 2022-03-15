@@ -145,9 +145,14 @@ export const ParseSucceededDMDTask = ParsingDMDTask.merge(
 );
 
 const ParseSucceededDMDTaskListCheck = ParseSucceededDMDTask.refine((task) => {
-  task.items?.[0] &&
-    !("destination" in task.items[0]) &&
-    !("stored" in task.items[0]);
+  let firstItem;
+  for (const item of task.items) {
+    if (item.shouldStore) {
+      firstItem = item;
+      break;
+    }
+  }
+  return firstItem && !("destination" in firstItem) && !("stored" in firstItem);
 }, "A validated task has items without a destination property and without a stored property.");
 
 export type ParseSucceededDMDTask = z.infer<
@@ -167,13 +172,16 @@ export const UpdatingDMDTask = ParseSucceededDMDTask.merge(
   })
 );
 
-const UpdatingDMDTaskListCheck = UpdatingDMDTask.refine(
-  (task) =>
-    task.items?.[0] &&
-    "destination" in task.items[0] &&
-    !("stored" in task.items[0]),
-  "A queued task has items with a destination property but without a stored property."
-);
+const UpdatingDMDTaskListCheck = UpdatingDMDTask.refine((task) => {
+  let firstItem;
+  for (const item of task.items) {
+    if (item.shouldStore) {
+      firstItem = item;
+      break;
+    }
+  }
+  return firstItem && "destination" in firstItem && !("stored" in firstItem);
+}, "A queued task has items with a destination property but without a stored property.");
 
 export type UpdatingDMDTask = z.infer<typeof UpdatingDMDTaskListCheck>;
 
@@ -188,13 +196,31 @@ export const UpdateFailedDMDTask = UpdatingDMDTask.merge(
      */
     process: FailedProcessResult,
   })
-).refine(
-  (task) =>
-    task.items?.[0] &&
-    "destination" in task.items[0] &&
-    "stored" in task.items[0],
-  "A failed task has items with a destination property and a stored property."
-);
+).refine((task) => {
+  let firstItem;
+  for (const item of task.items) {
+    if (item.shouldStore) {
+      firstItem = item;
+      break;
+    }
+  }
+
+  let lastItem;
+  for (let i = task.items.length - 1; i >= 0; i--) {
+    if (task.items?.[i]?.shouldStore) {
+      lastItem = task.items[i];
+      break;
+    }
+  }
+
+  return (
+    firstItem &&
+    "destination" in firstItem &&
+    "stored" in firstItem &&
+    lastItem &&
+    "stored" in lastItem
+  );
+}, "A failed task has items with a destination property and a stored property.");
 export type UpdateFailedDMDTask = z.infer<typeof UpdateFailedDMDTask>;
 
 /**
@@ -208,13 +234,31 @@ export const UpdateSucceededDMDTask = UpdatingDMDTask.merge(
      */
     process: SucceededProcessResult,
   })
-).refine(
-  (task) =>
-    task.items?.[0] &&
-    "destination" in task.items[0] &&
-    "stored" in task.items[0],
-  "A succeeded task has items with a destination property and a stored property."
-);
+).refine((task) => {
+  let firstItem;
+  for (const item of task.items) {
+    if (item.shouldStore) {
+      firstItem = item;
+      break;
+    }
+  }
+
+  let lastItem;
+  for (let i = task.items.length - 1; i >= 0; i--) {
+    if (task.items?.[i]?.shouldStore) {
+      lastItem = task.items[i];
+      break;
+    }
+  }
+
+  return (
+    firstItem &&
+    "destination" in firstItem &&
+    "stored" in firstItem &&
+    lastItem &&
+    "stored" in lastItem
+  );
+}, "A succeeded task has items with a destination property and a stored property.");
 export type UpdateSucceededDMDTask = z.infer<typeof UpdateSucceededDMDTask>;
 
 /**
@@ -228,14 +272,31 @@ export const UpdatePausedDMDTask = UpdatingDMDTask.merge(
      */
     process: SucceededProcessResult,
   })
-).refine(
-  (task) =>
-    task.items &&
-    task.items[0]?.["destination"] &&
-    task.items[0]?.["stored"] &&
-    !task.items[task.items.length - 1]?.["stored"],
-  "A paused update task has items with a destination property and some with a stored property, but not all."
-);
+).refine((task) => {
+  let firstItem;
+  for (const item of task.items) {
+    if (item.shouldStore) {
+      firstItem = item;
+      break;
+    }
+  }
+
+  let lastItem;
+  for (let i = task.items.length - 1; i >= 0; i--) {
+    if (task.items?.[i]?.shouldStore) {
+      lastItem = task.items[i];
+      break;
+    }
+  }
+
+  return (
+    firstItem &&
+    "destination" in firstItem &&
+    "stored" in firstItem &&
+    lastItem &&
+    !("stored" in lastItem)
+  );
+}, "A paused update task has items with a destination property and some with a stored property, but not all.");
 export type UpdatePausedDMDTask = z.infer<typeof UpdatePausedDMDTask>;
 
 /**

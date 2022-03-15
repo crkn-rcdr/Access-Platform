@@ -15,6 +15,7 @@
   "format": "marc490",
   "items": [
     {
+      "shouldStore": true,
       "output": "marc",
       "id": "8_06941",
       "message": "",
@@ -24,6 +25,7 @@
       "stored": true
     },
     {
+      "shouldStore": true,
       "output": "marc",
       "id": "8_06941_1",
       "message": "",
@@ -33,6 +35,7 @@
       "stored": true
     },
     {
+      "shouldStore": true,
       "output": "marc",
       "id": "8_06941_2",
       "message": "Store was a bit weird",

@@ -9,6 +9,7 @@ import {
   UpdatingDMDTask,
   ParseSucceededDMDTask,
   ParseFailedDMDTask,
+  UpdatePausedDMDTask,
 } from "./Task.js";
 
 const { isValid: isValidParsing, isInvalid: isInvalidParsing } =
@@ -24,6 +25,8 @@ const { isValid: isValidFailed } = tester(UpdateFailedDMDTask);
 const { isValid: isValidSucceeded, isInvalid: isInvalidSucceeded } = tester(
   UpdateSucceededDMDTask
 );
+const { isValid: isValidPaused, isInvalid: isInvalidPaused } =
+  tester(UpdatePausedDMDTask);
 
 const USER: User = { name: "User McGee", email: "mcgee@crkn.ca" };
 
@@ -188,6 +191,7 @@ const goodFailed: UpdateFailedDMDTask = {
   updated: now,
   items: [
     {
+      shouldStore: true,
       parsed: true,
       output: "issueinfo",
       id: "good.id",
@@ -197,6 +201,7 @@ const goodFailed: UpdateFailedDMDTask = {
       destination: "access",
     },
     {
+      shouldStore: true,
       parsed: false,
       stored: false,
       destination: "access",
@@ -217,6 +222,46 @@ test(
   goodFailed
 );
 
+const goodPaused: UpdatePausedDMDTask = {
+  ...goodFailed,
+  id: "processing-succeeded",
+  attachments: {
+    metadata: metadataAttachment,
+    "0.json": jsonAttachment,
+    "0.xml": xmlAttachment,
+  },
+  process: {
+    requestDate: then,
+    processDate: now,
+    succeeded: true,
+    message: "Good job, everyone.",
+  },
+  items: [
+    {
+      shouldStore: true,
+      parsed: true,
+      output: "issueinfo",
+      id: "good.id",
+      label: "nice label",
+      message: "Figured this one out",
+      stored: true,
+      destination: "access",
+    },
+    {
+      shouldStore: true,
+      parsed: false,
+      destination: "access",
+      message: "This one not so much.",
+    },
+  ],
+};
+
+test(
+  "UpdatePausedDMDTask schema parses a valid object",
+  isValidPaused,
+  goodPaused
+);
+
 const goodSucceeded: UpdateSucceededDMDTask = {
   ...goodFailed,
   id: "processing-succeeded",
@@ -233,6 +278,7 @@ const goodSucceeded: UpdateSucceededDMDTask = {
   },
   items: [
     {
+      shouldStore: true,
       parsed: true,
       output: "issueinfo",
       id: "good.id",
@@ -242,6 +288,7 @@ const goodSucceeded: UpdateSucceededDMDTask = {
       destination: "access",
     },
     {
+      shouldStore: true,
       parsed: false,
       stored: false,
       destination: "access",
@@ -259,6 +306,12 @@ test(
 test(
   "UpdateSucceededDMDTask schema does not parse as queued.",
   isInvalidUpdating,
+  goodSucceeded
+);
+
+test(
+  "UpdateSucceededDMDTask schema does not parse as a paused task.",
+  isInvalidPaused,
   goodSucceeded
 );
 
