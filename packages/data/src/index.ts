@@ -58,12 +58,14 @@ export {
   ParseSucceededDMDTask,
   ParseFailedDMDTask,
   ParsingDMDTask,
+  UpdatePausedDMDTask,
   isParsingDMDTask,
   isUpdateFailedDMDTask,
   isUpdateSucceededDMDTask,
   isUpdatingDMDTask,
   isParseSucceededDMDTask,
   isParseFailedDMDTask,
+  isUpdatePausedDMDTask,
 } from "./dmd/index.js";
 
 export { WipmetaObject } from "./wipmeta/index.js";

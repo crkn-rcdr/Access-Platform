@@ -6,6 +6,7 @@ import {
   UpdatingDMDTask,
   ParseSucceededDMDTask,
   ParsingDMDTask,
+  UpdatePausedDMDTask,
 } from "./Task.js";
 
 export const isUpdatingDMDTask = (obj: DMDTask): obj is UpdatingDMDTask => {
@@ -40,6 +41,12 @@ export const isUpdateSucceededDMDTask = (
   return UpdateSucceededDMDTask.safeParse(obj).success;
 };
 
+export const isUpdatePausedDMDTask = (
+  obj: DMDTask
+): obj is UpdatePausedDMDTask => {
+  return UpdatePausedDMDTask.safeParse(obj).success;
+};
+
 export {
   DMDTask,
   UpdateSucceededDMDTask,
@@ -48,5 +55,6 @@ export {
   ParseSucceededDMDTask,
   ParseFailedDMDTask,
   ParsingDMDTask,
+  UpdatePausedDMDTask,
 } from "./Task.js";
 export { DMDFORMATS, DMDFormat, DMDOUTPUTS, DMDOutput } from "./types.js";

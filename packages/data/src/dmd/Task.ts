@@ -3,7 +3,7 @@ import { z } from "zod";
 import { CouchAttachmentRecord } from "../util/CouchAttachmentRecord.js";
 import {
   ProcessRequest,
-  ProcessResult,
+  //ProcessResult,
   SucceededProcessResult,
   FailedProcessResult,
 } from "../util/ProcessUpdate.js";
@@ -110,6 +110,9 @@ export const ParsingDMDTask = z.object({
 
 export type ParsingDMDTask = z.infer<typeof ParsingDMDTask>;
 
+/**
+ * DMDTask whose metadata file could not be processed into individual records.
+ */
 export const ParseFailedDMDTask = ParsingDMDTask.merge(
   z.object({
     /**
@@ -122,7 +125,7 @@ export const ParseFailedDMDTask = ParsingDMDTask.merge(
 export type ParseFailedDMDTask = z.infer<typeof ParseFailedDMDTask>;
 
 /**
- * DMD Task is being added to the queue for storing each item's new metadata file.
+ * DMDTask whose metadata file could be processed into individual records.
  * (Process Metadata File Step: in-queue)
  */
 export const ParseSucceededDMDTask = ParsingDMDTask.merge(
@@ -130,7 +133,7 @@ export const ParseSucceededDMDTask = ParsingDMDTask.merge(
     /**
      * The items in the file have had their metadata processed.
      */
-    process: ProcessResult,
+    process: SucceededProcessResult,
 
     /**
      * List of individual items found in the metadata file.
@@ -175,7 +178,7 @@ const UpdatingDMDTaskListCheck = UpdatingDMDTask.refine(
 export type UpdatingDMDTask = z.infer<typeof UpdatingDMDTaskListCheck>;
 
 /**
- * DMDTask whose metadata file could not be processed into individual records.
+ * DMD Task process for storing each item's new metadata file failed.
  * (Final Results Step: fail)
  */
 export const UpdateFailedDMDTask = UpdatingDMDTask.merge(
@@ -195,7 +198,7 @@ export const UpdateFailedDMDTask = UpdatingDMDTask.merge(
 export type UpdateFailedDMDTask = z.infer<typeof UpdateFailedDMDTask>;
 
 /**
- * DMDTask whose metadata file could be processed into individual records.
+ * DMD Task process for storing each item's new metadata file succeeded.
  * (Final Results Step: warning/success)
  */
 export const UpdateSucceededDMDTask = UpdatingDMDTask.merge(
@@ -215,6 +218,27 @@ export const UpdateSucceededDMDTask = UpdatingDMDTask.merge(
 export type UpdateSucceededDMDTask = z.infer<typeof UpdateSucceededDMDTask>;
 
 /**
+ * DMD Task process for storing each item's new metadata file is paused.
+ * (Final Results Step: warning/success)
+ */
+export const UpdatePausedDMDTask = UpdatingDMDTask.merge(
+  z.object({
+    /**
+     * The items in the file have had their metadata stored.
+     */
+    process: SucceededProcessResult,
+  })
+).refine(
+  (task) =>
+    task.items &&
+    task.items[0]?.["destination"] &&
+    task.items[0]?.["stored"] &&
+    !task.items[task.items.length - 1]?.["stored"],
+  "A paused update task has items with a destination property and some with a stored property, but not all."
+);
+export type UpdatePausedDMDTask = z.infer<typeof UpdatePausedDMDTask>;
+
+/**
  * A descriptive metadata task (DMDTask) can be in four states:
  *
  * 1. Parsing
@@ -224,6 +248,7 @@ export type UpdateSucceededDMDTask = z.infer<typeof UpdateSucceededDMDTask>;
  *
  */
 export const DMDTask = z.union([
+  UpdatePausedDMDTask,
   UpdateSucceededDMDTask,
   UpdateFailedDMDTask,
   UpdatingDMDTask,

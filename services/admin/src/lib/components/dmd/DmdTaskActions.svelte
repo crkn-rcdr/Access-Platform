@@ -9,7 +9,7 @@
 
   export let task: DMDTask;
   export let stage: "parse" | "load" | "N/A";
-  export let status: "failed" | "waiting" | "succeeded" | "N/A";
+  export let status: "failed" | "waiting" | "succeeded" | "paused" | "N/A";
   export let isListLoading: boolean = false;
 
   /**
@@ -182,6 +182,10 @@
       {#if status === "waiting"}
         <a href={`/dmd/${task.id}`}>
           <button class="action secondary"> Track </button>
+        </a>
+      {:else if status === "paused"}
+        <a href={`/dmd/${task.id}`}>
+          <button class="action save"> Resume Load</button>
         </a>
       {:else if status === "failed"}
         <a href={`/dmd/${task.id}`}>

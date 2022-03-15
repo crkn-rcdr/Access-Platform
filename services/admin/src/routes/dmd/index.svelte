@@ -13,6 +13,7 @@
     ParsingDMDTask,
     DMDTask,
     ParseFailedDMDTask,
+    UpdatePausedDMDTask,
   } from "@crkn-rcdr/access-data";
 
   function getDMDTasks(taskList) {
@@ -20,6 +21,7 @@
     const parsing: ParsingDMDTask[] = [];
     const parsed: (ParseSucceededDMDTask | ParseFailedDMDTask)[] = [];
     const updating: UpdatingDMDTask[] = [];
+    const paused: UpdatePausedDMDTask[] = [];
     const updated: (UpdateSucceededDMDTask | UpdateFailedDMDTask)[] = [];
 
     // todo test
@@ -30,7 +32,9 @@
     });
 
     for (const task of list) {
-      if (UpdateSucceededDMDTask.safeParse(task).success) {
+      if (UpdatePausedDMDTask.safeParse(task).success) {
+        paused.push(task as UpdatePausedDMDTask);
+      } else if (UpdateSucceededDMDTask.safeParse(task).success) {
         updated.push(task as UpdateSucceededDMDTask);
       } else if (UpdateFailedDMDTask.safeParse(task).success) {
         updated.push(task as UpdateFailedDMDTask);
@@ -48,7 +52,7 @@
     }
 
     return {
-      props: { base, parsed, parsing, updating, updated },
+      props: { base, parsed, parsing, updating, updated, paused },
     };
   }
 
@@ -82,6 +86,7 @@
   export let parsing: ParsingDMDTask[] = [];
   export let parsed: (ParseSucceededDMDTask | ParseFailedDMDTask)[] = [];
   export let updating: UpdatingDMDTask[] = [];
+  export let paused: UpdatePausedDMDTask[] = [];
   export let updated: (UpdateSucceededDMDTask | UpdateFailedDMDTask)[] = [];
 
   let loading = true;
@@ -97,7 +102,7 @@
   async function getDMDTasksList() {
     let taskList = await $session.lapin.query("dmdTask.list");
     const results = getDMDTasks(taskList);
-    ({ base, parsed, parsing, updating, updated } = results.props);
+    ({ base, parsed, parsing, updating, updated, paused } = results.props);
     loading = false;
   }
 
@@ -247,6 +252,37 @@
             />
           </span>
         </ExpansionListItem>
+      {/each}
+    </ExpansionList>
+
+    <ExpansionList
+      showMessage={paused?.length === 0}
+      message="No tasks have been paused."
+    >
+      <span slot="title">Load Paused ({paused.length})</span>
+      {#each paused as task}
+        <ExpansionListItem status="paused">
+          <span slot="title">{task.fileName}</span>
+          <span slot="date"
+            >{new Date(task.updated)
+              .toLocaleString()
+              .replace(/:[0-9][0-9]$/, "")}</span
+          >
+          <span slot="details">{task.items.length} items</span>
+          <span slot="actions">
+            <DmdTaskActions
+              {task}
+              isListLoading={loading}
+              stage="load"
+              status={"paused"}
+              on:delete={getDMDTasksList}
+            />
+          </span>
+        </ExpansionListItem>
+        <ExpansionListMessage
+          status={task.process.succeeded ? "succeeded" : "failed"}
+          message={task.process.message}
+        />
       {/each}
     </ExpansionList>
 

@@ -10,25 +10,30 @@
     UpdateSucceededDMDTask,
     UpdatingDMDTask,
     UpdateFailedDMDTask,
+    isUpdatePausedDMDTask,
   } from "@crkn-rcdr/access-data";
   import Loading from "$lib/components/shared/Loading.svelte";
   import TiWarning from "svelte-icons/ti/TiWarning.svelte";
   import TiDelete from "svelte-icons/ti/TiDelete.svelte";
   import XmlViewer from "$lib/components/shared/XmlViewer.svelte";
   import DmdItemMetadataPreview from "$lib/components/dmd/DmdItemMetadataPreview.svelte";
-  import type { ItemProcessRecord } from "@crkn-rcdr/access-data/dist/esm/dmd/Task";
+  import type {
+    ItemProcessRecord,
+    UpdatePausedDMDTask,
+  } from "@crkn-rcdr/access-data/dist/esm/dmd/Task";
   import Paginator from "../shared/Paginator.svelte";
 
   /**
    * @type { UpdateSucceededDMDTask | ParseSucceededDMDTask | UpdatingDMDTask } The dmd task being displayed
    */
   export let dmdTask:
+    | UpdatePausedDMDTask
     | UpdateSucceededDMDTask
     | ParseSucceededDMDTask
     | UpdatingDMDTask;
   export let lookupResultsMap = {};
 
-  let state: "parsed" | "updating" | "updated" = "parsed";
+  let state: "parsed" | "updating" | "updated" | "paused" = "parsed";
 
   /**
    * @type { boolean } if the json preview modal should be displayed for an item in the table.
@@ -84,7 +89,12 @@
   }
 
   function setState() {
-    if (isUpdateSucceededDMDTask(dmdTask) || isUpdateFailedDMDTask(dmdTask)) {
+    if (isUpdatePausedDMDTask(dmdTask)) {
+      state = "paused";
+    } else if (
+      isUpdateSucceededDMDTask(dmdTask) ||
+      isUpdateFailedDMDTask(dmdTask)
+    ) {
       state = "updated";
     } else if (isUpdatingDMDTask(dmdTask)) {
       state = "updating";

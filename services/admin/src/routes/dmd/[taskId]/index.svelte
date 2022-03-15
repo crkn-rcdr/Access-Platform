@@ -46,6 +46,7 @@
     isUpdateFailedDMDTask,
     isUpdateSucceededDMDTask,
     isUpdatingDMDTask,
+    isUpdatePausedDMDTask,
   } from "@crkn-rcdr/access-data";
   import DmdItemsTable from "$lib/components/dmd/DmdItemsTable.svelte";
   import DmdUpdateSuccessOptions from "$lib/components/dmd/DmdUpdateSuccessOptions.svelte";
@@ -55,6 +56,7 @@
   import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
   import DmdParseTracker from "$lib/components/dmd/DmdParseTracker.svelte";
   import DmdParseFailedOptions from "$lib/components/dmd/DmdParseFailedOptions.svelte";
+  import DmdUpdatePausedOptions from "$lib/components/dmd/DmdUpdatePausedOptions.svelte";
 
   /**
    * @type {DMDTask} The dmdtask being displayed by the page.
@@ -71,6 +73,9 @@
     {error?.message}
   {:else if !dmdTask}
     Loading...
+  {:else if isUpdatePausedDMDTask(dmdTask)}
+    <DmdUpdatePausedOptions bind:dmdTask />
+    <DmdItemsTable bind:dmdTask />
   {:else if isUpdateSucceededDMDTask(dmdTask)}
     <DmdUpdateSuccessOptions bind:dmdTask />
     <DmdItemsTable bind:dmdTask />

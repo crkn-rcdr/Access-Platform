@@ -2,7 +2,13 @@
   import TiWarning from "svelte-icons/ti/TiWarning.svelte";
   import TiDelete from "svelte-icons/ti/TiDelete.svelte";
   import FaCheckCircle from "svelte-icons/fa/FaCheckCircle.svelte";
-  export let status: "waiting" | "failed" | "succeeded" | "warning" | "N/A";
+  export let status:
+    | "waiting"
+    | "failed"
+    | "succeeded"
+    | "paused"
+    | "warning"
+    | "N/A";
 </script>
 
 <div class="item-wrap auto-grid">
