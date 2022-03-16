@@ -46,6 +46,7 @@ This component allows the user to update the dmd tasks items in an access platfo
   let disabled: boolean = true;
   let destination: "access" | "preservation";
   let lookingUp: boolean = false;
+  let settingItemIds: boolean = false;
   let sendingStoreRequest: boolean = false;
 
   /**
@@ -93,12 +94,13 @@ This component allows the user to update the dmd tasks items in an access platfo
   }
 
   function setItemIds() {
+    settingItemIds = true;
     for (let item of dmdTask.items) {
       item.id = `${depositor.prefix !== "none" ? depositor.prefix + "." : ""}${
         prevPrefix ? item.id.replace(`${prevPrefix}.`, "") : item.id
       }`;
     }
-    dmdTask = dmdTask;
+    settingItemIds = false;
   }
 
   async function lookupItems() {
@@ -169,10 +171,14 @@ This component allows the user to update the dmd tasks items in an access platfo
   <div
     class="update-wrap auto-align auto-align__a-center auto-align__j-between"
   >
+    {#if settingItemIds}
+      <Loading size="sm" backgroundType="gradient" />
+    {/if}
     <PrefixSelector {depositor} on:depositorSelected={handleDepositorChanged} />
     <span>
       {#if destination === "preservation" || !lookingUp}
         <input
+          disabled={settingItemIds}
           checked={destination === "access"}
           on:change={onChange}
           type="radio"
@@ -190,6 +196,7 @@ This component allows the user to update the dmd tasks items in an access platfo
     <span>
       {#if destination === "access" || !lookingUp}
         <input
+          disabled={settingItemIds}
           checked={destination === "preservation"}
           on:change={onChange}
           type="radio"
