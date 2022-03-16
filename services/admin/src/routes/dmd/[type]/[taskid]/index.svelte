@@ -114,6 +114,11 @@
       bind:totalItems
       bind:totalPages
     />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
   {:else if type === "parse-failed"}
     <DmdParseFailedOptions bind:dmdTask />
   {:else if type === "parsing"}

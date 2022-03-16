@@ -1,16 +1,14 @@
 <script lang="ts">
-  import { paginate } from "svelte-paginate";
   import type { DMDTask } from "@crkn-rcdr/access-data";
   import Loading from "$lib/components/shared/Loading.svelte";
   import TiWarning from "svelte-icons/ti/TiWarning.svelte";
   import TiDelete from "svelte-icons/ti/TiDelete.svelte";
   import XmlViewer from "$lib/components/shared/XmlViewer.svelte";
   import DmdItemMetadataPreview from "$lib/components/dmd/DmdItemMetadataPreview.svelte";
-  import type {
-    ItemProcessRecord,
-    UpdatePausedDMDTask,
-  } from "@crkn-rcdr/access-data/dist/esm/dmd/Task";
+  import type { ItemProcessRecord } from "@crkn-rcdr/access-data/dist/esm/dmd/Task";
   import Paginator from "../shared/Paginator.svelte";
+  import { getStores } from "$app/stores";
+  import type { Session } from "$lib/types";
 
   /**
    * @type { DMDTask } The dmd task being displayed
@@ -26,6 +24,10 @@
   export let lookupResultsMap = {};
   export let totalItems: number = 0;
   export let totalPages: number = 0;
+  /**
+   * @type {Session} The session store that contains the module for sending requests to lapin.
+   */
+  const { session } = getStores<Session>();
 
   let state: "parsed" | "updating" | "updated" | "paused" = "parsed";
 
@@ -115,8 +117,18 @@
   let currentPage = 1;
   let pageSize = 100;
 
-  function handlePageChange(event: any) {
-    console.log(event.detail);
+  async function handlePageChange(event: any) {
+    currentPage = event.detail.page;
+    try {
+      const pageData = await $session.lapin.query("dmdTask.page", {
+        id: dmdTask.id,
+        page: currentPage,
+        limit: 100,
+      });
+      if (pageData && pageData.list) dmdTask["items"] = pageData.list;
+    } catch (e) {
+      console.log(e);
+    }
   }
 </script>
 
