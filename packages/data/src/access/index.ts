@@ -42,7 +42,8 @@ export {
 export { Pdf, EditablePdf } from "./Pdf.js";
 
 export {
-  ObjectList,
+  AccessObjectList,
+  DmdObjectList,
   ObjectListShort,
   ObjectListHandler,
   ObjectListPage,

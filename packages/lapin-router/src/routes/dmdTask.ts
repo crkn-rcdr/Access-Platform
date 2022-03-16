@@ -1,7 +1,12 @@
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { createRouter, httpErrorToTRPC } from "../router.js";
-import { DMDFORMATS, Slug, User } from "@crkn-rcdr/access-data";
+import {
+  DMDFORMATS,
+  ObjectListHandler,
+  Slug,
+  User,
+} from "@crkn-rcdr/access-data";
 
 const NewInput = z.object({
   user: User,
@@ -29,6 +34,26 @@ const ResetInput = z.object({
   user: User,
 });
 
+const PageInput = z.object({
+  id: z.string(),
+  page: z.number().int().positive(),
+  limit: z.number().int().positive().default(100),
+});
+
+/*
+const PageAfterInput = z.object({
+  id: z.string(),
+  after: z.string().nullable(),
+  limit: z.number().int().positive().default(100),
+});
+
+const PageBeforeInput = z.object({
+  id: z.string(),
+  before: z.string().nullable(),
+  limit: z.number().int().positive().default(100),
+});
+*/
+
 export const dmdTaskRouter = createRouter()
   .query("get", {
     input: z.string(),
@@ -49,6 +74,28 @@ export const dmdTaskRouter = createRouter()
         console.log("err", e?.message);
         throw httpErrorToTRPC(e);
       }
+    },
+  })
+  .query("page", {
+    input: PageInput.parse,
+    async resolve({ input: { id, page, limit }, ctx }) {
+      const response = await ctx.couch.dmdtask.getSafe(id);
+      if (response.found) {
+        const task = response.doc;
+        if (task && "items" in task && task.items) {
+          const items = new ObjectListHandler(task.items);
+          const pageData = items.page(page, limit);
+          return pageData;
+        }
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: `Object ${id} cannot be parsed.`,
+        });
+      }
+      throw new TRPCError({
+        code: "PATH_NOT_FOUND",
+        message: `No object with id ${id} found.`,
+      });
     },
   })
   .mutation("fetchResult", {

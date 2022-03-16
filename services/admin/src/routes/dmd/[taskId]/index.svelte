@@ -12,7 +12,19 @@
           "dmdTask.get",
           page.params["taskId"]
         );
-        if (response) return { props: { dmdTask: response } };
+        const pageData = await context.lapin.query("dmdTask.page", {
+          id: page.params["taskId"],
+          page: 1,
+          limit: 100,
+        });
+
+        if (response)
+          return {
+            props: {
+              dmdTask: response,
+              pageData,
+            },
+          };
         else
           return {
             props: {
@@ -63,12 +75,20 @@
    */
   export let dmdTask: DMDTask; //ParsingDMDTask | UpdateFailedDMDTask | UpdateSucceededDMDTask;
 
+  export let pageData: any;
+
   export let lookupResultsMap = {};
 
   export let error: any;
 </script>
 
 <div class="dmd-task-page-wrap">
+  {#if pageData}
+    {JSON.stringify(pageData)}
+  {:else}
+    none
+  {/if}
+
   {#if error}
     {error?.message}
   {:else if !dmdTask}
