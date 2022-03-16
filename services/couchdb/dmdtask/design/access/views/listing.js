@@ -1,37 +1,32 @@
 module.exports = {
   map: function (doc) {
-    function isParsing() {
+    const isParsing = () => {
       return (
         doc.process &&
         doc.process.requestDate &&
         !doc.process.processDate &&
         !doc.items
       );
-    }
+    };
 
-    function isParseFailed() {
+    const isParseFailed = () => {
       return (
         doc.process &&
         doc.process.processDate &&
         !doc.process.succeeded &&
         !doc.items
       );
-    }
+    };
 
-    function parseItemCheck() {
-      let firstItem;
-      for (const item of doc.items) {
-        if (item.shouldStore) {
-          firstItem = item;
-          break;
-        }
-      }
+    const parseItemCheck = () => {
+      let firstItem = null;
+      if (doc.items && doc.items.length) firstItem = doc.items[0];
       return (
         firstItem && !("destination" in firstItem) && !("stored" in firstItem)
       );
-    }
+    };
 
-    function isParseSucceeded() {
+    const isParseSucceeded = () => {
       return (
         doc.process &&
         doc.process.processDate &&
@@ -39,9 +34,9 @@ module.exports = {
         doc.items &&
         parseItemCheck()
       );
-    }
+    };
 
-    function loadItemCheck() {
+    const loadItemCheck = () => {
       let firstItem;
       for (const item of doc.items) {
         if (item.shouldStore) {
@@ -52,8 +47,8 @@ module.exports = {
       return (
         firstItem && "destination" in firstItem && !("stored" in firstItem)
       );
-    }
-    function isLoading() {
+    };
+    const isLoading = () => {
       return (
         doc.process &&
         doc.process.requestDate &&
@@ -61,9 +56,9 @@ module.exports = {
         doc.items &&
         loadItemCheck()
       );
-    }
+    };
 
-    function loadCompleteItemCheck() {
+    const loadCompleteItemCheck = () => {
       let firstItem;
       for (const item of doc.items) {
         if (item.shouldStore) {
@@ -87,9 +82,9 @@ module.exports = {
         lastItem &&
         "stored" in lastItem
       );
-    }
+    };
 
-    function isLoadFailed() {
+    const isLoadFailed = () => {
       return (
         doc.process &&
         doc.process.processDate &&
@@ -97,9 +92,9 @@ module.exports = {
         doc.items &&
         loadCompleteItemCheck()
       );
-    }
+    };
 
-    function isLoadSucceeded() {
+    const isLoadSucceeded = () => {
       return (
         doc.process &&
         doc.process.processDate &&
@@ -107,16 +102,16 @@ module.exports = {
         doc.items &&
         loadCompleteItemCheck()
       );
-    }
+    };
 
-    function loadPausedItemCheck() {
-      let firstItem;
+    const loadPausedItemCheck = () => {
+      /*let firstItem;
       for (const item of doc.items) {
         if (item.shouldStore) {
           firstItem = item;
           break;
         }
-      }
+      }*/
 
       let lastItem;
       for (let i = doc.items.length - 1; i >= 0; i--) {
@@ -126,16 +121,10 @@ module.exports = {
         }
       }
 
-      return (
-        firstItem &&
-        "destination" in firstItem &&
-        "stored" in firstItem &&
-        lastItem &&
-        !("stored" in lastItem)
-      );
-    }
+      return lastItem && "destination" in lastItem && !("stored" in lastItem);
+    };
 
-    function isLoadPaused() {
+    const isLoadPaused = () => {
       return (
         doc.process &&
         doc.process.processDate &&
@@ -143,7 +132,7 @@ module.exports = {
         doc.items &&
         loadPausedItemCheck()
       );
-    }
+    };
 
     let type = "N/A";
     if (isLoadPaused()) type = "paused";

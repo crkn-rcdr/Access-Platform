@@ -1,0 +1,36 @@
+{
+  "_id": "test",
+  "user": {
+    "name": "Russell McOrmond",
+    "email": "rmcormond@crkn.ca"
+  },
+  "process": {
+    "requestDate": "2022-03-14T14:00:51Z",
+    "processDate": "2022-03-14T14:00:54Z",
+    "succeeded": true,
+    "message": ""
+  },
+  "fileName": "IssueInfoTest.csv",
+  "updated": "2022-03-14T14:00:54Z",
+  "format": "csvissueinfo",
+  "items": [
+    {
+      "destination": "access",
+      "id": "8_00519_1",
+      "label": "First (1874/75)",
+      "shouldStore": true,
+      "message": "o",
+      "output": "issueinfo",
+      "parsed": true
+    },
+    {
+      "output": "issueinfo",
+      "parsed": true,
+      "label": "1885/86",
+      "shouldStore": true,
+      "message": "",
+      "destination": "access",
+      "id": "8_00525_1"
+    }
+  ]
+}

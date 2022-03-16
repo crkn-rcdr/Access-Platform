@@ -145,13 +145,8 @@ export const ParseSucceededDMDTask = ParsingDMDTask.merge(
 );
 
 const ParseSucceededDMDTaskListCheck = ParseSucceededDMDTask.refine((task) => {
-  let firstItem;
-  for (const item of task.items) {
-    if (item.shouldStore) {
-      firstItem = item;
-      break;
-    }
-  }
+  let firstItem = null;
+  if (task.items && task.items.length) firstItem = task.items[0];
   return firstItem && !("destination" in firstItem) && !("stored" in firstItem);
 }, "A validated task has items without a destination property and without a stored property.");
 
