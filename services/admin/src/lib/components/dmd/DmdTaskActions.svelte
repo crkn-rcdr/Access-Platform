@@ -2,12 +2,12 @@
   import { getStores } from "$app/stores";
   import type { Session } from "$lib/types";
   import { showConfirmation } from "$lib/utils/confirmation";
-  import type { DMDTask } from "@crkn-rcdr/access-data";
+  import type { ShortTask } from "@crkn-rcdr/access-data";
   import { createEventDispatcher } from "svelte";
   import TiTrash from "svelte-icons/ti/TiTrash.svelte";
   import Loading from "../shared/Loading.svelte";
 
-  export let task: DMDTask;
+  export let task: ShortTask;
   export let stage: "parse" | "load" | "N/A";
   export let status: "failed" | "waiting" | "succeeded" | "paused" | "N/A";
   export let isListLoading: boolean = false;
@@ -55,121 +55,6 @@
       `Error: failed to delete task.`
     );
   }
-
-  /*async function handleCancelPressed() {
-    loading = true;
-    await showConfirmation(
-      async () => {
-        try {
-          const route =
-            stage === "export" ? "ocr.cancelExport" : "ocr./cancelImport";
-          const response = await $session.lapin.mutation(route, {
-            user: $session.user,
-            id: task.id,
-          });
-          if (response) {
-            task = response;
-            await sleep(1000);
-            dispatch("cancel", task);
-            return {
-              success: true,
-              details: "",
-            };
-          } else {
-            return {
-              success: false,
-              details:
-                "Something went wrong. Please contact the platform team for assistance.",
-            };
-          }
-        } catch (e) {
-          return {
-            success: false,
-            details: e.message,
-          };
-        }
-      },
-      `Success: task ${stage} canceled.`,
-      `Error: failed to cancel task  ${stage}.`
-    );
-  }
-
-  async function handleExportPressed() {
-    loading = true;
-    await showConfirmation(
-      async () => {
-        try {
-          const response = await $session.lapin.mutation(`ocr.requestExport`, {
-            user: $session.user,
-            id: task.id,
-          });
-          if (response) {
-            task = response;
-            await sleep(1000);
-            dispatch("export", task);
-            return {
-              success: true,
-              details: "",
-            };
-          } else {
-            return {
-              success: false,
-              details:
-                "Something went wrong. Please contact the platform team for assistance.",
-            };
-          }
-        } catch (e) {
-          return {
-            success: false,
-            details: e.message,
-          };
-        }
-      },
-      "Success: task queued for exporting.",
-      "Error: failed queue task for exporting."
-    );
-  }
-
-  async function handleImportPressed() {
-    loading = true;
-    await showConfirmation(
-      async () => {
-        try {
-          const response = await $session.lapin.mutation(`ocr.requestImport`, {
-            user: $session.user,
-            id: task.id,
-          });
-          if (response) {
-            task = response;
-            await sleep(1000);
-            dispatch("import", task);
-            return {
-              success: true,
-              details: "",
-            };
-          } else {
-            return {
-              success: false,
-              details:
-                "Something went wrong. Please contact the platform team for assistance.",
-            };
-          }
-        } catch (e) {
-          return {
-            success: false,
-            details: e.message,
-          };
-        }
-      },
-      "Success: task queued for importing.",
-      "Error: failed queue task for importing."
-    );
-  }
-
-  async function handleRetryPressed() {
-    if (stage === "export") await handleExportPressed();
-    else await handleImportPressed();
-  }*/
 
   $: if (!isListLoading) loading = false;
 </script>

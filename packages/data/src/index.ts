@@ -51,6 +51,7 @@ export {
   DMDFormat,
   DMDOUTPUTS,
   DMDOutput,
+  ShortTask,
   DMDTask,
   UpdateSucceededDMDTask,
   UpdateFailedDMDTask,

@@ -44,12 +44,7 @@ export const dmdTaskRouter = createRouter()
   .query("list", {
     async resolve({ ctx }) {
       try {
-        const q = {
-          _id: {
-            $ne: "_design/access",
-          },
-        };
-        return await ctx.couch.dmdtask.find(q, null, { limit: 200 });
+        return await ctx.couch.dmdtask.getAll();
       } catch (e: any) {
         console.log("err", e?.message);
         throw httpErrorToTRPC(e);

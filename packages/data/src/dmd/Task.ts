@@ -319,3 +319,12 @@ export const DMDTask = z.union([
 ]);
 
 export type DMDTask = z.infer<typeof DMDTask>;
+
+export type ShortTask = {
+  id: string;
+  fileName: string;
+  type: string;
+  date: string | number;
+  count: number;
+  message: string;
+};

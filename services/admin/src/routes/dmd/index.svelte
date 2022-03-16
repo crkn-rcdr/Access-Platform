@@ -1,28 +1,18 @@
 <script context="module" lang="ts">
+  import type { ShortTask } from "@crkn-rcdr/access-data";
   /**
    * @module
    * @description loads in the object from the backend using the params in the route of the page
    */
-  import type { Load } from "@sveltejs/kit";
-  import type { RootLoadOutput, Session } from "$lib/types";
-  import {
-    UpdateSucceededDMDTask,
-    UpdateFailedDMDTask,
-    UpdatingDMDTask,
-    ParseSucceededDMDTask,
-    ParsingDMDTask,
-    DMDTask,
-    ParseFailedDMDTask,
-    UpdatePausedDMDTask,
-  } from "@crkn-rcdr/access-data";
+  import type { Session } from "$lib/types";
 
   function getDMDTasks(taskList) {
-    const base: DMDTask[] = [];
-    const parsing: ParsingDMDTask[] = [];
-    const parsed: (ParseSucceededDMDTask | ParseFailedDMDTask)[] = [];
-    const updating: UpdatingDMDTask[] = [];
-    const paused: UpdatePausedDMDTask[] = [];
-    const updated: (UpdateSucceededDMDTask | UpdateFailedDMDTask)[] = [];
+    const base: ShortTask[] = [];
+    const parsing: ShortTask[] = [];
+    const parsed: ShortTask[] = [];
+    const updating: ShortTask[] = [];
+    const paused: ShortTask[] = [];
+    const updated: ShortTask[] = [];
 
     // todo test
     const list = taskList.sort((a, b) => {
@@ -32,22 +22,24 @@
     });
 
     for (const task of list) {
-      if (UpdatePausedDMDTask.safeParse(task).success) {
-        paused.push(task as UpdatePausedDMDTask);
-      } else if (UpdateSucceededDMDTask.safeParse(task).success) {
-        updated.push(task as UpdateSucceededDMDTask);
-      } else if (UpdateFailedDMDTask.safeParse(task).success) {
-        updated.push(task as UpdateFailedDMDTask);
-      } else if (UpdatingDMDTask.safeParse(task).success) {
-        updating.push(task as UpdatingDMDTask);
-      } else if (ParseSucceededDMDTask.safeParse(task).success) {
-        parsed.push(task as ParseSucceededDMDTask);
-      } else if (ParseFailedDMDTask.safeParse(task).success) {
-        parsed.push(task as ParseFailedDMDTask);
-      } else if (ParsingDMDTask.safeParse(task).success) {
-        parsing.push(task as ParsingDMDTask);
+      if (task.type === "paused") {
+        paused.push(task);
+      } else if (
+        task.type === "load succeeded" ||
+        task.type === "load failed"
+      ) {
+        updated.push(task);
+      } else if (task.type === "loading") {
+        updating.push(task);
+      } else if (
+        task.type === "parse succeeded" ||
+        task.type === "parse failed"
+      ) {
+        parsed.push(task);
+      } else if (task.type === "parsing") {
+        parsing.push(task);
       } else {
-        base.push(task as DMDTask);
+        base.push(task);
       }
     }
 
@@ -82,12 +74,12 @@
   import Loading from "$lib/components/shared/Loading.svelte";
 
   // Typed arrays lets us avoid checks in the front end
-  export let base: DMDTask[] = [];
-  export let parsing: ParsingDMDTask[] = [];
-  export let parsed: (ParseSucceededDMDTask | ParseFailedDMDTask)[] = [];
-  export let updating: UpdatingDMDTask[] = [];
-  export let paused: UpdatePausedDMDTask[] = [];
-  export let updated: (UpdateSucceededDMDTask | UpdateFailedDMDTask)[] = [];
+  export let base: ShortTask[] = [];
+  export let parsing: ShortTask[] = [];
+  export let parsed: ShortTask[] = [];
+  export let updating: ShortTask[] = [];
+  export let paused: ShortTask[] = [];
+  export let updated: ShortTask[] = [];
 
   let loading = true;
 
@@ -100,7 +92,7 @@
   const { session } = getStores<Session>();
 
   async function getDMDTasksList() {
-    let taskList = await $session.lapin.query("dmdTask.list");
+    let taskList: ShortTask[] = await $session.lapin.query("dmdTask.list");
     const results = getDMDTasks(taskList);
     ({ base, parsed, parsing, updating, updated, paused } = results.props);
     loading = false;
@@ -170,7 +162,7 @@
         <ExpansionListItem status="waiting">
           <span slot="title">{task.fileName}</span>
           <span slot="date"
-            >{new Date(task.updated)
+            >{new Date(task.date)
               .toLocaleString()
               .replace(/:[0-9][0-9]$/, "")}</span
           >
@@ -194,36 +186,34 @@
       <span slot="title">Parsed ({parsed.length})</span>
       {#each parsed as task}
         <ExpansionListItem
-          status={task.process["succeeded"]
-            ? task.process.message?.length
+          status={task.type === "parse succeeded"
+            ? task.message?.length
               ? "warning"
               : "succeeded"
             : "failed"}
         >
           <span slot="title">{task.fileName}</span>
           <span slot="date"
-            >{new Date(task.updated)
+            >{new Date(task.date)
               .toLocaleString()
               .replace(/:[0-9][0-9]$/, "")}</span
           >
           <span slot="details">
-            {#if "items" in task}
-              {task.items.length} items
-            {/if}
+            {task.count} items
           </span>
           <span slot="actions">
             <DmdTaskActions
               {task}
               isListLoading={loading}
               stage="parse"
-              status={task.process["succeeded"] ? "succeeded" : "failed"}
+              status={task.type === "parse succeeded" ? "succeeded" : "failed"}
               on:delete={getDMDTasksList}
             />
           </span>
         </ExpansionListItem>
         <ExpansionListMessage
-          status={task.process.succeeded ? "succeeded" : "failed"}
-          message={task.process.message}
+          status={task.type === "parse succeeded" ? "succeeded" : "failed"}
+          message={task.message}
         />
       {/each}
     </ExpansionList>
@@ -237,11 +227,11 @@
         <ExpansionListItem status="waiting">
           <span slot="title">{task.fileName}</span>
           <span slot="date"
-            >{new Date(task.updated)
+            >{new Date(task.date)
               .toLocaleString()
               .replace(/:[0-9][0-9]$/, "")}</span
           >
-          <span slot="details">{task.items.length} items</span>
+          <span slot="details">{task.count} items</span>
           <span slot="actions">
             <DmdTaskActions
               {task}
@@ -264,11 +254,11 @@
         <ExpansionListItem status="paused">
           <span slot="title">{task.fileName}</span>
           <span slot="date"
-            >{new Date(task.updated)
+            >{new Date(task.date)
               .toLocaleString()
               .replace(/:[0-9][0-9]$/, "")}</span
           >
-          <span slot="details">{task.items.length} items</span>
+          <span slot="details">{task.count} items</span>
           <span slot="actions">
             <DmdTaskActions
               {task}
@@ -279,10 +269,7 @@
             />
           </span>
         </ExpansionListItem>
-        <ExpansionListMessage
-          status={task.process.succeeded ? "succeeded" : "failed"}
-          message={task.process.message}
-        />
+        <ExpansionListMessage status="succeeded" message={task.message} />
       {/each}
     </ExpansionList>
 
@@ -293,32 +280,32 @@
       <span slot="title">Load Completed ({updated.length})</span>
       {#each updated as task}
         <ExpansionListItem
-          status={task.process["succeeded"]
-            ? task.process.message?.length
+          status={task.type === "load succeeded"
+            ? task.message?.length
               ? "warning"
               : "succeeded"
             : "failed"}
         >
           <span slot="title">{task.fileName}</span>
           <span slot="date"
-            >{new Date(task.updated)
+            >{new Date(task.date)
               .toLocaleString()
               .replace(/:[0-9][0-9]$/, "")}</span
           >
-          <span slot="details">{task.items.length} items</span>
+          <span slot="details">{task.count} items</span>
           <span slot="actions">
             <DmdTaskActions
               {task}
               isListLoading={loading}
               stage="load"
-              status={task.process["succeeded"] ? "succeeded" : "failed"}
+              status={task.type === "load succeeded" ? "succeeded" : "failed"}
               on:delete={getDMDTasksList}
             />
           </span>
         </ExpansionListItem>
         <ExpansionListMessage
-          status={task.process.succeeded ? "succeeded" : "failed"}
-          message={task.process.message}
+          status={task.type === "load succeeded" ? "succeeded" : "failed"}
+          message={task.message}
         />
       {/each}
     </ExpansionList>

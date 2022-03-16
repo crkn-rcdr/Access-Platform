@@ -1,7 +1,5 @@
 module.exports = {
   map: function (doc) {
-    //const { parseTimestamp, dateAsArray } = require("views/lib/prelude");
-
     function isParsing() {
       return (
         doc.process &&

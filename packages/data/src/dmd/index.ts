@@ -48,6 +48,7 @@ export const isUpdatePausedDMDTask = (
 };
 
 export {
+  ShortTask,
   DMDTask,
   UpdateSucceededDMDTask,
   UpdateFailedDMDTask,

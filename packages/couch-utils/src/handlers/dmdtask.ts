@@ -1,4 +1,5 @@
 import { DMDFormat, DMDTask, Slug, User } from "@crkn-rcdr/access-data";
+import type { ShortTask } from "@crkn-rcdr/access-data";
 import { ServerScope } from "nano";
 
 import { DatabaseHandler } from "../DatabaseHandler.js";
@@ -11,6 +12,24 @@ export class DMDTaskHandler extends DatabaseHandler<DMDTask> {
    */
   constructor(client: ServerScope, suffix?: string) {
     super(suffix ? `dmdtask-${suffix}` : `dmdtask`, DMDTask, client);
+  }
+
+  async getAll(): Promise<ShortTask[]> {
+    const list = await this.view("access", "listing", {
+      include_docs: false,
+      reduce: false,
+    });
+    return list.rows.map((row: { id: string; key: string; value: any }) => {
+      console.log(row);
+      return {
+        id: row.id,
+        fileName: row.value["fileName"],
+        type: row.value["type"],
+        date: row.value["date"],
+        count: row.value["count"],
+        message: row.value["message"],
+      };
+    });
   }
 
   /**
