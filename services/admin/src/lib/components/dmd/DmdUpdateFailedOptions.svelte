@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getStores } from "$app/stores";
   import type { Session } from "$lib/types";
-  import type { UpdateFailedDMDTask } from "@crkn-rcdr/access-data";
+  import type { DMDTask } from "@crkn-rcdr/access-data";
   import { onMount } from "svelte";
   import NotificationBar from "../shared/NotificationBar.svelte";
 
@@ -11,9 +11,9 @@
   const { session } = getStores<Session>();
 
   /**
-   *  @type { string } The 'id' of the DMDTask being processed.
+   *  @type { DMDTask } The DMDTask being processed.
    */
-  export let dmdTask: UpdateFailedDMDTask;
+  export let dmdTask: DMDTask;
 
   let githubLink = "";
 
@@ -29,7 +29,7 @@
   onMount(() => {
     let failedSlugs: string[] = [];
 
-    for (let item of dmdTask.items) {
+    for (let item of dmdTask["items"]) {
       if (!item.stored) {
         failedSlugs.push(`| ${item.id} | ${item.message} |`);
       }

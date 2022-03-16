@@ -3,15 +3,15 @@
   import type { Session } from "$lib/types";
   import IoMdRefresh from "svelte-icons/io/IoMdRefresh.svelte";
   import IoMdOpen from "svelte-icons/io/IoMdOpen.svelte";
-  import type { UpdateSucceededDMDTask } from "@crkn-rcdr/access-data";
+  import type { DMDTask } from "@crkn-rcdr/access-data";
   import { onMount } from "svelte";
   import NotificationBar from "../shared/NotificationBar.svelte";
   import LoadingButton from "../shared/LoadingButton.svelte";
 
   /**
-   *  @type { string } The 'id' of the DMDTask being processed.
+   *  @type { DMDTask } The DMDTask being processed.
    */
-  export let dmdTask: UpdateSucceededDMDTask;
+  export let dmdTask: DMDTask;
 
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
@@ -68,10 +68,10 @@
     status="success"
   />
   <br />
-  <NotificationBar message={dmdTask.process.message} status="warn" />
+  <NotificationBar message={dmdTask.process?.["message"]} status="warn" />
   <!-- if preservation update -->
   <!-- then show button to go to old tool-->
-  {#if dmdTask.items?.length && dmdTask.items[0].destination === "preservation"}
+  {#if dmdTask["items"]?.length && dmdTask["items"][0].destination === "preservation"}
     <a
       class="finish-preservation"
       href="https://admin.canadiana.ca/packaging "

@@ -1,17 +1,6 @@
 <script lang="ts">
   import { paginate } from "svelte-paginate";
-  import {
-    isParseSucceededDMDTask,
-    isParseFailedDMDTask,
-    isUpdateSucceededDMDTask,
-    isUpdateFailedDMDTask,
-    isUpdatingDMDTask,
-    ParseSucceededDMDTask,
-    UpdateSucceededDMDTask,
-    UpdatingDMDTask,
-    UpdateFailedDMDTask,
-    isUpdatePausedDMDTask,
-  } from "@crkn-rcdr/access-data";
+  import type { DMDTask } from "@crkn-rcdr/access-data";
   import Loading from "$lib/components/shared/Loading.svelte";
   import TiWarning from "svelte-icons/ti/TiWarning.svelte";
   import TiDelete from "svelte-icons/ti/TiDelete.svelte";
@@ -24,14 +13,19 @@
   import Paginator from "../shared/Paginator.svelte";
 
   /**
-   * @type { UpdateSucceededDMDTask | ParseSucceededDMDTask | UpdatingDMDTask } The dmd task being displayed
+   * @type { DMDTask } The dmd task being displayed
    */
-  export let dmdTask:
-    | UpdatePausedDMDTask
-    | UpdateSucceededDMDTask
-    | ParseSucceededDMDTask
-    | UpdatingDMDTask;
+  export let dmdTask: DMDTask;
+  export let type:
+    | "paused"
+    | "load-succeeded"
+    | "load-failed"
+    | "loading"
+    | "parse-failed"
+    | "parse-succeeded";
   export let lookupResultsMap = {};
+  export let totalItems: number = 0;
+  export let totalPages: number = 0;
 
   let state: "parsed" | "updating" | "updated" | "paused" = "parsed";
 
@@ -67,7 +61,7 @@
 
   function toggleAllItemsSelected() {
     shouldUpdateAllItems = !shouldUpdateAllItems;
-    for (let item of dmdTask.items) {
+    for (let item of dmdTask["items"]) {
       if (item.parsed) item.shouldStore = shouldUpdateAllItems;
     }
     dmdTask = dmdTask;
@@ -75,8 +69,8 @@
 
   function checkIfAllItemsSelected() {
     return (
-      dmdTask.items.filter((item) => item.shouldStore).length ===
-      dmdTask.items.length
+      dmdTask["items"].filter((item) => item.shouldStore).length ===
+      dmdTask["items"].length
     );
   }
 
@@ -89,19 +83,13 @@
   }
 
   function setState() {
-    if (isUpdatePausedDMDTask(dmdTask)) {
+    if (type === "paused") {
       state = "paused";
-    } else if (
-      isUpdateSucceededDMDTask(dmdTask) ||
-      isUpdateFailedDMDTask(dmdTask)
-    ) {
+    } else if (type === "load-failed" || type === "load-succeeded") {
       state = "updated";
-    } else if (isUpdatingDMDTask(dmdTask)) {
+    } else if (type === "loading") {
       state = "updating";
-    } else if (
-      isParseFailedDMDTask(dmdTask) ||
-      isParseSucceededDMDTask(dmdTask)
-    ) {
+    } else if (type === "parse-failed" || type === "parse-succeeded") {
       state = "parsed";
     }
   }
@@ -112,7 +100,7 @@
   }
 
   function setItemSelectedFromSearchResult() {
-    for (const item of dmdTask.items) {
+    for (const item of dmdTask["items"]) {
       item.shouldStore = lookupResultsMap[item.id] && item.shouldStore;
     }
     dmdTask = dmdTask;
@@ -125,8 +113,11 @@
   }
 
   let currentPage = 1;
-  let pageSize = 50;
-  $: paginatedItems = paginate({ items: dmdTask.items, pageSize, currentPage });
+  let pageSize = 100;
+
+  function handlePageChange(event: any) {
+    console.log(event.detail);
+  }
 </script>
 
 {#if dmdTask}
@@ -153,7 +144,7 @@
       </tr>
     </thead>
     <tbody>
-      {#each paginatedItems as item, i}
+      {#each dmdTask["items"] as item, i}
         <tr>
           {#if state !== "updated"}
             <td>
@@ -250,8 +241,15 @@
   <Paginator
     bind:page={currentPage}
     bind:pageSize
-    count={dmdTask.items.length}
+    pageSizeEditable={false}
+    count={totalItems}
+    on:change={handlePageChange}
   />
+  <br />
+  <br />
+  <br />
+  <br />
+  <br />
 {:else}
   No items.
 {/if}

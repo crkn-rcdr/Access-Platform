@@ -19,14 +19,14 @@ This component allows the user to update the dmd tasks items in an access platfo
 <script lang="ts">
   import { getStores } from "$app/stores";
   import type { Session } from "$lib/types";
-  import type { UpdatePausedDMDTask } from "@crkn-rcdr/access-data";
+  import type { DMDTask } from "@crkn-rcdr/access-data";
   import NotificationBar from "../shared/NotificationBar.svelte";
   import LoadingButton from "../shared/LoadingButton.svelte";
 
   /**
-   *  @type { string } The 'id' of the DMDTask being processed.
+   *  @type { DMDTask } The DMDTask being processed.
    */
-  export let dmdTask: UpdatePausedDMDTask;
+  export let dmdTask: DMDTask;
 
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
@@ -47,9 +47,9 @@ This component allows the user to update the dmd tasks items in an access platfo
     sendingStoreRequest = true;
     const result = await $session.lapin.mutation("dmdTask.store", {
       task: dmdTask.id,
-      destination: dmdTask.items[0].destination,
+      destination: dmdTask["items"][0].destination,
       prefix: "none",
-      items: dmdTask.items
+      items: dmdTask["items"]
         .filter((item) => item.shouldStore)
         .map((item) => item.id),
       user: $session.user,
@@ -59,7 +59,7 @@ This component allows the user to update the dmd tasks items in an access platfo
 
   $: {
     let numItems = 0;
-    for (const item of dmdTask.items) {
+    for (const item of dmdTask["items"]) {
       if (item.shouldStore) numItems++;
     }
     disabled = numItems === 0;

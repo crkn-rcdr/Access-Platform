@@ -115,81 +115,84 @@ A card component that optionally allows for user selection
     >
   {/if}
 {:else}
-  {#if pageSizeEditable}
-    <span class="page-size">
-      <label for="page-size">Items per page:</label>
-      <select
-        name="page-size"
-        bind:value={pageSize}
-        on:change={(e) => onChange(e, page)}
-      >
-        <option value={10}>10</option>
-        <option value={20}>20</option>
-        <option value={30}>30</option>
-        <option value={40}>40</option>
-        <option value={50}>50</option>
-        <option value={100}>100</option>
-      </select>
-    </span>
-  {/if}
-  <ul>
-    <li>
-      <button
-        class="pagin-lg"
-        disabled={page === 1}
-        on:click={(e) => onChange(e, 0)}
-      >
-        {labels.first}
-      </button>
-    </li>
-    <li>
-      <button
-        class="pagin-lg"
-        disabled={page === 1}
-        on:click={(e) => onChange(e, page - 2)}
-      >
-        {labels.previous}
-      </button>
-    </li>
-    {#each buttons as button}
-      {#if page + button >= 0 && page + button <= pageCount}
-        <li>
-          <button
-            class="pagin-lg"
-            class:active={page === page + button + 1}
-            on:click={(e) => onChange(e, page + button)}
-          >
-            {page + button + 1}
-          </button>
-        </li>
-      {/if}
-    {/each}
-    <li>
-      <button
-        class="pagin-lg"
-        disabled={page > pageCount}
-        on:click={(e) => onChange(e, page)}
-      >
-        {labels.next}
-      </button>
-    </li>
-    <li>
-      <button
-        class="pagin-lg"
-        disabled={page > pageCount}
-        on:click={(e) => onChange(e, pageCount)}
-      >
-        {labels.last}
-      </button>
-    </li>
-    <br />
-    <li class="count-message">
-      Viewing items {page * pageSize - pageSize + 1} to {count < page * pageSize
-        ? count
-        : page * pageSize}
-      of {count}.
-    </li>
-  </ul>
+  <div>
+    {#if pageSizeEditable}
+      <span class="page-size">
+        <label for="page-size">Items per page:</label>
+        <select
+          name="page-size"
+          bind:value={pageSize}
+          on:change={(e) => onChange(e, page)}
+        >
+          <option value={10}>10</option>
+          <option value={20}>20</option>
+          <option value={30}>30</option>
+          <option value={40}>40</option>
+          <option value={50}>50</option>
+          <option value={100}>100</option>
+        </select>
+      </span>
+    {/if}
+    <ul>
+      <li>
+        <button
+          class="pagin-lg"
+          disabled={page === 1}
+          on:click={(e) => onChange(e, 0)}
+        >
+          {labels.first}
+        </button>
+      </li>
+      <li>
+        <button
+          class="pagin-lg"
+          disabled={page === 1}
+          on:click={(e) => onChange(e, page - 2)}
+        >
+          {labels.previous}
+        </button>
+      </li>
+      {#each buttons as button}
+        {#if page + button >= 0 && page + button <= pageCount}
+          <li>
+            <button
+              class="pagin-lg"
+              class:active={page === page + button + 1}
+              on:click={(e) => onChange(e, page + button)}
+            >
+              {page + button + 1}
+            </button>
+          </li>
+        {/if}
+      {/each}
+      <li>
+        <button
+          class="pagin-lg"
+          disabled={page > pageCount}
+          on:click={(e) => onChange(e, page)}
+        >
+          {labels.next}
+        </button>
+      </li>
+      <li>
+        <button
+          class="pagin-lg"
+          disabled={page > pageCount}
+          on:click={(e) => onChange(e, pageCount)}
+        >
+          {labels.last}
+        </button>
+      </li>
+      <br />
+      <li class="count-message">
+        Viewing items {page * pageSize - pageSize + 1} to {count <
+        page * pageSize
+          ? count
+          : page * pageSize}
+        of {count}.
+      </li>
+    </ul>
+  </div>
 {/if}
 
 <style>

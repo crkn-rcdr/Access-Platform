@@ -1,16 +1,16 @@
 <script lang="ts">
   import { session } from "$app/stores";
   import timer from "$lib/stores/timer";
-  import type { UpdatingDMDTask } from "@crkn-rcdr/access-data";
+  import type { DMDTask } from "@crkn-rcdr/access-data";
   import { onDestroy, onMount } from "svelte";
-  import LoadingButton from "../shared/LoadingButton.svelte";
+  //import LoadingButton from "../shared/LoadingButton.svelte";
   import NotificationBar from "../shared/NotificationBar.svelte";
   import ProgressBar from "../shared/ProgressBar.svelte";
 
   /**
-   *  @type { string } The 'id' of the DMDTask being processed.
+   *  @type { string } The DMDTask being processed.
    */
-  export let dmdTask: UpdatingDMDTask;
+  export let dmdTask: DMDTask;
 
   let unsubscribe;
   const interval = timer({ interval: 30000 }); // 2x per min
@@ -22,7 +22,7 @@
   // track status each item update progress
   function updateProgress() {
     let numComplete = 0;
-    for (const item of dmdTask.items) {
+    for (const item of dmdTask["items"]) {
       if ("stored" in item) {
         numComplete++;
       }
@@ -30,7 +30,7 @@
     if (numComplete !== 0)
       progress = Math.round(
         (numComplete /
-          dmdTask.items.filter((item) => item.shouldStore).length) *
+          dmdTask["items"].filter((item) => item.shouldStore).length) *
           100
       );
     else progress = 0;

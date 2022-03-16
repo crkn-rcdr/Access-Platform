@@ -14,14 +14,14 @@ Displays a dmd task in an waiting state.
 <script lang="ts">
   import type { Session } from "$lib/types";
   import { getStores } from "$app/stores";
-  import type { ParsingDMDTask } from "@crkn-rcdr/access-data";
+  import type { DMDTask } from "@crkn-rcdr/access-data";
   import Loading from "$lib/components/shared/Loading.svelte";
   import { onDestroy } from "svelte";
   import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
   /**
-   * @type {ParsingDMDTask} The dmdtask being displayed.
+   * @type {DMDTask} The dmdtask being displayed.
    */
-  export let dmdTask: ParsingDMDTask;
+  export let dmdTask: DMDTask;
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
    */

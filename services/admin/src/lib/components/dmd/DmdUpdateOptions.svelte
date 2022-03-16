@@ -21,15 +21,15 @@ This component allows the user to update the dmd tasks items in an access platfo
   import { getStores } from "$app/stores";
   import type { Session } from "$lib/types";
   import PrefixSelector from "$lib/components/access-objects/PrefixSelector.svelte";
-  import type { ParseSucceededDMDTask } from "@crkn-rcdr/access-data";
+  import type { DMDTask } from "@crkn-rcdr/access-data";
   import Loading from "../shared/Loading.svelte";
   import NotificationBar from "../shared/NotificationBar.svelte";
   import LoadingButton from "../shared/LoadingButton.svelte";
 
   /**
-   *  @type { string } The 'id' of the DMDTask being processed.
+   *  @type { DMDTask } The DMDTask being processed.
    */
-  export let dmdTask: ParseSucceededDMDTask;
+  export let dmdTask: DMDTask;
   export let lookupResultsMap = {};
 
   /**
@@ -62,7 +62,7 @@ This component allows the user to update the dmd tasks items in an access platfo
       task: dmdTask.id,
       destination,
       prefix: depositor.prefix,
-      items: dmdTask.items
+      items: dmdTask["items"]
         .filter((item) => item.shouldStore)
         .map((item) => item.id.replace(`${depositor.prefix}.`, "")),
       user: $session.user,
@@ -72,7 +72,7 @@ This component allows the user to update the dmd tasks items in an access platfo
 
   $: {
     let numItems = 0;
-    for (const item of dmdTask.items) {
+    for (const item of dmdTask["items"]) {
       if (item.shouldStore) numItems++;
     }
     disabled =
@@ -82,7 +82,7 @@ This component allows the user to update the dmd tasks items in an access platfo
   }
 
   function setDestinationForItems() {
-    for (let item of dmdTask.items) {
+    for (let item of dmdTask["items"]) {
       item.destination = destination;
     }
   }
@@ -95,7 +95,7 @@ This component allows the user to update the dmd tasks items in an access platfo
 
   function setItemIds() {
     settingItemIds = true;
-    for (let item of dmdTask.items) {
+    for (let item of dmdTask["items"]) {
       item.id = `${depositor.prefix !== "none" ? depositor.prefix + "." : ""}${
         prevPrefix ? item.id.replace(`${prevPrefix}.`, "") : item.id
       }`;
@@ -106,14 +106,14 @@ This component allows the user to update the dmd tasks items in an access platfo
   async function lookupItems() {
     lookingUp = true;
     lookupResultsMap = {};
-    const slugBatch = dmdTask.items.map((item) => item.id);
+    const slugBatch = dmdTask["items"].map((item) => item.id);
     try {
       if (destination === "access") {
         const response = await $session.lapin.mutation(
           `slug.bulkLookup`,
           slugBatch
         );
-        for (const item of dmdTask.items) {
+        for (const item of dmdTask["items"]) {
           if (response.includes(item.id)) {
             lookupResultsMap[item.id] = true;
           } else {
@@ -125,7 +125,7 @@ This component allows the user to update the dmd tasks items in an access platfo
           `wipmeta.bulkLookup`,
           slugBatch
         );
-        for (const item of dmdTask.items) {
+        for (const item of dmdTask["items"]) {
           if (response.includes(item.id)) {
             lookupResultsMap[item.id] = true;
           } else {
@@ -141,7 +141,7 @@ This component allows the user to update the dmd tasks items in an access platfo
           : "Code 9. Please contact the platform team for assistance. ";*/
     }
 
-    for (const item of dmdTask.items) {
+    for (const item of dmdTask["items"]) {
       item.shouldStore = lookupResultsMap[item.id] ? true : false;
     }
 

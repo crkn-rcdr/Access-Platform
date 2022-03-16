@@ -58,8 +58,23 @@ export const dmdTaskRouter = createRouter()
   .query("get", {
     input: z.string(),
     async resolve({ input: id, ctx }) {
-      const response = await ctx.couch.dmdtask.getSafe(id);
-      if (response.found) return response.doc;
+      const response: any = await ctx.couch.dmdtask.getSafe(id);
+      if (response.found) {
+        let totalItems = 0;
+        let totalPages = 0;
+        if ("items" in response.doc) {
+          totalItems = response.doc.items?.length;
+          totalPages = totalItems > 0 ? Math.ceil(totalPages / totalItems) : 0;
+          const items = new ObjectListHandler(response.doc.items);
+          const pageData = items.page(1, 100);
+          response.doc.items = pageData.list;
+        }
+        return {
+          task: response.doc,
+          totalItems,
+          totalPages,
+        };
+      }
       throw new TRPCError({
         code: "PATH_NOT_FOUND",
         message: `No dmd task with id ${id} found.`,

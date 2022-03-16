@@ -1,11 +1,11 @@
 <script lang="ts">
-  import type { ParseFailedDMDTask } from "@crkn-rcdr/access-data/dist/esm/dmd/Task";
+  import type { DMDTask } from "@crkn-rcdr/access-data";
   import NotificationBar from "../shared/NotificationBar.svelte";
 
   /**
-   *  @type { string } The 'id' of the DMDTask being processed.
+   *  @type { DMDTask } The DMDTask being processed.
    */
-  export let dmdTask: ParseFailedDMDTask;
+  export let dmdTask: DMDTask;
 </script>
 
 {#if dmdTask}
@@ -13,5 +13,5 @@
     <h5>{dmdTask.fileName}</h5>
   {/if}
   <p>Invalid Metadata File</p>
-  <NotificationBar message={dmdTask.process.message} status="fail" />
+  <NotificationBar message={dmdTask.process?.["message"]} status="fail" />
 {/if}
