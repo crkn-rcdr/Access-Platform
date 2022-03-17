@@ -17,8 +17,9 @@ module.exports = function (doc, req) {
 
   const { succeeded, message, items } = data;
 
-  if (succeeded) {
+  if (items) {
     if (Array.isArray(items)) {
+      // array[] -- set items and itemsCount
       const errors = [];
       items.forEach((item, i) => {
         if (item.parsed && !(item.id && item.output && item.label)) {
@@ -31,9 +32,15 @@ module.exports = function (doc, req) {
         );
       } else {
         doc.items = items;
+        doc.itemsCount = items.length;
       }
+    } else if (items === "delete") {
+      // "delete" -- remove items and itemsCount
+      if ("items" in doc) delete doc.items;
+      if ("itemsCount" in doc) delete doc.itemsCount;
     } else {
-      return errorReturn(`Process succeeded, but is missing items array`);
+      // undefined -- don't change
+      return errorReturn(`Items value must be either an array or "delete"`);
     }
   }
 

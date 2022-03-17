@@ -45,11 +45,24 @@
     window.location.reload();
   }
 
+  async function handleTestCompletePressed() {
+    console.log(dmdTask);
+    await $session.lapin.mutation("dmdTask.processArray", {
+      id: dmdTask.id,
+      array: dmdTask["items"].map((item) => {
+        return {
+          ...item,
+          stored: true,
+        };
+      }),
+    });
+  }
+
   onMount(() => {
     updateProgress();
     unsubscribe = interval.subscribe(async () => {
       const response = await $session.lapin.query("dmdTask.get", dmdTask.id);
-      if (response) dmdTask = response;
+      if (response) dmdTask = response.task;
       updateProgress();
     });
   });
@@ -74,6 +87,7 @@
     progressText={progress === 100 ? "done!" : "loaded..."}
   />
   <br />
+  <button on:click={handleTestCompletePressed}>Test Complete</button>
 
   <!--div>
     <LoadingButton

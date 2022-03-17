@@ -206,4 +206,48 @@ export const dmdTaskRouter = createRouter()
         throw httpErrorToTRPC(e);
       }
     },
+  })
+
+  .mutation("processArray", {
+    input: z.object({
+      id: z.string(), // dmdtask uuid
+      array: z.array(z.any()),
+    }),
+    async resolve({ input, ctx }) {
+      try {
+        return await ctx.couch.dmdtask.update({
+          ddoc: "access",
+          name: "process",
+          docId: input.id,
+          body: {
+            succeeded: true,
+            items: input.array,
+            message: "test",
+          },
+        });
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .mutation("processDelete", {
+    input: z.object({
+      id: z.string(), // dmdtask uuid
+    }),
+    async resolve({ input, ctx }) {
+      try {
+        return await ctx.couch.dmdtask.update({
+          ddoc: "access",
+          name: "process",
+          docId: input.id,
+          body: {
+            succeeded: true,
+            items: "delete",
+            message: "test",
+          },
+        });
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
   });

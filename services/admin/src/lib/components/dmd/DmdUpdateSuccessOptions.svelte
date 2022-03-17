@@ -31,6 +31,12 @@
     window.location.reload();
   }
 
+  async function handleTestClearPressed() {
+    await $session.lapin.mutation("dmdTask.processDelete", {
+      id: dmdTask.id,
+    });
+  }
+
   onMount(() => {
     const newLine = "%0A";
     const title = "title=DMD Task Item Updates Not Propagating";
@@ -89,6 +95,7 @@
   {/if}
 
   <div class="button-wrap">
+    <button on:click={handleTestClearPressed}>Test Clear</button>
     <LoadingButton
       buttonClass="primary"
       on:clicked={handleReProcessClicked}
