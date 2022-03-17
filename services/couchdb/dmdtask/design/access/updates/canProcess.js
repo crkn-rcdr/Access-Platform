@@ -3,6 +3,7 @@ module.exports = function (doc, req) {
     successReturn,
     errorReturn,
     timestamp,
+    extractJSONFromBody,
   } = require("views/lib/prelude");
 
   if (!doc) {
