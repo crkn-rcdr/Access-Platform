@@ -9,6 +9,20 @@ module.exports = function (doc, req) {
     return errorReturn(`No document found with id ${req.id}`, 404);
   }
 
+  const input = extractJSONFromBody(req);
+
+  // Passing in nothing is allowed
+  if (input) {
+    // Set if there is a 'user' parameter. Must follow User.js schema
+    if (input.user) doc.user = input.user;
+
+    // If there is a 'parse' parameter, re-parse "metadata" attachment.
+    if (input.parse) {
+      delete doc.items;
+      delete doc.itemCount;
+    }
+  }
+
   const now = timestamp();
 
   doc.updated = now;
