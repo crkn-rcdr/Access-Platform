@@ -16,10 +16,10 @@ module.exports = function (doc, req) {
     // Set if there is a 'user' parameter. Must follow User.js schema
     if (input.user) doc.user = input.user;
 
-    // If there is a 'parse' parameter, re-parse "metadata" attachment.
+    // If there is a 'parse' parameter, trigger re-parse of "metadata" attachment.
     if (input.parse) {
       delete doc.items;
-      delete doc.itemCount;
+      delete doc.itemsCount;
     }
   }
 
