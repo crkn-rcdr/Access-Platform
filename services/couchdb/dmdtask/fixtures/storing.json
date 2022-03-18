@@ -39,5 +39,6 @@
   "itemsCount": 3,
   "destination": "access",
   "stage": "store-started",
-  "partialStore": true
+  "partialStore": true,
+  "progress": 0
 }

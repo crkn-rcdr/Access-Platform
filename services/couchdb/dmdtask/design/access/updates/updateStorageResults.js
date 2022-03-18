@@ -21,19 +21,32 @@ module.exports = function (doc, req) {
     return errorReturn(`No document found with id ${req.id}`, 404);
   }
 
-  const input = extractJSONFromBody(req);
-  if (!Array.isArray(input)) {
-    return errorReturn(`Expected an array as input`);
+  const data = extractJSONFromBody(req);
+  if (!data) {
+    return errorReturn(`Could not parse request body as JSON: ${req.body}`);
   }
 
-  for (const itemDataArray of input) {
-    if (
-      Array.isArray(itemDataArray) &&
-      itemDataArray.length === 2 &&
-      itemDataArray[0] < doc.items.length
-    ) {
-      doc.items[itemDataArray[0]].stored = itemDataArray[1];
+  /*
+  An array as an optional parameter - [ [5,true], [6,true], [7,false]]
+  workProgress - an integer (index into array or index+1 -- your choice) for where the microservice is in paging through the work to do
+  workSize - an integer (size of array) for the work array. */
+  const { array, workProgress, workSize } = data;
+
+  if (array) {
+    for (const itemDataArray of input) {
+      if (
+        Array.isArray(itemDataArray) &&
+        itemDataArray.length === 2 &&
+        itemDataArray[0] < doc.items.length
+      ) {
+        doc.items[itemDataArray[0]].stored = itemDataArray[1];
+      }
     }
+  }
+
+  if (typeof workProgress !== "undefined" && typeof workSize !== "undefined") {
+    doc.progress =
+      workSize > 0 ? Math.ceil((workProgress / workSize) * 100) : 0;
   }
 
   const now = timestamp();

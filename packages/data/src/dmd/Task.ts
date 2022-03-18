@@ -177,6 +177,11 @@ export type ParsingSucceededDMDTask = z.infer<
 export const StoreQueuedDMDTask = ParsingSucceededDMDTask.merge(
   z.object({
     /**
+     *
+     */
+    destination: z.enum(["access", "preservation"]),
+
+    /**
      * The request to queue the items for storage.
      */
     process: ProcessRequest,
@@ -201,6 +206,10 @@ export const StoringDMDTask = StoreQueuedDMDTask.merge(
     /**
      */
     stage: z.literal("store-started"),
+
+    /**
+     */
+    progress: z.number(),
   })
 );
 
@@ -281,7 +290,7 @@ export const StoringPausedDMDTask = StoreQueuedDMDTask.merge(
     "shouldStore" in lastItem &&
     !("stored" in lastItem)
   );
-}, "A paused update task has items with a destination property and some with a stored property, but not all.");
+}, "A paused update task has items with a shouldStore property and some with a stored property, but not all.");
 
 /**
  * TypeScript class
