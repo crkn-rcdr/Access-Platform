@@ -48,6 +48,8 @@ module.exports = {
     };
 
     const storeItemCheck = () => {
+      if (!doc.items) return false;
+
       let firstItem;
       for (const item of doc.items) {
         if (item.shouldStore) {
@@ -84,6 +86,8 @@ module.exports = {
     };
 
     const storeCompleteItemCheck = () => {
+      if (!doc.items) return false;
+
       let firstItem;
       for (const item of doc.items) {
         if (item.shouldStore) {
@@ -132,6 +136,8 @@ module.exports = {
     };
 
     const storePausedItemCheck = () => {
+      if (!doc.items) return false;
+
       let lastItem;
       for (let i = doc.items.length - 1; i >= 0; i--) {
         if (doc.items[i].shouldStore) {
@@ -163,8 +169,8 @@ module.exports = {
     else if (isStoreQueued()) type = "store queued";
     else if (isParseSucceeded()) type = "parse succeeded";
     else if (isParseFailed()) type = "parse failed";
-    //else if (isParsing()) type = "parsing";
-    //else if (isParseQueued()) type = "parse queued";
+    else if (isParsing()) type = "parsing";
+    else if (isParseQueued()) type = "parse queued";
 
     let date = 0;
     let message = "";
