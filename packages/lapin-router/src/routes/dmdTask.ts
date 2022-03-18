@@ -203,8 +203,8 @@ export const dmdTaskRouter = createRouter()
           docId: input.id,
           body: {
             array: input.array,
-            workProgress: 2,
-            workSize: 3,
+            workProgress: 0,
+            workSize: 2,
           },
         });
       } catch (e: any) {
