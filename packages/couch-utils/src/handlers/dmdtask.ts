@@ -113,9 +113,6 @@ export class DMDTaskHandler extends DatabaseHandler<DMDTask> {
 
     const dmdTask = await this.get(task);
 
-    // DMD TODO
-    console.log(destination);
-
     if ("items" in dmdTask) {
       for (let item of dmdTask.items) {
         if (item.id) {
@@ -133,6 +130,7 @@ export class DMDTaskHandler extends DatabaseHandler<DMDTask> {
         body: {
           user,
           data: {
+            destination,
             items: dmdTask.items,
           },
         },

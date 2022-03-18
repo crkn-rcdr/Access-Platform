@@ -83,7 +83,7 @@
   {/if}
 
   <div class="button-wrap">
-    <button on:click={handleTestClearPressed}>Test Clear</button>
+    <!--button on:click={handleTestClearPressed}>Test Clear</button-->
     <LoadingButton
       buttonClass="primary"
       on:clicked={handleReProcessClicked}

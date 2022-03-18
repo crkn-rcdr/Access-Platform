@@ -98,8 +98,8 @@
     progressText={progress === 100 ? "done!" : "loaded..."}
   />
   <br />
-  <button on:click={handleTest}>Test Progress</button>
-  <button on:click={handleTestCompletePressed}>Test Complete</button>
+  <!--button on:click={handleTest}>Test Progress</button>
+  <button on:click={handleTestCompletePressed}>Test Complete</button-->
 
   <!--div>
     <LoadingButton
