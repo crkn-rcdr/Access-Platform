@@ -65,24 +65,24 @@
       <Loading backgroundType="gradient" size="sm" />
     {:else}
       {#if status === "waiting"}
-        <a href={`/dmd/${task.type.replace(" ", "-")}/${task.id}`}>
+        <a href={`/dmd/${task.id}`}>
           <button class="action secondary"> Track </button>
         </a>
       {:else if status === "paused"}
-        <a href={`/dmd/${task.type.replace(" ", "-")}/${task.id}`}>
+        <a href={`/dmd/${task.id}`}>
           <button class="action save"> Resume Load</button>
         </a>
       {:else if status === "failed"}
-        <a href={`/dmd/${task.type.replace(" ", "-")}/${task.id}`}>
+        <a href={`/dmd/${task.id}`}>
           <button class="action secondary"> Review </button>
         </a>
       {:else if status === "succeeded"}
         {#if stage === "parse"}
-          <a href={`/dmd/${task.type.replace(" ", "-")}/${task.id}`}>
+          <a href={`/dmd/${task.id}`}>
             <button class="action save"> Load Metadata </button>
           </a>
         {:else}
-          <a href={`/dmd/${task.type.replace(" ", "-")}/${task.id}`}>
+          <a href={`/dmd/${task.id}`}>
             <button class="action secondary"> Review </button>
           </a>
         {/if}

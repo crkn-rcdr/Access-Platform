@@ -22,7 +22,7 @@
               dmdTask: response.task,
               totalItems: response.totalItems,
               totalPages: response.totalPages,
-              type: page.params["type"],
+              type: response.type,
             },
           };
         else

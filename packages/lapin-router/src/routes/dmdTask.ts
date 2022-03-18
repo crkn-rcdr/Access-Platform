@@ -4,6 +4,7 @@ import { createRouter, httpErrorToTRPC } from "../router.js";
 import {
   DMDFORMATS,
   ObjectListHandler,
+  ShortTask,
   Slug,
   User,
 } from "@crkn-rcdr/access-data";
@@ -70,10 +71,15 @@ export const dmdTaskRouter = createRouter()
           const pageData = items.page(1, 100);
           response.doc.items = pageData.list;
         }
+
+        const typeInfo: ShortTask | null = await ctx.couch.dmdtask.getShort(id);
+        console.log(typeInfo);
+
         return {
           task: response.doc,
           totalItems,
           totalPages,
+          type: typeInfo ? typeInfo.type : "N/A",
         };
       }
       throw new TRPCError({

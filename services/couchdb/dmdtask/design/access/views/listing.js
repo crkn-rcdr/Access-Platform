@@ -183,7 +183,7 @@ module.exports = {
       }
     }
 
-    emit(doc.id, {
+    emit(doc._id, {
       fileName: doc.fileName ? doc.fileName : "",
       type,
       date,

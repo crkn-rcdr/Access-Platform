@@ -14,6 +14,26 @@ export class DMDTaskHandler extends DatabaseHandler<DMDTask> {
     super(suffix ? `dmdtask-${suffix}` : `dmdtask`, DMDTask, client);
   }
 
+  async getShort(id: string): Promise<ShortTask | null> {
+    const res: any = await this.view("access", "listing", {
+      key: id,
+      include_docs: false,
+      reduce: false,
+    });
+
+    console.log("res", res);
+    return res.rows?.length
+      ? {
+          id: res.rows[0]["id"],
+          fileName: res.rows[0].value["fileName"],
+          type: res.rows[0].value["type"],
+          date: res.rows[0].value["date"],
+          count: res.rows[0].value["count"],
+          message: res.rows[0].value["message"],
+        }
+      : null;
+  }
+
   async getAll(): Promise<ShortTask[]> {
     const list = await this.view("access", "listing", {
       include_docs: false,

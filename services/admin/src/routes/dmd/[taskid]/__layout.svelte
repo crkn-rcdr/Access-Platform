@@ -8,8 +8,8 @@
 
 <Wizard
   title={`
-  <a href="/dmd" style="color:var(--primary) !important">&#x2B05; Back to all metadata tasks</a>
-  `}
+<a href="/dmd"  style="color:var(--primary) !important">&#x2B05; Back to all metadata tasks</a>
+`}
 >
   <slot />
 </Wizard>
