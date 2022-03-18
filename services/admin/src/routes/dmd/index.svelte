@@ -4,7 +4,6 @@
    * @module
    * @description loads in the object from the backend using the params in the route of the page
    */
-  import type { Session } from "$lib/types";
 
   function getDMDTasks(taskList) {
     const base: ShortTask[] = [];
@@ -52,6 +51,7 @@
 
 <script lang="ts">
   import { getStores } from "$app/stores";
+  import type { Session } from "$lib/types";
   import timer from "$lib/stores/timer";
   import { onDestroy, onMount } from "svelte";
   import ExpansionList from "$lib/components/shared/ExpansionList.svelte";

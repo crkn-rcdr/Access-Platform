@@ -9,30 +9,11 @@
     try {
       console.log("page", page);
       if (page?.params?.["taskid"]) {
-        const response = await context.lapin.query(
-          "dmdTask.get",
-          page.params["taskid"]
-        );
-
-        console.log(response);
-
-        if (response)
-          return {
-            props: {
-              dmdTask: response.task,
-              totalItems: response.totalItems,
-              totalPages: response.totalPages,
-              type: response.type,
-            },
-          };
-        else
-          return {
-            props: {
-              error: {
-                message: "DMD task not found",
-              },
-            },
-          };
+        return {
+          props: {
+            id: page?.params?.["taskid"],
+          },
+        };
       }
       return { props: {} };
     } catch (e) {
@@ -50,6 +31,8 @@
    * @file
    * @description This page displays the various states of and information about a dmdtask
    */
+  import { getStores } from "$app/stores";
+  import type { Session } from "$lib/types";
   import type { DMDTask, ShortTaskType } from "@crkn-rcdr/access-data";
   import DmdItemsTable from "$lib/components/dmd/DmdItemsTable.svelte";
   import DmdUpdateSuccessOptions from "$lib/components/dmd/DmdUpdateSuccessOptions.svelte";
@@ -60,31 +43,51 @@
   import DmdParseTracker from "$lib/components/dmd/DmdParseTracker.svelte";
   import DmdParseFailedOptions from "$lib/components/dmd/DmdParseFailedOptions.svelte";
   import DmdUpdatePausedOptions from "$lib/components/dmd/DmdUpdatePausedOptions.svelte";
+  import { afterUpdate, onMount } from "svelte";
+  import Loading from "$lib/components/shared/Loading.svelte";
+
+  export let id: string;
+  export let lookupResultsMap = {};
+  export let error: any;
+
+  /**
+   * @type {Session} The session store that contains the module for sending requests to lapin.
+   */
+  const { session } = getStores<Session>();
 
   /**
    * @type {DMDTask} The dmdtask being displayed by the page.
    */
-  export let dmdTask: DMDTask;
+  let dmdTask: DMDTask;
 
-  export let type: ShortTaskType;
+  let type: ShortTaskType;
 
-  export let totalItems: number = 0;
-  export let totalPages: number = 0;
+  let totalItems: number = 0;
 
-  export let lookupResultsMap = {};
+  let totalPages: number = 0;
 
-  export let error: any;
+  let loading = true;
+
+  async function getTask() {
+    loading = true;
+    const response = await $session.lapin.query("dmdTask.get", id);
+    dmdTask = response.task;
+    ({ totalItems, totalPages, type } = response);
+    loading = false;
+  }
+
+  onMount(async () => {
+    if (id) await getTask();
+  });
 </script>
 
 <div class="dmd-task-page-wrap">
-  <!--{#if pageData}
-    {JSON.stringify(pageData)}
-  {:else}
-    none
-  {/if}-->
-
   {#if error}
     {error?.message}
+  {:else if loading}
+    <div class="auto-align auto-align__block auto-align__j-center">
+      <Loading backgroundType="gradient" />
+    </div>
   {:else if !dmdTask}
     Loading...
   {:else if type === "store paused"}
