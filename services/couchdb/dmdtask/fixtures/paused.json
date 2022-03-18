@@ -40,7 +40,7 @@
       "shouldStore": true
     }
   ],
-  "itemCount": 3,
+  "itemsCount": 3,
   "destination": "access",
-  "stage": "paused"
+  "stage": "store-paused"
 }

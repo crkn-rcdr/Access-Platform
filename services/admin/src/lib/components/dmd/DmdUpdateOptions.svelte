@@ -82,9 +82,7 @@ This component allows the user to update the dmd tasks items in an access platfo
   }
 
   function setDestinationForItems() {
-    for (let item of dmdTask["items"]) {
-      item.destination = destination;
-    }
+    dmdTask["destination"] = destination;
   }
 
   async function onChange(event) {

@@ -93,6 +93,9 @@ export class DMDTaskHandler extends DatabaseHandler<DMDTask> {
 
     const dmdTask = await this.get(task);
 
+    // DMD TODO
+    console.log(destination);
+
     if ("items" in dmdTask) {
       for (let item of dmdTask.items) {
         if (item.id) {
@@ -100,7 +103,6 @@ export class DMDTaskHandler extends DatabaseHandler<DMDTask> {
         } else {
           item["shouldStore"] = false;
         }
-        item["destination"] = destination;
         item["id"] = prefix === "none" ? item["id"] : `${prefix}.${item["id"]}`;
       }
 
@@ -157,7 +159,7 @@ export class DMDTaskHandler extends DatabaseHandler<DMDTask> {
             },
             items: dmdTask.items.map((item) => {
               if ("stored" in item) delete item["stored"];
-              if ("destination" in item) delete item["destination"];
+              if ("shouldStore" in item) delete item["shouldStore"];
               return item;
             }),
           },

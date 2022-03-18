@@ -1,11 +1,21 @@
 module.exports = {
   map: function (doc) {
-    const isParsing = () => {
+    const isParseQueued = () => {
       return (
         doc.process &&
         doc.process.requestDate &&
         !doc.process.processDate &&
         !doc.items
+      );
+    };
+
+    const isParsing = () => {
+      return (
+        doc.process &&
+        doc.process.requestDate &&
+        !doc.process.processDate &&
+        !doc.items &&
+        doc.stage === "parsing"
       );
     };
 
@@ -22,7 +32,7 @@ module.exports = {
       let firstItem = null;
       if (doc.items && doc.items.length) firstItem = doc.items[0];
       return (
-        firstItem && !("destination" in firstItem) && !("stored" in firstItem)
+        firstItem && !("shouldStore" in firstItem) && !("stored" in firstItem)
       );
     };
 
@@ -32,11 +42,12 @@ module.exports = {
         doc.process.processDate &&
         doc.process.succeeded &&
         doc.items &&
+        "itemsCount" in doc &&
         parseItemCheck()
       );
     };
 
-    const loadItemCheck = () => {
+    const storeItemCheck = () => {
       let firstItem;
       for (const item of doc.items) {
         if (item.shouldStore) {
@@ -45,20 +56,34 @@ module.exports = {
         }
       }
       return (
-        firstItem && "destination" in firstItem && !("stored" in firstItem)
+        firstItem && "shouldStore" in firstItem && !("stored" in firstItem)
       );
     };
-    const isLoading = () => {
+
+    const isStoreQueued = () => {
       return (
         doc.process &&
         doc.process.requestDate &&
         !doc.process.processDate &&
         doc.items &&
-        loadItemCheck()
+        "itemsCount" in doc &&
+        storeItemCheck()
       );
     };
 
-    const loadCompleteItemCheck = () => {
+    const isStoring = () => {
+      return (
+        doc.process &&
+          doc.process.requestDate &&
+          !doc.process.processDate &&
+          doc.items &&
+          "itemsCount" in doc &&
+          doc.stage === "store-started",
+        storeItemCheck()
+      );
+    };
+
+    const storeCompleteItemCheck = () => {
       let firstItem;
       for (const item of doc.items) {
         if (item.shouldStore) {
@@ -77,42 +102,36 @@ module.exports = {
 
       return (
         firstItem &&
-        "destination" in firstItem &&
+        "shouldStore" in firstItem &&
         "stored" in firstItem &&
         lastItem &&
         "stored" in lastItem
       );
     };
 
-    const isLoadFailed = () => {
+    const isStoreFailed = () => {
       return (
         doc.process &&
         doc.process.processDate &&
         !doc.process.succeeded &&
         doc.items &&
-        loadCompleteItemCheck()
+        "itemsCount" in doc &&
+        storeCompleteItemCheck()
       );
     };
 
-    const isLoadSucceeded = () => {
+    const isStoreSucceeded = () => {
       return (
         doc.process &&
         doc.process.processDate &&
         doc.process.succeeded &&
         doc.items &&
-        loadCompleteItemCheck()
+        "itemsCount" in doc &&
+        storeCompleteItemCheck()
       );
     };
 
-    const loadPausedItemCheck = () => {
-      /*let firstItem;
-      for (const item of doc.items) {
-        if (item.shouldStore) {
-          firstItem = item;
-          break;
-        }
-      }*/
-
+    const storePausedItemCheck = () => {
       let lastItem;
       for (let i = doc.items.length - 1; i >= 0; i--) {
         if (doc.items[i].shouldStore) {
@@ -121,27 +140,31 @@ module.exports = {
         }
       }
 
-      return lastItem && "destination" in lastItem && !("stored" in lastItem);
+      return lastItem && "shouldStore" in lastItem && !("stored" in lastItem);
     };
 
-    const isLoadPaused = () => {
+    const isStorePaused = () => {
       return (
         doc.process &&
         doc.process.processDate &&
         doc.process.succeeded &&
         doc.items &&
-        loadPausedItemCheck()
+        "itemsCount" in doc &&
+        doc.stage === "store-paused" &&
+        storePausedItemCheck()
       );
     };
 
     let type = "N/A";
-    if (isLoadPaused()) type = "paused";
-    else if (isLoadSucceeded()) type = "load succeeded";
-    else if (isLoadFailed()) type = "load failed";
-    else if (isLoading()) type = "loading";
+    if (isStorePaused()) type = "store paused";
+    else if (isStoreSucceeded()) type = "store succeeded";
+    else if (isStoreFailed()) type = "store failed";
+    else if (isStoring()) type = "storing";
+    else if (isStoreQueued()) type = "store queued";
     else if (isParseSucceeded()) type = "parse succeeded";
     else if (isParseFailed()) type = "parse failed";
-    else if (isParsing()) type = "parsing";
+    //else if (isParsing()) type = "parsing";
+    //else if (isParseQueued()) type = "parse queued";
 
     let date = 0;
     let message = "";
@@ -158,7 +181,7 @@ module.exports = {
       fileName: doc.fileName ? doc.fileName : "",
       type,
       date,
-      count: doc.items ? doc.items.length : 0,
+      count: doc.itemsCount ? doc.itemsCount : 0,
       message,
     });
   },

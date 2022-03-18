@@ -52,11 +52,6 @@ export const ItemProcessRecord = z
     stored: z.boolean().optional(),
 
     /**
-     * This field tells the metadata processor where to store the new metadata to.
-     */
-    destination: z.enum(["access", "preservation"]).optional(), // if not defined, then  not yet at the "Process Metadata File" stage.
-
-    /**
      * Tells the back end script if the item has been selected for storage.
      */
     shouldStore: z.boolean().optional(),
@@ -67,20 +62,11 @@ export const ItemProcessRecord = z
   );
 export type ItemProcessRecord = z.infer<typeof ItemProcessRecord>;
 
-/**
- * DMDTask file is being uploaded to split, validate, and flatten the metadata in the attached file.
- * (Upload Attachment Step: waiting)
- */
-export const ParsingDMDTask = z.object({
+export const BaseDMDTask = z.object({
   /**
    * Unique ID assigned to the task.
    */
   id: z.string(),
-
-  /**
-   * CouchDB `_attachments` object.
-   */
-  attachments: CouchAttachmentRecord.optional(),
 
   /**
    * Record of the user who created this task.
@@ -98,22 +84,49 @@ export const ParsingDMDTask = z.object({
   fileName: z.string().optional(),
 
   /**
-   * The request to split, validate, and flatten the metadata in the attached file.
-   */
-  process: ProcessRequest,
-
-  /**
    * Timestamp of the task's most recent update.
    */
   updated: Timestamp,
+
+  /**
+   * CouchDB `_attachments` object.
+   */
+  attachments: CouchAttachmentRecord.optional(),
 });
 
-export type ParsingDMDTask = z.infer<typeof ParsingDMDTask>;
+/**
+ * TypeScript class
+ */
+export type BaseDMDTask = z.infer<typeof BaseDMDTask>;
+
+export const ParsingQueuedDMDTask = BaseDMDTask.merge(
+  z.object({
+    /**
+     * The request to split, validate, and flatten the metadata in the attached file.
+     */
+    process: ProcessRequest,
+  })
+);
 
 /**
- * DMDTask whose metadata file could not be processed into individual records.
+ * TypeScript class
  */
-export const ParseFailedDMDTask = ParsingDMDTask.merge(
+export type ParsingQueuedDMDTask = z.infer<typeof ParsingQueuedDMDTask>;
+
+export const ParsingDMDTask = ParsingQueuedDMDTask.merge(
+  z.object({
+    /**
+     */
+    stage: z.literal("parsing"),
+  })
+);
+
+/**
+ * TypeScript class
+ */
+export type ParsingDMDTask = z.infer<typeof ParsingDMDTask>;
+
+export const ParsingFailedDMDTask = ParsingQueuedDMDTask.merge(
   z.object({
     /**
      * The items in the file have not had their metadata processed.
@@ -122,13 +135,12 @@ export const ParseFailedDMDTask = ParsingDMDTask.merge(
   })
 );
 
-export type ParseFailedDMDTask = z.infer<typeof ParseFailedDMDTask>;
-
 /**
- * DMDTask whose metadata file could be processed into individual records.
- * (Process Metadata File Step: in-queue)
+ * TypeScript class
  */
-export const ParseSucceededDMDTask = ParsingDMDTask.merge(
+export type ParsingFailedDMDTask = z.infer<typeof ParsingFailedDMDTask>;
+
+export const ParsingSucceededDMDTask = ParsingQueuedDMDTask.merge(
   z.object({
     /**
      * The items in the file have had their metadata processed.
@@ -141,24 +153,28 @@ export const ParseSucceededDMDTask = ParsingDMDTask.merge(
      * document, by the record's index in this array.
      */
     items: z.array(ItemProcessRecord),
+
+    /**
+     * Count of individual items found in the metadata file.
+     */
+    itemsCount: z.number(),
   })
 );
 
-const ParseSucceededDMDTaskListCheck = ParseSucceededDMDTask.refine((task) => {
+const ParsingSucceededDMDTaskCheck = ParsingSucceededDMDTask.refine((task) => {
   let firstItem = null;
   if (task.items && task.items.length) firstItem = task.items[0];
-  return firstItem && !("destination" in firstItem) && !("stored" in firstItem);
-}, "A validated task has items without a destination property and without a stored property.");
-
-export type ParseSucceededDMDTask = z.infer<
-  typeof ParseSucceededDMDTaskListCheck
->;
+  return firstItem && !("shouldStore" in firstItem) && !("stored" in firstItem);
+}, "A validated task has items without a shouldStore property and without a stored property.");
 
 /**
- * DMD Task is being added to the queue for storing each item's new metadata file.
- * (Process Metadata File Step: in-queue)
+ * TypeScript class
  */
-export const UpdatingDMDTask = ParseSucceededDMDTask.merge(
+export type ParsingSucceededDMDTask = z.infer<
+  typeof ParsingSucceededDMDTaskCheck
+>;
+
+export const StoreQueuedDMDTask = ParsingSucceededDMDTask.merge(
   z.object({
     /**
      * The request to queue the items for storage.
@@ -167,7 +183,7 @@ export const UpdatingDMDTask = ParseSucceededDMDTask.merge(
   })
 );
 
-const UpdatingDMDTaskListCheck = UpdatingDMDTask.refine((task) => {
+const StoreQueuedDMDTaskCheck = StoreQueuedDMDTask.refine((task) => {
   let firstItem;
   for (const item of task.items) {
     if (item.shouldStore) {
@@ -175,16 +191,25 @@ const UpdatingDMDTaskListCheck = UpdatingDMDTask.refine((task) => {
       break;
     }
   }
-  return firstItem && "destination" in firstItem && !("stored" in firstItem);
-}, "A queued task has items with a destination property but without a stored property.");
+  return firstItem && "shouldStore" in firstItem && !("stored" in firstItem);
+}, "A queued task has items with a shouldStore property but without a stored property.");
 
-export type UpdatingDMDTask = z.infer<typeof UpdatingDMDTaskListCheck>;
+export type StoreQueuedDMDTask = z.infer<typeof StoreQueuedDMDTaskCheck>;
+
+export const StoringDMDTask = StoreQueuedDMDTask.merge(
+  z.object({
+    /**
+     */
+    stage: z.literal("store-started"),
+  })
+);
 
 /**
- * DMD Task process for storing each item's new metadata file failed.
- * (Final Results Step: fail)
+ * TypeScript class
  */
-export const UpdateFailedDMDTask = UpdatingDMDTask.merge(
+export type StoringDMDTask = z.infer<typeof StoringDMDTask>;
+
+export const StoringFailedDMDTask = StoreQueuedDMDTask.merge(
   z.object({
     /**
      * The items in the file have not had their metadata stored
@@ -210,24 +235,26 @@ export const UpdateFailedDMDTask = UpdatingDMDTask.merge(
 
   return (
     firstItem &&
-    "destination" in firstItem &&
+    "shouldStore" in firstItem &&
     "stored" in firstItem &&
     lastItem &&
+    "shouldStore" in lastItem &&
     "stored" in lastItem
   );
-}, "A failed task has items with a destination property and a stored property.");
-export type UpdateFailedDMDTask = z.infer<typeof UpdateFailedDMDTask>;
+}, "A failed task has items with a shouldStore property and a stored property.");
 
 /**
- * DMD Task process for storing each item's new metadata file succeeded.
- * (Final Results Step: warning/success)
+ * TypeScript class
  */
-export const UpdateSucceededDMDTask = UpdatingDMDTask.merge(
+export type StoringFailedDMDTask = z.infer<typeof StoringFailedDMDTask>;
+export const StoringPausedDMDTask = StoreQueuedDMDTask.merge(
   z.object({
     /**
      * The items in the file have had their metadata stored.
      */
     process: SucceededProcessResult,
+
+    stage: z.literal("store-paused"),
   })
 ).refine((task) => {
   let firstItem;
@@ -248,77 +275,93 @@ export const UpdateSucceededDMDTask = UpdatingDMDTask.merge(
 
   return (
     firstItem &&
-    "destination" in firstItem &&
+    "shouldStore" in firstItem &&
     "stored" in firstItem &&
     lastItem &&
-    "stored" in lastItem
-  );
-}, "A succeeded task has items with a destination property and a stored property.");
-export type UpdateSucceededDMDTask = z.infer<typeof UpdateSucceededDMDTask>;
-
-/**
- * DMD Task process for storing each item's new metadata file is paused.
- * (Final Results Step: warning/success)
- */
-export const UpdatePausedDMDTask = UpdatingDMDTask.merge(
-  z.object({
-    /**
-     * The items in the file have had their metadata stored.
-     */
-    process: SucceededProcessResult,
-  })
-).refine((task) => {
-  let firstItem;
-  for (const item of task.items) {
-    if (item.shouldStore) {
-      firstItem = item;
-      break;
-    }
-  }
-
-  let lastItem;
-  for (let i = task.items.length - 1; i >= 0; i--) {
-    if (task.items?.[i]?.shouldStore) {
-      lastItem = task.items[i];
-      break;
-    }
-  }
-
-  return (
-    firstItem &&
-    "destination" in firstItem &&
-    "stored" in firstItem &&
-    lastItem &&
+    "shouldStore" in lastItem &&
     !("stored" in lastItem)
   );
 }, "A paused update task has items with a destination property and some with a stored property, but not all.");
-export type UpdatePausedDMDTask = z.infer<typeof UpdatePausedDMDTask>;
 
 /**
- * A descriptive metadata task (DMDTask) can be in four states:
- *
- * 1. Parsing
- * 2. Parsed (Reporting that background processing could split or validate the metadata file. The processor attempted to parse each individual item it extracted from the file; those items that parsed successfully have their own attachments added to the document.)
- * 3. Updating
- * 4. Update Success/warning/fail (Reporting that each item's metadata file was updated, or not.)
- *
+ * TypeScript class
+ */
+export type StoringPausedDMDTask = z.infer<typeof StoringPausedDMDTask>;
+
+export const StoringSucceededDMDTask = StoreQueuedDMDTask.merge(
+  z.object({
+    /**
+     * The items in the file have had their metadata stored.
+     */
+    process: SucceededProcessResult,
+  })
+).refine((task) => {
+  let firstItem;
+  for (const item of task.items) {
+    if (item.shouldStore) {
+      firstItem = item;
+      break;
+    }
+  }
+
+  let lastItem;
+  for (let i = task.items.length - 1; i >= 0; i--) {
+    if (task.items?.[i]?.shouldStore) {
+      lastItem = task.items[i];
+      break;
+    }
+  }
+
+  return (
+    firstItem &&
+    "shouldStore" in firstItem &&
+    "stored" in firstItem &&
+    lastItem &&
+    "shouldStore" in lastItem &&
+    "stored" in lastItem
+  );
+}, "A succeeded task has items with a shouldStore property and a stored property.");
+
+/**
+ * TypeScript class
+ */
+export type StoringSucceededDMDTask = z.infer<typeof StoringSucceededDMDTask>;
+
+/**
+ * A descriptive metadata task (DMDTask) in any state
  */
 export const DMDTask = z.union([
-  UpdatePausedDMDTask,
-  UpdateSucceededDMDTask,
-  UpdateFailedDMDTask,
-  UpdatingDMDTask,
-  ParseSucceededDMDTask,
-  ParseFailedDMDTask,
+  BaseDMDTask,
+  ParsingQueuedDMDTask,
   ParsingDMDTask,
+  ParsingFailedDMDTask,
+  ParsingSucceededDMDTask,
+  StoreQueuedDMDTask,
+  StoringDMDTask,
+  StoringFailedDMDTask,
+  StoringSucceededDMDTask,
+  StoringPausedDMDTask,
 ]);
 
 export type DMDTask = z.infer<typeof DMDTask>;
 
+/**
+ * Used to list the DMD Tasks
+ */
 export type ShortTask = {
   id: string;
   fileName: string;
-  type: string;
+  type:
+    | "N/A"
+    | "store paused"
+    | "store succeeded"
+    | "store failed"
+    | "store queued"
+    | "storing"
+    | "parse succeeded"
+    | "parse failed"
+    | "parse queued"
+    | "parsing";
   date: string | number;
   count: number;
   message: string;

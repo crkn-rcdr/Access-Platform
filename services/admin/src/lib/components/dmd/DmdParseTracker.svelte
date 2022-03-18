@@ -51,7 +51,7 @@ Displays a dmd task in an waiting state.
     try {
       error = "";
       const response = await $session.lapin.query("dmdTask.get", id);
-      if (response) dmdTask = response;
+      if (response) dmdTask = response.task;
       else error = "Code 4. Please contact the platform team for assistance.";
       lastUpdated = new Date().toLocaleString();
     } catch (e) {
@@ -103,10 +103,10 @@ Displays a dmd task in an waiting state.
     <br />
     <p>
       Request initiated on: {`${
-        typeof dmdTask.process["requestDate"] === "string"
-          ? new Date(dmdTask.process["requestDate"]).toLocaleString()
+        typeof dmdTask["process"]["requestDate"] === "string"
+          ? new Date(dmdTask["process"]["requestDate"]).toLocaleString()
           : new Date(
-              parseInt(`${dmdTask.process["requestDate"]}`) * 1000
+              parseInt(`${dmdTask["process"]["requestDate"]}`) * 1000
             ).toLocaleString()
       }`}
     </p>

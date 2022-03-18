@@ -1,5 +1,5 @@
 {
-  "_id": "queued",
+  "_id": "storing",
   "updated": 1631200365.22,
   "process": {
     "requestDate": 1631199874.161
@@ -8,7 +8,7 @@
     "name": "Brittny Lapierre",
     "email": "blapierre@crkn.ca"
   },
-  "fileName": "queued.mrc",
+  "fileName": "storing.mrc",
   "format": "marc490",
   "items": [
     {
@@ -36,7 +36,7 @@
       "shouldStore": false
     }
   ],
-  "itemCount": 3,
+  "itemsCount": 3,
   "destination": "access",
   "stage": "store-started",
   "partialStore": true

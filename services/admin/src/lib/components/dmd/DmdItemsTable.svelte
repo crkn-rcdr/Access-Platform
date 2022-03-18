@@ -160,7 +160,7 @@
         <tr>
           {#if state !== "updated"}
             <td>
-              {#if item.shouldStore && !("succeeded" in dmdTask.process) && !item.stored}
+              {#if item.shouldStore && !("succeeded" in dmdTask["process"]) && !item.stored}
                 <Loading size="sm" backgroundType="gradient" />
               {:else if item.parsed && lookupResultsMap[item.id]}
                 <input

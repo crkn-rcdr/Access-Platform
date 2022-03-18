@@ -47,7 +47,7 @@ This component allows the user to update the dmd tasks items in an access platfo
     sendingStoreRequest = true;
     const result = await $session.lapin.mutation("dmdTask.store", {
       task: dmdTask.id,
-      destination: dmdTask["items"][0].destination,
+      destination: dmdTask["destination"],
       prefix: "none",
       items: dmdTask["items"]
         .filter((item) => item.shouldStore)

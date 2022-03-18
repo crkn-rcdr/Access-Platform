@@ -1,4 +1,4 @@
-import test from "ava";
+/*import test from "ava";
 import { tester } from "../testHelper.js";
 import { User } from "../util/User.js";
 
@@ -351,3 +351,4 @@ test(
   isInvalidSucceeded,
   itemWithout("label")
 );
+*/

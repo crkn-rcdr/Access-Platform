@@ -1,5 +1,5 @@
 {
-  "_id": "warning",
+  "_id": "storeWarning",
   "updated": 1631200365.22,
   "process": {
     "requestDate": 1631199874.161,
@@ -11,7 +11,7 @@
     "name": "Brittny Lapierre",
     "email": "blapierre@crkn.ca"
   },
-  "fileName": "warning.mrc",
+  "fileName": "storeWarning.mrc",
   "format": "marc490",
   "items": [
     {
@@ -42,7 +42,7 @@
       "stored": true
     }
   ],
-  "itemCount": 3,
+  "itemsCount": 3,
   "destination": "access",
   "partialStore": false
 }

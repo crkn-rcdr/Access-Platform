@@ -1,5 +1,5 @@
 {
-  "_id": "parsingFailedTest",
+  "_id": "parsingFailed",
   "updated": 1631200365.22,
   "process": {
     "requestDate": 1631199874.161,
@@ -11,6 +11,6 @@
     "name": "Brittny Lapierre",
     "email": "blapierre@crkn.ca"
   },
-  "fileName": "parsingFailedTest.mrc",
+  "fileName": "parsingFailed.mrc",
   "format": "marc490"
 }

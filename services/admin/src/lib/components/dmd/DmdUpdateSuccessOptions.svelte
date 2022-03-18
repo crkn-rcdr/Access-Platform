@@ -74,7 +74,7 @@
     status="success"
   />
   <br />
-  <NotificationBar message={dmdTask.process?.["message"]} status="warn" />
+  <NotificationBar message={dmdTask["process"]?.["message"]} status="warn" />
   <!-- if preservation update -->
   <!-- then show button to go to old tool-->
   {#if dmdTask["items"]?.length && dmdTask["items"][0].destination === "preservation"}

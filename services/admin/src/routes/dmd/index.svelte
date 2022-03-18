@@ -15,28 +15,29 @@
     const updated: ShortTask[] = [];
 
     // todo test
+    /*
     const list = taskList.sort((a, b) => {
-      if (a.process?.requestDate > b.process?.requestDate) return 1;
-      else if (a.process?.requestDate < b.process?.requestDate) return -1;
+      if (a.date > b.date) return 1;
+      else if (a.date < b.date) return -1;
       return 0;
-    });
+    });*/
 
-    for (const task of list) {
-      if (task.type === "paused") {
+    for (const task of taskList) {
+      if (task.type === "store paused") {
         paused.push(task);
       } else if (
-        task.type === "load succeeded" ||
-        task.type === "load failed"
+        task.type === "store succeeded" ||
+        task.type === "store failed"
       ) {
         updated.push(task);
-      } else if (task.type === "loading") {
+      } else if (task.type === "store queued" || task.type === "storing") {
         updating.push(task);
       } else if (
         task.type === "parse succeeded" ||
         task.type === "parse failed"
       ) {
         parsed.push(task);
-      } else if (task.type === "parsing") {
+      } else if (task.type === "parse queued" || task.type === "parsing") {
         parsing.push(task);
       } else {
         base.push(task);
@@ -47,20 +48,6 @@
       props: { base, parsed, parsing, updating, updated, paused },
     };
   }
-
-  /*export const load: Load<RootLoadOutput> = async ({ page, context }) => {
-    try {
-      let taskList = await context.lapin.query("dmdTask.list");
-      return getDMDTasks(taskList);
-    } catch (e) {
-      return {
-        props: {
-          error:
-            "Could not get dmd update tasks from the server. Please contact the platform team for assistance.",
-        },
-      };
-    }
-  };*/
 </script>
 
 <script lang="ts">
@@ -280,7 +267,7 @@
       <span slot="title">Load Completed ({updated.length})</span>
       {#each updated as task}
         <ExpansionListItem
-          status={task.type === "load succeeded"
+          status={task.type === "store succeeded"
             ? task.message?.length
               ? "warning"
               : "succeeded"
@@ -298,13 +285,13 @@
               {task}
               isListLoading={loading}
               stage="load"
-              status={task.type === "load succeeded" ? "succeeded" : "failed"}
+              status={task.type === "store succeeded" ? "succeeded" : "failed"}
               on:delete={getDMDTasksList}
             />
           </span>
         </ExpansionListItem>
         <ExpansionListMessage
-          status={task.type === "load succeeded" ? "succeeded" : "failed"}
+          status={task.type === "store succeeded" ? "succeeded" : "failed"}
           message={task.message}
         />
       {/each}
