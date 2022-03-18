@@ -63,7 +63,6 @@ export const dmdTaskRouter = createRouter()
       if (response.found) {
         let totalItems = 0;
         let totalPages = 0;
-        console.log(response.doc);
         if ("items" in response.doc && Array.isArray(response.doc["items"])) {
           totalItems = response.doc["items"].length;
           totalPages = totalItems > 0 ? Math.ceil(totalPages / totalItems) : 0;
@@ -258,6 +257,45 @@ export const dmdTaskRouter = createRouter()
             message: "test",
           },
         });
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .mutation("bulkLookup", {
+    input: z.object({
+      id: z.string(), // dmdtask uuid
+      destination: z.enum(["access", "preservation"]),
+      prefix: z.string(),
+    }),
+    async resolve({ input, ctx }) {
+      try {
+        const { id, prefix, destination } = input;
+        const response: any = await ctx.couch.dmdtask.getSafe(id);
+
+        if (response.doc?.["items"]) {
+          const task: any = response.doc;
+          const ids = task.items.map((item: any) =>
+            prefix === "none" ? item.id : `${prefix}.${item.id}`
+          );
+          let foundIDs: any[] = [];
+          if (destination === "access") {
+            //ids
+            const list = await ctx.couch.access.view("access", "slug", {
+              keys: ids,
+            });
+            console.log("list", list);
+            foundIDs = list.rows.map((row: any) => row.key);
+          } else {
+            const list = await ctx.couch.wipmeta.bulkLookup(ids);
+            console.log("list", list);
+            foundIDs = list.rows
+              .filter((row: any) => "id" in row)
+              .map((row: any) => row.key);
+          }
+          return ids.filter((id: any) => !foundIDs.includes(id));
+        }
+        return [];
       } catch (e) {
         throw httpErrorToTRPC(e);
       }

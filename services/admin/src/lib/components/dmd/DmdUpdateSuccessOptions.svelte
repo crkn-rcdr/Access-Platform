@@ -35,6 +35,7 @@
     await $session.lapin.mutation("dmdTask.processDelete", {
       id: dmdTask.id,
     });
+    window.location.reload();
   }
 
   onMount(() => {

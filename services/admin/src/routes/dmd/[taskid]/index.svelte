@@ -47,7 +47,6 @@
   import Loading from "$lib/components/shared/Loading.svelte";
 
   export let id: string;
-  export let lookupResultsMap = {};
   export let error: any;
 
   /**
@@ -67,6 +66,8 @@
   let totalPages: number = 0;
 
   let loading = true;
+
+  let notFoundIds;
 
   async function getTask() {
     loading = true;
@@ -103,10 +104,10 @@
     <DmdUpdateProgress bind:dmdTask />
     <DmdItemsTable bind:dmdTask bind:type bind:totalItems bind:totalPages />
   {:else if type === "parse succeeded"}
-    <DmdUpdateOptions bind:dmdTask bind:lookupResultsMap />
+    <DmdUpdateOptions bind:dmdTask bind:notFoundIds />
     <DmdItemsTable
       bind:dmdTask
-      bind:lookupResultsMap
+      bind:notFoundIds
       bind:type
       bind:totalItems
       bind:totalPages

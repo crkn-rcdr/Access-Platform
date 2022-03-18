@@ -30,7 +30,7 @@ This component allows the user to update the dmd tasks items in an access platfo
    *  @type { DMDTask } The DMDTask being processed.
    */
   export let dmdTask: DMDTask;
-  export let lookupResultsMap = {};
+  export let notFoundIds;
 
   /**
    *  @type { Depositor } The access platform to look for the items in.
@@ -103,44 +103,17 @@ This component allows the user to update the dmd tasks items in an access platfo
 
   async function lookupItems() {
     lookingUp = true;
-    lookupResultsMap = {};
-    const slugBatch = dmdTask["items"].map((item) => item.id);
     try {
-      if (destination === "access") {
-        const response = await $session.lapin.mutation(
-          `slug.bulkLookup`,
-          slugBatch
-        );
-        for (const item of dmdTask["items"]) {
-          if (response.includes(item.id)) {
-            lookupResultsMap[item.id] = true;
-          } else {
-            lookupResultsMap[item.id] = false;
-          }
-        }
-      } else if (destination === "preservation") {
-        const response = await $session.lapin.mutation(
-          `wipmeta.bulkLookup`,
-          slugBatch
-        );
-        for (const item of dmdTask["items"]) {
-          if (response.includes(item.id)) {
-            lookupResultsMap[item.id] = true;
-          } else {
-            lookupResultsMap[item.id] = false;
-          }
-        }
-      }
+      notFoundIds = await $session.lapin.mutation(`dmdTask.bulkLookup`, {
+        id: dmdTask.id,
+        destination,
+        prefix: depositor.prefix,
+      });
     } catch (e) {
       console.log(e?.message);
-      for (let id of slugBatch) lookupResultsMap[id] = false;
       /*error = e?.message.includes(`"path:"`)
           ? "Code 8. Please contact the platform team for assistance."
           : "Code 9. Please contact the platform team for assistance. ";*/
-    }
-
-    for (const item of dmdTask["items"]) {
-      item.shouldStore = lookupResultsMap[item.id] ? true : false;
     }
 
     dmdTask = dmdTask;
@@ -149,7 +122,7 @@ This component allows the user to update the dmd tasks items in an access platfo
 
   async function handleDepositorChanged(e) {
     depositor = e.detail;
-    setItemIds();
+    //setItemIds();
     if (destination) await lookupItems();
     prevPrefix = depositor.prefix;
   }

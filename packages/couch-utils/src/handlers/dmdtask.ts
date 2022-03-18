@@ -138,7 +138,7 @@ export class DMDTaskHandler extends DatabaseHandler<DMDTask> {
 
       await this.update({
         ddoc: "access",
-        name: "canProcessStorage",
+        name: "canProcess",
         docId: task,
         body: {
           user,

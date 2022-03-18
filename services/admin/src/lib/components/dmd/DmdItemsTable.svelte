@@ -15,7 +15,7 @@
    */
   export let dmdTask: DMDTask;
   export let type: ShortTaskType;
-  export let lookupResultsMap = {};
+  export let notFoundIds: string[] | null = null;
   export let totalItems: number = 0;
   export let totalPages: number = 0;
   /**
@@ -97,15 +97,15 @@
 
   function setItemSelectedFromSearchResult() {
     for (const item of dmdTask["items"]) {
-      item.shouldStore = lookupResultsMap[item.id] && item.shouldStore;
+      item.shouldStore =
+        notFoundIds && !notFoundIds.includes(item.id) && item.shouldStore;
     }
     dmdTask = dmdTask;
     checkIfAllItemsSelected();
   }
 
   $: {
-    if (lookupResultsMap && Object.keys(lookupResultsMap).length)
-      setItemSelectedFromSearchResult();
+    if (notFoundIds && notFoundIds.length) setItemSelectedFromSearchResult();
   }
 
   let currentPage = 1;
@@ -156,7 +156,7 @@
             <td>
               {#if item.shouldStore && !("succeeded" in dmdTask["process"]) && !item.stored}
                 <Loading size="sm" backgroundType="gradient" />
-              {:else if item.parsed && lookupResultsMap[item.id]}
+              {:else if item.parsed && notFoundIds && !notFoundIds.includes(item.id)}
                 <input
                   type="checkbox"
                   bind:checked={item.shouldStore}
@@ -168,10 +168,8 @@
             </td>
           {/if}
           <td
-            class:success={item.id in lookupResultsMap &&
-              lookupResultsMap[item.id]}
-            class:not-success={item.id in lookupResultsMap &&
-              !lookupResultsMap[item.id]}
+            class:success={notFoundIds && !notFoundIds.includes(item.id)}
+            class:not-success={!item.parsed || notFoundIds?.includes(item.id)}
           >
             {item.id}
           </td>

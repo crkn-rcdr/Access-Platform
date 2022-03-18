@@ -76,6 +76,7 @@
         [0, true],
       ],
     });
+    window.location.reload();
   }
 
   onDestroy(() => {
