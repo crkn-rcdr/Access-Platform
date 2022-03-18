@@ -1,48 +1,46 @@
 {
-  "_id": "warning",
+  "_id": "paused",
   "updated": 1631200365.22,
   "process": {
     "requestDate": 1631199874.161,
     "processDate": 1631200365.22,
     "succeeded": true,
-    "message": "Store was a bit weird for item with id: 8_06941_2 "
+    "message": "paused"
   },
   "user": {
     "name": "Brittny Lapierre",
     "email": "blapierre@crkn.ca"
   },
-  "fileName": "warning.mrc",
+  "fileName": "paused.mrc",
   "format": "marc490",
   "items": [
     {
-      "shouldStore": true,
       "output": "marc",
       "id": "8_06941",
       "message": "",
       "parsed": true,
       "label": "Testing collection",
-      "destination": "access",
-      "stored": true
+      "stored": true,
+      "shouldStore": true
     },
     {
-      "shouldStore": true,
       "output": "marc",
       "id": "8_06941_1",
       "message": "",
       "parsed": true,
       "label": "Testing manifest 1",
-      "destination": "access",
-      "stored": true
+      "shouldStore": true
     },
     {
-      "shouldStore": true,
       "output": "marc",
       "id": "8_06941_2",
-      "message": "Store was a bit weird",
+      "message": "",
       "parsed": true,
       "label": "Testing manifest 2",
-      "destination": "access",
-      "stored": true
+      "shouldStore": true
     }
-  ]
+  ],
+  "itemCount": 3,
+  "destination": "access",
+  "stage": "paused"
 }

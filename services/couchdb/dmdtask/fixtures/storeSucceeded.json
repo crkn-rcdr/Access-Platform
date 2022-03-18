@@ -1,5 +1,5 @@
 {
-  "_id": "parsingSucceededTest",
+  "_id": "succeeded",
   "updated": 1631200365.22,
   "process": {
     "requestDate": 1631199874.161,
@@ -11,7 +11,7 @@
     "name": "Brittny Lapierre",
     "email": "blapierre@crkn.ca"
   },
-  "fileName": "parsingSucceededTest.mrc",
+  "fileName": "succeeded.mrc",
   "format": "marc490",
   "items": [
     {
@@ -20,23 +20,29 @@
       "message": "",
       "parsed": true,
       "label": "Testing collection",
+      "stored": true,
       "shouldStore": true
     },
     {
       "output": "marc",
       "id": "8_06941_1",
-      "message": "Should not be found in preservation test",
+      "message": "",
       "parsed": true,
       "label": "Testing manifest 1",
+      "stored": true,
       "shouldStore": true
     },
     {
       "output": "marc",
       "id": "8_06941_2",
-      "message": "Parse failed to generate xml and json test",
-      "parsed": false,
-      "label": "Testing manifest 2",
-      "shouldStore": false
+      "message": "",
+      "parsed": true,
+      "label": "Testing manifest 2 f",
+      "stored": true,
+      "shouldStore": true
     }
-  ]
+  ],
+  "itemCount": 3,
+  "destination": "access",
+  "partialStore": false
 }

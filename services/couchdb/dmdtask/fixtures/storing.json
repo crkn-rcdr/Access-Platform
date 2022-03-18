@@ -1,23 +1,20 @@
 {
-  "_id": "parsingWarningTest",
+  "_id": "queued",
   "updated": 1631200365.22,
   "process": {
-    "requestDate": 1631199874.161,
-    "processDate": 1631200365.22,
-    "succeeded": true,
-    "message": "Warning"
+    "requestDate": 1631199874.161
   },
   "user": {
     "name": "Brittny Lapierre",
     "email": "blapierre@crkn.ca"
   },
-  "fileName": "parsingWarningTest.mrc",
+  "fileName": "queued.mrc",
   "format": "marc490",
   "items": [
     {
       "output": "marc",
       "id": "8_06941",
-      "message": "Warning Warning",
+      "message": "",
       "parsed": true,
       "label": "Testing collection",
       "shouldStore": true
@@ -38,5 +35,9 @@
       "label": "Testing manifest 2",
       "shouldStore": false
     }
-  ]
+  ],
+  "itemCount": 3,
+  "destination": "access",
+  "stage": "store-started",
+  "partialStore": true
 }

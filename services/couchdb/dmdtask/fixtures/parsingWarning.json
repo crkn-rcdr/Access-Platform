@@ -1,48 +1,43 @@
 {
-  "_id": "succeeded",
+  "_id": "parsingWarningTest",
   "updated": 1631200365.22,
   "process": {
     "requestDate": 1631199874.161,
     "processDate": 1631200365.22,
     "succeeded": true,
-    "message": ""
+    "message": "Warning"
   },
   "user": {
     "name": "Brittny Lapierre",
     "email": "blapierre@crkn.ca"
   },
-  "fileName": "succeeded.mrc",
+  "fileName": "parsingWarningTest.mrc",
   "format": "marc490",
   "items": [
     {
       "output": "marc",
       "id": "8_06941",
-      "message": "",
+      "message": "Warning Warning",
       "parsed": true,
       "label": "Testing collection",
-      "destination": "access",
-      "stored": true,
       "shouldStore": true
     },
     {
       "output": "marc",
       "id": "8_06941_1",
-      "message": "",
+      "message": "Should not be found in preservation test",
       "parsed": true,
       "label": "Testing manifest 1",
-      "destination": "access",
-      "stored": true,
       "shouldStore": true
     },
     {
       "output": "marc",
       "id": "8_06941_2",
-      "message": "",
-      "parsed": true,
-      "label": "Testing manifest 2 f",
-      "destination": "access",
-      "stored": true,
-      "shouldStore": true
+      "message": "Parse failed to generate xml and json test",
+      "parsed": false,
+      "label": "Testing manifest 2",
+      "shouldStore": false
     }
-  ]
+  ],
+  "itemCount": 3
 }

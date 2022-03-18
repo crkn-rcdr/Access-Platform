@@ -20,7 +20,6 @@
       "message": "",
       "parsed": true,
       "label": "Testing collection",
-      "destination": "access",
       "stored": true,
       "shouldStore": true
     },
@@ -30,7 +29,6 @@
       "message": "",
       "parsed": true,
       "label": "Testing manifest 1",
-      "destination": "access",
       "stored": true,
       "shouldStore": true
     },
@@ -40,9 +38,10 @@
       "message": "Store failed",
       "parsed": false,
       "label": "Testing manifestt 2",
-      "destination": "access",
       "stored": false,
       "shouldStore": false
     }
-  ]
+  ],
+  "itemCount": 3,
+  "destination": "access"
 }

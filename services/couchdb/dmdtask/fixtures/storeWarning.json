@@ -1,42 +1,48 @@
 {
-  "_id": "queued",
+  "_id": "warning",
   "updated": 1631200365.22,
   "process": {
-    "requestDate": 1631199874.161
+    "requestDate": 1631199874.161,
+    "processDate": 1631200365.22,
+    "succeeded": true,
+    "message": "Store was a bit weird for item with id: 8_06941_2 "
   },
   "user": {
     "name": "Brittny Lapierre",
     "email": "blapierre@crkn.ca"
   },
-  "fileName": "queued.mrc",
+  "fileName": "warning.mrc",
   "format": "marc490",
   "items": [
     {
+      "shouldStore": true,
       "output": "marc",
       "id": "8_06941",
       "message": "",
       "parsed": true,
       "label": "Testing collection",
-      "destination": "access",
-      "shouldStore": true
+      "stored": true
     },
     {
+      "shouldStore": true,
       "output": "marc",
       "id": "8_06941_1",
-      "message": "Should not be found in preservation test",
+      "message": "",
       "parsed": true,
       "label": "Testing manifest 1",
-      "destination": "access",
-      "shouldStore": true
+      "stored": true
     },
     {
+      "shouldStore": true,
       "output": "marc",
       "id": "8_06941_2",
-      "message": "Parse failed to generate xml and json test",
-      "parsed": false,
+      "message": "Store was a bit weird",
+      "parsed": true,
       "label": "Testing manifest 2",
-      "destination": "access",
-      "shouldStore": false
+      "stored": true
     }
-  ]
+  ],
+  "itemCount": 3,
+  "destination": "access",
+  "partialStore": false
 }
