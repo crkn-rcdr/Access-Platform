@@ -7,7 +7,7 @@ Accepts an array such as:
 
 This is an array of pairs, where the first element in the pair is the array index into items[] , and the boolean is what to put into stored field.
 
-  workProgress - an integer (index into array or index+1 -- your choice) for where the microservice is in paging through the work to do
+  workProgress - an integer (index into array) for where the microservice is in paging through the work to do
 
   workSize - an integer (size of array) for the work array.
 
