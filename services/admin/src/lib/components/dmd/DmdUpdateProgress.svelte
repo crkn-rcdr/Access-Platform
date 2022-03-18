@@ -67,6 +67,17 @@
     });
   });
 
+  async function handleTest() {
+    // reset task to validated and refresh
+    await $session.lapin.mutation("dmdTask.updateStorageResults", {
+      id: dmdTask.id,
+      array: [
+        [1, true],
+        [0, true],
+      ],
+    });
+  }
+
   onDestroy(() => {
     if (unsubscribe) unsubscribe();
   });
@@ -87,6 +98,7 @@
     progressText={progress === 100 ? "done!" : "loaded..."}
   />
   <br />
+  <button on:click={handleTest}>Test Progress</button>
   <button on:click={handleTestCompletePressed}>Test Complete</button>
 
   <!--div>

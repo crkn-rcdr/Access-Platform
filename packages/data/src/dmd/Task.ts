@@ -340,37 +340,41 @@ export type StoringSucceededDMDTask = z.infer<typeof StoringSucceededDMDTask>;
  * A descriptive metadata task (DMDTask) in any state
  */
 export const DMDTask = z.union([
-  BaseDMDTask,
-  ParsingQueuedDMDTask,
-  ParsingDMDTask,
-  ParsingFailedDMDTask,
-  ParsingSucceededDMDTask,
-  StoreQueuedDMDTask,
-  StoringDMDTask,
-  StoringFailedDMDTask,
-  StoringSucceededDMDTask,
   StoringPausedDMDTask,
+  StoringSucceededDMDTask,
+  StoringFailedDMDTask,
+  StoringDMDTask,
+  StoreQueuedDMDTask,
+  ParsingSucceededDMDTask,
+  ParsingFailedDMDTask,
+  ParsingDMDTask,
+  ParsingQueuedDMDTask,
+  BaseDMDTask,
 ]);
 
 export type DMDTask = z.infer<typeof DMDTask>;
 
+const ShortTaskType = z.enum([
+  "N/A",
+  "store paused",
+  "store succeeded",
+  "store failed",
+  "store queued",
+  "storing",
+  "parse succeeded",
+  "parse failed",
+  "parse queued",
+  "parsing",
+]);
+
+export type ShortTaskType = z.infer<typeof ShortTaskType>;
 /**
  * Used to list the DMD Tasks
  */
 export type ShortTask = {
   id: string;
   fileName: string;
-  type:
-    | "N/A"
-    | "store paused"
-    | "store succeeded"
-    | "store failed"
-    | "store queued"
-    | "storing"
-    | "parse succeeded"
-    | "parse failed"
-    | "parse queued"
-    | "parsing";
+  type: ShortTaskType;
   date: string | number;
   count: number;
   message: string;

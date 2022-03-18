@@ -33,7 +33,7 @@ module.exports = function (doc, req) {
   const { array, workProgress, workSize } = data;
 
   if (array) {
-    for (const itemDataArray of input) {
+    for (const itemDataArray of array) {
       if (
         Array.isArray(itemDataArray) &&
         itemDataArray.length === 2 &&

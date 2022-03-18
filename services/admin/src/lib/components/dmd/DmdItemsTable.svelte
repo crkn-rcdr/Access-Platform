@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { DMDTask } from "@crkn-rcdr/access-data";
+  import type { DMDTask, ShortTaskType } from "@crkn-rcdr/access-data";
   import Loading from "$lib/components/shared/Loading.svelte";
   import TiWarning from "svelte-icons/ti/TiWarning.svelte";
   import TiDelete from "svelte-icons/ti/TiDelete.svelte";
@@ -14,13 +14,7 @@
    * @type { DMDTask } The dmd task being displayed
    */
   export let dmdTask: DMDTask;
-  export let type:
-    | "paused"
-    | "load-succeeded"
-    | "load-failed"
-    | "loading"
-    | "parse-failed"
-    | "parse-succeeded";
+  export let type: ShortTaskType;
   export let lookupResultsMap = {};
   export let totalItems: number = 0;
   export let totalPages: number = 0;
@@ -85,13 +79,13 @@
   }
 
   function setState() {
-    if (type === "paused") {
+    if (type === "store paused") {
       state = "paused";
-    } else if (type === "load-failed" || type === "load-succeeded") {
+    } else if (type === "store failed" || type === "store succeeded") {
       state = "updated";
-    } else if (type === "loading") {
+    } else if (type === "storing" || type === "store queued") {
       state = "updating";
-    } else if (type === "parse-failed" || type === "parse-succeeded") {
+    } else if (type === "parse failed" || type === "parse succeeded") {
       state = "parsed";
     }
   }

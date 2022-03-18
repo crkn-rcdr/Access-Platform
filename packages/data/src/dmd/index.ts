@@ -1,5 +1,6 @@
 export {
   ShortTask,
+  ShortTaskType,
   DMDTask,
   BaseDMDTask,
   ParsingQueuedDMDTask,

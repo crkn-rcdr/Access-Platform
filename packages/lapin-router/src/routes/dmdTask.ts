@@ -62,10 +62,11 @@ export const dmdTaskRouter = createRouter()
       if (response.found) {
         let totalItems = 0;
         let totalPages = 0;
-        if ("items" in response.doc) {
-          totalItems = response.doc.items?.length;
+        console.log(response.doc);
+        if ("items" in response.doc && Array.isArray(response.doc["items"])) {
+          totalItems = response.doc["items"].length;
           totalPages = totalItems > 0 ? Math.ceil(totalPages / totalItems) : 0;
-          const items = new ObjectListHandler(response.doc.items);
+          const items = new ObjectListHandler(response.doc["items"]);
           const pageData = items.page(1, 100);
           response.doc.items = pageData.list;
         }
@@ -200,9 +201,14 @@ export const dmdTaskRouter = createRouter()
           ddoc: "access",
           name: "updateStorageResults",
           docId: input.id,
-          body: input.array,
+          body: {
+            array: input.array,
+            workProgress: 2,
+            workSize: 3,
+          },
         });
-      } catch (e) {
+      } catch (e: any) {
+        console.log(e?.message);
         throw httpErrorToTRPC(e);
       }
     },

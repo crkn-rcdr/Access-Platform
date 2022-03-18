@@ -53,6 +53,7 @@ export {
   DMDOUTPUTS,
   DMDOutput,
   ShortTask,
+  ShortTaskType,
   DMDTask,
   BaseDMDTask,
   ParsingQueuedDMDTask,

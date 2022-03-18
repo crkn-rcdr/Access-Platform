@@ -14,6 +14,8 @@
           page.params["taskid"]
         );
 
+        console.log(response);
+
         if (response)
           return {
             props: {
@@ -48,7 +50,7 @@
    * @file
    * @description This page displays the various states of and information about a dmdtask
    */
-  import type { DMDTask } from "@crkn-rcdr/access-data";
+  import type { DMDTask, ShortTaskType } from "@crkn-rcdr/access-data";
   import DmdItemsTable from "$lib/components/dmd/DmdItemsTable.svelte";
   import DmdUpdateSuccessOptions from "$lib/components/dmd/DmdUpdateSuccessOptions.svelte";
   import DmdUpdateOptions from "$lib/components/dmd/DmdUpdateOptions.svelte";
@@ -64,15 +66,7 @@
    */
   export let dmdTask: DMDTask;
 
-  export let type:
-    | "N/A"
-    | "paused"
-    | "load-succeeded"
-    | "load-failed"
-    | "loading"
-    | "parse-succeeded"
-    | "parse-failed"
-    | "parsing";
+  export let type: ShortTaskType;
 
   export let totalItems: number = 0;
   export let totalPages: number = 0;
@@ -93,19 +87,19 @@
     {error?.message}
   {:else if !dmdTask}
     Loading...
-  {:else if type === "paused"}
+  {:else if type === "store paused"}
     <DmdUpdatePausedOptions bind:dmdTask />
     <DmdItemsTable bind:dmdTask bind:type bind:totalItems bind:totalPages />
-  {:else if type === "load-succeeded"}
+  {:else if type === "store succeeded"}
     <DmdUpdateSuccessOptions bind:dmdTask />
     <DmdItemsTable bind:dmdTask bind:type bind:totalItems bind:totalPages />
-  {:else if type === "load-failed"}
+  {:else if type === "store failed"}
     <DmdUpdateFailedOptions bind:dmdTask />
     <DmdItemsTable bind:dmdTask bind:type bind:totalItems bind:totalPages />
-  {:else if type === "loading"}
+  {:else if type === "store queued" || type === "storing"}
     <DmdUpdateProgress bind:dmdTask />
     <DmdItemsTable bind:dmdTask bind:type bind:totalItems bind:totalPages />
-  {:else if type === "parse-succeeded"}
+  {:else if type === "parse succeeded"}
     <DmdUpdateOptions bind:dmdTask bind:lookupResultsMap />
     <DmdItemsTable
       bind:dmdTask
@@ -119,7 +113,7 @@
     <br />
     <br />
     <br />
-  {:else if type === "parse-failed"}
+  {:else if type === "parse failed"}
     <DmdParseFailedOptions bind:dmdTask />
   {:else if type === "parsing"}
     <DmdParseTracker bind:dmdTask />
