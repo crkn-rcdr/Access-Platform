@@ -25,6 +25,8 @@ This component allows the user to update the dmd tasks items in an access platfo
   import Loading from "../shared/Loading.svelte";
   import NotificationBar from "../shared/NotificationBar.svelte";
   import LoadingButton from "../shared/LoadingButton.svelte";
+  import ScrollStepper from "../shared/ScrollStepper.svelte";
+  import ScrollStepperStep from "../shared/ScrollStepperStep.svelte";
 
   /**
    *  @type { DMDTask } The DMDTask being processed.
@@ -139,74 +141,91 @@ This component allows the user to update the dmd tasks items in an access platfo
   <!--p>Review Metadata</p-->
   <br />
 
-  <div
-    class="update-wrap auto-align auto-align__a-center auto-align__j-between"
-  >
-    {#if settingItemIds}
-      <Loading size="sm" backgroundType="gradient" />
-    {/if}
-    <PrefixSelector {depositor} on:depositorSelected={handleDepositorChanged} />
-    <span>
-      {#if destination === "preservation" || !lookingUp}
-        <input
-          disabled={settingItemIds}
-          checked={destination === "access"}
-          on:change={onChange}
-          type="radio"
-          name="amount"
-          value="access"
+  <ScrollStepper>
+    <ScrollStepperStep title="Select a Destination">
+      <div slot="icon">1</div>
+      <div class="auto-align auto-align__a-center auto-align__j-between">
+        <span>
+          {#if destination === "preservation" || !lookingUp}
+            <input
+              disabled={settingItemIds}
+              checked={destination === "access"}
+              on:change={onChange}
+              type="radio"
+              name="amount"
+              value="access"
+            />
+          {/if}
+
+          {#if destination === "access" && lookingUp}
+            <Loading size="sm" backgroundType="gradient" />
+          {/if}
+
+          Load into Access
+        </span>
+        <span>
+          {#if destination === "access" || !lookingUp}
+            <input
+              disabled={settingItemIds}
+              checked={destination === "preservation"}
+              on:change={onChange}
+              type="radio"
+              name="amount"
+              value="preservation"
+            />
+          {/if}
+          {#if destination === "preservation" && lookingUp}
+            <Loading size="sm" backgroundType="gradient" />
+          {/if}
+          Load into OAIS Packaging Database
+        </span>
+      </div>
+    </ScrollStepperStep>
+    <ScrollStepperStep title="Lookup Items">
+      <div slot="icon">2</div>
+      <div class="auto-align auto-align__a-center auto-align__j-between">
+        {#if settingItemIds}
+          <Loading size="sm" backgroundType="gradient" />
+        {/if}
+        <PrefixSelector
+          {depositor}
+          on:depositorSelected={handleDepositorChanged}
         />
-      {/if}
+      </div>
+    </ScrollStepperStep>
+    <ScrollStepperStep title="Review Metadata">
+      <div slot="icon">3</div>
+      <div class="auto-align auto-align__a-center auto-align__j-between">
+        <button class="primary">Looks Good!</button>
+      </div>
+    </ScrollStepperStep>
+    <ScrollStepperStep title="Load Metadata">
+      <div slot="icon">4</div>
+      <div class="auto-align auto-align__a-center auto-align__j-between">
+        <span>
+          <LoadingButton
+            buttonClass="primary"
+            on:clicked={handleUpdatePressed}
+            showLoader={sendingStoreRequest}
+            {disabled}
+          >
+            <span slot="content"> Load Metadata </span>
+          </LoadingButton>
+        </span>
+      </div>
+    </ScrollStepperStep>
+  </ScrollStepper>
 
-      {#if destination === "access" && lookingUp}
-        <Loading size="sm" backgroundType="gradient" />
-      {/if}
-
-      Load into Access
-    </span>
-    <span>
-      {#if destination === "access" || !lookingUp}
-        <input
-          disabled={settingItemIds}
-          checked={destination === "preservation"}
-          on:change={onChange}
-          type="radio"
-          name="amount"
-          value="preservation"
-        />
-      {/if}
-      {#if destination === "preservation" && lookingUp}
-        <Loading size="sm" backgroundType="gradient" />
-      {/if}
-      Load into OAIS Packaging Database
-    </span>
-    <span>
-      <LoadingButton
-        buttonClass="primary"
-        on:clicked={handleUpdatePressed}
-        showLoader={sendingStoreRequest}
-        {disabled}
-      >
-        <span slot="content"> Load Metadata </span>
-      </LoadingButton>
-    </span>
-  </div>
-
-  <br /><br />
+  <br />
+  <br />
 {/if}
 
 <style>
-  .update-wrap {
+  .auto-align {
     width: 100%;
   }
-  .update-wrap > *:not(:first-child) {
+  .auto-align > *:not(:first-child) {
     margin-left: 1rem;
-  }
-  :global(.update-wrap span:first-child) {
-    flex: 2;
-  }
-  :global(.update-wrap > div) {
-    flex: 3;
   }
   span:first-child {
     margin-right: var(--margin-sm);

@@ -159,15 +159,11 @@
               {#if item.shouldStore && !("succeeded" in dmdTask["process"]) && !item.stored}
                 <Loading size="sm" backgroundType="gradient" />
               {:else if item.parsed && notFoundIds && !notFoundIds.includes(item.id)}
-                <!--input
-                  type="checkbox"
-                  bind:checked={item.shouldStore}
-                  on:change={checkIfAllItemsSelected}
-                /-->
                 <DmdItemSelector
                   taskId={dmdTask.id}
                   index={i + (currentPage - 1) * pageSize}
                   checked={item.shouldStore}
+                  on:changed={checkIfAllItemsSelected}
                 />
               {:else}
                 <input type="checkbox" disabled />

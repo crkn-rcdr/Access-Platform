@@ -4,7 +4,7 @@ module.exports = {
       return (
         doc.process &&
         doc.process.requestDate &&
-        !doc.process.processDate &&
+        !("processDate" in doc.process) &&
         !doc.items
       );
     };
@@ -13,7 +13,7 @@ module.exports = {
       return (
         doc.process &&
         doc.process.requestDate &&
-        !doc.process.processDate &&
+        !("processDate" in doc.process) &&
         !doc.items &&
         doc.stage === "parsing"
       );
@@ -22,7 +22,7 @@ module.exports = {
     const isParseFailed = () => {
       return (
         doc.process &&
-        doc.process.processDate &&
+        "processDate" in doc.process &&
         !doc.process.succeeded &&
         !doc.items
       );
@@ -31,15 +31,13 @@ module.exports = {
     const parseItemCheck = () => {
       let firstItem = null;
       if (doc.items && doc.items.length) firstItem = doc.items[0];
-      return (
-        firstItem && !("shouldStore" in firstItem) && !("stored" in firstItem)
-      );
-    };
+      return firstItem && !("stored" in firstItem);
+    }; //&& !("shouldStore" in firstItem)
 
     const isParseSucceeded = () => {
       return (
         doc.process &&
-        doc.process.processDate &&
+        "processDate" in doc.process &&
         doc.process.succeeded &&
         doc.items &&
         "itemsCount" in doc &&
@@ -66,7 +64,7 @@ module.exports = {
       return (
         doc.process &&
         doc.process.requestDate &&
-        !doc.process.processDate &&
+        !("processDate" in doc.process) &&
         doc.items &&
         "itemsCount" in doc &&
         storeItemCheck()
@@ -76,11 +74,11 @@ module.exports = {
     const isStoring = () => {
       return (
         doc.process &&
-          doc.process.requestDate &&
-          !doc.process.processDate &&
-          doc.items &&
-          "itemsCount" in doc &&
-          doc.stage === "store-started",
+        doc.process.requestDate &&
+        !("processDate" in doc.process) &&
+        doc.items &&
+        "itemsCount" in doc &&
+        doc.stage === "store-started" &&
         storeItemCheck()
       );
     };
@@ -116,7 +114,7 @@ module.exports = {
     const isStoreFailed = () => {
       return (
         doc.process &&
-        doc.process.processDate &&
+        "processDate" in doc.process &&
         !doc.process.succeeded &&
         doc.items &&
         "itemsCount" in doc &&
