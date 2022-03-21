@@ -279,7 +279,13 @@ export const dmdTaskRouter = createRouter()
           const task: any = response.doc;
           let ids = [];
           for (let item of task.items) {
+            const oldPrefixCheck = item.id.split(".");
+
+            if (oldPrefixCheck.length)
+              item.id = item.id.replace(`${oldPrefixCheck[0]}.`, "");
+
             item.id = prefix === "none" ? item.id : `${prefix}.${item.id}`;
+
             ids.push(item.id);
           }
 
@@ -347,6 +353,29 @@ export const dmdTaskRouter = createRouter()
           name: "setItemShouldUpdate",
           docId: id,
           body: { index, value },
+        });
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .mutation("setDestination", {
+    input: z.object({
+      id: z.string(), //dmdtask id
+      destination: z.enum(["access", "preservation"]),
+      user: User,
+    }),
+    async resolve({ input, ctx }) {
+      try {
+        const { id, destination, user } = input;
+        return await ctx.couch.dmdtask.update({
+          ddoc: "access",
+          name: "editObject",
+          docId: id,
+          body: {
+            data: { destination },
+            user,
+          },
         });
       } catch (e) {
         throw httpErrorToTRPC(e);

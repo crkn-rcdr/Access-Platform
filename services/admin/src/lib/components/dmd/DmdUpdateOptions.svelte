@@ -28,6 +28,7 @@ This component allows the user to update the dmd tasks items in an access platfo
   import ScrollStepper from "../shared/ScrollStepper.svelte";
   import ScrollStepperStep from "../shared/ScrollStepperStep.svelte";
   import DmdItemsTable from "./DmdItemsTable.svelte";
+  import { onMount } from "svelte";
 
   /**
    *  @type { DMDTask } The DMDTask being processed.
@@ -69,8 +70,11 @@ This component allows the user to update the dmd tasks items in an access platfo
     destination = event.currentTarget.value;
     settingDestination = true;
     dmdTask["destination"] = destination;
-    // todo save server
-
+    await $session.lapin.mutation("dmdTask.setDestination", {
+      id: dmdTask.id,
+      destination,
+      user: $session.user,
+    });
     settingDestination = false;
     activeStepIndex = 1;
   }
@@ -104,6 +108,12 @@ This component allows the user to update the dmd tasks items in an access platfo
     depositor = e.detail;
     if (destination) await lookupItems();
   }
+
+  /*onMount(() => {
+    if (dmdTask["destination"]) activeStepIndex = 1;
+    if (dmdTask["items"]?.length && "found" in dmdTask["items"][0])
+      activeStepIndex = 2;
+  });*/
 </script>
 
 {#if dmdTask}
@@ -115,7 +125,7 @@ This component allows the user to update the dmd tasks items in an access platfo
     <br />
     <div style="flex:1; margin-right: 1rem;">
       <ScrollStepper enableAutoScrolling={false} bind:activeStepIndex>
-        <ScrollStepperStep title="Select a Destination">
+        <ScrollStepperStep title="Select Destination">
           <div slot="icon">1</div>
           <div class="auto-align auto-align__column">
             <span>
@@ -142,7 +152,6 @@ This component allows the user to update the dmd tasks items in an access platfo
             </span>
             {#if settingDestination}
               <span>
-                please wait...
                 <Loading size="sm" backgroundType="gradient" />
               </span>
             {/if}
@@ -156,7 +165,6 @@ This component allows the user to update the dmd tasks items in an access platfo
               on:depositorSelected={handleDepositorChanged}
             />
             {#if lookingUp}
-              please wait...
               <Loading size="sm" backgroundType="gradient" />
             {/if}
           </div>
@@ -169,7 +177,7 @@ This component allows the user to update the dmd tasks items in an access platfo
             </button>
           </div>
         </ScrollStepperStep>
-        <ScrollStepperStep title="Load Metadata">
+        <ScrollStepperStep isLastStep={true} title="Load Metadata">
           <div slot="icon">4</div>
           <div class="auto-align auto-align__column">
             <span>
@@ -177,8 +185,8 @@ This component allows the user to update the dmd tasks items in an access platfo
                 buttonClass="primary"
                 on:clicked={handleUpdatePressed}
                 showLoader={sendingStoreRequest}
-                {disabled}
               >
+                <!--{disabled}-->
                 <span slot="content"> Load Metadata </span>
               </LoadingButton>
             </span>

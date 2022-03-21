@@ -12,5 +12,6 @@ export {
   StoringFailedDMDTask,
   StoringSucceededDMDTask,
   StoringPausedDMDTask,
+  ItemProcessRecord,
 } from "./Task.js";
 export { DMDFORMATS, DMDFormat, DMDOUTPUTS, DMDOutput } from "./types.js";

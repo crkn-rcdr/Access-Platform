@@ -65,6 +65,7 @@ export {
   StoringFailedDMDTask,
   StoringSucceededDMDTask,
   StoringPausedDMDTask,
+  ItemProcessRecord,
 } from "./dmd/index.js";
 
 export { WipmetaObject } from "./wipmeta/index.js";

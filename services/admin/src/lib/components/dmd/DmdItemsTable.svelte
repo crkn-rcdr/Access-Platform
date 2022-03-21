@@ -5,7 +5,7 @@
   import TiDelete from "svelte-icons/ti/TiDelete.svelte";
   import XmlViewer from "$lib/components/shared/XmlViewer.svelte";
   import DmdItemMetadataPreview from "$lib/components/dmd/DmdItemMetadataPreview.svelte";
-  import type { ItemProcessRecord } from "@crkn-rcdr/access-data/dist/esm/dmd/Task";
+  import type { ItemProcessRecord } from "@crkn-rcdr/access-data";
   import Paginator from "../shared/Paginator.svelte";
   import { getStores } from "$app/stores";
   import type { Session } from "$lib/types";
