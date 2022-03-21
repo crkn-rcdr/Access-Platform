@@ -169,7 +169,7 @@ export const ParsingSucceededDMDTask = ParsingQueuedDMDTask.merge(
 const ParsingSucceededDMDTaskCheck = ParsingSucceededDMDTask.refine((task) => {
   let firstItem = null;
   if (task.items && task.items.length) firstItem = task.items[0];
-  return firstItem && !("shouldStore" in firstItem) && !("stored" in firstItem);
+  return firstItem && !("stored" in firstItem);
 }, "A validated task has items without a shouldStore property and without a stored property.");
 
 /**

@@ -10,15 +10,16 @@
   import { getStores } from "$app/stores";
   import type { Session } from "$lib/types";
   import DmdItemSelector from "./DmdItemSelector.svelte";
+  import { afterUpdate } from "svelte";
 
   /**
    * @type { DMDTask } The dmd task being displayed
    */
   export let dmdTask: DMDTask;
   export let type: ShortTaskType;
-  export let notFoundIds: string[] | null = null;
   export let totalItems: number = 0;
   export let totalPages: number = 0;
+  export let currentPage = 1;
 
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
@@ -66,6 +67,7 @@
   }
 
   function checkIfAllItemsSelected() {
+    // todo backend
     return (
       dmdTask["items"].filter((item) => item.shouldStore).length ===
       dmdTask["items"].length
@@ -95,22 +97,9 @@
   $: {
     dmdTask;
     setState();
-  }
-
-  function setItemSelectedFromSearchResult() {
-    for (const item of dmdTask["items"]) {
-      item.shouldStore =
-        notFoundIds && !notFoundIds.includes(item.id) && item.shouldStore;
-    }
-    dmdTask = dmdTask;
     checkIfAllItemsSelected();
   }
 
-  $: {
-    if (notFoundIds && notFoundIds.length) setItemSelectedFromSearchResult();
-  }
-
-  let currentPage = 1;
   let pageSize = 100;
 
   async function handlePageChange(event: any) {
@@ -158,7 +147,7 @@
             <td>
               {#if item.shouldStore && !("succeeded" in dmdTask["process"]) && !item.stored}
                 <Loading size="sm" backgroundType="gradient" />
-              {:else if item.parsed && notFoundIds && !notFoundIds.includes(item.id)}
+              {:else if item.parsed && item.found}
                 <DmdItemSelector
                   taskId={dmdTask.id}
                   index={i + (currentPage - 1) * pageSize}
@@ -171,8 +160,8 @@
             </td>
           {/if}
           <td
-            class:success={notFoundIds && !notFoundIds.includes(item.id)}
-            class:not-success={!item.parsed || notFoundIds?.includes(item.id)}
+            class:success={item.found}
+            class:not-success={"found" in item && !item.found}
           >
             {item.id}
           </td>

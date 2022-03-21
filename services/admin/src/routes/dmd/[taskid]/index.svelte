@@ -67,8 +67,6 @@
 
   let loading = true;
 
-  let notFoundIds;
-
   async function getTask() {
     loading = true;
     const response = await $session.lapin.query("dmdTask.get", id);
@@ -104,19 +102,7 @@
     <DmdUpdateProgress bind:dmdTask />
     <DmdItemsTable bind:dmdTask bind:type bind:totalItems bind:totalPages />
   {:else if type === "parse succeeded"}
-    <DmdUpdateOptions bind:dmdTask bind:notFoundIds />
-    <DmdItemsTable
-      bind:dmdTask
-      bind:notFoundIds
-      bind:type
-      bind:totalItems
-      bind:totalPages
-    />
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
+    <DmdUpdateOptions bind:dmdTask bind:type bind:totalItems bind:totalPages />
   {:else if type === "parse failed"}
     <DmdParseFailedOptions bind:dmdTask />
   {:else if type === "parsing"}

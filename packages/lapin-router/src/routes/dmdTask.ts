@@ -267,17 +267,22 @@ export const dmdTaskRouter = createRouter()
       id: z.string(), // dmdtask uuid
       destination: z.enum(["access", "preservation"]),
       prefix: z.string(),
+      returnPage: z.number(),
+      user: User,
     }),
     async resolve({ input, ctx }) {
       try {
-        const { id, prefix, destination } = input;
+        const { id, prefix, destination, returnPage, user } = input;
         const response: any = await ctx.couch.dmdtask.getSafe(id);
 
         if (response.doc?.["items"]) {
           const task: any = response.doc;
-          const ids = task.items.map((item: any) =>
-            prefix === "none" ? item.id : `${prefix}.${item.id}`
-          );
+          let ids = [];
+          for (let item of task.items) {
+            item.id = prefix === "none" ? item.id : `${prefix}.${item.id}`;
+            ids.push(item.id);
+          }
+
           let foundIDs: any[] = [];
           if (destination === "access") {
             //ids
@@ -293,9 +298,36 @@ export const dmdTaskRouter = createRouter()
               .filter((row: any) => "id" in row)
               .map((row: any) => row.key);
           }
-          return ids.filter((id: any) => !foundIDs.includes(id));
+
+          for (let item of task.items) {
+            if (foundIDs.includes(item.id)) {
+              item.found = true;
+              if (item.parsed) item.shouldStore = true;
+            } else {
+              item.shouldStore = false;
+              item.found = false;
+            }
+          }
+
+          await ctx.couch.dmdtask.update({
+            ddoc: "access",
+            name: "editObject",
+            docId: id,
+            body: {
+              data: { items: task.items },
+              user,
+            },
+          });
+
+          const items = new ObjectListHandler(task.items);
+          const pageData = items.page(returnPage, 100);
+          return pageData;
         }
-        return [];
+        return {
+          first: null,
+          last: null,
+          list: [],
+        };
       } catch (e) {
         throw httpErrorToTRPC(e);
       }
