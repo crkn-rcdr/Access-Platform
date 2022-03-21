@@ -63,9 +63,7 @@ A step (section) of a ScrollStepper. Generally used to isolate a group of requir
   .scroll-stepper-step-not-last::before {
     content: "";
     position: absolute;
-    /*top: 8.7rem;
-    bottom: -5rem;*/
-    top: 4.7rem;
+    top: 4rem;
     bottom: 2rem;
     width: 1px;
     background-color: rgba(0, 0, 0, 0.2);
