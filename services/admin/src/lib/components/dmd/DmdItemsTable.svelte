@@ -9,6 +9,7 @@
   import Paginator from "../shared/Paginator.svelte";
   import { getStores } from "$app/stores";
   import type { Session } from "$lib/types";
+  import DmdItemSelector from "./DmdItemSelector.svelte";
 
   /**
    * @type { DMDTask } The dmd task being displayed
@@ -18,6 +19,7 @@
   export let notFoundIds: string[] | null = null;
   export let totalItems: number = 0;
   export let totalPages: number = 0;
+
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
    */
@@ -157,10 +159,15 @@
               {#if item.shouldStore && !("succeeded" in dmdTask["process"]) && !item.stored}
                 <Loading size="sm" backgroundType="gradient" />
               {:else if item.parsed && notFoundIds && !notFoundIds.includes(item.id)}
-                <input
+                <!--input
                   type="checkbox"
                   bind:checked={item.shouldStore}
                   on:change={checkIfAllItemsSelected}
+                /-->
+                <DmdItemSelector
+                  taskId={dmdTask.id}
+                  index={i + (currentPage - 1) * pageSize}
+                  checked={item.shouldStore}
                 />
               {:else}
                 <input type="checkbox" disabled />

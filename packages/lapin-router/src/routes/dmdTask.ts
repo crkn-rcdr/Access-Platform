@@ -300,4 +300,24 @@ export const dmdTaskRouter = createRouter()
         throw httpErrorToTRPC(e);
       }
     },
+  })
+  .mutation("setItemShouldUpdate", {
+    input: z.object({
+      id: z.string(), //dmdtask id
+      index: z.number(), // dmdtask index in items array
+      value: z.boolean(),
+    }),
+    async resolve({ input, ctx }) {
+      try {
+        const { id, index, value } = input;
+        return await ctx.couch.dmdtask.update({
+          ddoc: "access",
+          name: "setItemShouldUpdate",
+          docId: id,
+          body: { index, value },
+        });
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
   });

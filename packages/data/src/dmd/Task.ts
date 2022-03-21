@@ -55,6 +55,11 @@ export const ItemProcessRecord = z
      * Tells the back end script if the item has been selected for storage.
      */
     shouldStore: z.boolean().optional(),
+
+    /**
+     * Tells the back end script if the item id has resolved in the dmd task's destination.
+     */
+    found: z.boolean().optional(),
   })
   .refine(
     (record) => !record.parsed || (record.id && record.output && record.label),
