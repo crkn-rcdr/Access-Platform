@@ -48,16 +48,14 @@ module.exports = {
     const storeItemCheck = () => {
       if (!doc.items) return false;
 
-      let firstItem;
-      for (const item of doc.items) {
-        if (item.shouldStore) {
-          firstItem = item;
+      let lastItem;
+      for (let i = doc.items.length - 1; i >= 0; i--) {
+        if (doc.items[i].shouldStore) {
+          lastItem = doc.items[i];
           break;
         }
       }
-      return (
-        firstItem && "shouldStore" in firstItem && !("stored" in firstItem)
-      );
+      return lastItem && "shouldStore" in lastItem && !("stored" in lastItem);
     };
 
     const isStoreQueued = () => {

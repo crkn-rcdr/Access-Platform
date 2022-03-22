@@ -305,6 +305,8 @@ export const dmdTaskRouter = createRouter()
               .map((row: any) => row.key);
           }
 
+          let numNotFound = 0;
+
           for (let item of task.items) {
             if (foundIDs.includes(item.id)) {
               item.found = true;
@@ -312,6 +314,7 @@ export const dmdTaskRouter = createRouter()
             } else {
               item.shouldStore = false;
               item.found = false;
+              numNotFound++;
             }
           }
 
@@ -327,7 +330,7 @@ export const dmdTaskRouter = createRouter()
 
           const items = new ObjectListHandler(task.items);
           const pageData = items.page(returnPage, 100);
-          return pageData;
+          return { pageData, numNotFound };
         }
         return {
           first: null,

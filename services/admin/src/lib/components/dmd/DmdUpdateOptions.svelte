@@ -56,6 +56,7 @@ This component allows the user to update the dmd tasks items in an access platfo
   let sendingStoreRequest: boolean = false;
   let activeStepIndex = 0;
   let currentPage = 1;
+  let numNotFound = 0;
 
   async function handleUpdatePressed() {
     sendingStoreRequest = true;
@@ -83,7 +84,7 @@ This component allows the user to update the dmd tasks items in an access platfo
     lookingUp = true;
 
     try {
-      const pageData = await $session.lapin.mutation(`dmdTask.bulkLookup`, {
+      const response = await $session.lapin.mutation(`dmdTask.bulkLookup`, {
         id: dmdTask.id,
         destination,
         prefix: depositor.prefix,
@@ -91,7 +92,11 @@ This component allows the user to update the dmd tasks items in an access platfo
         user: $session.user,
       });
 
-      dmdTask["items"] = pageData.list;
+      dmdTask["items"] = response.pageData.list;
+
+      dmdTask = dmdTask;
+      numNotFound = response.numNotFound;
+      if (numNotFound === 0) activeStepIndex = 2;
     } catch (e) {
       console.log(e?.message);
       /*error = e?.message.includes(`"path:"`)
@@ -99,9 +104,7 @@ This component allows the user to update the dmd tasks items in an access platfo
           : "Code 9. Please contact the platform team for assistance. ";*/
     }
 
-    dmdTask = dmdTask;
     lookingUp = false;
-    activeStepIndex = 2;
   }
 
   async function handleDepositorChanged(e) {
@@ -166,6 +169,15 @@ This component allows the user to update the dmd tasks items in an access platfo
             />
             {#if lookingUp}
               <Loading size="sm" backgroundType="gradient" />
+            {/if}
+            {#if numNotFound > 0}
+              <NotificationBar
+                message={`${numNotFound} items not found.`}
+                status="warn"
+              />
+              <button class="primary" on:click={() => (activeStepIndex = 2)}>
+                Ok
+              </button>
             {/if}
           </div>
         </ScrollStepperStep>
