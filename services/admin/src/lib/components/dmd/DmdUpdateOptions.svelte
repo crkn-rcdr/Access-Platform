@@ -168,7 +168,9 @@ This component allows the user to update the dmd tasks items in an access platfo
               on:depositorSelected={handleDepositorChanged}
             />
             {#if lookingUp}
-              <Loading size="sm" backgroundType="gradient" />
+              <span>
+                <Loading size="sm" backgroundType="gradient" />
+              </span>
             {/if}
             {#if numNotFound > 0}
               {#if numNotFound === dmdTask["itemsCount"]}
@@ -188,7 +190,7 @@ This component allows the user to update the dmd tasks items in an access platfo
             {/if}
           </div>
         </ScrollStepperStep>
-        <ScrollStepperStep title="Review Selections">
+        <ScrollStepperStep title="Review Selection">
           <div slot="icon">3</div>
           <div class="auto-align auto-align__column">
             <button class="primary" on:click={() => (activeStepIndex = 3)}>
