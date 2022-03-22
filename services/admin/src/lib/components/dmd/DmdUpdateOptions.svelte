@@ -137,7 +137,7 @@ This component allows the user to update the dmd tasks items in an access platfo
                 name="amount"
                 value="access"
               />
-              Load into Access
+              Access
             </span>
             <span>
               <input
@@ -148,7 +148,7 @@ This component allows the user to update the dmd tasks items in an access platfo
                 name="amount"
                 value="preservation"
               />
-              Load into OAIS Packaging Database
+              OAIS Packaging Database
             </span>
             {#if settingDestination}
               <span>
@@ -214,8 +214,5 @@ This component allows the user to update the dmd tasks items in an access platfo
   .auto-align > * {
     /**:not(:first-child)*/
     margin-top: 1rem;
-  }
-  span:first-child {
-    margin-right: var(--margin-sm);
   }
 </style>

@@ -109,6 +109,6 @@ A step (section) of a ScrollStepper. Generally used to isolate a group of requir
     cursor: pointer;
   }
   .scroll-stepper-step .scroll-stepper-step-body {
-    padding-left: 5rem;
+    padding-left: 3.6rem;
   }
 </style>
