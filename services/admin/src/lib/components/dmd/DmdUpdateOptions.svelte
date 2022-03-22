@@ -171,17 +171,24 @@ This component allows the user to update the dmd tasks items in an access platfo
               <Loading size="sm" backgroundType="gradient" />
             {/if}
             {#if numNotFound > 0}
-              <NotificationBar
-                message={`${numNotFound} items not found.`}
-                status="warn"
-              />
-              <button class="primary" on:click={() => (activeStepIndex = 2)}>
-                Ok
-              </button>
+              {#if numNotFound === dmdTask["itemsCount"]}
+                <NotificationBar
+                  message={`No items were found. Please check your selection.`}
+                  status="fail"
+                />
+              {:else}
+                <NotificationBar
+                  message={`${numNotFound} items not found.`}
+                  status="warn"
+                />
+                <button class="primary" on:click={() => (activeStepIndex = 2)}>
+                  Ok
+                </button>
+              {/if}
             {/if}
           </div>
         </ScrollStepperStep>
-        <ScrollStepperStep title="Review Metadata">
+        <ScrollStepperStep title="Review Selections">
           <div slot="icon">3</div>
           <div class="auto-align auto-align__column">
             <button class="primary" on:click={() => (activeStepIndex = 3)}>
@@ -214,6 +221,8 @@ This component allows the user to update the dmd tasks items in an access platfo
         bind:totalItems
         bind:totalPages
         bind:currentPage
+        showLookupResults={activeStepIndex > 1 || numNotFound > 0}
+        showSelection={activeStepIndex > 1}
       />
     </div>
   </div>

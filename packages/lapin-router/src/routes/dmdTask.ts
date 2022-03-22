@@ -279,10 +279,10 @@ export const dmdTaskRouter = createRouter()
           const task: any = response.doc;
           let ids = [];
           for (let item of task.items) {
-            const oldPrefixCheck = item.id.split(".");
+            /*const oldPrefixCheck = item.id.split(".");
 
             if (oldPrefixCheck.length)
-              item.id = item.id.replace(`${oldPrefixCheck[0]}.`, "");
+              item.id = item.id.replace(`${oldPrefixCheck[0]}.`, "");*/
 
             item.id = prefix === "none" ? item.id : `${prefix}.${item.id}`;
 

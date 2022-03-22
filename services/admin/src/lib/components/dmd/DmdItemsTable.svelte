@@ -10,16 +10,17 @@
   import { getStores } from "$app/stores";
   import type { Session } from "$lib/types";
   import DmdItemSelector from "./DmdItemSelector.svelte";
-  import { afterUpdate } from "svelte";
 
   /**
    * @type { DMDTask } The dmd task being displayed
    */
   export let dmdTask: DMDTask;
   export let type: ShortTaskType;
+  export let showSelection: boolean = true;
   export let totalItems: number = 0;
   export let totalPages: number = 0;
   export let currentPage = 1;
+  export let showLookupResults: boolean = false;
 
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
@@ -121,7 +122,7 @@
   <table>
     <thead>
       <tr>
-        {#if state !== "updated"}
+        {#if state !== "updated" && showSelection}
           <th>
             {#if state === "parsed"}
               <input
@@ -143,7 +144,7 @@
     <tbody>
       {#each dmdTask["items"] as item, i}
         <tr>
-          {#if state !== "updated"}
+          {#if state !== "updated" && showSelection}
             <td>
               {#if item.shouldStore && !("succeeded" in dmdTask["process"]) && !item.stored}
                 <Loading size="sm" backgroundType="gradient" />
@@ -160,8 +161,10 @@
             </td>
           {/if}
           <td
-            class:success={item.found}
-            class:not-success={"found" in item && !item.found}
+            class:success={item.found && showLookupResults}
+            class:not-success={"found" in item &&
+              !item.found &&
+              showLookupResults}
           >
             {item.id}
           </td>
