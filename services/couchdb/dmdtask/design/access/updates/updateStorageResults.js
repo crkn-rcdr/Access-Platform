@@ -47,6 +47,8 @@ module.exports = function (doc, req) {
   if (typeof workProgress !== "undefined" && typeof workSize !== "undefined") {
     doc.progress =
       workSize > 0 ? Math.round((workProgress + 1 / workSize) * 100) : 0;
+    doc.workProgress = workProgress;
+    doc.workSize = workSize;
   }
 
   const now = timestamp();
