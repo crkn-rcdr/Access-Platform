@@ -60,11 +60,11 @@ This component allows the user to update the dmd tasks items in an access platfo
 
   async function handleUpdatePressed() {
     sendingStoreRequest = true;
-    /*const result = await $session.lapin.mutation("dmdTask.store", {
+    const result = await $session.lapin.mutation("dmdTask.store", {
       task: dmdTask.id,
       user: $session.user,
     });
-    if (result) window.location.reload();*/
+    if (result) window.location.reload();
   }
 
   async function onDestinationChange(event) {

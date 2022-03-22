@@ -5,7 +5,6 @@ import {
   DMDFORMATS,
   ObjectListHandler,
   ShortTask,
-  Slug,
   User,
 } from "@crkn-rcdr/access-data";
 
@@ -25,9 +24,6 @@ const FetchInput = z.object({
 const StoreInput = z.object({
   task: z.string(), // dmdtask uuid
   user: User,
-  prefix: z.string(),
-  items: z.array(Slug),
-  destination: z.enum(["access", "preservation"]),
 });
 
 const ResetInput = z.object({
@@ -279,10 +275,10 @@ export const dmdTaskRouter = createRouter()
           const task: any = response.doc;
           let ids = [];
           for (let item of task.items) {
-            /*const oldPrefixCheck = item.id.split(".");
+            const oldPrefixCheck = item.id.split(".");
 
             if (oldPrefixCheck.length)
-              item.id = item.id.replace(`${oldPrefixCheck[0]}.`, "");*/
+              item.id = item.id.replace(`${oldPrefixCheck[0]}.`, "");
 
             item.id = prefix === "none" ? item.id : `${prefix}.${item.id}`;
 
