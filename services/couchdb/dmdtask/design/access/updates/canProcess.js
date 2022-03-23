@@ -29,5 +29,10 @@ module.exports = function (doc, req) {
   doc.updated = now;
   doc.process = { requestDate: now };
 
+  // Clear these from a potential previous run
+  delete doc.progress;
+  delete doc.workProgress;
+  delete doc.workSize;
+
   return successReturn(doc, "ok");
 };
