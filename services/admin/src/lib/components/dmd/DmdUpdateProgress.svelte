@@ -15,26 +15,7 @@
   let unsubscribe;
   const interval = timer({ interval: 30000 }); // 2x per min
 
-  let progress = 0;
   let sendingPauseRequest = false;
-
-  // every so often poll dmdtask
-  // track status each item update progress
-  function updateProgress() {
-    let numComplete = 0;
-    for (const item of dmdTask["items"]) {
-      if ("stored" in item) {
-        numComplete++;
-      }
-    }
-    if (numComplete !== 0)
-      progress = Math.round(
-        (numComplete /
-          dmdTask["items"].filter((item) => item.shouldStore).length) *
-          100
-      );
-    else progress = 0;
-  }
 
   async function handlePausePressed() {
     sendingPauseRequest = true;
@@ -59,11 +40,13 @@
   }
 
   onMount(() => {
-    updateProgress();
+    if (!("progress" in dmdTask)) dmdTask["progress"] = 0;
     unsubscribe = interval.subscribe(async () => {
       const response = await $session.lapin.query("dmdTask.get", dmdTask.id);
-      if (response) dmdTask = response.task;
-      updateProgress();
+      if (response) {
+        if (!("progress" in response.task)) response.task["progress"] = 0;
+        dmdTask = response.task;
+      }
     });
   });
 
@@ -93,10 +76,9 @@
     status="secondary"
     message="Please wait while the metadata is loaded..."
   />
-
   <ProgressBar
-    {progress}
-    progressText={progress === 100 ? "done!" : "loaded..."}
+    bind:progress={dmdTask["progress"]}
+    progressText={dmdTask["progress"] === 100 ? "done!" : "loaded..."}
   />
   <br />
   <!--button on:click={handleTest}>Test Progress</button>
