@@ -105,7 +105,7 @@
       on:clicked={handlePausePressed}
       showLoader={sendingPauseRequest}
     >
-      <span slot="content">Pause Metadata Load</span>
+      <span slot="content">Pause Metadata Storing</span>
     </LoadingButton>
   </div>
 {/if}
