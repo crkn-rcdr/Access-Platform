@@ -197,7 +197,7 @@ This component allows the user to update the dmd tasks items in an access platfo
                   message={`No items were found. Please check your selection.`}
                   status="fail"
                 />
-              {:else}
+              {:else if !lookingUp}
                 <NotificationBar
                   message={`${numNotFound} items not found.`}
                   status="warn"
