@@ -184,4 +184,14 @@ export class DMDTaskHandler extends DatabaseHandler<DMDTask> {
       },
     });
   }
+
+  async getProgress(id: string): Promise<number> {
+    const res: any = await this.view("access", "processProgress", {
+      key: id,
+      include_docs: false,
+      reduce: false,
+    });
+
+    return res.rows?.length ? res.rows[0].value : 0;
+  }
 }

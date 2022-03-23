@@ -93,6 +93,17 @@ export const dmdTaskRouter = createRouter()
       }
     },
   })
+  .query("progress", {
+    input: z.string(),
+    async resolve({ input, ctx }) {
+      try {
+        return await ctx.couch.dmdtask.getProgress(input);
+      } catch (e: any) {
+        console.log("err", e?.message);
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
   .query("page", {
     input: PageInput.parse,
     async resolve({ input: { id, page, limit }, ctx }) {

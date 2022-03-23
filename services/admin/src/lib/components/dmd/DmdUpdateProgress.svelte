@@ -1,20 +1,25 @@
 <script lang="ts">
   import { session } from "$app/stores";
   import timer from "$lib/stores/timer";
-  import type { DMDTask } from "@crkn-rcdr/access-data";
+  import type { DMDTask, ShortTaskType } from "@crkn-rcdr/access-data";
   import { onDestroy, onMount } from "svelte";
   //import LoadingButton from "../shared/LoadingButton.svelte";
   import NotificationBar from "../shared/NotificationBar.svelte";
   import ProgressBar from "../shared/ProgressBar.svelte";
+  import DmdItemsTable from "./DmdItemsTable.svelte";
 
   /**
    *  @type { string } The DMDTask being processed.
    */
   export let dmdTask: DMDTask;
+  export let type: ShortTaskType;
+  export let totalItems: number = 0;
+  export let totalPages: number = 0;
 
   let unsubscribe;
   const interval = timer({ interval: 30000 }); // 2x per min
-
+  let currentPage = 1;
+  let progress = 0;
   let sendingPauseRequest = false;
 
   async function handlePausePressed() {
@@ -42,10 +47,23 @@
   onMount(() => {
     if (!("progress" in dmdTask)) dmdTask["progress"] = 0;
     unsubscribe = interval.subscribe(async () => {
-      const response = await $session.lapin.query("dmdTask.get", dmdTask.id);
+      const response = await $session.lapin.query(
+        "dmdTask.progress",
+        dmdTask.id
+      );
       if (response) {
-        if (!("progress" in response.task)) response.task["progress"] = 0;
-        dmdTask = response.task;
+        progress = response;
+        if (progress === 100) window.location.reload();
+      }
+      try {
+        const pageData = await $session.lapin.query("dmdTask.page", {
+          id: dmdTask.id,
+          page: currentPage,
+          limit: 100,
+        });
+        if (pageData && pageData.list) dmdTask["items"] = pageData.list;
+      } catch (e) {
+        console.log(e);
       }
     });
   });
@@ -77,8 +95,8 @@
     message="Please wait while the metadata is loaded..."
   />
   <ProgressBar
-    bind:progress={dmdTask["progress"]}
-    progressText={dmdTask["progress"] === 100 ? "done!" : "loaded..."}
+    {progress}
+    progressText={progress === 100 ? "done!" : "loaded..."}
   />
   <br />
   <!--button on:click={handleTest}>Test Progress</button>
@@ -94,6 +112,13 @@
     </LoadingButton>
   </div-->
 {/if}
+<DmdItemsTable
+  bind:dmdTask
+  bind:currentPage
+  bind:type
+  bind:totalItems
+  bind:totalPages
+/>
 
 <style>
   div {
