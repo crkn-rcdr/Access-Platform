@@ -58,7 +58,7 @@
   {/if}
 
   <NotificationBar
-    message={`There was a problem updating one or more of your items metadata files. Please check the results in the table below for details about the problem. You can 1) Try running the update again, <a href="/dmd/new" target="_blank">2) Correct any formatting issues in the input file and upload it again</a>, or <a href="${githubLink}" target="_blank">3) Open a ticket for the platform team to investigate the problem.</a>`}
+    message={`There was a problem storing the metadata for one or more of your items. Please check the results in the table below for details about the problem. You can 1) Try running the update again, <a href="/dmd/new" target="_blank">2) Correct any formatting issues in the input file and upload it again</a>, or <a href="${githubLink}" target="_blank">3) Open a ticket for the platform team to investigate the problem.</a>`}
     status="fail"
   />
   <br />

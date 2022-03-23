@@ -181,6 +181,7 @@ export class DMDTaskHandler extends DatabaseHandler<DMDTask> {
             message: "",
             succeeded: true,
           },
+          status: "paused",
         },
       },
     });

@@ -58,12 +58,12 @@
   {#if dmdTask?.fileName}
     <h5>{dmdTask.fileName}</h5>
   {/if}
+  <NotificationBar message={dmdTask["process"]?.["message"]} status="warn" />
   <NotificationBar
-    message={`Success! All of the metadata files were updated for the selected items. Please wait up to one hour to see the new metadata updated in access and/or preservation. <a href="${githubLink}" target="_blank">If after one hour the updates still aren't visible, open a ticket for the platform team to investigate the problem.</a>`}
+    message={`Success! The metadata files were stored for the selected items.`}
     status="success"
   />
   <br />
-  <NotificationBar message={dmdTask["process"]?.["message"]} status="warn" />
   <!-- if preservation update -->
   <!-- then show button to go to old tool-->
   {#if dmdTask["items"]?.length && dmdTask["items"][0].destination === "preservation"}

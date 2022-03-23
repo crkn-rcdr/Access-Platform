@@ -3,7 +3,7 @@
   import timer from "$lib/stores/timer";
   import type { DMDTask, ShortTaskType } from "@crkn-rcdr/access-data";
   import { onDestroy, onMount } from "svelte";
-  //import LoadingButton from "../shared/LoadingButton.svelte";
+  import LoadingButton from "../shared/LoadingButton.svelte";
   import NotificationBar from "../shared/NotificationBar.svelte";
   import ProgressBar from "../shared/ProgressBar.svelte";
   import DmdItemsTable from "./DmdItemsTable.svelte";
@@ -99,7 +99,7 @@
   <!--button on:click={handleTest}>Test Progress</button>
   <button on:click={handleTestCompletePressed}>Test Complete</button-->
 
-  <!--div>
+  <div>
     <LoadingButton
       buttonClass="secondary"
       on:clicked={handlePausePressed}
@@ -107,7 +107,7 @@
     >
       <span slot="content">Pause Metadata Load</span>
     </LoadingButton>
-  </div-->
+  </div>
 {/if}
 <DmdItemsTable
   bind:dmdTask
