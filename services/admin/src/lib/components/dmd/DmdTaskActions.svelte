@@ -40,6 +40,7 @@
           await $session.lapin.mutation("dmdTask.delete", task.id);
           await sleep(1000);
           dispatch("delete", task);
+          loading = false;
           return {
             success: true,
             details: "",
@@ -55,8 +56,6 @@
       `Error: failed to delete task.`
     );
   }
-
-  $: if (!isListLoading) loading = false;
 </script>
 
 {#if task}

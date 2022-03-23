@@ -78,6 +78,11 @@
    */
   const { session } = getStores<Session>();
 
+  async function handleDeletePressed(array, task) {
+    array = array.filter((item) => task["id"] === item["id"]);
+    await getDMDTasksList();
+  }
+
   async function getDMDTasksList() {
     let taskList: ShortTask[] = await $session.lapin.query("dmdTask.list");
     const results = getDMDTasks(taskList);
@@ -129,10 +134,11 @@
             <span slot="actions">
               <DmdTaskActions
                 {task}
-                isListLoading={loading}
                 stage="N/A"
                 status="N/A"
-                on:delete={getDMDTasksList}
+                on:delete={async () => {
+                  await handleDeletePressed(base, task);
+                }}
               />
             </span>
           </ExpansionListItem>
@@ -156,10 +162,11 @@
           <span slot="actions">
             <DmdTaskActions
               {task}
-              isListLoading={loading}
               stage="parse"
               status="waiting"
-              on:delete={getDMDTasksList}
+              on:delete={async () => {
+                await handleDeletePressed(parsing, task);
+              }}
             />
           </span>
         </ExpansionListItem>
@@ -191,10 +198,11 @@
           <span slot="actions">
             <DmdTaskActions
               {task}
-              isListLoading={loading}
               stage="parse"
               status={task.type === "parse succeeded" ? "succeeded" : "failed"}
-              on:delete={getDMDTasksList}
+              on:delete={async () => {
+                await handleDeletePressed(parsed, task);
+              }}
             />
           </span>
         </ExpansionListItem>
@@ -222,10 +230,11 @@
           <span slot="actions">
             <DmdTaskActions
               {task}
-              isListLoading={loading}
               stage="load"
               status="waiting"
-              on:delete={getDMDTasksList}
+              on:delete={async () => {
+                await handleDeletePressed(updating, task);
+              }}
             />
           </span>
         </ExpansionListItem>
@@ -249,10 +258,11 @@
           <span slot="actions">
             <DmdTaskActions
               {task}
-              isListLoading={loading}
               stage="load"
               status={"paused"}
-              on:delete={getDMDTasksList}
+              on:delete={async () => {
+                await handleDeletePressed(paused, task);
+              }}
             />
           </span>
         </ExpansionListItem>
@@ -283,10 +293,11 @@
           <span slot="actions">
             <DmdTaskActions
               {task}
-              isListLoading={loading}
               stage="load"
               status={task.type === "store succeeded" ? "succeeded" : "failed"}
-              on:delete={getDMDTasksList}
+              on:delete={async () => {
+                await handleDeletePressed(updated, task);
+              }}
             />
           </span>
         </ExpansionListItem>
