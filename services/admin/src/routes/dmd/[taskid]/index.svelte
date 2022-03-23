@@ -99,8 +99,7 @@
     <DmdUpdateFailedOptions bind:dmdTask />
     <DmdItemsTable bind:dmdTask bind:type bind:totalItems bind:totalPages />
   {:else if type === "store queued" || type === "storing"}
-    <DmdUpdateProgress bind:dmdTask />
-    <DmdItemsTable bind:dmdTask bind:type bind:totalItems bind:totalPages />
+    <DmdUpdateProgress bind:dmdTask bind:type bind:totalItems bind:totalPages />
   {:else if type === "parse succeeded"}
     <DmdUpdateOptions bind:dmdTask bind:type bind:totalItems bind:totalPages />
   {:else if type === "parse failed"}
