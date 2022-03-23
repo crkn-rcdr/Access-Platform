@@ -91,9 +91,7 @@ This component allows the user to update the dmd tasks items in an access platfo
         returnPage: currentPage,
         user: $session.user,
       });
-
       dmdTask["items"] = response.pageData.list;
-
       dmdTask = dmdTask;
       numNotFound = response.numNotFound;
       if (numNotFound === 0) activeStepIndex = 2;
@@ -113,15 +111,17 @@ This component allows the user to update the dmd tasks items in an access platfo
   }
 
   async function handleRemoveExistingPrefixPressed() {
-    const response = await $session.lapin.mutation(
-      `dmdTask.removeExistingPrefix`,
-      {
-        id: dmdTask.id,
-        returnPage: currentPage,
-        user: $session.user,
-      }
-    );
-    dmdTask["items"] = response.list;
+    lookingUp = true;
+    await $session.lapin.mutation(`dmdTask.removeExistingPrefix`, {
+      id: dmdTask.id,
+      returnPage: currentPage,
+      user: $session.user,
+    });
+    depositor = {
+      prefix: "none",
+      label: "No Prefix",
+    };
+    await lookupItems();
   }
 
   /*onMount(() => {

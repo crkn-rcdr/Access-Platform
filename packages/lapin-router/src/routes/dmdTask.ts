@@ -404,6 +404,8 @@ export const dmdTaskRouter = createRouter()
 
             if (oldPrefixCheck.length)
               item.id = item.id.replace(`${oldPrefixCheck[0]}.`, "");
+
+            if ("found" in item) delete item["found"];
           }
 
           await ctx.couch.dmdtask.update({
