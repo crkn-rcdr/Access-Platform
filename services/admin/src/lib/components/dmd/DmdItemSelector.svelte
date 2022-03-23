@@ -5,6 +5,7 @@
 
   export let taskId: string;
   export let checked: boolean;
+  export let disabled: boolean;
   export let index: number;
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
@@ -32,4 +33,16 @@
   }
 </script>
 
-<input type="checkbox" bind:checked on:change={handleChange} />
+<input
+  type="checkbox"
+  bind:checked
+  on:change={handleChange}
+  class:not-usable={disabled}
+/>
+
+<style>
+  .not-usable {
+    cursor: not-allowed !important;
+    pointer-events: none;
+  }
+</style>

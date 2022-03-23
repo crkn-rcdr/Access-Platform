@@ -89,11 +89,11 @@
 
   <NotificationBar
     status="secondary"
-    message="Please wait while the metadata is loaded..."
+    message="Please wait while the metadata is storing..."
   />
   <ProgressBar
     {progress}
-    progressText={progress === 100 ? "done!" : "loaded..."}
+    progressText={progress === 100 ? "done!" : "stored..."}
   />
   <br />
   <!--button on:click={handleTest}>Test Progress</button>

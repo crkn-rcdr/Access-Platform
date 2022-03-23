@@ -72,7 +72,7 @@ This component allows the user to update the dmd tasks items in an access platfo
   {/if}
   <NotificationBar
     status="secondary"
-    message="Press the 'Resume Metadata Load' button to continue loading the metadata for your items."
+    message="Press the 'Resume Metadata Store' button to continue storing the metadata for your items."
   />
   <!--p>Review Metadata</p-->
   <br />
@@ -84,7 +84,7 @@ This component allows the user to update the dmd tasks items in an access platfo
       showLoader={sendingStoreRequest}
       {disabled}
     >
-      <span slot="content">Resume Metadata Load</span>
+      <span slot="content">Resume Metadata Store</span>
     </LoadingButton>
   </div>
 {/if}

@@ -69,7 +69,7 @@
         </a>
       {:else if status === "paused"}
         <a href={`/dmd/${task.id}`}>
-          <button class="action save"> Resume Load</button>
+          <button class="action save"> Resume Store</button>
         </a>
       {:else if status === "failed"}
         <a href={`/dmd/${task.id}`}>
@@ -78,7 +78,7 @@
       {:else if status === "succeeded"}
         {#if stage === "parse"}
           <a href={`/dmd/${task.id}`}>
-            <button class="action save"> Load Metadata </button>
+            <button class="action save"> Store Metadata </button>
           </a>
         {:else}
           <a href={`/dmd/${task.id}`}>

@@ -122,7 +122,7 @@
   <table>
     <thead>
       <tr>
-        {#if state !== "updated" && showSelection}
+        {#if showSelection}
           <th>
             {#if state === "parsed"}
               <input
@@ -144,15 +144,16 @@
     <tbody>
       {#each dmdTask["items"] as item, i}
         <tr>
-          {#if state !== "updated" && showSelection}
+          {#if showSelection}
             <td>
               {#if item.shouldStore && !("succeeded" in dmdTask["process"]) && !item.stored}
                 <Loading size="sm" backgroundType="gradient" />
-              {:else if item.parsed && item.found}
+              {:else if "stored" in item || (item.parsed && item.found)}
                 <DmdItemSelector
                   taskId={dmdTask.id}
                   index={i + (currentPage - 1) * pageSize}
                   checked={item.shouldStore}
+                  disabled={state !== "parsed"}
                   on:changed={checkIfAllItemsSelected}
                 />
               {:else}
@@ -224,7 +225,7 @@
                       <td class="detail-label"> Load Result:</td>
                       <td>
                         <XmlViewer
-                          xml={`Successfully loaded metadata into ${item.destination}`}
+                          xml={`Successfully stored metadata in ${dmdTask["destination"]}`}
                         />
                       </td>
                     {/if}

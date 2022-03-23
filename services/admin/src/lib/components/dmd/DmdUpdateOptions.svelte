@@ -198,7 +198,7 @@ This component allows the user to update the dmd tasks items in an access platfo
             </button>
           </div>
         </ScrollStepperStep>
-        <ScrollStepperStep isLastStep={true} title="Load Metadata">
+        <ScrollStepperStep isLastStep={true} title="Store Metadata">
           <div slot="icon">4</div>
           <div class="auto-align auto-align__column">
             <span>
@@ -208,7 +208,7 @@ This component allows the user to update the dmd tasks items in an access platfo
                 showLoader={sendingStoreRequest}
               >
                 <!--{disabled}-->
-                <span slot="content"> Load Metadata </span>
+                <span slot="content"> Store Metadata </span>
               </LoadingButton>
             </span>
           </div>
