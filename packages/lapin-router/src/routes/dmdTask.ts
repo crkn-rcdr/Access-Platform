@@ -135,17 +135,15 @@ export const dmdTaskRouter = createRouter()
        Results should be decoded in the browser.
       */
       try {
-        return input.type === "json"
-          ? await ctx.couch.dmdtask.getAttachmentAsJSON({
-              document: input.task,
-              attachment: `${input.index}.${input.type}`,
-            })
-          : (
-              await ctx.couch.dmdtask.getAttachment({
-                document: input.task,
-                attachment: `${input.index}.${input.type}`,
-              })
-            ).toString();
+        const fileName = input.type === "json" ? "flatten.json" : "dmd.json";
+        const jsonData = await ctx.couch.dmdtask.getAttachmentAsJSON({
+          document: input.task,
+          attachment: fileName,
+        });
+        console.log(jsonData);
+        if (Array.isArray(jsonData) && input.index < jsonData.length)
+          return jsonData[input.index];
+        else return null;
       } catch (e) {
         throw httpErrorToTRPC(e);
       }
