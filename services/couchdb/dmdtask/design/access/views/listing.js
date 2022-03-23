@@ -123,7 +123,7 @@ module.exports = {
     const isStoreSucceeded = () => {
       return (
         doc.process &&
-        doc.process.processDate &&
+        "processDate" in doc.process &&
         doc.process.succeeded &&
         doc.items &&
         "itemsCount" in doc &&
@@ -148,10 +148,9 @@ module.exports = {
     const isStorePaused = () => {
       return (
         doc.process &&
-        doc.process.processDate &&
+        "processDate" in doc.process &&
         doc.process.succeeded &&
         doc.items &&
-        "itemsCount" in doc &&
         doc.stage === "store-paused" &&
         storePausedItemCheck()
       );
