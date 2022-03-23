@@ -112,6 +112,18 @@ This component allows the user to update the dmd tasks items in an access platfo
     if (destination) await lookupItems();
   }
 
+  async function handleRemoveExistingPrefixPressed() {
+    const response = await $session.lapin.mutation(
+      `dmdTask.removeExistingPrefix`,
+      {
+        id: dmdTask.id,
+        returnPage: currentPage,
+        user: $session.user,
+      }
+    );
+    dmdTask["items"] = response.list;
+  }
+
   /*onMount(() => {
     if (dmdTask["destination"]) activeStepIndex = 1;
     if (dmdTask["items"]?.length && "found" in dmdTask["items"][0])
@@ -163,6 +175,13 @@ This component allows the user to update the dmd tasks items in an access platfo
         <ScrollStepperStep title="Lookup Items">
           <div slot="icon">2</div>
           <div class="auto-align auto-align__column">
+            <button
+              class="secondary"
+              on:click={handleRemoveExistingPrefixPressed}
+            >
+              Remove Prefix
+            </button>
+            <br />
             <PrefixSelector
               {depositor}
               on:depositorSelected={handleDepositorChanged}

@@ -140,7 +140,6 @@ export const dmdTaskRouter = createRouter()
           document: input.task,
           attachment: fileName,
         });
-        console.log(jsonData);
         if (Array.isArray(jsonData) && input.index < jsonData.length)
           return jsonData[input.index];
         else return null;
@@ -284,13 +283,7 @@ export const dmdTaskRouter = createRouter()
           const task: any = response.doc;
           let ids = [];
           for (let item of task.items) {
-            const oldPrefixCheck = item.id.split(".");
-
-            if (oldPrefixCheck.length)
-              item.id = item.id.replace(`${oldPrefixCheck[0]}.`, "");
-
             item.id = prefix === "none" ? item.id : `${prefix}.${item.id}`;
-
             ids.push(item.id);
           }
 
@@ -338,9 +331,12 @@ export const dmdTaskRouter = createRouter()
           return { pageData, numNotFound };
         }
         return {
-          first: null,
-          last: null,
-          list: [],
+          numNotFound: 0,
+          pageData: {
+            first: null,
+            last: null,
+            list: [],
+          },
         };
       } catch (e) {
         throw httpErrorToTRPC(e);
@@ -385,6 +381,50 @@ export const dmdTaskRouter = createRouter()
             user,
           },
         });
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .mutation("removeExistingPrefix", {
+    input: z.object({
+      id: z.string(),
+      returnPage: z.number(),
+      user: User,
+    }),
+    async resolve({ input, ctx }) {
+      try {
+        const { id, returnPage, user } = input;
+        const response: any = await ctx.couch.dmdtask.getSafe(id);
+
+        if (response.doc?.["items"]) {
+          const task: any = response.doc;
+          for (let item of task.items) {
+            const oldPrefixCheck = item.id.split(".");
+
+            if (oldPrefixCheck.length)
+              item.id = item.id.replace(`${oldPrefixCheck[0]}.`, "");
+          }
+
+          await ctx.couch.dmdtask.update({
+            ddoc: "access",
+            name: "editObject",
+            docId: id,
+            body: {
+              data: { items: task.items },
+              user,
+            },
+          });
+
+          const items = new ObjectListHandler(task.items);
+          const pageData = items.page(returnPage, 100);
+          return pageData;
+        }
+        return {
+          first: null,
+          last: null,
+          list: [],
+        };
       } catch (e) {
         throw httpErrorToTRPC(e);
       }
