@@ -147,6 +147,7 @@ export class DMDTaskHandler extends DatabaseHandler<DMDTask> {
               succeeded: true,
             },
             items: dmdTask.items.map((item) => {
+              if ("found" in item) delete item["found"];
               if ("stored" in item) delete item["stored"];
               if ("shouldStore" in item) delete item["shouldStore"];
               return item;

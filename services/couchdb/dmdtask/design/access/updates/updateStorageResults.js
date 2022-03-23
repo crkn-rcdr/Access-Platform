@@ -30,7 +30,7 @@ module.exports = function (doc, req) {
     return errorReturn(`Could not parse request body as JSON: ${req.body}`);
   }
 
-  const { array, workProgress, workSize } = data;
+  let { array, workProgress, workSize } = data;
 
   if (array) {
     for (const itemDataArray of array) {
@@ -45,8 +45,10 @@ module.exports = function (doc, req) {
   }
 
   if (typeof workProgress !== "undefined" && typeof workSize !== "undefined") {
+    workSize = parseInt(workSize);
+    workProgress = parseInt(workProgress);
     doc.progress =
-      workSize > 0 ? Math.round((workProgress + 1 / workSize) * 100) : 0;
+      workSize > 0 ? Math.round(((workProgress + 1) / workSize) * 100) : 0;
     doc.workProgress = workProgress;
     doc.workSize = workSize;
   }

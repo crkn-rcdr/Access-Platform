@@ -72,10 +72,7 @@
     // reset task to validated and refresh
     await $session.lapin.mutation("dmdTask.updateStorageResults", {
       id: dmdTask.id,
-      array: [
-        [1, true],
-        [0, true],
-      ],
+      array: [[0, true]],
     });
     window.location.reload();
   }
