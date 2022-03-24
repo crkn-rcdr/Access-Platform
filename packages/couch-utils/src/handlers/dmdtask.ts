@@ -91,6 +91,7 @@ export class DMDTaskHandler extends DatabaseHandler<DMDTask> {
       docId: taskId,
       body: {
         user,
+        parse: true,
       },
     });
 
