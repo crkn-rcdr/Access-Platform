@@ -104,7 +104,7 @@
     <DmdUpdateOptions bind:dmdTask bind:type bind:totalItems bind:totalPages />
   {:else if type === "parse failed"}
     <DmdParseFailedOptions bind:dmdTask />
-  {:else if type === "parsing"}
+  {:else if type === "parsing" || type === "parse queued"}
     <DmdParseTracker bind:dmdTask />
   {:else}
     <NotificationBar message="Something went wrong." status="fail" />
