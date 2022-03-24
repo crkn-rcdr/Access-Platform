@@ -216,7 +216,7 @@
       showMessage={updating?.length === 0}
       message="No tasks are loading."
     >
-      <span slot="title">Loading ({updating.length})</span>
+      <span slot="title">Storing ({updating.length})</span>
       {#each updating as task}
         <ExpansionListItem status="waiting">
           <span slot="title">{task.fileName}</span>
@@ -244,7 +244,7 @@
       showMessage={paused?.length === 0}
       message="No tasks have been paused."
     >
-      <span slot="title">Load Paused ({paused.length})</span>
+      <span slot="title">Store Paused ({paused.length})</span>
       {#each paused as task}
         <ExpansionListItem status="paused">
           <span slot="title">{task.fileName}</span>
@@ -273,7 +273,7 @@
       showMessage={updated?.length === 0}
       message="No tasks have been completed."
     >
-      <span slot="title">Load Completed ({updated.length})</span>
+      <span slot="title">Store Completed ({updated.length})</span>
       {#each updated as task}
         <ExpansionListItem
           status={task.type === "store succeeded"
