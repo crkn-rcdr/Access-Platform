@@ -48,7 +48,7 @@ module.exports = function (doc, req) {
     workSize = parseInt(workSize);
     workProgress = parseInt(workProgress);
     doc.progress =
-      workSize > 0 ? Math.round(((workProgress + 1) / workSize) * 100) : 0;
+      workSize > 0 ? Math.round((workProgress / workSize) * 100) : 0;
     doc.workProgress = workProgress;
     doc.workSize = workSize;
   }
