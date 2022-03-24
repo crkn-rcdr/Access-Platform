@@ -25,7 +25,7 @@
   async function handlePausePressed() {
     sendingPauseRequest = true;
     await $session.lapin.mutation("dmdTask.pauseStorage", {
-      task: dmdTask.id,
+      id: dmdTask.id,
       user: $session.user,
     });
     window.location.reload();

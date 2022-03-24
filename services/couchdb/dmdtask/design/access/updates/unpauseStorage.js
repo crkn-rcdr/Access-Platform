@@ -23,5 +23,7 @@ module.exports = function (doc, req) {
   doc.updated = now;
   doc.process = { requestDate: now };
 
+  delete doc.stage;
+
   return successReturn(doc, "ok");
 };

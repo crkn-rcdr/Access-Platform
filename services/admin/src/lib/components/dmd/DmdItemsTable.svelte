@@ -217,12 +217,12 @@
                     class:not-success={!item.stored}
                   >
                     {#if item.message.length}
-                      <td class="detail-label"> Load Result:</td>
+                      <td class="detail-label"> Result:</td>
                       <td>
                         <XmlViewer xml={item.message} />
                       </td>
                     {:else}
-                      <td class="detail-label"> Load Result:</td>
+                      <td class="detail-label"> Result:</td>
                       <td>
                         <XmlViewer
                           xml={`Successfully stored metadata in ${dmdTask["destination"]}`}

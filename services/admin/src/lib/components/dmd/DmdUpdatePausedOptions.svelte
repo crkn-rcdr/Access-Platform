@@ -33,36 +33,15 @@ This component allows the user to update the dmd tasks items in an access platfo
    */
   const { session } = getStores<Session>();
 
-  let disabled: boolean = true;
   let sendingStoreRequest: boolean = false;
 
-  /**
-   * Passes on the work of updating the metadata of the items in the task to the dmdTasksStore
-   * @returns void
-   */
-  async function handleUpdatePressed() {
-    // save item info, call proccess on dmdtask
-    // should update item ids
-    // destination
+  async function handlePausePressed() {
     sendingStoreRequest = true;
-    const result = await $session.lapin.mutation("dmdTask.store", {
-      task: dmdTask.id,
-      destination: dmdTask["destination"],
-      prefix: "none",
-      items: dmdTask["items"]
-        .filter((item) => item.shouldStore)
-        .map((item) => item.id),
+    await $session.lapin.mutation("dmdTask.unpauseStorage", {
+      id: dmdTask.id,
       user: $session.user,
     });
-    if (result) window.location.reload();
-  }
-
-  $: {
-    let numItems = 0;
-    for (const item of dmdTask["items"]) {
-      if (item.shouldStore) numItems++;
-    }
-    disabled = numItems === 0;
+    window.location.reload();
   }
 </script>
 
@@ -80,9 +59,8 @@ This component allows the user to update the dmd tasks items in an access platfo
   <div>
     <LoadingButton
       buttonClass="primary"
-      on:clicked={handleUpdatePressed}
+      on:clicked={handlePausePressed}
       showLoader={sendingStoreRequest}
-      {disabled}
     >
       <span slot="content">Resume Metadata Storing</span>
     </LoadingButton>
