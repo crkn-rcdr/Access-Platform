@@ -32,7 +32,7 @@
       {/if}
       <span>
         <slot name="stage" />
-        {status}
+        {#if status !== "N/A"}{status}{/if}
         {#if status === "waiting"}...{/if}
       </span>
     </span>

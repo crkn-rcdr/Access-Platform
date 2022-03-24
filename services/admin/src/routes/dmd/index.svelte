@@ -130,7 +130,6 @@
         {#each base as task}
           <ExpansionListItem status="N/A">
             <span slot="title">{task.fileName}</span>
-            <span slot="stage">N/A</span>
             <span slot="actions">
               <DmdTaskActions
                 {task}
