@@ -25,10 +25,10 @@ This component displays the non content properties for an access editorObject an
   } from "@crkn-rcdr/access-data";
   import { typedChecks } from "$lib/utils/validation";
   import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
-  import Resolver from "$lib/components/access-objects/Resolver.svelte";
   import EditorInput from "$lib/components/access-objects/EditorInput.svelte";
   import { createEventDispatcher } from "svelte";
   import { showConfirmation } from "$lib/utils/confirmation";
+  import SlugSearch from "./SlugSearch.svelte";
   //import { editorObjectStore } from "$lib/stores/accessObjectEditorStore";
 
   /**
@@ -60,6 +60,8 @@ This component displays the non content properties for an access editorObject an
    * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.
    */
   const dispatch = createEventDispatcher();
+
+  let isSlugValid = true;
 
   function handleSavePressed(event: any) {
     dispatch("save", event.detail);
@@ -109,15 +111,26 @@ This component displays the non content properties for an access editorObject an
           keys={["slug"]}
           bind:value={editorObject["slug"]}
           on:save={handleSavePressed}
-          saveDisabled={!editorObject["slug"] ||
-            editorObject["slug"].length === 0}
+          saveDisabled={!isSlugValid}
         >
           <div>
-            <Resolver bind:slug={editorObject["slug"]} />
+            <SlugSearch
+              searchOnLoad={false}
+              bind:slug={editorObject["slug"]}
+              on:slugValidity={(e) => {
+                isSlugValid = e.detail;
+              }}
+            />
           </div>
         </EditorInput>
       {:else}
-        <Resolver bind:slug={editorObject["slug"]} />
+        <SlugSearch
+          searchOnLoad={false}
+          bind:slug={editorObject["slug"]}
+          on:slugValidity={(e) => {
+            isSlugValid = e.detail;
+          }}
+        />
       {/if}
 
       <br /><br />

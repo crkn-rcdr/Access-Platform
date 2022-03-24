@@ -19,6 +19,7 @@ This component shows the results of a dipstaging find-package(s) request or a vi
   import type { Session } from "$lib/types";
   import type { ImportStatus, LegacyPackage } from "@crkn-rcdr/access-data";
   import Resolver from "$lib/components/access-objects/Resolver.svelte";
+  import SlugSearch from "$lib/components/access-objects/SlugSearch.svelte";
   import Loading from "$lib/components/shared/Loading.svelte";
   import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
   import ExpansionTile from "$lib/components/shared/ExpansionTile.svelte";
@@ -138,7 +139,7 @@ This component shows the results of a dipstaging find-package(s) request or a vi
    * @returns void
    */
   function setSlugAvailability(event, item: ImportStatus | LegacyPackage) {
-    slugUnavailableMap[slugMap[item["id"]]] = !event.detail.status;
+    slugUnavailableMap[slugMap[item["id"]]] = !event.detail;
     slugUnavailableMap = slugUnavailableMap;
     if (isItemSelectable(item)) selectedMap[item["id"]] = true;
     else selectedMap[item["id"]] = false;
@@ -156,10 +157,8 @@ This component shows the results of a dipstaging find-package(s) request or a vi
     for (const item of results) {
       let itemCopy = structuredClone(item);
       items.push(itemCopy);
-      if (!itemCopy["slug"] && !isSlugSearch) {
-        itemCopy["slug"] = itemCopy["id"];
-        slugMap[itemCopy["id"]] = itemCopy["id"];
-      } else slugMap[itemCopy["id"]] = itemCopy["slug"];
+      itemCopy["slug"] = itemCopy["id"]; // Ignore old slugs
+      slugMap[itemCopy["id"]] = itemCopy["id"];
     }
     items = items;
   }
@@ -240,6 +239,15 @@ This component shows the results of a dipstaging find-package(s) request or a vi
       loading = false;
     });
   }
+
+  /*$: {
+    loading = true;
+    slugUnavailableMap;
+    getSlugAvailability().then(() => {
+      setSelectedModel();
+      loading = false;
+    });
+  }*/
 </script>
 
 <NotificationBar message={error} status="fail" />
@@ -316,56 +324,30 @@ This component shows the results of a dipstaging find-package(s) request or a vi
                   >Track its status in the 'Import Queue' tab.</a
                 >
               {:else}
-                {#if slugUnavailableMap[slugMap[item["id"]]] && slugMap[item["id"]] === item["slug"]}
-                  <NotificationBar
-                    status="fail"
-                    message={isSlugSearch
-                      ? `The existing manifest must be deleted before the package can be re-imported into a new manifest.`
-                      : `This package is already imported as a  manifest.`}
-                  />
-
-                  <p>
-                    <br />
-                    <a
-                      href={`/object/edit/${noidMap[slugMap[item["id"]]]}`}
-                      target="_blank"
-                    >
-                      To replace the existing import of this package, please
-                      click here open it in the editor. Then, unpublish the
-                      manifest if it is published. Then, press delete to delete
-                      the manifest.
-                    </a> When you are done, click the button below to enable importing
-                    for your package.
-                  </p>
-
-                  <br />
-                  <button
-                    class="secondary"
-                    on:click={() => {
-                      slugUnavailableMap[slugMap[item["id"]]] = false;
-                    }}
-                  >
-                    OK, I have deleted the existing manifest.
-                  </button>
-                {:else}
-                  <span
-                    >Please enter the slug you would like to use for the
-                    manifest:
-                  </span>
-                  <Resolver
-                    noid={slugMap[item["id"]] in noidMap
-                      ? noidMap[slugMap[item["id"]]]
-                      : null}
-                    isFound={slugUnavailableMap[slugMap[item["id"]]]}
-                    alwaysShowIfFound={true}
-                    runInitial={false}
-                    on:available={(e) => setSlugAvailability(e, item)}
-                    bind:slug={slugMap[item["id"]]}
-                  />
-                {/if}
-
-                <br /><br />
-
+                <p class="slug-label">
+                  Please enter the slug for the manifest that will be created:
+                </p>
+                <SlugSearch
+                  bind:slug={slugMap[item["id"]]}
+                  tooltip={`
+The slug entered is currently in use. To resolve this issue, you can either:
+  1. Enter a new slug below 
+  2. Edit the slug of the 
+       existing manifest
+  3. Delete the existing 
+       manifest
+                  `}
+                  searchOnLoad={false}
+                  found={slugUnavailableMap[slugMap[item["id"]]]}
+                  noid={slugMap[item["id"]] in noidMap
+                    ? noidMap[slugMap[item["id"]]]
+                    : null}
+                  on:slugValidity={(e) => {
+                    setSlugAvailability(e, item);
+                  }}
+                />
+                <br />
+                <br />
                 <div class="import-history-wrap">
                   <ExpansionTile>
                     <span slot="top">Last Import Status</span>
@@ -421,5 +403,12 @@ This component shows the results of a dipstaging find-package(s) request or a vi
     border-radius: var(--border-radius);
     border: 1px solid var(--border-color);
     padding: 1rem;
+  }
+  .slug-label {
+    margin-bottom: 1rem;
+  }
+  .slug-error-instructions {
+    margin-top: 1rem;
+    color: var(--secondary);
   }
 </style>
