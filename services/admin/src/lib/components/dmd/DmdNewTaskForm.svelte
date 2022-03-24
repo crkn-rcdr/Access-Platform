@@ -100,7 +100,6 @@ none
             goto(`/dmd/${response}`);
             return {
               success: true,
-              details: response,
             };
           } else {
             state = "error";
