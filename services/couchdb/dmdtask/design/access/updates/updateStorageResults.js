@@ -25,6 +25,8 @@ module.exports = function (doc, req) {
     return errorReturn(`No document found with id ${req.id}`, 404);
   }
 
+  if (doc.stage === "store-paused") return successReturn(doc, "paused");
+
   const data = extractJSONFromBody(req);
   if (!data) {
     return errorReturn(`Could not parse request body as JSON: ${req.body}`);
