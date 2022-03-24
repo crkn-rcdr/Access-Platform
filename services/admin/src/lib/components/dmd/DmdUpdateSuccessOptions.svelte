@@ -65,7 +65,7 @@
   />
   <br />
   <!-- if preservation update -->
-  <!-- then show button to go to old tool-->
+  <!-- then show button to go to old tool
   {#if dmdTask["items"]?.length && dmdTask["items"][0].destination === "preservation"}
     <a
       class="finish-preservation"
@@ -81,7 +81,7 @@
     </a>
 
     <br />
-  {/if}
+  {/if}-->
 
   <div class="button-wrap">
     <!--button on:click={handleTestClearPressed}>Test Clear</button-->
