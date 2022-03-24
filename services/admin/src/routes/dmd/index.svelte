@@ -126,7 +126,7 @@
     </div>
     {#if base.length}
       <ExpansionList showMessage={base?.length === 0} message="">
-        <span slot="title">Awaiting Parsing ({base.length})</span>
+        <span slot="title">Unable to Trigger Parse ({base.length})</span>
         {#each base as task}
           <ExpansionListItem status="N/A">
             <span slot="title">{task.fileName}</span>
