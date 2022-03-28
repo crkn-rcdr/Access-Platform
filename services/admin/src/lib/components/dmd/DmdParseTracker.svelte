@@ -51,8 +51,11 @@ Displays a dmd task in an waiting state.
     try {
       error = "";
       const response = await $session.lapin.query("dmdTask.get", id);
-      if (response) dmdTask = response.task;
-      else error = "Code 4. Please contact the platform team for assistance.";
+      if (response) {
+        dmdTask = response.task;
+        if (response.type !== "parse queued" && response.type !== "parsing")
+          window.location.reload();
+      } else error = "Code 4. Please contact the platform team for assistance.";
       lastUpdated = new Date().toLocaleString();
     } catch (e) {
       error = "Code 5. Please contact the platform team for assistance.";

@@ -2,6 +2,7 @@
   import { createEventDispatcher } from "svelte";
   import { getStores } from "$app/stores";
   import type { Session } from "$lib/types";
+  import { showConfirmation } from "$lib/utils/confirmation";
 
   export let taskId: string;
   export let checked: boolean;
@@ -19,17 +20,31 @@
 
   async function handleChange() {
     // send val to backend
-    try {
-      await $session.lapin.mutation("dmdTask.setItemShouldUpdate", {
-        id: taskId,
-        index,
-        value: checked,
-      });
-      // dispatch --- parent check all selected
-      dispatch("changed", { index, checked });
-    } catch (e: any) {
-      console.log(e.message);
-    }
+    await showConfirmation(
+      async () => {
+        try {
+          await $session.lapin.mutation("dmdTask.setItemShouldUpdate", {
+            id: taskId,
+            index,
+            value: checked,
+          });
+          // dispatch --- parent check all selected
+          dispatch("changed", { index, checked });
+
+          return {
+            success: true,
+          };
+        } catch (e) {
+          return {
+            success: false,
+            details: e?.message,
+          };
+        }
+      },
+      "",
+      "Error: failed to save selection.",
+      true
+    );
   }
 </script>
 

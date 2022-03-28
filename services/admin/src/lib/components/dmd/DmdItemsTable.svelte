@@ -10,6 +10,7 @@
   import { getStores } from "$app/stores";
   import type { Session } from "$lib/types";
   import DmdItemSelector from "./DmdItemSelector.svelte";
+  import { showConfirmation } from "$lib/utils/confirmation";
 
   /**
    * @type { DMDTask } The dmd task being displayed
@@ -105,16 +106,30 @@
 
   async function handlePageChange(event: any) {
     currentPage = event.detail.page;
-    try {
-      const pageData = await $session.lapin.query("dmdTask.page", {
-        id: dmdTask.id,
-        page: currentPage,
-        limit: 100,
-      });
-      if (pageData && pageData.list) dmdTask["items"] = pageData.list;
-    } catch (e) {
-      console.log(e);
-    }
+
+    await showConfirmation(
+      async () => {
+        try {
+          const pageData = await $session.lapin.query("dmdTask.page", {
+            id: dmdTask.id,
+            page: currentPage,
+            limit: 100,
+          });
+          if (pageData && pageData.list) dmdTask["items"] = pageData.list;
+          return {
+            success: true,
+          };
+        } catch (e) {
+          return {
+            success: false,
+            details: e?.message,
+          };
+        }
+      },
+      "",
+      "Error: failed to get page data.",
+      true
+    );
   }
 </script>
 

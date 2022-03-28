@@ -29,6 +29,7 @@ This component allows the user to update the dmd tasks items in an access platfo
   import ScrollStepperStep from "../shared/ScrollStepperStep.svelte";
   import DmdItemsTable from "./DmdItemsTable.svelte";
   import { onMount } from "svelte";
+  import { showConfirmation } from "$lib/utils/confirmation";
 
   /**
    *  @type { DMDTask } The DMDTask being processed.
@@ -59,50 +60,93 @@ This component allows the user to update the dmd tasks items in an access platfo
   let numNotFound = 0;
 
   async function handleUpdatePressed() {
-    sendingStoreRequest = true;
-    const result = await $session.lapin.mutation("dmdTask.store", {
-      task: dmdTask.id,
-      user: $session.user,
-    });
-    if (result) window.location.reload();
+    await showConfirmation(
+      async () => {
+        try {
+          sendingStoreRequest = true;
+          const result = await $session.lapin.mutation("dmdTask.store", {
+            task: dmdTask.id,
+            user: $session.user,
+          });
+          if (result) window.location.reload();
+          return {
+            success: true,
+          };
+        } catch (e) {
+          return {
+            success: false,
+            details: e?.message,
+          };
+        }
+      },
+      "",
+      "Error: could not add task to store queue.",
+      true
+    );
   }
 
   async function onDestinationChange(event) {
     destination = event.currentTarget.value;
     settingDestination = true;
     dmdTask["destination"] = destination;
-    await $session.lapin.mutation("dmdTask.setDestination", {
-      id: dmdTask.id,
-      destination,
-      user: $session.user,
-    });
-    settingDestination = false;
-    activeStepIndex = 1;
+    await showConfirmation(
+      async () => {
+        try {
+          await $session.lapin.mutation("dmdTask.setDestination", {
+            id: dmdTask.id,
+            destination,
+            user: $session.user,
+          });
+          settingDestination = false;
+          activeStepIndex = 1;
+          return {
+            success: true,
+          };
+        } catch (e) {
+          return {
+            success: false,
+            details: e?.message,
+          };
+        }
+      },
+      "",
+      "Error: could not save selection.",
+      true
+    );
   }
 
   async function lookupItems() {
     lookingUp = true;
 
-    try {
-      const response = await $session.lapin.mutation(`dmdTask.bulkLookup`, {
-        id: dmdTask.id,
-        destination,
-        prefix: depositor.prefix,
-        returnPage: currentPage,
-        user: $session.user,
-      });
-      dmdTask["items"] = response.pageData.list;
-      dmdTask = dmdTask;
-      numNotFound = response.numNotFound;
-      if (numNotFound === 0) activeStepIndex = 2;
-    } catch (e) {
-      console.log(e?.message);
-      /*error = e?.message.includes(`"path:"`)
-          ? "Code 8. Please contact the platform team for assistance."
-          : "Code 9. Please contact the platform team for assistance. ";*/
-    }
-
-    lookingUp = false;
+    await showConfirmation(
+      async () => {
+        try {
+          const response = await $session.lapin.mutation(`dmdTask.bulkLookup`, {
+            id: dmdTask.id,
+            destination,
+            prefix: depositor.prefix,
+            returnPage: currentPage,
+            user: $session.user,
+          });
+          dmdTask["items"] = response.pageData.list;
+          dmdTask = dmdTask;
+          numNotFound = response.numNotFound;
+          if (numNotFound === 0) activeStepIndex = 2;
+          lookingUp = false;
+          return {
+            success: true,
+          };
+        } catch (e) {
+          return {
+            success: false,
+            details: e?.message,
+          };
+        }
+      },
+      "",
+      "Error: failed to lookup items.",
+      true
+    );
   }
 
   async function handleDepositorChanged(e) {
@@ -112,16 +156,34 @@ This component allows the user to update the dmd tasks items in an access platfo
 
   async function handleRemoveExistingPrefixPressed() {
     lookingUp = true;
-    await $session.lapin.mutation(`dmdTask.removeExistingPrefix`, {
-      id: dmdTask.id,
-      returnPage: currentPage,
-      user: $session.user,
-    });
-    depositor = {
-      prefix: "none",
-      label: "No Prefix",
-    };
-    await lookupItems();
+
+    await showConfirmation(
+      async () => {
+        try {
+          await $session.lapin.mutation(`dmdTask.removeExistingPrefix`, {
+            id: dmdTask.id,
+            returnPage: currentPage,
+            user: $session.user,
+          });
+          depositor = {
+            prefix: "none",
+            label: "No Prefix",
+          };
+          await lookupItems();
+          return {
+            success: true,
+          };
+        } catch (e) {
+          return {
+            success: false,
+            details: e?.message,
+          };
+        }
+      },
+      "",
+      "Error: failed to reset prefix.",
+      true
+    );
   }
 
   /*onMount(() => {

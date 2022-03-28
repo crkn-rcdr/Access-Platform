@@ -22,10 +22,17 @@ module.exports = function (doc, req) {
     for (let item of doc.items) {
       delete item.shouldStore;
       delete item.stored;
+      delete item.found;
     }
   }
 
   const now = timestamp();
+  doc.process = {
+    requestDate: now,
+    processDate: now,
+    message: "",
+    succeeded: true,
+  };
   doc.updated = now;
 
   // Clear these from a potential previous run

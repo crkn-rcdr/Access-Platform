@@ -1,6 +1,7 @@
 <script lang="ts">
   import { getStores } from "$app/stores";
   import type { Session } from "$lib/types";
+  import { showConfirmation } from "$lib/utils/confirmation";
   import type { DMDTask } from "@crkn-rcdr/access-data";
   import { onMount } from "svelte";
   import NotificationBar from "../shared/NotificationBar.svelte";
@@ -18,12 +19,29 @@
   let githubLink = "";
 
   async function handleTryAgainPressed() {
-    // reset task to validated and refresh
-    await $session.lapin.mutation("dmdTask.resetStorageResult", {
-      task: dmdTask.id,
-      user: $session.user,
-    });
-    window.location.reload();
+    await showConfirmation(
+      async () => {
+        try {
+          // reset task to validated and refresh
+          await $session.lapin.mutation("dmdTask.resetStorageResult", {
+            id: dmdTask.id,
+            user: $session.user,
+          });
+          window.location.reload();
+          return {
+            success: true,
+          };
+        } catch (e) {
+          return {
+            success: false,
+            details: e?.message,
+          };
+        }
+      },
+      "",
+      "Error: failed to reset task.",
+      true
+    );
   }
 
   onMount(() => {

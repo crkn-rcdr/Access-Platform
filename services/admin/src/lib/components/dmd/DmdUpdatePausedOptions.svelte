@@ -22,6 +22,7 @@ This component allows the user to update the dmd tasks items in an access platfo
   import type { DMDTask } from "@crkn-rcdr/access-data";
   import NotificationBar from "../shared/NotificationBar.svelte";
   import LoadingButton from "../shared/LoadingButton.svelte";
+  import { showConfirmation } from "$lib/utils/confirmation";
 
   /**
    *  @type { DMDTask } The DMDTask being processed.
@@ -37,11 +38,28 @@ This component allows the user to update the dmd tasks items in an access platfo
 
   async function handlePausePressed() {
     sendingStoreRequest = true;
-    await $session.lapin.mutation("dmdTask.unpauseStorage", {
-      id: dmdTask.id,
-      user: $session.user,
-    });
-    window.location.reload();
+    await showConfirmation(
+      async () => {
+        try {
+          await $session.lapin.mutation("dmdTask.unpauseStorage", {
+            id: dmdTask.id,
+            user: $session.user,
+          });
+          window.location.reload();
+          return {
+            success: true,
+          };
+        } catch (e) {
+          return {
+            success: false,
+            details: e?.message,
+          };
+        }
+      },
+      "",
+      "Error: failed to unpause storage.",
+      true
+    );
   }
 </script>
 

@@ -7,6 +7,7 @@
   import { onMount } from "svelte";
   import NotificationBar from "../shared/NotificationBar.svelte";
   import LoadingButton from "../shared/LoadingButton.svelte";
+  import { showConfirmation } from "$lib/utils/confirmation";
 
   /**
    *  @type { DMDTask } The DMDTask being processed.
@@ -19,23 +20,33 @@
   const { session } = getStores<Session>();
 
   let githubLink = "";
-  let sendingReProcessRequest = false;
+  let sendingReprocessRequest = false;
 
-  async function handleReProcessClicked() {
-    // reset task to validated and refresh
-    sendingReProcessRequest = true;
-    await $session.lapin.mutation("dmdTask.resetStorageResult", {
-      task: dmdTask.id,
-      user: $session.user,
-    });
-    window.location.reload();
-  }
-
-  async function handleTestClearPressed() {
-    await $session.lapin.mutation("dmdTask.processDelete", {
-      id: dmdTask.id,
-    });
-    window.location.reload();
+  async function handleReprocessClicked() {
+    await showConfirmation(
+      async () => {
+        try {
+          // reset task to validated and refresh
+          sendingReprocessRequest = true;
+          await $session.lapin.mutation("dmdTask.resetStorageResult", {
+            id: dmdTask.id,
+            user: $session.user,
+          });
+          window.location.reload();
+          return {
+            success: true,
+          };
+        } catch (e) {
+          return {
+            success: false,
+            details: e?.message,
+          };
+        }
+      },
+      "",
+      "Error: failed to reset task.",
+      true
+    );
   }
 
   onMount(() => {
@@ -64,31 +75,12 @@
     status="success"
   />
   <br />
-  <!-- if preservation update -->
-  <!-- then show button to go to old tool
-  {#if dmdTask["items"]?.length && dmdTask["items"][0].destination === "preservation"}
-    <a
-      class="finish-preservation"
-      href="https://admin.canadiana.ca/packaging "
-      target="_blank"
-    >
-      <button class="primary">
-        <span class="auto-align auto-align__a-center">
-          <span class="icon"><IoMdOpen /></span>
-          Finish Preservation Update
-        </span>
-      </button>
-    </a>
-
-    <br />
-  {/if}-->
 
   <div class="button-wrap">
-    <!--button on:click={handleTestClearPressed}>Test Clear</button-->
     <LoadingButton
       buttonClass="primary"
-      on:clicked={handleReProcessClicked}
-      showLoader={sendingReProcessRequest}
+      on:clicked={handleReprocessClicked}
+      showLoader={sendingReprocessRequest}
     >
       <span slot="content" class="auto-align auto-align__a-center">
         <span class="icon"><IoMdRefresh /></span>

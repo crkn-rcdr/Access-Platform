@@ -26,30 +26,11 @@ const StoreInput = z.object({
   user: User,
 });
 
-const ResetInput = z.object({
-  task: z.string(), // dmdtask uuid
-  user: User,
-});
-
 const PageInput = z.object({
   id: z.string(),
   page: z.number().int().positive(),
   limit: z.number().int().positive().default(100),
 });
-
-/*
-const PageAfterInput = z.object({
-  id: z.string(),
-  after: z.string().nullable(),
-  limit: z.number().int().positive().default(100),
-});
-
-const PageBeforeInput = z.object({
-  id: z.string(),
-  before: z.string().nullable(),
-  limit: z.number().int().positive().default(100),
-});
-*/
 
 export const dmdTaskRouter = createRouter()
   .query("get", {
@@ -180,10 +161,20 @@ export const dmdTaskRouter = createRouter()
     },
   })
   .mutation("resetStorageResult", {
-    input: ResetInput,
+    input: z.object({
+      id: z.string(), // dmdtask uuid
+      user: User,
+    }),
     async resolve({ input, ctx }) {
       try {
-        return await ctx.couch.dmdtask.resetStorageResult(input);
+        return await ctx.couch.dmdtask.update({
+          ddoc: "access",
+          name: "resetStorageResults",
+          docId: input.id,
+          body: {
+            user: input.user,
+          },
+        });
       } catch (e) {
         throw httpErrorToTRPC(e);
       }
