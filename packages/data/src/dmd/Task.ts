@@ -271,13 +271,7 @@ export const StoringPausedDMDTask = StoreQueuedDMDTask.merge(
     stage: z.literal("store-paused"),
   })
 ).refine((task) => {
-  let firstItem;
-  for (const item of task.items) {
-    if (item.shouldStore) {
-      firstItem = item;
-      break;
-    }
-  }
+  if (!task.items) return false;
 
   let lastItem;
   for (let i = task.items.length - 1; i >= 0; i--) {
@@ -286,16 +280,8 @@ export const StoringPausedDMDTask = StoreQueuedDMDTask.merge(
       break;
     }
   }
-
-  return (
-    firstItem &&
-    "shouldStore" in firstItem &&
-    "stored" in firstItem &&
-    lastItem &&
-    "shouldStore" in lastItem &&
-    !("stored" in lastItem)
-  );
-}, "A paused update task has items with a shouldStore property and some with a stored property, but not all.");
+  return lastItem && "shouldStore" in lastItem && !("stored" in lastItem);
+}, "A paused update task has items with a shouldStore property and might have some with a stored property, but not all.");
 
 /**
  * TypeScript class

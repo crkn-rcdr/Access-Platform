@@ -110,7 +110,7 @@ none
           }
         } catch (e) {
           state = "error";
-          console.log("e", e);
+          console.log(e?.message);
           return {
             success: false,
             details: e?.message.includes('"path":')

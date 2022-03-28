@@ -32,7 +32,7 @@ module.exports = {
       let firstItem = null;
       if (doc.items && doc.items.length) firstItem = doc.items[0];
       return firstItem && !("stored" in firstItem);
-    }; //&& !("shouldStore" in firstItem)
+    };
 
     const isParseSucceeded = () => {
       return (

@@ -49,8 +49,6 @@ export const dmdTaskRouter = createRouter()
         }
 
         const typeInfo: ShortTask | null = await ctx.couch.dmdtask.getShort(id);
-        console.log(typeInfo);
-
         return {
           task: response.doc,
           totalItems,
@@ -69,7 +67,7 @@ export const dmdTaskRouter = createRouter()
       try {
         return await ctx.couch.dmdtask.getAll();
       } catch (e: any) {
-        console.log("err", e?.message);
+        console.log(e?.message);
         throw httpErrorToTRPC(e);
       }
     },
@@ -313,11 +311,9 @@ export const dmdTaskRouter = createRouter()
             const list = await ctx.couch.access.view("access", "slug", {
               keys: ids,
             });
-            console.log("list", list);
             foundIDs = list.rows.map((row: any) => row.key);
           } else {
             const list = await ctx.couch.wipmeta.bulkLookup(ids);
-            console.log("list", list);
             foundIDs = list.rows
               .filter((row: any) => "id" in row)
               .map((row: any) => row.key);

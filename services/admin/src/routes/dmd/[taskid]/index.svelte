@@ -7,7 +7,6 @@
   import type { RootLoadOutput } from "$lib/types";
   export const load: Load<RootLoadOutput> = async ({ page, context }) => {
     try {
-      console.log("page", page);
       if (page?.params?.["taskid"]) {
         return {
           props: {

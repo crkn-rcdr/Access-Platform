@@ -20,8 +20,6 @@ export class DMDTaskHandler extends DatabaseHandler<DMDTask> {
       include_docs: false,
       reduce: false,
     });
-
-    console.log("res", res);
     return res.rows?.length
       ? {
           id: res.rows[0]["id"],
@@ -40,7 +38,6 @@ export class DMDTaskHandler extends DatabaseHandler<DMDTask> {
       reduce: false,
     });
     return list.rows.map((row: { id: string; key: string; value: any }) => {
-      console.log(row);
       return {
         id: row.id,
         fileName: row.value["fileName"],
