@@ -13,15 +13,16 @@
     const paused: ShortTask[] = [];
     const updated: ShortTask[] = [];
 
-    // todo test
-    /*
     const list = taskList.sort((a, b) => {
-      if (a.date > b.date) return 1;
-      else if (a.date < b.date) return -1;
-      return 0;
-    });*/
+      const aDate = new Date(a.date).getTime();
+      const bDate = new Date(b.date).getTime();
 
-    for (const task of taskList) {
+      if (aDate > bDate) return -1;
+      else if (aDate < bDate) return 1;
+      return 0;
+    });
+
+    for (const task of list) {
       if (task.type === "store paused") {
         paused.push(task);
       } else if (
