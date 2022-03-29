@@ -69,10 +69,22 @@
   export let paused: ShortTask[] = [];
   export let updated: ShortTask[] = [];
 
+  let filteredBase: ShortTask[] = [];
+  let filteredParsing: ShortTask[] = [];
+  let filteredParsed: ShortTask[] = [];
+  let filteredUpdating: ShortTask[] = [];
+  let filteredPaused: ShortTask[] = [];
+  let filteredUpdated: ShortTask[] = [];
+
   let loading = true;
+  let searchTerm = "";
 
   let unsubscribe;
   const interval = timer({ interval: 60000 }); // 1x per min
+  /**
+   * @type {NodeJS.Timeout | null} Used to debounce the filtering of tasks.
+   */
+  let filterTimer: NodeJS.Timeout | null = null;
 
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
@@ -84,10 +96,45 @@
     await getDMDTasksList();
   }
 
+  function search() {
+    if (searchTerm.length) {
+      if (filterTimer) clearTimeout(filterTimer);
+      filterTimer = setTimeout(async () => {
+        const searchTermLower = searchTerm.toLowerCase();
+        filteredBase = base.filter((task) =>
+          task.fileName.includes(searchTerm)
+        );
+        filteredParsing = parsing.filter((task) =>
+          task.fileName.toLowerCase().includes(searchTermLower)
+        );
+        filteredParsed = parsed.filter((task) =>
+          task.fileName.toLowerCase().includes(searchTermLower)
+        );
+        filteredUpdating = updating.filter((task) =>
+          task.fileName.toLowerCase().includes(searchTermLower)
+        );
+        filteredPaused = paused.filter((task) =>
+          task.fileName.toLowerCase().includes(searchTermLower)
+        );
+        filteredUpdated = updated.filter((task) =>
+          task.fileName.toLowerCase().includes(searchTermLower)
+        );
+      }, 500);
+    } else {
+      filteredBase = base;
+      filteredParsing = parsing;
+      filteredParsed = parsed;
+      filteredUpdating = updating;
+      filteredPaused = paused;
+      filteredUpdated = updated;
+    }
+  }
+
   async function getDMDTasksList() {
     let taskList: ShortTask[] = await $session.lapin.query("dmdTask.list");
     const results = getDMDTasks(taskList);
     ({ base, parsed, parsing, updating, updated, paused } = results.props);
+    search();
     loading = false;
   }
 
@@ -102,6 +149,11 @@
   onDestroy(() => {
     if (unsubscribe) unsubscribe();
   });
+
+  $: {
+    searchTerm;
+    search();
+  }
 </script>
 
 {#if loading}
@@ -119,16 +171,28 @@
     <br />
     <br />
     <br />
-    <div class="title auto-align auto-align__a-center">
+    <div
+      class="title auto-align auto-align__a-center auto-align__j-space-between"
+    >
       <h6>Metadata Tasks</h6>
+      <input
+        class="task-search"
+        placeholder="Search tasks by file name..."
+        bind:value={searchTerm}
+      />
       <a href="/dmd/new">
         <button class="create-button primary">Parse New Metadata File</button>
       </a>
     </div>
-    {#if base.length}
-      <ExpansionList showMessage={base?.length === 0} message="">
-        <span slot="title">Unable to Trigger Parse ({base.length})</span>
-        {#each base as task}
+    {#if filteredBase.length}
+      <ExpansionList
+        showMessage={filteredBase?.length === 0}
+        toggled={filteredBase?.length !== 0}
+        message=""
+      >
+        <span slot="title">Unable to Trigger Parse ({filteredBase.length})</span
+        >
+        {#each filteredBase as task}
           <ExpansionListItem status="N/A">
             <span slot="title">{task.fileName}</span>
             <span slot="actions">
@@ -137,7 +201,7 @@
                 stage="N/A"
                 status="N/A"
                 on:delete={async () => {
-                  await handleDeletePressed(base, task);
+                  await handleDeletePressed(filteredBase, task);
                 }}
               />
             </span>
@@ -147,11 +211,12 @@
     {/if}
 
     <ExpansionList
-      showMessage={parsing?.length === 0}
+      showMessage={filteredParsing?.length === 0}
+      toggled={filteredParsing?.length !== 0}
       message="No tasks are parsing."
     >
-      <span slot="title">Parsing ({parsing.length})</span>
-      {#each parsing as task}
+      <span slot="title">Parsing ({filteredParsing.length})</span>
+      {#each filteredParsing as task}
         <ExpansionListItem status="waiting">
           <span slot="title">{task.fileName}</span>
           <span slot="date"
@@ -165,7 +230,7 @@
               stage="parse"
               status="waiting"
               on:delete={async () => {
-                await handleDeletePressed(parsing, task);
+                await handleDeletePressed(filteredParsing, task);
               }}
             />
           </span>
@@ -174,11 +239,12 @@
     </ExpansionList>
 
     <ExpansionList
-      showMessage={parsed?.length === 0}
+      showMessage={filteredParsed?.length === 0}
+      toggled={filteredParsed?.length !== 0}
       message="No tasks have been parsed."
     >
-      <span slot="title">Parsed ({parsed.length})</span>
-      {#each parsed as task}
+      <span slot="title">Parsed ({filteredParsed.length})</span>
+      {#each filteredParsed as task}
         <ExpansionListItem
           status={task.type === "parse succeeded"
             ? task.message?.length
@@ -201,7 +267,7 @@
               stage="parse"
               status={task.type === "parse succeeded" ? "succeeded" : "failed"}
               on:delete={async () => {
-                await handleDeletePressed(parsed, task);
+                await handleDeletePressed(filteredParsed, task);
               }}
             />
           </span>
@@ -214,11 +280,12 @@
     </ExpansionList>
 
     <ExpansionList
-      showMessage={updating?.length === 0}
+      showMessage={filteredUpdating?.length === 0}
+      toggled={filteredUpdating?.length !== 0}
       message="No tasks are loading."
     >
-      <span slot="title">Storing ({updating.length})</span>
-      {#each updating as task}
+      <span slot="title">Storing ({filteredUpdating.length})</span>
+      {#each filteredUpdating as task}
         <ExpansionListItem status="waiting">
           <span slot="title">{task.fileName}</span>
           <span slot="date"
@@ -233,7 +300,7 @@
               stage="load"
               status="waiting"
               on:delete={async () => {
-                await handleDeletePressed(updating, task);
+                await handleDeletePressed(filteredUpdating, task);
               }}
             />
           </span>
@@ -242,11 +309,12 @@
     </ExpansionList>
 
     <ExpansionList
-      showMessage={paused?.length === 0}
+      showMessage={filteredPaused?.length === 0}
+      toggled={filteredPaused?.length !== 0}
       message="No tasks have been paused."
     >
-      <span slot="title">Store Paused ({paused.length})</span>
-      {#each paused as task}
+      <span slot="title">Store Paused ({filteredPaused.length})</span>
+      {#each filteredPaused as task}
         <ExpansionListItem status="paused">
           <span slot="title">{task.fileName}</span>
           <span slot="date"
@@ -261,7 +329,7 @@
               stage="load"
               status={"paused"}
               on:delete={async () => {
-                await handleDeletePressed(paused, task);
+                await handleDeletePressed(filteredPaused, task);
               }}
             />
           </span>
@@ -271,11 +339,12 @@
     </ExpansionList>
 
     <ExpansionList
-      showMessage={updated?.length === 0}
+      showMessage={filteredUpdated?.length === 0}
+      toggled={filteredUpdated?.length !== 0}
       message="No tasks have been completed."
     >
-      <span slot="title">Store Completed ({updated.length})</span>
-      {#each updated as task}
+      <span slot="title">Store Completed ({filteredUpdated.length})</span>
+      {#each filteredUpdated as task}
         <ExpansionListItem
           status={task.type === "store succeeded"
             ? task.message?.length
@@ -296,7 +365,7 @@
               stage="load"
               status={task.type === "store succeeded" ? "succeeded" : "failed"}
               on:delete={async () => {
-                await handleDeletePressed(updated, task);
+                await handleDeletePressed(filteredUpdated, task);
               }}
             />
           </span>
@@ -317,10 +386,8 @@
   .title {
     width: 100%;
   }
-  .title h6 {
-    flex: 10;
-  }
-  .create-button {
-    flex: 2;
+  .task-search {
+    flex: 1;
+    margin: 0 4rem;
   }
 </style>

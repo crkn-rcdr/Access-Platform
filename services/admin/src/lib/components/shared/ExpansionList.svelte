@@ -3,9 +3,10 @@
 
   export let showMessage = false;
   export let message = "";
+  export let toggled = true;
 </script>
 
-<ExpansionTile toggled={true} topClass="toggle-title">
+<ExpansionTile bind:toggled topClass="toggle-title">
   <span slot="top">
     <slot name="title" />
   </span>
