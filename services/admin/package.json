@@ -38,6 +38,7 @@
     "svelte-flatpickr": "^3.2.3",
     "svelte-grid-responsive": "^1.0.0",
     "svelte-icons": "^2.1.0",
+    "svelte-paginate": "^0.0.1",
     "svelte-virtual-scroll-list": "^1.0.8"
   },
   "scripts": {

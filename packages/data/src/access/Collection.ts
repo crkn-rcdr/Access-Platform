@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { AccessObjectTrait } from "./AccessObject.js";
 import {
-  ObjectList,
+  AccessObjectList,
   ObjectListHandler,
   ObjectListShort,
 } from "./util/ObjectList.js";
@@ -23,7 +23,7 @@ export const Collection = z
     /**
      * The list of members of this collection.
      */
-    members: ObjectList,
+    members: AccessObjectList,
   })
   .merge(AccessObjectTrait);
 

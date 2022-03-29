@@ -1,4 +1,4 @@
-import { WaitingDMDTask } from "@crkn-rcdr/access-data";
+import { ParsingDMDTask } from "@crkn-rcdr/access-data";
 import anyTest, { TestInterface } from "ava";
 import { BaseContext, getTestContext } from "../test.js";
 import { DMDTaskHandler } from "./dmdtask.js";
@@ -30,7 +30,7 @@ test.serial("Can create new DMDTasks", async (t) => {
 
   const task = await t.context.dmdtask.get(taskId);
 
-  t.true(WaitingDMDTask.safeParse(task).success);
+  t.true(ParsingDMDTask.safeParse(task).success);
 
   const serverfile = await t.context.dmdtask.getAttachment({
     document: taskId,

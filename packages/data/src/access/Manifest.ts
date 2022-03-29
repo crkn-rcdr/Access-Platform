@@ -2,7 +2,7 @@ import { z } from "zod";
 import { AccessObjectTrait } from "./AccessObject.js";
 import { FileRef } from "../util/FileRef.js";
 import {
-  ObjectList,
+  AccessObjectList,
   ObjectListShort,
   ObjectListHandler,
 } from "./util/ObjectList.js";
@@ -45,7 +45,7 @@ export const Manifest = z
     /**
      * The Manifest's Canvas list.
      */
-    canvases: ObjectList,
+    canvases: AccessObjectList,
   })
   .merge(AccessObjectTrait);
 

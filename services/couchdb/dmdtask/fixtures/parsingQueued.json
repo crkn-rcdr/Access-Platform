@@ -1,0 +1,13 @@
+{
+  "_id": "parsingQueued",
+  "updated": 1631200365.22,
+  "process": {
+    "requestDate": 1631199874.161
+  },
+  "user": {
+    "name": "Brittny Lapierre",
+    "email": "blapierre@crkn.ca"
+  },
+  "fileName": "parsingQueued.mrc",
+  "format": "marc490"
+}

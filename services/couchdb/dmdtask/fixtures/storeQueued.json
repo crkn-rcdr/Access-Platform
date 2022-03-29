@@ -1,0 +1,41 @@
+{
+  "_id": "storeQueued",
+  "updated": 1631200365.22,
+  "process": {
+    "requestDate": 1631199874.161
+  },
+  "user": {
+    "name": "Brittny Lapierre",
+    "email": "blapierre@crkn.ca"
+  },
+  "fileName": "storeQueued.mrc",
+  "format": "marc490",
+  "items": [
+    {
+      "output": "marc",
+      "id": "8_06941",
+      "message": "",
+      "parsed": true,
+      "label": "Testing collection",
+      "shouldStore": true
+    },
+    {
+      "output": "marc",
+      "id": "8_06941_1",
+      "message": "Should not be found in preservation test",
+      "parsed": true,
+      "label": "Testing manifest 1",
+      "shouldStore": true
+    },
+    {
+      "output": "marc",
+      "id": "8_06941_2",
+      "message": "Parse failed to generate xml and json test",
+      "parsed": false,
+      "label": "Testing manifest 2",
+      "shouldStore": false
+    }
+  ],
+  "itemsCount": 3,
+  "destination": "access"
+}

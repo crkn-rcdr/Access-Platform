@@ -1,23 +1,23 @@
 {
-  "_id": "test",
+  "_id": "parsingWarning",
   "updated": 1631200365.22,
   "process": {
     "requestDate": 1631199874.161,
     "processDate": 1631200365.22,
     "succeeded": true,
-    "message": ""
+    "message": "Warning"
   },
   "user": {
     "name": "Brittny Lapierre",
     "email": "blapierre@crkn.ca"
   },
-  "fileName": "dmd_test.mrc",
+  "fileName": "parsingWarning.mrc",
   "format": "marc490",
   "items": [
     {
       "output": "marc",
       "id": "8_06941",
-      "message": "",
+      "message": "Warning Warning",
       "parsed": true,
       "label": "Testing collection"
     },
@@ -35,5 +35,6 @@
       "parsed": false,
       "label": "Testing manifest 2"
     }
-  ]
+  ],
+  "itemsCount": 3
 }

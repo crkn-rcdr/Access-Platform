@@ -48,4 +48,13 @@ export const slugRouter = createRouter()
         "slug",
       ] as const);
     },
+  })
+  .mutation("bulkLookup", {
+    input: StringArray.parse,
+    async resolve({ input, ctx }) {
+      const list = await ctx.couch.access.view("access", "slug", {
+        keys: input,
+      });
+      return list.rows.map((row: any) => row.key);
+    },
   });

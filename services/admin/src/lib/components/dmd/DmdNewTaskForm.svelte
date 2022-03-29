@@ -2,10 +2,8 @@
 @component
 ### Overview
 This component allows the user to create new DMD tasks to attach metadata to objects. The metadata and objects are specified by a file that is selected from their computer.
-
 ### Properties
 none
-
 ### Usage
 ```  
 <DmdNewTaskForm />
@@ -19,17 +17,14 @@ none
   import { goto } from "$app/navigation";
   import { showConfirmation } from "$lib/utils/confirmation";
   import LoadingButton from "$lib/components/shared/LoadingButton.svelte";
-
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
    */
   const { session } = getStores<Session>();
-
   /**
    * @type {"ready" | "uploading" | "uploaded" | "error" } This vaiable keeps track of the state of the component, to show relevant messages to the user.
    */
   let state: "ready" | "uploading" | "uploaded" | "error" = "ready";
-
   /**
    * @type {"csvissueinfo" | "csvdc" | "marc490" | "marcoocihm" | "marcooe"} Used to tell the dmdtask deamons what kind of metadata format the metadata being processed is in.
    */
@@ -39,22 +34,18 @@ none
     | "marc490"
     | "marcoocihm"
     | "marcooe";
-
   /**
    * @type {string } This is the base 64 encoded string for the metadata file that will be stored in the couch attachment.
    */
   let b64EncodedMetadataFileText: string;
-
   /**
    * @type {string } The name of the file being used to create the dmd task.
    */
   let fileName: string = "";
-
   /**
    * @type {string } Thiis variable is used to show any error with the user's selections to them.
    */
   let errorText: string = "";
-
   /**
    * TODO: Probably want to move this to a helper module, or straight into the file select component itself.
    * This method takes a file and returns a promise with the file contents as a string.
@@ -70,7 +61,6 @@ none
       };
       reader.readAsDataURL(blob);
     });
-
   /**
    * Converts the selected file into a base 64 encoded string and stores it in the @var b64EncodedMetadataFileText
    * @returns void
@@ -86,7 +76,6 @@ none
         "There was a formatting problem with the metadata file. Please fix it or choose another file.";
     }
   }
-
   /**
    * Sends the create request to lapin. Uses @function showConfirmation to show a notification at the bottom right of the screen saying if the request was sucessful or not. If it is a success, it uses the @function goto ith the DMD task id passed as the response from the request in the url.
    * @returns void
@@ -111,7 +100,6 @@ none
             goto(`/dmd/${response}`);
             return {
               success: true,
-              details: response,
             };
           } else {
             state = "error";
@@ -122,7 +110,7 @@ none
           }
         } catch (e) {
           state = "error";
-          console.log("e", e);
+          console.log(e?.message);
           return {
             success: false,
             details: e?.message.includes('"path":')

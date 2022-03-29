@@ -8,7 +8,6 @@ import {
   EditableCollection,
   EditableManifest,
   User,
-  //ObjectList,
   Slug,
   NewCollection,
   NewManifest,

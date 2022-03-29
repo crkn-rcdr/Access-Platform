@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { ItemProcessRecord } from "../../dmd/Task.js";
 import { Noid } from "../../util/Noid.js";
 import { TextRecord } from "./TextRecord.js";
 
@@ -6,7 +7,7 @@ import { TextRecord } from "./TextRecord.js";
  * A list of references to access objects, including an optional label
  * for the object in the context of this list.
  */
-export const ObjectList = z.array(
+export const AccessObjectList = z.array(
   z.object({
     /**
      * The object's Noid.
@@ -20,7 +21,11 @@ export const ObjectList = z.array(
   })
 );
 
-export type ObjectList = z.infer<typeof ObjectList>;
+export type AccessObjectList = z.infer<typeof AccessObjectList>;
+
+export const DmdObjectList = z.array(ItemProcessRecord);
+
+export type DmdObjectList = z.infer<typeof DmdObjectList>;
 
 export const ObjectListShort = z
   .object({
@@ -35,12 +40,12 @@ export type ObjectListShort = z.infer<typeof ObjectListShort>;
 export const ObjectListPage = z.object({
   first: Noid.nullable(),
   last: Noid.nullable(),
-  list: ObjectList,
+  list: z.array(z.any()),
 });
 
 export type ObjectListPage = z.infer<typeof ObjectListPage>;
 
-const pageFrom = (list: ObjectList): ObjectListPage => {
+const pageFrom = (list: AccessObjectList | DmdObjectList): ObjectListPage => {
   return {
     first: list[0]?.id || null,
     last: list[list.length - 1]?.id || null,
@@ -52,9 +57,9 @@ const pageFrom = (list: ObjectList): ObjectListPage => {
  * Methods for ObjectLists.
  */
 export class ObjectListHandler {
-  private list: ObjectList;
+  private list: AccessObjectList | DmdObjectList;
 
-  constructor(list: ObjectList) {
+  constructor(list: AccessObjectList | DmdObjectList) {
     this.list = list;
   }
 

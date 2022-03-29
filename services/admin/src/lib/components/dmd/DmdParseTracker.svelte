@@ -2,12 +2,10 @@
 @component
 ### Overview
 Displays a dmd task in an waiting state.
-
 ### Properties
 |    |    |    |
 | -- | -- | -- |
 | dmdTask: WaitingDMDTask | required | The dmd task to be displayed. |
-
 ### Usage
 ```
 <DmdSplitWaitingViewer {dmdTask} />
@@ -16,33 +14,27 @@ Displays a dmd task in an waiting state.
 <script lang="ts">
   import type { Session } from "$lib/types";
   import { getStores } from "$app/stores";
-  import type { WaitingDMDTask } from "@crkn-rcdr/access-data";
+  import type { DMDTask } from "@crkn-rcdr/access-data";
   import Loading from "$lib/components/shared/Loading.svelte";
   import { onDestroy } from "svelte";
   import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
-
   /**
-   * @type {WaitingDMDTask} The dmdtask being displayed.
+   * @type {DMDTask} The dmdtask being displayed.
    */
-  export let dmdTask: WaitingDMDTask;
-
+  export let dmdTask: DMDTask;
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
    */
   const { session } = getStores<Session>();
-
   /**
    * @type {String} A date string for when the last time the request for the DMD task was made to the backend.
    */
   let lastUpdated: string = new Date().toLocaleString();
-
   /**
    * @type {NodeJS.Timeout} A timed interval for sending a request to the backend to get the task.
    */
   let poller: NodeJS.Timeout;
-
   let error: string = "";
-
   /**
    * Sets up the interval @var poller that calls @function doPoll
    * @returns void
@@ -51,7 +43,6 @@ Displays a dmd task in an waiting state.
     if (poller) clearPoller();
     poller = setInterval(doPoll(id), 30000);
   };
-
   /**
    * Sends the request to the backend to update the @var dmdTask with the lates info in the database.
    * @returns void
@@ -59,15 +50,17 @@ Displays a dmd task in an waiting state.
   const doPoll = (id: string) => async () => {
     try {
       error = "";
-      const response = await $session.lapin.query("dmdTask.find", id);
-      if (response && "result" in response) dmdTask = response.result;
-      else error = "Code 4. Please contact the platform team for assistance.";
+      const response = await $session.lapin.query("dmdTask.get", id);
+      if (response) {
+        dmdTask = response.task;
+        if (response.type !== "parse queued" && response.type !== "parsing")
+          window.location.reload();
+      } else error = "Code 4. Please contact the platform team for assistance.";
       lastUpdated = new Date().toLocaleString();
     } catch (e) {
       error = "Code 5. Please contact the platform team for assistance.";
     }
   };
-
   /**
    * Adds the dmd task to the dmd task store on page load. (If it isn't in the store already)
    * @returns void
@@ -79,7 +72,6 @@ Displays a dmd task in an waiting state.
       console.log(e?.message);
     }
   }
-
   /**
    * @event onDestroy
    * @description When the component instance is destroyed from the dom, clear the interval by calling @function clearPoller
@@ -87,7 +79,6 @@ Displays a dmd task in an waiting state.
   onDestroy(() => {
     clearPoller();
   });
-
   /**
    * @listens dmdTask
    * @description Calls @function setupPoller when the @var dmdTask changes.
@@ -109,14 +100,18 @@ Displays a dmd task in an waiting state.
       <h5>{dmdTask.fileName}</h5>
     {/if}
     <!--br /-->
-    <h6>Please wait while the metadata file processes...</h6>
+    <h6>Please wait while the metadata file parses...</h6>
     <br />
     <p>Page last refreshed on: {lastUpdated}</p>
     <br />
     <p>
-      Request initiated on: {`${new Date(
-        parseInt(`${dmdTask.process["requestDate"]}`) * 1000
-      ).toLocaleString()}`}
+      Request initiated on: {`${
+        typeof dmdTask["process"]["requestDate"] === "string"
+          ? new Date(dmdTask["process"]["requestDate"]).toLocaleString()
+          : new Date(
+              parseInt(`${dmdTask["process"]["requestDate"]}`) * 1000
+            ).toLocaleString()
+      }`}
     </p>
     <!--DmdTaskInfoTable {dmdTask} /-->
   {/if}

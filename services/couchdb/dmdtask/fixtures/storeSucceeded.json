@@ -1,0 +1,48 @@
+{
+  "_id": "storeSucceeded",
+  "updated": 1631200365.22,
+  "process": {
+    "requestDate": 1631199874.161,
+    "processDate": 1631200365.22,
+    "succeeded": true,
+    "message": ""
+  },
+  "user": {
+    "name": "Brittny Lapierre",
+    "email": "blapierre@crkn.ca"
+  },
+  "fileName": "storeSucceeded.mrc",
+  "format": "marc490",
+  "items": [
+    {
+      "output": "marc",
+      "id": "8_06941",
+      "message": "",
+      "parsed": true,
+      "label": "Testing collection",
+      "stored": true,
+      "shouldStore": true
+    },
+    {
+      "output": "marc",
+      "id": "8_06941_1",
+      "message": "",
+      "parsed": true,
+      "label": "Testing manifest 1",
+      "stored": true,
+      "shouldStore": true
+    },
+    {
+      "output": "marc",
+      "id": "8_06941_2",
+      "message": "",
+      "parsed": true,
+      "label": "Testing manifest 2 f",
+      "stored": true,
+      "shouldStore": true
+    }
+  ],
+  "itemsCount": 3,
+  "destination": "access",
+  "partialStore": false
+}

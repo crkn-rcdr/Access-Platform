@@ -1,4 +1,5 @@
 import { DMDFormat, DMDTask, User } from "@crkn-rcdr/access-data";
+import type { ShortTask } from "@crkn-rcdr/access-data";
 import { ServerScope } from "nano";
 
 import { DatabaseHandler } from "../DatabaseHandler.js";
@@ -11,6 +12,41 @@ export class DMDTaskHandler extends DatabaseHandler<DMDTask> {
    */
   constructor(client: ServerScope, suffix?: string) {
     super(suffix ? `dmdtask-${suffix}` : `dmdtask`, DMDTask, client);
+  }
+
+  async getShort(id: string): Promise<ShortTask | null> {
+    const res: any = await this.view("access", "listing", {
+      key: id,
+      include_docs: false,
+      reduce: false,
+    });
+    return res.rows?.length
+      ? {
+          id: res.rows[0]["id"],
+          fileName: res.rows[0].value["fileName"],
+          type: res.rows[0].value["type"],
+          date: res.rows[0].value["date"],
+          count: res.rows[0].value["count"],
+          message: res.rows[0].value["message"],
+        }
+      : null;
+  }
+
+  async getAll(): Promise<ShortTask[]> {
+    const list = await this.view("access", "listing", {
+      include_docs: false,
+      reduce: false,
+    });
+    return list.rows.map((row: { id: string; key: string; value: any }) => {
+      return {
+        id: row.id,
+        fileName: row.value["fileName"],
+        type: row.value["type"],
+        date: row.value["date"],
+        count: row.value["count"],
+        message: row.value["message"],
+      };
+    });
   }
 
   /**
@@ -50,8 +86,112 @@ export class DMDTaskHandler extends DatabaseHandler<DMDTask> {
       ddoc: "access",
       name: "canProcess",
       docId: taskId,
+      body: {
+        user,
+        parse: true,
+      },
     });
 
     return taskId;
+  }
+
+  async store(args: {
+    /** User who triggered storage */
+    user: User;
+    /** Descriptive metadata task id */
+    task: string;
+  }) {
+    const { user, task } = args;
+
+    const dmdTask = await this.get(task);
+
+    if ("items" in dmdTask) {
+      await this.update({
+        ddoc: "access",
+        name: "canProcess",
+        docId: task,
+        body: {
+          user,
+        },
+      });
+      return await this.get(task);
+    } else throw "Can not store a metadata task before it has been parsed.";
+  }
+
+  async resetStorageResult(args: {
+    /** User who triggered storage */
+    user: User;
+    /** Descriptive metadata task id */
+    task: string;
+  }) {
+    const { user, task } = args;
+
+    const dmdTask = await this.get(task);
+
+    if ("items" in dmdTask) {
+      const now = new Date().toISOString().replace(/.\d+Z$/g, "Z");
+
+      await this.update({
+        ddoc: "access",
+        name: "editObject",
+        docId: task,
+        body: {
+          user,
+          data: {
+            process: {
+              requestDate: now,
+              processDate: now,
+              message: "",
+              succeeded: true,
+            },
+            items: dmdTask.items.map((item) => {
+              if ("found" in item) delete item["found"];
+              if ("stored" in item) delete item["stored"];
+              if ("shouldStore" in item) delete item["shouldStore"];
+              return item;
+            }),
+          },
+        },
+      });
+    }
+  }
+
+  async pauseStorage(args: {
+    /** User who triggered storage */
+    user: User;
+    /** Descriptive metadata task id */
+    task: string;
+  }) {
+    const { user, task } = args;
+
+    const now = new Date().toISOString().replace(/.\d+Z$/g, "Z");
+
+    await this.update({
+      ddoc: "access",
+      name: "editObject",
+      docId: task,
+      body: {
+        user,
+        data: {
+          process: {
+            requestDate: now,
+            processDate: now,
+            message: "",
+            succeeded: true,
+          },
+          stage: "store-paused",
+        },
+      },
+    });
+  }
+
+  async getProgress(id: string): Promise<number> {
+    const res: any = await this.view("access", "processProgress", {
+      key: id,
+      include_docs: false,
+      reduce: false,
+    });
+
+    return res.rows?.length ? res.rows[0].value : 0;
   }
 }

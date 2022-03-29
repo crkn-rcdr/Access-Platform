@@ -563,6 +563,9 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
     flex: 10;
     text-align: center;
   }
+  :global(.pagination-info .page-info button) {
+    min-width: 5rem !important;
+  }
   .canvas-wrap {
     display: flex;
     flex-direction: column;
