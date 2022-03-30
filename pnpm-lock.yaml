@@ -280,7 +280,7 @@ importers:
   services/hare:
     specifiers:
       '@crkn-rcdr/access-env': workspace:*
-      '@crkn-rcdr/lapin-router': workspace:*
+      '@crkn-rcdr/hare-router': workspace:*
       '@trpc/server': ^8.4.2
       '@types/node': ^16.4.13
       dotenv: ^10.0.0
@@ -290,7 +290,7 @@ importers:
       typescript: ^4.3.5
     dependencies:
       '@crkn-rcdr/access-env': link:../../packages/env
-      '@crkn-rcdr/lapin-router': link:../../packages/lapin-router
+      '@crkn-rcdr/hare-router': link:../../packages/hare-router
       '@trpc/server': 8.4.2
     devDependencies:
       '@types/node': 16.4.13

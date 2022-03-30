@@ -6,20 +6,29 @@
   import type { LapinRouter } from "@crkn-rcdr/lapin-router";
   import type { Load } from "@sveltejs/kit";
   import type { TRPCClient } from "@trpc/client";
-  import type { RootLoadOutput, ServerSession, Session } from "$lib/types";
+  import type {
+    RootLoadOutput,
+    ServerSession,
+    Session,
+    HttpClient,
+  } from "$lib/types";
   import { createTRPCClient } from "@trpc/client";
 
   export const load: Load<{ session: ServerSession }, RootLoadOutput> = ({
     fetch,
-    session: { apiEndpoint },
+    session: { restEndpoint, apiEndpoint },
   }) => {
     const lapin = createTRPCClient<LapinRouter>({
       url: apiEndpoint,
       fetch,
     });
+    //https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch
+    const hare = (info: string, init?: RequestInit): Promise<Response> => {
+      return fetch(`${restEndpoint}/${info}`, init);
+    };
     return {
-      context: { lapin },
-      props: { lapin },
+      context: { lapin, hare },
+      props: { lapin, hare },
     };
   };
 </script>
@@ -41,12 +50,17 @@
   export let lapin: TRPCClient<LapinRouter>;
 
   /**
+   * @type {HttpClient} Allows the app to to speak to the hare api
+   */
+  export let hare: HttpClient;
+
+  /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
    */
   const { session } = getStores<Session>();
 
   /** Allows all other pages to access lapin */
-  session.set({ ...$session, lapin });
+  session.set({ ...$session, lapin, hare });
 </script>
 
 <pre

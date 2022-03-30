@@ -11,7 +11,6 @@ export interface HTTPErrorLike {
 export const server: Server = createServer();
 
 function ctx(req: Request, res: Response, next: Next) {
-  req.body.ctx = createContext();
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Request-Method", "*");
   res.setHeader("Access-Control-Allow-Methods", "OPTIONS, GET, POST");
@@ -21,6 +20,9 @@ function ctx(req: Request, res: Response, next: Next) {
     res.end();
     return;
   }
+  const appCtx = createContext();
+  if (req.body) req.body["ctx"] = appCtx;
+  else req.body = { ctx: appCtx };
   return next();
 }
 

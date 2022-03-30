@@ -11,14 +11,14 @@
    * @type {Session} The session store that contains the module for sending requests to lapin.
    */
   const { session } = getStores<Session>();
-  //import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
+  //import NotificationBar from "$lib/components/shared/NotificationBar.svelte"
   let name = "";
 
   $: name = $session?.user?.name?.split(" ")[0];
 
-  onMount(() => {
-    $session?.hare.get("/dmdTask/hello", function (err, req) {
-      console.log(err, req);
+  onMount(async () => {
+    await $session?.hare("dmdTask/hello", {
+      method: "GET",
     });
   });
 </script>

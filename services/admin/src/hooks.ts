@@ -94,6 +94,32 @@ export const handle: Handle<Locals> = async ({ request, resolve }) => {
     }
   }
 
+  if (request.path.startsWith("/rest/")) {
+    const url = `${env.hare.url}${fullpath.slice(5)}`;
+
+    const fetchOptions = { method: request.method };
+
+    if (request.method !== "HEAD" && request.method !== "GET")
+      fetchOptions["body"] = request.rawBody;
+
+    try {
+      const response = await fetch(url, fetchOptions);
+
+      return {
+        status: response.status,
+        // @ts-ignore: TypeScript's DOM library doesn't have Headers.entries()
+        headers: Object.fromEntries(response.headers.entries()),
+        body: await response.text(),
+      };
+    } catch (e) {
+      return {
+        status: 500,
+        headers: {},
+        body: "error",
+      };
+    }
+  }
+
   // Fetch api response from lapin and return it
   if (request.path.startsWith("/api/")) {
     const url = `${env.lapin.url}/${fullpath.slice(5)}`;
@@ -129,6 +155,7 @@ export const handle: Handle<Locals> = async ({ request, resolve }) => {
   // Set up `locals`
   request.locals = {
     session: {
+      restEndpoint: env.admin.urlExternal + "/rest",
       apiEndpoint: env.admin.urlExternal + "/api",
       authLogout: env.auth.url + "/logout",
       user,

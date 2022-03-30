@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@crkn-rcdr/access-env": "workspace:*",
-    "@crkn-rcdr/lapin-router": "workspace:*",
+    "@crkn-rcdr/hare-router": "workspace:*",
     "@trpc/server": "^8.4.2"
   },
   "devDependencies": {
@@ -36,9 +36,9 @@
     "watch": [
       "src",
       "node_modules/@crkn-rcdr/access-env/dist/esm",
-      "node_modules/@crkn-rcdr/lapin-router/dist/esm",
-      "node_modules/@crkn-rcdr/lapin-router/node_modules/@crkn-rcdr/access-data/dist/esm",
-      "node_modules/@crkn-rcdr/lapin-router/node_modules/@crkn-rcdr/couch-utils/dist/esm"
+      "node_modules/@crkn-rcdr/hare-router/dist/esm",
+      "node_modules/@crkn-rcdr/hare-router/node_modules/@crkn-rcdr/access-data/dist/esm",
+      "node_modules/@crkn-rcdr/hare-router/node_modules/@crkn-rcdr/couch-utils/dist/esm"
     ],
     "ext": "ts,js,json",
     "exec": "NODE_NO_WARNINGS=1 node --loader ts-node/esm ./src/server.ts"

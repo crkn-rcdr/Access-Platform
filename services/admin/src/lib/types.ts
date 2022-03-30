@@ -7,11 +7,14 @@
 import type { TRPCClient } from "@trpc/client";
 import type { LapinRouter } from "@crkn-rcdr/lapin-router";
 import type { Noid, Slug, User } from "@crkn-rcdr/access-data";
-import type { HttpClient } from "restify-clients";
+//import type { HttpClient } from "restify-clients";
+
+export type HttpClient = typeof fetch;
 /**
  * Session exported by the `getSession` hook.
  */
 export type ServerSession = {
+  restEndpoint: string;
   apiEndpoint: string;
   authLogout: string;
   user: User;
