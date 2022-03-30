@@ -1,4 +1,4 @@
-import { createContext } from "./context.js";
+import { createContext, HareContext } from "./context.js";
 import { Server, createServer, Request, Response, Next } from "restify";
 import dmdTaskRouter from "./routes/dmdTask.js";
 import wipmetaRouter from "./routes/wipmeta.js";
@@ -10,7 +10,8 @@ export interface HTTPErrorLike {
 
 export const server: Server = createServer();
 
-function ctx(req: Request, res: Response, next: Next) {
+function setup(req: Request, res: Response, next: Next) {
+  // Basic headers
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Request-Method", "*");
   res.setHeader("Access-Control-Allow-Methods", "OPTIONS, GET, POST");
@@ -20,17 +21,20 @@ function ctx(req: Request, res: Response, next: Next) {
     res.end();
     return;
   }
-  const appCtx = createContext();
-  if (req.body) req.body["ctx"] = appCtx;
-  else req.body = { ctx: appCtx };
+
+  // Give the context to the routes
+  const ctx: HareContext = createContext();
+  if (req.body) req.body["ctx"] = ctx;
+  else req.body = { ctx };
   return next();
 }
 
-// this will run before every route on this router
-dmdTaskRouter.use(ctx);
+// setup will run before every route on this router
+dmdTaskRouter.use(setup);
+// add routes to the server
 dmdTaskRouter.applyRoutes(server);
 
-wipmetaRouter.use(ctx);
+wipmetaRouter.use(setup);
 wipmetaRouter.applyRoutes(server);
 
 export default server;
