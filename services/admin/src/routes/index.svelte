@@ -6,6 +6,7 @@
   import DropdownMenu from "$lib/components/shared/DropdownMenu.svelte";
   import { getStores, page } from "$app/stores";
   import type { Session } from "$lib/types";
+  import { onMount } from "svelte";
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
    */
@@ -14,6 +15,12 @@
   let name = "";
 
   $: name = $session?.user?.name?.split(" ")[0];
+
+  onMount(() => {
+    $session?.hare.get("/dmdTask/hello", function (err, req) {
+      console.log(err, req);
+    });
+  });
 </script>
 
 <div class="notifications">

@@ -6,8 +6,8 @@
 
 import type { TRPCClient } from "@trpc/client";
 import type { LapinRouter } from "@crkn-rcdr/lapin-router";
-import type { DMDTask, Noid, Slug, User } from "@crkn-rcdr/access-data";
-
+import type { Noid, Slug, User } from "@crkn-rcdr/access-data";
+import type { HttpClient } from "restify-clients";
 /**
  * Session exported by the `getSession` hook.
  */
@@ -26,6 +26,7 @@ export type Locals = {
  */
 export type Session = ServerSession & {
   lapin: TRPCClient<LapinRouter>;
+  hare: HttpClient;
 };
 
 /**
@@ -34,9 +35,11 @@ export type Session = ServerSession & {
 export type RootLoadOutput = {
   context: {
     lapin: TRPCClient<LapinRouter>;
+    hare: HttpClient;
   };
   props: {
     lapin: TRPCClient<LapinRouter>;
+    hare: HttpClient;
   };
 };
 
