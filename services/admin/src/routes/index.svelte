@@ -17,7 +17,7 @@
   $: name = $session?.user?.name?.split(" ")[0];
 
   onMount(async () => {
-    await $session?.hare("dmdTask/hello", {
+    await $session?.hare("dmdTask/parsing", {
       method: "GET",
     });
   });
