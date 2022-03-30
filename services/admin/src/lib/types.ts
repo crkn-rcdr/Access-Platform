@@ -6,13 +6,7 @@
 
 import type { TRPCClient } from "@trpc/client";
 import type { LapinRouter } from "@crkn-rcdr/lapin-router";
-import type {
-  DMDTask,
-  Noid,
-  Slug,
-  UpdateSucceededDMDTask,
-  User,
-} from "@crkn-rcdr/access-data";
+import type { DMDTask, Noid, Slug, User } from "@crkn-rcdr/access-data";
 
 /**
  * Session exported by the `getSession` hook.
@@ -78,20 +72,6 @@ export type DmdItemState = {
   updatedInPreservationMsg: string;
   shouldUpdate: boolean;
 };
-
-export type DmdItemStates = Map<string, DmdItemState>;
-
-export type DmdTaskState = {
-  task: UpdateSucceededDMDTask;
-  updateState: "ready" | "updating" | "updated" | "error";
-  itemStates: DmdItemStates;
-  resultMsg: string;
-  shouldUpdateInPreservation: boolean;
-  shouldUpdateInAccess: boolean;
-  updatedProgressPercentage: number;
-};
-
-export type DmdTasksCache = Map<string, DmdTaskState>;
 
 /**
  * Used to create a pull-down of available access platforms to prepend to identifiers in the CSV or MarcXML files.

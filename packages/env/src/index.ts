@@ -20,6 +20,7 @@ export const Env = z
     COUCHDB_URL: Url,
     COUCHDB_PASSWORD: z.string().min(1),
     LAPIN_URL: Url,
+    HARE_URL: Url,
     NOID_URL: Url,
     SWIFT_URL: Url,
     SWIFT_USER: z.string().min(1),
@@ -39,6 +40,7 @@ export const Env = z
     ADMIN_DEV_WS_PORT: Port.default("14747"),
     ADMIN_PORT: Port.default("4747"),
     LAPIN_PORT: Port.default("5858"),
+    HARE_PORT: Port.default("5959"),
   })
   .transform((env) => {
     return {
@@ -62,6 +64,10 @@ export const Env = z
       lapin: {
         port: env.LAPIN_PORT,
         url: env.LAPIN_URL,
+      },
+      hare: {
+        port: env.HARE_PORT,
+        url: env.HARE_URL,
       },
       noid: {
         url: env.NOID_URL,
