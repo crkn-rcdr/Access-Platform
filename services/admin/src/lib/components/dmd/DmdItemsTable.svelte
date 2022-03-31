@@ -114,6 +114,9 @@
             id: dmdTask.id,
             page: currentPage,
             limit: 100,
+            filters: {
+              stored: false,
+            },
           });
           if (pageData && pageData.list) dmdTask["items"] = pageData.list;
           return {

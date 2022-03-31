@@ -68,7 +68,12 @@
 
   async function getTask() {
     loading = true;
-    const response = await $session.lapin.query("dmdTask.get", id);
+    const response = await $session.lapin.query("dmdTask.get", {
+      id,
+      filters: {
+        stored: false,
+      },
+    });
     dmdTask = response.task;
     ({ totalItems, totalPages, type } = response);
     loading = false;

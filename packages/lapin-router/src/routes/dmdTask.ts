@@ -30,17 +30,35 @@ const PageInput = z.object({
   id: z.string(),
   page: z.number().int().positive(),
   limit: z.number().int().positive().default(100),
+  filters: z.any().optional(),
 });
 
 export const dmdTaskRouter = createRouter()
   .query("get", {
-    input: z.string(),
-    async resolve({ input: id, ctx }) {
+    input: z.object({
+      id: z.string(),
+      filters: z.any(),
+    }),
+    async resolve({ input: { id, filters }, ctx }) {
       const response: any = await ctx.couch.dmdtask.getSafe(id);
       if (response.found) {
         let totalItems = 0;
         let totalPages = 0;
         if ("items" in response.doc && Array.isArray(response.doc["items"])) {
+          if (filters) {
+            response.doc["items"] = response.doc["items"].filter(
+              (item: any) => {
+                let result = true;
+                for (let filterKey in filters) {
+                  const value = filters[filterKey];
+                  result = result && item[filterKey] === value;
+                  if (result === false) break;
+                }
+                return result;
+              }
+            );
+          }
+
           totalItems = response.doc["items"].length;
           totalPages = totalItems > 0 ? Math.ceil(totalPages / totalItems) : 0;
           const items = new ObjectListHandler(response.doc["items"]);
@@ -85,11 +103,23 @@ export const dmdTaskRouter = createRouter()
   })
   .query("page", {
     input: PageInput.parse,
-    async resolve({ input: { id, page, limit }, ctx }) {
+    async resolve({ input: { id, page, limit, filters }, ctx }) {
       const response = await ctx.couch.dmdtask.getSafe(id);
       if (response.found) {
         const task = response.doc;
         if (task && "items" in task && task.items) {
+          if (filters) {
+            task.items = task.items.filter((item: any) => {
+              let result = true;
+              for (let filterKey in filters) {
+                const value = filters[filterKey];
+                result = result && item[filterKey] === value;
+                if (result === false) break;
+              }
+              return result;
+            });
+          }
+
           const items = new ObjectListHandler(task.items);
           const pageData = items.page(page, limit);
           return pageData;

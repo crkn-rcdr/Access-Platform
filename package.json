@@ -24,7 +24,7 @@
     "deploy": "./deployImage.sh",
     "dev": "pnpm down && pnpm dev:up",
     "dev:up": "CURRENT_USER=$(id -u):$(id -g) docker-compose --profile dev up --build --remove-orphans --detach",
-    "down": "CURRENT_USER=$(id -u):$(id -g) docker-compose down --volumes",
+    "down": "CURRENT_USER=$(id -u):$(id -g) docker-compose down --volumes --remove-orphans",
     "preinstall": "npx only-allow pnpm",
     "prod": "pnpm down && pnpm prod:up",
     "prod:up": "CURRENT_USER=$(id -u):$(id -g) docker-compose --profile prod up --build --remove-orphans --detach",
