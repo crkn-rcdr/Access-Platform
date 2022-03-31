@@ -30,4 +30,6 @@ function getResultCSV(req: Request, res: Response, next: Next) {
 }
 dmdTaskRouter.get("/dmdTask/resultCSV/:id", getResultCSV);
 
+//https://stackoverflow.com/questions/45948918/nodejs-restify-how-can-i-recieve-file-upload-in-api
+
 export default dmdTaskRouter;
