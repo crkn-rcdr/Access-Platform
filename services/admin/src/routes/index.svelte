@@ -17,9 +17,24 @@
   $: name = $session?.user?.name?.split(" ")[0];
 
   onMount(async () => {
-    await $session?.hare("dmdTask/parsing", {
+    await $session?.hare("dmdTask/6557a92fb5cee680075de6dfa9ee2a7a", {
       method: "GET",
     });
+    const res = await $session?.hare(
+      "dmdTask/resultCSV/6557a92fb5cee680075de6dfa9ee2a7a",
+      {
+        method: "GET",
+      }
+    );
+    const fileBlob = await res.blob();
+    const url = window.URL.createObjectURL(fileBlob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "export.csv";
+    document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
+    a.click();
+    a.remove(); //afterwards we remove the element again
+    URL.revokeObjectURL(url);
   });
 </script>
 
