@@ -60,6 +60,8 @@
    */
   let previewingDmdTaskId: string;
 
+  let filters: any = {};
+
   function toggleAllItemsSelected() {
     shouldUpdateAllItems = !shouldUpdateAllItems;
     for (let item of dmdTask["items"]) {
@@ -104,9 +106,7 @@
 
   let pageSize = 100;
 
-  async function handlePageChange(event: any) {
-    currentPage = event.detail.page;
-
+  async function getPage() {
     await showConfirmation(
       async () => {
         try {
@@ -114,11 +114,13 @@
             id: dmdTask.id,
             page: currentPage,
             limit: 100,
-            filters: {
-              stored: false,
-            },
+            filters,
           });
-          if (pageData && pageData.list) dmdTask["items"] = pageData.list;
+          if (pageData) {
+            if (pageData.list) dmdTask["items"] = pageData.list;
+            if (pageData.totalItems) totalItems = pageData.totalItems;
+            if (pageData.totalPages) totalPages = pageData.totalPages;
+          }
           return {
             success: true,
           };
@@ -134,9 +136,35 @@
       true
     );
   }
+
+  async function handlePageChange(event: any) {
+    currentPage = event.detail.page;
+    await getPage();
+  }
+
+  async function handleStatusFilterChange(event: any) {
+    console.log(event);
+    if (event.target.value === "None") delete filters["stored"];
+    else filters["stored"] = event.target.value === "Succeeded";
+    await getPage();
+  }
 </script>
 
 {#if dmdTask}
+  {#if state === "updated"}
+    <br />
+    <div class="filters">
+      <span class="auto-align auto-align__column">
+        <label for="stored">Filter Store Result:</label>
+        <select name="stored" on:change={handleStatusFilterChange}>
+          <option value={"None"}> None Selected </option>
+          <option value={"Succeeded"}> Succeeded </option>
+          <option value={"Failed"}> Failed </option>
+        </select>
+      </span>
+    </div>
+    <br />
+  {/if}
   <table>
     <thead>
       <tr>

@@ -45,7 +45,7 @@ export const dmdTaskRouter = createRouter()
         let totalItems = 0;
         let totalPages = 0;
         if ("items" in response.doc && Array.isArray(response.doc["items"])) {
-          if (filters) {
+          if (filters && Object.keys(filters).length) {
             response.doc["items"] = response.doc["items"].filter(
               (item: any) => {
                 let result = true;
@@ -60,7 +60,7 @@ export const dmdTaskRouter = createRouter()
           }
 
           totalItems = response.doc["items"].length;
-          totalPages = totalItems > 0 ? Math.ceil(totalPages / totalItems) : 0;
+          totalPages = totalItems > 0 ? Math.ceil(totalItems / 100) : 0;
           const items = new ObjectListHandler(response.doc["items"]);
           const pageData = items.page(1, 100);
           response.doc.items = pageData.list;
@@ -108,7 +108,7 @@ export const dmdTaskRouter = createRouter()
       if (response.found) {
         const task = response.doc;
         if (task && "items" in task && task.items) {
-          if (filters) {
+          if (filters && Object.keys(filters).length) {
             task.items = task.items.filter((item: any) => {
               let result = true;
               for (let filterKey in filters) {
@@ -120,9 +120,12 @@ export const dmdTaskRouter = createRouter()
             });
           }
 
+          const totalItems = task.items.length;
+          const totalPages = totalItems > 0 ? Math.ceil(totalItems / 100) : 0;
+
           const items = new ObjectListHandler(task.items);
           const pageData = items.page(page, limit);
-          return pageData;
+          return { ...pageData, totalItems, totalPages };
         }
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
