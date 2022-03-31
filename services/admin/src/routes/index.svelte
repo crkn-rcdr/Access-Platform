@@ -17,11 +17,11 @@
   $: name = $session?.user?.name?.split(" ")[0];
 
   onMount(async () => {
-    await $session?.hare("dmdTask/6557a92fb5cee680075de6dfa9ee2a7a", {
+    await $session?.hare("dmdTask/b5883ccf5e85996af9cc4268d750065b", {
       method: "GET",
     });
     const res = await $session?.hare(
-      "dmdTask/resultCSV/6557a92fb5cee680075de6dfa9ee2a7a",
+      "dmdTask/resultCSV/b5883ccf5e85996af9cc4268d750065b",
       {
         method: "GET",
       }
