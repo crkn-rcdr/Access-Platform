@@ -60,6 +60,7 @@
   import ExpansionListMessage from "$lib/components/shared/ExpansionListMessage.svelte";
   import DmdTaskActions from "$lib/components/dmd/DmdTaskActions.svelte";
   import Loading from "$lib/components/shared/Loading.svelte";
+  import Toggle from "$lib/components/shared/Toggle.svelte";
 
   // Typed arrays lets us avoid checks in the front end
   export let base: ShortTask[] = [];
@@ -85,6 +86,7 @@
    * @type {NodeJS.Timeout | null} Used to debounce the filtering of tasks.
    */
   let filterTimer: NodeJS.Timeout | null = null;
+  let filters: any = {};
 
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
@@ -131,14 +133,26 @@
   }
 
   async function getDMDTasksList() {
-    let taskList: ShortTask[] = await $session.lapin.query("dmdTask.list");
+    let taskList: ShortTask[] = await $session.lapin.mutation(
+      "dmdTask.list",
+      filters
+    );
     const results = getDMDTasks(taskList);
     ({ base, parsed, parsing, updating, updated, paused } = results.props);
     search();
     loading = false;
   }
 
+  async function handleUserFilterChanged(event) {
+    const toggled = event.detail;
+    if (toggled) filters["user"] = $session.user.email;
+    else delete filters["user"];
+    // get tasks
+    await getDMDTasksList();
+  }
+
   onMount(() => {
+    filters["user"] = $session.user.email;
     getDMDTasksList().then(() => {
       unsubscribe = interval.subscribe(async () => {
         await getDMDTasksList();
@@ -175,6 +189,15 @@
       class="title auto-align auto-align__a-center auto-align__j-space-between"
     >
       <h6>Metadata Tasks</h6>
+    </div>
+    <div
+      class="title auto-align auto-align__a-center auto-align__j-space-between"
+    >
+      <Toggle
+        toggled={true}
+        label={"Only show my tasks"}
+        on:toggled={handleUserFilterChanged}
+      />
       <input
         class="task-search"
         placeholder="Search tasks by file name..."

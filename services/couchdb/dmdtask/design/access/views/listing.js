@@ -178,7 +178,7 @@ module.exports = {
       }
     }
 
-    emit(doc._id, {
+    emit([doc.user.email, doc._id], {
       fileName: doc.fileName ? doc.fileName : "",
       type,
       date,

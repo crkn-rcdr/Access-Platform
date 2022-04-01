@@ -32,11 +32,20 @@ export class DMDTaskHandler extends DatabaseHandler<DMDTask> {
       : null;
   }
 
-  async getAll(): Promise<ShortTask[]> {
-    const list = await this.view("access", "listing", {
+  async getAll(filters?: any): Promise<ShortTask[]> {
+    let options: any = {
       include_docs: false,
       reduce: false,
-    });
+    };
+
+    if (filters) {
+      if (filters["user"]) {
+        options["startkey"] = [filters["user"]];
+        options["endkey"] = [filters["user"], {}];
+      }
+    }
+
+    const list = await this.view("access", "listing", options);
     return list.rows.map((row: { id: string; key: string; value: any }) => {
       return {
         id: row.id,

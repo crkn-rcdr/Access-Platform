@@ -1,22 +1,39 @@
 <script lang="ts">
+  import { createEventDispatcher } from "svelte";
+
   export let label = "on";
   export let toggled = true;
+
+  /**
+   * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.
+   */
+  const dispatch = createEventDispatcher();
+
+  function handleToggle() {
+    dispatch("toggled", toggled);
+  }
 </script>
 
 <!-- Rounded switch -->
-<label class="switch">
-  <input type="checkbox" bind:checked={toggled} />
-  <span class="slider primary round" />
-  {label}
-</label>
+<span class="switch-wrap">
+  <label class="switch">
+    <input type="checkbox" bind:checked={toggled} on:change={handleToggle} />
+    <span class="slider primary round" />
+  </label>
+  <span>{label}</span>
+</span>
 
 <style>
+  .switch-wrap {
+    width: fit-content;
+  }
   /* The switch - the box around the slider */
   .switch {
     position: relative;
     display: inline-block;
     width: 60px;
     height: 34px;
+    margin-right: 0.5rem;
   }
 
   /* Hide default HTML checkbox */

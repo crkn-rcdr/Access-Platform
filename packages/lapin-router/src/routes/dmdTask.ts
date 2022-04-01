@@ -480,4 +480,15 @@ export const dmdTaskRouter = createRouter()
         throw httpErrorToTRPC(e);
       }
     },
+  })
+  .mutation("list", {
+    input: z.any(), // fitlers
+    async resolve({ input, ctx }) {
+      try {
+        return await ctx.couch.dmdtask.getAll(input);
+      } catch (e: any) {
+        console.log(e?.message);
+        throw httpErrorToTRPC(e);
+      }
+    },
   });
