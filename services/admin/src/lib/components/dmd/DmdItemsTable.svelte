@@ -70,19 +70,7 @@
   let duplicates: string[] = [];
 
   function toggleAllItemsSelected() {
-    shouldUpdateAllItems = !shouldUpdateAllItems;
-    for (let item of dmdTask["items"]) {
-      if (item.parsed) item.shouldStore = shouldUpdateAllItems;
-    }
     dmdTask = dmdTask;
-  }
-
-  function checkIfAllItemsSelected() {
-    // todo backend
-    return (
-      dmdTask["items"].filter((item) => item.shouldStore).length ===
-      dmdTask["items"].length
-    );
   }
 
   function handlePreviewItemPressed(index: number, item: ItemProcessRecord) {
@@ -108,7 +96,6 @@
   $: {
     dmdTask;
     setState();
-    checkIfAllItemsSelected();
   }
 
   let pageSize = 100;
@@ -184,15 +171,42 @@
     );
   }
 
+  async function checkIfAllItemsSelected() {
+    await showConfirmation(
+      async () => {
+        try {
+          shouldUpdateAllItems = true; /*await $session.lapin.query(
+            "dmdTask.duplicates",
+            dmdTask.id
+          );*/
+
+          return {
+            success: true,
+          };
+        } catch (e) {
+          return {
+            success: false,
+            details: e?.message,
+          };
+        }
+      },
+      "",
+      "Error: failed to get check for duplicates.",
+      true
+    );
+  }
+
   onMount(async () => {
     await checkDuplicates();
   });
 </script>
 
 {#if dmdTask}
-  <NotificationBar message={duplicateWarning} status="warn" />
-  {#if duplicates.length}
-    <br />
+  {#if showLookupResults}
+    <NotificationBar message={duplicateWarning} status="warn" />
+    {#if duplicates.length}
+      <br />
+    {/if}
   {/if}
   {#if state === "updated"}
     <br />
@@ -233,11 +247,17 @@
     <tbody>
       {#each dmdTask["items"] as item, i}
         <tr
-          class:success={item.found && showLookupResults}
-          class:not-success={"found" in item &&
+          class:success={(item.found && showLookupResults) ||
+            ("stored" in item && item.stored && item["shouldStore"])}
+          class:not-success={("found" in item &&
             !item.found &&
-            showLookupResults}
-          class:warning={duplicates.includes(item.id)}
+            showLookupResults) ||
+            ("stored" in item && !item.stored && item["shouldStore"])}
+          class:warning={(duplicates.includes(item.id) && showLookupResults) ||
+            ("stored" in item &&
+              item.stored &&
+              item["shouldStore"] &&
+              item.message.length)}
         >
           {#if showSelection}
             <td>
@@ -294,29 +314,23 @@
             >
           </td>
         </tr>
-        {#if "stored" in item && item["shouldStore"]}
+        {#if "stored" in item && item["shouldStore"] && item.message.length}
           <tr class="row-details">
             <td class="result-cell" colspan="5">
               <table>
                 <tbody>
                   <tr
-                    class:success={item.stored}
-                    class:warning={item.stored && item.message.length}
-                    class:not-success={!item.stored}
+                    class:warning={"stored" in item &&
+                      item.stored &&
+                      item["shouldStore"] &&
+                      item.message.length}
+                    class:not-success={"stored" in item &&
+                      !item.stored &&
+                      item["shouldStore"]}
                   >
-                    {#if item.message.length}
-                      <td class="detail-label"> Result:</td>
-                      <td>
-                        <XmlViewer xml={item.message} />
-                      </td>
-                    {:else}
-                      <td class="detail-label"> Result:</td>
-                      <td>
-                        <XmlViewer
-                          xml={`Successfully stored metadata in ${dmdTask["destination"]}`}
-                        />
-                      </td>
-                    {/if}
+                    <td>
+                      <XmlViewer xml={item.message} />
+                    </td>
                   </tr>
                 </tbody>
               </table>

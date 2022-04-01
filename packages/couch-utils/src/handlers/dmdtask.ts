@@ -45,7 +45,7 @@ export class DMDTaskHandler extends DatabaseHandler<DMDTask> {
       }
     }
 
-    const list = await this.view("access", "listing", options);
+    const list = await this.view("access", "filterListing", options);
     return list.rows.map((row: { id: string; key: string; value: any }) => {
       return {
         id: row.id,

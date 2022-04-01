@@ -377,13 +377,20 @@ export const dmdTaskRouter = createRouter()
               .map((row: any) => row.key);
           }
 
+          const duplicates = ids.filter(
+            (
+              (set: Set<string>) => (value: string) =>
+                set.has(value) || !set.add(value)
+            )(new Set())
+          );
+
           let numNotFound = 0;
           let notFoundIds: string[] = [];
 
           for (let item of task.items) {
             if (foundIDs.includes(item.id)) {
               item.found = true;
-              if (item.parsed) item.shouldStore = true;
+              if (item.parsed) item.shouldStore = !duplicates.includes(item.id);
             } else {
               item.shouldStore = false;
               item.found = false;
