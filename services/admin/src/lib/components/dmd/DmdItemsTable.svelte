@@ -11,6 +11,9 @@
   import type { Session } from "$lib/types";
   import DmdItemSelector from "./DmdItemSelector.svelte";
   import { showConfirmation } from "$lib/utils/confirmation";
+  import { onMount } from "svelte";
+  import NotificationBar from "../shared/NotificationBar.svelte";
+  import { includes } from "lodash-es";
 
   /**
    * @type { DMDTask } The dmd task being displayed
@@ -61,6 +64,10 @@
   let previewingDmdTaskId: string;
 
   let filters: any = {};
+
+  let duplicateWarning: string = "";
+
+  let duplicates: string[] = [];
 
   function toggleAllItemsSelected() {
     shouldUpdateAllItems = !shouldUpdateAllItems;
@@ -148,9 +155,45 @@
     else filters["stored"] = event.target.value === "Succeeded";
     await getPage();
   }
+
+  async function checkDuplicates() {
+    await showConfirmation(
+      async () => {
+        try {
+          duplicates = await $session.lapin.query(
+            "dmdTask.duplicates",
+            dmdTask.id
+          );
+
+          if (duplicates && Array.isArray(duplicates) && duplicates.length)
+            duplicateWarning = `Warning! There are duplicate items in your file: ${duplicates.toString()}`;
+
+          return {
+            success: true,
+          };
+        } catch (e) {
+          return {
+            success: false,
+            details: e?.message,
+          };
+        }
+      },
+      "",
+      "Error: failed to get check for duplicates.",
+      true
+    );
+  }
+
+  onMount(async () => {
+    await checkDuplicates();
+  });
 </script>
 
 {#if dmdTask}
+  <NotificationBar message={duplicateWarning} status="warn" />
+  {#if duplicates.length}
+    <br />
+  {/if}
   {#if state === "updated"}
     <br />
     <div class="filters">
@@ -189,12 +232,18 @@
     </thead>
     <tbody>
       {#each dmdTask["items"] as item, i}
-        <tr>
+        <tr
+          class:success={item.found && showLookupResults}
+          class:not-success={"found" in item &&
+            !item.found &&
+            showLookupResults}
+          class:warning={duplicates.includes(item.id)}
+        >
           {#if showSelection}
             <td>
               {#if item.shouldStore && !("succeeded" in dmdTask["process"]) && !item.stored}
                 <Loading size="sm" backgroundType="gradient" />
-              {:else if "stored" in item || (item.parsed && item.found)}
+              {:else if !duplicates.includes(item.id) && ("stored" in item || (item.parsed && item.found))}
                 <DmdItemSelector
                   taskId={dmdTask.id}
                   index={i + (currentPage - 1) * pageSize}
@@ -207,14 +256,7 @@
               {/if}
             </td>
           {/if}
-          <td
-            class:success={item.found && showLookupResults}
-            class:not-success={"found" in item &&
-              !item.found &&
-              showLookupResults}
-          >
-            {item.id}
-          </td>
+          <td>{item.id}</td>
           <td>{item.label}</td>
 
           {#if state !== "updated"}
@@ -252,7 +294,7 @@
             >
           </td>
         </tr>
-        {#if "stored" in item}
+        {#if "stored" in item && item["shouldStore"]}
           <tr class="row-details">
             <td class="result-cell" colspan="5">
               <table>

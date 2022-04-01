@@ -91,7 +91,7 @@ A component tha tis used to highlight important messages to the user
             >
           {/if}
         </div>
-        <div slot="bottom">{detail}</div>
+        <div slot="bottom">{@html detail}</div>
       </ExpansionTile>
     {:else}
       {@html message}

@@ -101,6 +101,31 @@ export const dmdTaskRouter = createRouter()
       }
     },
   })
+  .query("duplicates", {
+    input: z.string(),
+    async resolve({ input, ctx }) {
+      try {
+        let duplicates: string[] = [];
+
+        const response: any = await ctx.couch.dmdtask.getSafe(input);
+        if (response.found) {
+          if ("items" in response.doc && Array.isArray(response.doc["items"])) {
+            const ids: string[] = response.doc["items"].map((item) => item.id);
+            duplicates = ids.filter(
+              (
+                (set: Set<string>) => (value: string) =>
+                  set.has(value) || !set.add(value)
+              )(new Set())
+            );
+          }
+        }
+        return duplicates;
+      } catch (e: any) {
+        console.log("err", e?.message);
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
   .query("page", {
     input: PageInput.parse,
     async resolve({ input: { id, page, limit, filters }, ctx }) {
@@ -353,6 +378,7 @@ export const dmdTaskRouter = createRouter()
           }
 
           let numNotFound = 0;
+          let notFoundIds: string[] = [];
 
           for (let item of task.items) {
             if (foundIDs.includes(item.id)) {
@@ -361,6 +387,7 @@ export const dmdTaskRouter = createRouter()
             } else {
               item.shouldStore = false;
               item.found = false;
+              notFoundIds.push(item.id);
               numNotFound++;
             }
           }
@@ -377,7 +404,7 @@ export const dmdTaskRouter = createRouter()
 
           const items = new ObjectListHandler(task.items);
           const pageData = items.page(returnPage, 100);
-          return { pageData, numNotFound };
+          return { pageData, numNotFound, notFoundIds };
         }
         return {
           numNotFound: 0,

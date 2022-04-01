@@ -58,6 +58,7 @@ This component allows the user to update the dmd tasks items in an access platfo
   let activeStepIndex = 0;
   let currentPage = 1;
   let numNotFound = 0;
+  let notFoundIds: string[] = [];
 
   async function handleUpdatePressed() {
     await showConfirmation(
@@ -130,6 +131,7 @@ This component allows the user to update the dmd tasks items in an access platfo
           });
           dmdTask["items"] = response.pageData.list;
           dmdTask = dmdTask;
+          notFoundIds = response.notFoundIds;
           numNotFound = response.numNotFound;
           if (numNotFound === 0) activeStepIndex = 2;
           lookingUp = false;
@@ -262,7 +264,9 @@ This component allows the user to update the dmd tasks items in an access platfo
               {:else if !lookingUp}
                 <NotificationBar
                   message={`${numNotFound} items not found.`}
-                  status="warn"
+                  status="fail"
+                  expandable={true}
+                  detail={notFoundIds.map((id) => `${id}<br/>`).join("")}
                 />
                 <button class="primary" on:click={() => (activeStepIndex = 2)}>
                   Ok
