@@ -144,7 +144,7 @@
 
   async function handleStatusFilterChange(event: any) {
     console.log(event);
-    if (event.target.value === "None") delete filters["stored"];
+    if (event.target.value === "All") delete filters["stored"];
     else filters["stored"] = event.target.value === "Succeeded";
     await getPage();
   }
@@ -157,7 +157,7 @@
       <span class="auto-align auto-align__column">
         <label for="stored">Filter Storage Results:</label>
         <select name="stored" on:change={handleStatusFilterChange}>
-          <option value={"None"}> None Selected </option>
+          <option value={"All"}> All </option>
           <option value={"Succeeded"}> Succeeded </option>
           <option value={"Failed"}> Failed </option>
         </select>
