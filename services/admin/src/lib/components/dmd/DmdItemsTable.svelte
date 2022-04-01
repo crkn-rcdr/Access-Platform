@@ -155,7 +155,7 @@
     <br />
     <div class="filters">
       <span class="auto-align auto-align__column">
-        <label for="stored">Filter Store Result:</label>
+        <label for="stored">Filter Storage Results:</label>
         <select name="stored" on:change={handleStatusFilterChange}>
           <option value={"None"}> None Selected </option>
           <option value={"Succeeded"}> Succeeded </option>
