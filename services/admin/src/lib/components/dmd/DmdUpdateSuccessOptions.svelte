@@ -69,11 +69,14 @@
   {#if dmdTask?.fileName}
     <h5>{dmdTask.fileName}</h5>
   {/if}
+
+  <NotificationBar message={`Store Complete!`} status="success" />
+
+  {#if dmdTask["process"]?.["message"]?.length}
+    <br />
+  {/if}
   <NotificationBar message={dmdTask["process"]?.["message"]} status="warn" />
-  <NotificationBar
-    message={`Success! The metadata files were stored for the selected items.`}
-    status="success"
-  />
+
   <br />
 
   <div class="button-wrap">
