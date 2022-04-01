@@ -16,7 +16,7 @@ module.exports = function (doc, req) {
 
   doc = Object.assign(doc, input.data);
 
-  doc.user = input.user;
+  if (input.user) doc.user = input.user;
 
   return successReturn(doc, `${doc.slug ? doc.slug : doc.id} updated`);
 };
