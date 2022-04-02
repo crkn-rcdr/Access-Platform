@@ -33,10 +33,20 @@ export const slugRouter = createRouter()
   .mutation("resolveMany", {
     input: SlugArray.parse,
     async resolve({ input, ctx }) {
-      return await ctx.couch.access.findUniqueArray("slug", input, [
-        "id",
-        "type",
-      ] as const);
+      const result = await ctx.couch.access.view("access", "slug", {
+        keys: input,
+        include_docs: true,
+      });
+
+      let foundMap: any = {};
+
+      for (const row of result.rows) {
+        console.log(row);
+        const rowValue: any = row.doc;
+        if (rowValue && rowValue["slug"]) foundMap[rowValue.slug] = row.id;
+      }
+
+      return foundMap;
     },
   })
   .mutation("lookupMany", {

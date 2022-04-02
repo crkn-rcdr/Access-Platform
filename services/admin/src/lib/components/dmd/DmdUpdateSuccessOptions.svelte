@@ -21,6 +21,7 @@
 
   let githubLink = "";
   let sendingReprocessRequest = false;
+  let sendingDownloadRequest = false;
 
   async function handleReprocessClicked() {
     await showConfirmation(
@@ -63,6 +64,41 @@
         "+"
       );
   });
+
+  async function handleDownloadPressed() {
+    await showConfirmation(
+      async () => {
+        try {
+          sendingDownloadRequest = true;
+          const res = await $session?.hare(`dmdTask/resultCSV/${dmdTask.id}`, {
+            method: "GET",
+          });
+          const fileBlob = await res.blob();
+          const url = window.URL.createObjectURL(fileBlob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "export.csv";
+          document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
+          a.click();
+          a.remove(); //afterwards we remove the element again
+          URL.revokeObjectURL(url);
+
+          sendingDownloadRequest = false;
+          return {
+            success: true,
+          };
+        } catch (e) {
+          return {
+            success: false,
+            details: e?.message,
+          };
+        }
+      },
+      "",
+      "Error: failed to reset task.",
+      true
+    );
+  }
 </script>
 
 {#if dmdTask}
@@ -79,9 +115,18 @@
 
   <br />
 
-  <div class="button-wrap">
+  <div class="button-wrap auto-align">
     <LoadingButton
       buttonClass="primary"
+      on:clicked={handleDownloadPressed}
+      showLoader={sendingDownloadRequest}
+    >
+      <span slot="content" class="auto-align auto-align__a-center">
+        Download Results
+      </span>
+    </LoadingButton>
+    <LoadingButton
+      buttonClass="secondary"
       on:clicked={handleReprocessClicked}
       showLoader={sendingReprocessRequest}
     >
@@ -91,10 +136,14 @@
       </span>
     </LoadingButton>
   </div>
+  <br />
 {/if}
 
 <style>
   .button-wrap {
     margin-bottom: 1rem;
+  }
+  :global(.button-wrap button) {
+    margin-right: 1rem;
   }
 </style>

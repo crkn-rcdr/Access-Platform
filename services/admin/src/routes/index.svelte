@@ -6,7 +6,6 @@
   import DropdownMenu from "$lib/components/shared/DropdownMenu.svelte";
   import { getStores, page } from "$app/stores";
   import type { Session } from "$lib/types";
-  import { onMount } from "svelte";
   /**
    * @type {Session} The session store that contains the module for sending requests to lapin.
    */
@@ -15,27 +14,6 @@
   let name = "";
 
   $: name = $session?.user?.name?.split(" ")[0];
-
-  onMount(async () => {
-    await $session?.hare("dmdTask/b5883ccf5e85996af9cc4268d750065b", {
-      method: "GET",
-    });
-    const res = await $session?.hare(
-      "dmdTask/resultCSV/b5883ccf5e85996af9cc4268d750065b",
-      {
-        method: "GET",
-      }
-    );
-    const fileBlob = await res.blob();
-    const url = window.URL.createObjectURL(fileBlob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "export.csv";
-    document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
-    a.click();
-    a.remove(); //afterwards we remove the element again
-    URL.revokeObjectURL(url);
-  });
 </script>
 
 <div class="notifications">

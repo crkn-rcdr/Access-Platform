@@ -15,11 +15,25 @@ dmdTaskRouter.get("/dmdTask/:id", getById);
 function getResultCSV(req: Request, res: Response, next: Next) {
   req.body.ctx.couch.dmdtask.get(req.params.id).then((task: DMDTask) => {
     let csvString =
-      "id,label,output,parsed,parse message,found,shouldStore,stored\n";
+      "id,is duplicated,found,parsed,shouldStore,stored,output,label,message\n";
 
     if ("items" in task && task.items) {
+      const ids: (string | undefined)[] = task.items.map(
+        (item: any) => item.id
+      );
+      const duplicates = ids.filter(
+        (
+          (set: Set<string | undefined>) => (value: string | undefined) =>
+            set.has(value) || !set.add(value)
+        )(new Set())
+      );
       for (let item of task.items) {
-        csvString += `${item.id},"${item.label}",${item.output},${item.parsed},"${item.message}",${item.found},${item.shouldStore},${item.stored}\n`;
+        ("id,is duplicated?,found?,parsed,shouldStore?,stored?,output,label,message\n");
+        csvString += `${item.id},${duplicates.includes(item.id)},${
+          item.found
+        },${item.parsed},${item.shouldStore},${item.stored},${item.output},"${
+          item.label
+        }","${item.message}"\n`;
       }
     }
     res.header("Content-Type", "text/csv");

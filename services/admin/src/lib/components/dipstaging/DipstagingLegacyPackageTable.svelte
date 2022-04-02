@@ -243,13 +243,14 @@ This component shows the results of a dipstaging package view. It allows the use
 
     try {
       const response = await $session.lapin.mutation(`slug.resolveMany`, slugs);
-      for (const result of response) {
-        if (result.length === 2) {
-          const slug = result[0];
-          const info = result[1];
-          slugAvailableMap[slug] = !info.found;
-          if (info.found && info.result) {
-            noidMap[slug] = info.result.id;
+
+      if (response) {
+        for (const slug of slugs) {
+          if (response.hasOwnProperty(slug)) {
+            slugAvailableMap[slug] = false;
+            noidMap[slug] = response[slug];
+          } else {
+            slugAvailableMap[slug] = true;
           }
         }
       }
