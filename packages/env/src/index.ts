@@ -15,7 +15,7 @@ export const Env = z
     /**
      * REQUIRED: Applications will fail if these are unset.
      */
-    ADMIN_URL_EXTERNAL: Url,
+    URL_EXTERNAL: Url,
     AUTH_JWT_SECRET: z.string().min(1),
     COUCHDB_URL: Url,
     COUCHDB_PASSWORD: z.string().min(1),
@@ -37,7 +37,7 @@ export const Env = z
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
-    ADMIN_DEV_WS_PORT: Port.default("14747"),
+    DEV_ADMIN_WS_PORT: Port.default("14747"),
     ADMIN_PORT: Port.default("4747"),
     LAPIN_PORT: Port.default("5858"),
     HARE_PORT: Port.default("5959"),
@@ -47,8 +47,8 @@ export const Env = z
       mode: env.NODE_ENV,
       admin: {
         port: env.ADMIN_PORT,
-        wsPort: env.ADMIN_DEV_WS_PORT,
-        urlExternal: env.ADMIN_URL_EXTERNAL,
+        wsPort: env.DEV_ADMIN_WS_PORT,
+        urlExternal: env.URL_EXTERNAL,
       },
       auth: {
         url: env.AUTH_URL,

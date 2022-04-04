@@ -53,6 +53,14 @@ function list(req: Request, res: Response, next: Next) {
 }
 dmdTaskRouter.post("/dmdTask/list", list);
 
+function upload(req: Request, res: Response, next: Next) {
+  const input = req.files;
+  console.log(input);
+  res.send("moo");
+  next();
+}
+dmdTaskRouter.post("/dmdTask/upload", upload);
+
 //https://stackoverflow.com/questions/45948918/nodejs-restify-how-can-i-recieve-file-upload-in-api
 
 export default dmdTaskRouter;
