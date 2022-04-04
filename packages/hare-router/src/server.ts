@@ -1,5 +1,12 @@
 import { createContext, HareContext } from "./context.js";
-import { Server, createServer, Request, Response, Next } from "restify";
+import {
+  Server,
+  createServer,
+  Request,
+  Response,
+  Next,
+  plugins,
+} from "restify";
 import dmdTaskRouter from "./routes/dmdTask.js";
 import wipmetaRouter from "./routes/wipmeta.js";
 
@@ -29,6 +36,16 @@ function setup(req: Request, res: Response, next: Next) {
   return next();
 }
 
+dmdTaskRouter.use(
+  plugins.queryParser({
+    mapParams: true,
+  })
+);
+dmdTaskRouter.use(
+  plugins.bodyParser({
+    mapParams: true,
+  })
+);
 // setup will run before every route on this router
 dmdTaskRouter.use(setup);
 // add routes to the server

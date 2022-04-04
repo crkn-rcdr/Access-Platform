@@ -67,6 +67,20 @@ none
    */
   async function handleFileSelected(event: any) {
     const file: File = event.detail;
+
+    console.log("Uploading file...");
+    const request = new XMLHttpRequest();
+    const formData = new FormData();
+
+    request.open("POST", "/upload", true);
+    request.onreadystatechange = () => {
+      if (request.readyState === 4 && request.status === 200) {
+        console.log(request.responseText);
+      }
+    };
+    formData.append("file", file);
+    request.send(formData);
+    /*
     try {
       b64EncodedMetadataFileText = await convertBlobToBase64(file);
       fileName = file.name;
@@ -74,7 +88,7 @@ none
       console.log(e?.message);
       errorText =
         "There was a formatting problem with the metadata file. Please fix it or choose another file.";
-    }
+    }*/
   }
   /**
    * Sends the create request to lapin. Uses @function showConfirmation to show a notification at the bottom right of the screen saying if the request was sucessful or not. If it is a success, it uses the @function goto ith the DMD task id passed as the response from the request in the url.

@@ -1,15 +1,15 @@
-import type { Locals, ServerSession } from "$lib/types";
-import type { GetSession, Handle, ServerFetch } from "@sveltejs/kit";
-import type { JwtPayload } from "jsonwebtoken";
-import type { User } from "@crkn-rcdr/access-data";
+import type { Locals, ServerSession } from '$lib/types';
+import type { GetSession, Handle, ServerFetch } from '@sveltejs/kit';
+import type { JwtPayload } from 'jsonwebtoken';
+import type { User } from '@crkn-rcdr/access-data';
 
-import cookie from "cookie";
-import jwt from "jsonwebtoken";
-import { Env } from "@crkn-rcdr/access-env";
+import cookie from 'cookie';
+import jwt from 'jsonwebtoken';
+import { Env } from '@crkn-rcdr/access-env';
 
-import { readFileSync } from "fs";
-import { join as pathJoin } from "path";
-import Timeout from "await-timeout";
+import { readFileSync } from 'fs';
+import { join as pathJoin } from 'path';
+import Timeout from 'await-timeout';
 
 const RETRY_DELAY_MS = 10000;
 
@@ -19,165 +19,200 @@ const RETRY_DELAY_MS = 10000;
  * Uses semaphore-async-await to prevent any simultaneous calls.
  */
 const retry = async (method: Function, numAttempts: number) => {
-  let curNumAttempts = 0;
-  let response;
-  while (curNumAttempts < numAttempts) {
-    try {
-      response = await method();
-      if (response.status >= 200 && response.status < 300) break;
-      console.log(`Retry attempt #${curNumAttempts}: `, response);
-    } catch (e) {
-      console.log(`Retry attempt #${curNumAttempts}: `, e?.message);
-      response = e;
-    }
-    console.log(`Waiting ${RETRY_DELAY_MS}ms before trying again...`);
-    await Timeout.set(RETRY_DELAY_MS);
-    curNumAttempts++;
-  }
-  if (curNumAttempts === numAttempts - 1)
-    console.log("Request failed. No more attempts allowed.");
-  return response;
+	let curNumAttempts = 0;
+	let response;
+	while (curNumAttempts < numAttempts) {
+		try {
+			response = await method();
+			if (response.status >= 200 && response.status < 300) break;
+			console.log(`Retry attempt #${curNumAttempts}: `, response);
+		} catch (e) {
+			console.log(`Retry attempt #${curNumAttempts}: `, e?.message);
+			response = e;
+		}
+		console.log(`Waiting ${RETRY_DELAY_MS}ms before trying again...`);
+		await Timeout.set(RETRY_DELAY_MS);
+		curNumAttempts++;
+	}
+	if (curNumAttempts === numAttempts - 1) console.log('Request failed. No more attempts allowed.');
+	return response;
 };
 
 const verifyToken = (token: string, secret: string): User => {
-  const payload = jwt.verify(token, secret) as JwtPayload;
-  return {
-    name: payload["name"] as string,
-    email: payload["email"] as string,
-  };
+	const payload = jwt.verify(token, secret) as JwtPayload;
+	return {
+		name: payload['name'] as string,
+		email: payload['email'] as string
+	};
 };
 
 const getFullpath = (path: string, query: URLSearchParams) => {
-  const q = query.toString();
-  return q.length > 0 ? `${path}?${q}` : path;
+	const q = query.toString();
+	return q.length > 0 ? `${path}?${q}` : path;
 };
 
 // TODO: this is pretty unwieldy, although I doubt it'll need to grow much
-export const handle: Handle<Locals> = async ({ request, resolve }) => {
-  const env = Env.parse(process.env);
+export async function handle({ event, resolve }) {
+	const env = Env.parse(process.env);
 
-  // we'll need this more than once
-  const fullpath = getFullpath(request.path, request.query);
+	// we'll need this more than once
+	const fullpath = getFullpath(event.url.pathname, event.url.searchParams);
 
-  // Auth
-  const cookies = cookie.parse(request.headers["cookie"] || "");
-  const token = cookies["auth_token"];
+	// Auth
+	const cookies = cookie.parse(event.request.headers.get('cookie') || '');
+	const token = cookies['auth_token'];
 
-  let user: User;
-  if (token) {
-    try {
-      user = verifyToken(token, env.auth.secret);
-    } catch (e) {
-      return {
-        status: 403,
-        headers: {},
-        body: `Could not verify authorization token: ${e?.message}`,
-      };
-    }
-  } else {
-    const returnUrl = `${env.admin.urlExternal}${fullpath}`;
-    const redirectUrl = `${env.auth.url}/azuread/login?redirectUrl=${returnUrl}`;
-    return {
-      status: 307,
-      headers: { Location: redirectUrl },
-    };
-  }
+	let user: User;
+	if (token) {
+		try {
+			user = verifyToken(token, env.auth.secret);
+		} catch (e) {
+			return new Response(`Could not verify authorization token: ${e?.message}`, {
+				status: 403,
+				headers: {}
+			});
+		}
+	} else {
+		const returnUrl = `${env.admin.urlExternal}${fullpath}`;
+		const redirectUrl = `${env.auth.url}/azuread/login?redirectUrl=${returnUrl}`;
+		return new Response(undefined, {
+			status: 307,
+			headers: { Location: redirectUrl }
+		});
+	}
 
-  // I don't know why this is necessary; might have to do with https://github.com/sveltejs/kit/issues/2102
-  if (env.mode === "production" && request.path.startsWith("/static/")) {
-    try {
-      const filepath = pathJoin(process.cwd(), "static", request.path.slice(8));
-      const file = readFileSync(filepath);
-      return { status: 200, headers: {}, body: file };
-    } catch (e) {
-      return { status: 404, headers: {}, body: "" };
-    }
-  }
+	// I don't know why this is necessary; might have to do with https://github.com/sveltejs/kit/issues/2102
+	if (env.mode === 'production' && event.url.pathname.startsWith('/static/')) {
+		try {
+			const filepath = pathJoin(process.cwd(), 'static', event.url.pathname.slice(8));
+			const file = readFileSync(filepath);
+			return new Response(file, { status: 200, headers: {} });
+		} catch (e) {
+			return new Response('', { status: 404, headers: {} });
+		}
+	}
 
-  if (request.path.startsWith("/rest/")) {
-    const url = `${env.hare.url}${fullpath.slice(5)}`;
+	if (event.url.pathname.startsWith('/rest/')) {
+		const url = `${env.hare.url}${fullpath.slice(5)}`;
 
-    const fetchOptions = { method: request.method };
+		let headers = {};
 
-    if (request.method !== "HEAD" && request.method !== "GET")
-      fetchOptions["body"] = request.rawBody;
+		if (event.request.headers.get('Content-Type'))
+			headers['Content-Type'] = event.request.headers.get('content-Type');
 
-    try {
-      const response = await fetch(url, fetchOptions);
+		if (event.request.headers.get('Content-Disposition'))
+			headers['Content-Disposition'] = event.request.headers.get('Content-Disposition');
 
-      return {
-        status: response.status,
-        // @ts-ignore: TypeScript's DOM library doesn't have Headers.entries()
-        headers: Object.fromEntries(response.headers.entries()),
-        body: await response.text(),
-      };
-    } catch (e) {
-      return {
-        status: 500,
-        headers: {},
-        body: "error",
-      };
-    }
-  }
+		const fetchOptions = {
+			method: event.request.method,
+			headers
+		};
 
-  // Fetch api response from lapin and return it
-  if (request.path.startsWith("/api/")) {
-    const url = `${env.lapin.url}/${fullpath.slice(5)}`;
+		if (event.request.method !== 'HEAD' && event.request.method !== 'GET') {
+			if (event.request.headers.get('Content-Type') === 'application/json') {
+				fetchOptions['body'] = JSON.stringify(await event.request.json());
+			} else {
+				fetchOptions['body'] = await event.request.text();
+			}
+		}
 
-    const fetchOptions = { method: request.method };
+		try {
+			const response = await fetch(url, fetchOptions);
 
-    if (request.method !== "HEAD" && request.method !== "GET")
-      fetchOptions["body"] = request.rawBody;
+			let body;
+			if (event.request.headers.get('Content-Type') === 'application/json') {
+				body = await response.json();
+			} else {
+				body = await response.text();
+			}
 
-    try {
-      const response = await fetch(url, fetchOptions);
+			return new Response(JSON.stringify(body), {
+				status: response.status,
+				// @ts-ignore: TypeScript's DOM library doesn't have Headers.entries()
+				headers: Object.fromEntries(response.headers.entries())
+			});
+		} catch (e) {
+			return new Response('error', {
+				status: 500,
+				headers: {}
+			});
+		}
+	}
 
-      // OR we can retry all api requests 5 times on failure.
-      /*await retry(async () => {
-        return await fetch(url, fetchOptions);
-      }, 5);*/
+	// Fetch api response from lapin and return it
+	if (event.url.pathname.startsWith('/api/')) {
+		const url = `${env.lapin.url}/${fullpath.slice(5)}`;
 
-      return {
-        status: response.status,
-        // @ts-ignore: TypeScript's DOM library doesn't have Headers.entries()
-        headers: Object.fromEntries(response.headers.entries()),
-        body: await response.text(),
-      };
-    } catch (e) {
-      return {
-        status: 500,
-        headers: {},
-        body: "error",
-      };
-    }
-  }
+		let headers = {};
 
-  // Set up `locals`
-  request.locals = {
-    session: {
-      restEndpoint: env.admin.urlExternal + "/rest",
-      apiEndpoint: env.admin.urlExternal + "/api",
-      authLogout: env.auth.url + "/logout",
-      user,
-    },
-  };
+		if (event.request.headers.get('Content-Type'))
+			headers['Content-Type'] = event.request.headers.get('content-Type');
 
-  return await resolve(request);
-};
+		if (event.request.headers.get('Content-Disposition'))
+			headers['Content-Disposition'] = event.request.headers.get('Content-Disposition');
 
-export const getSession: GetSession<Locals, ServerSession> = (request) => {
-  return request.locals.session;
-};
+		const fetchOptions = {
+			method: event.request.method,
+			headers
+		};
+
+		if (event.request.method !== 'HEAD' && event.request.method !== 'GET') {
+			if (event.request.headers.get('Content-Type') === 'application/json') {
+				fetchOptions['body'] = JSON.stringify(await event.request.json());
+			} else {
+				fetchOptions['body'] = await event.request.text();
+			}
+		}
+
+		try {
+			const response = await fetch(url, fetchOptions);
+
+			let body;
+			if (event.request.headers.get('Content-Type') === 'application/json') {
+				body = await response.json();
+			} else {
+				body = await response.text();
+			}
+
+			return new Response(JSON.stringify(body), {
+				status: response.status,
+				// @ts-ignore: TypeScript's DOM library doesn't have Headers.entries()
+				headers: Object.fromEntries(response.headers.entries())
+			});
+		} catch (e) {
+			return new Response('error', {
+				status: 500,
+				headers: {}
+			});
+		}
+	}
+
+	// Set up `locals`
+	event.locals.info = {
+		restEndpoint: env.admin.urlExternal + '/rest',
+		apiEndpoint: env.admin.urlExternal + '/api',
+		authLogout: env.auth.url + '/logout',
+		user
+	};
+
+	console.log(event.locals.info);
+	return await resolve(event);
+}
+
+/** @type {import('@sveltejs/kit').GetSession} */
+export function getSession(event) {
+	return event.locals.info;
+}
 
 export const serverFetch: ServerFetch = (request) => {
-  /* Docker won't have access to local hosts files, and so
+	/* Docker won't have access to local hosts files, and so
      we replace external domains with `127.0.0.1`.
      This assumes the external domain starts with `access`. */
 
-  const url = request.url.replace(
-    /^https:\/\/access.*\.canadiana\.ca/,
-    `http://127.0.0.1:${process.env["ADMIN_PORT"]}`
-  );
+	const url = request.url.replace(
+		/^https:\/\/access.*\.canadiana\.ca/,
+		`http://127.0.0.1:${process.env['ADMIN_PORT']}`
+	);
 
-  return fetch(new Request(url, request));
+	return fetch(new Request(url, request));
 };
