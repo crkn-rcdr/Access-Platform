@@ -82,10 +82,14 @@ none
 		await showConfirmation(
 			async () => {
 				try {
-					const fetchRes = await fetch(`/dmd/2-b7948c8bcc208cc3c40d50a8222e348b/upload`, {
-						method: 'PUT',
-						body: metadatafile
-					});
+					//rev/id/filename
+					const fetchRes = await fetch(
+						`/dmd/3-3519a3649d23f5a93c3bdc5049e90e84/parsing/${metadatafile.name}/upload`,
+						{
+							method: 'PUT',
+							body: metadatafile
+						}
+					);
 					/*const bodyObj = {
 						user: $session.user,
 						format: metadataType,

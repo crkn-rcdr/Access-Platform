@@ -2,8 +2,8 @@ import { Env } from '@crkn-rcdr/access-env';
 const env = Env.parse(process.env);
 export async function put({ params, request }) {
 	const body = request.body;
-	const etag = params.etag;
-	const url = `${env.couch.url}/dmdtask/parsing/duplicates2.csv`;
+	const { etag, id, fileName } = params;
+	const url = `${env.couch.url}/dmdtask/${id}/${fileName}`;
 	const res = await fetch(url, {
 		headers: {
 			Authorization: 'Basic ' + btoa(`${env.couch.auth.username}:${env.couch.auth.password}`),
