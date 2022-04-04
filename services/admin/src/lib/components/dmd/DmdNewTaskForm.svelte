@@ -42,7 +42,7 @@ none
 	 */
 	let errorText: string = '';
 
-	let formData: FormData;
+	let metadatafile: File;
 
 	/**
 	 * TODO: Probably want to move this to a helper module, or straight into the file select component itself.
@@ -66,10 +66,7 @@ none
 	async function handleFileSelected(event: any) {
 		try {
 			const file: File = event.detail;
-			formData = new FormData();
-			formData.append('file', file);
-			formData.append('user', JSON.stringify($session.user));
-			formData.append('format', metadataType);
+			metadatafile = file;
 		} catch (e) {
 			console.log(e?.message);
 			errorText =
@@ -85,6 +82,10 @@ none
 		await showConfirmation(
 			async () => {
 				try {
+					const fetchRes = await fetch(`/dmd/2-b7948c8bcc208cc3c40d50a8222e348b/upload`, {
+						method: 'PUT',
+						body: metadatafile
+					});
 					/*const bodyObj = {
 						user: $session.user,
 						format: metadataType,
@@ -92,12 +93,12 @@ none
 						fileName
 					};
 					const response = await $session.lapin.mutation(`dmdTask.create`, bodyObj);*/
-					const res = await $session?.hare(`dmdTask/upload`, {
+					/*const res = await fetch(`${$session?.restEndpoint}dmdTask/upload`, {
 						method: 'PUT',
 						body: formData
-					});
-					if (res) {
-						console.log(await res.text());
+					});*/
+					if (fetchRes) {
+						console.log(fetchRes);
 						/*state = 'uploaded';
 						goto(`/dmd/${response}`);*/
 						return {

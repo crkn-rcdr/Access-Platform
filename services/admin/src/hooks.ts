@@ -92,57 +92,16 @@ export async function handle({ event, resolve }) {
 		}
 	}
 
+	// Fetch api response from lapin and return it
+	let url = '';
 	if (event.url.pathname.startsWith('/rest/')) {
-		const url = `${env.hare.url}${fullpath.slice(5)}`;
-
-		let headers = {};
-
-		if (event.request.headers.get('Content-Type'))
-			headers['Content-Type'] = event.request.headers.get('content-Type');
-
-		if (event.request.headers.get('Content-Disposition'))
-			headers['Content-Disposition'] = event.request.headers.get('Content-Disposition');
-
-		const fetchOptions = {
-			method: event.request.method,
-			headers
-		};
-
-		if (event.request.method !== 'HEAD' && event.request.method !== 'GET') {
-			if (event.request.headers.get('Content-Type') === 'application/json') {
-				fetchOptions['body'] = JSON.stringify(await event.request.json());
-			} else {
-				fetchOptions['body'] = await event.request.text();
-			}
-		}
-
-		try {
-			const response = await fetch(url, fetchOptions);
-
-			let body;
-			if (event.request.headers.get('Content-Type') === 'application/json') {
-				body = await response.json();
-			} else {
-				body = await response.text();
-			}
-
-			return new Response(JSON.stringify(body), {
-				status: response.status,
-				// @ts-ignore: TypeScript's DOM library doesn't have Headers.entries()
-				headers: Object.fromEntries(response.headers.entries())
-			});
-		} catch (e) {
-			return new Response('error', {
-				status: 500,
-				headers: {}
-			});
-		}
+		url = env.hare.url;
+	} else if (event.url.pathname.startsWith('/api/')) {
+		url = `${env.lapin.url}/`;
 	}
 
-	// Fetch api response from lapin and return it
-	if (event.url.pathname.startsWith('/api/')) {
-		const url = `${env.lapin.url}/${fullpath.slice(5)}`;
-
+	if (url.length > 0) {
+		url = `${url}${fullpath.slice(5)}`;
 		let headers = {};
 
 		if (event.request.headers.get('Content-Type'))
@@ -189,13 +148,12 @@ export async function handle({ event, resolve }) {
 
 	// Set up `locals`
 	event.locals.info = {
-		restEndpoint: env.admin.urlExternal + '/rest',
+		restEndpoint: env.admin.urlExternal + '/rest/',
 		apiEndpoint: env.admin.urlExternal + '/api',
 		authLogout: env.auth.url + '/logout',
 		user
 	};
 
-	console.log(event.locals.info);
 	return await resolve(event);
 }
 

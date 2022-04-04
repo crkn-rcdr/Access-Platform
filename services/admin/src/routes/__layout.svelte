@@ -18,12 +18,10 @@
 			fetch
 		});
 		//https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch
-		const hare = (info: string, init?: RequestInit): Promise<Response> => {
-			return fetch(`${restEndpoint}/${info}`, init);
-		};
+
 		return {
-			stuff: { lapin, hare },
-			props: { lapin, hare }
+			stuff: { lapin, restEndpoint },
+			props: { lapin, restEndpoint }
 		};
 	};
 </script>
@@ -44,10 +42,7 @@
 	 */
 	export let lapin: TRPCClient<LapinRouter>;
 
-	/**
-	 * @type {HttpClient} Allows the app to to speak to the hare api
-	 */
-	export let hare: HttpClient;
+	export let restEndpoint: string;
 
 	/**
 	 * @type {Session} The session store that contains the module for sending requests to lapin.
@@ -55,7 +50,7 @@
 	const { session } = getStores<Session>();
 
 	/** Allows all other pages to access lapin */
-	session.set({ ...$session, lapin, hare });
+	session.set({ ...$session, lapin, restEndpoint });
 </script>
 
 <pre
