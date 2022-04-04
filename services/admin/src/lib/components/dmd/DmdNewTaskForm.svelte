@@ -82,29 +82,17 @@ none
 		await showConfirmation(
 			async () => {
 				try {
-					//rev/id/filename
-					const fetchRes = await fetch(
-						`/dmd/3-3519a3649d23f5a93c3bdc5049e90e84/parsing/${metadatafile.name}/upload`,
-						{
-							method: 'PUT',
-							body: metadatafile
-						}
-					);
-					/*const bodyObj = {
-						user: $session.user,
-						format: metadataType,
-						file: b64EncodedMetadataFileText,
-						fileName
-					};
-					const response = await $session.lapin.mutation(`dmdTask.create`, bodyObj);*/
-					/*const res = await fetch(`${$session?.restEndpoint}dmdTask/upload`, {
+					//TODO: create & get id and rev
+					const id = 'parsing';
+					const rev = '5-e82b171e14c415500769a116fb111ea9';
+					const fetchRes = await fetch(`/dmd/${rev}/${id}/${metadatafile.name}/upload`, {
 						method: 'PUT',
-						body: formData
-					});*/
+						body: metadatafile
+					});
 					if (fetchRes) {
 						console.log(fetchRes);
 						/*state = 'uploaded';
-						goto(`/dmd/${response}`);*/
+						goto(`/dmd/${id}`);*/
 						return {
 							success: true
 						};
