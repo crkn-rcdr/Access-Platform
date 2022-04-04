@@ -41,6 +41,9 @@ none
 	 * @type {string } Thiis variable is used to show any error with the user's selections to them.
 	 */
 	let errorText: string = '';
+
+	let formData: FormData;
+
 	/**
 	 * TODO: Probably want to move this to a helper module, or straight into the file select component itself.
 	 * This method takes a file and returns a promise with the file contents as a string.
@@ -61,26 +64,17 @@ none
 	 * @returns void
 	 */
 	async function handleFileSelected(event: any) {
-		const file: File = event.detail;
-
-		console.log('Uploading file...');
-		const request = new XMLHttpRequest();
-		const formData = new FormData();
-		formData.append('file', file);
-		const res = await $session?.hare(`dmdTask/upload`, {
-			method: 'POST',
-			body: formData
-		});
-		console.log(res);
-		/*
-    try {
-      b64EncodedMetadataFileText = await convertBlobToBase64(file);
-      fileName = file.name;
-    } catch (e) {
-      console.log(e?.message);
-      errorText =
-        "There was a formatting problem with the metadata file. Please fix it or choose another file.";
-    }*/
+		try {
+			const file: File = event.detail;
+			formData = new FormData();
+			formData.append('file', file);
+			formData.append('user', JSON.stringify($session.user));
+			formData.append('format', metadataType);
+		} catch (e) {
+			console.log(e?.message);
+			errorText =
+				'There was a formatting problem with the metadata file. Please fix it or choose another file.';
+		}
 	}
 	/**
 	 * Sends the create request to lapin. Uses @function showConfirmation to show a notification at the bottom right of the screen saying if the request was sucessful or not. If it is a success, it uses the @function goto ith the DMD task id passed as the response from the request in the url.
@@ -91,16 +85,21 @@ none
 		await showConfirmation(
 			async () => {
 				try {
-					const bodyObj = {
+					/*const bodyObj = {
 						user: $session.user,
 						format: metadataType,
 						file: b64EncodedMetadataFileText,
 						fileName
 					};
-					const response = await $session.lapin.mutation(`dmdTask.create`, bodyObj);
-					if (response) {
-						state = 'uploaded';
-						goto(`/dmd/${response}`);
+					const response = await $session.lapin.mutation(`dmdTask.create`, bodyObj);*/
+					const res = await $session?.hare(`dmdTask/upload`, {
+						method: 'PUT',
+						body: formData
+					});
+					if (res) {
+						console.log(await res.text());
+						/*state = 'uploaded';
+						goto(`/dmd/${response}`);*/
 						return {
 							success: true
 						};
@@ -108,7 +107,7 @@ none
 						state = 'error';
 						return {
 							success: false,
-							details: response
+							details: res
 						};
 					}
 				} catch (e) {

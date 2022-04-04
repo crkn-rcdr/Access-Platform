@@ -1,6 +1,7 @@
 import { Router } from "restify-router";
 import { Request, Response, Next } from "restify";
 import { DMDTask, ShortTask } from "@crkn-rcdr/access-data";
+import * as fs from "fs";
 
 const dmdTaskRouter = new Router();
 
@@ -54,12 +55,29 @@ function list(req: Request, res: Response, next: Next) {
 dmdTaskRouter.post("/dmdTask/list", list);
 
 function upload(req: Request, res: Response, next: Next) {
-  const input = req.files;
-  console.log(input);
-  res.send("moo");
-  next();
+  const file = req.files?.["file"];
+  //console.log(file._writeStream);
+  if (!file) next("upload request requires a file");
+  else {
+    fs.readFile(
+      file.path,
+      (err: NodeJS.ErrnoException | null, data: Buffer) => {
+        if (err) next(err.message);
+        const createData = {
+          user: req.body.user,
+          format: req.body.format,
+          file: data,
+          fileName: file["name"],
+        };
+        req.body.ctx.couch.dmdtask.create(createData).then((taskId: string) => {
+          res.send(202, taskId);
+          next();
+        });
+      }
+    );
+  }
 }
-dmdTaskRouter.post("/dmdTask/upload", upload);
+dmdTaskRouter.put("/dmdTask/upload", upload);
 
 //https://stackoverflow.com/questions/45948918/nodejs-restify-how-can-i-recieve-file-upload-in-api
 
