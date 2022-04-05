@@ -99,8 +99,7 @@ none
 					} else {
 						state = 'error';
 						return {
-							success: false,
-							details: res
+							success: false
 						};
 					}
 				} catch (e) {
