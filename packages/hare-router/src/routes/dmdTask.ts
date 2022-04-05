@@ -8,6 +8,7 @@ declare module "fastify" {
   }
 }
 
+//https://www.fastify.io/docs/latest/Reference/Routes/
 export const dmdTaskRouter: FastifyPluginAsync = async (
   server: FastifyInstance
 ) => {

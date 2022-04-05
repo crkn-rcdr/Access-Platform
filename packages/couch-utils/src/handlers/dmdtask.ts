@@ -90,7 +90,7 @@ export class DMDTaskHandler extends DatabaseHandler<DMDTask> {
       document: taskId,
 
       /** Attachment name */
-      attachmentName: fileName,
+      attachmentName: "metadata",
 
       /** Attachment (as a Buffer) */
       attachment: file,
