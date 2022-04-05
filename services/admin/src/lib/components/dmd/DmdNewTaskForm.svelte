@@ -83,16 +83,28 @@ none
 			async () => {
 				try {
 					//TODO: create & get id and rev
-					const id = 'parsing';
-					const rev = '5-e82b171e14c415500769a116fb111ea9';
-					const fetchRes = await fetch(`/dmd/${rev}/${id}/${metadatafile.name}/upload`, {
+					//const id = 'parsing';
+					//const rev = '5-e82b171e14c415500769a116fb111ea9';
+
+					const data: FormData = new FormData();
+
+					data.append('user', JSON.stringify($session.user));
+					data.append('type', metadataType);
+					data.append('file', metadatafile);
+
+					const res = await fetch(`${$session?.restEndpoint}dmdtask/upload`, {
+						method: 'PUT',
+						body: data
+					});
+
+					/*await fetch(`/dmd/${rev}/${id}/${metadatafile.name}/upload`, {
 						method: 'PUT',
 						body: metadatafile
-					});
-					if (fetchRes) {
-						console.log(fetchRes);
-						/*state = 'uploaded';
-						goto(`/dmd/${id}`);*/
+					});*/
+					if (res) {
+						state = 'uploaded';
+						const id = await res.text();
+						goto(`/dmd/${id}`);
 						return {
 							success: true
 						};
@@ -146,6 +158,7 @@ none
 				buttonClass="primary"
 				showLoader={state === 'uploading'}
 				on:clicked={handleCreateTask}
+				disabled={state !== 'ready'}
 			>
 				<span slot="content">
 					{state !== 'ready'

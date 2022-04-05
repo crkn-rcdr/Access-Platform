@@ -70,12 +70,12 @@
 			async () => {
 				try {
 					sendingDownloadRequest = true;
-					const res = await await fetch(
-						`${$session?.restEndpoint}dmdTask/resultCSV/${dmdTask.id}`,
-						{
-							method: 'GET'
-						}
-					);
+					const link = `${$session?.restEndpoint}dmdtask/resultCSV/${dmdTask.id}`;
+
+					console.log(link);
+					const res = await await fetch(link, {
+						method: 'GET'
+					});
 					const fileBlob = await res.blob();
 					const url = window.URL.createObjectURL(fileBlob);
 					const a = document.createElement('a');

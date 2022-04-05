@@ -6,6 +6,15 @@ const {
 
 console.log(`Starting hare on port ${port}.`);
 
-server.listen(port, function () {
-  console.log("%s listening at %s", server.name, server.url);
+// Run the server!
+const start = async () => {
+  try {
+    await server.listen({ port, host: "0.0.0.0" });
+  } catch (err) {
+    console.log(err);
+    process.exit(1);
+  }
+};
+start().then(() => {
+  console.log("server listening at port", port);
 });

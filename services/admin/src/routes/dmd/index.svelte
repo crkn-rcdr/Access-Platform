@@ -129,7 +129,7 @@
       "dmdTask.list",
       filters
     );*/
-		const res = await await fetch(`${$session?.restEndpoint}dmdTask/list`, {
+		const res = await await fetch(`${$session?.restEndpoint}dmdtask/list`, {
 			method: 'POST',
 			headers: {
 				Accept: 'application/json',

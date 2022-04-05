@@ -129,16 +129,18 @@ export async function handle({ event, resolve }) {
 			let body;
 			if (event.request.headers.get('Content-Type') === 'application/json') {
 				body = await response.json();
+				body = JSON.stringify(body);
 			} else {
 				body = await response.text();
 			}
 
-			return new Response(JSON.stringify(body), {
+			return new Response(body, {
 				status: response.status,
 				// @ts-ignore: TypeScript's DOM library doesn't have Headers.entries()
 				headers: Object.fromEntries(response.headers.entries())
 			});
 		} catch (e) {
+			console.log(e.message);
 			return new Response('error', {
 				status: 500,
 				headers: {}

@@ -53,9 +53,10 @@
 	session.set({ ...$session, lapin, restEndpoint });
 </script>
 
-<pre
-	class="site-nav auto-align auto-align__block auto-align__a-center auto-align__j-between auto-align__wrap">
-  <a href="/"
+<div
+	class="site-nav auto-align auto-align__block auto-align__a-center auto-align__j-between auto-align__wrap"
+>
+	<a href="/"
 		><img
 			width="220"
 			src="/static/canadiana-pa-tag-color.png"
@@ -63,73 +64,71 @@
 		/></a
 	>
 
-  {#if $page.url.pathname !== '/'}
+	{#if $page.url.pathname !== '/'}
 		<nav class="navbar auto-align auto-align__wrap">
-
-      <DropdownMenu direction="right">
-          <div
+			<DropdownMenu direction="right">
+				<div
 					slot="dropdown-button"
 					class={`create-object-menu-button auto-align auto-align__a-center ${
 						$page.url.pathname.includes('/object/new') ? 'active-nav-item' : ''
-					}`}>Create in Access</div>
-          <a href="/object/new/collection">
-            New Collection
-          </a>
-          <a href="/object/new/manifest">
-            New Manifest
-          </a>
-      </DropdownMenu>
+					}`}
+				>
+					Create in Access
+				</div>
+				<a href="/object/new/collection"> New Collection </a>
+				<a href="/object/new/manifest"> New Manifest </a>
+			</DropdownMenu>
 
-      <a
+			<a
 				class="auto-align auto-align__a-center"
 				href="/smelter/find"
 				class:active-nav-item={$page.url.pathname.includes('/smelter')}>Import into Access</a
 			>
 
-      <a
+			<a
 				class="auto-align auto-align__a-center"
 				href="/dmd"
 				class:active-nav-item={$page.url.pathname.includes('/dmd')}>Load Metadata</a
 			>
 
-      <a
+			<a
 				class="auto-align auto-align__a-center"
 				href="/object/edit"
 				class:active-nav-item={$page.url.pathname.includes('/object/edit')}>Edit in Access</a
 			>
 
-
-      <a
+			<a
 				class="auto-align auto-align__a-center"
 				href="/ocr"
 				class:active-nav-item={$page.url.pathname.includes('/ocr')}>Load OCR</a
 			>
-      
-    </nav>
+		</nav>
 	{/if}
-  
-  <div class="right-menu auto-align auto-align__a-center">
- 
-    <a
+
+	<div class="right-menu auto-align auto-align__a-center">
+		<a
 			href="https://github.com/crkn-rcdr/Access-Platform/blob/main/Help.md"
 			target="_blank"
 			data-tooltip="Click to read the glossary and how-to guides!"
-			data-tooltip-flow="bottom">
-      <div class="icon">
-        <FaRegQuestionCircle />
-      </div>
-    </a>
-    
-   <div>
-    <DropdownMenu direction="right">
-      <div slot="dropdown-button" class="icon">
-        <FaRegUserCircle />
-      </div>
-      <div class="disabled">Logged in as: <b>{$session.user.name}</b>, {$session.user.email}.</div>
-    </DropdownMenu>
-   </div>
-  </div>
-</pre>
+			data-tooltip-flow="bottom"
+		>
+			<div class="icon">
+				<FaRegQuestionCircle />
+			</div>
+		</a>
+
+		<div>
+			<DropdownMenu direction="right">
+				<div slot="dropdown-button" class="icon">
+					<FaRegUserCircle />
+				</div>
+				<div class="disabled">
+					Logged in as: <b>{$session.user.name}</b>, {$session.user.email}.
+				</div>
+			</DropdownMenu>
+		</div>
+	</div>
+</div>
 <slot />
 
 <style>
@@ -137,7 +136,7 @@
 		font-family: 'Roboto';
 		src: url('/static/fonts/Roboto-Regular.ttf') format('truetype');
 	}
-	pre {
+	div {
 		position: relative;
 	}
 	.site-nav {
@@ -152,7 +151,7 @@
 	nav > * {
 		font-family: 'Roboto';
 		color: var(--secondary) !important;
-		width: min-content;
+		width: fit-content;
 		height: 6rem;
 		padding: 0 4rem;
 		/*background: var(--nav-item-bg);*/

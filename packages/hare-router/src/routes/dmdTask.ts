@@ -1,84 +1,90 @@
-import { Router } from "restify-router";
-import { Request, Response, Next } from "restify";
 import { DMDTask, ShortTask } from "@crkn-rcdr/access-data";
-import * as fs from "fs";
+import { FastifyInstance, FastifyPluginAsync } from "fastify";
+import { HareContext } from "../context.js";
 
-const dmdTaskRouter = new Router();
-
-function getById(req: Request, res: Response, next: Next) {
-  req.body.ctx.couch.dmdtask.get(req.params.id).then((task: DMDTask) => {
-    res.json(task);
-    next();
-  });
-}
-dmdTaskRouter.get("/dmdTask/:id", getById);
-
-function getResultCSV(req: Request, res: Response, next: Next) {
-  req.body.ctx.couch.dmdtask.get(req.params.id).then((task: DMDTask) => {
-    let csvString =
-      "id,is duplicated,found,parsed,shouldStore,stored,output,label,message\n";
-
-    if ("items" in task && task.items) {
-      const ids: (string | undefined)[] = task.items.map(
-        (item: any) => item.id
-      );
-      const duplicates = ids.filter(
-        (
-          (set: Set<string | undefined>) => (value: string | undefined) =>
-            set.has(value) || !set.add(value)
-        )(new Set())
-      );
-      for (let item of task.items) {
-        ("id,is duplicated?,found?,parsed,shouldStore?,stored?,output,label,message\n");
-        csvString += `${item.id},${duplicates.includes(item.id)},${
-          item.found
-        },${item.parsed},${item.shouldStore},${item.stored},${item.output},"${
-          item.label
-        }","${item.message}"\n`;
-      }
-    }
-    res.header("Content-Type", "text/csv");
-    res.header("Content-Disposition", "attachment; filename=export.csv");
-    res.send(csvString);
-    next();
-  });
-}
-dmdTaskRouter.get("/dmdTask/resultCSV/:id", getResultCSV);
-
-function list(req: Request, res: Response, next: Next) {
-  const input = req.body.filters;
-  req.body.ctx.couch.dmdtask.getAll(input).then((tasks: ShortTask[]) => {
-    res.json(tasks);
-    next();
-  });
-}
-dmdTaskRouter.post("/dmdTask/list", list);
-
-function upload(req: Request, res: Response, next: Next) {
-  const file = req.files?.["file"];
-  //console.log(file._writeStream);
-  if (!file) next("upload request requires a file");
-  else {
-    fs.readFile(
-      file.path,
-      (err: NodeJS.ErrnoException | null, data: Buffer) => {
-        if (err) next(err.message);
-        const createData = {
-          user: req.body.user,
-          format: req.body.format,
-          file: data,
-          fileName: file["name"],
-        };
-        req.body.ctx.couch.dmdtask.create(createData).then((taskId: string) => {
-          res.send(202, taskId);
-          next();
-        });
-      }
-    );
+declare module "fastify" {
+  export interface FastifyInstance {
+    ctx: HareContext;
   }
 }
-dmdTaskRouter.put("/dmdTask/upload", upload);
 
-//https://stackoverflow.com/questions/45948918/nodejs-restify-how-can-i-recieve-file-upload-in-api
+export const dmdTaskRouter: FastifyPluginAsync = async (
+  server: FastifyInstance
+) => {
+  //https://github.com/fastify/fastify-multipart
+  server.put("/upload", async (request, reply) => {
+    try {
+      const file = await request.file();
+      const fileBuffer = await file.toBuffer(); // Buffer
+      const fileName = file.filename;
+      const fields: any = file.fields;
+      const type = fields["type"]?.value;
+      const user = JSON.parse(fields["user"]?.value);
 
-export default dmdTaskRouter;
+      const res = await server.ctx.couch.dmdtask.create({
+        user,
+        fileName,
+        file: fileBuffer,
+        format: type,
+      });
+
+      return reply.code(200).send(res);
+    } catch (e: any) {
+      console.log("e", e?.message);
+      return reply.code(500).send({ error: e?.message });
+    }
+  });
+
+  // list
+  server.post("/list", async (request, reply) => {
+    try {
+      const body: any = request.body;
+      const input = body["filters"];
+      const res: ShortTask[] = await server.ctx.couch.dmdtask.getAll(input);
+      return reply.code(200).send(res);
+    } catch (e: any) {
+      console.log("e", e?.message);
+      return reply.code(500).send({ error: e?.message });
+    }
+  });
+
+  // download
+  server.get("/resultCSV/:id", async (request, reply) => {
+    try {
+      const params: any = request.params;
+      const id = params["id"];
+      const task: DMDTask = await server.ctx.couch.dmdtask.get(id);
+      let csvString =
+        "id,is duplicated,found,parsed,shouldStore,stored,output,label,message\n";
+
+      if ("items" in task && task.items) {
+        const ids: (string | undefined)[] = task.items.map(
+          (item: any) => item.id
+        );
+        const duplicates = ids.filter(
+          (
+            (set: Set<string | undefined>) => (value: string | undefined) =>
+              set.has(value) || !set.add(value)
+          )(new Set())
+        );
+        for (let item of task.items) {
+          ("id,is duplicated?,found?,parsed,shouldStore?,stored?,output,label,message\n");
+          csvString += `${item.id},${duplicates.includes(item.id)},${
+            item.found
+          },${item.parsed},${item.shouldStore},${item.stored},${item.output},"${
+            item.label
+          }","${item.message}"\n`;
+        }
+      }
+
+      return reply
+        .code(200)
+        .type("text/csv")
+        .header("Content-Disposition", "attachment; filename=export.csv")
+        .send(csvString);
+    } catch (e: any) {
+      console.log("e", e?.message);
+      return reply.code(500).send({ error: e?.message });
+    }
+  });
+};
