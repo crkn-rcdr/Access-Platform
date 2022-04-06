@@ -11,6 +11,9 @@
   import type { Session } from "$lib/types";
   import DmdItemSelector from "./DmdItemSelector.svelte";
   import { showConfirmation } from "$lib/utils/confirmation";
+  import { onMount } from "svelte";
+  import NotificationBar from "../shared/NotificationBar.svelte";
+  import { includes } from "lodash-es";
 
   /**
    * @type { DMDTask } The dmd task being displayed
@@ -60,20 +63,14 @@
    */
   let previewingDmdTaskId: string;
 
-  function toggleAllItemsSelected() {
-    shouldUpdateAllItems = !shouldUpdateAllItems;
-    for (let item of dmdTask["items"]) {
-      if (item.parsed) item.shouldStore = shouldUpdateAllItems;
-    }
-    dmdTask = dmdTask;
-  }
+  let filters: any = {};
 
-  function checkIfAllItemsSelected() {
-    // todo backend
-    return (
-      dmdTask["items"].filter((item) => item.shouldStore).length ===
-      dmdTask["items"].length
-    );
+  let duplicateWarning: string = "";
+
+  let duplicates: string[] = [];
+
+  function toggleAllItemsSelected() {
+    dmdTask = dmdTask;
   }
 
   function handlePreviewItemPressed(index: number, item: ItemProcessRecord) {
@@ -99,14 +96,11 @@
   $: {
     dmdTask;
     setState();
-    checkIfAllItemsSelected();
   }
 
   let pageSize = 100;
 
-  async function handlePageChange(event: any) {
-    currentPage = event.detail.page;
-
+  async function getPage() {
     await showConfirmation(
       async () => {
         try {
@@ -114,8 +108,13 @@
             id: dmdTask.id,
             page: currentPage,
             limit: 100,
+            filters,
           });
-          if (pageData && pageData.list) dmdTask["items"] = pageData.list;
+          if (pageData) {
+            if (pageData.list) dmdTask["items"] = pageData.list;
+            if (pageData.totalItems) totalItems = pageData.totalItems;
+            if (pageData.totalPages) totalPages = pageData.totalPages;
+          }
           return {
             success: true,
           };
@@ -131,9 +130,98 @@
       true
     );
   }
+
+  async function handlePageChange(event: any) {
+    currentPage = event.detail.page;
+    await getPage();
+  }
+
+  async function handleStatusFilterChange(event: any) {
+    console.log(event);
+    if (event.target.value === "All") delete filters["stored"];
+    else filters["stored"] = event.target.value === "Succeeded";
+    await getPage();
+  }
+
+  async function checkDuplicates() {
+    await showConfirmation(
+      async () => {
+        try {
+          duplicates = await $session.lapin.query(
+            "dmdTask.duplicates",
+            dmdTask.id
+          );
+
+          if (duplicates && Array.isArray(duplicates) && duplicates.length)
+            duplicateWarning = `Warning! There are duplicate items in your file: ${duplicates.toString()}`;
+
+          return {
+            success: true,
+          };
+        } catch (e) {
+          return {
+            success: false,
+            details: e?.message,
+          };
+        }
+      },
+      "",
+      "Error: failed to get check for duplicates.",
+      true
+    );
+  }
+
+  async function checkIfAllItemsSelected() {
+    await showConfirmation(
+      async () => {
+        try {
+          shouldUpdateAllItems = true; /*await $session.lapin.query(
+            "dmdTask.duplicates",
+            dmdTask.id
+          );*/
+
+          return {
+            success: true,
+          };
+        } catch (e) {
+          return {
+            success: false,
+            details: e?.message,
+          };
+        }
+      },
+      "",
+      "Error: failed to get check for duplicates.",
+      true
+    );
+  }
+
+  onMount(async () => {
+    await checkDuplicates();
+  });
 </script>
 
 {#if dmdTask}
+  {#if showLookupResults}
+    <NotificationBar message={duplicateWarning} status="warn" />
+    {#if duplicates.length}
+      <br />
+    {/if}
+  {/if}
+  {#if state === "updated"}
+    <br />
+    <div class="filters">
+      <span class="auto-align auto-align__column">
+        <label for="stored">Filter Storage Results:</label>
+        <select name="stored" on:change={handleStatusFilterChange}>
+          <option value={"All"}> All </option>
+          <option value={"Succeeded"}> Succeeded </option>
+          <option value={"Failed"}> Failed </option>
+        </select>
+      </span>
+    </div>
+    <br />
+  {/if}
   <table>
     <thead>
       <tr>
@@ -158,12 +246,24 @@
     </thead>
     <tbody>
       {#each dmdTask["items"] as item, i}
-        <tr>
+        <tr
+          class:success={(item.found && showLookupResults) ||
+            ("stored" in item && item.stored && item["shouldStore"])}
+          class:not-success={("found" in item &&
+            !item.found &&
+            showLookupResults) ||
+            ("stored" in item && !item.stored && item["shouldStore"])}
+          class:warning={(duplicates.includes(item.id) && showLookupResults) ||
+            ("stored" in item &&
+              item.stored &&
+              item["shouldStore"] &&
+              item.message.length)}
+        >
           {#if showSelection}
             <td>
               {#if item.shouldStore && !("succeeded" in dmdTask["process"]) && !item.stored}
                 <Loading size="sm" backgroundType="gradient" />
-              {:else if "stored" in item || (item.parsed && item.found)}
+              {:else if !duplicates.includes(item.id) && ("stored" in item || (item.parsed && item.found))}
                 <DmdItemSelector
                   taskId={dmdTask.id}
                   index={i + (currentPage - 1) * pageSize}
@@ -176,14 +276,7 @@
               {/if}
             </td>
           {/if}
-          <td
-            class:success={item.found && showLookupResults}
-            class:not-success={"found" in item &&
-              !item.found &&
-              showLookupResults}
-          >
-            {item.id}
-          </td>
+          <td>{item.id}</td>
           <td>{item.label}</td>
 
           {#if state !== "updated"}
@@ -221,29 +314,23 @@
             >
           </td>
         </tr>
-        {#if "stored" in item}
+        {#if "stored" in item && item["shouldStore"] && item.message.length}
           <tr class="row-details">
             <td class="result-cell" colspan="5">
               <table>
                 <tbody>
                   <tr
-                    class:success={item.stored}
-                    class:warning={item.stored && item.message.length}
-                    class:not-success={!item.stored}
+                    class:warning={"stored" in item &&
+                      item.stored &&
+                      item["shouldStore"] &&
+                      item.message.length}
+                    class:not-success={"stored" in item &&
+                      !item.stored &&
+                      item["shouldStore"]}
                   >
-                    {#if item.message.length}
-                      <td class="detail-label"> Result:</td>
-                      <td>
-                        <XmlViewer xml={item.message} />
-                      </td>
-                    {:else}
-                      <td class="detail-label"> Result:</td>
-                      <td>
-                        <XmlViewer
-                          xml={`Successfully stored metadata in ${dmdTask["destination"]}`}
-                        />
-                      </td>
-                    {/if}
+                    <td>
+                      <XmlViewer xml={item.message} />
+                    </td>
                   </tr>
                 </tbody>
               </table>
