@@ -16,466 +16,431 @@ The editor actions component holds functionality that is responsible for perform
 *Note: `bind:` is required for changes to the serverObject and its model to be reflected in higher level components.*
 -->
 <script lang="ts">
-  import { createEventDispatcher, onMount } from "svelte";
-  import type { Session } from "$lib/types";
-  import type { PagedAccessObject } from "@crkn-rcdr/access-data";
-  import type { NewCollection, NewManifest } from "@crkn-rcdr/access-data";
-  import { getStores } from "$app/stores";
-  import { showConfirmation } from "$lib/utils/confirmation";
-  import { checkValidDiff } from "$lib/utils/validation";
-  import Modal from "$lib/components/shared/Modal.svelte";
-  import { goto } from "$app/navigation";
-  import Loading from "../shared/Loading.svelte";
-  import LoadingButton from "../shared/LoadingButton.svelte";
+	import { createEventDispatcher, onMount } from 'svelte';
+	import type { Session } from '$lib/types';
+	import type { PagedAccessObject } from '@crkn-rcdr/access-data';
+	import type { NewCollection, NewManifest } from '@crkn-rcdr/access-data';
+	import { getStores } from '$app/stores';
+	import { showConfirmation } from '$lib/utils/confirmation';
+	import { checkValidDiff } from '$lib/utils/validation';
+	import Modal from '$lib/components/shared/Modal.svelte';
+	import { goto } from '$app/navigation';
+	import Loading from '../shared/Loading.svelte';
+	import LoadingButton from '../shared/LoadingButton.svelte';
 
-  /**
-   * This is th$lib/utils/confirmationerObject of type AccessObject pulled from the backend, to be edited only once an action is successfully performed.
-   */
-  export let serverObject: PagedAccessObject;
-  /**
-   * The AccessObject editorObject that will be manipulated by the user, usually, a copy of an access pbject that acts as a form model.
-   */
-  export let editorObject: PagedAccessObject;
-  /**
-   * @type {"create" | "edit"} An indicator variable if the editor is in create mode or edit mode.
-   */
-  export let mode: "create" | "edit";
+	/**
+	 * This is th$lib/utils/confirmationerObject of type AccessObject pulled from the backend, to be edited only once an action is successfully performed.
+	 */
+	export let serverObject: PagedAccessObject;
+	/**
+	 * The AccessObject editorObject that will be manipulated by the user, usually, a copy of an access pbject that acts as a form model.
+	 */
+	export let editorObject: PagedAccessObject;
+	/**
+	 * @type {"create" | "edit"} An indicator variable if the editor is in create mode or edit mode.
+	 */
+	export let mode: 'create' | 'edit';
 
-  /**
-   * @type {Session} The session store that contains the module for sending requests to lapin.
-   */
-  const { session } = getStores<Session>();
+	/**
+	 * @type {Session} The session store that contains the module for sending requests to lapin.
+	 */
+	const { session } = getStores<Session>();
 
-  /**
-   * @type {any} A module that quickly deep copies (clones) an serverObject.
-   */
-  let clone: any;
+	/**
+	 * @type {any} A module that quickly deep copies (clones) an serverObject.
+	 */
+	let clone: any;
 
-  /**
-   * @type {boolean} Controls if the save button is displayed or not.
-   */
-  let isSaveEnabled = false;
+	/**
+	 * @type {boolean} Controls if the save button is displayed or not.
+	 */
+	let isSaveEnabled = false;
 
-  /**
-   * @type {boolean} Controls if the move to storage modal is being displayed or not.
-   */
-  let showDeleteModal = false;
+	/**
+	 * @type {boolean} Controls if the move to storage modal is being displayed or not.
+	 */
+	let showDeleteModal = false;
 
-  /**
-   * @type {string} Used to show a message to the user when delete is pressed.
-   */
-  let deleteModalTitle = "";
+	/**
+	 * @type {string} Used to show a message to the user when delete is pressed.
+	 */
+	let deleteModalTitle = '';
 
-  /**
-   * @type {string} Used to show a message to the user when delete is pressed.
-   */
-  let deleteModalMsg = "";
+	/**
+	 * @type {string} Used to show a message to the user when delete is pressed.
+	 */
+	let deleteModalMsg = '';
 
-  let deleteModalActionText = "";
+	let deleteModalActionText = '';
 
-  let isDeleteModalWaiting = false;
+	let isDeleteModalWaiting = false;
 
-  let isDeleting = false;
+	let isDeleting = false;
 
-  /**
-   * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.
-   */
-  const dispatch = createEventDispatcher();
+	/**
+	 * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.
+	 */
+	const dispatch = createEventDispatcher();
 
-  /**
-   * Sets @var isSaveEnabled depending on if the editorObject is valid.
-   * @returns void
-   */
-  function checkEnableSave() {
-    isSaveEnabled = checkValidDiff(serverObject, editorObject);
-  }
+	/**
+	 * Sets @var isSaveEnabled depending on if the editorObject is valid.
+	 * @returns void
+	 */
+	function checkEnableSave() {
+		isSaveEnabled = checkValidDiff(serverObject, editorObject);
+	}
 
-  $: {
-    editorObject;
-    checkEnableSave();
-  }
+	$: {
+		editorObject;
+		checkEnableSave();
+	}
 
-  $: {
-    mode = serverObject?.id ? "edit" : "create";
-  }
+	$: {
+		mode = serverObject?.id ? 'edit' : 'create';
+	}
 
-  async function handleSaveCreate() {
-    await showConfirmation(
-      async () => {
-        try {
-          if (editorObject.type === "manifest") {
-            const data: NewManifest = {
-              slug: editorObject.slug,
-              summary: editorObject.summary,
-              behavior: editorObject.behavior,
-              canvases: [], //editorObject.canvases || [],
-              viewingDirection: editorObject.viewingDirection,
-              type: editorObject.type,
-              label: editorObject.label,
-            };
-            const response = await $session.lapin.mutation(`manifest.new`, {
-              user: $session.user,
-              data,
-            });
-            goto(`/object/edit/${response}`);
-            return {
-              success: true,
-              details: response,
-            };
-          } else if (editorObject.type === "collection") {
-            const data: NewCollection = {
-              slug: editorObject.slug,
-              summary: editorObject.summary,
-              type: editorObject.type,
-              label: editorObject.label,
-              behavior: editorObject.behavior,
-              members: [],
-            };
-            const response = await $session.lapin.mutation(`collection.new`, {
-              user: $session.user,
-              data,
-            });
-            goto(`/object/edit/${response}`);
-            return {
-              success: true,
-              details: response,
-            };
-          } else
-            return {
-              success: false,
-              details: "Object not of type canvas or manifest",
-            };
-        } catch (e) {
-          return {
-            success: false,
-            details: e.message,
-          };
-        }
-      },
-      "Success! Changes saved.",
-      "Error: failed to save changes."
-    );
-  }
+	async function handleSaveCreate() {
+		await showConfirmation(
+			async () => {
+				try {
+					if (editorObject.type === 'manifest') {
+						const data: NewManifest = {
+							slug: editorObject.slug,
+							summary: editorObject.summary,
+							behavior: editorObject.behavior,
+							canvases: [], //editorObject.canvases || [],
+							viewingDirection: editorObject.viewingDirection,
+							type: editorObject.type,
+							label: editorObject.label
+						};
+						const response = await $session.lapin.mutation(`manifest.new`, {
+							user: $session.user,
+							data
+						});
+						goto(`/object/edit/${response}`);
+						return {
+							success: true,
+							details: response
+						};
+					} else if (editorObject.type === 'collection') {
+						const data: NewCollection = {
+							slug: editorObject.slug,
+							summary: editorObject.summary,
+							type: editorObject.type,
+							label: editorObject.label,
+							behavior: editorObject.behavior,
+							members: []
+						};
+						const response = await $session.lapin.mutation(`collection.new`, {
+							user: $session.user,
+							data
+						});
+						goto(`/object/edit/${response}`);
+						return {
+							success: true,
+							details: response
+						};
+					} else
+						return {
+							success: false,
+							details: 'Object not of type canvas or manifest'
+						};
+				} catch (e) {
+					return {
+						success: false,
+						details: e.message
+					};
+				}
+			},
+			'Success! Changes saved.',
+			'Error: failed to save changes.'
+		);
+	}
 
-  /**
-   * Sends the request to the backend to delete the access serverObject.
-   * @returns response
-   */
-  async function handleDelete() {
-    showDeleteModal = false;
-    isDeleting = true;
-    return await showConfirmation(
-      async () => {
-        if (
-          editorObject.type === "manifest" ||
-          editorObject.type === "collection"
-        ) {
-          try {
-            const response = await $session.lapin.mutation(
-              `accessObject.delete`,
-              {
-                id: editorObject.id,
-                user: $session.user,
-              }
-            );
-            //dispatch("updated");
-            //await pullServerObject();
-            goto("/object/edit");
-            isDeleting = false;
-            return { success: true, details: "" };
-          } catch (e) {
-            console.log(e);
-            isDeleting = false;
-            return { success: false, details: e.message };
-          }
-        }
-        isDeleting = false;
-        return {
-          success: false,
-          details: "Object not of type canvas or manifest",
-        };
-      },
-      `Success! Deleted '${editorObject["slug"]}.'`,
-      `Error deleting '${editorObject["slug"]}.'`
-    );
-  }
+	/**
+	 * Sends the request to the backend to delete the access serverObject.
+	 * @returns response
+	 */
+	async function handleDelete() {
+		showDeleteModal = false;
+		isDeleting = true;
+		return await showConfirmation(
+			async () => {
+				if (editorObject.type === 'manifest' || editorObject.type === 'collection') {
+					try {
+						const response = await $session.lapin.mutation(`accessObject.delete`, {
+							id: editorObject.id,
+							user: $session.user
+						});
+						//dispatch("updated");
+						//await pullServerObject();
+						goto('/object/edit');
+						isDeleting = false;
+						return { success: true, details: '' };
+					} catch (e) {
+						console.log(e);
+						isDeleting = false;
+						return { success: false, details: e.message };
+					}
+				}
+				isDeleting = false;
+				return {
+					success: false,
+					details: 'Object not of type canvas or manifest'
+				};
+			},
+			`Success! Deleted '${editorObject['slug']}.'`,
+			`Error deleting '${editorObject['slug']}.'`
+		);
+	}
 
-  /**
-   * This method sends the request to the backend to publish or unpublish an object from the platform.
-   * @param arr
-   * @param currentIndex
-   * @param destinationIndex
-   * @returns response
-   */
-  async function handlePublishStatusChange() {
-    return await showConfirmation(
-      async () => {
-        if (
-          editorObject.type === "manifest" ||
-          editorObject.type === "collection"
-        ) {
-          try {
-            if (editorObject.public) {
-              const response = await $session.lapin.mutation(
-                `accessObject.unpublish`,
-                {
-                  id: editorObject.id,
-                  user: $session.user,
-                }
-              );
-            } else {
-              const response = await $session.lapin.mutation(
-                `accessObject.publish`,
-                {
-                  id: editorObject.id,
-                  user: $session.user,
-                }
-              );
-            }
-            dispatch("updated");
-            //await pullServerObject();
-            return {
-              success: true,
-              details: JSON.stringify(serverObject),
-            };
-          } catch (e) {
-            console.log(e);
-            return { success: false, details: e.message };
-          }
-        }
-        return {
-          success: false,
-          details: "Object not of type canvas or manifest",
-        };
-      },
-      `Success! ${editorObject["public"] ? "Unublish" : "Publish"}ed ${
-        editorObject["type"]
-      }.`,
-      `Error: could not publish ${editorObject["type"]}.`
-    );
-  }
+	/**
+	 * This method sends the request to the backend to publish or unpublish an object from the platform.
+	 * @param arr
+	 * @param currentIndex
+	 * @param destinationIndex
+	 * @returns response
+	 */
+	async function handlePublishStatusChange() {
+		return await showConfirmation(
+			async () => {
+				if (editorObject.type === 'manifest' || editorObject.type === 'collection') {
+					try {
+						if (editorObject.public) {
+							const response = await $session.lapin.mutation(`accessObject.unpublish`, {
+								id: editorObject.id,
+								user: $session.user
+							});
+						} else {
+							const response = await $session.lapin.mutation(`accessObject.publish`, {
+								id: editorObject.id,
+								user: $session.user
+							});
+						}
+						dispatch('updated');
+						//await pullServerObject();
+						return {
+							success: true,
+							details: JSON.stringify(serverObject)
+						};
+					} catch (e) {
+						console.log(e);
+						return { success: false, details: e.message };
+					}
+				}
+				return {
+					success: false,
+					details: 'Object not of type canvas or manifest'
+				};
+			},
+			`Success! ${editorObject['public'] ? 'Unpublish' : 'Publish'}ed ${editorObject['type']}.`,
+			`Error: could not publish ${editorObject['type']}.`
+		);
+	}
 
-  /**
-   * This method pulls the 'serverObject' from the backend. This resets the form and ensures that any problems saving changes are caught.
-   * @returns void
-   */
-  async function pullServerObject() {
-    await showConfirmation(
-      async () => {
-        try {
-          const response = await $session.lapin.query(
-            "accessObject.getPaged",
-            serverObject["id"]
-          );
-          serverObject = response;
-          return {
-            success: true,
-            details: "",
-          };
-        } catch (e) {
-          return {
-            success: false,
-            details: e?.message,
-          };
-        }
-      },
-      "",
-      "Error: failed to update page. Please refresh.",
-      true
-    );
-  }
+	/**
+	 * This method pulls the 'serverObject' from the backend. This resets the form and ensures that any problems saving changes are caught.
+	 * @returns void
+	 */
+	async function pullServerObject() {
+		await showConfirmation(
+			async () => {
+				try {
+					const response = await $session.lapin.query('accessObject.getPaged', serverObject['id']);
+					serverObject = response;
+					return {
+						success: true,
+						details: ''
+					};
+				} catch (e) {
+					return {
+						success: false,
+						details: e?.message
+					};
+				}
+			},
+			'',
+			'Error: failed to update page. Please refresh.',
+			true
+		);
+	}
 
-  function setDeletionModalTextEnabled() {
-    deleteModalTitle = `Are you sure you want to delete ${serverObject["slug"]}?`;
-    deleteModalMsg = `By deleting ${serverObject["slug"]}, you will be taking it out of all the collections it belongs to. You will be able to use the slug, "${serverObject["slug"]}", for future ${serverObject["type"]}s. You can add ${serverObject["slug"]} back into the access platform by importing it from preservation again.`;
-    deleteModalActionText = `Delete`;
-  }
+	function setDeletionModalTextEnabled() {
+		deleteModalTitle = `Are you sure you want to delete ${serverObject['slug']}?`;
+		deleteModalMsg = `By deleting ${serverObject['slug']}, you will be taking it out of all the collections it belongs to. You will be able to use the slug, "${serverObject['slug']}", for future ${serverObject['type']}s. You can add ${serverObject['slug']} back into the access platform by importing it from preservation again.`;
+		deleteModalActionText = `Delete`;
+	}
 
-  function setDeletionModalTextWaiting() {
-    deleteModalTitle = `${serverObject["slug"]} can't be deleted yet.`;
-    deleteModalMsg = `There are background processes running preventing ${serverObject["slug"]} from being deleted. Please wait...`;
-    deleteModalActionText = `Ok`;
-  }
+	function setDeletionModalTextWaiting() {
+		deleteModalTitle = `${serverObject['slug']} can't be deleted yet.`;
+		deleteModalMsg = `There are background processes running preventing ${serverObject['slug']} from being deleted. Please wait...`;
+		deleteModalActionText = `Ok`;
+	}
 
-  function setDeletionModalTextTryAgain() {
-    console.log("No tries left");
-    deleteModalTitle = `${serverObject["slug"]} can not be deleted.`;
-    deleteModalMsg = `Can not delete ${serverObject["slug"]}. There are background processes running on ${serverObject["slug"]}. Please wait and try again later.`;
-    deleteModalActionText = `Ok`;
-  }
+	function setDeletionModalTextTryAgain() {
+		console.log('No tries left');
+		deleteModalTitle = `${serverObject['slug']} can not be deleted.`;
+		deleteModalMsg = `Can not delete ${serverObject['slug']}. There are background processes running on ${serverObject['slug']}. Please wait and try again later.`;
+		deleteModalActionText = `Ok`;
+	}
 
-  function setDeletionModalTextError() {
-    deleteModalTitle = `${serverObject["slug"]} can't be deleted.`;
-    deleteModalMsg = `There was a problem when background processes ran on ${serverObject["slug"]} that is preventing it from being deleted. Message: ${serverObject["updateInternalmeta"]?.["message"]}`;
-    deleteModalActionText = `Ok`;
-  }
+	function setDeletionModalTextError() {
+		deleteModalTitle = `${serverObject['slug']} can't be deleted.`;
+		deleteModalMsg = `There was a problem when background processes ran on ${serverObject['slug']} that is preventing it from being deleted. Message: ${serverObject['updateInternalmeta']?.['message']}`;
+		deleteModalActionText = `Ok`;
+	}
 
-  async function openDeletionModal() {
-    console.log(serverObject.updateInternalmeta);
-    if (
-      !serverObject.updateInternalmeta ||
-      (serverObject.updateInternalmeta &&
-        "succeeded" in serverObject.updateInternalmeta)
-    ) {
-      console.log("one");
-      if (
-        serverObject.updateInternalmeta &&
-        serverObject.updateInternalmeta["succeeded"]
-      ) {
-        console.log("two");
-        isDeleteModalWaiting = false;
-        setDeletionModalTextEnabled();
-      } else if (!serverObject.updateInternalmeta) {
-        console.log("two");
-        isDeleteModalWaiting = false;
-        setDeletionModalTextEnabled();
-      } else {
-        console.log("three");
-        isDeleteModalWaiting = false;
-        setDeletionModalTextError();
-      }
-    } else {
-      console.log("four");
-      isDeleteModalWaiting = true;
-      setDeletionModalTextWaiting();
+	async function openDeletionModal() {
+		console.log(serverObject.updateInternalmeta);
+		if (
+			!serverObject.updateInternalmeta ||
+			(serverObject.updateInternalmeta && 'succeeded' in serverObject.updateInternalmeta)
+		) {
+			console.log('one');
+			if (serverObject.updateInternalmeta && serverObject.updateInternalmeta['succeeded']) {
+				console.log('two');
+				isDeleteModalWaiting = false;
+				setDeletionModalTextEnabled();
+			} else if (!serverObject.updateInternalmeta) {
+				console.log('two');
+				isDeleteModalWaiting = false;
+				setDeletionModalTextEnabled();
+			} else {
+				console.log('three');
+				isDeleteModalWaiting = false;
+				setDeletionModalTextError();
+			}
+		} else {
+			console.log('four');
+			isDeleteModalWaiting = true;
+			setDeletionModalTextWaiting();
 
-      (function requestLoop(i) {
-        setTimeout(async () => {
-          isDeleteModalWaiting = true;
-          await pullServerObject();
-          if (
-            serverObject.updateInternalmeta &&
-            "succeeded" in serverObject.updateInternalmeta
-          ) {
-            if (serverObject.updateInternalmeta?.["succeeded"]) {
-              isDeleteModalWaiting = false;
-              setDeletionModalTextEnabled();
-            } else {
-              isDeleteModalWaiting = false;
-              setDeletionModalTextError();
-            }
-          } else {
-            //isDeleteModalWaiting = true;
-            //setDeletionModalTextWaiting();
-            if (--i) {
-              console.log("More tries left");
-              requestLoop(i);
-            } else {
-              isDeleteModalWaiting = false;
-              setDeletionModalTextTryAgain();
-            }
-          }
-        }, 30000);
-      })(30);
-    }
+			(function requestLoop(i) {
+				setTimeout(async () => {
+					isDeleteModalWaiting = true;
+					await pullServerObject();
+					if (serverObject.updateInternalmeta && 'succeeded' in serverObject.updateInternalmeta) {
+						if (serverObject.updateInternalmeta?.['succeeded']) {
+							isDeleteModalWaiting = false;
+							setDeletionModalTextEnabled();
+						} else {
+							isDeleteModalWaiting = false;
+							setDeletionModalTextError();
+						}
+					} else {
+						//isDeleteModalWaiting = true;
+						//setDeletionModalTextWaiting();
+						if (--i) {
+							console.log('More tries left');
+							requestLoop(i);
+						} else {
+							isDeleteModalWaiting = false;
+							setDeletionModalTextTryAgain();
+						}
+					}
+				}, 30000);
+			})(30);
+		}
 
-    showDeleteModal = true;
-  }
+		showDeleteModal = true;
+	}
 
-  /**
-   * @event onMount
-   * @description When the component instance is mounted onto the dom, the 'clone' variable is set to the rfdc module.
-   */
-  onMount(async () => {
-    clone = (await import("rfdc")).default();
-  });
+	/**
+	 * @event onMount
+	 * @description When the component instance is mounted onto the dom, the 'clone' variable is set to the rfdc module.
+	 */
+	onMount(async () => {
+		clone = (await import('rfdc')).default();
+	});
 </script>
 
 <span class="editor-actions auto-align auto-align__a-center">
-  {#if mode === "create"}
-    <button class="save" disabled={!isSaveEnabled} on:click={handleSaveCreate}
-      >Create</button
-    >
-  {/if}
+	{#if mode === 'create'}
+		<button class="save" disabled={!isSaveEnabled} on:click={handleSaveCreate}>Create</button>
+	{/if}
 
-  {#if editorObject["id"]}
-    {#if editorObject["type"] === "manifest"}
-      <!--a
+	{#if editorObject['id']}
+		{#if editorObject['type'] === 'manifest'}
+			<!--a
         href={`/smelter/slug?slugs=${editorObject["slug"]}`}
         data-tooltip-flow="bottom"
         data-tooltip="Re-import the source package for this manifest (if applicable.) This will reset this manifest, making it match the preservation package it was derived from."
       >
         <button class="secondary">Re-import</button>
       </a-->
-      <i class="reassurance"
-        >Afraid of making changes? Don't worry. If you make a mistake you can
-        always re-import the package.</i
-      >
-    {/if}
+			<i class="reassurance"
+				>Afraid of making changes? Don't worry. If you make a mistake you can always re-import the
+				package.</i
+			>
+		{/if}
 
-    <button
-      class="secondary"
-      on:click={handlePublishStatusChange}
-      disabled={!serverObject["public"] && !serverObject["dmdType"]}
-      data-tooltip={!serverObject["public"] && !serverObject["dmdType"]
-        ? `Publishing is disabled for ${serverObject["type"]}s with no metadata. Please use the "Load Metadata" tool to add metadata to your ${serverObject["type"]}.`
-        : serverObject["public"]
-        ? `Hide this ${serverObject["type"]} from the access platform.`
-        : `Make this ${serverObject["type"]} available on the access platform.`}
-      data-tooltip-flow="left"
-    >
-      {serverObject["public"] ? "Unpublish" : "Publish"}
-    </button>
+		<button
+			class="secondary"
+			on:click={handlePublishStatusChange}
+			disabled={!serverObject['public'] && !serverObject['dmdType']}
+			data-tooltip={!serverObject['public'] && !serverObject['dmdType']
+				? `Publishing is disabled for ${serverObject['type']}s with no metadata. Please use the "Load Metadata" tool to add metadata to your ${serverObject['type']}.`
+				: serverObject['public']
+				? `Hide this ${serverObject['type']} from the access platform.`
+				: `Make this ${serverObject['type']} available on the access platform.`}
+			data-tooltip-flow="left"
+		>
+			{serverObject['public'] ? 'Unpublish' : 'Publish'}
+		</button>
 
-    {#if serverObject["slug"] && !serverObject["public"]}
-      <LoadingButton
-        buttonClass="danger"
-        on:clicked={openDeletionModal}
-        showLoader={isDeleting}
-      >
-        <span slot="content">{isDeleting ? "Deleting..." : "Delete"} </span>
-      </LoadingButton>
-    {/if}
-  {/if}
+		{#if serverObject['slug'] && !serverObject['public']}
+			<LoadingButton buttonClass="danger" on:clicked={openDeletionModal} showLoader={isDeleting}>
+				<span slot="content">{isDeleting ? 'Deleting...' : 'Delete'} </span>
+			</LoadingButton>
+		{/if}
+	{/if}
 </span>
 
 <Modal bind:open={showDeleteModal} title={deleteModalTitle}>
-  <div slot="body">
-    {#if isDeleteModalWaiting}
-      {deleteModalMsg}
-      <br />
-      <br />
-      <div class="modal-loader-wrap">
-        <Loading backgroundType="gradient" />
-      </div>
-    {:else}
-      <p>{deleteModalMsg}</p>
-    {/if}
-  </div>
-  <div slot="footer">
-    <button class="secondary" on:click={() => (showDeleteModal = false)}>
-      Cancel
-    </button>
-    {#if !isDeleteModalWaiting}
-      {#if deleteModalActionText === "Ok"}
-        <button
-          class="primary"
-          on:click={() => {
-            showDeleteModal = false;
-          }}
-        >
-          {deleteModalActionText}
-        </button>
-      {:else}
-        <button class="danger" on:click={handleDelete}>
-          {deleteModalActionText}
-        </button>
-      {/if}
-    {/if}
-  </div>
+	<div slot="body">
+		{#if isDeleteModalWaiting}
+			{deleteModalMsg}
+			<br />
+			<br />
+			<div class="modal-loader-wrap">
+				<Loading backgroundType="gradient" />
+			</div>
+		{:else}
+			<p>{deleteModalMsg}</p>
+		{/if}
+	</div>
+	<div slot="footer">
+		<button class="secondary" on:click={() => (showDeleteModal = false)}> Cancel </button>
+		{#if !isDeleteModalWaiting}
+			{#if deleteModalActionText === 'Ok'}
+				<button
+					class="primary"
+					on:click={() => {
+						showDeleteModal = false;
+					}}
+				>
+					{deleteModalActionText}
+				</button>
+			{:else}
+				<button class="danger" on:click={handleDelete}>
+					{deleteModalActionText}
+				</button>
+			{/if}
+		{/if}
+	</div>
 </Modal>
 
 <style>
-  :global(.editor-actions button) {
-    margin-left: var(--margin-sm);
-  }
-  /* .centered-modal-content, */
-  .modal-loader-wrap {
-    height: 5rem;
-  }
-  .reassurance {
-    font-size: 1rem;
-    min-width: 16rem;
-    color: var(--secondary);
-  }
+	:global(.editor-actions button) {
+		margin-left: var(--margin-sm);
+	}
+	/* .centered-modal-content, */
+	.modal-loader-wrap {
+		height: 5rem;
+	}
+	.reassurance {
+		font-size: 1rem;
+		min-width: 16rem;
+		color: var(--secondary);
+	}
 </style>

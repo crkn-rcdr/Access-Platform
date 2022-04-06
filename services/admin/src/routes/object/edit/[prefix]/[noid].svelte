@@ -16,7 +16,7 @@
 
 				const membership = await stuff.lapin.query('accessObject.getMembership', id);
 
-				const chacheStatus = await stuff.lapin.query('accessObject.getChacheStatus', id);
+				const cacheStatus = await stuff.lapin.query('accessObject.getCacheStatus', id);
 
 				let firstPage: ObjectListPage;
 				let childrenCount;
@@ -44,7 +44,7 @@
 						id,
 						childrenCount,
 						firstPage,
-						chacheStatus,
+						cacheStatus,
 						error: ''
 					}
 				};
@@ -72,6 +72,9 @@
 	import Editor from '$lib/components/access-objects/Editor.svelte';
 	import NotificationBar from '$lib/components/shared/NotificationBar.svelte';
 	import Loading from '$lib/components/shared/Loading.svelte';
+	import timer from '$lib/stores/timer';
+	import { onDestroy, onMount } from 'svelte';
+	import { session } from '$app/stores';
 
 	export let id: Noid;
 
@@ -103,14 +106,24 @@
 	/**
 	 * @type {{ found: true; result: any } | { found: false }} The status of the process that moves the data into the access platform databases
 	 */
-	export let chacheStatus: { found: true; result: any } | { found: false };
+	export let cacheStatus: { found: true; result: any } | { found: false };
 
-	// The `key` directive below reloads this component's contents when `id` changes.
+	let unsubscribe;
+
+	const interval = timer({ interval: 30000 }); // 2x per min
+	onMount(() => {
+		unsubscribe = interval.subscribe(async () => {
+			cacheStatus = await $session.lapin.query('accessObject.getCacheStatus', id);
+		});
+	});
+	onDestroy(() => {
+		if (unsubscribe) unsubscribe();
+	});
 </script>
 
 {#key id}
 	{#if serverObject}
-		<Editor bind:serverObject {membership} {firstPage} {childrenCount} {chacheStatus} />
+		<Editor bind:serverObject {membership} {firstPage} {childrenCount} bind:cacheStatus />
 	{:else if error}
 		<br />
 		<div class="wrapper">

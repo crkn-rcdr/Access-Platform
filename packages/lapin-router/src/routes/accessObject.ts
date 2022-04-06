@@ -69,11 +69,11 @@ export const accessObjectRouter = createRouter()
       }
     },
   })
-  .query("getChacheStatus", {
+  .query("getCacheStatus", {
     input: Noid.parse,
     async resolve({ input: id, ctx }) {
       try {
-        return await ctx.couch.access.getChacheStatus(id);
+        return await ctx.couch.access.getCacheStatus(id);
       } catch (e) {
         throw httpErrorToTRPC(e);
       }
