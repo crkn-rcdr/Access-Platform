@@ -82,14 +82,6 @@
 	let filterTimer: NodeJS.Timeout | null = null;
 	let filters: any = {};
 
-	let unsubscribe;
-	const interval = timer({ interval: 60000 }); // 1x per min
-	/**
-	 * @type {NodeJS.Timeout | null} Used to debounce the filtering of tasks.
-	 */
-	let filterTimer: NodeJS.Timeout | null = null;
-	let filters: any = {};
-
 	/**
 	 * @type {Session} The session store that contains the module for sending requests to lapin.
 	 */
