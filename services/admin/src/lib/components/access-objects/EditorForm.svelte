@@ -63,7 +63,7 @@ This component displays the non content properties for an access editorObject an
 
 	let unsubscribe;
 
-	const interval = timer({ interval: 30000 }); // 2x per min
+	const interval = timer({ interval: 15000 }); // 2x per min
 
 	function handleSavePressed(event: any) {
 		dispatch('save', event.detail);
