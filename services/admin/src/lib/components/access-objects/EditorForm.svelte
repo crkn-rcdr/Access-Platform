@@ -26,6 +26,8 @@ This component displays the non content properties for an access editorObject an
 	import { showConfirmation } from '$lib/utils/confirmation';
 	import SlugSearch from './SlugSearch.svelte';
 	//import { editorObjectStore } from "$lib/stores/accessObjectEditorStore";
+	import { onDestroy, onMount } from 'svelte';
+	import timer from '$lib/stores/timer';
 
 	/**
 	 * @type {PagedAccessObject} The editorObject that will be manipulated by the user, usually, a copy of an access object that acts as a form model.
@@ -58,6 +60,10 @@ This component displays the non content properties for an access editorObject an
 	const dispatch = createEventDispatcher();
 
 	let isSlugValid = true;
+
+	let unsubscribe;
+
+	const interval = timer({ interval: 30000 }); // 2x per min
 
 	function handleSavePressed(event: any) {
 		dispatch('save', event.detail);
@@ -94,6 +100,17 @@ This component displays the non content properties for an access editorObject an
 		editorObject;
 		dispatch('change', editorObject);
 	}
+
+	onMount(() => {
+		if (cacheStatus) {
+			unsubscribe = interval.subscribe(async () => {
+				cacheStatus = await $session.lapin.query('accessObject.getCacheStatus', editorObject.id);
+			});
+		}
+	});
+	onDestroy(() => {
+		if (unsubscribe) unsubscribe();
+	});
 </script>
 
 {#if editorObject}
