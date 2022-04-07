@@ -382,14 +382,14 @@ Allows the user to modify the member list for a collection.
 		await showConfirmation(
 			async () => {
 				try {
-					const failedUpdates = await $session.lapin.mutation('collection.unpublishAllMembers', {
+					const updated = await $session.lapin.mutation('collection.unpublishAllMembers', {
 						id: collection.id,
 						user: $session.user
 					});
 					await sendCurrentPageRequest();
 					bulkLoading = false;
 
-					if (failedUpdates?.length) {
+					if (!updated) {
 						return {
 							success: false,
 							details: 'Please contact the platform team for assistance.'
@@ -418,14 +418,14 @@ Allows the user to modify the member list for a collection.
 		await showConfirmation(
 			async () => {
 				try {
-					const failedUpdates = await $session.lapin.mutation('collection.publishAllMembers', {
+					const updated = await $session.lapin.mutation('collection.publishAllMembers', {
 						id: collection.id,
 						user: $session.user
 					});
 					await sendCurrentPageRequest();
 					bulkLoading = false;
 
-					if (failedUpdates?.length) {
+					if (!updated) {
 						return {
 							success: false,
 							details: 'Please contact the platform team for assistance.'
