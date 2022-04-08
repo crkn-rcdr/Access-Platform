@@ -7,54 +7,56 @@
 	import type { RootLoadOutput } from '$lib/types';
 	export const load: Load<RootLoadOutput> = async ({ params, stuff }) => {
 		try {
-			if (params['prefix'] && params['noid']) {
+			if (params && params['prefix'] && params['noid']) {
 				const id = [params['prefix'] as string, params['noid'] as string].join('/');
-				const serverObject: PagedAccessObject = await stuff.lapin.query(
-					'accessObject.getPaged',
-					id
-				);
 
-				const membership = await stuff.lapin.query('accessObject.getMembership', id);
+				if (id) {
+					const serverObject: PagedAccessObject = await stuff.lapin.query(
+						'accessObject.getPaged',
+						id
+					);
 
-				const cacheStatus = await stuff.lapin.query('accessObject.getCacheStatus', id);
+					const membership = await stuff.lapin.query('accessObject.getMembership', id);
 
-				let firstPage: ObjectListPage;
-				let childrenCount;
+					let firstPage: ObjectListPage;
+					let childrenCount;
 
-				if (serverObject['members']) {
-					firstPage = await stuff.lapin.query('collection.pageAfter', {
-						id: serverObject.id,
-						after: null,
-						limit: 100
-					});
-					childrenCount = serverObject['members'].count;
-				} else if (serverObject['canvases']) {
-					firstPage = await stuff.lapin.query('manifest.pageAfter', {
-						id: serverObject.id,
-						after: null,
-						limit: 100
-					});
-					childrenCount = serverObject['canvases'].count;
-				}
-
-				return {
-					props: {
-						serverObject,
-						membership,
-						id,
-						childrenCount,
-						firstPage,
-						cacheStatus,
-						error: ''
+					if (serverObject['members']) {
+						firstPage = await stuff.lapin.query('collection.pageAfter', {
+							id: serverObject.id,
+							after: null,
+							limit: 100
+						});
+						childrenCount = serverObject['members'].count;
+					} else if (serverObject['canvases']) {
+						firstPage = await stuff.lapin.query('manifest.pageAfter', {
+							id: serverObject.id,
+							after: null,
+							limit: 100
+						});
+						childrenCount = serverObject['canvases'].count;
 					}
-				};
+
+					return {
+						props: {
+							serverObject,
+							membership,
+							id,
+							childrenCount,
+							firstPage,
+							error: ''
+						}
+					};
+				}
+				return { props: {} };
 			}
 			return { props: { error: 'Could not find prefix or noid in url.' } };
 		} catch (e) {
+			console.log(e.message);
 			return {
 				props: {
-					error:
-						'Could not get item from the server. Please contact the platform team for assistance.'
+					error: e.message
+					/*'Could not get item from the server. Please contact the platform team for assistance.'*/
 				}
 			};
 		}
@@ -99,16 +101,11 @@
 	 * @type {string} An error message insdicating what went wrong.
 	 */
 	export let error: string;
-
-	/**
-	 * @type {{ found: true; result: any } | { found: false }} The status of the process that moves the data into the access platform databases
-	 */
-	export let cacheStatus: { found: true; result: any } | { found: false };
 </script>
 
 {#key id}
 	{#if serverObject}
-		<Editor bind:serverObject {membership} {firstPage} {childrenCount} {cacheStatus} />
+		<Editor bind:serverObject {membership} {firstPage} {childrenCount} />
 	{:else if error}
 		<br />
 		<div class="wrapper">
