@@ -9,7 +9,7 @@ You will need to set these yourself:
 - `NODE_ENV`: set this to `production` if running in production
 - `ADMIN_URL_EXTERNAL`: public-facing URL serving the admin tools (e.g. `https://access.canadiana.ca`)
 - `AUTH_JWT_SECRET`: secret for verifying platform JWTs
-- `COUCHDB_URL`: URL serving CouchDB (e.g. `http://iris.tor.c7a.ca:5984`)
+- `COUCHDB_URL`: URL serving CouchDB (e.g. `http://jarlsberg.tor.c7a.ca:5984`)
 - `COUCHDB_PASSWORD`: the CouchDB admin user's password
 - `LAPIN_URL`: network-internal URL serving lapin (i.e., something the admin tools has access to)
 - `NOID_URL`: URL pointing to the Noid minting service (e.g. `http://noid.c7a.ca`)

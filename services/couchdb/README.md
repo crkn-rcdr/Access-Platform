@@ -8,7 +8,7 @@ To deploy with Kivik, copy [`./kivikrc.example.json`](kivikrc.example.json) to `
 
     $ kivik deploy production
 
-to deploy design docs and indexes to our Couch endpoint on `iris.tor.c7a.ca`.
+to deploy design docs and indexes to our Couch endpoint on `jarlsberg.tor.c7a.ca`.
 
 ## Design documents
 
