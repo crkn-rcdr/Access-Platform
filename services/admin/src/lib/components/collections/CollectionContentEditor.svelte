@@ -408,7 +408,7 @@ Allows the user to modify the member list for a collection.
 					};
 				}
 			},
-			'Success: all members unpublished.',
+			'Success: all members are being unpublished. Please wait.',
 			'Error: failed to unpublish one or more members.'
 		);
 	}
@@ -444,7 +444,7 @@ Allows the user to modify the member list for a collection.
 					};
 				}
 			},
-			'Success: all members published.',
+			'Success: all members are being published. Please wait.',
 			'Error: failed to publish one or more members.'
 		);
 	}
