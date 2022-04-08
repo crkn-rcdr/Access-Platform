@@ -84,6 +84,13 @@ Allows the user to modify the member list for a collection.
 	let shuffleLoading: boolean = false;
 
 	//let list: HTMLElement;
+	/**
+	 * A helper method to slow down the rate of requests going to the backend. Causes the script to pause for 'ms.'
+	 * @param ms
+	 */
+	function sleep(ms: number) {
+		return new Promise((resolve) => setTimeout(resolve, ms));
+	}
 
 	function setPositions() {
 		if (!members?.length) return;
@@ -386,6 +393,7 @@ Allows the user to modify the member list for a collection.
 						id: collection.id,
 						user: $session.user
 					});
+					await sleep(2000);
 					await sendCurrentPageRequest();
 					bulkLoading = false;
 
@@ -422,6 +430,7 @@ Allows the user to modify the member list for a collection.
 						id: collection.id,
 						user: $session.user
 					});
+					await sleep(2000);
 					await sendCurrentPageRequest();
 					bulkLoading = false;
 
