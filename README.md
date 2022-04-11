@@ -157,3 +157,5 @@ In the ticket, remember to:
 ### Production environment variables
 
 More information about what environment variables are expected can be found in [the env package](packages/env).
+
+Note: everything in production is done by port and not IP address. We need to ensure that ports are unique whenever adding in a new container.
