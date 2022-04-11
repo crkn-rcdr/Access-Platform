@@ -144,6 +144,16 @@ Avoid doing this frivolously, as changes to these files could cause hours-long d
 
 The production image is tagged `access-platform:prod`. When you're satisfied with how the production containers look, run `pnpm deploy` to tag and push the image to our private Docker repository.
 
+As part of the ticket that is created to deploy the new Docker image to production:
+
+In the ticket, remember to:
+
+- Link to the PRs included in your new image
+- Document any new environment variables, and their meaning
+- Document any new volume mounts for data that should persist.
+- Document any changes to docker-compose, especially new containers, so the equivalents can be made in production.
+- Document any new network connections that need to work. For example, if there is a path between what in the dev environment is called "access-admin" and "access-hare". If there was a new path from HAProxy, that would need to be documented as the HAProxy config would need to change as well.
+
 ### Production environment variables
 
 More information about what environment variables are expected can be found in [the env package](packages/env).
