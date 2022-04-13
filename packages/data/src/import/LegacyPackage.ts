@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { MD5 } from "../util/MD5.js";
 import { Noid } from "../util/Noid.js";
-import { SmeltProcess, ProcessResult } from "../util/ProcessUpdate.js"; //ProcessUpdate
+import { ProcessUpdate, ProcessResult } from "../util/ProcessUpdate.js"; //ProcessUpdate
 import { Slug } from "../util/Slug.js";
 import { StaffUpdate } from "../util/StaffUpdate.js";
 import { Timestamp } from "../util/Timestamp.js";
@@ -75,12 +75,12 @@ export const LegacyPackage = z.object({
   /**
    * Request for a Smelter operation on this package.
    */
-  smelt: SmeltProcess.optional(),
+  smelt: ProcessUpdate.optional(),
 
   /**
    * Request to extract OCR information from his package.
    */
-  ocr: SmeltProcess.optional(),
+  ocr: ProcessUpdate.optional(),
 
   /**
    * A record of the staff member who caused this record to be updated.
