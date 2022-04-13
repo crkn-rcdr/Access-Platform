@@ -49,6 +49,10 @@ Uses [tRPC](https://trpc.io) to define the interface.
 
 Access Platform admin tools, built with [SvelteKit](https://kit.svelte.dev).
 
+### Network Communication Diagram
+![Screenshot from 2022-04-11 15-52-40](https://user-images.githubusercontent.com/10541019/163195471-360e1ef0-14c7-432b-b121-9ffe2b0abf89.png)
+
+
 ## Technical instructions
 
 ### Prerequisites

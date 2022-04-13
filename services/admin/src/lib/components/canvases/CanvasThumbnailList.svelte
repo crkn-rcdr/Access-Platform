@@ -199,7 +199,7 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
 					};
 				}
 			},
-			'Success: the new canvas position has saved.',
+			'Success: the new canvas position was saved.',
 			'Error: failed to move canvas.'
 		);
 
