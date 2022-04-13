@@ -1,3 +1,3 @@
-# services/lapin - Access Platform administrative API
+# services/hare - Access Platform administrative REST API
 
-Thin wrapper around the [lapin-router](../../packages/lapin-router) package. See there for more.
+Thin wrapper around the [hare-router](../../packages/hare-router) package. See there for more.

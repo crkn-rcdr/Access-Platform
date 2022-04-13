@@ -434,7 +434,10 @@ export class AccessHandler extends DatabaseHandler<AccessObject> {
       }
 
       try {
-        return await this.bulkPublish(ids, user);
+        this.bulkPublish(ids, user).then((value) => {
+          console.log(`Done publishing members of ${id}: `, value);
+        });
+        return true;
       } catch (e: any) {
         console.log(e?.message);
         return false;
@@ -453,7 +456,10 @@ export class AccessHandler extends DatabaseHandler<AccessObject> {
       }
 
       try {
-        return await this.bulkUnpublish(ids, user);
+        this.bulkUnpublish(ids, user).then((value) => {
+          console.log(`Done unpublishing members of ${id}: `, value);
+        });
+        return true;
       } catch (e: any) {
         console.log(e?.message);
         return false;

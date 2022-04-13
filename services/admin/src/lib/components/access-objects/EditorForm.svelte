@@ -101,8 +101,10 @@ This component displays the non content properties for an access editorObject an
 		dispatch('change', editorObject);
 	}
 
-	onMount(() => {
-		if (cacheStatus) {
+	onMount(async () => {
+		if (editorObject.id) {
+			cacheStatus = await $session.lapin.query('accessObject.getCacheStatus', editorObject.id);
+
 			unsubscribe = interval.subscribe(async () => {
 				cacheStatus = await $session.lapin.query('accessObject.getCacheStatus', editorObject.id);
 			});

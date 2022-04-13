@@ -98,7 +98,7 @@
 				}
 			},
 			'',
-			'Error: failed to reset task.',
+			'Error: failed to download results.',
 			true
 		);
 	}
