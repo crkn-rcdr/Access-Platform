@@ -4,8 +4,9 @@
 FROM node:16.11.1-alpine AS init
 
 ENV ADMIN_PORT=4747 \
-    ADMIN_DEV_WS_PORT=14747 \
-    LAPIN_PORT=5858
+    DEV_ADMIN_WS_PORT=14747 \
+    LAPIN_PORT=5858 \
+    HARE_PORT=5959
 
 RUN apk add --no-cache curl
 RUN curl -sL https://unpkg.com/@pnpm/self-installer | node

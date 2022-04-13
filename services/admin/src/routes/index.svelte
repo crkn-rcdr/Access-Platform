@@ -1,23 +1,23 @@
 <script lang="ts">
-  /**
-   * @file
-   * @description This is the main page for the app
-   */
-  import DropdownMenu from "$lib/components/shared/DropdownMenu.svelte";
-  import { getStores, page } from "$app/stores";
-  import type { Session } from "$lib/types";
-  /**
-   * @type {Session} The session store that contains the module for sending requests to lapin.
-   */
-  const { session } = getStores<Session>();
-  //import NotificationBar from "$lib/components/shared/NotificationBar.svelte";
-  let name = "";
+	/**
+	 * @file
+	 * @description This is the main page for the app
+	 */
+	import DropdownMenu from '$lib/components/shared/DropdownMenu.svelte';
+	import { getStores, page } from '$app/stores';
+	import type { Session } from '$lib/types';
+	/**
+	 * @type {Session} The session store that contains the module for sending requests to lapin.
+	 */
+	const { session } = getStores<Session>();
+	//import NotificationBar from "$lib/components/shared/NotificationBar.svelte"
+	let name = '';
 
-  $: name = $session?.user?.name?.split(" ")[0];
+	$: name = $session?.user?.name?.split(' ')[0];
 </script>
 
 <div class="notifications">
-  <!--NotificationBar message="New fix pushed!" status="success" />
+	<!--NotificationBar message="New fix pushed!" status="success" />
     <NotificationBar message="There is some error!" status="fail" />
     <NotificationBar
       message="The platform is experiencing an outage."
@@ -25,60 +25,40 @@
     /-->
 </div>
 
-{#if $page.path === "/"}
-  <br />
-  <br />
-  <div
-    class="home-content auto-align auto-align__column auto-align__a-center auto-align__j-center"
-  >
-    <h4>
-      Hi {name.length ? `, ${name}` : ""}. What would you like to do today?
-    </h4>
-    <nav class="auto-align auto-align__wrap">
-      <span
-        class="drop-down-wrap-page auto-align auto-align__a-center auto-align__j-center"
-      >
-        <DropdownMenu direction="right">
-          <div
-            slot="dropdown-button"
-            class="create-object-menu-button auto-align auto-align__a-center"
-          >
-            Create in Access
-          </div>
-          <a href="/object/new/collection"> New Collection </a>
-          <a href="/object/new/manifest"> New Manifest </a>
-        </DropdownMenu>
-      </span>
+{#if $page.url.pathname === '/'}
+	<br />
+	<br />
+	<div class="home-content auto-align auto-align__column auto-align__a-center auto-align__j-center">
+		<h4>
+			Hi {name.length ? `, ${name}` : ''}. What would you like to do today?
+		</h4>
+		<nav class="auto-align auto-align__wrap">
+			<span class="drop-down-wrap-page auto-align auto-align__a-center auto-align__j-center">
+				<DropdownMenu direction="right">
+					<div
+						slot="dropdown-button"
+						class="create-object-menu-button auto-align auto-align__a-center"
+					>
+						Create in Access
+					</div>
+					<a href="/object/new/collection"> New Collection </a>
+					<a href="/object/new/manifest"> New Manifest </a>
+				</DropdownMenu>
+			</span>
 
-      <a
-        class="auto-align auto-align__a-center auto-align__j-center"
-        href="/smelter/find"
-      >
-        Import into Access
-      </a>
+			<a class="auto-align auto-align__a-center auto-align__j-center" href="/smelter/find"
+				>Import into Access</a
+			>
 
-      <a
-        class="auto-align auto-align__a-center auto-align__j-center"
-        href="/dmd"
-      >
-        Load Metadata
-      </a>
+			<a class="auto-align auto-align__a-center auto-align__j-center" href="/dmd">Load Metadata</a>
 
-      <a
-        class="auto-align auto-align__a-center auto-align__j-center"
-        href="/object/edit"
-      >
-        Edit in Access
-      </a>
+			<a class="auto-align auto-align__a-center auto-align__j-center" href="/object/edit"
+				>Edit in Access</a
+			>
 
-      <a
-        class="auto-align auto-align__a-center auto-align__j-center"
-        href="/ocr"
-      >
-        Load OCR
-      </a>
-    </nav>
-  </div>
+			<a class="auto-align auto-align__a-center auto-align__j-center" href="/ocr">Load OCR</a>
+		</nav>
+	</div>
 {/if}
 
 <!--div class="title">
@@ -95,42 +75,42 @@
     />
   </div-->
 <style>
-  .notifications {
-    padding-top: var(--perfect-fourth-3);
-  }
-  .home-content {
-    width: 100%;
-  }
-  nav > * {
-    font-family: "Roboto";
-    width: fit-content;
-    height: 6rem;
-    padding: 0 1rem;
-    /*background: var(--nav-item-bg);*/
-    color: var(--dark-font) !important;
-    background: var(--primary);
-    color: var(--light-font) !important;
-    margin-top: 1rem;
-    margin-right: 0.5rem;
-    margin-left: 0.5rem;
-    border-radius: var(--border-radius);
-    min-width: 13rem;
-  }
-  nav > *:hover {
-    filter: brightness(1.1);
-  }
-  a {
-    text-decoration: none !important;
-  }
-  :global(.drop-down-wrap-page > div) {
-    align-items: center;
-    color: var(--dark-font);
-  }
-  :global(.drop-down-wrap-page .create-object-menu-button) {
-    height: 6rem;
-    color: var(--light-font) !important;
-  }
-  /*
+	.notifications {
+		padding-top: var(--perfect-fourth-3);
+	}
+	.home-content {
+		width: 100%;
+	}
+	nav > * {
+		font-family: 'Roboto';
+		width: fit-content;
+		height: 6rem;
+		padding: 0 1rem;
+		/*background: var(--nav-item-bg);*/
+		color: var(--dark-font) !important;
+		background: var(--primary);
+		color: var(--light-font) !important;
+		margin-top: 1rem;
+		margin-right: 0.5rem;
+		margin-left: 0.5rem;
+		border-radius: var(--border-radius);
+		min-width: 13rem;
+	}
+	nav > *:hover {
+		filter: brightness(1.1);
+	}
+	a {
+		text-decoration: none !important;
+	}
+	:global(.drop-down-wrap-page > div) {
+		align-items: center;
+		color: var(--dark-font);
+	}
+	:global(.drop-down-wrap-page .create-object-menu-button) {
+		height: 6rem;
+		color: var(--light-font) !important;
+	}
+	/*
   .title,
   .title img {
     position: relative;

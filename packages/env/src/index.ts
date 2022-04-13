@@ -15,11 +15,12 @@ export const Env = z
     /**
      * REQUIRED: Applications will fail if these are unset.
      */
-    ADMIN_URL_EXTERNAL: Url,
+    URL_EXTERNAL: Url,
     AUTH_JWT_SECRET: z.string().min(1),
     COUCHDB_URL: Url,
     COUCHDB_PASSWORD: z.string().min(1),
     LAPIN_URL: Url,
+    HARE_URL: Url,
     NOID_URL: Url,
     SWIFT_URL: Url,
     SWIFT_USER: z.string().min(1),
@@ -36,17 +37,18 @@ export const Env = z
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
-    ADMIN_DEV_WS_PORT: Port.default("14747"),
+    DEV_ADMIN_WS_PORT: Port.default("14747"),
     ADMIN_PORT: Port.default("4747"),
     LAPIN_PORT: Port.default("5858"),
+    HARE_PORT: Port.default("5959"),
   })
   .transform((env) => {
     return {
       mode: env.NODE_ENV,
       admin: {
         port: env.ADMIN_PORT,
-        wsPort: env.ADMIN_DEV_WS_PORT,
-        urlExternal: env.ADMIN_URL_EXTERNAL,
+        wsPort: env.DEV_ADMIN_WS_PORT,
+        urlExternal: env.URL_EXTERNAL,
       },
       auth: {
         url: env.AUTH_URL,
@@ -62,6 +64,10 @@ export const Env = z
       lapin: {
         port: env.LAPIN_PORT,
         url: env.LAPIN_URL,
+      },
+      hare: {
+        port: env.HARE_PORT,
+        url: env.HARE_URL,
       },
       noid: {
         url: env.NOID_URL,

@@ -69,7 +69,7 @@ export class DMDTaskHandler extends DatabaseHandler<DMDTask> {
     /** Descriptive metadata type of the file's contents */
     format: DMDFormat;
     /** The file as a base64-encoded string */
-    file: string;
+    file: any;
     /** The name of the file */
     fileName: string;
   }) {
@@ -82,13 +82,21 @@ export class DMDTaskHandler extends DatabaseHandler<DMDTask> {
         user,
         format,
         fileName,
-        _attachments: {
-          metadata: {
-            content_type: "application/octet-stream",
-            data: file,
-          },
-        },
       },
+    });
+
+    await this.uploadAttachment({
+      /** Document id */
+      document: taskId,
+
+      /** Attachment name */
+      attachmentName: "metadata",
+
+      /** Attachment (as a Buffer) */
+      attachment: file,
+
+      /** Attachment content type. Default: application/octet-stream */
+      //contentType?: string
     });
 
     await this.update({

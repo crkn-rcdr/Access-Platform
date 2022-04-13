@@ -117,12 +117,36 @@ services:
     networks:
       access-platform:
         ipv4_address: 172.30.0.51
+  hare:
+    profiles:
+      - dev
+    depends_on:
+      - haproxy
+      - couchdb
+      - noid
+      - packages
+    user: ${CURRENT_USER}
+    container_name: access-hare
+    build:
+      context: .
+      target: dev
+    image: access-platform:dev
+    command: ["-C", "./services/hare", "dev"]
+    env_file:
+      - ./.env.dev
+      - ./.env.secret
+    volumes:
+      - .:/repo
+    networks:
+      access-platform:
+        ipv4_address: 172.30.0.55
   admin:
     profiles:
       - dev
     depends_on:
       - haproxy
       - lapin
+      - hare
     user: ${CURRENT_USER}
     container_name: access-admin
     build:
@@ -176,6 +200,22 @@ services:
     networks:
       access-platform:
         ipv4_address: 172.30.0.51
+  hare-prod:
+    profiles:
+      - prod
+    container_name: access-hare-prod
+    build:
+      context: .
+      target: prod
+    image: access-platform:prod
+    command: ["-C", "./services/hare", "start"]
+    env_file:
+      - .env.prod
+      - .env.secret
+      - .env.secret.prod
+    networks:
+      access-platform:
+        ipv4_address: 172.30.0.55
   admin-prod:
     profiles:
       - prod
@@ -188,6 +228,7 @@ services:
       - .env.secret.prod
     depends_on:
       - lapin-prod
+      - hare-prod
     networks:
       access-platform:
         ipv4_address: 172.30.0.52

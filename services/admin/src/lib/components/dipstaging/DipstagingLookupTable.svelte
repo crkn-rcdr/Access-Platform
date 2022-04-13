@@ -200,15 +200,23 @@ This component shows the results of a dipstaging find-package(s) request or a vi
     if (!items) return;
     error = "";
     const slugs: string[] = Object.values(slugMap);
-    while (slugs.length > 0) {
-      const slugBatch = slugs.splice(0, 500);
-      //results.map((item) => item["id"]);
-      try {
-        const response = await $session.lapin.mutation(
-          `slug.resolveMany`,
-          slugBatch
-        );
-        for (const result of response) {
+    // while (slugs.length > 0) {
+    // const slugBatch = slugs.splice(0, 500);
+    //results.map((item) => item["id"]);
+    try {
+      const response = await $session.lapin.mutation(`slug.resolveMany`, slugs);
+
+      if (response) {
+        for (const slug of slugs) {
+          if (response.hasOwnProperty(slug)) {
+            slugUnavailableMap[slug] = true;
+            noidMap[slug] = response[slug];
+          } else {
+            slugUnavailableMap[slug] = false;
+          }
+        }
+      }
+      /*for (const result of response) {
           if (result.length === 2) {
             const slug = result[0];
             const info = result[1];
@@ -217,13 +225,13 @@ This component shows the results of a dipstaging find-package(s) request or a vi
               noidMap[slug] = info.result.id;
             }
           }
-        }
-      } catch (e) {
-        error = e?.message.includes(`"path:"`)
-          ? "Code 8. Please contact the platform team for assistance."
-          : "Code 9. Please contact the platform team for assistance. ";
-      }
+        }*/
+    } catch (e) {
+      error = e?.message.includes(`"path:"`)
+        ? "Code 8. Please contact the platform team for assistance."
+        : "Code 9. Please contact the platform team for assistance. ";
     }
+    //}
   }
 
   /**

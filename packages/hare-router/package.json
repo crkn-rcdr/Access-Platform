@@ -1,0 +1,90 @@
+{
+  "name": "@crkn-rcdr/hare-router",
+  "version": "0.0.0",
+  "description": "The restify router used by hare",
+  "type": "module",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/esm/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/cjs/index.js",
+      "import": "./dist/esm/index.js",
+      "types": "./dist/esm/index.d.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/crkn-rcdr/Access-Platform.git",
+    "directory": "packages/hare-router"
+  },
+  "contributors": [
+    {
+      "name": "Brittny Lapierre",
+      "email": "lapierre@crkn.ca"
+    }
+  ],
+  "license": "CC0-1.0",
+  "bugs": {
+    "url": "https://github.com/crkn-rcdr/Access-Platform/issues"
+  },
+  "homepage": "https://github.com/crkn-rcdr/Access-Platform",
+  "scripts": {
+    "build": "npm-run-all clean --parallel build:*",
+    "build:cjs": "tsc -p ./tsconfig-cjs.json && cp ../package-cjs.json dist/cjs/package.json",
+    "build:esm": "tsc",
+    "clean": "rm -rf dist",
+    "test": "NODE_NO_WARNINGS=1 ava -v",
+    "watch": "run-p watch:*",
+    "watch:cjs": "tsc -p ./tsconfig-cjs.json --watch",
+    "watch:esm": "tsc --watch"
+  },
+  "ava": {
+    "extensions": {
+      "ts": "module"
+    },
+    "nonSemVerExperiments": {
+      "configurableModuleFormat": true
+    },
+    "nodeArguments": [
+      "--loader=ts-node/esm"
+    ],
+    "files": [
+      "src/**/*.spec.*",
+      "!src/**/common.spec.*"
+    ]
+  },
+  "devDependencies": {
+    "@types/koa-router": "^7.4.4",
+    "@types/node": "^16.11.26",
+    "@types/node-fetch": "^2.5.12",
+    "ava": "^3.15.0",
+    "npm-run-all": "^4.1.5",
+    "ts-node": "^10.3.1",
+    "typescript": "^4.6.3"
+  },
+  "dependencies": {
+    "@crkn-rcdr/access-data": "workspace:*",
+    "@crkn-rcdr/access-env": "workspace:*",
+    "@crkn-rcdr/couch-utils": "workspace:*",
+    "@crkn-rcdr/swift": "workspace:*",
+    "@trpc/server": "^8.4.2",
+    "@types/await-timeout": "^0.3.1",
+    "@types/koa": "^2.13.4",
+    "@types/restify": "^8.5.4",
+    "await-timeout": "1.0.1",
+    "deep-object-diff": "^1.1.0",
+    "fastify": "^3.28.0",
+    "fastify-multipart": "^5.3.1",
+    "fastify-plugin": "^3.0.1",
+    "koa": "^2.13.4",
+    "koa-router": "^10.1.1",
+    "node-fetch": "^2.6.1",
+    "queue-promise": "^2.2.1",
+    "restify": "^8.6.1",
+    "restify-router": "^0.6.2",
+    "semaphore-async-await": "^1.5.1",
+    "zod": "^3.7.1"
+  }
+}
