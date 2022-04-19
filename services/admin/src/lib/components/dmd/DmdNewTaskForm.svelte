@@ -96,11 +96,6 @@ none
 						method: 'PUT',
 						body: data
 					});
-
-					/*await fetch(`/dmd/${rev}/${id}/${metadatafile.name}/upload`, {
-						method: 'PUT',
-						body: metadatafile
-					});*/
 					if (res) {
 						state = 'uploaded';
 						const id = await res.text();

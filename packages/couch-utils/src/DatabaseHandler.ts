@@ -189,7 +189,7 @@ export class DatabaseHandler<T extends Document> {
    * Returns a the cache status
    * @param id ID of the document.
    */
-  async getChacheStatus(
+  async getCacheStatus(
     id: string
   ): Promise<{ found: true; result: any } | { found: false }> {
     try {

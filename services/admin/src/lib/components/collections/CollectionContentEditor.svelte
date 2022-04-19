@@ -84,6 +84,13 @@ Allows the user to modify the member list for a collection.
 	let shuffleLoading: boolean = false;
 
 	//let list: HTMLElement;
+	/**
+	 * A helper method to slow down the rate of requests going to the backend. Causes the script to pause for 'ms.'
+	 * @param ms
+	 */
+	function sleep(ms: number) {
+		return new Promise((resolve) => setTimeout(resolve, ms));
+	}
 
 	function setPositions() {
 		if (!members?.length) return;
@@ -382,14 +389,15 @@ Allows the user to modify the member list for a collection.
 		await showConfirmation(
 			async () => {
 				try {
-					const failedUpdates = await $session.lapin.mutation('collection.unpublishAllMembers', {
+					const updated = await $session.lapin.mutation('collection.unpublishAllMembers', {
 						id: collection.id,
 						user: $session.user
 					});
+					await sleep(2000);
 					await sendCurrentPageRequest();
 					bulkLoading = false;
 
-					if (failedUpdates?.length) {
+					if (!updated) {
 						return {
 							success: false,
 							details: 'Please contact the platform team for assistance.'
@@ -408,7 +416,7 @@ Allows the user to modify the member list for a collection.
 					};
 				}
 			},
-			'Success: all members unpublished.',
+			'Success: all members are being unpublished. Please wait.',
 			'Error: failed to unpublish one or more members.'
 		);
 	}
@@ -418,14 +426,15 @@ Allows the user to modify the member list for a collection.
 		await showConfirmation(
 			async () => {
 				try {
-					const failedUpdates = await $session.lapin.mutation('collection.publishAllMembers', {
+					const updated = await $session.lapin.mutation('collection.publishAllMembers', {
 						id: collection.id,
 						user: $session.user
 					});
+					await sleep(2000);
 					await sendCurrentPageRequest();
 					bulkLoading = false;
 
-					if (failedUpdates?.length) {
+					if (!updated) {
 						return {
 							success: false,
 							details: 'Please contact the platform team for assistance.'
@@ -444,7 +453,7 @@ Allows the user to modify the member list for a collection.
 					};
 				}
 			},
-			'Success: all members published.',
+			'Success: all members are being published. Please wait.',
 			'Error: failed to publish one or more members.'
 		);
 	}

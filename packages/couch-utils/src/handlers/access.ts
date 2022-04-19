@@ -367,56 +367,105 @@ export class AccessHandler extends DatabaseHandler<AccessObject> {
     return rv;
   }
 
-  async publishAllMembers(
-    id: Noid,
-    user: User
-  ): Promise<{ id: Noid; status: string }[]> {
-    const collection = await this.get(id);
-    const results: { id: Noid; status: string }[] = [];
-    if ("members" in collection && collection.members?.length) {
-      for (const m of collection.members) {
-        if (!m.id) continue;
-        try {
-          const member = await this.get(m.id);
-          if (member && !member.public) {
-            await this.publish({ id: m.id, user });
-          }
-        } catch (e) {
-          results.push({
-            id: m.id,
-            status:
-              "Request to publish failed. Does this member have metadata?",
-          });
-        }
+  async bulkPublish(ids: any[], user: User): Promise<boolean> {
+    const date = new Date().toISOString().replace(/.\d+Z$/g, "Z");
+    return await this.bulkChange(ids, (doc: any) => {
+      if (!doc) return [null, "Error. Old document was null."];
+      if (!doc["_id"]) return [null, "Error. Old document had no id."];
+      if (!doc["_rev"]) return [null, "Error. Old document had no revision."];
+      if (!doc["dmdType"])
+        return [null, "Error. Old document had no dmd type."];
+      if (doc["public"]) {
+        return [null, `Trying to publish an object that is already public`];
       }
-    }
-    return results;
+
+      doc.public = date;
+
+      doc.staff = {
+        by: user,
+        date,
+      };
+
+      doc.updateInternalmeta = {
+        requestDate: date,
+      };
+
+      return [doc];
+    });
   }
 
-  async unpublishAllMembers(
-    id: Noid,
-    user: User
-  ): Promise<{ id: Noid; status: string }[]> {
+  async bulkUnpublish(ids: any[], user: User): Promise<boolean> {
+    const date = new Date().toISOString().replace(/.\d+Z$/g, "Z");
+    return await this.bulkChange(ids, (doc: any) => {
+      if (!doc) return [null, "Error. Old document was null."];
+      if (!doc["_id"]) return [null, "Error. Old document had no id."];
+      if (!doc["_rev"]) return [null, "Error. Old document had no revision."];
+      if (!doc["dmdType"])
+        return [null, "Error. Old document had no dmd type."];
+      if (!doc["public"]) {
+        return [
+          null,
+          `Trying to unpublish an object that is already unpublished`,
+        ];
+      }
+
+      delete doc.public;
+
+      doc.staff = {
+        by: user,
+        date,
+      };
+
+      doc.updateInternalmeta = {
+        requestDate: date,
+      };
+
+      return [doc];
+    });
+  }
+
+  async publishAllMembers(id: Noid, user: User): Promise<boolean> {
     const collection = await this.get(id);
-    const results: { id: Noid; status: string }[] = [];
     if ("members" in collection && collection.members?.length) {
+      let ids: string[] = [];
       for (const m of collection.members) {
         if (!m.id) continue;
-        try {
-          const member = await this.get(m.id);
-          if (member && member.public) {
-            await this.unpublish({ id: m.id, user });
-          }
-        } catch (e) {
-          results.push({
-            id: m.id,
-            status:
-              "Request to unpublish failed. Does this member have metadata?",
-          });
-        }
+        ids.push(m.id);
+      }
+
+      try {
+        this.bulkPublish(ids, user).then((value) => {
+          console.log(`Done publishing members of ${id}: `, value);
+        });
+        return true;
+      } catch (e: any) {
+        console.log(e?.message);
+        return false;
       }
     }
-    return results;
+    return false;
+  }
+
+  async unpublishAllMembers(id: Noid, user: User): Promise<boolean> {
+    const collection = await this.get(id);
+    if ("members" in collection && collection.members?.length) {
+      let ids: string[] = [];
+      for (const m of collection.members) {
+        if (!m.id) continue;
+        ids.push(m.id);
+      }
+
+      try {
+        this.bulkUnpublish(ids, user).then((value) => {
+          console.log(`Done unpublishing members of ${id}: `, value);
+        });
+        return true;
+      } catch (e: any) {
+        console.log(e?.message);
+        return false;
+      }
+    }
+    return false;
   }
 
   async getAncestry(id: Noid): Promise<Ancestry> {
