@@ -105,6 +105,11 @@
 		loading = false;
 	}
 
+	async function handleDeletePressed(array, task) {
+		array = array.filter((item) => task['id'] === item['id']);
+		await getBatches();
+	}
+
 	onMount(() => {
 		getBatches().then(() => {
 			unsubscribe = interval.subscribe(async () => {
@@ -149,11 +154,12 @@
 						<span slot="actions">
 							<OcrBatchActions
 								{batch}
-								isListLoading={loading}
 								stage="N/A"
 								status="N/A"
 								on:export={getBatches}
-								on:delete={getBatches}
+								on:delete={async () => {
+									await handleDeletePressed(base, batch);
+								}}
 							/>
 						</span>
 					</ExpansionListItem>
@@ -173,11 +179,12 @@
 					<span slot="actions">
 						<OcrBatchActions
 							{batch}
-							isListLoading={loading}
 							stage="export"
 							status="waiting"
 							on:export={getBatches}
-							on:delete={getBatches}
+							on:delete={async () => {
+								await handleDeletePressed(exportWaiting, batch);
+							}}
 						/>
 					</span>
 				</ExpansionListItem>
@@ -202,12 +209,13 @@
 					<span slot="actions">
 						<OcrBatchActions
 							{batch}
-							isListLoading={loading}
 							stage="export"
 							status={batch.exportProcess['succeeded'] ? 'succeeded' : 'failed'}
 							on:export={getBatches}
 							on:import={getBatches}
-							on:delete={getBatches}
+							on:delete={async () => {
+								await handleDeletePressed(exportDone, batch);
+							}}
 						/>
 					</span>
 				</ExpansionListItem>
@@ -232,11 +240,12 @@
 					<span slot="actions">
 						<OcrBatchActions
 							{batch}
-							isListLoading={loading}
 							stage="import"
 							status={'waiting'}
 							on:cancel={getBatches}
-							on:delete={getBatches}
+							on:delete={async () => {
+								await handleDeletePressed(importWaiting, batch);
+							}}
 						/>
 					</span>
 				</ExpansionListItem>
@@ -263,11 +272,12 @@
 					<span slot="actions">
 						<OcrBatchActions
 							{batch}
-							isListLoading={loading}
 							stage="import"
 							status={batch.importProcess['succeeded'] ? 'succeeded' : 'failed'}
 							on:import={getBatches}
-							on:delete={getBatches}
+							on:delete={async () => {
+								await handleDeletePressed(importDone, batch);
+							}}
 						/>
 					</span>
 				</ExpansionListItem>
