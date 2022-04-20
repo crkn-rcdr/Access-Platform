@@ -110,6 +110,12 @@
 		await getBatches();
 	}
 
+	async function handleStatusButtonPressed(fromArray, toArray, task) {
+		fromArray = fromArray.filter((item) => task['id'] === item['id']);
+		toArray.push(task);
+		await getBatches();
+	}
+
 	onMount(() => {
 		getBatches().then(() => {
 			unsubscribe = interval.subscribe(async () => {
@@ -156,7 +162,9 @@
 								{batch}
 								stage="N/A"
 								status="N/A"
-								on:export={getBatches}
+								on:export={async () => {
+									await handleStatusButtonPressed(base, exportWaiting, batch);
+								}}
 								on:delete={async () => {
 									await handleDeletePressed(base, batch);
 								}}
@@ -181,7 +189,9 @@
 							{batch}
 							stage="export"
 							status="waiting"
-							on:export={getBatches}
+							on:cancel={async () => {
+								await handleStatusButtonPressed(exportWaiting, base, batch);
+							}}
 							on:delete={async () => {
 								await handleDeletePressed(exportWaiting, batch);
 							}}
@@ -211,8 +221,12 @@
 							{batch}
 							stage="export"
 							status={batch.exportProcess['succeeded'] ? 'succeeded' : 'failed'}
-							on:export={getBatches}
-							on:import={getBatches}
+							on:export={async () => {
+								await handleStatusButtonPressed(exportDone, exportWaiting, batch);
+							}}
+							on:import={async () => {
+								await handleStatusButtonPressed(exportDone, importWaiting, batch);
+							}}
 							on:delete={async () => {
 								await handleDeletePressed(exportDone, batch);
 							}}
@@ -242,7 +256,9 @@
 							{batch}
 							stage="import"
 							status={'waiting'}
-							on:cancel={getBatches}
+							on:cancel={async () => {
+								await handleStatusButtonPressed(importWaiting, exportDone, batch);
+							}}
 							on:delete={async () => {
 								await handleDeletePressed(importWaiting, batch);
 							}}
@@ -274,7 +290,9 @@
 							{batch}
 							stage="import"
 							status={batch.importProcess['succeeded'] ? 'succeeded' : 'failed'}
-							on:import={getBatches}
+							on:import={async () => {
+								await handleStatusButtonPressed(importDone, importWaiting, batch);
+							}}
 							on:delete={async () => {
 								await handleDeletePressed(importDone, batch);
 							}}
