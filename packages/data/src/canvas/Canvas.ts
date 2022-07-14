@@ -28,7 +28,7 @@ export const Canvas = z
         /**
          * Size of the file, in bytes.
          */
-        size: z.number().min(0),
+        size: z.number().min(0).optional(),
 
         /**
          * MD5 checksum.
