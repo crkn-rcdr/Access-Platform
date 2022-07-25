@@ -3,6 +3,7 @@ import { UnixFilePath } from "../util/UnixFilePath.js";
 import { Identified } from "../util/Identified.js";
 import { FileRef } from "../util/FileRef.js";
 import { ImageRef } from "../util/ImageRef.js";
+import { MD5 } from "../util/MD5.js";
 
 /**
  * The virtual representation of the space taken up by a page of a Manifest.
@@ -23,6 +24,17 @@ export const Canvas = z
          * File path in the legacy repository.
          */
         path: UnixFilePath,
+
+        /**
+         * Size of the file, in bytes.
+         */
+        size: z.number().min(0).optional(),
+
+        /**
+         * MD5 checksum.
+         */
+        md5: MD5.optional(),
+
       }),
 
       /**
