@@ -29,10 +29,10 @@ RUN pnpm fetch --silent
 COPY . .
 
 # The offline flag ensures that the dependencies are installed from the fetched cache 
-RUN pnpm install -r --offline --silent
+RUN pnpm install -r
 
 # Lets just build every package now, to be safe
-RUN pnpm run -r build --filter ./packages
+RUN pnpm run -r build 
 
 # builder 
 # Gets things ready for production images
@@ -40,7 +40,7 @@ RUN pnpm run -r build --filter ./packages
 FROM dev AS builder
 
 # Build services that need to be built
-RUN pnpm run -r build --filter ./services
+RUN pnpm run -r build 
 
 # Purge node_modules directories.
 RUN pnpm -r exec -- rm -rf node_modules && rm -rf node_modules
