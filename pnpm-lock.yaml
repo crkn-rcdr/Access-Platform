@@ -209,7 +209,7 @@ importers:
       '@crkn-rcdr/lapin-router': workspace:*
       '@playwright/test': ^1.20.0
       '@sveltejs/adapter-node': 1.0.0-next.73
-      '@sveltejs/kit': next
+      '@sveltejs/kit': 1.0.0-next.330
       '@trpc/client': ^8.4.2
       '@types/cookie': ^0.4.1
       '@types/jsonwebtoken': ^8.5.4
@@ -275,7 +275,7 @@ importers:
       '@crkn-rcdr/lapin-router': link:../../packages/lapin-router
       '@playwright/test': 1.20.2
       '@sveltejs/adapter-node': 1.0.0-next.73
-      '@sveltejs/kit': 1.0.0-next.305_svelte@3.46.6
+      '@sveltejs/kit': 1.0.0-next.330_svelte@3.46.6
       '@types/cookie': 0.4.1
       '@types/jsonwebtoken': 8.5.4
       '@typescript-eslint/eslint-plugin': 5.17.0_6da5f837f6da21a8347f2aaca31a901b
@@ -1098,14 +1098,15 @@ packages:
       tiny-glob: 0.2.9
     dev: true
 
-  /@sveltejs/kit/1.0.0-next.305_svelte@3.46.6:
-    resolution: {integrity: sha512-xnykqWuN/9pRQOG8M+qnqbOyM/UK6UnnrdWIy82DkQ+ZO0jKA+puM7V6r0jso2vQr8n7LGSabgwioeJ/EINKpg==}
+  /@sveltejs/kit/1.0.0-next.330_svelte@3.46.6:
+    resolution: {integrity: sha512-Wb95D5tOF8BViZuikqzZLAcupdS7TpXtadNPgpEOxKowmkrW8xjRrrfVdPIkNOLqAP1V+gKInmQ/gFYmnv5EjA==}
     engines: {node: '>=14.13'}
     hasBin: true
     peerDependencies:
       svelte: ^3.44.0
     dependencies:
       '@sveltejs/vite-plugin-svelte': 1.0.0-next.40_svelte@3.46.6+vite@2.9.1
+      chokidar: 3.5.3
       sade: 1.8.1
       svelte: 3.46.6
       vite: 2.9.1
@@ -1647,7 +1648,7 @@ packages:
     engines: {node: '>= 8'}
     dependencies:
       normalize-path: 3.0.0
-      picomatch: 2.3.0
+      picomatch: 2.3.1
     dev: true
 
   /archy/1.0.0:
@@ -2041,6 +2042,21 @@ packages:
       glob-parent: 5.1.2
       is-binary-path: 2.1.0
       is-glob: 4.0.1
+      normalize-path: 3.0.0
+      readdirp: 3.6.0
+    optionalDependencies:
+      fsevents: 2.3.2
+    dev: true
+
+  /chokidar/3.5.3:
+    resolution: {integrity: sha512-Dr3sfKRP6oTcjf2JmUmFJfeVMvXBdegxB0iVQ5eb2V10uFJUCAS8OByZdVAyVb8xXNz3GjjTgj9kLWsZTqE6kw==}
+    engines: {node: '>= 8.10.0'}
+    dependencies:
+      anymatch: 3.1.2
+      braces: 3.0.2
+      glob-parent: 5.1.2
+      is-binary-path: 2.1.0
+      is-glob: 4.0.3
       normalize-path: 3.0.0
       readdirp: 3.6.0
     optionalDependencies:
@@ -3376,7 +3392,7 @@ packages:
     resolution: {integrity: sha512-AOIgSQCepiJYwP3ARnGx+5VnTu2HBYdzbGP45eLw1vr3zB3vZLeyed1sC9hnbcOc9/SrMyM5RPQrkGz4aS9Zow==}
     engines: {node: '>= 6'}
     dependencies:
-      is-glob: 4.0.1
+      is-glob: 4.0.3
     dev: true
 
   /glob/6.0.4:
@@ -3774,7 +3790,7 @@ packages:
     dev: true
 
   /is-extglob/2.1.1:
-    resolution: {integrity: sha1-qIwCU1eR8C7TfHahueqXc8gz+MI=}
+    resolution: {integrity: sha512-SbKbANkN603Vi4jEZv49LeVJMn4yGwsbzZworEoyEiutsN3nJYdbO36zfhGJ6QEDpOZIFkDtnq5JRxmvl3jsoQ==}
     engines: {node: '>=0.10.0'}
     dev: true
 
@@ -5299,7 +5315,7 @@ packages:
     resolution: {integrity: sha512-hOS089on8RduqdbhvQ5Z37A0ESjsqz6qnRcffsMU3495FuTdqSm+7bhJ29JvIOsBDEEnan5DPu9t3To9VRlMzA==}
     engines: {node: '>=8.10.0'}
     dependencies:
-      picomatch: 2.3.0
+      picomatch: 2.3.1
     dev: true
 
   /regenerator-runtime/0.13.9:
