@@ -452,12 +452,9 @@ export class DatabaseHandler<T extends Document> {
     };
     if (fields) query["fields"] = [...fieldSet.values()];
 
-    console.log(query);
-
     try {
       const response = await this.db.find(query);
 
-      console.log(response);
       if (hasId) {
         return response.docs.map((doc) => {
           const r: Record<string, unknown> = { ...doc };
