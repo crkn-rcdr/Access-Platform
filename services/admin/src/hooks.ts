@@ -82,7 +82,7 @@ export async function handle({ event, resolve }) {
 	}
 
 	// I don't know why this is necessary; might have to do with https://github.com/sveltejs/kit/issues/2102
-	if (env.mode === 'production' && event.url.pathname.startsWith('/')) {
+	if (env.mode === 'production' && event.url.pathname.startsWith('/static')) {
 		try {
 			const filepath = pathJoin(process.cwd(), 'static', event.url.pathname.slice(8));
 			const file = readFileSync(filepath);

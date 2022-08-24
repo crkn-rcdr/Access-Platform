@@ -100,7 +100,6 @@ module.exports.fixStaff = async () => {
 
   while (true) {
     const ids = await fetchIds();
-    console.log(ids);
     for (const id of ids) {
       await client.updateWithHandler("access", "removeStaff", id);
     }
