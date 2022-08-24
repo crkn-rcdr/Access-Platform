@@ -89,7 +89,7 @@ The editor component allows for the editing of PagedAccessObjects. It will dynam
 					} else
 						return {
 							success: false,
-							details: 'Object not of type canvas or manifest'
+							details: 'Object not of type collection, manifest, or pdf'
 						};
 				} catch (e) {
 					return {
