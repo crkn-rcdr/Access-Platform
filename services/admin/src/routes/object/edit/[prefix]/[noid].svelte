@@ -54,10 +54,12 @@
 		} catch (e) {
 			console.log(e.message);
 			return {
-				props: {
-					error: e.message
-					/*'Could not get item from the server. Please contact the platform team for assistance.'*/
-				}
+				props: e.message.includes('ECONNREFUSED') /*TODO: debug */
+					? {}
+					: {
+							error: e.message
+							/*'Could not get item from the server. Please contact the platform team for assistance.'*/
+					  }
 			};
 		}
 	};

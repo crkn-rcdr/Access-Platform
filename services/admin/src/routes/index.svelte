@@ -64,7 +64,7 @@
 <!--div class="title">
     <img
       class="logo"
-      src="/static/canadiana-pa-tag-color.png"
+      src="/canadiana-pa-tag-color.png"
       alt="Canadiana by CRKN, par RCDR"
     />
   </div>

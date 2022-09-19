@@ -81,17 +81,6 @@ export async function handle({ event, resolve }) {
 		});
 	}
 
-	// I don't know why this is necessary; might have to do with https://github.com/sveltejs/kit/issues/2102
-	if (env.mode === 'production' && event.url.pathname.startsWith('/static/')) {
-		try {
-			const filepath = pathJoin(process.cwd(), 'static', event.url.pathname.slice(8));
-			const file = readFileSync(filepath);
-			return new Response(file, { status: 200, headers: {} });
-		} catch (e) {
-			return new Response('', { status: 404, headers: {} });
-		}
-	}
-
 	// Fetch api response from lapin and return it
 	let url = '';
 	if (event.url.pathname.startsWith('/rest/')) {

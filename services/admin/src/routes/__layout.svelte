@@ -57,11 +57,7 @@
 	class="site-nav auto-align auto-align__block auto-align__a-center auto-align__j-between auto-align__wrap"
 >
 	<a href="/"
-		><img
-			width="220"
-			src="/static/canadiana-pa-tag-color.png"
-			alt="canadiana by CRKN, par RCDR"
-		/></a
+		><img width="220" src="/canadiana-pa-tag-color.png" alt="canadiana by CRKN, par RCDR" /></a
 	>
 
 	{#if $page.url.pathname !== '/'}
@@ -134,7 +130,7 @@
 <style>
 	@font-face {
 		font-family: 'Roboto';
-		src: url('/static/fonts/Roboto-Regular.ttf') format('truetype');
+		src: url('/fonts/Roboto-Regular.ttf') format('truetype');
 	}
 	div {
 		position: relative;

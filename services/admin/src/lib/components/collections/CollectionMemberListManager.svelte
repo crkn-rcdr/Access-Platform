@@ -9,7 +9,6 @@
 	import type { Slug } from '@crkn-rcdr/access-data';
 	import Toggle from '../shared/Toggle.svelte';
 	import Loading from '../shared/Loading.svelte';
-	import { isEqual } from 'lodash-es';
 	import { showConfirmation } from '$lib/utils/confirmation';
 
 	/**
@@ -63,10 +62,6 @@
 	}
 
 	async function validateSlugList(slugs: Slug[]) {
-		// Return if nothing changed ~ too buggy
-		// if (isEqual(slugs, slugArray)) return;
-		// just validate new things...
-		//let newSlugs = slugs.filter((x) => !slugArray.includes(x));
 		if (!slugs.length) return;
 
 		validating = true;

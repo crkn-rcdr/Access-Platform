@@ -143,7 +143,7 @@ The editor actions component holds functionality that is responsible for perform
 					} else
 						return {
 							success: false,
-							details: 'Object not of type canvas or manifest'
+							details: 'Object not of type collection or manifest'
 						};
 				} catch (e) {
 					return {
@@ -166,7 +166,11 @@ The editor actions component holds functionality that is responsible for perform
 		isDeleting = true;
 		return await showConfirmation(
 			async () => {
-				if (editorObject.type === 'manifest' || editorObject.type === 'collection') {
+				if (
+					editorObject.type === 'manifest' ||
+					editorObject.type === 'collection' ||
+					serverObject.type === 'pdf'
+				) {
 					try {
 						const response = await $session.lapin.mutation(`accessObject.delete`, {
 							id: editorObject.id,
@@ -186,7 +190,7 @@ The editor actions component holds functionality that is responsible for perform
 				isDeleting = false;
 				return {
 					success: false,
-					details: 'Object not of type canvas or manifest'
+					details: 'Object not of type collection, pdf, or manifest'
 				};
 			},
 			`Success! Deleted '${editorObject['slug']}.'`,
@@ -204,7 +208,11 @@ The editor actions component holds functionality that is responsible for perform
 	async function handlePublishStatusChange() {
 		return await showConfirmation(
 			async () => {
-				if (editorObject.type === 'manifest' || editorObject.type === 'collection') {
+				if (
+					editorObject.type === 'manifest' ||
+					editorObject.type === 'pdf' ||
+					editorObject.type === 'collection'
+				) {
 					try {
 						if (editorObject.public) {
 							const response = await $session.lapin.mutation(`accessObject.unpublish`, {
@@ -230,7 +238,7 @@ The editor actions component holds functionality that is responsible for perform
 				}
 				return {
 					success: false,
-					details: 'Object not of type canvas or manifest'
+					details: 'Object not of type collection, pdf, or manifest'
 				};
 			},
 			`Success! ${editorObject['public'] ? 'Unpublish' : 'Publish'}ed ${editorObject['type']}.`,
