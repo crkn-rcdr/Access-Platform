@@ -191,10 +191,27 @@ This component displays the non content properties for an access editorObject an
 
 			{#if editorObject.type === 'collection'}
 				<label for="behavior">Behaviour</label><br />
-				<select id="behavior" name="behavior" bind:value={editorObject['behavior']}>
-					<option>multi-part</option>
-					<option>unordered</option>
-				</select><br /><br />
+
+				{#if mode === 'edit'}
+					<EditorInput
+						keys={['behavior']}
+						bind:value={editorObject['behavior']}
+						on:save={handleSavePressed}
+					>
+						<div>
+							<select id="behavior" name="behavior" bind:value={editorObject['behavior']}>
+								<option>multi-part</option>
+								<option>unordered</option>
+							</select>
+						</div>
+					</EditorInput>
+				{:else}
+					<select id="behavior" name="behavior" bind:value={editorObject['behavior']}>
+						<option>multi-part</option>
+						<option>unordered</option>
+					</select>
+				{/if}
+				<br /><br />
 			{/if}
 
 			<table>
