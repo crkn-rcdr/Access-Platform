@@ -357,7 +357,7 @@ export const collectionRouter = createRouter()
             if (collection.behavior === "multi-part") {
               await ctx.couch.access.bulkForceUpdateAllMembers(id);
             } else if (collection.behavior === "unordered") {
-              ctx.couch.access.bulkForceUpdate(members).then((res: any) => {
+              ctx.couch.access.bulkForceUpdate(memberIds).then((res: any) => {
                 console.log("Forced Update Members: ", res);
               });
             }
@@ -477,12 +477,9 @@ export const collectionRouter = createRouter()
           user,
         });
         // Don't hold up the response but force update to these new members
-        //const collection = await ctx.couch.access.get(id);
-        //if ("behavior" in collection && collection.behavior === "multi-part") {
         ctx.couch.access.bulkForceUpdate(memberIds).then((res: any) => {
           console.log("Forced Update Members: ", res);
         });
-        //}
       } catch (e: any) {
         console.log(e?.message);
         throw httpErrorToTRPC(e);
