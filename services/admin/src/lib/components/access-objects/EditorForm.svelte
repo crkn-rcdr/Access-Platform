@@ -61,12 +61,61 @@ This component displays the non content properties for an access editorObject an
 
 	let isSlugValid = true;
 
+	let status: 'published' | 'unpublished' | null;
+
 	let unsubscribe;
 
 	const interval = timer({ interval: 15000 }); // 2x per min
 
 	function handleSavePressed(event: any) {
 		dispatch('save', event.detail);
+	}
+
+	/**
+	 * This method sends the request to the backend to publish or unpublish an object from the platform.
+	 * @param arr
+	 * @param currentIndex
+	 * @param destinationIndex
+	 * @returns response
+	 */
+	async function handlePublishStatusChange() {
+		return await showConfirmation(
+			async () => {
+				if (
+					editorObject.type === 'manifest' ||
+					editorObject.type === 'pdf' ||
+					editorObject.type === 'collection'
+				) {
+					try {
+						if (status === 'unpublished') {
+							const response = await $session.lapin.mutation(`accessObject.unpublish`, {
+								id: editorObject.id,
+								user: $session.user
+							});
+						} else {
+							const response = await $session.lapin.mutation(`accessObject.publish`, {
+								id: editorObject.id,
+								user: $session.user
+							});
+						}
+						dispatch('change', editorObject);
+						return {
+							success: true,
+							details: JSON.stringify(editorObject)
+						};
+					} catch (e) {
+						console.log(e);
+						return { success: false, details: e.message };
+					}
+				}
+				return {
+					success: false,
+					details: 'Object not of type collection, pdf, or manifest'
+				};
+			},
+			`Success! Updated the status of the ${editorObject['type']}.`,
+			`Error: could not update the status of the ${editorObject['type']}.`
+		);
 	}
 
 	const removeMembership = async (collectionID: Noid) => {
@@ -104,6 +153,7 @@ This component displays the non content properties for an access editorObject an
 	onMount(async () => {
 		if (editorObject.id) {
 			cacheStatus = await $session.lapin.query('accessObject.getCacheStatus', editorObject.id);
+			status = editorObject.public ? 'published' : 'unpublished';
 
 			unsubscribe = interval.subscribe(async () => {
 				cacheStatus = await $session.lapin.query('accessObject.getCacheStatus', editorObject.id);
@@ -118,6 +168,33 @@ This component displays the non content properties for an access editorObject an
 {#if editorObject}
 	<div class="info-wrap auto-align">
 		<div class="info-form">
+			<label
+				for="status"
+				data-tooltip={!editorObject['public'] && !editorObject['dmdType']
+					? `Publishing is disabled for ${editorObject['type']}s with no metadata. Please use the "Load Metadata" tool to add metadata to your ${editorObject['type']}.`
+					: editorObject['public']
+					? `Hide this ${editorObject['type']} from the access platform.`
+					: `Make this ${editorObject['type']} available on the access platform.`}
+				data-tooltip-flow="right">Status</label
+			><br />
+
+			{#if mode === 'edit' && status}
+				<EditorInput
+					saveDisabled={!editorObject['public'] && !editorObject['dmdType']}
+					keys={['status']}
+					bind:value={status}
+					on:save={handlePublishStatusChange}
+				>
+					<div>
+						<select id="behavior" name="behavior" bind:value={status}>
+							<option>unpublished</option>
+							<option>published</option>
+						</select>
+					</div>
+				</EditorInput>
+			{/if}
+			<br /><br />
+
 			<label for="slug">Slug</label>
 			{#if mode === 'edit'}
 				<EditorInput
@@ -277,18 +354,6 @@ This component displays the non content properties for an access editorObject an
 				{#if !('succeeded' in cacheStatus.result)}
 					<table>
 						<tbody>
-							<tr>
-								<td>Published On:</td>
-								<td>
-									{#if editorObject['public']}
-										{typeof editorObject['public'] === 'string'
-											? editorObject['public']
-											: new Date(parseInt(`${editorObject['public']}`) * 1000).toLocaleString()}
-									{:else}
-										Not published
-									{/if}
-								</td>
-							</tr>
 							<tr>
 								<td>Access Status:</td>
 								<td>Currently updating...</td>

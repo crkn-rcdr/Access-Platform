@@ -199,54 +199,6 @@ The editor actions component holds functionality that is responsible for perform
 	}
 
 	/**
-	 * This method sends the request to the backend to publish or unpublish an object from the platform.
-	 * @param arr
-	 * @param currentIndex
-	 * @param destinationIndex
-	 * @returns response
-	 */
-	async function handlePublishStatusChange() {
-		return await showConfirmation(
-			async () => {
-				if (
-					editorObject.type === 'manifest' ||
-					editorObject.type === 'pdf' ||
-					editorObject.type === 'collection'
-				) {
-					try {
-						if (editorObject.public) {
-							const response = await $session.lapin.mutation(`accessObject.unpublish`, {
-								id: editorObject.id,
-								user: $session.user
-							});
-						} else {
-							const response = await $session.lapin.mutation(`accessObject.publish`, {
-								id: editorObject.id,
-								user: $session.user
-							});
-						}
-						dispatch('updated');
-						//await pullServerObject();
-						return {
-							success: true,
-							details: JSON.stringify(serverObject)
-						};
-					} catch (e) {
-						console.log(e);
-						return { success: false, details: e.message };
-					}
-				}
-				return {
-					success: false,
-					details: 'Object not of type collection, pdf, or manifest'
-				};
-			},
-			`Success! ${editorObject['public'] ? 'Unpublish' : 'Publish'}ed ${editorObject['type']}.`,
-			`Error: could not publish ${editorObject['type']}.`
-		);
-	}
-
-	/**
 	 * This method pulls the 'serverObject' from the backend. This resets the form and ensures that any problems saving changes are caught.
 	 * @returns void
 	 */
@@ -368,34 +320,6 @@ The editor actions component holds functionality that is responsible for perform
 	{/if}
 
 	{#if editorObject['id']}
-		{#if editorObject['type'] === 'manifest'}
-			<!--a
-        href={`/smelter/slug?slugs=${editorObject["slug"]}`}
-        data-tooltip-flow="bottom"
-        data-tooltip="Re-import the source package for this manifest (if applicable.) This will reset this manifest, making it match the preservation package it was derived from."
-      >
-        <button class="secondary">Re-import</button>
-      </a-->
-			<!--i class="reassurance"
-				>Afraid of making changes? Don't worry. If you make a mistake you can always re-import the
-				package.</i
-      -->
-		{/if}
-
-		<button
-			class="secondary"
-			on:click={handlePublishStatusChange}
-			disabled={!serverObject['public'] && !serverObject['dmdType']}
-			data-tooltip={!serverObject['public'] && !serverObject['dmdType']
-				? `Publishing is disabled for ${serverObject['type']}s with no metadata. Please use the "Load Metadata" tool to add metadata to your ${serverObject['type']}.`
-				: serverObject['public']
-				? `Hide this ${serverObject['type']} from the access platform.`
-				: `Make this ${serverObject['type']} available on the access platform.`}
-			data-tooltip-flow="left"
-		>
-			{serverObject['public'] ? 'Unpublish' : 'Publish'}
-		</button>
-
 		{#if serverObject['slug'] && !serverObject['public']}
 			<LoadingButton buttonClass="danger" on:clicked={openDeletionModal} showLoader={isDeleting}>
 				<span slot="content">{isDeleting ? 'Deleting...' : 'Delete'} </span>
