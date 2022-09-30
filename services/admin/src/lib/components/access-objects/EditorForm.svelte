@@ -350,82 +350,69 @@ This component displays the non content properties for an access editorObject an
       </span><br /-->
 		</div>
 		<div class="cache-status">
+			<div class="cache-title">Data Transfer (Admin Tools -> CAP)</div>
 			{#if cacheStatus?.found && cacheStatus.result}
 				{#if !('succeeded' in cacheStatus.result)}
 					<table>
 						<tbody>
 							<tr>
-								<td>Access Status:</td>
+								<td>Status:</td>
 								<td>Currently updating...</td>
 							</tr>
 							<tr>
-								<td>Update Started:</td>
+								<td>Started:</td>
 								<td>{cacheStatus.result.requestDate}</td>
 							</tr>
 						</tbody>
 					</table>
+					<br />
+					<button disabled>Force data transfer</button>
 				{:else if cacheStatus.result.succeeded}
 					<table>
 						<tbody>
+							<!--tr>
+                <Used to show publish date here>
+							</tr-->
 							<tr>
-								<td>Published On:</td>
-								<td>
-									{#if editorObject['public']}
-										{typeof editorObject['public'] === 'string'
-											? editorObject['public']
-											: new Date(parseInt(`${editorObject['public']}`) * 1000).toLocaleString()}
-									{:else}
-										Not published
-									{/if}
-								</td>
-							</tr>
-							<tr>
-								<td>Access Status:</td>
+								<td>Status:</td>
 								<td>Most recent update succeeded!</td>
 							</tr>
 							<tr>
-								<td>Update Started:</td>
+								<td>Started:</td>
 								<td>{cacheStatus.result.requestDate}</td>
 							</tr>
 							<tr>
-								<td>Update Finished:</td>
+								<td>Finished:</td>
 								<td>{cacheStatus.result.processDate}</td>
 							</tr>
 						</tbody>
 					</table>
 					<br />
 					<NotificationBar status="warn" message={cacheStatus.result.message} />
+					<button class="secondary">Force data transfer</button>
 				{:else}
 					<table>
 						<tbody>
+							<!--tr>
+                <Used to show publish date here>
+							</tr-->
 							<tr>
-								<td>Published On:</td>
-								<td>
-									{#if editorObject['public']}
-										{typeof editorObject['public'] === 'string'
-											? editorObject['public']
-											: new Date(parseInt(`${editorObject['public']}`) * 1000).toLocaleString()}
-									{:else}
-										Not published
-									{/if}
-								</td>
-							</tr>
-							<tr>
-								<td>Access Status:</td>
+								<td>Status:</td>
 								<td>Most recent update failed.</td>
 							</tr>
 							<tr>
-								<td>Update Started:</td>
+								<td>Started:</td>
 								<td>{cacheStatus.result.requestDate}</td>
 							</tr>
 							<tr>
-								<td>Update Finished:</td>
+								<td>Finished:</td>
 								<td>{cacheStatus.result.processDate}</td>
 							</tr>
 						</tbody>
 					</table>
 					<br />
 					<NotificationBar status="fail" message={cacheStatus.result.message} />
+					<button class="secondary">Force data transfer</button>
 				{/if}
 			{/if}
 		</div>
@@ -459,5 +446,15 @@ This component displays the non content properties for an access editorObject an
 	}
 	.remove-button {
 		text-align: right;
+	}
+
+	.cache-title {
+		color: var(--base-font-color);
+		padding: 0 1rem 1rem 1rem;
+	}
+
+	.cache-status button {
+		float: right;
+		margin-right: 1rem;
 	}
 </style>
