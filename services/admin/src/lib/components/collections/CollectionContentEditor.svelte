@@ -421,6 +421,34 @@ Allows the user to modify the member list for a collection.
 		);
 	}
 
+	async function handleUpdatePressed() {
+		bulkLoading = true;
+		await showConfirmation(
+			async () => {
+				try {
+					const updated = await $session.lapin.mutation(
+						'collection.updateAllMembers',
+						collection.id
+					);
+					bulkLoading = false;
+
+					return {
+						success: true,
+						details: ''
+					};
+				} catch (e) {
+					bulkLoading = false;
+					return {
+						success: false,
+						details: e.message
+					};
+				}
+			},
+			'Success: queued data transfer for all members. Please wait.',
+			'Error: failed to queue data transfer for all members.'
+		);
+	}
+
 	async function handlePublishPressed() {
 		bulkLoading = true;
 		await showConfirmation(
@@ -495,6 +523,7 @@ Allows the user to modify the member list for a collection.
 	{#if members.length}
 		<span class="bulk-wrap">
 			<DropdownMenu direction="right">
+				<span on:click={handleUpdatePressed}>Force Data Transfer All</span>
 				<span slot="dropdown-button">
 					<LoadingButton backgroundType="gradient" buttonClass="" showLoader={bulkLoading}>
 						<span slot="content"> Bulk Member Operations </span>
