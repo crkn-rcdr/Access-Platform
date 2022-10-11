@@ -79,6 +79,16 @@ export const accessObjectRouter = createRouter()
       }
     },
   })
+  .mutation("forceUpdate", {
+    input: Noid.parse,
+    async resolve({ input, ctx }) {
+      try {
+        return await ctx.couch.access.forceUpdate(input);
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
   .mutation("publish", {
     input: NoidWithUser.parse,
     async resolve({ input, ctx }) {

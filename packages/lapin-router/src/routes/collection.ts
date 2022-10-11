@@ -608,6 +608,16 @@ export const collectionRouter = createRouter()
       }
     },
   })
+  .mutation("updateAllMembers", {
+    input: Noid.parse,
+    async resolve({ input, ctx }) {
+      try {
+        await ctx.couch.access.bulkForceUpdateAllMembers(input);
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
   .query("getMemberSlugs", {
     input: Noid,
     async resolve({ input, ctx }) {
