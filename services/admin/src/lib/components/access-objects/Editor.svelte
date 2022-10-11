@@ -28,6 +28,7 @@ The editor component allows for the editing of PagedAccessObjects. It will dynam
 	import { editorObjectStore } from '$lib/stores/accessObjectEditorStore';
 	import { onDestroy } from 'svelte';
 	import EditorForm from '$lib/components/access-objects/EditorForm.svelte';
+	import DeleteForm from './DeleteForm.svelte';
 
 	/**
 	 * @type {Session} The session store that contains the module for sending requests to lapin.
@@ -166,6 +167,28 @@ The editor component allows for the editing of PagedAccessObjects. It will dynam
 							overflowY: 'hidden'
 						},
 						listeners: {}
+					}
+				});
+			}
+
+			if (mode === 'edit') {
+				pageList.push({
+					name: 'Delete',
+					componentData: {
+						contentComponent: DeleteForm,
+						contentComponentProps: {
+							editorObject: $editorObjectStore
+						},
+						sideMenuPageProps: {},
+						listeners: {
+							save: (event) => {
+								saveChange(event);
+							},
+							change: (event) => {
+								// Unfortunately just passing the store only works for members and canvases lists
+								$editorObjectStore = event.detail;
+							}
+						}
 					}
 				});
 			}
