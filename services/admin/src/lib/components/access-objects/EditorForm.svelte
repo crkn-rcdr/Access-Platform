@@ -382,9 +382,9 @@ This component displays the non content properties for an access editorObject an
       </span><br /-->
 		</div>
 		<div class="cache-status">
-			<div class="cache-title">Data Transfer (Admin Tools -> CAP)</div>
 			{#if cacheStatus?.found && cacheStatus.result}
 				{#if !('succeeded' in cacheStatus.result)}
+					<div class="cache-title">Data Transfer (Admin Tools -> CAP)</div>
 					<table>
 						<tbody>
 							<tr>
@@ -400,6 +400,7 @@ This component displays the non content properties for an access editorObject an
 					<br />
 					<button disabled>Force data transfer to CAP</button>
 				{:else if cacheStatus.result.succeeded}
+					<div class="cache-title">Data Transfer (Admin Tools -> CAP)</div>
 					<table>
 						<tbody>
 							<!--tr>
@@ -423,6 +424,7 @@ This component displays the non content properties for an access editorObject an
 					<NotificationBar status="warn" message={cacheStatus.result.message} />
 					<button class="secondary" on:click={handleForceUpdate}>Force data transfer to CAP</button>
 				{:else}
+					<div class="cache-title">Data Transfer (Admin Tools -> CAP)</div>
 					<table>
 						<tbody>
 							<!--tr>

@@ -158,47 +158,6 @@ The editor actions component holds functionality that is responsible for perform
 	}
 
 	/**
-	 * Sends the request to the backend to delete the access serverObject.
-	 * @returns response
-	 */
-	async function handleDelete() {
-		showDeleteModal = false;
-		isDeleting = true;
-		return await showConfirmation(
-			async () => {
-				if (
-					editorObject.type === 'manifest' ||
-					editorObject.type === 'collection' ||
-					serverObject.type === 'pdf'
-				) {
-					try {
-						const response = await $session.lapin.mutation(`accessObject.delete`, {
-							id: editorObject.id,
-							user: $session.user
-						});
-						//dispatch("updated");
-						//await pullServerObject();
-						goto('/object/edit');
-						isDeleting = false;
-						return { success: true, details: '' };
-					} catch (e) {
-						console.log(e);
-						isDeleting = false;
-						return { success: false, details: e.message };
-					}
-				}
-				isDeleting = false;
-				return {
-					success: false,
-					details: 'Object not of type collection, pdf, or manifest'
-				};
-			},
-			`Success! Deleted '${editorObject['slug']}.'`,
-			`Error deleting '${editorObject['slug']}.'`
-		);
-	}
-
-	/**
 	 * This method pulls the 'serverObject' from the backend. This resets the form and ensures that any problems saving changes are caught.
 	 * @returns void
 	 */
@@ -225,86 +184,6 @@ The editor actions component holds functionality that is responsible for perform
 		);
 	}
 
-	function setDeletionModalTextEnabled() {
-		deleteModalTitle = `Are you sure you want to delete ${serverObject['slug']}?`;
-		deleteModalMsg = `By deleting ${serverObject['slug']}, you will be taking it out of all the collections it belongs to. You will be able to use the slug, "${serverObject['slug']}", for future ${serverObject['type']}s. You can add ${serverObject['slug']} back into the access platform by importing it from preservation again.`;
-		deleteModalActionText = `Delete`;
-	}
-
-	function setDeletionModalTextWaiting() {
-		deleteModalTitle = `${serverObject['slug']} can't be deleted yet.`;
-		deleteModalMsg = `There are background processes running preventing ${serverObject['slug']} from being deleted. Please wait...`;
-		deleteModalActionText = `Ok`;
-	}
-
-	function setDeletionModalTextTryAgain() {
-		console.log('No tries left');
-		deleteModalTitle = `${serverObject['slug']} can not be deleted.`;
-		deleteModalMsg = `Can not delete ${serverObject['slug']}. There are background processes running on ${serverObject['slug']}. Please wait and try again later.`;
-		deleteModalActionText = `Ok`;
-	}
-
-	function setDeletionModalTextError() {
-		deleteModalTitle = `${serverObject['slug']} can't be deleted.`;
-		deleteModalMsg = `There was a problem when background processes ran on ${serverObject['slug']} that is preventing it from being deleted. Message: ${serverObject['updateInternalmeta']?.['message']}`;
-		deleteModalActionText = `Ok`;
-	}
-
-	async function openDeletionModal() {
-		console.log(serverObject.updateInternalmeta);
-		if (
-			!serverObject.updateInternalmeta ||
-			(serverObject.updateInternalmeta && 'succeeded' in serverObject.updateInternalmeta)
-		) {
-			console.log('one');
-			if (serverObject.updateInternalmeta && serverObject.updateInternalmeta['succeeded']) {
-				console.log('two');
-				isDeleteModalWaiting = false;
-				setDeletionModalTextEnabled();
-			} else if (!serverObject.updateInternalmeta) {
-				console.log('two');
-				isDeleteModalWaiting = false;
-				setDeletionModalTextEnabled();
-			} else {
-				console.log('three');
-				isDeleteModalWaiting = false;
-				setDeletionModalTextError();
-			}
-		} else {
-			console.log('four');
-			isDeleteModalWaiting = true;
-			setDeletionModalTextWaiting();
-
-			(function requestLoop(i) {
-				setTimeout(async () => {
-					isDeleteModalWaiting = true;
-					await pullServerObject();
-					if (serverObject.updateInternalmeta && 'succeeded' in serverObject.updateInternalmeta) {
-						if (serverObject.updateInternalmeta?.['succeeded']) {
-							isDeleteModalWaiting = false;
-							setDeletionModalTextEnabled();
-						} else {
-							isDeleteModalWaiting = false;
-							setDeletionModalTextError();
-						}
-					} else {
-						//isDeleteModalWaiting = true;
-						//setDeletionModalTextWaiting();
-						if (--i) {
-							console.log('More tries left');
-							requestLoop(i);
-						} else {
-							isDeleteModalWaiting = false;
-							setDeletionModalTextTryAgain();
-						}
-					}
-				}, 30000);
-			})(30);
-		}
-
-		showDeleteModal = true;
-	}
-
 	/**
 	 * @event onMount
 	 * @description When the component instance is mounted onto the dom, the 'clone' variable is set to the rfdc module.
@@ -318,49 +197,7 @@ The editor actions component holds functionality that is responsible for perform
 	{#if mode === 'create'}
 		<button class="save" disabled={!isSaveEnabled} on:click={handleSaveCreate}>Create</button>
 	{/if}
-
-	{#if editorObject['id']}
-		{#if serverObject['slug'] && !serverObject['public']}
-			<LoadingButton buttonClass="danger" on:clicked={openDeletionModal} showLoader={isDeleting}>
-				<span slot="content">{isDeleting ? 'Deleting...' : 'Delete'} </span>
-			</LoadingButton>
-		{/if}
-	{/if}
 </span>
-
-<Modal bind:open={showDeleteModal} title={deleteModalTitle}>
-	<div slot="body">
-		{#if isDeleteModalWaiting}
-			{deleteModalMsg}
-			<br />
-			<br />
-			<div class="modal-loader-wrap">
-				<Loading backgroundType="gradient" />
-			</div>
-		{:else}
-			<p>{deleteModalMsg}</p>
-		{/if}
-	</div>
-	<div slot="footer">
-		<button class="secondary" on:click={() => (showDeleteModal = false)}> Cancel </button>
-		{#if !isDeleteModalWaiting}
-			{#if deleteModalActionText === 'Ok'}
-				<button
-					class="primary"
-					on:click={() => {
-						showDeleteModal = false;
-					}}
-				>
-					{deleteModalActionText}
-				</button>
-			{:else}
-				<button class="danger" on:click={handleDelete}>
-					{deleteModalActionText}
-				</button>
-			{/if}
-		{/if}
-	</div>
-</Modal>
 
 <style>
 	:global(.editor-actions button) {
