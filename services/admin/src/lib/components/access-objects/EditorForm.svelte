@@ -85,11 +85,13 @@ This component displays the non content properties for an access editorObject an
 								id: editorObject.id,
 								user: $session.user
 							});
+							editorObject.public = null;
 						} else {
 							const response = await $session.lapin.mutation(`accessObject.publish`, {
 								id: editorObject.id,
 								user: $session.user
 							});
+							editorObject.public = '2020-03-03T18:43:17Z';
 						}
 						dispatch('change', editorObject);
 						return {

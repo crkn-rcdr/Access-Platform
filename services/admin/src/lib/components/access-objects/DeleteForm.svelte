@@ -16,13 +16,14 @@ The editor actions component holds functionality that is responsible for perform
 *Note: `bind:` is required for changes to the editorObject and its model to be reflected in higher level components.*
 -->
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import type { Session } from '$lib/types';
 	import type { PagedAccessObject } from '@crkn-rcdr/access-data';
+	import { editorObjectStore } from '$lib/stores/accessObjectEditorStore';
 	import { getStores } from '$app/stores';
 	import { showConfirmation } from '$lib/utils/confirmation';
 	import { goto } from '$app/navigation';
 	import Loading from '../shared/Loading.svelte';
+	import { pull } from 'lodash-es';
 
 	/**
 	 * This is th$lib/utils/confirmationerObject of type AccessObject pulled from the backend, to be edited only once an action is successfully performed.
@@ -33,21 +34,6 @@ The editor actions component holds functionality that is responsible for perform
 	 * @type {Session} The session store that contains the module for sending requests to lapin.
 	 */
 	const { session } = getStores<Session>();
-
-	/**
-	 * @type {any} A module that quickly deep copies (clones) an editorObject.
-	 */
-	let clone: any;
-
-	/**
-	 * @type {boolean} Controls if the save button is displayed or not.
-	 */
-	let isSaveEnabled = false;
-
-	/**
-	 * @type {boolean} Controls if the move to storage modal is being displayed or not.
-	 */
-	let showDeleteModal = false;
 
 	/**
 	 * @type {string} Used to show a message to the user when delete is pressed.
@@ -63,15 +49,11 @@ The editor actions component holds functionality that is responsible for perform
 
 	let isDeleteModalWaiting = false;
 
-	let isDeleting = false;
-
 	/**
 	 * Sends the request to the backend to delete the access editorObject.
 	 * @returns response
 	 */
 	async function handleDelete() {
-		showDeleteModal = false;
-		isDeleting = true;
 		return await showConfirmation(
 			async () => {
 				if (
@@ -87,15 +69,12 @@ The editor actions component holds functionality that is responsible for perform
 						//dispatch("updated");
 						//await pulleditorObject();
 						goto('/object/edit');
-						isDeleting = false;
 						return { success: true, details: '' };
 					} catch (e) {
 						console.log(e);
-						isDeleting = false;
 						return { success: false, details: e.message };
 					}
 				}
-				isDeleting = false;
 				return {
 					success: false,
 					details: 'Object not of type collection, pdf, or manifest'
@@ -208,54 +187,47 @@ The editor actions component holds functionality that is responsible for perform
 				}, 30000);
 			})(30);
 		}
-
-		showDeleteModal = true;
 	}
 
-	/**
-	 * @event onMount
-	 * @description When the component instance is mounted onto the dom, the 'clone' variable is set to the rfdc module.
-	 */
-	onMount(async () => {
-		clone = (await import('rfdc')).default();
-		await openDeletionModal();
+	editorObjectStore.subscribe((value: PagedAccessObject) => {
+		editorObject = value;
+		openDeletionModal().then(() => {
+			console.log('');
+		});
 	});
 </script>
 
-<div class="delete-wrap">
-	<b>{deleteModalTitle}</b>
-	<br />
-	<br />
-	{#if isDeleteModalWaiting}
-		{deleteModalMsg}
+{#if !editorObject.public}
+	<div class="delete-wrap">
+		<b>{deleteModalTitle}</b>
 		<br />
 		<br />
-		<div class="modal-loader-wrap">
-			<Loading backgroundType="gradient" />
-		</div>
-	{:else}
-		<p>{deleteModalMsg}</p>
-	{/if}
-	<br />
-	<div>
-		{#if !isDeleteModalWaiting}
-			{#if deleteModalActionText === 'Ok'}
-				<button
-					class="primary"
-					on:click={() => {
-						showDeleteModal = false;
-					}}
-				>
-					{deleteModalActionText}
-				</button>
-			{:else}
-				<button class="danger" on:click={handleDelete}>
-					{deleteModalActionText}
-				</button>
-			{/if}
+		{#if isDeleteModalWaiting}
+			{deleteModalMsg}
+			<br />
+			<br />
+			<div class="modal-loader-wrap">
+				<Loading backgroundType="gradient" />
+			</div>
+		{:else}
+			<p>{deleteModalMsg}</p>
 		{/if}
+		<br />
+		<div>
+			{#if !isDeleteModalWaiting}
+				{#if deleteModalActionText !== 'Ok'}
+					<button class="danger" on:click={handleDelete}>
+						{deleteModalActionText}
+					</button>
+				{/if}
+			{/if}
+		</div>
 	</div>
-</div>
+{:else}
+	<div class="delete-wrap">
+		<p>Please unpublish {editorObject['slug']} to enable deletion.</p>
+	</div>
+{/if}
 
 <style>
 	.delete-wrap {

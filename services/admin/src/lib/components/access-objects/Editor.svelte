@@ -177,13 +177,10 @@ The editor component allows for the editing of PagedAccessObjects. It will dynam
 					componentData: {
 						contentComponent: DeleteForm,
 						contentComponentProps: {
-							editorObject: $editorObjectStore
+							editorObjectStore: editorObjectStore
 						},
 						sideMenuPageProps: {},
 						listeners: {
-							save: (event) => {
-								saveChange(event);
-							},
 							change: (event) => {
 								// Unfortunately just passing the store only works for members and canvases lists
 								$editorObjectStore = event.detail;
