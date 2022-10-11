@@ -71,13 +71,6 @@ This component displays the non content properties for an access editorObject an
 		dispatch('save', event.detail);
 	}
 
-	/**
-	 * This method sends the request to the backend to publish or unpublish an object from the platform.
-	 * @param arr
-	 * @param currentIndex
-	 * @param destinationIndex
-	 * @returns response
-	 */
 	async function handlePublishStatusChange() {
 		return await showConfirmation(
 			async () => {
@@ -115,6 +108,45 @@ This component displays the non content properties for an access editorObject an
 			},
 			`Success! Updated the status of the ${editorObject['type']}.`,
 			`Error: could not update the status of the ${editorObject['type']}.`
+		);
+	}
+
+	async function handleForceUpdate() {
+		return await showConfirmation(
+			async () => {
+				if (
+					editorObject.type === 'manifest' ||
+					editorObject.type === 'pdf' ||
+					editorObject.type === 'collection'
+				) {
+					try {
+						const response = await $session.lapin.mutation(
+							`accessObject.forceUpdate`,
+							editorObject.id
+						);
+
+						cacheStatus = await $session.lapin.query(
+							'accessObject.getCacheStatus',
+							editorObject.id
+						);
+
+						dispatch('change', editorObject);
+						return {
+							success: true,
+							details: JSON.stringify(editorObject)
+						};
+					} catch (e) {
+						console.log(e);
+						return { success: false, details: e.message };
+					}
+				}
+				return {
+					success: false,
+					details: 'Object not of type collection, pdf, or manifest'
+				};
+			},
+			`Success! Started data transfer for ${editorObject['type']}.`,
+			`Error: could not data transfer for ${editorObject['type']}.`
 		);
 	}
 
@@ -366,7 +398,7 @@ This component displays the non content properties for an access editorObject an
 						</tbody>
 					</table>
 					<br />
-					<button disabled>Force data transfer</button>
+					<button disabled>Force data transfer to CAP</button>
 				{:else if cacheStatus.result.succeeded}
 					<table>
 						<tbody>
@@ -389,7 +421,7 @@ This component displays the non content properties for an access editorObject an
 					</table>
 					<br />
 					<NotificationBar status="warn" message={cacheStatus.result.message} />
-					<button class="secondary">Force data transfer</button>
+					<button class="secondary" on:click={handleForceUpdate}>Force data transfer to CAP</button>
 				{:else}
 					<table>
 						<tbody>
@@ -412,7 +444,7 @@ This component displays the non content properties for an access editorObject an
 					</table>
 					<br />
 					<NotificationBar status="fail" message={cacheStatus.result.message} />
-					<button class="secondary">Force data transfer</button>
+					<button class="secondary" on:click={handleForceUpdate}>Force data transfer to CAP</button>
 				{/if}
 			{/if}
 		</div>
