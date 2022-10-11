@@ -202,17 +202,17 @@ This component displays the non content properties for an access editorObject an
 {#if editorObject}
 	<div class="info-wrap auto-align">
 		<div class="info-form">
-			<label
-				for="status"
-				data-tooltip={!editorObject['public'] && !editorObject['dmdType']
-					? `Publishing is disabled for ${editorObject['type']}s with no metadata. Please use the "Load Metadata" tool to add metadata to your ${editorObject['type']}.`
-					: editorObject['public']
-					? `Hide this ${editorObject['type']} from the access platform.`
-					: `Make this ${editorObject['type']} available on the access platform.`}
-				data-tooltip-flow="right">Status</label
-			><br />
-
 			{#if mode === 'edit' && status}
+				<label
+					for="status"
+					data-tooltip={!editorObject['public'] && !editorObject['dmdType']
+						? `Publishing is disabled for ${editorObject['type']}s with no metadata. Please use the "Load Metadata" tool to add metadata to your ${editorObject['type']}.`
+						: editorObject['public']
+						? `Hide this ${editorObject['type']} from the access platform.`
+						: `Make this ${editorObject['type']} available on the access platform.`}
+					data-tooltip-flow="right">Status</label
+				><br />
+
 				<EditorInput
 					saveDisabled={!editorObject['public'] && !editorObject['dmdType']}
 					keys={['status']}
