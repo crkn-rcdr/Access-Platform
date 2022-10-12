@@ -30,6 +30,8 @@ The editor actions component holds functionality that is responsible for perform
 	 */
 	export let editorObject: PagedAccessObject;
 
+	export let cacheStatus: any;
+
 	/**
 	 * @type {Session} The session store that contains the module for sending requests to lapin.
 	 */
@@ -191,38 +193,41 @@ The editor actions component holds functionality that is responsible for perform
 
 	editorObjectStore.subscribe((value: PagedAccessObject) => {
 		editorObject = value;
+		console.log('Changed', editorObject);
 		openDeletionModal().then(() => {
-			console.log('');
+			console.log('redrew1');
 		});
 	});
 </script>
 
 {#if !editorObject.public}
-	<div class="delete-wrap">
-		<b>{deleteModalTitle}</b>
-		<br />
-		<br />
-		{#if isDeleteModalWaiting}
-			{deleteModalMsg}
+	{#if !cacheStatus || cacheStatus?.processDate}
+		<div class="delete-wrap">
+			<b>{deleteModalTitle}</b>
 			<br />
 			<br />
-			<div class="modal-loader-wrap">
-				<Loading backgroundType="gradient" />
-			</div>
-		{:else}
-			<p>{deleteModalMsg}</p>
-		{/if}
-		<br />
-		<div>
-			{#if !isDeleteModalWaiting}
-				{#if deleteModalActionText !== 'Ok'}
-					<button class="danger" on:click={handleDelete}>
-						{deleteModalActionText}
-					</button>
-				{/if}
+			{#if isDeleteModalWaiting}
+				{deleteModalMsg}
+				<br />
+			{:else}
+				<p>{deleteModalMsg}</p>
 			{/if}
+			<br />
+			<div>
+				{#if !isDeleteModalWaiting}
+					{#if deleteModalActionText !== 'Ok'}
+						<button class="danger" on:click={handleDelete}>
+							{deleteModalActionText}
+						</button>
+					{/if}
+				{/if}
+			</div>
 		</div>
-	</div>
+	{:else}
+		<div class="delete-wrap">
+			<p>Please wait - {editorObject['slug']} has background processes running on it.</p>
+		</div>
+	{/if}
 {:else}
 	<div class="delete-wrap">
 		<p>Please unpublish {editorObject['slug']} to enable deletion.</p>

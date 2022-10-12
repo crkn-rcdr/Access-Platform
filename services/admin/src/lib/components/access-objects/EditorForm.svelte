@@ -85,13 +85,13 @@ This component displays the non content properties for an access editorObject an
 								id: editorObject.id,
 								user: $session.user
 							});
-							editorObject.public = null;
+							//editorObject.public = null;
 						} else {
 							const response = await $session.lapin.mutation(`accessObject.publish`, {
 								id: editorObject.id,
 								user: $session.user
 							});
-							editorObject.public = '2020-03-03T18:43:17Z';
+							//editorObject.public = new Date().toISOString().replace(/.\d+Z$/g, 'Z');
 						}
 						dispatch('change', editorObject);
 						return {
@@ -191,6 +191,8 @@ This component displays the non content properties for an access editorObject an
 
 			unsubscribe = interval.subscribe(async () => {
 				cacheStatus = await $session.lapin.query('accessObject.getCacheStatus', editorObject.id);
+				console.log('pulled');
+				dispatch('pullServer', editorObject);
 			});
 		}
 	});
@@ -226,6 +228,9 @@ This component displays the non content properties for an access editorObject an
 						</select>
 					</div>
 				</EditorInput>
+				{#if editorObject.public}
+					<span class="public">{editorObject.public}</span>
+				{/if}
 
 				<br /><br />
 			{/if}
@@ -480,6 +485,9 @@ This component displays the non content properties for an access editorObject an
 	}
 	.cache-status tbody {
 		background: none !important;
+	}
+	.public {
+		color: var(--secondary);
 	}
 	label,
 	textarea {
