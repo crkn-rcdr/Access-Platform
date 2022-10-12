@@ -226,8 +226,9 @@ This component displays the non content properties for an access editorObject an
 						</select>
 					</div>
 				</EditorInput>
+
+				<br /><br />
 			{/if}
-			<br /><br />
 
 			<label for="slug">Slug</label>
 			{#if mode === 'edit'}
