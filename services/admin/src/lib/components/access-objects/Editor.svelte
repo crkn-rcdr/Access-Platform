@@ -129,6 +129,13 @@ The editor component allows for the editing of PagedAccessObjects. It will dynam
 					change: (event) => {
 						// Unfortunately just passing the store only works for members and canvases lists
 						$editorObjectStore = event.detail;
+					},
+					pullServer: (event) => {
+						// Unfortunately just passing the store only works for members and canvases lists
+						console.log('pullServer');
+						pullServerObject().then(() => {
+							console.log('updated');
+						});
 					}
 				}
 			}
@@ -177,16 +184,14 @@ The editor component allows for the editing of PagedAccessObjects. It will dynam
 					componentData: {
 						contentComponent: DeleteForm,
 						contentComponentProps: {
-							editorObject: $editorObjectStore
+							editorObjectStore: editorObjectStore
 						},
 						sideMenuPageProps: {},
 						listeners: {
-							save: (event) => {
-								saveChange(event);
-							},
 							change: (event) => {
 								// Unfortunately just passing the store only works for members and canvases lists
 								$editorObjectStore = event.detail;
+								//pullServerObject();
 							}
 						}
 					}
@@ -205,6 +210,9 @@ The editor component allows for the editing of PagedAccessObjects. It will dynam
 				try {
 					const response = await $session.lapin.query('accessObject.getPaged', serverObject['id']);
 					serverObject = response;
+					console.log('server', serverObject);
+					$editorObjectStore = serverObject;
+
 					return {
 						success: true,
 						details: ''

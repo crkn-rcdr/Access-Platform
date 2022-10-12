@@ -85,11 +85,13 @@ This component displays the non content properties for an access editorObject an
 								id: editorObject.id,
 								user: $session.user
 							});
+							//editorObject.public = null;
 						} else {
 							const response = await $session.lapin.mutation(`accessObject.publish`, {
 								id: editorObject.id,
 								user: $session.user
 							});
+							//editorObject.public = new Date().toISOString().replace(/.\d+Z$/g, 'Z');
 						}
 						dispatch('change', editorObject);
 						return {
@@ -189,6 +191,8 @@ This component displays the non content properties for an access editorObject an
 
 			unsubscribe = interval.subscribe(async () => {
 				cacheStatus = await $session.lapin.query('accessObject.getCacheStatus', editorObject.id);
+				console.log('pulled');
+				dispatch('pullServer', editorObject);
 			});
 		}
 	});
@@ -200,17 +204,17 @@ This component displays the non content properties for an access editorObject an
 {#if editorObject}
 	<div class="info-wrap auto-align">
 		<div class="info-form">
-			<label
-				for="status"
-				data-tooltip={!editorObject['public'] && !editorObject['dmdType']
-					? `Publishing is disabled for ${editorObject['type']}s with no metadata. Please use the "Load Metadata" tool to add metadata to your ${editorObject['type']}.`
-					: editorObject['public']
-					? `Hide this ${editorObject['type']} from the access platform.`
-					: `Make this ${editorObject['type']} available on the access platform.`}
-				data-tooltip-flow="right">Status</label
-			><br />
-
 			{#if mode === 'edit' && status}
+				<label
+					for="status"
+					data-tooltip={!editorObject['public'] && !editorObject['dmdType']
+						? `Publishing is disabled for ${editorObject['type']}s with no metadata. Please use the "Load Metadata" tool to add metadata to your ${editorObject['type']}.`
+						: editorObject['public']
+						? `Hide this ${editorObject['type']} from the access platform.`
+						: `Make this ${editorObject['type']} available on the access platform.`}
+					data-tooltip-flow="right">Status</label
+				><br />
+
 				<EditorInput
 					saveDisabled={!editorObject['public'] && !editorObject['dmdType']}
 					keys={['status']}
@@ -224,8 +228,12 @@ This component displays the non content properties for an access editorObject an
 						</select>
 					</div>
 				</EditorInput>
+				{#if editorObject.public}
+					<span class="public">{editorObject.public}</span>
+				{/if}
+
+				<br /><br />
 			{/if}
-			<br /><br />
 
 			<label for="slug">Slug</label>
 			{#if mode === 'edit'}
@@ -422,7 +430,11 @@ This component displays the non content properties for an access editorObject an
 					</table>
 					<br />
 					<NotificationBar status="warn" message={cacheStatus.result.message} />
-					<button class="secondary" on:click={handleForceUpdate}>Force data transfer to CAP</button>
+					{#if editorObject.public}
+						<button class="secondary" on:click={handleForceUpdate}
+							>Force data transfer to CAP</button
+						>
+					{/if}
 				{:else}
 					<div class="cache-title">Data Transfer (Admin Tools -> CAP)</div>
 					<table>
@@ -446,7 +458,11 @@ This component displays the non content properties for an access editorObject an
 					</table>
 					<br />
 					<NotificationBar status="fail" message={cacheStatus.result.message} />
-					<button class="secondary" on:click={handleForceUpdate}>Force data transfer to CAP</button>
+					{#if editorObject.public}
+						<button class="secondary" on:click={handleForceUpdate}
+							>Force data transfer to CAP</button
+						>
+					{/if}
 				{/if}
 			{/if}
 		</div>
@@ -469,6 +485,9 @@ This component displays the non content properties for an access editorObject an
 	}
 	.cache-status tbody {
 		background: none !important;
+	}
+	.public {
+		color: var(--secondary);
 	}
 	label,
 	textarea {
