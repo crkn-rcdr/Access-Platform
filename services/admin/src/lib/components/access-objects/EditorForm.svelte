@@ -425,7 +425,11 @@ This component displays the non content properties for an access editorObject an
 					</table>
 					<br />
 					<NotificationBar status="warn" message={cacheStatus.result.message} />
-					<button class="secondary" on:click={handleForceUpdate}>Force data transfer to CAP</button>
+					{#if editorObject.public}
+						<button class="secondary" on:click={handleForceUpdate}
+							>Force data transfer to CAP</button
+						>
+					{/if}
 				{:else}
 					<div class="cache-title">Data Transfer (Admin Tools -> CAP)</div>
 					<table>
@@ -449,7 +453,11 @@ This component displays the non content properties for an access editorObject an
 					</table>
 					<br />
 					<NotificationBar status="fail" message={cacheStatus.result.message} />
-					<button class="secondary" on:click={handleForceUpdate}>Force data transfer to CAP</button>
+					{#if editorObject.public}
+						<button class="secondary" on:click={handleForceUpdate}
+							>Force data transfer to CAP</button
+						>
+					{/if}
 				{/if}
 			{/if}
 		</div>
