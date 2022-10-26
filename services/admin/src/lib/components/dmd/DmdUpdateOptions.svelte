@@ -63,7 +63,6 @@ This component allows the user to update the dmd tasks items in an access platfo
 	let creatingCollections = false;
 
 	async function handleCreateOption() {
-		console.log(createOption);
 		//send req to back end for setting item.shouldStore.
 		//also set createOption for the dmdTask
 		try {
@@ -73,7 +72,6 @@ This component allows the user to update the dmd tasks items in an access platfo
 				user: $session.user,
 				createOption
 			});
-			console.log(response);
 			await lookupItems();
 			creatingCollections = false;
 		} catch (e) {

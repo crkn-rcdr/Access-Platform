@@ -220,15 +220,12 @@ export const dmdTaskRouter = createRouter()
         await ctx.couch.dmdtask.setCreate(input);
 
         const response = await ctx.couch.dmdtask.getSafe(input.task);
-        console.log("11", response);
 
         if (response.found) {
           const task = response.doc;
 
           if (task && "items" in task && task.items) {
-            console.log(task.items);
             if (input.createOption) {
-              console.log(input.createOption);
               //create the collections
               for (let item of task.items) {
                 if (
@@ -239,7 +236,7 @@ export const dmdTaskRouter = createRouter()
                 ) {
                   const id: Noid = await ctx.noid.mintOne();
 
-                  const res = await ctx.couch.access.createCollection({
+                  await ctx.couch.access.createCollection({
                     id,
                     user: input.user,
                     data: {
@@ -250,7 +247,6 @@ export const dmdTaskRouter = createRouter()
                       members: [],
                     },
                   });
-                  console.log(res);
                 }
               }
             }
