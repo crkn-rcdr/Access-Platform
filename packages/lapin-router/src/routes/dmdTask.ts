@@ -245,7 +245,7 @@ export const dmdTaskRouter = createRouter()
                     data: {
                       type: "collection",
                       slug: item.id,
-                      label: { value: `${item.label}` },
+                      label: { none: `${item.label}` },
                       behavior: "multi-part",
                       members: [],
                     },
