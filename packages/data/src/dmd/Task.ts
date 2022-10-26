@@ -97,6 +97,11 @@ export const BaseDMDTask = z.object({
    * CouchDB `_attachments` object.
    */
   attachments: CouchAttachmentRecord.optional(),
+
+  /**
+   * Allows for tracking if multi-part collections should be made from items that were not found
+   */
+  createOption: z.boolean().optional(),
 });
 
 /**

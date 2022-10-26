@@ -112,6 +112,43 @@ export class DMDTaskHandler extends DatabaseHandler<DMDTask> {
     return taskId;
   }
 
+  async setCreate(args: {
+    /** User who triggered storage */
+    user: User;
+    /** Descriptive metadata task id */
+    task: string;
+    /** If selected items that were'nt found should be made into multi part collections */
+    createOption: boolean;
+  }) {
+    const { user, task, createOption } = args;
+
+    const dmdTask = await this.get(task);
+
+    if ("items" in dmdTask) {
+      await this.update({
+        ddoc: "access",
+        name: "editObject",
+        docId: task,
+        body: {
+          user,
+          data: {
+            items: dmdTask.items.map((item) => {
+              if (
+                "found" in item &&
+                !item["found"] &&
+                "parsed" in item &&
+                item["parsed"]
+              ) {
+                item["shouldStore"] = createOption;
+              }
+              return item;
+            }),
+          },
+        },
+      });
+    }
+  }
+
   async store(args: {
     /** User who triggered storage */
     user: User;

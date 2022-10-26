@@ -3,6 +3,7 @@ import { TRPCError } from "@trpc/server";
 import { createRouter, httpErrorToTRPC } from "../router.js";
 import {
   DMDFORMATS,
+  Noid,
   ObjectListHandler,
   ShortTask,
   User,
@@ -24,6 +25,12 @@ const FetchInput = z.object({
 const StoreInput = z.object({
   task: z.string(), // dmdtask uuid
   user: User,
+});
+
+const CreateOptionInput = z.object({
+  task: z.string(), // dmdtask uuid
+  user: User,
+  createOption: z.boolean(),
 });
 
 const PageInput = z.object({
@@ -201,6 +208,57 @@ export const dmdTaskRouter = createRouter()
     async resolve({ input, ctx }) {
       try {
         return await ctx.couch.dmdtask.delete({ document: input });
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .mutation("setCreate", {
+    input: CreateOptionInput,
+    async resolve({ input, ctx }) {
+      try {
+        await ctx.couch.dmdtask.setCreate(input);
+
+        const response = await ctx.couch.dmdtask.getSafe(input.task);
+        console.log("11", response);
+
+        if (response.found) {
+          const task = response.doc;
+
+          if (task && "items" in task && task.items) {
+            console.log(task.items);
+            if (input.createOption) {
+              console.log(input.createOption);
+              //create the collections
+              for (let item of task.items) {
+                if (
+                  "found" in item &&
+                  !item["found"] &&
+                  "parsed" in item &&
+                  item["parsed"]
+                ) {
+                  const id: Noid = await ctx.noid.mintOne();
+
+                  const res = await ctx.couch.access.createCollection({
+                    id,
+                    user: input.user,
+                    data: {
+                      type: "collection",
+                      slug: item.id,
+                      label: { value: `${item.label}` },
+                      behavior: "multi-part",
+                      members: [],
+                    },
+                  });
+                  console.log(res);
+                }
+              }
+            }
+
+            return task;
+          }
+        }
+        return null;
       } catch (e) {
         throw httpErrorToTRPC(e);
       }
