@@ -290,26 +290,40 @@ This component allows the user to update the dmd tasks items in an access platfo
 							{/if}
 							<br />
 
-							{#if creatingCollections}
-								<span>
-									<Loading size="sm" backgroundType="gradient" />
-								</span>
-							{/if}
 							<span>
-								<input type="checkbox" bind:checked={createOption} on:change={handleCreateOption} />
+								<input
+									type="checkbox"
+									bind:checked={createOption}
+									on:change={() => (activeStepIndex = 2)}
+								/>
 								<span>Create multi-part collections from the items that were not found</span>
 							</span>
 						{/if}
 					</div>
 				</ScrollStepperStep>
+				{#if createOption}
+					<ScrollStepperStep title="Create Collections">
+						<div slot="icon">3</div>
+						<div class="auto-align auto-align__column">
+							{#if creatingCollections}
+								<span>
+									<Loading size="sm" backgroundType="gradient" />
+								</span>
+							{/if}
+							<button class="primary" on:click={handleCreateOption}> Create </button>
+						</div>
+					</ScrollStepperStep>
+				{/if}
 				<ScrollStepperStep title="Review Selection">
-					<div slot="icon">3</div>
+					<div slot="icon">{createOption ? 4 : 3}</div>
 					<div class="auto-align auto-align__column">
-						<button class="primary" on:click={() => (activeStepIndex = 3)}> Looks Good! </button>
+						<button class="primary" on:click={() => (activeStepIndex = createOption ? 4 : 3)}>
+							Looks Good!
+						</button>
 					</div>
 				</ScrollStepperStep>
 				<ScrollStepperStep isLastStep={true} title="Store Metadata">
-					<div slot="icon">4</div>
+					<div slot="icon">{createOption ? 5 : 4}</div>
 					<div class="auto-align auto-align__column">
 						<span>
 							<LoadingButton
