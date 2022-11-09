@@ -79,6 +79,7 @@ This component allows the user to update the dmd tasks items in an access platfo
 			console.log('dmdTask', dmdTask);
 			activeStepIndex = 3;
 			creatingCollections = false;
+			showCreateWarningModal = false;
 		} catch (e) {
 			return {
 				success: false,
