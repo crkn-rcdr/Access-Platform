@@ -73,7 +73,8 @@ This component allows the user to update the dmd tasks items in an access platfo
 				user: $session.user,
 				createOption
 			});
-			await lookupItems();
+			if (response) dmdTask = response;
+			console.log('dmdTask', dmdTask);
 			activeStepIndex = 3;
 			creatingCollections = false;
 		} catch (e) {

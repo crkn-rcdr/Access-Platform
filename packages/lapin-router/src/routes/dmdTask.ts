@@ -222,6 +222,8 @@ export const dmdTaskRouter = createRouter()
         if (response.found) {
           const task = response.doc;
 
+          const createdItems: any[] = [];
+
           if (task && "items" in task && task.items) {
             if (input.createOption) {
               //create the collections
@@ -246,8 +248,30 @@ export const dmdTaskRouter = createRouter()
                       members: [],
                     },
                   });
+
+                  createdItems.push(item.id);
                 }
               }
+
+              task.items = task.items.map((item) => {
+                if (createdItems.includes(item["id"])) {
+                  item["found"] = true;
+                  item["shouldStore"] = true;
+                }
+                return item;
+              });
+
+              await ctx.couch.dmdtask.update({
+                ddoc: "access",
+                name: "editObject",
+                docId: input.task,
+                body: {
+                  data: {
+                    items: task.items,
+                    user: input.user,
+                  },
+                },
+              });
             }
 
             return task;

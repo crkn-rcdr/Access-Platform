@@ -133,7 +133,6 @@
 
 {#if dmdTask}
 	<div class="create-list-create-all">
-		{shouldCreateAllItems}
 		<input type="checkbox" bind:checked={shouldCreateAllItems} on:change={setAllItemsSelected} />
 		<span>Select all</span>
 	</div>
@@ -148,7 +147,6 @@
 					}}
 				/>
 				<span>
-					{item['shouldCreate']}
 					<b>{item.id}</b>
 				</span>
 				<p>{item.label}</p>
