@@ -213,12 +213,10 @@ export const dmdTaskRouter = createRouter()
       }
     },
   })
-  .mutation("setCreate", {
+  .mutation("createCollections", {
     input: CreateOptionInput,
     async resolve({ input, ctx }) {
       try {
-        await ctx.couch.dmdtask.setCreate(input);
-
         const response = await ctx.couch.dmdtask.getSafe(input.task);
 
         if (response.found) {
@@ -232,7 +230,8 @@ export const dmdTaskRouter = createRouter()
                   "found" in item &&
                   !item["found"] &&
                   "parsed" in item &&
-                  item["parsed"]
+                  item["parsed"] &&
+                  item["shouldCreate"]
                 ) {
                   const id: Noid = await ctx.noid.mintOne();
 
@@ -574,6 +573,37 @@ export const dmdTaskRouter = createRouter()
     async resolve({ input, ctx }) {
       try {
         return await ctx.couch.dmdtask.getAll(input);
+      } catch (e: any) {
+        console.log(e?.message);
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .mutation("setAllItemsShouldCreate", {
+    input: z.object({
+      id: z.string(),
+      value: z.boolean(),
+      user: User,
+    }),
+    async resolve({ input, ctx }) {
+      try {
+        return await ctx.couch.dmdtask.setCreate(input);
+      } catch (e: any) {
+        console.log(e?.message);
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .mutation("setItemShouldCreate", {
+    input: z.object({
+      id: z.string(),
+      value: z.boolean(),
+      index: z.number(),
+      user: User,
+    }),
+    async resolve({ input, ctx }) {
+      try {
+        return await ctx.couch.dmdtask.setItemShouldCreate(input);
       } catch (e: any) {
         console.log(e?.message);
         throw httpErrorToTRPC(e);

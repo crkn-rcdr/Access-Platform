@@ -30,6 +30,7 @@ This component allows the user to update the dmd tasks items in an access platfo
 	import DmdItemsTable from './DmdItemsTable.svelte';
 	import { onMount } from 'svelte';
 	import { showConfirmation } from '$lib/utils/confirmation';
+	import DmdCreateCollections from './DmdCreateCollections.svelte';
 
 	/**
 	 *  @type { DMDTask } The DMDTask being processed.
@@ -67,12 +68,13 @@ This component allows the user to update the dmd tasks items in an access platfo
 		//also set createOption for the dmdTask
 		try {
 			creatingCollections = true;
-			const response = await $session.lapin.mutation('dmdTask.setCreate', {
+			const response = await $session.lapin.mutation('dmdTask.createCollections', {
 				task: dmdTask.id,
 				user: $session.user,
 				createOption
 			});
 			await lookupItems();
+			activeStepIndex = 3;
 			creatingCollections = false;
 		} catch (e) {
 			return {
@@ -341,16 +343,19 @@ This component allows the user to update the dmd tasks items in an access platfo
 		</div>
 
 		<div style="flex:3;">
-			<DmdItemsTable
-				bind:dmdTask
-				bind:type
-				bind:totalItems
-				bind:totalPages
-				bind:currentPage
-				showLookupResults={activeStepIndex > 1 || numNotFound > 0}
-				showSelection={activeStepIndex > 1}
-				createOption
-			/>
+			{#if createOption && activeStepIndex === 2}
+				<DmdCreateCollections bind:dmdTask bind:totalItems bind:totalPages bind:currentPage />
+			{:else}
+				<DmdItemsTable
+					bind:dmdTask
+					bind:type
+					bind:totalItems
+					bind:totalPages
+					bind:currentPage
+					showLookupResults={activeStepIndex > 1 || numNotFound > 0}
+					showSelection={activeStepIndex > 1}
+				/>
+			{/if}
 		</div>
 	</div>
 {/if}

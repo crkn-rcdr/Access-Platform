@@ -116,19 +116,19 @@ export class DMDTaskHandler extends DatabaseHandler<DMDTask> {
     /** User who triggered storage */
     user: User;
     /** Descriptive metadata task id */
-    task: string;
+    id: string;
     /** If selected items that were'nt found should be made into multi part collections */
-    createOption: boolean;
+    value: boolean;
   }) {
-    const { user, task, createOption } = args;
+    const { user, id, value } = args;
 
-    const dmdTask = await this.get(task);
+    const dmdTask = await this.get(id);
 
     if ("items" in dmdTask) {
       await this.update({
         ddoc: "access",
         name: "editObject",
-        docId: task,
+        docId: id,
         body: {
           user,
           data: {
@@ -139,7 +139,42 @@ export class DMDTaskHandler extends DatabaseHandler<DMDTask> {
                 "parsed" in item &&
                 item["parsed"]
               ) {
-                item["shouldStore"] = createOption;
+                item["shouldCreate"] = value;
+              }
+              return item;
+            }),
+          },
+        },
+      });
+    }
+  }
+
+  async setItemShouldCreate(args: {
+    /** User who triggered storage */
+    user: User;
+    /** Descriptive metadata task id */
+    id: string;
+    /** If selected items that were'nt found should be made into multi part collections */
+    value: boolean;
+    /** Index of item */
+    index: number;
+  }) {
+    const { user, id, value, index } = args;
+
+    const dmdTask = await this.get(id);
+
+    if ("items" in dmdTask) {
+      await this.update({
+        ddoc: "access",
+        name: "editObject",
+        docId: id,
+        body: {
+          user,
+          data: {
+            items: dmdTask.items.map((item, i) => {
+              if (i === index) {
+                item["shouldCreate"] = value;
+                console.log(i, item["shouldCreate"]);
               }
               return item;
             }),
