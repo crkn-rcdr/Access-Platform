@@ -145,7 +145,11 @@ export const dmdTaskRouter = createRouter()
               let result = true;
               for (let filterKey in filters) {
                 const value = filters[filterKey];
-                result = result && item[filterKey] === value;
+                result =
+                  result &&
+                  (Array.isArray(value)
+                    ? value.includes(item[filterKey])
+                    : item[filterKey] === value);
                 if (result === false) break;
               }
               return result;

@@ -19,7 +19,11 @@
 	 */
 	const { session } = getStores<Session>();
 
-	let filters: any = {};
+	//const value = filters[filterKey];
+	let filters: any = {
+		found: false,
+		shouldCreate: [true, false]
+	};
 	let pageSize = 100;
 	let shouldCreateAllItems = true;
 
@@ -127,6 +131,7 @@
 		setAllItemsSelected().then(() => {
 			console.log('Done');
 			setModel();
+			getPage();
 		});
 	});
 </script>
@@ -137,7 +142,7 @@
 		<span>Select all</span>
 	</div>
 	{#each dmdTask['items'] as item, i}
-		{#if ('found' in item && !item.found) || ('stored' in item && !item.stored && 'shouldCreate' in item && typeof item['shouldCreate'] !== 'undefined')}
+		{#if 'shouldCreate' in item && typeof item['shouldCreate'] !== 'undefined'}
 			<div class="create-list auto-align auto-align__j-start">
 				<input
 					type="checkbox"
