@@ -31,6 +31,7 @@ This component allows the user to update the dmd tasks items in an access platfo
 	import { onMount } from 'svelte';
 	import { showConfirmation } from '$lib/utils/confirmation';
 	import DmdCreateCollections from './DmdCreateCollections.svelte';
+	import Modal from '../shared/Modal.svelte';
 
 	/**
 	 *  @type { DMDTask } The DMDTask being processed.
@@ -62,6 +63,7 @@ This component allows the user to update the dmd tasks items in an access platfo
 	let notFoundIds: string[] = [];
 	let createOption = false;
 	let creatingCollections = false;
+	let showCreateWarningModal = false;
 
 	async function handleCreateOption() {
 		//send req to back end for setting item.shouldStore.
@@ -164,6 +166,7 @@ This component allows the user to update the dmd tasks items in an access platfo
 						success: true
 					};
 				} catch (e) {
+					console.log(e);
 					lookingUp = false;
 					return {
 						success: false,
@@ -313,7 +316,14 @@ This component allows the user to update the dmd tasks items in an access platfo
 									<Loading size="sm" backgroundType="gradient" />
 								</span>
 							{/if}
-							<button class="primary" on:click={handleCreateOption}> Create </button>
+							<button
+								class="primary"
+								on:click={() => {
+									showCreateWarningModal = true;
+								}}
+							>
+								Create
+							</button>
 						</div>
 					</ScrollStepperStep>
 				{/if}
@@ -353,6 +363,7 @@ This component allows the user to update the dmd tasks items in an access platfo
 					bind:totalItems
 					bind:totalPages
 					bind:currentPage
+					bind:activeStepIndex
 					showLookupResults={activeStepIndex > 1 || numNotFound > 0}
 					showSelection={activeStepIndex > 1}
 				/>
@@ -360,6 +371,32 @@ This component allows the user to update the dmd tasks items in an access platfo
 		</div>
 	</div>
 {/if}
+
+<Modal
+	bind:open={showCreateWarningModal}
+	title="Do you want to review the collections before continuing?"
+	size="sm"
+>
+	<div slot="body">
+		If you continue, new collections will be made with the following ids:
+		{#each dmdTask['items'] as item, i}
+			{#if item['shouldCreate']}
+				{item['id']}{#if i != dmdTask['items'].length - 1},&nbsp;{/if}
+			{/if}
+		{/each}
+	</div>
+	<div slot="footer">
+		<button class="secondary" on:click={handleCreateOption}> No, I want to continue </button>
+		<button
+			class="primary"
+			on:click={() => {
+				showCreateWarningModal = false;
+			}}
+		>
+			Yes, I want to review
+		</button>
+	</div>
+</Modal>
 
 <style>
 	.auto-align {
