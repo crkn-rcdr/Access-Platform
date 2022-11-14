@@ -64,6 +64,7 @@ This component allows the user to update the dmd tasks items in an access platfo
 	let createOption = false;
 	let creatingCollections = false;
 	let showCreateWarningModal = false;
+	let firstStepTitle = 'Select Destination';
 
 	async function handleCreateOption() {
 		//send req to back end for setting item.shouldStore.
@@ -218,6 +219,16 @@ This component allows the user to update the dmd tasks items in an access platfo
 		);
 	}
 
+	$: {
+		firstStepTitle =
+			'Select Destination' +
+			(destination === 'access'
+				? ' (' + 'Access' + ')'
+				: destination === 'preservation'
+				? ' (OAIS)'
+				: '');
+	}
+
 	/*onMount(() => {
     if (dmdTask["destination"]) activeStepIndex = 1;
     if (dmdTask["items"]?.length && "found" in dmdTask["items"][0])
@@ -234,7 +245,7 @@ This component allows the user to update the dmd tasks items in an access platfo
 		<br />
 		<div style="flex:1; margin-right: 1rem;">
 			<ScrollStepper enableAutoScrolling={false} bind:activeStepIndex>
-				<ScrollStepperStep title="Select Destination">
+				<ScrollStepperStep title={firstStepTitle}>
 					<div slot="icon">1</div>
 					<div class="auto-align auto-align__column">
 						<span>
@@ -297,14 +308,16 @@ This component allows the user to update the dmd tasks items in an access platfo
 							{/if}
 							<br />
 
-							<span>
-								<input
-									type="checkbox"
-									bind:checked={createOption}
-									on:change={() => (activeStepIndex = 2)}
-								/>
-								<span>Create multi-part collections from the items that were not found</span>
-							</span>
+							{#if destination === 'access'}
+								<span>
+									<input
+										type="checkbox"
+										bind:checked={createOption}
+										on:change={() => (activeStepIndex = 2)}
+									/>
+									<span>Create multi-part collections from the items that were not found</span>
+								</span>
+							{/if}
 						{/if}
 					</div>
 				</ScrollStepperStep>
