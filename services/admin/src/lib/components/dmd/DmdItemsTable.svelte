@@ -25,6 +25,8 @@
 	export let totalPages: number = 0;
 	export let currentPage = 1;
 	export let showLookupResults: boolean = false;
+	export let createOption: boolean = false;
+	export let activeStepIndex: number = 0;
 
 	/**
 	 * @type {Session} The session store that contains the module for sending requests to lapin.
@@ -193,6 +195,13 @@
 		);
 	}
 
+	$: {
+		activeStepIndex;
+		getPage().then(() => {
+			console.log('updated list');
+		});
+	}
+
 	onMount(async () => {
 		await checkDuplicates();
 	});
@@ -255,7 +264,7 @@
 						<td>
 							{#if item.shouldStore && !('succeeded' in dmdTask['process']) && !item.stored}
 								<Loading size="sm" backgroundType="gradient" />
-							{:else if !duplicates.includes(item.id) && ('stored' in item || (item.parsed && item.found))}
+							{:else if !duplicates.includes(item.id) && ('stored' in item || (item.parsed && (item.found || createOption)))}
 								<DmdItemSelector
 									taskId={dmdTask.id}
 									index={i + (currentPage - 1) * pageSize}

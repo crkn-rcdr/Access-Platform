@@ -60,6 +60,11 @@ export const ItemProcessRecord = z
      * Tells the back end script if the item id has resolved in the dmd task's destination.
      */
     found: z.boolean().optional(),
+
+    /**
+     * Tells the back end script if the item id has resolved in the dmd task's destination.
+     */
+    shouldCreate: z.boolean().optional(),
   })
   .refine(
     (record) => !record.parsed || (record.id && record.output && record.label),
@@ -97,6 +102,11 @@ export const BaseDMDTask = z.object({
    * CouchDB `_attachments` object.
    */
   attachments: CouchAttachmentRecord.optional(),
+
+  /**
+   * Allows for tracking if multi-part collections should be made from items that were not found
+   */
+  createOption: z.boolean().optional(),
 });
 
 /**

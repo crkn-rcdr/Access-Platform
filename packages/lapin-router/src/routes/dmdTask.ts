@@ -3,6 +3,7 @@ import { TRPCError } from "@trpc/server";
 import { createRouter, httpErrorToTRPC } from "../router.js";
 import {
   DMDFORMATS,
+  Noid,
   ObjectListHandler,
   ShortTask,
   User,
@@ -24,6 +25,12 @@ const FetchInput = z.object({
 const StoreInput = z.object({
   task: z.string(), // dmdtask uuid
   user: User,
+});
+
+const CreateOptionInput = z.object({
+  task: z.string(), // dmdtask uuid
+  user: User,
+  createOption: z.boolean(),
 });
 
 const PageInput = z.object({
@@ -138,7 +145,11 @@ export const dmdTaskRouter = createRouter()
               let result = true;
               for (let filterKey in filters) {
                 const value = filters[filterKey];
-                result = result && item[filterKey] === value;
+                result =
+                  result &&
+                  (Array.isArray(value)
+                    ? value.includes(item[filterKey])
+                    : item[filterKey] === value);
                 if (result === false) break;
               }
               return result;
@@ -201,6 +212,76 @@ export const dmdTaskRouter = createRouter()
     async resolve({ input, ctx }) {
       try {
         return await ctx.couch.dmdtask.delete({ document: input });
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .mutation("createCollections", {
+    input: CreateOptionInput,
+    async resolve({ input, ctx }) {
+      try {
+        const response = await ctx.couch.dmdtask.getSafe(input.task);
+
+        if (response.found) {
+          const task = response.doc;
+
+          const createdItems: any[] = [];
+
+          if (task && "items" in task && task.items) {
+            if (input.createOption) {
+              //create the collections
+              for (let item of task.items) {
+                if (
+                  "found" in item &&
+                  !item["found"] &&
+                  "parsed" in item &&
+                  item["parsed"] &&
+                  item["shouldCreate"]
+                ) {
+                  const id: Noid = await ctx.noid.mintOne();
+
+                  await ctx.couch.access.createCollection({
+                    id,
+                    user: input.user,
+                    data: {
+                      type: "collection",
+                      slug: item.id,
+                      label: { none: `${item.label}` },
+                      behavior: "multi-part",
+                      members: [],
+                    },
+                  });
+
+                  createdItems.push(item.id);
+                }
+              }
+
+              task.items = task.items.map((item) => {
+                if (createdItems.includes(item["id"])) {
+                  item["found"] = true;
+                  item["shouldStore"] = true;
+                }
+                return item;
+              });
+
+              await ctx.couch.dmdtask.update({
+                ddoc: "access",
+                name: "editObject",
+                docId: input.task,
+                body: {
+                  data: {
+                    items: task.items,
+                    user: input.user,
+                  },
+                },
+              });
+            }
+
+            return task;
+          }
+        }
+        return null;
       } catch (e) {
         throw httpErrorToTRPC(e);
       }
@@ -520,6 +601,37 @@ export const dmdTaskRouter = createRouter()
     async resolve({ input, ctx }) {
       try {
         return await ctx.couch.dmdtask.getAll(input);
+      } catch (e: any) {
+        console.log(e?.message);
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .mutation("setAllItemsShouldCreate", {
+    input: z.object({
+      id: z.string(),
+      value: z.boolean(),
+      user: User,
+    }),
+    async resolve({ input, ctx }) {
+      try {
+        return await ctx.couch.dmdtask.setCreate(input);
+      } catch (e: any) {
+        console.log(e?.message);
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .mutation("setItemShouldCreate", {
+    input: z.object({
+      id: z.string(),
+      value: z.boolean(),
+      index: z.number(),
+      user: User,
+    }),
+    async resolve({ input, ctx }) {
+      try {
+        return await ctx.couch.dmdtask.setItemShouldCreate(input);
       } catch (e: any) {
         console.log(e?.message);
         throw httpErrorToTRPC(e);
