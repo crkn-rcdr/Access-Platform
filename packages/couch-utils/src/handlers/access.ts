@@ -262,7 +262,7 @@ export class AccessHandler extends DatabaseHandler<AccessObject> {
 
       // Don't hold up the response but force update to these new members
       this.bulkForceUpdate(memberIds).then((res: any) => {
-        console.log("Forced Update Members: ", res);
+        //console.log("Forced Update Members: ", res);
       });
     }
   }
@@ -435,7 +435,7 @@ export class AccessHandler extends DatabaseHandler<AccessObject> {
 
       try {
         this.bulkPublish(ids, user).then((value) => {
-          console.log(`Done publishing members of ${id}: `, value);
+          //console.log(`Done publishing members of ${id}: `, value);
         });
         return true;
       } catch (e: any) {
@@ -457,7 +457,7 @@ export class AccessHandler extends DatabaseHandler<AccessObject> {
 
       try {
         this.bulkUnpublish(ids, user).then((value) => {
-          console.log(`Done unpublishing members of ${id}: `, value);
+          //console.log(`Done unpublishing members of ${id}: `, value);
         });
         return true;
       } catch (e: any) {

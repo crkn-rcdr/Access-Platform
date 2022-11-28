@@ -80,13 +80,12 @@ export class RouteLimiter {
       routeLimiter.enqueue(async () => {
         try {
           await callback();
-          console.log("Successfully executed job on route: ", route);
+          //console.log("Successfully executed job on route: ", route);
         } catch (e: any) {
           console.log(
             "Error executing callback in route limiter: ",
             e?.message
           );
-          console.log("Route: ", route);
         }
       });
       return true;
@@ -116,12 +115,10 @@ export class RouteLimiter {
         routeLimiter.enqueue(async () => {
           try {
             const res = await callback();
-            console.log("Successfully executed job on route: ", route);
             resolve(typeof res !== "undefined" ? res : true);
           } catch (e: any) {
             const error = `Error executing callback in route limiter: ${e?.message}`;
             console.log(error);
-            console.log("Route: ", route);
             reject(error);
           }
         });

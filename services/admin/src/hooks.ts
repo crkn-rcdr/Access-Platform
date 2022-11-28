@@ -25,16 +25,16 @@ const retry = async (method: Function, numAttempts: number) => {
 		try {
 			response = await method();
 			if (response.status >= 200 && response.status < 300) break;
-			console.log(`Retry attempt #${curNumAttempts}: `, response);
+			//console.log(`Retry attempt #${curNumAttempts}: `, response);
 		} catch (e) {
-			console.log(`Retry attempt #${curNumAttempts}: `, e?.message);
+			//console.log(`Retry attempt #${curNumAttempts}: `, e?.message);
 			response = e;
 		}
-		console.log(`Waiting ${RETRY_DELAY_MS}ms before trying again...`);
+		//console.log(`Waiting ${RETRY_DELAY_MS}ms before trying again...`);
 		await Timeout.set(RETRY_DELAY_MS);
 		curNumAttempts++;
 	}
-	if (curNumAttempts === numAttempts - 1) console.log('Request failed. No more attempts allowed.');
+	//if (curNumAttempts === numAttempts - 1) console.log('Request failed. No more attempts allowed.');
 	return response;
 };
 

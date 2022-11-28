@@ -191,7 +191,6 @@ The editor component allows for the editing of PagedAccessObjects. It will dynam
 							change: (event) => {
 								// Unfortunately just passing the store only works for members and canvases lists
 								$editorObjectStore = event.detail;
-								//pullServerObject();
 							}
 						}
 					}

@@ -8,12 +8,12 @@ function inititializeSwiftContainers(client: Client) {
     //console.log("Swift containers: ", containers);
     if (!containers.includes("access-files")) {
       client.createContainer("access-files").then(() => {
-        console.log("Done making");
+        //console.log("Done making");
       });
     }
     if (!containers.includes("access-metadata")) {
       client.createContainer("access-metadata").then(() => {
-        console.log("Done making access-metadata");
+        //console.log("Done making access-metadata");
       });
     }
   });

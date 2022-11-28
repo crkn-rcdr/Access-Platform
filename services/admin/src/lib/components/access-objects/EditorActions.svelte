@@ -158,33 +158,6 @@ The editor actions component holds functionality that is responsible for perform
 	}
 
 	/**
-	 * This method pulls the 'serverObject' from the backend. This resets the form and ensures that any problems saving changes are caught.
-	 * @returns void
-	 */
-	async function pullServerObject() {
-		await showConfirmation(
-			async () => {
-				try {
-					const response = await $session.lapin.query('accessObject.getPaged', serverObject['id']);
-					serverObject = response;
-					return {
-						success: true,
-						details: ''
-					};
-				} catch (e) {
-					return {
-						success: false,
-						details: e?.message
-					};
-				}
-			},
-			'',
-			'Error: failed to update page. Please refresh.',
-			true
-		);
-	}
-
-	/**
 	 * @event onMount
 	 * @description When the component instance is mounted onto the dom, the 'clone' variable is set to the rfdc module.
 	 */
