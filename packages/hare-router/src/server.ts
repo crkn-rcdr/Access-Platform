@@ -6,7 +6,7 @@ import { dmdTaskRouter } from "./routes/dmdTask.js";
 // Require the framework and instantiate it
 const server = fastify({
   maxParamLength: 1000,
-  logger: true,
+  logger: false,
 });
 
 // Declare a route
