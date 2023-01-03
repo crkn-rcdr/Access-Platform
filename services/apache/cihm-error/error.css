@@ -1,0 +1,39 @@
+body {
+    width: 400px;
+    margin: 0 auto;
+    font-family: Georgia, serif;
+    background-color: #f7f2eb;
+}
+
+.logo {
+    width: 300px;
+    height: 180px;
+    margin: 0 auto;
+    background: url('logo.png') no-repeat;
+}
+
+div {
+    float: left;
+    width: 360px;
+    margin: 0 20px 20px;
+}
+
+h2 {
+    background-color: #971131;
+    color: #f7f2eb;
+    font-variant: small-caps;
+    margin: 0;
+    padding: 0 10px;
+}
+
+p {
+    margin: 0;
+    padding: 10px;
+    border: 2px solid #971131;
+}
+
+@media only screen and (min-width: 800px) {
+    body {
+        width: 800px;
+    }
+}

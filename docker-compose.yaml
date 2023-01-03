@@ -22,6 +22,18 @@ services:
     networks:
       access-platform:
         ipv4_address: 172.30.0.2
+  apache:
+    profiles:
+      - dev
+    image: httpd:2.4.41
+    container_name: acess-apache
+    volumes:
+      - /services/apache/httpd.conf:/usr/local/apache2/conf/httpd.conf
+    # If you want to keep the Apache logs, mount the volume externally
+    #   - "./apachelogs:/usr/local/apache2/logs"
+    networks:
+      access-platform:
+        ipv4_address: 172.30.0.4
   couchdb:
     profiles:
       - dev
@@ -184,6 +196,18 @@ services:
     networks:
       access-platform:
         ipv4_address: 172.30.0.2
+  apache-prod:
+    profiles:
+      - prod
+    image: httpd:2.4.41
+    container_name: acess-apache-prod
+    volumes:
+      - ./services/apache/httpd.conf:/usr/local/apache2/conf/httpd.conf
+    # If you want to keep the Apache logs, mount the volume externally
+    #   - "./apachelogs:/usr/local/apache2/logs"
+    networks:
+      access-platform:
+        ipv4_address: 172.30.0.4
   lapin-prod:
     profiles:
       - prod
