@@ -3,7 +3,7 @@
 This directory contains Apache configuration for the Access Platform development environment.
 The primary purpose of this configuration is to enable redirection from previous URL's to the current URL's as the platform has changed over tye years.
 
-Using Apache for this is overkill, and a better long-term solution is to impliment the relevant logic in a small NODE application.
+Using Apache for this is overkill, and a better long-term solution is to impliment the relevant logic in a small NODE application as part of a larger resolver service.
 
 
 ## Example of need for redirection
