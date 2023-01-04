@@ -28,7 +28,7 @@ services:
     image: httpd:2.4.41
     container_name: acess-apache
     volumes:
-      - /services/apache/httpd.conf:/usr/local/apache2/conf/httpd.conf
+      - ./services/apache/httpd.conf:/usr/local/apache2/conf/httpd.conf
     # If you want to keep the Apache logs, mount the volume externally
     #   - "./apachelogs:/usr/local/apache2/logs"
     networks:
