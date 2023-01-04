@@ -19,11 +19,20 @@ This needs to redirect to the best we can get to on the new platform, which is c
 https://www.canadiana.ca/view/oocihm.51209
 
 
-Further examples that exist in papers written by researchers can be found through a Google Search.
-This list should not be considered complete.
+Further examples that exist in papers written by researchers can be found through a Google Search (always check with Google Books).
+This list should not be considered complete, and is an example of articles we should ensure the references work as best they can in the future.
 
-https://www.google.com/search?q=%22www.canadiana.org%2FECO%2FItemRecord%22
+* https://www.google.com/search?q=%22www.canadiana.org%2FECO%2FItemRecord%22
+* https://www.google.com/search?q=%22canadiana.org/record/%22
+* https://www.google.com/search?q=%22canadiana.org/ECO/mtq%22
+* https://www.google.com/search?q=%22canadiana.org%2FECO%2FPageView%22
+* https://www.google.com/search?q=%22canadiana.org%2Frecord%22
+* https://www.google.com/search?q=%22canadiana.org%2Fnotice%22
+* https://www.google.com/search?q=%22canadiana.org%2Fshow%22
 
+Similar queries can be checked against Google Scholar:
+
+* https://scholar.google.ca/scholar?q=%22canadiana.org%2FECO%22
 
 ## How the httpd.conf is created
 
