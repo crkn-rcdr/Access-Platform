@@ -231,8 +231,8 @@ export const manifestRouter = createRouter()
             .map((collection) => collection.id);
 
           // Don't hold up the response. This will run in the background without causing issues for end users. They don't need to be alerted about any of this in real time. The updateInternalmeta is displayed in the editor.
-          ctx.couch.access.bulkForceUpdate(ids).then((res: any) => {
-            console.log("Forced Parent Collections:", res);
+          ctx.couch.access.bulkForceUpdate(ids).catch((error) => {
+            console.log(error);
           });
         }
 

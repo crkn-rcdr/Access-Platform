@@ -42,6 +42,8 @@ export const accessObjectRouter = createRouter()
           case "pdf":
             return response.doc as Pdf;
         }
+      } else {
+        console.log("Server Object Error - Could not find ", id);
       }
       throw new TRPCError({
         code: "PATH_NOT_FOUND",
@@ -187,6 +189,16 @@ export const accessObjectRouter = createRouter()
         return { success: true };
       } catch (e: any) {
         console.log(e?.message);
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .mutation("printErr", {
+    input: z.string(),
+    async resolve({ input }) {
+      try {
+        console.log(input);
+      } catch (e) {
         throw httpErrorToTRPC(e);
       }
     },

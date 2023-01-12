@@ -159,8 +159,8 @@ export const collectionRouter = createRouter()
             .map((member) => member.id);
 
           // Don't hold up the response. This will run in the background without causing issues for end users. They don't need to be alerted about any of this in real time. The updateInternalmeta is displayed in the editor.
-          ctx.couch.access.bulkForceUpdate(ids).then((res: any) => {
-            console.log("Forced Update Members: ", res);
+          ctx.couch.access.bulkForceUpdate(ids).catch((error) => {
+            console.log(error);
           });
         }
 
@@ -244,8 +244,8 @@ export const collectionRouter = createRouter()
           (collection.behavior === "multi-part" ||
             collection.behavior === "unordered")
         ) {
-          ctx.couch.access.bulkForceUpdate(filteredMembers).then((res: any) => {
-            console.log("Forced Update Members: ", res);
+          ctx.couch.access.bulkForceUpdate(filteredMembers).catch((error) => {
+            console.log(error);
           });
         }
       } catch (e) {
@@ -299,8 +299,8 @@ export const collectionRouter = createRouter()
             } else if (collection.behavior === "unordered") {
               ctx.couch.access
                 .bulkForceUpdate(filteredMembers)
-                .then((res: any) => {
-                  console.log("Forced Update Members: ", res);
+                .catch((error) => {
+                  console.log(error);
                 });
             }
           }
@@ -357,8 +357,8 @@ export const collectionRouter = createRouter()
             if (collection.behavior === "multi-part") {
               await ctx.couch.access.bulkForceUpdateAllMembers(id);
             } else if (collection.behavior === "unordered") {
-              ctx.couch.access.bulkForceUpdate(memberIds).then((res: any) => {
-                console.log("Forced Update Members: ", res);
+              ctx.couch.access.bulkForceUpdate(memberIds).catch((error) => {
+                console.log(error);
               });
             }
           }
@@ -412,12 +412,12 @@ export const collectionRouter = createRouter()
             ];
             ctx.couch.access
               .bulkForceUpdate(allObjectsToUpdate)
-              .then((res: any) => {
-                console.log("Forced Update Members: ", res);
+              .catch((error) => {
+                console.log(error);
               });
           } else if (collection.behavior === "unordered") {
-            ctx.couch.access.bulkForceUpdate(memberIds).then((res: any) => {
-              console.log("Forced Update Members: ", res);
+            ctx.couch.access.bulkForceUpdate(memberIds).catch((error) => {
+              console.log(error);
             });
           }
         }
@@ -443,8 +443,8 @@ export const collectionRouter = createRouter()
         // Don't hold up the response but force update to these new members
         //const collection = await ctx.couch.access.get(id);
         //if ("behavior" in collection && collection.behavior === "multi-part") {
-        ctx.couch.access.bulkForceUpdate(members).then((res: any) => {
-          console.log("Forced Update Members: ", res);
+        ctx.couch.access.bulkForceUpdate(members).catch((error) => {
+          console.log(error);
         });
         //}
       } catch (e: any) {
@@ -477,8 +477,8 @@ export const collectionRouter = createRouter()
           user,
         });
         // Don't hold up the response but force update to these new members
-        ctx.couch.access.bulkForceUpdate(memberIds).then((res: any) => {
-          console.log("Forced Update Members: ", res);
+        ctx.couch.access.bulkForceUpdate(memberIds).catch((error) => {
+          console.log(error);
         });
       } catch (e: any) {
         console.log(e?.message);

@@ -191,7 +191,6 @@ The editor component allows for the editing of PagedAccessObjects. It will dynam
 							change: (event) => {
 								// Unfortunately just passing the store only works for members and canvases lists
 								$editorObjectStore = event.detail;
-								//pullServerObject();
 							}
 						}
 					}
@@ -207,17 +206,22 @@ The editor component allows for the editing of PagedAccessObjects. It will dynam
 	async function pullServerObject() {
 		await showConfirmation(
 			async () => {
+				let stage = 0;
 				try {
 					const response = await $session.lapin.query('accessObject.getPaged', serverObject['id']);
 					serverObject = response;
-					console.log('server', serverObject);
-					$editorObjectStore = serverObject;
-
+					stage = 1;
+					if (serverObject) $editorObjectStore = serverObject;
+					stage = 2;
 					return {
 						success: true,
 						details: ''
 					};
 				} catch (e) {
+					const errorString = `Server Object Error - stage: ${stage}. serverObject: ${JSON.stringify(
+						serverObject
+					)}`;
+					await $session.lapin.mutation('accessObject.printErr', errorString);
 					return {
 						success: false,
 						details: e?.message

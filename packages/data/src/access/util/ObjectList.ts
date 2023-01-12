@@ -47,8 +47,8 @@ export type ObjectListPage = z.infer<typeof ObjectListPage>;
 
 const pageFrom = (list: AccessObjectList | DmdObjectList): ObjectListPage => {
   return {
-    first: list[0]?.id || null,
-    last: list[list.length - 1]?.id || null,
+    first: (list ? list[0]?.id : null) || null,
+    last: (list ? list[list.length - 1]?.id : null) || null,
     list,
   };
 };

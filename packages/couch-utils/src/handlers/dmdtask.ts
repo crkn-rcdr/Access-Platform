@@ -174,7 +174,6 @@ export class DMDTaskHandler extends DatabaseHandler<DMDTask> {
             items: dmdTask.items.map((item, i) => {
               if (i === index) {
                 item["shouldCreate"] = value;
-                console.log(i, item["shouldCreate"]);
               }
               return item;
             }),

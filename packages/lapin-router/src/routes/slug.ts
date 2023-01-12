@@ -41,7 +41,6 @@ export const slugRouter = createRouter()
       let foundMap: any = {};
 
       for (const row of result.rows) {
-        console.log(row);
         const rowValue: any = row.doc;
         if (rowValue && rowValue["slug"]) foundMap[rowValue.slug] = row.id;
       }
