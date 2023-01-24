@@ -70,36 +70,43 @@
       }
   -->
 	<table>
-		{#if results}
-			{#if results.length}
-				{#each results as result}
+		<thead>
+			<tr>
+				<th>Slug</th>
+				<th>Request Date</th>
+			</tr>
+		</thead>
+		<tbody>
+			{#if results}
+				{#if results.length}
+					{#each results as result}
+						<tr>
+							<td>
+								{result['slug']}
+							</td>
+							<td>
+								{result['updateInternalmeta']?.['requestDate']}
+							</td>
+						</tr>
+					{/each}
+				{:else}
 					<tr>
-						<td>
-							{result['slug']}
-						</td>
-						<td>
-							{result['updateInternalmeta']?.['requestDate']}
-						</td>
+						<td colspan="4">No results</td>
 					</tr>
-				{/each}
-			{:else}
-				<tr>
-					<td colspan="4">No results</td>
-				</tr>
+				{/if}
 			{/if}
-		{/if}
+		</tbody>
 	</table>
+	{#if count != 0}
+		<Paginator
+			bind:page={pageNumber}
+			pageSize={50}
+			{count}
+			on:change={sendLookupRequest}
+			pageSizeEditable={false}
+		/>
+	{/if}
 </div>
-
-{#if count != 0}
-	<Paginator
-		bind:page={pageNumber}
-		pageSize={50}
-		{count}
-		on:change={sendLookupRequest}
-		pageSizeEditable={false}
-	/>
-{/if}
 
 <style>
 </style>
