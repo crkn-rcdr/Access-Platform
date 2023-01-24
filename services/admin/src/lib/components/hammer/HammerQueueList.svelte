@@ -83,7 +83,9 @@
 					</tr>
 				{/each}
 			{:else}
-				No results
+				<tr>
+					<td colspan="4">No results</td>
+				</tr>
 			{/if}
 		{/if}
 	</table>
