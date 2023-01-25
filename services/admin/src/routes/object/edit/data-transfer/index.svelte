@@ -95,12 +95,16 @@
 			</SideMenuPage>
 			<SideMenuPage>
 				<div class="page-wrap">
-					<HammerQueueList />
+					{#if activePageIndex === 1}
+						<HammerQueueList />
+					{/if}
 				</div>
 			</SideMenuPage>
 			<SideMenuPage>
 				<div class="page-wrap">
-					<HammerStatusList />
+					{#if activePageIndex === 2}
+						<HammerStatusList />
+					{/if}
 				</div>
 			</SideMenuPage>
 		</SideMenuBody>

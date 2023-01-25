@@ -3,6 +3,7 @@
 	import type { Session } from '$lib/types';
 	import { onMount } from 'svelte';
 	import Paginator from '../shared/Paginator.svelte';
+	import Loading from '$lib/components/shared/Loading.svelte';
 
 	/**
 	 * @type {Session} The session store that contains the module for sending requests to lapin.
@@ -77,7 +78,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			{#if results}
+			{#if results && !loading}
 				{#if results.length}
 					{#each results as result}
 						<tr>
@@ -97,6 +98,14 @@
 			{/if}
 		</tbody>
 	</table>
+
+	{#if loading}
+		<br />
+		<div class="loader">
+			<Loading size="md" backgroundType="gradient" />
+		</div>
+	{/if}
+
 	{#if count != 0}
 		<Paginator
 			bind:page={pageNumber}

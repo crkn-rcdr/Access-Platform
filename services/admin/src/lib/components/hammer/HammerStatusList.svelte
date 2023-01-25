@@ -12,7 +12,7 @@
 	 */
 	const { session } = getStores<Session>();
 
-	let results: any[] = [];
+	let results: any[];
 	let slugList: string[] = [];
 	let loading: boolean = false;
 	let disableButton: boolean = true;
@@ -83,7 +83,7 @@
 {/if}
 <NotificationBar message={error} status="fail" />
 
-<div class="auto-align">
+<div class="auto-align upper-wrap">
 	<LoadingButton
 		disabled={disableButton}
 		buttonClass="secondary"
@@ -175,6 +175,9 @@
 </div>
 
 <style>
+	.upper-wrap {
+		width: 100%;
+	}
 	.row-details {
 		color: var(--secondary);
 		filter: brightness(0.98);
