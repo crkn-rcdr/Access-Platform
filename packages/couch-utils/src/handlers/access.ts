@@ -566,4 +566,16 @@ export class AccessHandler extends DatabaseHandler<AccessObject> {
 
     return graph.map((path) => path.map((id) => recordMemo.get(id)!));
   }
+
+  /**
+   * Delete the property from an access object that interacts with hammer..
+   */
+  async cancelHammer(args: { id: Noid; user?: User }) {
+    await this.update({
+      ddoc: "access",
+      name: "cancelHammer",
+      docId: args.id,
+      body: args.user,
+    });
+  }
 }

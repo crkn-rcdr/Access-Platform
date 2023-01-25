@@ -2,6 +2,7 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import {
   Noid,
+  Slug,
   User,
   PagedAccessObject,
   Pdf,
@@ -251,6 +252,44 @@ export const accessObjectRouter = createRouter()
     async resolve({ input }) {
       try {
         console.log(input);
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .mutation("cancelHammer", {
+    input: NoidWithUser.parse,
+    async resolve({ input, ctx }) {
+      try {
+        return await ctx.couch.access.cancelHammer(input);
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .mutation("cancelHammerMany", {
+    input: z.object({
+      slugs: z.array(Slug),
+      user: User,
+    }).parse,
+    async resolve({ input, ctx }) {
+      try {
+        let searchResults = await ctx.couch.access.findUniqueArray(
+          "slug",
+          input.slugs,
+          ["id", "slug"] as const
+        );
+        for (let res of searchResults) {
+          if (res.length === 2) {
+            let data = res[1];
+            if (data && "result" in data) {
+              await ctx.couch.access.cancelHammer({
+                id: `${data["result"]["id"]}`,
+                user: input.user,
+              });
+            }
+          }
+        }
       } catch (e) {
         throw httpErrorToTRPC(e);
       }

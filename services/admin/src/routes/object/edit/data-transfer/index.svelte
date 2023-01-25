@@ -1,4 +1,5 @@
 <script lang="ts">
+	import TiArrowBack from 'svelte-icons/ti/TiArrowBack.svelte';
 	import type { Session } from '$lib/types';
 	import SideMenuContainer from '$lib/components/shared/SideMenuContainer.svelte';
 	import SideMenuPageList from '$lib/components/shared/SideMenuPageList.svelte';
@@ -11,19 +12,20 @@
 	import PrefixSlugSearchBox from '$lib/components/access-objects/PrefixSlugSearchBox.svelte';
 	import type { Slug } from '@crkn-rcdr/access-data';
 	import { getStores } from '$app/stores';
+	import Loading from '$lib/components/shared/Loading.svelte';
 
 	const { session } = getStores<Session>();
 
 	export let activePageIndex: number = 0;
 
+	let loading = false;
 	let timer: NodeJS.Timeout | null = null;
-
 	let results: any[];
 
 	async function validateSlugList(slugs: Slug[]) {
 		if (!slugs.length) return;
 
-		//validating = true;
+		loading = true;
 
 		if (timer) clearTimeout(timer);
 
@@ -32,52 +34,61 @@
 			try {
 				results = [];
 				const resolutions = await $session.lapin.mutation('slug.lookupMany', slugs);
-				//[{"id":null,"result":{"type":"data","data":[["oocihm.45116",{"found":true,"result":{"type":"manifest","slug":"oocihm.45116","id":"69429/m0bz6154gh7n"}}]]}}]
 				for (const res of resolutions) {
-					console.log('res', res);
 					if (res.length) {
 						const slug = res[0];
 						if (res.length === 2 && res[1].found && 'result' in res[1]) {
-							console.log('here');
 							const noid = res[1].result.id;
-							results.push({ slug, noid, selected: true });
+							results.push({ slug, noid, selected: true, found: true });
 						} else {
-							//invalid
-							results.push({ slug, noid: null, selected: false });
+							results.push({ slug, noid: null, selected: false, found: false });
 						}
 					}
 				}
 			} catch (e) {
-				//console.log(e?.message);
+				console.log(e?.message);
 				//error = 'Could not valid slugs. Please contact the platform team for assistance.';
 			}
-			//validating = false;
+			loading = false;
 			results = results;
-			console.log('results', results);
 		}, 2000);
 	}
 </script>
 
 <div class="dipstaging-wrap">
 	<br />
-	<a class="back" href="/object/edit"> Back to search </a>
+	<a class="back auto-align auto-align__a-center" href="/object/edit">
+		<div class="icon">
+			<TiArrowBack />
+		</div>
+
+		<span> Back to search </span>
+	</a>
 	<br />
 	<br />
 	<SideMenuContainer showHeader={false} fullPage={true} bind:activeIndex={activePageIndex}>
 		<SideMenuPageList>
 			<SideMenuPageListButton>Bulk Force Data Transfer</SideMenuPageListButton>
 			<SideMenuPageListButton>Data Transfer Queue</SideMenuPageListButton>
-			<SideMenuPageListButton>Data Transfer Results</SideMenuPageListButton>
+			<SideMenuPageListButton>Data Transfer Warnings and Failures</SideMenuPageListButton>
 		</SideMenuPageList>
 		<SideMenuBody>
 			<SideMenuPage>
 				<div class="page-wrap">
 					<div class="search-wrap auto-align auto-align__wrap">
 						<div style="flex:1">
+							<p>Look up items by slug:</p>
+							<br />
 							<PrefixSlugSearchBox rows={10} on:slugs={(event) => validateSlugList(event.detail)} />
 						</div>
-						<div style="flex:2">
+						<div style="flex:2; margin-left: 2rem;">
 							<HammerSearchResults bind:results />
+							{#if loading}
+								<br />
+								<div class="loader">
+									<Loading size="md" backgroundType="gradient" />
+								</div>
+							{/if}
 						</div>
 					</div>
 				</div>
