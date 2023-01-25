@@ -21,6 +21,7 @@
 	let success: boolean = false;
 	let error = '';
 	let lookingup = false;
+	let selectAll = false;
 
 	/**
 	 * Sends the request to look up the items by slug to the backend and saves the results
@@ -54,6 +55,23 @@
 		if (slugList.length) disableButton = false;
 		else disableButton = true;
 		slugList = slugList;
+	}
+
+	function toggleAllSelected() {
+		selectAll = !selectAll;
+		if (selectAll) {
+			for (const result of results) {
+				result['selected'] = true;
+				slugList.push(result['slug']);
+			}
+		} else {
+			for (const result of results) {
+				result['selected'] = false;
+			}
+			slugList = [];
+		}
+		slugList = slugList;
+		results = results;
 	}
 
 	async function handleClearPressed() {
@@ -109,7 +127,11 @@
 	<table>
 		<thead>
 			<tr>
-				<th>Select</th>
+				<th>
+					<div class="row-check">
+						<input type="checkbox" on:click={toggleAllSelected} checked={selectAll} />
+					</div>
+				</th>
 				<th>Slug</th>
 				<th>Request Date</th>
 				<th>Process Date</th>
