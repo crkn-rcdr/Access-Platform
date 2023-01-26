@@ -26,9 +26,9 @@ none
 	 */
 	let state: 'ready' | 'uploading' | 'uploaded' | 'error' = 'ready';
 	/**
-	 * @type {"csvissueinfo" | "csvdc" | "marc490" | "marcoocihm" | "marcooe"} Used to tell the dmdtask deamons what kind of metadata format the metadata being processed is in.
+	 * @type {"csvissueinfo" | "csvdc" | "marc490" | "marcoocihm" | "marcooe" | "marc856"} Used to tell the dmdtask deamons what kind of metadata format the metadata being processed is in.
 	 */
-	let metadataType: 'csvissueinfo' | 'csvdc' | 'marc490' | 'marcoocihm' | 'marcooe';
+	let metadataType: 'csvissueinfo' | 'csvdc' | 'marc490' | 'marcoocihm' | 'marcooe' | 'marc856';
 	/**
 	 * @type {string } This is the base 64 encoded string for the metadata file that will be stored in the couch attachment.
 	 */
@@ -142,6 +142,7 @@ none
 			<option value="marc490">MARC - ID in 490</option>
 			<option value="marcoocihm">MARC - ID in oocihm interpretation</option>
 			<option value="marcooe">MARC - ID in ooe interpretation</option>
+			<option value="marc856">MARC - ID in 856 URI</option>
 		</select>
 		<span>Metadata File:</span>
 		<FileSelector on:change={handleFileSelected} />
