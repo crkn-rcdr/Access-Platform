@@ -26,6 +26,7 @@ export const DMDFORMATS = [
   "marc490",
   "marcoocihm",
   "marcooe",
+  "marc856"
 ] as const;
 
 /**
