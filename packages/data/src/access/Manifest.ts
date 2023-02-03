@@ -6,6 +6,7 @@ import {
   ObjectListShort,
   ObjectListHandler,
 } from "./util/ObjectList.js";
+import { ProcessUpdate } from "../util/index.js";
 
 /**
  * Any work primarily consisting of a sequence of images.
@@ -41,6 +42,12 @@ export const Manifest = z
      * access object store at $id.pdf
      */
     ocrPdf: FileRef.optional(),
+
+    /**
+     * Information about the most recent attempt to created a multi-page PDF from
+     * individual single-page PDF files associated with `canvases`
+     */
+    createOCRPDF: ProcessUpdate.optional(),
 
     /**
      * The Manifest's Canvas list.
