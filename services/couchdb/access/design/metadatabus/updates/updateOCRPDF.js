@@ -27,7 +27,7 @@ module.exports = function (doc, req) {
 
   doc.createOCRPDF.succeeded = Boolean(succeeded);
 
-  if (typeof ocrPdf === "object") {
+  if (ocrPdf != null && typeof ocrPdf === "object") {
     doc.ocrPdf = ocrPdf;
   }
 
