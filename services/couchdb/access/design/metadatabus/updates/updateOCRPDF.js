@@ -16,7 +16,7 @@ module.exports = function (doc, req) {
     return errorReturn(`Could not parse request body as JSON: ${req.body}`);
   }
 
-  const { user, processDate, succeeded, message } = data;
+  const { user, processDate, succeeded, message, ocrPdf } = data;
 
   updateGenericObject(doc, user);
 
@@ -26,6 +26,10 @@ module.exports = function (doc, req) {
   }
 
   doc.createOCRPDF.succeeded = Boolean(succeeded);
+
+  if (typeof ocrPdf === "object") {
+    doc.ocrPdf = ocrPdf;
+  }
 
   if (typeof processDate === "string") {
     doc.createOCRPDF.processDate = processDate;
