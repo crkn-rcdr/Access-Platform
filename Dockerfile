@@ -40,7 +40,7 @@ RUN pnpm run -r build
 FROM dev AS builder
 
 # Build services that need to be built
-RUN pnpm run -r build 
+RUN pnpm run -r build  
 
 # Purge node_modules directories.
 RUN pnpm -r exec -- rm -rf node_modules && rm -rf node_modules
