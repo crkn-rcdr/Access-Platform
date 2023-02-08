@@ -154,6 +154,16 @@ export const dmdTaskRouter = createRouter()
               }
               return result;
             });
+            /*.sort((a:any, b:any) => {
+                if (!a["stored"]) {
+                  return -1; // sort a before b
+                }
+                if (!b["stored"]) {
+                  return 1; //sort a after b
+                }
+                // keep original order
+                return 0;
+            });*/
           }
 
           const totalItems = task.items.length;
