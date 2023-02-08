@@ -520,7 +520,8 @@ This component displays the non content properties for an access editorObject an
 		padding: 0 1rem 1rem 1rem;
 	}
 
-	.cache-status button {
+	.cache-status button,
+	.updates {
 		float: right;
 		margin-right: 1rem;
 	}
