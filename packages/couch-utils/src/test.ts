@@ -22,7 +22,7 @@ export const getTestContext = async (): Promise<BaseContext> => {
   const c = client();
 
   // make sure couch responds
-  await pRetry(async () => await c.db.get("access"), { retries: 50 });
+  await pRetry(async () => await c.db.get("access"), { });
 
   const testDeploy = kivik.testDeployer(c);
   const testDestroy = async (db: string, suffix: string) => {
