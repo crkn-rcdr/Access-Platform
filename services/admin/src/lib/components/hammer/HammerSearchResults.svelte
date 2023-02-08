@@ -89,6 +89,9 @@
 
 							<td>
 								{result['slug']}
+								{#if !result['found']}
+									- Item not found
+								{/if}
 							</td>
 						</tr>
 					{/each}

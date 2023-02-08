@@ -204,12 +204,15 @@ This component displays the non content properties for an access editorObject an
 {#if editorObject}
 	<div class="info-wrap auto-align">
 		<div class="info-form">
+			<label for="status">Metadata File Type</label><br />
 			{#if editorObject['dmdType']}
-				<label for="status">DMD Type</label><br />
 				<span class="public">
 					{editorObject['dmdType']}
-				</span><br /><br />
+				</span>
+			{:else}
+				<span class="public"> None </span>
 			{/if}
+			<br /><br />
 			{#if mode === 'edit' && status}
 				<label for="status">Status</label><br />
 
@@ -219,8 +222,8 @@ This component displays the non content properties for an access editorObject an
 						<a href="/dmd">"Load Metadata"</a>
 						tool to add metadata to your {editorObject['type']}.
 					</span>
-				{:else}
 					<br />
+				{:else}
 					<EditorInput
 						saveDisabled={!editorObject['public'] && !editorObject['dmdType']}
 						keys={['status']}
@@ -471,6 +474,10 @@ This component displays the non content properties for an access editorObject an
 						>
 					{/if}
 				{/if}
+				<br />
+				<div class="updates">
+					<a href="/object/edit/data-transfer"> Advanced Data Transfer Options </a>
+				</div>
 			{/if}
 		</div>
 	</div>

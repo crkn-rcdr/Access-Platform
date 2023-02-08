@@ -154,17 +154,19 @@ export const dmdTaskRouter = createRouter()
               }
               return result;
             });
-            /*.sort((a:any, b:any) => {
-                if (!a["stored"]) {
-                  return -1; // sort a before b
-                }
-                if (!b["stored"]) {
-                  return 1; //sort a after b
-                }
-                // keep original order
-                return 0;
-            });*/
           }
+
+
+          task.items = task.items.sort((a:any, b:any) => {
+              if (!a["stored"] || !a['parsed']) {
+                return -1; // sort a before b
+              }
+              if (!b["stored"] || !b['parsed']) {
+                return 1; //sort a after b
+              }
+              // keep original order
+              return 0;
+          });
 
           const totalItems = task.items.length;
           const totalPages = totalItems > 0 ? Math.ceil(totalItems / 100) : 0;
