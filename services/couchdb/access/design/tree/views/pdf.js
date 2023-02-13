@@ -27,7 +27,18 @@ module.exports = {
       }
     }
 
-    emit([type, hasOcrPdf, hasFile], doc.slug);
+    var hasCanvases = "none";
+    if (Array.isArray(doc.canvases)) {
+      if (doc.canvases.length == 0) {
+        hasCanvases = "0";
+      } else if (doc.canvases.length == 1) {
+        hasCanvases = "1";
+      } else {
+        hasCanvases = "2+";
+      }
+    }
+
+    emit([type, hasOcrPdf, hasFile, hasCanvases], doc.slug);
   },
   reduce: "_count",
 };
