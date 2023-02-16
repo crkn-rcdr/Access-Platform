@@ -46,7 +46,7 @@ Allows the user to select one of many pre-defined depositors.
 </script>
 
 <span>
-	<label for="depositor">Select prefix:</label>
+	<!--label for="depositor">Select prefix:</label-->
 	<select
 		name="depositor"
 		on:change={(e) => {

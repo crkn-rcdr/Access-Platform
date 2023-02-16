@@ -2,6 +2,7 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import {
   Noid,
+  Slug,
   User,
   PagedAccessObject,
   Pdf,
@@ -81,11 +82,64 @@ export const accessObjectRouter = createRouter()
       }
     },
   })
+  /*
+   "selected" : found
+     "slug": "oop.debates_SOC1901",
+     "id": noid
+     "updateInternalmeta": {
+        "requestDate": "2022-12-22T04:00:43Z",
+        "processDate": "2022-12-22T09:35:17Z",
+        "succeeded": true,
+        "message": "Item not found: 69429/m0599z033520\n"
+      }
+  */
+  .mutation("hammerQueue", {
+    input: z.object({
+      limit: z.number(),
+      skip: z.number(),
+    }).parse,
+    async resolve({ input, ctx }) {
+      try {
+        return await ctx.couch.access.hammerQueueLookup(
+          input.limit,
+          input.skip
+        );
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .mutation("hammerStatus", {
+    input: z.object({
+      limit: z.number(),
+      skip: z.number(),
+    }).parse,
+    async resolve({ input, ctx }) {
+      try {
+        return await ctx.couch.access.hammerStatusLookup(
+          input.limit,
+          input.skip
+        );
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
   .mutation("forceUpdate", {
     input: Noid.parse,
     async resolve({ input, ctx }) {
       try {
         return await ctx.couch.access.forceUpdate(input);
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .mutation("bulkForceUpdate", {
+    input: z.array(Noid).parse,
+    async resolve({ input, ctx }) {
+      try {
+        return await ctx.couch.access.bulkForceUpdate(input);
       } catch (e) {
         throw httpErrorToTRPC(e);
       }
@@ -198,6 +252,44 @@ export const accessObjectRouter = createRouter()
     async resolve({ input }) {
       try {
         console.log(input);
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .mutation("cancelHammer", {
+    input: NoidWithUser.parse,
+    async resolve({ input, ctx }) {
+      try {
+        return await ctx.couch.access.cancelHammer(input);
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .mutation("cancelHammerMany", {
+    input: z.object({
+      slugs: z.array(Slug),
+      user: User,
+    }).parse,
+    async resolve({ input, ctx }) {
+      try {
+        let searchResults = await ctx.couch.access.findUniqueArray(
+          "slug",
+          input.slugs,
+          ["id", "slug"] as const
+        );
+        for (let res of searchResults) {
+          if (res.length === 2) {
+            let data = res[1];
+            if (data && "result" in data) {
+              await ctx.couch.access.cancelHammer({
+                id: `${data["result"]["id"]}`,
+                user: input.user,
+              });
+            }
+          }
+        }
       } catch (e) {
         throw httpErrorToTRPC(e);
       }

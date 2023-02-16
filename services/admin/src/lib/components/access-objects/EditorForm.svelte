@@ -204,32 +204,42 @@ This component displays the non content properties for an access editorObject an
 {#if editorObject}
 	<div class="info-wrap auto-align">
 		<div class="info-form">
+			<label for="status">Metadata File Type</label><br />
+			{#if editorObject['dmdType']}
+				<span class="public">
+					{editorObject['dmdType']}
+				</span>
+			{:else}
+				<span class="public"> None </span>
+			{/if}
+			<br /><br />
 			{#if mode === 'edit' && status}
-				<label
-					for="status"
-					data-tooltip={!editorObject['public'] && !editorObject['dmdType']
-						? `Publishing is disabled for ${editorObject['type']}s with no metadata. Please use the "Load Metadata" tool to add metadata to your ${editorObject['type']}.`
-						: editorObject['public']
-						? `Hide this ${editorObject['type']} from the access platform.`
-						: `Make this ${editorObject['type']} available on the access platform.`}
-					data-tooltip-flow="right">Status</label
-				><br />
+				<label for="status">Status</label><br />
 
-				<EditorInput
-					saveDisabled={!editorObject['public'] && !editorObject['dmdType']}
-					keys={['status']}
-					bind:value={status}
-					on:save={handlePublishStatusChange}
-				>
-					<div>
-						<select id="behavior" name="behavior" bind:value={status}>
-							<option>unpublished</option>
-							<option>published</option>
-						</select>
-					</div>
-				</EditorInput>
-				{#if editorObject.public}
-					<span class="public">{editorObject.public}</span>
+				{#if !editorObject['dmdType']}
+					<span class="public">
+						Publishing is disabled for {editorObject['type']}s with no metadata. Please use the
+						<a href="/dmd">"Load Metadata"</a>
+						tool to add metadata to your {editorObject['type']}.
+					</span>
+					<br />
+				{:else}
+					<EditorInput
+						saveDisabled={!editorObject['public'] && !editorObject['dmdType']}
+						keys={['status']}
+						bind:value={status}
+						on:save={handlePublishStatusChange}
+					>
+						<div>
+							<select id="behavior" name="behavior" bind:value={status}>
+								<option>unpublished</option>
+								<option>published</option>
+							</select>
+						</div>
+					</EditorInput>
+					{#if editorObject.public}
+						<span class="public">{editorObject.public}</span>
+					{/if}
 				{/if}
 
 				<br /><br />
@@ -464,6 +474,10 @@ This component displays the non content properties for an access editorObject an
 						>
 					{/if}
 				{/if}
+				<br />
+				<div class="updates">
+					<a href="/object/edit/data-transfer"> Advanced Data Transfer Options </a>
+				</div>
 			{/if}
 		</div>
 	</div>
@@ -506,7 +520,8 @@ This component displays the non content properties for an access editorObject an
 		padding: 0 1rem 1rem 1rem;
 	}
 
-	.cache-status button {
+	.cache-status button,
+	.updates {
 		float: right;
 		margin-right: 1rem;
 	}

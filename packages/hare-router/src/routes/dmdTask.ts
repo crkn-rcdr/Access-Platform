@@ -13,7 +13,7 @@ export const dmdTaskRouter: FastifyPluginAsync = async (
   server: FastifyInstance
 ) => {
   //https://github.com/fastify/fastify-multipart
-  server.put("/upload", async (request, reply) => {
+  server.put("/upload", async (request:any, reply:any) => {
     try {
       const file = await request.file();
       const fileBuffer = await file.toBuffer(); // Buffer

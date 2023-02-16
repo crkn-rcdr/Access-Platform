@@ -355,6 +355,67 @@ export class AccessHandler extends DatabaseHandler<AccessObject> {
     }
   }
 
+  /**
+   * Todo
+   * "selected" : found
+     "slug": "oop.debates_SOC1901",
+     "id": noid
+     "updateInternalmeta": {
+        "requestDate": "2022-12-22T04:00:43Z",
+        "processDate": "2022-12-22T09:35:17Z",
+        "succeeded": true,
+        "message": "Item not found: 69429/m0599z033520\n"
+      }
+   */
+  async hammerQueueLookup(limit: number, skip: number): Promise<any> {
+    const response = await this.view("metadatabus", "hammerQueue", {
+      reduce: false,
+      include_docs: true,
+      descending: true,
+      limit,
+      skip,
+    });
+    return {
+      count: response.rows.length,
+      results: response.rows.map((row) => {
+        return {
+          id: row.id,
+          selected: !!row.doc,
+          slug: row.doc?.slug,
+          updateInternalmeta: row.doc?.updateInternalmeta,
+        };
+      }),
+    };
+  }
+
+  /**
+   *
+    limit: number | null = null,
+    skip: number | null = null,
+
+
+   */
+  async hammerStatusLookup(limit: number, skip: number): Promise<any> {
+    const response = await this.view("metadatabus", "hammerStatus", {
+      reduce: false,
+      include_docs: true,
+      descending: true,
+      limit,
+      skip,
+    });
+    return {
+      count: response.rows.length,
+      results: response.rows.map((row) => {
+        return {
+          id: row.id,
+          selected: !!row.doc,
+          slug: row.doc?.slug,
+          updateInternalmeta: row.doc?.updateInternalmeta,
+        };
+      }),
+    };
+  }
+
   /** TODO: move to lapin when it's testable */
   async getMembership(id: Noid): Promise<Membership> {
     const memberships = await this.isMemberOf(id);
@@ -534,6 +595,18 @@ export class AccessHandler extends DatabaseHandler<AccessObject> {
       };
 
       return [doc];
+    }
+  }
+
+  /**
+   * Delete the property from an access object that interacts with hammer..
+   */
+  async cancelHammer(args: { id: Noid; user?: User }) {
+    await this.update({
+      ddoc: "access",
+      name: "cancelHammer",
+      docId: args.id,
+      body: args.user,
     });
   }
 }
