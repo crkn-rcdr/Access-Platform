@@ -256,4 +256,32 @@ export const manifestRouter = createRouter()
         throw httpErrorToTRPC(e);
       }
     },
+  })
+  .mutation("singleCreateOCRPDF", {
+    input: z.object({
+      id: Noid,
+      user: User.optional(),
+    }),
+    async resolve({ input: { id, user }, ctx }) {
+      try {
+        return await ctx.couch.access.createOCRPDF(id, user);
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .mutation("manyCreateOCRPDF", {
+    input: z.object({
+      ids: z.array(Noid),
+    }),
+    async resolve({ input: { ids }, ctx }) {
+      try {
+        ctx.couch.access.bulkCreateOCRPDF(ids).catch((error: any) => {
+          console.log(error);
+        });
+        return {success: true};
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
   });

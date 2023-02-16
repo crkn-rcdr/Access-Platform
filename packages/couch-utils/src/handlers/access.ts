@@ -505,4 +505,35 @@ export class AccessHandler extends DatabaseHandler<AccessObject> {
 
     return graph.map((path) => path.map((id) => recordMemo.get(id)!));
   }
+
+   /**
+   * CreateOCRPDF for an Access Object.
+   */
+   async createOCRPDF(id: Noid, user: User): Promise<void> {
+    await this.update({
+      ddoc: "metadatabus",
+      name: "requestOCRPDF",
+      docId: id,
+      body: user,
+    });
+  }
+
+  /*
+    * Forces a pdf to be generated for objects with a list of ids.
+    * @returns void
+    */
+  async bulkCreateOCRPDF(ids: any[]): Promise<boolean> {
+    const date = new Date().toISOString().replace(/.\d+Z$/g, "Z");
+    return await this.bulkChange(ids, (doc: any) => {
+      if (!doc) return [null, "Error. Old document was null."];
+      if (!doc["_id"]) return [null, "Error. Old document had no id."];
+      if (!doc["_rev"]) return [null, "Error. Old document had no revision."];
+
+      doc.createOCRPDF = {
+        requestDate: date,
+      };
+
+      return [doc];
+    });
+  }
 }
