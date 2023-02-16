@@ -2,8 +2,11 @@ import { URLSearchParams } from "url";
 import type { ListOptions, Entity } from "./types.js";
 
 export function listQuery(options: ListOptions) {
-  const limit = options.limit ? options.limit.toString() : undefined;
-  const q = { ...options, limit, format: "json" };
+  let q : any = { ...options, format: "json" };
+  if(options.limit) {
+    const limit = options.limit.toString();
+    q["limit"] = limit;
+  }
   return { query: new URLSearchParams(q) };
 }
 
@@ -16,3 +19,4 @@ export function metadataHeaders(
     value,
   ]);
 }
+

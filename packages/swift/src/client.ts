@@ -91,7 +91,7 @@ export class Client implements ClientInterface {
         return token;
       };
 
-      this.token = await pRetry(auth, { forever: true });
+      this.token = await pRetry(auth, { });
     }
 
     return this.token;
