@@ -82,17 +82,6 @@ export const accessObjectRouter = createRouter()
       }
     },
   })
-  /*
-   "selected" : found
-     "slug": "oop.debates_SOC1901",
-     "id": noid
-     "updateInternalmeta": {
-        "requestDate": "2022-12-22T04:00:43Z",
-        "processDate": "2022-12-22T09:35:17Z",
-        "succeeded": true,
-        "message": "Item not found: 69429/m0599z033520\n"
-      }
-  */
   .mutation("hammerQueue", {
     input: z.object({
       limit: z.number(),

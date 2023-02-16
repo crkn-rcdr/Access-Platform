@@ -30,7 +30,7 @@
 	async function sendLookupRequest() {
 		lookingup = true;
 		try {
-			const response = await $session.lapin.mutation('accessObject.hammerStatus', {
+			const response = await $session.lapin.mutation('manifest.ocrPDFStatus', {
 				limit: 50,
 				skip: (pageNumber - 1) * 50
 			});
@@ -78,7 +78,7 @@
 		loading = true;
 		success = false;
 		try {
-			const response = await $session.lapin.mutation('accessObject.cancelHammerMany', {
+			const response = await $session.lapin.mutation('manifest.cancelOCRPDFMany', {
 				slugs: slugList,
 				user: $session.user
 			});
@@ -154,19 +154,19 @@
 								<a href={`/object/edit/${result['id']}`}>{result['slug']}</a>
 							</td>
 							<td>
-								{result['updateInternalmeta']?.['requestDate']}
+								{result['createOCRPDF']?.['requestDate']}
 							</td>
 							<td>
-								{result['updateInternalmeta']?.['processDate']}
+								{result['createOCRPDF']?.['processDate']}
 							</td>
 							<td>
-								{result['updateInternalmeta']?.['succeeded'] ? 'Yes' : 'no'}
+								{result['createOCRPDF']?.['succeeded'] ? 'Yes' : 'no'}
 							</td>
 						</tr>
 						<tr class="row-details">
 							<td />
 							<td colspan="4">
-								<pre>{result['updateInternalmeta']?.['message']}</pre>
+								<pre>{result['createOCRPDF']?.['message']}</pre>
 							</td>
 						</tr>
 					{/each}

@@ -28,7 +28,7 @@
 		loading = true;
 
 		try {
-			const response = await $session.lapin.mutation('accessObject.hammerQueue', {
+			const response = await $session.lapin.mutation('manifest.ocrPDFQueue', {
 				limit: 50,
 				skip: (pageNumber - 1) * 50
 			});
@@ -63,7 +63,7 @@
      "selected" : found
      "slug": "oop.debates_SOC1901",
      "id": noid
-     "updateInternalmeta": {
+     "createOCRPDF": {
         "requestDate": "2022-12-22T04:00:43Z",
         "processDate": "2022-12-22T09:35:17Z",
         "succeeded": true,
@@ -86,7 +86,7 @@
 								<a href={`/object/edit/${result['id']}`}>{result['slug']}</a>
 							</td>
 							<td>
-								{result['updateInternalmeta']?.['requestDate']}
+								{result['createOCRPDF']?.['requestDate']}
 							</td>
 						</tr>
 					{/each}

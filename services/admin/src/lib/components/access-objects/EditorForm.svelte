@@ -50,6 +50,11 @@ This component displays the non content properties for an access editorObject an
 	export let cacheStatus: { found: true; result: any } | { found: false };
 
 	/**
+	 * The status of the process that  creates a pdf for the manifest with ocr data
+	 */
+	export let ocrStatus: { found: true; result: any } | { found: false };
+
+	/**
 	 * The session store that contains the module for sending requests to lapin.
 	 */
 	const session = getStores<Session>().session;
@@ -152,6 +157,38 @@ This component displays the non content properties for an access editorObject an
 		);
 	}
 
+	async function handleCreateOCRPDF() {
+		return await showConfirmation(
+			async () => {
+				if (editorObject.type === 'manifest') {
+					try {
+						const response = await $session.lapin.mutation(`manifest.singleCreateOCRPDF`, {
+							id: editorObject.id,
+							user: $session.user
+						});
+
+						ocrStatus = await $session.lapin.query('manifest.getOCRStatus', editorObject.id);
+
+						dispatch('change', editorObject);
+						return {
+							success: true,
+							details: JSON.stringify(editorObject)
+						};
+					} catch (e) {
+						console.log(e);
+						return { success: false, details: e.message };
+					}
+				}
+				return {
+					success: false,
+					details: 'Object not of type collection, pdf, or manifest'
+				};
+			},
+			`Success! Started data transfer for ${editorObject['type']}.`,
+			`Error: could not data transfer for ${editorObject['type']}.`
+		);
+	}
+
 	const removeMembership = async (collectionID: Noid) => {
 		return await showConfirmation(
 			async () => {
@@ -187,10 +224,14 @@ This component displays the non content properties for an access editorObject an
 	onMount(async () => {
 		if (editorObject.id) {
 			cacheStatus = await $session.lapin.query('accessObject.getCacheStatus', editorObject.id);
+			ocrStatus = await $session.lapin.query('manifest.getOCRStatus', editorObject.id);
+
 			status = editorObject.public ? 'published' : 'unpublished';
 
 			unsubscribe = interval.subscribe(async () => {
 				cacheStatus = await $session.lapin.query('accessObject.getCacheStatus', editorObject.id);
+				ocrStatus = await $session.lapin.query('manifest.getOCRStatus', editorObject.id);
+				ocrStatus;
 				console.log('pulled');
 				dispatch('pullServer', editorObject);
 			});
@@ -382,22 +423,6 @@ This component displays the non content properties for an access editorObject an
 					{/if}
 				</tbody>
 			</table>
-
-			<!--Fixtures don't have this yet, causes save to be enabled on load-->
-			<!--span>
-      <span>
-        <label for="viewing-direction">Viewing Direction</label>
-        <select
-          id="viewing-direction"
-          name="viewing-direction"
-          bind:value={manifest["viewingDirection"]}
-        >
-          <option>left-to-right</option>
-          <option>right-to-left</option>
-          <option>top-to-bottom</option>
-          <option>bottom-to-top</option>
-        </select>
-      </span><br /-->
 		</div>
 		<div class="cache-status">
 			{#if cacheStatus?.found && cacheStatus.result}
@@ -421,9 +446,6 @@ This component displays the non content properties for an access editorObject an
 					<div class="cache-title">Data Transfer (Admin Tools -> CAP)</div>
 					<table>
 						<tbody>
-							<!--tr>
-                <Used to show publish date here>
-							</tr-->
 							<tr>
 								<td>Status:</td>
 								<td>Most recent update succeeded!</td>
@@ -441,9 +463,9 @@ This component displays the non content properties for an access editorObject an
 					<br />
 					<NotificationBar status="warn" message={cacheStatus.result.message} />
 					{#if editorObject.public}
-						<button class="secondary" on:click={handleForceUpdate}
-							>Force data transfer to CAP</button
-						>
+						<button class="secondary" on:click={handleForceUpdate}>
+							Force data transfer to CAP
+						</button>
 					{/if}
 				{:else}
 					<div class="cache-title">Data Transfer (Admin Tools -> CAP)</div>
@@ -469,14 +491,92 @@ This component displays the non content properties for an access editorObject an
 					<br />
 					<NotificationBar status="fail" message={cacheStatus.result.message} />
 					{#if editorObject.public}
-						<button class="secondary" on:click={handleForceUpdate}
-							>Force data transfer to CAP</button
-						>
+						<button class="secondary" on:click={handleForceUpdate}>
+							Force data transfer to CAP
+						</button>
 					{/if}
 				{/if}
 				<br />
 				<div class="updates">
-					<a href="/object/edit/data-transfer"> Advanced Data Transfer Options </a>
+					<a href="/object/edit/data-transfer"> Bulk Data Transfer </a>
+				</div>
+			{/if}
+
+			<div>
+				<br />
+				<br />
+			</div>
+
+			{#if editorObject.type === 'manifest'}
+				<div class="cache-title ocr">OCR PDF Creation</div>
+			{/if}
+			{#if ocrStatus?.found && ocrStatus.result}
+				{#if !('succeeded' in ocrStatus.result)}
+					<table>
+						<tbody>
+							<tr>
+								<td>Status:</td>
+								<td>Currently running...</td>
+							</tr>
+							<tr>
+								<td>Started:</td>
+								<td>{ocrStatus.result.requestDate}</td>
+							</tr>
+						</tbody>
+					</table>
+					<br />
+				{:else if ocrStatus.result.succeeded}
+					<table>
+						<tbody>
+							<tr>
+								<td>OCR Status:</td>
+								<td>Most recent creation succeeded!</td>
+							</tr>
+							<tr>
+								<td>Started:</td>
+								<td>{ocrStatus.result.requestDate}</td>
+							</tr>
+							<tr>
+								<td>Finished:</td>
+								<td>{ocrStatus.result.processDate}</td>
+							</tr>
+						</tbody>
+					</table>
+					<br />
+					<NotificationBar status="warn" message={ocrStatus.result.message} />
+				{:else}
+					<table>
+						<tbody>
+							<!--tr>
+                <Used to show publish date here>
+							</tr-->
+							<tr>
+								<td>OCR Status:</td>
+								<td>Most recent creation failed.</td>
+							</tr>
+							<tr>
+								<td>Started:</td>
+								<td>{ocrStatus.result.requestDate}</td>
+							</tr>
+							<tr>
+								<td>Finished:</td>
+								<td>{ocrStatus.result.processDate}</td>
+							</tr>
+						</tbody>
+					</table>
+					<br />
+					<NotificationBar status="fail" message={ocrStatus.result.message} />
+				{/if}
+			{/if}
+			{#if editorObject.type === 'manifest'}
+				{#if ocrStatus?.found && ocrStatus.result && !('succeeded' in ocrStatus.result)}
+					<button disabled>Create OCR PDF</button>
+				{:else}
+					<button class="secondary" on:click={handleCreateOCRPDF}> Create OCR PDF </button>
+				{/if}
+				<br />
+				<div class="updates">
+					<a href="/ocr/ocr-pdf"> Bulk Create OCR PDF </a>
 				</div>
 			{/if}
 		</div>
@@ -496,6 +596,7 @@ This component displays the non content properties for an access editorObject an
 		margin-right: 1rem;
 		padding: 0.5rem 0;
 		color: var(--secondary);
+		max-width: 400px;
 	}
 	.cache-status tbody {
 		background: none !important;
@@ -520,9 +621,13 @@ This component displays the non content properties for an access editorObject an
 		padding: 0 1rem 1rem 1rem;
 	}
 
+	.cache-title.ocr {
+		padding-top: 5rem !important;
+	}
+
 	.cache-status button,
 	.updates {
-		float: right;
-		margin-right: 1rem;
+		float: left;
+		margin-left: 1rem;
 	}
 </style>

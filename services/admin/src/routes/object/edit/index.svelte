@@ -29,7 +29,8 @@
 
 <PrefetchLoader bind:href={objectHref}>
 	<div class="updates">
-		<a href="/object/edit/data-transfer"> Advanced Data Transfer Options </a>
+		<a href="/object/edit/data-transfer"> Bulk Data Transfer </a>
+		<a href="/ocr/ocr-pdf"> Bulk Create OCR PDF </a>
 	</div>
 	<br />
 	<div class="search">
@@ -47,8 +48,12 @@
 	}
 	.updates {
 		max-width: 50rem;
-		text-align: right;
+		text-align: left;
 		margin: auto;
 		color: var(--primary);
+	}
+
+	.updates a {
+		margin-right: 1rem;
 	}
 </style>
