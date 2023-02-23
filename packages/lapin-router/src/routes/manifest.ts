@@ -142,6 +142,17 @@ export const manifestRouter = createRouter()
       });
     },
   })
+
+  .query("getOCRStatus", {
+    input: Noid.parse,
+    async resolve({ input: id, ctx }) {
+      try {
+        return await ctx.couch.access.getOCRStatus(id);
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
   .mutation("addCanvases", {
     input: z.object({
       id: Noid,
@@ -252,6 +263,94 @@ export const manifestRouter = createRouter()
           ...input,
         });
         return id;
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .mutation("singleCreateOCRPDF", {
+    input: z.object({
+      id: Noid,
+      user: User,
+    }),
+    async resolve({ input: { id, user }, ctx }) {
+      try {
+        return await ctx.couch.access.createOCRPDF(id, user);
+      } catch (e:any) {
+        console.log(e?.message)
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .mutation("bulkCreateOCRPDF", {
+    input: z.array(Noid),
+    async resolve({ input, ctx }) {
+      try {
+        ctx.couch.access.bulkCreateOCRPDF(input).catch((error: any) => {
+          console.log(error);
+        });
+        return {success: true};
+      } catch (e:any) {
+        console.log(e?.message)
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .mutation("ocrPDFQueue", {
+    input: z.object({
+      limit: z.number(),
+      skip: z.number(),
+    }).parse,
+    async resolve({ input, ctx }) {
+      try {
+        return await ctx.couch.access.ocrPDFQueueLookup(
+          input.limit,
+          input.skip
+        );
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .mutation("ocrPDFStatus", {
+    input: z.object({
+      limit: z.number(),
+      skip: z.number(),
+    }).parse,
+    async resolve({ input, ctx }) {
+      try {
+        return await ctx.couch.access.ocrPDFStatusLookup(
+          input.limit,
+          input.skip
+        );
+      } catch (e) {
+        throw httpErrorToTRPC(e);
+      }
+    },
+  })
+  .mutation("cancelOCRPDFMany", {
+    input: z.object({
+      slugs: z.array(Slug),
+      user: User,
+    }).parse,
+    async resolve({ input, ctx }) {
+      try {
+        let searchResults = await ctx.couch.access.findUniqueArray(
+          "slug",
+          input.slugs,
+          ["id", "slug"] as const
+        );
+        for (let res of searchResults) {
+          if (res.length === 2) {
+            let data = res[1];
+            if (data && "result" in data) {
+              await ctx.couch.access.cancelOCRPDF({
+                id: `${data["result"]["id"]}`,
+                user: input.user,
+              });
+            }
+          }
+        }
       } catch (e) {
         throw httpErrorToTRPC(e);
       }

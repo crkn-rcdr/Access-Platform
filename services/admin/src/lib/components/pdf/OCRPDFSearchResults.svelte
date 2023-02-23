@@ -20,11 +20,11 @@
 	let success: boolean = false;
 	let error = '';
 
-	async function handleForceUpdate() {
+	async function handleOCR() {
 		try {
 			loading = true;
 			success = false;
-			const response = await $session.lapin.mutation('accessObject.bulkForceUpdate', noidList);
+			const response = await $session.lapin.mutation('manifest.bulkCreateOCRPDF', noidList);
 			if (response) result = response;
 			loading = false;
 			success = true;
@@ -63,8 +63,8 @@
 <NotificationBar message={error} status="fail" />
 
 {#if results && results.length}
-	<LoadingButton buttonClass="secondary" on:clicked={handleForceUpdate} showLoader={loading}>
-		<span slot="content">{loading ? 'Forcing update...' : 'Force update'} </span>
+	<LoadingButton buttonClass="secondary" on:clicked={handleOCR} showLoader={loading}>
+		<span slot="content">{loading ? 'Sending Request...' : 'Create OCR PDFs'} </span>
 	</LoadingButton>
 {/if}
 
@@ -81,7 +81,7 @@
 						<tr>
 							<td>
 								<input
-									disabled={!result['found']}
+									disabled={!result['found'] || result['type'] !== 'manifest'}
 									type="checkbox"
 									on:click={(e) => handleItemSelected(result, e)}
 									checked={result['selected']}
@@ -92,6 +92,9 @@
 								{result['slug']}
 								{#if !result['found']}
 									- Item not found
+								{/if}
+								{#if result['type'] !== 'manifest'}
+									- Item is a {result['type']} not a manifest
 								{/if}
 							</td>
 						</tr>

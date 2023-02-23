@@ -1,4 +1,4 @@
-import createHttpError from "http-errors";
+import createHttpError, { HttpError } from "http-errors";
 import { ServerScope } from "nano";
 
 import {
@@ -392,8 +392,6 @@ export class AccessHandler extends DatabaseHandler<AccessObject> {
    *
     limit: number | null = null,
     skip: number | null = null,
-
-
    */
   async hammerStatusLookup(limit: number, skip: number): Promise<any> {
     const response = await this.view("metadatabus", "hammerStatus", {
@@ -414,6 +412,63 @@ export class AccessHandler extends DatabaseHandler<AccessObject> {
         };
       }),
     };
+  }
+
+  async ocrPDFQueueLookup(limit: number, skip: number): Promise<any> {
+    const response = await this.view("metadatabus", "OCRPDFQueue", {
+      reduce: false,
+      include_docs: true,
+      descending: true,
+      limit,
+      skip,
+    });
+    return {
+      count: response.rows.length,
+      results: response.rows.map((row: any) => {
+        return {
+          id: row.id,
+          selected: !!row.doc,
+          slug: row.doc?.slug,
+          createOCRPDF: row.doc?.createOCRPDF,
+        };
+      }),
+    };
+  }
+
+  async ocrPDFStatusLookup(limit: number, skip: number): Promise<any> {
+    const response = await this.view("metadatabus", "OCRPDFStatus", {
+      reduce: false,
+      include_docs: true,
+      descending: true,
+      limit,
+      skip,
+    });
+    return {
+      count: response.rows.length,
+      results: response.rows.map((row: any) => {
+        return {
+          id: row.id,
+          selected: !!row.doc,
+          slug: row.doc?.slug,
+          createOCRPDF: row.doc?.createOCRPDF,
+        };
+      }),
+    };
+  }
+
+
+  async getOCRStatus(
+    id: string
+  ): Promise<{ found: true; result: any } | { found: false }> {
+    try {
+      const doc:any = await this.get(id);
+      return { found: true, result: doc["createOCRPDF"] };
+    } catch (error) {
+      if ((error as HttpError).status === 404) {
+        return { found: false };
+      }
+      throw error;
+    }
   }
 
   /** TODO: move to lapin when it's testable */
@@ -567,13 +622,56 @@ export class AccessHandler extends DatabaseHandler<AccessObject> {
     return graph.map((path) => path.map((id) => recordMemo.get(id)!));
   }
 
+   /**
+   * CreateOCRPDF for an Access Object.
+   */
+   async createOCRPDF(id: Noid, user: User): Promise<void> {
+    await this.update({
+      ddoc: "metadatabus",
+      name: "requestOCRPDF",
+      docId: id,
+      body: user,
+    });
+  }
+
+  /*
+    * Forces a pdf to be generated for objects with a list of ids.
+    * @returns void
+    */
+  async bulkCreateOCRPDF(ids: any[]): Promise<boolean> {
+    const date = new Date().toISOString().replace(/.\d+Z$/g, "Z");
+    return await this.bulkChange(ids, (doc: any) => {
+      if (!doc) return [null, "Error. Old document was null."];
+      if (!doc["_id"]) return [null, "Error. Old document had no id."];
+      if (!doc["_rev"]) return [null, "Error. Old document had no revision."];
+
+      doc.createOCRPDF = {
+        requestDate: date,
+      };
+
+      return [doc];
+    });
+  }
+
   /**
-   * Delete the property from an access object that interacts with hammer..
+   * Delete the property from an access object that interacts with hammer.
    */
   async cancelHammer(args: { id: Noid; user?: User }) {
     await this.update({
       ddoc: "access",
       name: "cancelHammer",
+      docId: args.id,
+      body: args.user,
+    });
+  }
+
+  /**
+   * Delete the property from an access object that interacts with ocr pdf scripts.
+   */
+  async cancelOCRPDF(args: { id: Noid; user?: User }) {
+    await this.update({
+      ddoc: "metadatabus",
+      name: "cancelOCRPDF",
       docId: args.id,
       body: args.user,
     });
