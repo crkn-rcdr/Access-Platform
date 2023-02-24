@@ -137,7 +137,7 @@ none
 		<label for="metadata-type">Metadata File Type:</label>
 		<select name="metadata-type" bind:value={metadataType}>
 			<option value="" />
-			<option value="csvissueinfo">Issueinfo CSV</option>
+			<!--option value="csvissueinfo">Issueinfo CSV</option-->
 			<option value="csvdc">Dublin Core CSV</option>
 			<option value="marc490">MARC - ID in 490</option>
 			<option value="marcoocihm">MARC - ID in oocihm interpretation</option>
