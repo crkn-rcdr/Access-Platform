@@ -1,7 +1,13 @@
 module.exports = {
   map: function (doc) {
     if (typeof doc.master == "object") {
-      emit(doc.master.extension, null);
+      var ext;
+      if ("extension" in doc.master) {
+        ext = doc.master.extension;
+      } else {
+        ext = "none";
+      }
+      emit(ext, null);
     }
   },
   reduce: "_count",
