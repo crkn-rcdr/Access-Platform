@@ -1,6 +1,12 @@
 module.exports = {
   map: function (doc) {
-    emit(doc.ocrType, null);
+    var ocrType;
+    if ("ocrType" in doc) {
+      ocrType = doc.ocrType;
+    } else {
+      ocrType = "none";
+    }
+    emit(ocrType, null);
   },
   reduce: "_count",
 };
