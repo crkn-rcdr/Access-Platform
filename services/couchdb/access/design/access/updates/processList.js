@@ -4,6 +4,7 @@ module.exports = function (doc, req) {
     errorReturn,
     extractJSONFromBody,
     updateObject,
+    timestamp
   } = require("views/lib/prelude");
 
   if (!doc) {
@@ -196,6 +197,10 @@ module.exports = function (doc, req) {
   try {
     if (doc.type === "manifest") {
       doc.canvases = processList(doc.canvases, input.command);
+      if (input.command[0] !== "relabel") {
+        const now = timestamp();
+        doc.createOCRPDF = { requestDate: now };
+      }
     } else if (doc.type === "collection") {
       doc.members = processList(doc.members, input.command);
     }
