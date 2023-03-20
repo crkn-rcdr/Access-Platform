@@ -142,7 +142,7 @@ to build and run the production environment on your machine. Differences between
 
 There is no automated deploy of CouchDB configuration to production CouchDB. If you've made changes to files in `services/couchdb` you will need to deploy them yourself. You can do this by running
 
-    $ pnpm exec -C services/couchdb kivik deploy production
+    $ pnpm exec kivik deploy production
 
 Avoid doing this frivolously, as changes to these files could cause hours-long database index updates.
 
