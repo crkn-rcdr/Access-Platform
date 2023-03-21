@@ -7,7 +7,16 @@ module.exports = {
       const requestDate = parseTimestamp(update.requestDate);
       const processDate = parseTimestamp(update.processDate);
       if (!!update.message && processDate >= requestDate) {
-        emit([update.succeeded, ...dateAsArray(processDate)], update.message);
+        var type = "other";
+        if (update.message.includes("413 - Request Entity Too Large")) {
+          type = "Too Large";
+        } else if (update.message.includes("Not all canvases have OCR data")) {
+          type = "Not All";
+        }
+        emit(
+          [update.succeeded, type, ...dateAsArray(processDate)],
+          update.message
+        );
       }
     }
   },
