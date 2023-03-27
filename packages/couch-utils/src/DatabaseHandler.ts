@@ -283,6 +283,46 @@ export class DatabaseHandler<T extends Document> {
     return res;
   }
 
+
+  async listFromView(
+    viewName: string,
+    limit: number | null = null,
+    skip: number | null = null,
+    startDate: string | null = null,
+    endDate: string | null = null,
+    status: boolean | null = null,
+    docsName: string = "access"
+  ) {
+    const DateString = z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .transform((str) => str.split("-").map((s) => parseInt(s, 10)));  
+
+    let viewOptions: DocumentViewParams = {
+      include_docs: true,
+      reduce: false,
+    };
+    if (limit !== null) viewOptions.limit = limit;
+    if (skip !== null) viewOptions.skip = skip;
+
+    if (startDate !== null && endDate !== null) {
+      const startArray = DateString.parse(startDate);
+      const endArray = DateString.parse(endDate);
+      viewOptions["startkey"] =
+        status !== null ? [status, ...startArray] : startArray;
+      viewOptions["endkey"] =
+        status !== null ? [status, ...endArray] : endArray;
+    } else {
+      viewOptions["descending"] = true;
+    }
+
+    const list = await this.view(docsName, viewName, viewOptions);
+    return {
+      count: list.total_rows,
+      results: list.rows.map((row) => row.doc),
+    };
+  }
+
   /**
    * Queries the `_all_docs` view for this database.
    * @param options View query options.

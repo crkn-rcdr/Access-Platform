@@ -30,6 +30,7 @@ Allows the user to modify the member list for a collection.
 	import Modal from '$lib/components/shared/Modal.svelte';
 	import PrefixSlugSearchBox from '../access-objects/PrefixSlugSearchBox.svelte';
 	import CollectionMemberListManager from './CollectionMemberListManager.svelte';
+	import NotificationBar from '$lib/components/shared/NotificationBar.svelte';
 
 	export let collection: PagedCollection;
 

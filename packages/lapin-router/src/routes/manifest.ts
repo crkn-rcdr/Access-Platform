@@ -298,14 +298,19 @@ export const manifestRouter = createRouter()
   })
   .mutation("ocrPDFQueue", {
     input: z.object({
-      limit: z.number(),
-      skip: z.number(),
+      page: z.number(),
+      pageSize: z.number(),
     }).parse,
     async resolve({ input, ctx }) {
       try {
-        return await ctx.couch.access.ocrPDFQueueLookup(
-          input.limit,
-          input.skip
+        return await ctx.couch.access.listFromView(
+          "OCRPDFQueue",
+          input.pageSize,
+          (input.page - 1) * input.pageSize,
+          null,
+          null,
+          null,
+          "metadatabus"
         );
       } catch (e) {
         throw httpErrorToTRPC(e);
@@ -314,14 +319,19 @@ export const manifestRouter = createRouter()
   })
   .mutation("ocrPDFStatus", {
     input: z.object({
-      limit: z.number(),
-      skip: z.number(),
+      page: z.number(),
+      pageSize: z.number(),
     }).parse,
     async resolve({ input, ctx }) {
       try {
-        return await ctx.couch.access.ocrPDFStatusLookup(
-          input.limit,
-          input.skip
+        return await ctx.couch.access.listFromView(
+          "OCRPDFStatus",
+          input.pageSize,
+          (input.page - 1) * input.pageSize,
+          null,
+          null,
+          null,
+          "metadatabus"
         );
       } catch (e) {
         throw httpErrorToTRPC(e);

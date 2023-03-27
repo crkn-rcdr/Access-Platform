@@ -29,8 +29,8 @@
 
 		try {
 			const response = await $session.lapin.mutation('manifest.ocrPDFQueue', {
-				limit: 50,
-				skip: (pageNumber - 1) * 50
+				page: pageNumber,
+				pageSize: 50
 			});
 			if (response) {
 				count = response['count'];

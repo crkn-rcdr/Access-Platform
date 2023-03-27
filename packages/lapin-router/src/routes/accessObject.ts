@@ -84,14 +84,19 @@ export const accessObjectRouter = createRouter()
   })
   .mutation("hammerQueue", {
     input: z.object({
-      limit: z.number(),
-      skip: z.number(),
+      page: z.number(),
+      pageSize: z.number(),
     }).parse,
     async resolve({ input, ctx }) {
       try {
-        return await ctx.couch.access.hammerQueueLookup(
-          input.limit,
-          input.skip
+        return await ctx.couch.access.listFromView(
+          "hammerQueue",
+          input.pageSize,
+          (input.page - 1) * input.pageSize,
+          null,
+          null,
+          null,
+          "metadatabus"
         );
       } catch (e) {
         throw httpErrorToTRPC(e);
@@ -100,14 +105,19 @@ export const accessObjectRouter = createRouter()
   })
   .mutation("hammerStatus", {
     input: z.object({
-      limit: z.number(),
-      skip: z.number(),
+      page: z.number(),
+      pageSize: z.number(),
     }).parse,
     async resolve({ input, ctx }) {
       try {
-        return await ctx.couch.access.hammerStatusLookup(
-          input.limit,
-          input.skip
+        return await ctx.couch.access.listFromView(
+          "hammerStatus",
+          input.pageSize,
+          (input.page - 1) * input.pageSize,
+          null,
+          null,
+          null,
+          "metadatabus"
         );
       } catch (e) {
         throw httpErrorToTRPC(e);

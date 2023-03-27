@@ -5,7 +5,7 @@ import {
   LegacyPackage,
   Slug,
 } from "@crkn-rcdr/access-data";
-import { DocumentViewParams, ServerScope } from "nano";
+import { ServerScope } from "nano";
 import { DatabaseHandler } from "../DatabaseHandler.js";
 import { AccessHandler } from "./access.js";
 
@@ -80,39 +80,6 @@ export class LegacyPackageHandler extends DatabaseHandler<LegacyPackage> {
       return getImportStatus(row.id, row.doc);
     });
     return res;
-  }
-
-  async listFromView(
-    viewName: string,
-    limit: number | null = null,
-    skip: number | null = null,
-    startDate: string | null = null,
-    endDate: string | null = null,
-    status: boolean | null = null
-  ) {
-    let viewOptions: DocumentViewParams = {
-      include_docs: true,
-      reduce: false,
-    };
-    if (limit !== null) viewOptions.limit = limit;
-    if (skip !== null) viewOptions.skip = skip;
-
-    if (startDate !== null && endDate !== null) {
-      const startArray = DateString.parse(startDate);
-      const endArray = DateString.parse(endDate);
-      viewOptions["startkey"] =
-        status !== null ? [status, ...startArray] : startArray;
-      viewOptions["endkey"] =
-        status !== null ? [status, ...endArray] : endArray;
-    } else {
-      viewOptions["descending"] = true;
-    }
-
-    const list = await this.view("access", viewName, viewOptions);
-    return {
-      count: list.total_rows,
-      results: list.rows.map((row) => row.doc),
-    };
   }
 
   /* Too slow

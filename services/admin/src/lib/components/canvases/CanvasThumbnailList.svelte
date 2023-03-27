@@ -433,10 +433,12 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
 							<img
 								loading="lazy"
 								alt={canvas?.label?.none}
-								class="thumbnail-img"
-								src={`https://image-tor.canadiana.ca/iiif/2/${encodeURIComponent(
-									canvas?.id
-								)}/full/!425,524/0/default.jpg`}
+								class={`thumbnail-img ${canvas?.id ? '' : 'thumbnail-img-error'}`}
+								src={canvas?.id
+									? `https://image-tor.canadiana.ca/iiif/2/${encodeURIComponent(
+											canvas?.id
+									  )}/full/!425,524/0/default.jpg`
+									: '/file-error.png'}
 							/>
 						</div>
 					</div>
@@ -572,5 +574,9 @@ Displays a ribbon of canvases. The canvases can be re-ordered, and canvases can 
 		overflow: hidden;
 		pointer-events: none;
 		user-select: none;
+	}
+	.thumbnail-img-error {
+		background: none !important;
+		height: 19vh !important;
 	}
 </style>

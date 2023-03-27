@@ -140,26 +140,18 @@ The editor actions component holds functionality that is responsible for perform
 	}
 
 	async function openDeletionModal() {
-		if (
-			!editorObject.updateInternalmeta ||
-			(editorObject.updateInternalmeta && 'succeeded' in editorObject.updateInternalmeta)
-		) {
-			console.log('one');
+		if (!editorObject.updateInternalmeta) {
+			isDeleteModalWaiting = false;
+			setDeletionModalTextEnabled();
+		} else if (editorObject.updateInternalmeta && 'succeeded' in editorObject.updateInternalmeta) {
 			if (editorObject.updateInternalmeta && editorObject.updateInternalmeta['succeeded']) {
-				console.log('two');
-				isDeleteModalWaiting = false;
-				setDeletionModalTextEnabled();
-			} else if (!editorObject.updateInternalmeta) {
-				console.log('two');
 				isDeleteModalWaiting = false;
 				setDeletionModalTextEnabled();
 			} else {
-				console.log('three');
 				isDeleteModalWaiting = false;
 				setDeletionModalTextError();
 			}
 		} else {
-			console.log('four');
 			isDeleteModalWaiting = true;
 			setDeletionModalTextWaiting();
 
@@ -179,7 +171,6 @@ The editor actions component holds functionality that is responsible for perform
 						//isDeleteModalWaiting = true;
 						//setDeletionModalTextWaiting();
 						if (--i) {
-							console.log('More tries left');
 							requestLoop(i);
 						} else {
 							isDeleteModalWaiting = false;
