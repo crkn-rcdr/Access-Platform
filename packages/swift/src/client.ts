@@ -48,7 +48,7 @@ export class Client implements ClientInterface {
     this.server = options.server;
     this.authHeaders = {
       "X-Auth-User": options.user,
-      "X-Auth-Key": options.password,
+      "X-Auth-Key": "MOOOOO",//options.password,
     };
     this.accountName = options.account ?? `AUTH_${options.user}`;
   }
@@ -69,12 +69,14 @@ export class Client implements ClientInterface {
         });
 
         if (response.status >= 500) {
+          console.log(`Swift server error: ${response.statusText} (${response.status})`)
           throw new Error(
             `Swift server error: ${response.statusText} (${response.status})`
           );
         }
 
         if (response.status >= 400) {
+          console.log(`Authorization failure: ${response.statusText} (${response.status})`)
           throw new pRetry.AbortError(
             `Authorization failure: ${response.statusText} (${response.status})`
           );
@@ -83,6 +85,7 @@ export class Client implements ClientInterface {
         const token = response.headers.get("X-Auth-Token");
 
         if (!token) {
+          console.log(`Authorization response lacked X-Auth-Token header`)
           throw new pRetry.AbortError(
             `Authorization response lacked X-Auth-Token header`
           );

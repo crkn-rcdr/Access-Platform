@@ -119,7 +119,12 @@
 	{:else if type === 'parsing' || type === 'parse queued'}
 		<DmdParseTracker bind:dmdTask />
 	{:else}
-		<NotificationBar message="Something went wrong." status="fail" />
+		<NotificationBar
+			message={`Something went wrong. ${
+				'process' in dmdTask ? ('message' in dmdTask.process ? dmdTask.process.message : '') : ''
+			}`}
+			status="fail"
+		/>
 	{/if}
 </div>
 
