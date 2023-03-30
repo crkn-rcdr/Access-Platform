@@ -6,6 +6,7 @@
 	import Loading from '$lib/components/shared/Loading.svelte';
 	import LoadingButton from '$lib/components/shared/LoadingButton.svelte';
 	import NotificationBar from '$lib/components/shared/NotificationBar.svelte';
+	import ExpansionTile from '../shared/ExpansionTile.svelte';
 
 	/**
 	 * @type {Session} The session store that contains the module for sending requests to lapin.
@@ -166,7 +167,18 @@
 						<tr class="row-details">
 							<td />
 							<td colspan="4">
-								<pre>{result['updateInternalmeta']?.['message']}</pre>
+								<div class="message-wrap">
+									{#if result['updateInternalmeta']?.['message']}
+										<ExpansionTile>
+											<span slot="top">View Message</span>
+											<div slot="bottom">
+												<pre>{result['updateInternalmeta']?.['message']}</pre>
+											</div>
+										</ExpansionTile>
+									{:else}
+										No message
+									{/if}
+								</div>
 							</td>
 						</tr>
 					{/each}
@@ -206,5 +218,13 @@
 	}
 	.pages-upper {
 		flex: 10;
+	}
+	pre {
+		width: 70vw;
+		white-space: pre-wrap;
+	}
+	.message-wrap {
+		background-color: var(--light-bg);
+		padding: 1rem;
 	}
 </style>
