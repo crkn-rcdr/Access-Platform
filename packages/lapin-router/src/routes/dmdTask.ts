@@ -73,7 +73,12 @@ export const dmdTaskRouter = createRouter()
           response.doc.items = pageData.list;
         }
 
-        const typeInfo: ShortTask | null = await ctx.couch.dmdtask.getShort(id);
+        let typeInfo: ShortTask | null = await ctx.couch.dmdtask.getShort(id);
+        if(response.doc?.process?.message && response.doc.process.message.includes("timeout")) {
+          if(typeInfo?.type === 'store failed') {
+            typeInfo.type = 'store paused';
+          }
+        }
         return {
           task: response.doc,
           totalItems,

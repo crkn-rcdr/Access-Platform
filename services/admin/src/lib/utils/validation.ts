@@ -64,7 +64,15 @@ function checkChangeIsValid(editorObject: PagedAccessObject) {
  * @returns boolean
  */
 function checkModelChanged(serverObject: PagedAccessObject, editorObject: PagedAccessObject) {
-	return !_.isEqual(serverObject, editorObject);
+	try {
+		if(typeof _ !== "undefined") {
+			return !_.isEqual(serverObject, editorObject);
+		} else {
+		return false;
+		}
+	} catch (e) {
+		console.log(e)
+	}
 }
 
 /**

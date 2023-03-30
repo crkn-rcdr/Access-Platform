@@ -61,6 +61,20 @@
 		loading = false;
 	}
 
+	function chunkArray(array: any[], n: number) {
+		if (!array || !n) return array;
+
+		let length = array.length;
+		let slicePoint = 0;
+		let ret = [];
+
+		while (slicePoint < length) {
+			ret.push(array.slice(slicePoint, slicePoint + n));
+			slicePoint += n;
+		}
+		return ret;
+	}
+
 	async function validateSlugList(slugs: Slug[]) {
 		if (!slugs.length) return;
 
@@ -74,7 +88,15 @@
 				try {
 					const invalidSlugs: Slug[] = [];
 					//if (newSlugs.length) {
-					const resolutions = await $session.lapin.mutation('slug.lookupMany', slugs);
+					let resolutions = [];
+					if (slugs.length > 1000) {
+						const chunkSlugs = chunkArray(slugs, 1000);
+						for (let chunk of chunkSlugs) {
+							resolutions.concat($session.lapin.mutation('slug.lookupMany', chunk));
+						}
+					} else {
+						resolutions = await $session.lapin.mutation('slug.lookupMany', slugs);
+					}
 
 					for (const result of resolutions) {
 						if (result.length) {
@@ -212,6 +234,14 @@
 </script>
 
 <div class="member-selector-wrap add-menu" class:unexpanded={!opened}>
+	{#if destinationCollection.updateInternalmeta && 'message' in destinationCollection.updateInternalmeta && destinationCollection.updateInternalmeta.message.includes('Noids not found in Search documents')}
+		<NotificationBar
+			status="warn"
+			message={`There are members of this collection that have been deleted. Please remove the members with the noids mentioned in this warning message: ` +
+				destinationCollection.updateInternalmeta.message}
+		/>
+	{/if}
+
 	{#if !opened && !isCollectionEmpty}
 		<button class="primary lg" on:click={() => (opened = true)}> Manage Member List </button>
 	{/if}

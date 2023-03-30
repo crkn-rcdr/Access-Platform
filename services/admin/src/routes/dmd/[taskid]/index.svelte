@@ -66,14 +66,23 @@
 
 	let loading = true;
 
+	let errorMsg = '';
+
 	async function getTask() {
 		loading = true;
-		const response = await $session.lapin.query('dmdTask.get', {
-			id
-		});
-		dmdTask = response.task;
-		({ totalItems, totalPages, type } = response);
-		loading = false;
+		errorMsg = '';
+		try {
+			const response = await $session.lapin.query('dmdTask.get', {
+				id
+			});
+			dmdTask = response.task;
+			({ totalItems, totalPages, type } = response);
+			loading = false;
+			if (!dmdTask) errorMsg = `Error: Task with id '${id}' not found`;
+		} catch (e) {
+			errorMsg = 'There was a problem getting the task.';
+			loading = false;
+		}
 	}
 
 	onMount(async () => {
@@ -88,6 +97,8 @@
 		<div class="auto-align auto-align__block auto-align__j-center">
 			<Loading backgroundType="gradient" />
 		</div>
+	{:else if errorMsg.length}
+		{errorMsg}
 	{:else if !dmdTask}
 		Loading...
 	{:else if type === 'store paused'}
@@ -108,7 +119,12 @@
 	{:else if type === 'parsing' || type === 'parse queued'}
 		<DmdParseTracker bind:dmdTask />
 	{:else}
-		<NotificationBar message="Something went wrong." status="fail" />
+		<NotificationBar
+			message={`Something went wrong. ${
+				'process' in dmdTask ? ('message' in dmdTask.process ? dmdTask.process.message : '') : ''
+			}`}
+			status="fail"
+		/>
 	{/if}
 </div>
 
