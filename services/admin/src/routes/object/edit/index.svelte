@@ -29,6 +29,7 @@
 
 <PrefetchLoader bind:href={objectHref}>
 	<div class="updates">
+		<a href="/object/edit/bulk-iiif"> Bulk Label Update </a>
 		<a href="/object/edit/data-transfer"> Bulk Data Transfer </a>
 		<a href="/ocr/ocr-pdf"> Bulk Create OCR PDF </a>
 	</div>

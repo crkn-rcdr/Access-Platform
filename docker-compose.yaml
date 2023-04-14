@@ -49,6 +49,7 @@ services:
       access-platform:
         ipv4_address: 172.30.0.50
   noid:
+    platform: linux/amd64
     profiles:
       - dev
     container_name: access-noid
@@ -61,6 +62,7 @@ services:
       access-platform:
         ipv4_address: 172.30.0.53
   swift:
+    platform: linux/amd64
     profiles:
       - dev
     container_name: access-swift

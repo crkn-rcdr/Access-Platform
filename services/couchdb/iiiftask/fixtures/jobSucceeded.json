@@ -1,0 +1,35 @@
+{
+  "_id": "jobSucceeded",
+  "updated": 1631200365.22,
+  "process": {
+    "requestDate": 1631199874.161,
+    "processDate": 1631200365.22,
+    "succeeded": true,
+    "message": ""
+  },
+  "user": {
+    "name": "Brittny Lapierre",
+    "email": "blapierre@crkn.ca"
+  },
+  "fileName": "test.csv",
+  "items": [
+    {
+      "id": "oocihm.8_06941",
+      "message": "",
+      "succeeded": true
+    },
+    {
+      
+      "id": "oocihm.8_06942",
+      "message": "",
+      "succeeded": true
+    },
+    {
+      "id": "oocihm.8_06943",
+      "message": "",
+      "succeeded": true
+    }
+  ],
+  "itemsCount": 3,
+  "progress": 11
+}

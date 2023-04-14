@@ -9,6 +9,7 @@ import { DMDTaskHandler } from "./handlers/dmdtask.js";
 import { LegacyPackageHandler } from "./handlers/dipstaging.js";
 import { WipmetaHandler } from "./handlers/wipmeta.js";
 import { OcrBatchHandler } from "./handlers/ocr.js";
+import { IIIFTaskHandler } from "./handlers/iiifTask.js";
 
 export { CouchAttachmentRecord } from "./DatabaseHandler.js";
 
@@ -43,5 +44,6 @@ export function connect() {
     dmdtask: new DMDTaskHandler(c),
     wipmeta: new WipmetaHandler(c),
     ocr: new OcrBatchHandler(c),
+    iiiftask: new IIIFTaskHandler(c)
   };
 }
