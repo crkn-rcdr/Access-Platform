@@ -234,13 +234,13 @@
 </script>
 
 <div class="member-selector-wrap add-menu" class:unexpanded={!opened}>
-	{#if destinationCollection.updateInternalmeta && 'message' in destinationCollection.updateInternalmeta && destinationCollection.updateInternalmeta.message.includes('Noids not found in Search documents')}
+	<!--{#if destinationCollection.updateInternalmeta && 'message' in destinationCollection.updateInternalmeta && destinationCollection.updateInternalmeta.message.includes('Noids not found in Search documents')}
 		<NotificationBar
 			status="warn"
 			message={`There are members of this collection that have been deleted. Please remove the members with the noids mentioned in this warning message: ` +
 				destinationCollection.updateInternalmeta.message}
 		/>
-	{/if}
+	{/if}-->
 
 	{#if !opened && !isCollectionEmpty}
 		<button class="primary lg" on:click={() => (opened = true)}> Manage Member List </button>

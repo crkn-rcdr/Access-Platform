@@ -19,7 +19,7 @@
   },
   "homepage": "https://github.com/crkn-rcdr/Access-Platform#readme",
   "scripts": {
-    "build": "pnpm clean && pnpm install && pnpm build -r --filter ./packages",
+    "allbuild": "pnpm install && pnpm build -r --filter ./packages",
     "clean": "pnpm clean -r",
     "deploy": "./deployImage.sh",
     "dev": "pnpm down && pnpm dev:up",
