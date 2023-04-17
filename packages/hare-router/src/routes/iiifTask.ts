@@ -37,8 +37,8 @@ export const iiifTaskRouter: FastifyPluginAsync = async (
   server.post("/list", async (request:any, reply:any) => {
     try {
       const body: any = request.body;
-      const input = body["filters"];
-      const res: ShortIIIFTask[] = await server.ctx.couch.iiiftask.getAll(input);
+      console.log(body);
+      const res: ShortIIIFTask[] = await server.ctx.couch.iiiftask.getAll();
       return reply.code(200).send(res);
     } catch (e: any) {
       console.log("e", e?.message);

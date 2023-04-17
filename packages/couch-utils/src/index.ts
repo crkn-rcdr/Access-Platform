@@ -9,7 +9,7 @@ import { DMDTaskHandler } from "./handlers/dmdtask.js";
 import { LegacyPackageHandler } from "./handlers/dipstaging.js";
 import { WipmetaHandler } from "./handlers/wipmeta.js";
 import { OcrBatchHandler } from "./handlers/ocr.js";
-import { IIIFTaskHandler } from "./handlers/iiifTask.js";
+import { IIIFTaskHandler } from "./handlers/iiiftask.js";
 
 export { CouchAttachmentRecord } from "./DatabaseHandler.js";
 

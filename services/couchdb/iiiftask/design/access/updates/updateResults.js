@@ -41,7 +41,7 @@ module.exports = function (doc, req) {
         itemDataArray.length === 2 &&
         itemDataArray[0] < doc.items.length
       ) {
-        doc.items[itemDataArray[0]].stored = itemDataArray[1];
+        doc.items[itemDataArray[0]].succeeded = itemDataArray[1];
       }
     }
   }

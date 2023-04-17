@@ -27,22 +27,16 @@ export class IIIFTaskHandler extends DatabaseHandler<IIIFTask> {
           date: res.rows[0].value["date"],
           count: res.rows[0].value["count"],
           message: res.rows[0].value["message"],
+          type: res.rows[0].value["type"],
         }
       : null;
   }
 
-  async getAll(filters?: any): Promise<ShortIIIFTask[]> {
+  async getAll(): Promise<ShortIIIFTask[]> {
     let options: any = {
       include_docs: false,
       reduce: false,
     };
-
-    if (filters) {
-      if (filters["user"]) {
-        options["startkey"] = [filters["user"]];
-        options["endkey"] = [filters["user"], {}];
-      }
-    }
 
     const list = await this.view("access", "listing", options);
     return list.rows.map((row: { id: string; key: string; value: any }) => {
@@ -52,6 +46,7 @@ export class IIIFTaskHandler extends DatabaseHandler<IIIFTask> {
         date: row.value["date"],
         count: row.value["count"],
         message: row.value["message"],
+        type: row.value["type"],
       };
     });
   }

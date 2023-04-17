@@ -56,7 +56,7 @@ export const JobRunningIIIFTask = JobQueuedIIIFTask.merge(
     /**
      */
     progress: z.number(),
-    results: z.array(z.object({
+    items: z.array(z.object({
       slug: z.string(),
       succeeded: z.boolean().optional(),
       message: z.string().optional()
@@ -75,7 +75,7 @@ export const JobFailedIIIFTask = JobRunningIIIFTask.merge(
      * The items in the file have not had their metadata stored
      */
     process: FailedProcessResult,
-    results: z.array(z.object({
+    items: z.array(z.object({
       slug: z.string(),
       succeeded: z.boolean(),
       message: z.string()
@@ -95,7 +95,7 @@ export const JobSucceededIIIFTask = JobRunningIIIFTask.merge(
      * The items in the file have had their metadata stored.
      */
     process: SucceededProcessResult,
-    results: z.array(z.object({
+    items: z.array(z.object({
       slug: z.string(),
       succeeded: z.boolean(),
       message: z.string()
@@ -130,4 +130,5 @@ export type ShortIIIFTask = {
   date: string | number;
   count: number;
   message: string;
+  type: string;
 };
