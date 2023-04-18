@@ -57,6 +57,8 @@
 	import FileSelector from '$lib/components/shared/FileSelector.svelte';
 	import { showConfirmation } from '$lib/utils/confirmation';
 	import LoadingButton from '$lib/components/shared/LoadingButton.svelte';
+	import Modal from '$lib/components/shared/Modal.svelte';
+	import TiArrowBack from 'svelte-icons/ti/TiArrowBack.svelte';
 
 	// Typed arrays lets us avoid checks in the front end
 	export let queued: ShortIIIFTask[] = [];
@@ -68,8 +70,10 @@
 	let loading = true;
 	let searchTerm = '';
 
-	let file: File;
 	let state = 'ready';
+	let showCreateModal = false;
+
+	let file: File;
 
 	let unsubscribe;
 	const interval = timer({ interval: 60000 }); // 1x per min
@@ -166,7 +170,7 @@
 		} catch (e) {
 			console.log(e?.message);
 			//errorText =
-			//	'There was a formatting problem with the metadata file. Please fix it or choose another file.';
+			//	'There was a formatting problem with the file. Please fix it or choose another file.';
 		}
 	}
 
@@ -193,7 +197,8 @@
 					if (res) {
 						const id = await res.text();
 						state = 'ready';
-						//window.location.reload();
+						showCreateModal = false;
+						await getIIIFTasksList();
 
 						return {
 							success: true
@@ -230,45 +235,37 @@
 	<br />
 	<div class="auto-align auto-align__column auto-align__block auto-align__a-center">
 		<Loading backgroundType="gradient" />
-		<p>Fetching metadata tasks...</p>
+		<p>Fetching iiif tasks...</p>
 	</div>
 {:else}
 	<div class="wrapper">
 		<br />
+		<a class="back auto-align auto-align__a-center" href="/object/edit">
+			<div class="icon">
+				<TiArrowBack />
+			</div>
+
+			<span> Back to search </span>
+		</a>
 		<br />
 		<br />
 		<div class="title auto-align auto-align__a-center auto-align__j-space-between">
 			<h6>IIIF Tasks</h6>
+			<button
+				class="create-button primary"
+				on:click={() => {
+					showCreateModal = true;
+				}}>New IIIF Task</button
+			>
 		</div>
-		<div class="title auto-align auto-align__a-center auto-align__j-space-between">
-			<!--Toggle toggled={true} label={'Only show my tasks'} on:toggled={handleUserFilterChanged} />
+		<!--div>
+			<Toggle toggled={true} label={'Only show my tasks'} on:toggled={handleUserFilterChanged} />
 			<input
 				class="task-search"
 				placeholder="Search tasks by file name..."
 				bind:value={searchTerm}
-			/-->
-			<button class="create-button primary">New IIIF Task</button>
-			<FileSelector on:change={handleFileSelected} />
-			<br />
-			{#if file}
-				<div class="new-task-button">
-					<LoadingButton
-						buttonClass="primary"
-						showLoader={state === 'uploading'}
-						on:clicked={handleCreateTask}
-						disabled={state !== 'ready'}
-					>
-						<span slot="content">
-							{state !== 'ready'
-								? state === 'uploading'
-									? 'Uploading...'
-									: 'Uploaded!'
-								: 'Upload File'}
-						</span>
-					</LoadingButton>
-				</div>
-			{/if}
-		</div>
+			/>
+		</div-->
 		{#if filteredQueued.length}
 			<ExpansionList
 				showMessage={filteredQueued?.length === 0}
@@ -280,14 +277,7 @@
 					<ExpansionListItem status="">
 						<span slot="title">{task.fileName}</span>
 						<span slot="actions">
-							<!--<DmdTaskActions
-								{task}
-								stage="N/A"
-								status="N/A"
-								on:delete={async () => {
-									await handleDeletePressed(filteredBase, task);
-								}}
-							/>-->
+							<!-- todo -->
 						</span>
 					</ExpansionListItem>
 				{/each}
@@ -303,10 +293,18 @@
 			{#each filteredCompleted as task}
 				<ExpansionListItem status="">
 					<span slot="title">{task.fileName}</span>
+					<span slot="status" />
 					<span slot="date">{new Date(task.date).toLocaleString().replace(/:[0-9][0-9]$/, '')}</span
 					>
+					<span slot="state" />
 					<span slot="actions">
 						<!--todo-->
+
+						<div class="auto-align auto-align__a-center auto-align__j-space-between">
+							<span>Download Results CSV</span>
+							<!-- Total Items: x , Failed: 0, Succeeded: x,\nid, label, succees?-->
+							<span>Delete</span>
+						</div>
 					</span>
 				</ExpansionListItem>
 			{/each}
@@ -317,6 +315,24 @@
 	</div>
 {/if}
 
+<Modal bind:open={showCreateModal} title="Move Member">
+	<div slot="body">
+		<FileSelector on:change={handleFileSelected} />
+	</div>
+	<div slot="footer">
+		<LoadingButton
+			buttonClass="primary"
+			showLoader={state === 'uploading'}
+			on:clicked={handleCreateTask}
+			disabled={state !== 'ready' || !file}
+		>
+			<span slot="content">
+				{state !== 'ready' ? (state === 'uploading' ? 'Uploading...' : 'Uploaded!') : 'Upload File'}
+			</span>
+		</LoadingButton>
+	</div>
+</Modal>
+
 <style>
 	.title {
 		width: 100%;
@@ -324,5 +340,11 @@
 	.task-search {
 		flex: 1;
 		margin: 0 4rem;
+	}
+	.auto-align__j-space-between {
+		justify-content: space-between !important;
+	}
+	a {
+		color: var(--primary) !important;
 	}
 </style>

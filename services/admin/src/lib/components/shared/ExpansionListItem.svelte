@@ -9,28 +9,29 @@
 	<span class="auto-align auto-align__a-center">
 		<slot name="title" />
 	</span>
-	{#if status}
-		<span class="auto-align auto-align__a-center">
-			{#if status === 'warning'}
-				<span data-tooltip="See message below" class="icon warning">
-					<TiWarning />
-				</span>
-			{:else if status === 'succeeded'}
-				<span class="icon success">
-					<FaCheckCircle />
-				</span>
-			{:else if status === 'failed'}
-				<span data-tooltip="See message below" class="icon not-success">
-					<TiDelete />
-				</span>
-			{/if}
-			<span>
+
+	<span class="auto-align auto-align__a-center">
+		{#if status === 'warning'}
+			<span data-tooltip="See message below" class="icon warning">
+				<TiWarning />
+			</span>
+		{:else if status === 'succeeded'}
+			<span class="icon success">
+				<FaCheckCircle />
+			</span>
+		{:else if status === 'failed'}
+			<span data-tooltip="See message below" class="icon not-success">
+				<TiDelete />
+			</span>
+		{/if}
+		<span>
+			{#if status}
 				<slot name="stage" />
 				{#if status !== 'N/A'}{status}{/if}
 				{#if status === 'waiting'}...{/if}
-			</span>
+			{/if}
 		</span>
-	{/if}
+	</span>
 
 	<span class="auto-align auto-align__a-center">
 		<slot name="date" />
