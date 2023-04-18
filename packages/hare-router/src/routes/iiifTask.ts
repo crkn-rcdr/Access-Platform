@@ -29,7 +29,7 @@ export const iiifTaskRouter: FastifyPluginAsync = async (
 
       return reply.code(200).send(res);
     } catch (e: any) {
-      console.log("e", e?.message);
+      console.log("e1", e?.message);
       return reply.code(500).send({ error: e?.message });
     }
   });
@@ -41,7 +41,7 @@ export const iiifTaskRouter: FastifyPluginAsync = async (
       const res: ShortIIIFTask[] = await server.ctx.couch.iiiftask.getAll();
       return reply.code(200).send(res);
     } catch (e: any) {
-      console.log("e", e?.message);
+      console.log("e2", e?.message);
       return reply.code(500).send({ error: e?.message });
     }
   });
@@ -52,7 +52,7 @@ export const iiifTaskRouter: FastifyPluginAsync = async (
       const res: IIIFTask = await server.ctx.couch.iiiftask.get(taskId);
       return reply.code(200).send(res);
     } catch (e: any) {
-      console.log("e", e?.message);
+      console.log("e3", e?.message);
       return reply.code(500).send({ error: e?.message });
     }
   });

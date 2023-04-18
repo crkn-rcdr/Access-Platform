@@ -53,10 +53,10 @@
 	import { onDestroy, onMount } from 'svelte';
 	import ExpansionList from '$lib/components/shared/ExpansionList.svelte';
 	import ExpansionListItem from '$lib/components/shared/ExpansionListItem.svelte';
-	import ExpansionListMessage from '$lib/components/shared/ExpansionListMessage.svelte';
-	//import DmdTaskActions from '$lib/components/dmd/DmdTaskActions.svelte';
 	import Loading from '$lib/components/shared/Loading.svelte';
-	import Toggle from '$lib/components/shared/Toggle.svelte';
+	import FileSelector from '$lib/components/shared/FileSelector.svelte';
+	import { showConfirmation } from '$lib/utils/confirmation';
+	import LoadingButton from '$lib/components/shared/LoadingButton.svelte';
 
 	// Typed arrays lets us avoid checks in the front end
 	export let queued: ShortIIIFTask[] = [];
@@ -68,12 +68,16 @@
 	let loading = true;
 	let searchTerm = '';
 
+	let file: File;
+	let state = 'ready';
+
 	let unsubscribe;
 	const interval = timer({ interval: 60000 }); // 1x per min
 	/**
 	 * @type {NodeJS.Timeout | null} Used to debounce the filtering of tasks.
 	 */
 	let filterTimer: NodeJS.Timeout | null = null;
+
 	let filters: any = {};
 
 	/**
@@ -115,10 +119,6 @@
 	}
 
 	async function getIIIFTasksList() {
-		/*let taskList: ShortIIIFTask[] = await $session.lapin.mutation(
-      "dmdTask.list",
-      filters
-    );*/
 		const res = await await fetch(`${$session?.restEndpoint}iiiftask/list`, {
 			method: 'POST',
 			headers: {
@@ -155,6 +155,69 @@
 		if (unsubscribe) unsubscribe();
 	});
 
+	/**
+	 * Converts the selected file into a base 64 encoded string and stores it in the @var b64EncodedMetadataFileText
+	 * @returns void
+	 */
+	async function handleFileSelected(event: any) {
+		try {
+			file = event.detail;
+			console.log(file);
+		} catch (e) {
+			console.log(e?.message);
+			//errorText =
+			//	'There was a formatting problem with the metadata file. Please fix it or choose another file.';
+		}
+	}
+
+	/**
+	 * Sends the create request to lapin. Uses @function showConfirmation to show a notification at the bottom right of the screen saying if the request was sucessful or not. If it is a success, it uses the @function goto ith the DMD task id passed as the response from the request in the url.
+	 * @returns void
+	 */
+	async function handleCreateTask() {
+		await showConfirmation(
+			async () => {
+				try {
+					state = 'uploading';
+
+					const data: FormData = new FormData();
+
+					data.append('user', JSON.stringify($session.user));
+					data.append('file', file);
+
+					const res = await fetch(`${$session?.restEndpoint}iiiftask/upload`, {
+						method: 'PUT',
+						body: data
+					});
+
+					if (res) {
+						const id = await res.text();
+						state = 'ready';
+						//window.location.reload();
+
+						return {
+							success: true
+						};
+					} else {
+						return {
+							success: false
+						};
+					}
+				} catch (e) {
+					console.log(e?.message);
+					return {
+						success: false,
+						details: e?.message.includes('"path":')
+							? 'Code 1. Please contact the platform team for assistance.'
+							: 'Code 2-3. Please try uploading the file again. If multiple file uploads fail throughout the day, this signifies a system error, and the platform team needs to be notified.'
+					};
+				}
+			},
+			'Success! File uploaded.',
+			'Error: File upload request failed.'
+		);
+	}
+
 	$: {
 		searchTerm;
 		search();
@@ -184,9 +247,27 @@
 				placeholder="Search tasks by file name..."
 				bind:value={searchTerm}
 			/-->
-			<a href="/dmd/new">
-				<button class="create-button primary">New IIIF Task</button>
-			</a>
+			<button class="create-button primary">New IIIF Task</button>
+			<FileSelector on:change={handleFileSelected} />
+			<br />
+			{#if file}
+				<div class="new-task-button">
+					<LoadingButton
+						buttonClass="primary"
+						showLoader={state === 'uploading'}
+						on:clicked={handleCreateTask}
+						disabled={state !== 'ready'}
+					>
+						<span slot="content">
+							{state !== 'ready'
+								? state === 'uploading'
+									? 'Uploading...'
+									: 'Uploaded!'
+								: 'Upload File'}
+						</span>
+					</LoadingButton>
+				</div>
+			{/if}
 		</div>
 		{#if filteredQueued.length}
 			<ExpansionList
@@ -225,14 +306,7 @@
 					<span slot="date">{new Date(task.date).toLocaleString().replace(/:[0-9][0-9]$/, '')}</span
 					>
 					<span slot="actions">
-						<!--<DmdTaskActions
-							{task}
-							stage="parse"
-							status="waiting"
-							on:delete={async () => {
-								await handleDeletePressed(filteredParsing, task);
-							}}
-						/>-->
+						<!--todo-->
 					</span>
 				</ExpansionListItem>
 			{/each}
