@@ -80,7 +80,7 @@ export class IIIFTaskHandler extends DatabaseHandler<IIIFTask> {
       document: taskId,
 
       /** Attachment name */
-      attachmentName: "labels",
+      attachmentName: "file",
 
       /** Attachment (as a Buffer) */
       attachment: file,
