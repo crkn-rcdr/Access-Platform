@@ -56,51 +56,9 @@
 <div
 	class="site-nav auto-align auto-align__block auto-align__a-center auto-align__j-between auto-align__wrap"
 >
-	<a href="/"
-		><img width="220" src="/canadiana-pa-tag-color.png" alt="canadiana by CRKN, par RCDR" /></a
-	>
-
-	{#if $page.url.pathname !== '/'}
-		<nav class="navbar auto-align auto-align__wrap">
-			<DropdownMenu direction="right">
-				<div
-					slot="dropdown-button"
-					class={`create-object-menu-button auto-align auto-align__a-center ${
-						$page.url.pathname.includes('/object/new') ? 'active-nav-item' : ''
-					}`}
-				>
-					Create in Access
-				</div>
-				<a href="/object/new/collection"> New Collection </a>
-				<a href="/object/new/manifest"> New Manifest </a>
-			</DropdownMenu>
-
-			<a
-				class="auto-align auto-align__a-center"
-				href="/smelter/find"
-				class:active-nav-item={$page.url.pathname.includes('/smelter')}>Import into Access</a
-			>
-
-			<a
-				class="auto-align auto-align__a-center"
-				href="/dmd"
-				class:active-nav-item={$page.url.pathname.includes('/dmd')}>Load Metadata</a
-			>
-
-			<a
-				class="auto-align auto-align__a-center"
-				href="/object/edit"
-				class:active-nav-item={$page.url.pathname.includes('/object/edit')}>Edit in Access</a
-			>
-
-			<a
-				class="auto-align auto-align__a-center"
-				href="/ocr"
-				class:active-nav-item={$page.url.pathname.includes('/ocr')}>Load OCR</a
-			>
-		</nav>
-	{/if}
-
+	<a href="/">
+		<img width="220" src="/canadiana-pa-tag-color.png" alt="canadiana by CRKN, par RCDR" />
+	</a>
 	<div class="right-menu auto-align auto-align__a-center">
 		<a
 			href="https://github.com/crkn-rcdr/Access-Platform/blob/main/Help.md"
@@ -125,6 +83,40 @@
 		</div>
 	</div>
 </div>
+
+<br />
+
+{#if $page.url.pathname !== '/'}
+	<ul class="nav nav-tabs">
+		<li class="nav-item">
+			<a
+				class="nav-link"
+				class:active={$page.url.pathname.includes('/smelter')}
+				aria-current="page"
+				href="/smelter/find"
+			>
+				Import Images into Access
+			</a>
+		</li>
+
+		<li class="nav-item">
+			<a class="nav-link" class:active={$page.url.pathname.includes('/dmd')} href="/dmd"
+				>Load Metadata into Access</a
+			>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" class:active={$page.url.pathname.includes('/object')} href="/object/edit"
+				>Edit IIIF in Access</a
+			>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" class:active={$page.url.pathname.includes('/ocr')} href="/ocr"
+				>Load OCR into Access</a
+			>
+		</li>
+	</ul>
+{/if}
+
 <slot />
 
 <style>
@@ -136,7 +128,7 @@
 		position: relative;
 	}
 	.site-nav {
-		background-color: var(--nav-bg);
+		/*background-color: var(--nav-bg);*/
 		margin: 0;
 		padding: 0 1rem;
 		min-height: 6rem;

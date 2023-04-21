@@ -29,14 +29,14 @@
   /* Change this to set the app base bg color */
   --base-bg: white;
   /* Change this to set the app bg color */
-  --light-bg: #f8f8f8;
+  --light-bg: white;/*#f8f8f8*/;
   --light-bg-2: #f1f1f1;
   /* Change this to set the nav bg color */
   --nav-bg: #f3f3f3;
   --nav-item-bg: #f0efef;
   --nav-item-active-bg: var(--light-bg);
   /* Change this to set the toolbar colour */
-  --toolbar-bg: #f8f8f8; /*e6e6e6;*/
+  --toolbar-bg: #fff;/*#f8f8f8;*/ /*e6e6e6;*/
   /* Change this to set the tables, menus etc. colour */
   --structural-div-bg: var(--grey-light);
   /* Change this to set the side menu bg */

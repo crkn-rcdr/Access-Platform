@@ -794,7 +794,7 @@ Allows the user to modify the member list for a collection.
 	}
 	.member-inner {
 		width: 100%;
-		background: var(--base-bg);
+		background: var(--secondary-light);
 		padding: var(--perfect-fourth-2);
 		border-radius: var(--border-radius);
 	}
