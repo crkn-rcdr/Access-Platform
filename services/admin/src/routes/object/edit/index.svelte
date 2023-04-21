@@ -30,7 +30,7 @@
 
 <PrefetchLoader bind:href={objectHref}>
 	<div class="updates">
-		<div class="dropdown">
+		<div class="dropdown create-dd">
 			<button
 				class="btn btn-secondary dropdown-toggle create"
 				type="button"
@@ -59,7 +59,7 @@
 </PrefetchLoader>
 
 <style>
-	.create {
+	.create-dd {
 		display: inline-block;
 		margin-right: 1rem;
 	}
