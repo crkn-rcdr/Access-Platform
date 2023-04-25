@@ -547,11 +547,11 @@ Allows the user to modify the member list for a collection.
 			{#each members as collectionMember, i}
 				<!--DynamicDragAndDropListItem pos={i + 1}-->
 				<div
-					class="member"
+					class="card"
 					class:active={i === activeMemberIndex}
 					on:mousedown={() => setActiveIndex(i)}
 				>
-					<div class="member-inner auto-align">
+					<div class="card-body">
 						<div
 							class="shuffle icon"
 							on:click={() => {
@@ -627,11 +627,11 @@ Allows the user to modify the member list for a collection.
 				<!--bind:this={list}-->
 				{#each members as collectionMember, i}
 					<div
-						class="member"
+						class="card"
 						class:active={i === activeMemberIndex}
 						on:mousedown={() => setActiveIndex(i)}
 					>
-						<div class="member-inner auto-align">
+						<div class="card-body">
 							<div class="auto-align auto-align__column label">
 								<a class="member-link" href="/object/edit/{collectionMember.id}" target="_blank">
 									{collectionMember.slug} : {collectionMember.label?.none
@@ -782,29 +782,16 @@ Allows the user to modify the member list for a collection.
 		min-width: 3.03rem;
 		padding-top: 0.45em;
 	}
-	.action.icon {
-		display: none;
-		margin-bottom: 0.5em;
-	}
-	.member {
-		padding: 1rem 0;
-	}
-	.member:hover .action.icon {
-		display: inherit;
-	}
-	.member-inner {
-		width: 100%;
-		background: var(--secondary-light);
-		padding: var(--perfect-fourth-2);
-		border-radius: var(--border-radius);
+	.card {
+		margin: 1rem 0;
 	}
 	.pos-input {
 		display: none;
 	}
-	.member:hover .pos-input {
+	.card:hover .pos-input {
 		display: inherit;
 	}
-	.member:hover .pos {
+	.card:hover .pos {
 		display: none;
 	}
 	.member-wrap {
@@ -882,5 +869,9 @@ Allows the user to modify the member list for a collection.
 		margin-top: 0.4rem;
 		color: var(--secondary);
 		margin-right: var(--margin-sm);
+	}
+
+	.card-body {
+		display: flex;
 	}
 </style>

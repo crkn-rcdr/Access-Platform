@@ -198,6 +198,9 @@
 			</a>
 		</div>
 
+		<br />
+		<br />
+
 		<div class="accordion" id="">
 			{#if filteredBase.length}
 				<div class="accordion-item">
@@ -292,15 +295,20 @@
 										aria-labelledby="panelsStayOpen-headingOne"
 									>
 										<div class="accordion-body">
-											{new Date(task.date).toLocaleString().replace(/:[0-9][0-9]$/, '')}
-											<DmdTaskActions
-												{task}
-												stage="parse"
-												status="waiting"
-												on:delete={async () => {
-													await handleDeletePressed(filteredParsing, task);
-												}}
-											/>
+											<div class="detail-body">
+												<span
+													>{new Date(task.date).toLocaleString().replace(/:[0-9][0-9]$/, '')}</span
+												>
+
+												<DmdTaskActions
+													{task}
+													stage="parse"
+													status="waiting"
+													on:delete={async () => {
+														await handleDeletePressed(filteredParsing, task);
+													}}
+												/>
+											</div>
 										</div>
 									</div>
 								</div>
@@ -338,7 +346,10 @@
 											data-bs-toggle="collapse"
 											data-bs-target={`#parsed-${task}-${i}`}
 											aria-expanded="false"
-											aria-controls={`parsed-${task}-${i}`}>{task.fileName}</button
+											aria-controls={`parsed-${task}-${i}`}
+											>{task.fileName} ({task.type === 'parse succeeded'
+												? 'succeeded'
+												: 'failed'})</button
 										>
 									</h2>
 									<div
@@ -347,19 +358,24 @@
 										aria-labelledby="panelsStayOpen-headingOne"
 									>
 										<div class="accordion-body">
-											{new Date(task.date).toLocaleString().replace(/:[0-9][0-9]$/, '')}
-											{task.count} items
+											<div class="detail-body">
+												<span
+													>{new Date(task.date).toLocaleString().replace(/:[0-9][0-9]$/, '')}</span
+												>
 
-											<DmdTaskActions
-												{task}
-												stage="parse"
-												status={task.type === 'parse succeeded' ? 'succeeded' : 'failed'}
-												on:delete={async () => {
-													await handleDeletePressed(filteredParsed, task);
-												}}
-											/>
-											status {task.type === 'parse succeeded' ? 'succeeded' : 'failed'}
-											message {task.message}
+												<span>{task.count} items</span>
+
+												<DmdTaskActions
+													{task}
+													stage="parse"
+													status={task.type === 'parse succeeded' ? 'succeeded' : 'failed'}
+													on:delete={async () => {
+														await handleDeletePressed(filteredParsed, task);
+													}}
+												/>
+											</div>
+
+											<pre>{task.message}</pre>
 										</div>
 									</div>
 								</div>
@@ -406,17 +422,21 @@
 										aria-labelledby="panelsStayOpen-headingOne"
 									>
 										<div class="accordion-body">
-											{new Date(task.date).toLocaleString().replace(/:[0-9][0-9]$/, '')}
-											{task.count} items
+											<div class="detail-body">
+												<span
+													>{new Date(task.date).toLocaleString().replace(/:[0-9][0-9]$/, '')}</span
+												>
+												<span>{task.count} items</span>
 
-											<DmdTaskActions
-												{task}
-												stage="load"
-												status="waiting"
-												on:delete={async () => {
-													await handleDeletePressed(filteredUpdating, task);
-												}}
-											/>
+												<DmdTaskActions
+													{task}
+													stage="load"
+													status="waiting"
+													on:delete={async () => {
+														await handleDeletePressed(filteredUpdating, task);
+													}}
+												/>
+											</div>
 										</div>
 									</div>
 								</div>
@@ -463,17 +483,21 @@
 										aria-labelledby="panelsStayOpen-headingOne"
 									>
 										<div class="accordion-body">
-											{new Date(task.date).toLocaleString().replace(/:[0-9][0-9]$/, '')}
-											{task.count} items
+											<div class="detail-body">
+												<span
+													>{new Date(task.date).toLocaleString().replace(/:[0-9][0-9]$/, '')}</span
+												>
+												<span>{task.count} items</span>
 
-											<DmdTaskActions
-												{task}
-												stage="load"
-												status={'paused'}
-												on:delete={async () => {
-													await handleDeletePressed(filteredPaused, task);
-												}}
-											/>
+												<DmdTaskActions
+													{task}
+													stage="load"
+													status={'paused'}
+													on:delete={async () => {
+														await handleDeletePressed(filteredPaused, task);
+													}}
+												/>
+											</div>
 										</div>
 									</div>
 								</div>
@@ -511,7 +535,10 @@
 											data-bs-toggle="collapse"
 											data-bs-target={`#loaded-${task}-${i}`}
 											aria-expanded="false"
-											aria-controls={`loaded-${task}-${i}`}>{task.fileName}</button
+											aria-controls={`loaded-${task}-${i}`}
+											>{task.fileName} ({task.type === 'store succeeded'
+												? 'succeeded'
+												: 'failed'})</button
 										>
 									</h2>
 									<div
@@ -520,20 +547,23 @@
 										aria-labelledby="panelsStayOpen-headingOne"
 									>
 										<div class="accordion-body">
-											{new Date(task.date).toLocaleString().replace(/:[0-9][0-9]$/, '')}
-											{task.count} items
+											<div class="detail-body">
+												<span
+													>{new Date(task.date).toLocaleString().replace(/:[0-9][0-9]$/, '')}
+												</span>
+												<span>{task.count} items</span>
 
-											<DmdTaskActions
-												{task}
-												stage="load"
-												status={task.type === 'store succeeded' ? 'succeeded' : 'failed'}
-												on:delete={async () => {
-													await handleDeletePressed(filteredUpdated, task);
-												}}
-											/>
+												<DmdTaskActions
+													{task}
+													stage="load"
+													status={task.type === 'store succeeded' ? 'succeeded' : 'failed'}
+													on:delete={async () => {
+														await handleDeletePressed(filteredUpdated, task);
+													}}
+												/>
+											</div>
 
-											{task.type === 'store succeeded' ? 'succeeded' : 'failed'}
-											{task.message}
+											<pre>{task.message}</pre>
 										</div>
 									</div>
 								</div>
@@ -557,5 +587,9 @@
 	.task-search {
 		flex: 1;
 		margin: 0 4rem;
+	}
+	.detail-body {
+		display: flex;
+		justify-content: space-between;
 	}
 </style>

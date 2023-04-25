@@ -81,7 +81,7 @@ A component tha tis used to highlight important messages to the user
 				<div class="accordion-item">
 					<h2 class="accordion-header" id="">
 						<button
-							class="btn accordion-button"
+							class="btn accordion-button collapsed"
 							type="button"
 							data-bs-toggle="collapse"
 							data-bs-target="#notif"

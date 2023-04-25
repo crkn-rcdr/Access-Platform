@@ -146,6 +146,7 @@
 			</a>
 		</div>
 		<br />
+		<br />
 		<div class="accordion" id="">
 			{#if base.length}
 				<div class="accordion-item">
@@ -172,7 +173,7 @@
 									<div class="accordion-item">
 										<h2 class="accordion-header" id="">
 											<button
-												class="btn accordion-button collapsed"
+												class="btn accordion-button"
 												type="button"
 												data-bs-toggle="collapse"
 												data-bs-target={`#base-${i}`}
@@ -186,21 +187,22 @@
 											aria-labelledby="panelsStayOpen-headingOne"
 										>
 											<div class="accordion-body">
-												<span>N/A</span>
-												<span>{batch.canvases.length} canvases</span>
-												<span>
-													<OcrBatchActions
-														{batch}
-														stage="N/A"
-														status="N/A"
-														on:export={async () => {
-															await handleStatusButtonPressed(base, exportWaiting, batch);
-														}}
-														on:delete={async () => {
-															await handleDeletePressed(base, batch);
-														}}
-													/>
-												</span>
+												<div class="detail-body">
+													<span>{batch.canvases.length} canvases</span>
+													<span>
+														<OcrBatchActions
+															{batch}
+															stage="N/A"
+															status="N/A"
+															on:export={async () => {
+																await handleStatusButtonPressed(base, exportWaiting, batch);
+															}}
+															on:delete={async () => {
+																await handleDeletePressed(base, batch);
+															}}
+														/>
+													</span>
+												</div>
 											</div>
 										</div>
 									</div>
@@ -236,7 +238,7 @@
 								<div class="accordion-item">
 									<h2 class="accordion-header" id="">
 										<button
-											class="btn accordion-button collapsed"
+											class="btn accordion-button"
 											type="button"
 											data-bs-toggle="collapse"
 											data-bs-target={`#waite-${i}`}
@@ -250,25 +252,27 @@
 										aria-labelledby="panelsStayOpen-headingOne"
 									>
 										<div class="accordion-body">
-											<span
-												>{new Date(batch.staff.date)
-													.toLocaleString()
-													.replace(/:[0-9][0-9]$/, '')}</span
-											>
-											<span>{batch.canvases.length} canvases</span>
-											<span>
-												<OcrBatchActions
-													{batch}
-													stage="export"
-													status="waiting"
-													on:cancel={async () => {
-														await handleStatusButtonPressed(exportWaiting, base, batch);
-													}}
-													on:delete={async () => {
-														await handleDeletePressed(exportWaiting, batch);
-													}}
-												/>
-											</span>
+											<div class="detail-body">
+												<span
+													>{new Date(batch.staff.date)
+														.toLocaleString()
+														.replace(/:[0-9][0-9]$/, '')}</span
+												>
+												<span>{batch.canvases.length} canvases</span>
+												<span>
+													<OcrBatchActions
+														{batch}
+														stage="export"
+														status="waiting"
+														on:cancel={async () => {
+															await handleStatusButtonPressed(exportWaiting, base, batch);
+														}}
+														on:delete={async () => {
+															await handleDeletePressed(exportWaiting, batch);
+														}}
+													/>
+												</span>
+											</div>
 										</div>
 									</div>
 								</div>
@@ -301,12 +305,15 @@
 								<div class="accordion-item">
 									<h2 class="accordion-header" id="">
 										<button
-											class="btn accordion-button collapsed"
+											class="btn accordion-button"
 											type="button"
 											data-bs-toggle="collapse"
 											data-bs-target={`#e-${i}`}
 											aria-expanded="false"
-											aria-controls={`e-${i}`}>{batch.name}</button
+											aria-controls={`e-${i}`}
+											>{batch.name} ({batch.exportProcess['succeeded']
+												? 'succeeded'
+												: 'failed'})</button
 										>
 									</h2>
 									<div
@@ -315,27 +322,27 @@
 										aria-labelledby="panelsStayOpen-headingOne"
 									>
 										<div class="accordion-body">
-											{batch.exportProcess['succeeded'] ? 'succeeded' : 'failed'}
-											<span
-												>{new Date(batch.staff.date)
-													.toLocaleString()
-													.replace(/:[0-9][0-9]$/, '')}</span
-											>
-											<span>{batch.canvases.length} canvases</span>
-											<span>
-												<OcrBatchActions
-													{batch}
-													stage="import"
-													status={'waiting'}
-													on:cancel={async () => {
-														await handleStatusButtonPressed(importWaiting, exportDone, batch);
-													}}
-													on:delete={async () => {
-														await handleDeletePressed(importWaiting, batch);
-													}}
-												/>
-											</span>
-											<br />
+											<div class="detail-body">
+												<span
+													>{new Date(batch.staff.date)
+														.toLocaleString()
+														.replace(/:[0-9][0-9]$/, '')}</span
+												>
+												<span>{batch.canvases.length} canvases</span>
+												<span>
+													<OcrBatchActions
+														{batch}
+														stage="import"
+														status={'waiting'}
+														on:cancel={async () => {
+															await handleStatusButtonPressed(importWaiting, exportDone, batch);
+														}}
+														on:delete={async () => {
+															await handleDeletePressed(importWaiting, batch);
+														}}
+													/>
+												</span>
+											</div>
 											<pre>{batch.exportProcess['message']}</pre>
 										</div>
 									</div>
@@ -369,7 +376,7 @@
 								<div class="accordion-item">
 									<h2 class="accordion-header" id="">
 										<button
-											class="btn accordion-button collapsed"
+											class="btn accordion-button"
 											type="button"
 											data-bs-toggle="collapse"
 											data-bs-target={`#iw-${i}`}
@@ -416,12 +423,15 @@
 								<div class="accordion-item">
 									<h2 class="accordion-header" id="">
 										<button
-											class="btn accordion-button collapsed"
+											class="btn accordion-button"
 											type="button"
 											data-bs-toggle="collapse"
 											data-bs-target={`#i-${i}`}
 											aria-expanded="false"
-											aria-controls={`i-${i}`}>{batch.name}</button
+											aria-controls={`i-${i}`}
+											>{batch.name} ({batch.importProcess['succeeded']
+												? 'succeeded'
+												: 'failed'})</button
 										>
 									</h2>
 									<div
@@ -430,28 +440,27 @@
 										aria-labelledby="panelsStayOpen-headingOne"
 									>
 										<div class="accordion-body">
-											{batch.importProcess['succeeded'] ? 'succeeded' : 'failed'}
-											<span
-												>{new Date(batch.staff.date)
-													.toLocaleString()
-													.replace(/:[0-9][0-9]$/, '')}</span
-											>
-											<span>{batch.canvases.length} canvases</span>
-											<span>
-												<OcrBatchActions
-													{batch}
-													stage="import"
-													status={batch.importProcess['succeeded'] ? 'succeeded' : 'failed'}
-													on:import={async () => {
-														await handleStatusButtonPressed(importDone, importWaiting, batch);
-													}}
-													on:delete={async () => {
-														await handleDeletePressed(importDone, batch);
-													}}
-												/>
-											</span>
-
-											<br />
+											<div class="detail-body">
+												<span
+													>{new Date(batch.staff.date)
+														.toLocaleString()
+														.replace(/:[0-9][0-9]$/, '')}</span
+												>
+												<span>{batch.canvases.length} canvases</span>
+												<span>
+													<OcrBatchActions
+														{batch}
+														stage="import"
+														status={batch.importProcess['succeeded'] ? 'succeeded' : 'failed'}
+														on:import={async () => {
+															await handleStatusButtonPressed(importDone, importWaiting, batch);
+														}}
+														on:delete={async () => {
+															await handleDeletePressed(importDone, batch);
+														}}
+													/>
+												</span>
+											</div>
 											<pre>{batch.importProcess['message']}</pre>
 										</div>
 									</div>
@@ -475,5 +484,10 @@
 
 	.create-button {
 		flex: 2;
+	}
+
+	.detail-body {
+		display: flex;
+		justify-content: space-between;
 	}
 </style>
