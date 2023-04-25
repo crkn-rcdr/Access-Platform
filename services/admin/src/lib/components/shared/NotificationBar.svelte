@@ -22,133 +22,142 @@ A component tha tis used to highlight important messages to the user
 *Note: `message` must be non-empty to have the notification display.*
 -->
 <script lang="ts">
-  import ExpansionTile from "$lib/components/shared/ExpansionTile.svelte";
+	/**
+	 * @type {string} The message to be displayed on the notification bar, must be a non-empty string.
+	 */
+	export let message = '';
 
-  /**
-   * @type {string} The message to be displayed on the notification bar, must be a non-empty string.
-   */
-  export let message = "";
+	/**
+	 * @type {"success" | "fail" | "warn" | "secondary" | "primary" } The state of the notification, determines the colour displayed and options available.
+	 */
+	export let status: 'success' | 'fail' | 'warn' | 'secondary' | 'primary' = 'success';
 
-  /**
-   * @type {"success" | "fail" | "warn" | "secondary" | "primary" } The state of the notification, determines the colour displayed and options available.
-   */
-  export let status: "success" | "fail" | "warn" | "secondary" | "primary" =
-    "success";
+	/**
+	 * @type {string} Any detailed information that will be shown in the expandable portion.
+	 */
+	export let detail = '';
 
-  /**
-   * @type {string} Any detailed information that will be shown in the expandable portion.
-   */
-  export let detail = "";
+	/**
+	 * @type {boolean} If there will be an expandible portion or not.
+	 */
+	export let expandable = false;
 
-  /**
-   * @type {boolean} If there will be an expandible portion or not.
-   */
-  export let expandable = false;
+	/**
+	 * @type {boolean} If the notification bar should be drawn independant of the rest of the dom, floating on the bottom right, or if it should be drawn in-place.
+	 */
+	export let float = false;
 
-  /**
-   * @type {boolean} If the notification bar should be drawn independant of the rest of the dom, floating on the bottom right, or if it should be drawn in-place.
-   */
-  export let float = false;
+	/**
+	 * @type {Function} A function that will run when the user presses the 'dismiss' button.
+	 */
+	export let dismissFunction = null;
 
-  /**
-   * @type {Function} A function that will run when the user presses the 'dismiss' button.
-   */
-  export let dismissFunction = null;
+	/**
+	 * @type {number} The position of the notifciation in the list of notifications on the bottom right corner.
+	 */
+	export let notificationPosition = 1;
 
-  /**
-   * @type {number} The position of the notifciation in the list of notifications on the bottom right corner.
-   */
-  export let notificationPosition = 1;
+	/**
+	 * @type {number} The height of the notification bar.
+	 */
+	const notificationHeightRem = 5;
 
-  /**
-   * @type {number} The height of the notification bar.
-   */
-  const notificationHeightRem = 5;
-
-  /**
-   * @type {number} The spacing between notifciations in the list of notifications on the bottom right corner.
-   */
-  const notificationSpacing = 1;
+	/**
+	 * @type {number} The spacing between notifciations in the list of notifications on the bottom right corner.
+	 */
+	const notificationSpacing = 1;
 </script>
 
 {#if message && message.length}
-  <div
-    class={`notification-bar notification-bar-${status}`}
-    class:notification-bar-float={float}
-    style={float
-      ? `bottom: ${
-          notificationPosition * notificationHeightRem + notificationSpacing
-        }rem;`
-      : ""}
-  >
-    {#if expandable && detail && detail.length}
-      <ExpansionTile useInfoIcon={true}>
-        <div slot="top">
-          {@html message}
-          {#if dismissFunction}
-            <button class="dismiss sm ghost dark" on:click={dismissFunction}
-              >dismiss</button
-            >
-          {/if}
-        </div>
-        <div slot="bottom">{@html detail}</div>
-      </ExpansionTile>
-    {:else}
-      {@html message}
-    {/if}
-  </div>
+	<div
+		class={`notification-bar notification-bar-${status}`}
+		class:notification-bar-float={float}
+		style={float
+			? `bottom: ${notificationPosition * notificationHeightRem + notificationSpacing}rem;`
+			: ''}
+	>
+		{#if expandable && detail && detail.length}
+			<div class="accordion" id="">
+				<div class="accordion-item">
+					<h2 class="accordion-header" id="">
+						<button
+							class="btn accordion-button"
+							type="button"
+							data-bs-toggle="collapse"
+							data-bs-target="#notif"
+							aria-expanded="false"
+							aria-controls="notif"
+						>
+							{@html message}
+						</button>
+					</h2>
+					<div
+						id="notif"
+						class="accordion-collapse collapse show"
+						aria-labelledby="panelsStayOpen-headingOne"
+					>
+						<div class="accordion-body">
+							{@html detail}
+						</div>
+					</div>
+				</div>
+			</div>
+		{:else}
+			{@html message}
+		{/if}
+	</div>
 {/if}
 
 <style>
-  .notification-bar {
-    background-color: var(--structural-div-bg);
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
-    padding: 1rem;
-    display: block;
-    width: 100%;
-  }
-  .notification-bar-float {
-    position: fixed;
-    right: 1rem;
-    min-width: 20rem;
-    max-width: 36rem;
-    display: inline-block;
-    z-index: 2;
-  }
+	.notification-bar {
+		background-color: var(--structural-div-bg);
+		border: 1px solid var(--border-color);
+		border-radius: var(--border-radius);
+		padding: 1rem;
+		display: block;
+		width: 100%;
+	}
+	.notification-bar-float {
+		position: fixed;
+		right: 1rem;
+		min-width: 20rem;
+		max-width: 36rem;
+		display: inline-block;
+		z-index: 2;
+	}
 
-  .notification-bar-secondary {
-    background-color: var(--secondary-light);
-    border: 1px solid var(--secondary);
-    color: var(--secondary);
-  }
+	.notification-bar-secondary {
+		background-color: var(--secondary-light);
+		border: 1px solid var(--secondary);
+		color: var(--secondary);
+	}
 
-  .notification-bar-primary {
-    background-color: var(--primary-light);
-    border: 1px solid var(--primary);
-    color: var(--primary);
-  }
+	.notification-bar-primary {
+		background-color: var(--primary-light);
+		border: 1px solid var(--primary);
+		color: var(--primary);
+	}
 
-  .notification-bar-success {
-    background-color: var(--success-light);
-    border: 1px solid var(--success);
-    color: var(--success);
-  }
-  .notification-bar-warn {
-    background-color: var(--warn-light);
-    border: 1px solid var(--warn);
-    color: var(--warn);
-  }
-  .notification-bar-fail {
-    background-color: var(--danger-light);
-    border: 1px solid var(--danger);
-    color: var(--danger);
-  }
-  div {
-    display: inline;
-  }
+	.notification-bar-success {
+		background-color: var(--success-light);
+		border: 1px solid var(--success);
+		color: var(--success);
+	}
+	.notification-bar-warn {
+		background-color: var(--warn-light);
+		border: 1px solid var(--warn);
+		color: var(--warn);
+	}
+	.notification-bar-fail {
+		background-color: var(--danger-light);
+		border: 1px solid var(--danger);
+		color: var(--danger);
+	}
+	div {
+		display: inline;
+	}
 
-  .dismiss {
-    float: right;
-  }
+	.dismiss {
+		float: right;
+	}
 </style>

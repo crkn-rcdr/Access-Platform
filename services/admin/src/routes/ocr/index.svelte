@@ -76,10 +76,7 @@
 	import { getStores } from '$app/stores';
 	import timer from '$lib/stores/timer';
 	import { onDestroy, onMount } from 'svelte';
-	import ExpansionList from '$lib/components/shared/ExpansionList.svelte';
-	import ExpansionListItem from '$lib/components/shared/ExpansionListItem.svelte';
 	import OcrBatchActions from '$lib/components/ocr-batch/OcrBatchActions.svelte';
-	import ExpansionListMessage from '$lib/components/shared/ExpansionListMessage.svelte';
 	import Loading from '$lib/components/shared/Loading.svelte';
 	// Typed arrays lets us avoid checks in the front end
 	export let base: OcrBatch[] = [];
@@ -143,171 +140,328 @@
 		<br />
 		<br />
 		<div class="title auto-align auto-align__a-center">
-			<h6>OCR Batches</h6>
+			<h6 class="h6">OCR Batches</h6>
 			<a href="/ocr/new">
-				<button class="create-button primary">Create New OCR Batch</button>
+				<button class="btn create-button primary">Create New OCR Batch</button>
 			</a>
 		</div>
-
-		{#if base.length}
-			<ExpansionList showMessage={base?.length === 0} message="">
-				<span slot="title">Awaiting Export ({base.length})</span>
-				{#each base as batch}
-					<ExpansionListItem status="N/A">
-						<span slot="title">{batch.name}</span>
-						<span slot="stage">N/A</span>
-						<span slot="details">{batch.canvases.length} canvases</span>
-						<span slot="actions">
-							<OcrBatchActions
-								{batch}
-								stage="N/A"
-								status="N/A"
-								on:export={async () => {
-									await handleStatusButtonPressed(base, exportWaiting, batch);
-								}}
-								on:delete={async () => {
-									await handleDeletePressed(base, batch);
-								}}
-							/>
-						</span>
-					</ExpansionListItem>
-				{/each}
-			</ExpansionList>
-		{/if}
-
-		<ExpansionList showMessage={exportWaiting?.length === 0} message="No batches are exporting.">
-			<span slot="title">Exporting ({exportWaiting.length})</span>
-			{#each exportWaiting as batch}
-				<ExpansionListItem status="waiting">
-					<span slot="title">{batch.name}</span>
-					<span slot="date"
-						>{new Date(batch.staff.date).toLocaleString().replace(/:[0-9][0-9]$/, '')}</span
+		<br />
+		<div class="accordion" id="">
+			{#if base.length}
+				<div class="accordion-item">
+					<h2 class="accordion-header" id="">
+						<button
+							class="btn accordion-button collapsed"
+							type="button"
+							data-bs-toggle="collapse"
+							data-bs-target={`#base-g`}
+							aria-expanded="false"
+							aria-controls={`base-g`}>Awaiting Export ({base.length})</button
+						>
+					</h2>
+					<div
+						id={`base-g`}
+						class={`accordion-collapse collapse ${base.length ? 'show' : ''}`}
+						aria-labelledby="panelsStayOpen-headingOne"
 					>
-					<span slot="details">{batch.canvases.length} canvases</span>
-					<span slot="actions">
-						<OcrBatchActions
-							{batch}
-							stage="export"
-							status="waiting"
-							on:cancel={async () => {
-								await handleStatusButtonPressed(exportWaiting, base, batch);
-							}}
-							on:delete={async () => {
-								await handleDeletePressed(exportWaiting, batch);
-							}}
-						/>
-					</span>
-				</ExpansionListItem>
-			{/each}
-		</ExpansionList>
+						<div class="accordion-body">
+							<div class="accordion" id="">
+								<!--"No tasks have been completed."-->
 
-		<ExpansionList showMessage={exportDone?.length === 0} message="No batches are done exporting.">
-			<span slot="title">Done Exporting ({exportDone.length})</span>
-			{#each exportDone as batch}
-				<ExpansionListItem
-					status={batch.exportProcess['succeeded']
-						? batch.exportProcess.message?.length
-							? 'warning'
-							: 'succeeded'
-						: 'failed'}
+								{#each base as batch, i}
+									<div class="accordion-item">
+										<h2 class="accordion-header" id="">
+											<button
+												class="btn accordion-button collapsed"
+												type="button"
+												data-bs-toggle="collapse"
+												data-bs-target={`#base-${i}`}
+												aria-expanded="false"
+												aria-controls={`base-${i}`}>{batch.name}</button
+											>
+										</h2>
+										<div
+											id={`base-${i}`}
+											class="accordion-collapse collapse show"
+											aria-labelledby="panelsStayOpen-headingOne"
+										>
+											<div class="accordion-body">
+												<span>N/A</span>
+												<span>{batch.canvases.length} canvases</span>
+												<span>
+													<OcrBatchActions
+														{batch}
+														stage="N/A"
+														status="N/A"
+														on:export={async () => {
+															await handleStatusButtonPressed(base, exportWaiting, batch);
+														}}
+														on:delete={async () => {
+															await handleDeletePressed(base, batch);
+														}}
+													/>
+												</span>
+											</div>
+										</div>
+									</div>
+								{/each}
+							</div>
+						</div>
+					</div>
+				</div>
+			{/if}
+
+			<div class="accordion-item">
+				<h2 class="accordion-header" id="">
+					<button
+						class="btn accordion-button collapsed"
+						type="button"
+						data-bs-toggle="collapse"
+						data-bs-target={`#base-e`}
+						aria-expanded="false"
+						aria-controls={`base-e`}
+					>
+						Exporting ({exportWaiting.length})</button
+					>
+				</h2>
+				<div
+					id={`base-e`}
+					class={`accordion-collapse collapse ${exportWaiting.length ? 'show' : ''}`}
+					aria-labelledby="panelsStayOpen-headingOne"
 				>
-					<span slot="title">{batch.name}</span>
-					<span slot="date"
-						>{new Date(batch.staff.date).toLocaleString().replace(/:[0-9][0-9]$/, '')}</span
-					>
-					<span slot="details">{batch.canvases.length} canvases</span>
-					<span slot="actions">
-						<OcrBatchActions
-							{batch}
-							stage="export"
-							status={batch.exportProcess['succeeded'] ? 'succeeded' : 'failed'}
-							on:export={async () => {
-								await handleStatusButtonPressed(exportDone, exportWaiting, batch);
-							}}
-							on:import={async () => {
-								await handleStatusButtonPressed(exportDone, importWaiting, batch);
-							}}
-							on:delete={async () => {
-								await handleDeletePressed(exportDone, batch);
-							}}
-						/>
-					</span>
-				</ExpansionListItem>
-				<ExpansionListMessage
-					status={batch.exportProcess['succeeded'] ? 'succeeded' : 'failed'}
-					message={batch.exportProcess['message']}
-				/>
-			{/each}
-		</ExpansionList>
+					<div class="accordion-body">
+						<div class="accordion" id="">
+							<!--"No tasks are exporting."-->
+							{#each exportWaiting as batch, i}
+								<div class="accordion-item">
+									<h2 class="accordion-header" id="">
+										<button
+											class="btn accordion-button collapsed"
+											type="button"
+											data-bs-toggle="collapse"
+											data-bs-target={`#waite-${i}`}
+											aria-expanded="false"
+											aria-controls={`waite-${i}`}>{batch.name}</button
+										>
+									</h2>
+									<div
+										id={`waite-${i}`}
+										class="accordion-collapse collapse show"
+										aria-labelledby="panelsStayOpen-headingOne"
+									>
+										<div class="accordion-body">
+											<span
+												>{new Date(batch.staff.date)
+													.toLocaleString()
+													.replace(/:[0-9][0-9]$/, '')}</span
+											>
+											<span>{batch.canvases.length} canvases</span>
+											<span>
+												<OcrBatchActions
+													{batch}
+													stage="export"
+													status="waiting"
+													on:cancel={async () => {
+														await handleStatusButtonPressed(exportWaiting, base, batch);
+													}}
+													on:delete={async () => {
+														await handleDeletePressed(exportWaiting, batch);
+													}}
+												/>
+											</span>
+										</div>
+									</div>
+								</div>
+							{/each}
+						</div>
+					</div>
+				</div>
+			</div>
 
-		<ExpansionList showMessage={importWaiting?.length === 0} message="No batches are importing.">
-			<span slot="title">
-				Importing ({importWaiting.length})
-			</span>
-			{#each importWaiting as batch}
-				<ExpansionListItem status="waiting">
-					<span slot="title">{batch.name}</span>
-					<span slot="date"
-						>{new Date(batch.staff.date).toLocaleString().replace(/:[0-9][0-9]$/, '')}</span
+			<div class="accordion-item">
+				<h2 class="accordion-header" id="">
+					<button
+						class="btn accordion-button collapsed"
+						type="button"
+						data-bs-toggle="collapse"
+						data-bs-target={`#base-ed`}
+						aria-expanded="false"
+						aria-controls={`base-ed`}>Exported ({exportDone.length})</button
 					>
-					<span slot="details">{batch.canvases.length} canvases</span>
-					<span slot="actions">
-						<OcrBatchActions
-							{batch}
-							stage="import"
-							status={'waiting'}
-							on:cancel={async () => {
-								await handleStatusButtonPressed(importWaiting, exportDone, batch);
-							}}
-							on:delete={async () => {
-								await handleDeletePressed(importWaiting, batch);
-							}}
-						/>
-					</span>
-				</ExpansionListItem>
-			{/each}
-		</ExpansionList>
-
-		<ExpansionList showMessage={importDone?.length === 0} message="No batches are done importing.">
-			<span slot="title">
-				Done Importing ({importDone.length})
-			</span>
-			{#each importDone as batch}
-				<ExpansionListItem
-					status={batch.importProcess['succeeded']
-						? batch.importProcess.message?.length
-							? 'warning'
-							: 'succeeded'
-						: 'failed'}
+				</h2>
+				<div
+					id={`base-ed`}
+					class={`accordion-collapse collapse ${exportDone.length ? 'show' : ''}`}
+					aria-labelledby="panelsStayOpen-headingOne"
 				>
-					<span slot="title">{batch.name}</span>
-					<span slot="date"
-						>{new Date(batch.staff.date).toLocaleString().replace(/:[0-9][0-9]$/, '')}</span
+					<div class="accordion-body">
+						<div class="accordion" id="">
+							<!--"No tasks have been exported."-->
+							{#each exportDone as batch, i}
+								<div class="accordion-item">
+									<h2 class="accordion-header" id="">
+										<button
+											class="btn accordion-button collapsed"
+											type="button"
+											data-bs-toggle="collapse"
+											data-bs-target={`#e-${i}`}
+											aria-expanded="false"
+											aria-controls={`e-${i}`}>{batch.name}</button
+										>
+									</h2>
+									<div
+										id={`e-${i}`}
+										class="accordion-collapse collapse show"
+										aria-labelledby="panelsStayOpen-headingOne"
+									>
+										<div class="accordion-body">
+											{batch.exportProcess['succeeded'] ? 'succeeded' : 'failed'}
+											<span
+												>{new Date(batch.staff.date)
+													.toLocaleString()
+													.replace(/:[0-9][0-9]$/, '')}</span
+											>
+											<span>{batch.canvases.length} canvases</span>
+											<span>
+												<OcrBatchActions
+													{batch}
+													stage="import"
+													status={'waiting'}
+													on:cancel={async () => {
+														await handleStatusButtonPressed(importWaiting, exportDone, batch);
+													}}
+													on:delete={async () => {
+														await handleDeletePressed(importWaiting, batch);
+													}}
+												/>
+											</span>
+											<br />
+											<pre>{batch.exportProcess['message']}</pre>
+										</div>
+									</div>
+								</div>
+							{/each}
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="accordion-item">
+				<h2 class="accordion-header" id="">
+					<button
+						class="btn accordion-button collapsed"
+						type="button"
+						data-bs-toggle="collapse"
+						data-bs-target={`#base-i`}
+						aria-expanded="false"
+						aria-controls={`base-i`}>Importing ({importWaiting.length})</button
 					>
-					<span slot="details">{batch.canvases.length} canvases</span>
-					<span slot="actions">
-						<OcrBatchActions
-							{batch}
-							stage="import"
-							status={batch.importProcess['succeeded'] ? 'succeeded' : 'failed'}
-							on:import={async () => {
-								await handleStatusButtonPressed(importDone, importWaiting, batch);
-							}}
-							on:delete={async () => {
-								await handleDeletePressed(importDone, batch);
-							}}
-						/>
-					</span>
-				</ExpansionListItem>
-				<ExpansionListMessage
-					status={batch.importProcess['succeeded'] ? 'succeeded' : 'failed'}
-					message={batch.importProcess['message']}
-				/>
-			{/each}
-		</ExpansionList>
-		<br />
-		<br />
-		<br />
+				</h2>
+				<div
+					id={`base-i`}
+					class={`accordion-collapse collapse ${importWaiting.length ? 'show' : ''}`}
+					aria-labelledby="panelsStayOpen-headingOne"
+				>
+					<div class="accordion-body">
+						<div class="accordion" id="">
+							<!--"No tasks are importing."-->
+							{#each importWaiting as batch, i}
+								<div class="accordion-item">
+									<h2 class="accordion-header" id="">
+										<button
+											class="btn accordion-button collapsed"
+											type="button"
+											data-bs-toggle="collapse"
+											data-bs-target={`#iw-${i}`}
+											aria-expanded="false"
+											aria-controls={`iw-${i}`}>{batch.name}</button
+										>
+									</h2>
+									<div
+										id={`iw-${i}`}
+										class="accordion-collapse collapse show"
+										aria-labelledby="panelsStayOpen-headingOne"
+									>
+										<div class="accordion-body">
+											<span>waiting...</span>
+										</div>
+									</div>
+								</div>
+							{/each}
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="accordion-item">
+				<h2 class="accordion-header" id="">
+					<button
+						class="btn accordion-button collapsed"
+						type="button"
+						data-bs-toggle="collapse"
+						data-bs-target={`#base-id`}
+						aria-expanded="false"
+						aria-controls={`base-id`}>Imported ({importDone.length})</button
+					>
+				</h2>
+				<div
+					id={`base-id`}
+					class={`accordion-collapse collapse ${importDone.length ? 'show' : ''}`}
+					aria-labelledby="panelsStayOpen-headingOne"
+				>
+					<div class="accordion-body">
+						<div class="accordion" id="">
+							<!--"No tasks have been imported."-->
+							{#each importDone as batch, i}
+								<div class="accordion-item">
+									<h2 class="accordion-header" id="">
+										<button
+											class="btn accordion-button collapsed"
+											type="button"
+											data-bs-toggle="collapse"
+											data-bs-target={`#i-${i}`}
+											aria-expanded="false"
+											aria-controls={`i-${i}`}>{batch.name}</button
+										>
+									</h2>
+									<div
+										id={`i-${i}`}
+										class="accordion-collapse collapse show"
+										aria-labelledby="panelsStayOpen-headingOne"
+									>
+										<div class="accordion-body">
+											{batch.importProcess['succeeded'] ? 'succeeded' : 'failed'}
+											<span
+												>{new Date(batch.staff.date)
+													.toLocaleString()
+													.replace(/:[0-9][0-9]$/, '')}</span
+											>
+											<span>{batch.canvases.length} canvases</span>
+											<span>
+												<OcrBatchActions
+													{batch}
+													stage="import"
+													status={batch.importProcess['succeeded'] ? 'succeeded' : 'failed'}
+													on:import={async () => {
+														await handleStatusButtonPressed(importDone, importWaiting, batch);
+													}}
+													on:delete={async () => {
+														await handleDeletePressed(importDone, batch);
+													}}
+												/>
+											</span>
+
+											<br />
+											<pre>{batch.importProcess['message']}</pre>
+										</div>
+									</div>
+								</div>
+							{/each}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 {/if}
 

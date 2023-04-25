@@ -698,7 +698,7 @@ Allows the user to modify the member list for a collection.
 	</div>
 	<div slot="footer">
 		<button
-			class="secondary"
+			class="btn secondary"
 			disabled={shuffleLoading}
 			on:click={() => {
 				showSingleShuffleModal = false;
@@ -708,7 +708,7 @@ Allows the user to modify the member list for a collection.
 			Cancel
 		</button>
 		<button
-			class="primary"
+			class="btn primary"
 			disabled={!slugsToShuffle?.length ||
 				!shuffleOption?.length ||
 				!shuffleToSlug?.length ||
@@ -746,7 +746,7 @@ Allows the user to modify the member list for a collection.
 	<div slot="footer">
 		<button
 			disabled={shuffleLoading}
-			class="secondary"
+			class="btn secondary"
 			on:click={() => {
 				showManyShuffleModal = false;
 				slugsToShuffle = [];
@@ -755,7 +755,7 @@ Allows the user to modify the member list for a collection.
 			Cancel
 		</button>
 		<button
-			class="primary"
+			class="btn primary"
 			disabled={!slugsToShuffle?.length ||
 				!shuffleOption?.length ||
 				!shuffleToSlug?.length ||

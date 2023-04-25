@@ -207,7 +207,7 @@ The editor actions component holds functionality that is responsible for perform
 			<div>
 				{#if !isDeleteModalWaiting}
 					{#if deleteModalActionText !== 'Ok'}
-						<button class="danger" on:click={handleDelete}>
+						<button class="btn danger" on:click={handleDelete}>
 							{deleteModalActionText}
 						</button>
 					{/if}

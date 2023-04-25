@@ -49,9 +49,6 @@
 	import type { Session } from '$lib/types';
 	import timer from '$lib/stores/timer';
 	import { onDestroy, onMount } from 'svelte';
-	import ExpansionList from '$lib/components/shared/ExpansionList.svelte';
-	import ExpansionListItem from '$lib/components/shared/ExpansionListItem.svelte';
-	import ExpansionListMessage from '$lib/components/shared/ExpansionListMessage.svelte';
 	import DmdTaskActions from '$lib/components/dmd/DmdTaskActions.svelte';
 	import Loading from '$lib/components/shared/Loading.svelte';
 	import Toggle from '$lib/components/shared/Toggle.svelte';
@@ -187,6 +184,8 @@
 		<div class="title auto-align auto-align__a-center auto-align__j-space-between">
 			<h6>Metadata Tasks</h6>
 		</div>
+		<br />
+
 		<div class="title auto-align auto-align__a-center auto-align__j-space-between">
 			<Toggle toggled={true} label={'Only show my tasks'} on:toggled={handleUserFilterChanged} />
 			<input
@@ -195,185 +194,356 @@
 				bind:value={searchTerm}
 			/>
 			<a href="/dmd/new">
-				<button class="create-button primary">Parse New Metadata File</button>
+				<button class="btn create-button primary">Parse New Metadata File</button>
 			</a>
 		</div>
-		{#if filteredBase.length}
-			<ExpansionList
-				showMessage={filteredBase?.length === 0}
-				toggled={filteredBase?.length !== 0}
-				message=""
-			>
-				<span slot="title">Unable to Trigger Parse ({filteredBase.length})</span>
-				{#each filteredBase as task}
-					<ExpansionListItem status="N/A">
-						<span slot="title">{task.fileName}</span>
-						<span slot="actions">
-							<DmdTaskActions
-								{task}
-								stage="N/A"
-								status="N/A"
-								on:delete={async () => {
-									await handleDeletePressed(filteredBase, task);
-								}}
-							/>
-						</span>
-					</ExpansionListItem>
-				{/each}
-			</ExpansionList>
-		{/if}
 
-		<ExpansionList
-			showMessage={filteredParsing?.length === 0}
-			toggled={filteredParsing?.length !== 0}
-			message="No tasks are parsing."
-		>
-			<span slot="title">Parsing ({filteredParsing.length})</span>
-			{#each filteredParsing as task}
-				<ExpansionListItem status="waiting">
-					<span slot="title">{task.fileName}</span>
-					<span slot="date">{new Date(task.date).toLocaleString().replace(/:[0-9][0-9]$/, '')}</span
+		<div class="accordion" id="">
+			{#if filteredBase.length}
+				<div class="accordion-item">
+					<h2 class="accordion-header" id="">
+						<button
+							class="btn accordion-button collapsed"
+							type="button"
+							data-bs-toggle="collapse"
+							data-bs-target={`#base-g`}
+							aria-expanded="false"
+							aria-controls={`base-g`}>Unable to Trigger Parse ({filteredBase.length})</button
+						>
+					</h2>
+					<div
+						id={`base-g`}
+						class={`accordion-collapse collapse ${base.length ? 'show' : ''}`}
+						aria-labelledby="panelsStayOpen-headingOne"
 					>
-					<span slot="actions">
-						<DmdTaskActions
-							{task}
-							stage="parse"
-							status="waiting"
-							on:delete={async () => {
-								await handleDeletePressed(filteredParsing, task);
-							}}
-						/>
-					</span>
-				</ExpansionListItem>
-			{/each}
-		</ExpansionList>
+						<div class="accordion-body">
+							<div class="accordion" id="">
+								{#each filteredBase as task, i}
+									<div class="accordion-item">
+										<h2 class="accordion-header" id="">
+											<button
+												class="btn accordion-button"
+												type="button"
+												data-bs-toggle="collapse"
+												data-bs-target={`#base-${task}-${i}`}
+												aria-expanded="false"
+												aria-controls={`base-${task}-${i}`}
+											>
+												{task.fileName}
+											</button>
+										</h2>
+										<div
+											id={`base-${task}-${i}`}
+											class="accordion-collapse collapse show"
+											aria-labelledby="panelsStayOpen-headingOne"
+										>
+											<div class="accordion-body">
+												<DmdTaskActions
+													{task}
+													stage="N/A"
+													status="N/A"
+													on:delete={async () => {
+														await handleDeletePressed(filteredBase, task);
+													}}
+												/>
+											</div>
+										</div>
+									</div>
+								{/each}
+							</div>
+						</div>
+					</div>
+				</div>
+			{/if}
 
-		<ExpansionList
-			showMessage={filteredParsed?.length === 0}
-			toggled={filteredParsed?.length !== 0}
-			message="No tasks have been parsed."
-		>
-			<span slot="title">Parsed ({filteredParsed.length})</span>
-			{#each filteredParsed as task}
-				<ExpansionListItem
-					status={task.type === 'parse succeeded'
-						? task.message?.length
-							? 'warning'
-							: 'succeeded'
-						: 'failed'}
+			<div class="accordion-item">
+				<h2 class="accordion-header" id="">
+					<button
+						class="btn accordion-button collapsed"
+						type="button"
+						data-bs-toggle="collapse"
+						data-bs-target={`#ps-g`}
+						aria-expanded="false"
+						aria-controls={`ps-g`}>Parsing ({filteredParsing.length})</button
+					>
+				</h2>
+				<div
+					id={`ps-g`}
+					class={`accordion-collapse collapse ${filteredParsing.length ? 'show' : ''}`}
+					aria-labelledby="panelsStayOpen-headingOne"
 				>
-					<span slot="title">{task.fileName}</span>
-					<span slot="date">{new Date(task.date).toLocaleString().replace(/:[0-9][0-9]$/, '')}</span
-					>
-					<span slot="details">
-						{task.count} items
-					</span>
-					<span slot="actions">
-						<DmdTaskActions
-							{task}
-							stage="parse"
-							status={task.type === 'parse succeeded' ? 'succeeded' : 'failed'}
-							on:delete={async () => {
-								await handleDeletePressed(filteredParsed, task);
-							}}
-						/>
-					</span>
-				</ExpansionListItem>
-				<ExpansionListMessage
-					status={task.type === 'parse succeeded' ? 'succeeded' : 'failed'}
-					message={task.message}
-				/>
-			{/each}
-		</ExpansionList>
+					<div class="accordion-body">
+						<div class="accordion" id="">
+							{#each filteredParsing as task, i}
+								<div class="accordion-item">
+									<h2 class="accordion-header" id="">
+										<button
+											class="btn accordion-button"
+											type="button"
+											data-bs-toggle="collapse"
+											data-bs-target={`#parsing-${task}-${i}`}
+											aria-expanded="false"
+											aria-controls={`parsing-${task}-${i}`}>{task.fileName}</button
+										>
+									</h2>
+									<div
+										id={`parsing-${task}-${i}`}
+										class="accordion-collapse collapse show"
+										aria-labelledby="panelsStayOpen-headingOne"
+									>
+										<div class="accordion-body">
+											{new Date(task.date).toLocaleString().replace(/:[0-9][0-9]$/, '')}
+											<DmdTaskActions
+												{task}
+												stage="parse"
+												status="waiting"
+												on:delete={async () => {
+													await handleDeletePressed(filteredParsing, task);
+												}}
+											/>
+										</div>
+									</div>
+								</div>
+							{/each}
+						</div>
+					</div>
+				</div>
+			</div>
 
-		<ExpansionList
-			showMessage={filteredUpdating?.length === 0}
-			toggled={filteredUpdating?.length !== 0}
-			message="No tasks are loading."
-		>
-			<span slot="title">Storing ({filteredUpdating.length})</span>
-			{#each filteredUpdating as task}
-				<ExpansionListItem status="waiting">
-					<span slot="title">{task.fileName}</span>
-					<span slot="date">{new Date(task.date).toLocaleString().replace(/:[0-9][0-9]$/, '')}</span
+			<div class="accordion-item">
+				<h2 class="accordion-header" id="">
+					<button
+						class="btn accordion-button collapsed"
+						type="button"
+						data-bs-toggle="collapse"
+						data-bs-target={`#p-g`}
+						aria-expanded="false"
+						aria-controls={`p-g`}>Parsed ({filteredParsed.length})</button
 					>
-					<span slot="details">{task.count} items</span>
-					<span slot="actions">
-						<DmdTaskActions
-							{task}
-							stage="load"
-							status="waiting"
-							on:delete={async () => {
-								await handleDeletePressed(filteredUpdating, task);
-							}}
-						/>
-					</span>
-				</ExpansionListItem>
-			{/each}
-		</ExpansionList>
-
-		<ExpansionList
-			showMessage={filteredPaused?.length === 0}
-			toggled={filteredPaused?.length !== 0}
-			message="No tasks have been paused."
-		>
-			<span slot="title">Store Paused ({filteredPaused.length})</span>
-			{#each filteredPaused as task}
-				<ExpansionListItem status="paused">
-					<span slot="title">{task.fileName}</span>
-					<span slot="date">{new Date(task.date).toLocaleString().replace(/:[0-9][0-9]$/, '')}</span
-					>
-					<span slot="details">{task.count} items</span>
-					<span slot="actions">
-						<DmdTaskActions
-							{task}
-							stage="load"
-							status={'paused'}
-							on:delete={async () => {
-								await handleDeletePressed(filteredPaused, task);
-							}}
-						/>
-					</span>
-				</ExpansionListItem>
-				<ExpansionListMessage status="succeeded" message={task.message} />
-			{/each}
-		</ExpansionList>
-
-		<ExpansionList
-			showMessage={filteredUpdated?.length === 0}
-			toggled={filteredUpdated?.length !== 0}
-			message="No tasks have been completed."
-		>
-			<span slot="title">Store Completed ({filteredUpdated.length})</span>
-			{#each filteredUpdated as task}
-				<ExpansionListItem
-					status={task.type === 'store succeeded'
-						? task.message?.length
-							? 'warning'
-							: 'succeeded'
-						: 'failed'}
+				</h2>
+				<div
+					id={`p-g`}
+					class={`accordion-collapse collapse ${filteredParsed.length ? 'show' : ''}`}
+					aria-labelledby="panelsStayOpen-headingOne"
 				>
-					<span slot="title">{task.fileName}</span>
-					<span slot="date">{new Date(task.date).toLocaleString().replace(/:[0-9][0-9]$/, '')}</span
+					<div class="accordion-body">
+						<div class="accordion" id="">
+							<!--"No tasks have been parsed."-->
+							{#each filteredParsed as task, i}
+								<div class="accordion-item">
+									<h2 class="accordion-header" id="">
+										<button
+											class="btn accordion-button"
+											type="button"
+											data-bs-toggle="collapse"
+											data-bs-target={`#parsed-${task}-${i}`}
+											aria-expanded="false"
+											aria-controls={`parsed-${task}-${i}`}>{task.fileName}</button
+										>
+									</h2>
+									<div
+										id={`parsed-${task}-${i}`}
+										class="accordion-collapse collapse show"
+										aria-labelledby="panelsStayOpen-headingOne"
+									>
+										<div class="accordion-body">
+											{new Date(task.date).toLocaleString().replace(/:[0-9][0-9]$/, '')}
+											{task.count} items
+
+											<DmdTaskActions
+												{task}
+												stage="parse"
+												status={task.type === 'parse succeeded' ? 'succeeded' : 'failed'}
+												on:delete={async () => {
+													await handleDeletePressed(filteredParsed, task);
+												}}
+											/>
+											status {task.type === 'parse succeeded' ? 'succeeded' : 'failed'}
+											message {task.message}
+										</div>
+									</div>
+								</div>
+							{/each}
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="accordion-item">
+				<h2 class="accordion-header" id="">
+					<button
+						class="btn accordion-button collapsed"
+						type="button"
+						data-bs-toggle="collapse"
+						data-bs-target={`#lg-g`}
+						aria-expanded="false"
+						aria-controls={`lg-g`}>Loading ({filteredUpdating.length})</button
 					>
-					<span slot="details">{task.count} items</span>
-					<span slot="actions">
-						<DmdTaskActions
-							{task}
-							stage="load"
-							status={task.type === 'store succeeded' ? 'succeeded' : 'failed'}
-							on:delete={async () => {
-								await handleDeletePressed(filteredUpdated, task);
-							}}
-						/>
-					</span>
-				</ExpansionListItem>
-				<ExpansionListMessage
-					status={task.type === 'store succeeded' ? 'succeeded' : 'failed'}
-					message={task.message}
-				/>
-			{/each}
-		</ExpansionList>
+				</h2>
+				<div
+					id={`lg-g`}
+					class={`accordion-collapse collapse ${filteredUpdating.length ? 'show' : ''}`}
+					aria-labelledby="panelsStayOpen-headingOne"
+				>
+					<div class="accordion-body">
+						<div class="accordion" id="">
+							<!--"No tasks are loading."-->
+							{#each filteredUpdating as task, i}
+								<div class="accordion-item">
+									<h2 class="accordion-header" id="">
+										<button
+											class="btn accordion-button"
+											type="button"
+											data-bs-toggle="collapse"
+											data-bs-target={`#loading-${task}-${i}`}
+											aria-expanded="false"
+											aria-controls={`loading-${task}-${i}`}>{task.fileName}</button
+										>
+									</h2>
+									<div
+										id={`loading-${task}-${i}`}
+										class="accordion-collapse collapse show"
+										aria-labelledby="panelsStayOpen-headingOne"
+									>
+										<div class="accordion-body">
+											{new Date(task.date).toLocaleString().replace(/:[0-9][0-9]$/, '')}
+											{task.count} items
+
+											<DmdTaskActions
+												{task}
+												stage="load"
+												status="waiting"
+												on:delete={async () => {
+													await handleDeletePressed(filteredUpdating, task);
+												}}
+											/>
+										</div>
+									</div>
+								</div>
+							{/each}
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="accordion-item">
+				<h2 class="accordion-header" id="">
+					<button
+						class="btn accordion-button collapsed"
+						type="button"
+						data-bs-toggle="collapse"
+						data-bs-target={`#lp-g`}
+						aria-expanded="false"
+						aria-controls={`lp-g`}>Paused ({filteredPaused.length})</button
+					>
+				</h2>
+				<div
+					id={`lp-g`}
+					class={`accordion-collapse collapse ${filteredPaused.length ? 'show' : ''}`}
+					aria-labelledby="panelsStayOpen-headingOne"
+				>
+					<div class="accordion-body">
+						<div class="accordion" id="">
+							<!--"No tasks are paused."-->
+							{#each filteredPaused as task, i}
+								<div class="accordion-item">
+									<h2 class="accordion-header" id="">
+										<button
+											class="btn accordion-button"
+											type="button"
+											data-bs-toggle="collapse"
+											data-bs-target={`#paused-${task}-${i}`}
+											aria-expanded="false"
+											aria-controls={`paused-${task}-${i}`}>{task.fileName}</button
+										>
+									</h2>
+									<div
+										id={`paused-${task}-${i}`}
+										class="accordion-collapse collapse show"
+										aria-labelledby="panelsStayOpen-headingOne"
+									>
+										<div class="accordion-body">
+											{new Date(task.date).toLocaleString().replace(/:[0-9][0-9]$/, '')}
+											{task.count} items
+
+											<DmdTaskActions
+												{task}
+												stage="load"
+												status={'paused'}
+												on:delete={async () => {
+													await handleDeletePressed(filteredPaused, task);
+												}}
+											/>
+										</div>
+									</div>
+								</div>
+							{/each}
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="accordion-item">
+				<h2 class="accordion-header" id="">
+					<button
+						class="btn accordion-button collapsed"
+						type="button"
+						data-bs-toggle="collapse"
+						data-bs-target={`#l-g`}
+						aria-expanded="false"
+						aria-controls={`l-g`}>Load Completed ({filteredUpdated.length})</button
+					>
+				</h2>
+				<div
+					id={`l-g`}
+					class={`accordion-collapse collapse ${filteredUpdated.length ? 'show' : ''}`}
+					aria-labelledby="panelsStayOpen-headingOne"
+				>
+					<div class="accordion-body">
+						<div class="accordion" id="">
+							<!--"No tasks have been completed."-->
+							{#each filteredUpdated as task, i}
+								<div class="accordion-item">
+									<h2 class="accordion-header" id="">
+										<button
+											class="btn accordion-button"
+											type="button"
+											data-bs-toggle="collapse"
+											data-bs-target={`#loaded-${task}-${i}`}
+											aria-expanded="false"
+											aria-controls={`loaded-${task}-${i}`}>{task.fileName}</button
+										>
+									</h2>
+									<div
+										id={`loaded-${task}-${i}`}
+										class="accordion-collapse collapse show"
+										aria-labelledby="panelsStayOpen-headingOne"
+									>
+										<div class="accordion-body">
+											{new Date(task.date).toLocaleString().replace(/:[0-9][0-9]$/, '')}
+											{task.count} items
+
+											<DmdTaskActions
+												{task}
+												stage="load"
+												status={task.type === 'store succeeded' ? 'succeeded' : 'failed'}
+												on:delete={async () => {
+													await handleDeletePressed(filteredUpdated, task);
+												}}
+											/>
+
+											{task.type === 'store succeeded' ? 'succeeded' : 'failed'}
+											{task.message}
+										</div>
+									</div>
+								</div>
+							{/each}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
 		<br />
 		<br />
 		<br />

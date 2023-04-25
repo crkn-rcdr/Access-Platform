@@ -377,7 +377,7 @@ input:disabled {
 }
 
 /* Element defauls*/
-
+/*
 h1,
 h2,
 h3,
@@ -446,7 +446,6 @@ button,
 
 button.sm,
 .button.sm {
-  /*padding: var(--perfect-fourth-8) var(--perfect-fourth-6);*/
   padding: 0 0.5rem;
   height: fit-content;
 }
@@ -454,7 +453,7 @@ button.sm,
 button.lg,
 .button.lg {
   padding: var(--perfect-fourth-7) var(--perfect-fourth-3);
-}
+}*/
 
 button.primary,
 .button.primary {
@@ -573,20 +572,20 @@ a {
   color: inherit !important;
 }
 
-/* Table settings */
-table {
-  width: 100%;
-  text-align: left;
-  border-collapse: collapse;
-  border-spacing: 0;
-  /*border-radius: var(--border-radius);
-  border: solid var(--border-color) 1px;*/
-}
 
 caption {
   text-align: left;
   padding: 1rem;
 }
+
+/* Table settings 
+table {
+  width: 100%;
+  text-align: left;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
 
 thead {
   background: var(--backdrop-bg);
@@ -600,14 +599,9 @@ tbody tr.clickable:hover {
   background-color: rgba(0, 0, 0, 0.04);
 }
 
-/*
-tr:nth-child(even) {
-  background-color: rgba(0, 0, 0, 0.02);
-}*/
 
 thead th {
   padding: 1rem;
-  /*font-weight: bold;*/
 }
 
 th {
@@ -623,6 +617,7 @@ th.center {
 td {
   padding: 1rem;
 }
+*/
 
 /* Used to add a '...' cut-off to text */
 
