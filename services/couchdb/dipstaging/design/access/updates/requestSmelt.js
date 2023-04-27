@@ -21,7 +21,11 @@ module.exports = function (doc, req) {
   updateGenericObject(doc, user);
 
   if (typeof slug === "string") {
-    doc.slug = slug;
+    if (slug === "") {
+      delete doc.slug;
+    } else {
+      doc.slug = slug;
+    }
   }
 
   // When launching new smelt, clear past OCR data processing.
