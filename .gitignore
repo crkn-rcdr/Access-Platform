@@ -7,5 +7,6 @@
 .env
 .env.secret
 .env.secret.prod
+.env.secret.dev
 .notes
 kivikrc.json

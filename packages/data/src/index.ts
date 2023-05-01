@@ -68,6 +68,8 @@ export {
   ItemProcessRecord,
 } from "./dmd/index.js";
 
+export * from "./iiif/index.js";
+
 export { WipmetaObject } from "./wipmeta/index.js";
 
 export {
