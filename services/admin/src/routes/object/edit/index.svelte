@@ -47,7 +47,6 @@
 		</div>
 
 		<a href="/object/edit/data-transfer"> Bulk Data Transfer </a>
-		<a href="/ocr/ocr-pdf"> Bulk Create OCR PDF </a>
 	</div>
 	<br />
 	<div class="search">

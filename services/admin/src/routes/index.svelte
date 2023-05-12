@@ -32,6 +32,10 @@
 		<h4>
 			Hi {name.length ? `, ${name}` : ''}. What would you like to do today?
 		</h4>
+	</div>
+{/if}
+
+<!--
 		<nav class="auto-align auto-align__wrap">
 			<span class="drop-down-wrap-page auto-align auto-align__a-center auto-align__j-center">
 				<DropdownMenu direction="right">
@@ -59,7 +63,7 @@
 			<a class="auto-align auto-align__a-center auto-align__j-center" href="/ocr">Load OCR</a>
 		</nav>
 	</div>
-{/if}
+{/if}-->
 
 <!--div class="title">
     <img

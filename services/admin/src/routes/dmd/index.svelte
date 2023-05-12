@@ -150,7 +150,7 @@
 	}
 
 	onMount(() => {
-		filters['user'] = $session.user.email;
+		//filters['user'] = $session.user.email;
 		getDMDTasksList().then(() => {
 			unsubscribe = interval.subscribe(async () => {
 				await getDMDTasksList();
@@ -187,7 +187,7 @@
 		<br />
 
 		<div class="title auto-align auto-align__a-center auto-align__j-space-between">
-			<Toggle toggled={true} label={'Only show my tasks'} on:toggled={handleUserFilterChanged} />
+			<Toggle toggled={false} label={'Only show my tasks'} on:toggled={handleUserFilterChanged} />
 			<input
 				class="task-search"
 				placeholder="Search tasks by file name..."

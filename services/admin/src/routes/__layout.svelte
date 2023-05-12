@@ -86,36 +86,33 @@
 
 <br />
 
-{#if $page.url.pathname !== '/'}
-	<ul class="nav nav-tabs">
-		<li class="nav-item">
-			<a
-				class="nav-link"
-				class:active={$page.url.pathname.includes('/smelter')}
-				aria-current="page"
-				href="/smelter/find"
-			>
-				Import Images into Access
-			</a>
-		</li>
+<ul class="nav nav-tabs">
+	<li class="nav-item">
+		<a
+			class="nav-link"
+			class:active={$page.url.pathname.includes('/smelter')}
+			aria-current="page"
+			href="/smelter/find"
+		>
+			Import Images from Preservation
+		</a>
+	</li>
 
-		<li class="nav-item">
-			<a class="nav-link" class:active={$page.url.pathname.includes('/dmd')} href="/dmd"
-				>Load Metadata into Access</a
-			>
-		</li>
-		<li class="nav-item">
-			<a class="nav-link" class:active={$page.url.pathname.includes('/object')} href="/object/edit"
-				>Edit IIIF in Access</a
-			>
-		</li>
-		<li class="nav-item">
-			<a class="nav-link" class:active={$page.url.pathname.includes('/ocr')} href="/ocr"
-				>Load OCR into Access</a
-			>
-		</li>
-	</ul>
-{/if}
+	<li class="nav-item">
+		<a class="nav-link" class:active={$page.url.pathname.includes('/dmd')} href="/dmd"
+			>Load Descriptive Metadata</a
+		>
+	</li>
+	<li class="nav-item">
+		<a class="nav-link" class:active={$page.url.pathname.includes('/object')} href="/object/edit"
+			>Manage IIIF</a
+		>
+	</li>
+	<li class="nav-item">
+		<a class="nav-link" class:active={$page.url.pathname.includes('/ocr')} href="/ocr">Manage OCR</a
+		>
+	</li>
+</ul>
 
 <slot />
 

@@ -139,6 +139,10 @@
 		<br />
 		<br />
 		<br />
+		<a href="/ocr/ocr-pdf"> Bulk Force OCR PDF </a>
+		<br />
+		<br />
+		<br />
 		<div class="title auto-align auto-align__a-center">
 			<h6 class="h6">OCR Batches</h6>
 			<a href="/ocr/new">
