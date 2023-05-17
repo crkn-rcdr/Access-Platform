@@ -40,7 +40,7 @@
 		<div class="row">
 			<div class="col-sm-6">
 				<div class="card">
-					<h5 class="card-header">Import Images from Preservation</h5>
+					<h5 class="card-header">Import Images into Access</h5>
 					<div class="card-body">
 						<p class="card-text">Import images from preservation into the access image storage.</p>
 						<br />

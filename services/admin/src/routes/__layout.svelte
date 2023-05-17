@@ -95,7 +95,7 @@
 				aria-current="page"
 				href="/smelter/find"
 			>
-				Import Images from Preservation
+				Import Images into Access
 			</a>
 		</li>
 
