@@ -228,15 +228,15 @@
 												class="btn accordion-button"
 												type="button"
 												data-bs-toggle="collapse"
-												data-bs-target={`#base-${task}-${i}`}
+												data-bs-target={`#base-${i}`}
 												aria-expanded="false"
-												aria-controls={`base-${task}-${i}`}
+												aria-controls={`base-${i}`}
 											>
 												{task.fileName}
 											</button>
 										</h2>
 										<div
-											id={`base-${task}-${i}`}
+											id={`base-${i}`}
 											class="accordion-collapse collapse show"
 											aria-labelledby="panelsStayOpen-headingOne"
 										>
@@ -284,13 +284,13 @@
 											class="btn accordion-button"
 											type="button"
 											data-bs-toggle="collapse"
-											data-bs-target={`#parsing-${task}-${i}`}
+											data-bs-target={`#parsing-${i}`}
 											aria-expanded="false"
-											aria-controls={`parsing-${task}-${i}`}>{task.fileName}</button
+											aria-controls={`parsing-${i}`}>{task.fileName}</button
 										>
 									</h2>
 									<div
-										id={`parsing-${task}-${i}`}
+										id={`parsing-${i}`}
 										class="accordion-collapse collapse show"
 										aria-labelledby="panelsStayOpen-headingOne"
 									>
@@ -344,16 +344,16 @@
 											class="btn accordion-button"
 											type="button"
 											data-bs-toggle="collapse"
-											data-bs-target={`#parsed-${task}-${i}`}
+											data-bs-target={`#parsed-${i}`}
 											aria-expanded="false"
-											aria-controls={`parsed-${task}-${i}`}
+											aria-controls={`parsed-${i}`}
 											>{task.fileName} ({task.type === 'parse succeeded'
 												? 'succeeded'
 												: 'failed'})</button
 										>
 									</h2>
 									<div
-										id={`parsed-${task}-${i}`}
+										id={`parsed-${i}`}
 										class="accordion-collapse collapse show"
 										aria-labelledby="panelsStayOpen-headingOne"
 									>
@@ -411,13 +411,13 @@
 											class="btn accordion-button"
 											type="button"
 											data-bs-toggle="collapse"
-											data-bs-target={`#loading-${task}-${i}`}
+											data-bs-target={`#loading-${i}`}
 											aria-expanded="false"
-											aria-controls={`loading-${task}-${i}`}>{task.fileName}</button
+											aria-controls={`loading-${i}`}>{task.fileName}</button
 										>
 									</h2>
 									<div
-										id={`loading-${task}-${i}`}
+										id={`loading-${i}`}
 										class="accordion-collapse collapse show"
 										aria-labelledby="panelsStayOpen-headingOne"
 									>
@@ -472,13 +472,13 @@
 											class="btn accordion-button"
 											type="button"
 											data-bs-toggle="collapse"
-											data-bs-target={`#paused-${task}-${i}`}
+											data-bs-target={`#paused-${i}`}
 											aria-expanded="false"
-											aria-controls={`paused-${task}-${i}`}>{task.fileName}</button
+											aria-controls={`paused-${i}`}>{task.fileName}</button
 										>
 									</h2>
 									<div
-										id={`paused-${task}-${i}`}
+										id={`paused-${i}`}
 										class="accordion-collapse collapse show"
 										aria-labelledby="panelsStayOpen-headingOne"
 									>
@@ -533,16 +533,16 @@
 											class="btn accordion-button"
 											type="button"
 											data-bs-toggle="collapse"
-											data-bs-target={`#loaded-${task}-${i}`}
+											data-bs-target={`#loaded-${i}`}
 											aria-expanded="false"
-											aria-controls={`loaded-${task}-${i}`}
+											aria-controls={`loaded-${i}`}
 											>{task.fileName} ({task.type === 'store succeeded'
 												? 'succeeded'
 												: 'failed'})</button
 										>
 									</h2>
 									<div
-										id={`loaded-${task}-${i}`}
+										id={`loaded-${i}`}
 										class="accordion-collapse collapse show"
 										aria-labelledby="panelsStayOpen-headingOne"
 									>

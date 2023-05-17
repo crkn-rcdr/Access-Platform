@@ -139,7 +139,7 @@
 		<br />
 		<br />
 		<br />
-		<a href="/ocr/ocr-pdf"> Bulk Force OCR PDF </a>
+		<a href="/ocr/ocr-pdf" class="ocr-pdf-link">Bulk OCR PDF Generation</a>
 		<br />
 		<br />
 		<br />
@@ -489,9 +489,11 @@
 	.create-button {
 		flex: 2;
 	}
-
 	.detail-body {
 		display: flex;
 		justify-content: space-between;
+	}
+	.ocr-pdf-link {
+		color: var(--primary) !important;
 	}
 </style>

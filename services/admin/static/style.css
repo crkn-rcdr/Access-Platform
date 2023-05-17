@@ -456,9 +456,11 @@ button.lg,
 }*/
 
 button.primary,
-.button.primary {
-  background-color: var(--primary);
+.button.primary,
+.btn-primary {
+  background-color: var(--primary) !important;
   color: var(--primary-font) !important;
+  border: none !important;
 }
 button.ghost.dark,
 .button.ghost.dark {

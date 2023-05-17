@@ -30,40 +30,68 @@
 	<br />
 	<div class="home-content auto-align auto-align__column auto-align__a-center auto-align__j-center">
 		<h4>
-			Hi {name.length ? `, ${name}` : ''}. What would you like to do today?
+			Hi{name.length ? `, ${name}` : ''}. What would you like to do today?
 		</h4>
 	</div>
-{/if}
 
-<!--
-		<nav class="auto-align auto-align__wrap">
-			<span class="drop-down-wrap-page auto-align auto-align__a-center auto-align__j-center">
-				<DropdownMenu direction="right">
-					<div
-						slot="dropdown-button"
-						class="create-object-menu-button auto-align auto-align__a-center"
-					>
-						Create in Access
+	<div class="container">
+		<br />
+
+		<div class="row">
+			<div class="col-sm-6">
+				<div class="card">
+					<h5 class="card-header">Import Images</h5>
+					<div class="card-body">
+						<p class="card-text">Import images from preservation into the access image storage.</p>
+						<br />
+						<a href="/smelter/find" class="btn btn-primary">Go</a>
 					</div>
-					<a href="/object/new/collection"> New Collection </a>
-					<a href="/object/new/manifest"> New Manifest </a>
-				</DropdownMenu>
-			</span>
+				</div>
+			</div>
 
-			<a class="auto-align auto-align__a-center auto-align__j-center" href="/smelter/find"
-				>Import into Access</a
-			>
+			<div class="col-sm-6">
+				<div class="card">
+					<h5 class="card-header">Load Descriptive Metadata</h5>
+					<div class="card-body">
+						<p class="card-text">
+							Load MARC and DC descriptive metadata files into the access storage. (Temporary
+							feature - you can also use this tool to load descriptive metadata into preservation.)
+						</p>
+						<a href="/dmd" class="btn btn-primary">Go</a>
+					</div>
+				</div>
+			</div>
+		</div>
 
-			<a class="auto-align auto-align__a-center auto-align__j-center" href="/dmd">Load Metadata</a>
+		<br />
 
-			<a class="auto-align auto-align__a-center auto-align__j-center" href="/object/edit"
-				>Edit in Access</a
-			>
+		<div class="row">
+			<div class="col-sm-6">
+				<div class="card">
+					<h5 class="card-header">Manage IIIF</h5>
+					<div class="card-body">
+						<p class="card-text">Create and edit IIIF manifests and collections.</p>
+						<br />
+						<a href="/object/edit" class="btn btn-primary">Go</a>
+					</div>
+				</div>
+			</div>
 
-			<a class="auto-align auto-align__a-center auto-align__j-center" href="/ocr">Load OCR</a>
-		</nav>
+			<div class="col-sm-6">
+				<div class="card">
+					<h5 class="card-header">Manage OCR</h5>
+					<div class="card-body">
+						<p class="card-text">
+							Export images for OCR, import the resulting OCR files, and create PDFs from their OCR
+							data.
+						</p>
+						<a href="/ocr" class="btn btn-primary">Go</a>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
-{/if}-->
+{/if}
 
 <!--div class="title">
     <img
@@ -113,6 +141,9 @@
 	:global(.drop-down-wrap-page .create-object-menu-button) {
 		height: 6rem;
 		color: var(--light-font) !important;
+	}
+	.card {
+		min-height: 180px !important;
 	}
 	/*
   .title,

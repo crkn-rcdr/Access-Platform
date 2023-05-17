@@ -62,12 +62,23 @@
 	$: validSlug = batchName.length ? Slug.safeParse(batchName).success : true;
 </script>
 
-<Wizard title="Create OCR Batch">
+<Wizard title="Create a new OCR Batch">
 	{#if loading}
 		<div class="loader">
 			<Loading backgroundType="gradient" />
 		</div>
 	{:else}
+		<div class="wizard-buttons">
+			<button class="btn secondary" on:click={handleCancelPressed}>Cancel</button>
+			<button
+				on:click={handleCreatePressed}
+				class="btn save"
+				disabled={!selectedManifests?.length || !batchName.length || !validSlug}
+			>
+				Create OCR Batch
+			</button>
+		</div>
+
 		<label>
 			<h6>Enter an Identifiable Batch Name</h6>
 			{#if !validSlug}
@@ -84,17 +95,6 @@
 		<h6>Search for Canvases by Manifest</h6>
 		<div class="auto-align canvas-select">
 			<ManifestSelector on:change={handleManifestSelectionChange} />
-		</div>
-
-		<div class="wizard-buttons">
-			<button class="btn secondary" on:click={handleCancelPressed}>Cancel</button>
-			<button
-				on:click={handleCreatePressed}
-				class="btn save"
-				disabled={!selectedManifests?.length || !batchName.length || !validSlug}
-			>
-				Create OCR Batch
-			</button>
 		</div>
 	{/if}
 </Wizard>
