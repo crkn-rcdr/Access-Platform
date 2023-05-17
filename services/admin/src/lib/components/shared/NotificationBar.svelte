@@ -76,7 +76,8 @@ A component tha tis used to highlight important messages to the user
 			? `bottom: ${notificationPosition * notificationHeightRem + notificationSpacing}rem;`
 			: ''}
 	>
-		{#if expandable && detail && detail.length}
+		{@html message}
+		<!--{#if expandable && detail && detail.length}
 			<div class="accordion" id="">
 				<div class="accordion-item">
 					<h2 class="accordion-header" id="">
@@ -88,7 +89,7 @@ A component tha tis used to highlight important messages to the user
 							aria-expanded="false"
 							aria-controls="notif"
 						>
-							{@html message}
+							
 						</button>
 					</h2>
 					<div
@@ -104,7 +105,7 @@ A component tha tis used to highlight important messages to the user
 			</div>
 		{:else}
 			{@html message}
-		{/if}
+		{/if}-->
 	</div>
 {/if}
 
