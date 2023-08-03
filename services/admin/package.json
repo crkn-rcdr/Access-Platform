@@ -34,7 +34,7 @@
     "cookie": "^0.4.1",
     "deep-object-diff": "^1.1.0",
     "jsonfn": "^0.31.0",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "lodash-es": "^4.17.21",
     "openseadragon": "^2.4.2",
     "promise-delay": "^2.1.0",
