@@ -33,6 +33,7 @@ Allows the user to select one of many pre-defined depositors.
 		none: 'No Prefix',
 		ams: 'Shortgrass Public Library System',
 		carl: 'Canadian Association of Research Libraries',
+		mw: 'Musicworks Society of Ontario Inc.',
 		numeris: 'Numeris - broadcast measurement and consumer behaviour data',
 		omcn: 'Mississauga Library System',
 		oocihm: 'Canadiana.org',
