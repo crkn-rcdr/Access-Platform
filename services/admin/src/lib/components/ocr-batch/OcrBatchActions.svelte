@@ -180,13 +180,13 @@
 			<Loading backgroundType="gradient" size="sm" />
 		{:else}
 			{#if status === 'waiting'}
-				<button class="action secondary" on:click={handleCancelPressed}> Cancel </button>
+				<button class="btn action secondary" on:click={handleCancelPressed}> Cancel </button>
 			{:else if status === 'failed'}
-				<button class="action secondary" on:click={handleRetryPressed}> Retry </button>
+				<button class="btn action secondary" on:click={handleRetryPressed}> Retry </button>
 			{:else if status === 'succeeded' && stage === 'export'}
-				<button class="action save" on:click={handleImportPressed}> Import </button>
+				<button class="btn action save" on:click={handleImportPressed}> Import </button>
 			{:else if status === 'N/A'}
-				<button class="action save" on:click={handleExportPressed}> Export </button>
+				<button class="btn action save" on:click={handleExportPressed}> Export </button>
 			{/if}
 
 			<div class="action icon" on:click={handleDeletePressed}>

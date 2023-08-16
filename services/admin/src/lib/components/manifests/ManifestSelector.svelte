@@ -149,7 +149,7 @@ This componenet allows the user to search the backend for any access object that
 			{/if}
 		</div>
 
-		<table>
+		<table class="table">
 			<thead>
 				<tr>
 					<th>

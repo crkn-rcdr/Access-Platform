@@ -68,7 +68,7 @@
 	</LoadingButton>
 {/if}
 
-<table>
+<table class="table">
 	<thead>
 		<td> Select </td>
 		<td> Slug </td>

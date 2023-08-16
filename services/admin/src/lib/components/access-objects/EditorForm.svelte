@@ -382,7 +382,7 @@ This component displays the non content properties for an access editorObject an
 				<br /><br />
 			{/if}
 
-			<table>
+			<table class="table">
 				<thead>
 					<th colspan={4}>Membership</th>
 				</thead>
@@ -410,7 +410,7 @@ This component displays the non content properties for an access editorObject an
 									</a>
 								</td>
 								<td class="remove-button">
-									<button class="sm danger" on:click={() => removeMembership(coll.id)}
+									<button class="btn btn-sm danger" on:click={() => removeMembership(coll.id)}
 										>Remove</button
 									>
 								</td>
@@ -428,7 +428,7 @@ This component displays the non content properties for an access editorObject an
 			{#if cacheStatus?.found && cacheStatus.result}
 				{#if !('succeeded' in cacheStatus.result)}
 					<div class="cache-title">Data Transfer (Admin Tools -> CAP)</div>
-					<table>
+					<table class="table">
 						<tbody>
 							<tr>
 								<td>Status:</td>
@@ -441,10 +441,10 @@ This component displays the non content properties for an access editorObject an
 						</tbody>
 					</table>
 					<br />
-					<button disabled>Force data transfer to CAP</button>
+					<button class="btn" disabled>Force data transfer to CAP</button>
 				{:else if cacheStatus.result.succeeded}
 					<div class="cache-title">Data Transfer (Admin Tools -> CAP)</div>
-					<table>
+					<table class="table">
 						<tbody>
 							<tr>
 								<td>Status:</td>
@@ -463,13 +463,13 @@ This component displays the non content properties for an access editorObject an
 					<br />
 					<NotificationBar status="warn" message={cacheStatus.result.message} />
 					{#if editorObject.public}
-						<button class="secondary" on:click={handleForceUpdate}>
+						<button class="btn secondary" on:click={handleForceUpdate}>
 							Force data transfer to CAP
 						</button>
 					{/if}
 				{:else}
 					<div class="cache-title">Data Transfer (Admin Tools -> CAP)</div>
-					<table>
+					<table class="table">
 						<tbody>
 							<!--tr>
                 <Used to show publish date here>
@@ -491,7 +491,7 @@ This component displays the non content properties for an access editorObject an
 					<br />
 					<NotificationBar status="fail" message={cacheStatus.result.message} />
 					{#if editorObject.public}
-						<button class="secondary" on:click={handleForceUpdate}>
+						<button class="btn secondary" on:click={handleForceUpdate}>
 							Force data transfer to CAP
 						</button>
 					{/if}
@@ -512,7 +512,7 @@ This component displays the non content properties for an access editorObject an
 			{/if}
 			{#if ocrStatus?.found && ocrStatus.result}
 				{#if !('succeeded' in ocrStatus.result)}
-					<table>
+					<table class="table">
 						<tbody>
 							<tr>
 								<td>Status:</td>
@@ -526,7 +526,7 @@ This component displays the non content properties for an access editorObject an
 					</table>
 					<br />
 				{:else if ocrStatus.result.succeeded}
-					<table>
+					<table class="table">
 						<tbody>
 							<tr>
 								<td>OCR Status:</td>
@@ -545,7 +545,7 @@ This component displays the non content properties for an access editorObject an
 					<br />
 					<NotificationBar status="warn" message={ocrStatus.result.message} />
 				{:else}
-					<table>
+					<table class="table">
 						<tbody>
 							<!--tr>
                 <Used to show publish date here>
@@ -570,9 +570,9 @@ This component displays the non content properties for an access editorObject an
 			{/if}
 			{#if editorObject.type === 'manifest'}
 				{#if ocrStatus?.found && ocrStatus.result && !('succeeded' in ocrStatus.result)}
-					<button disabled>Create OCR PDF</button>
+					<button class="btn" disabled>Create OCR PDF</button>
 				{:else}
-					<button class="secondary" on:click={handleCreateOCRPDF}> Create OCR PDF </button>
+					<button class="btn secondary" on:click={handleCreateOCRPDF}> Create OCR PDF </button>
 				{/if}
 				<br />
 				<div class="updates">
@@ -627,7 +627,6 @@ This component displays the non content properties for an access editorObject an
 
 	.cache-status button,
 	.updates {
-		float: left;
 		margin-left: 1rem;
 	}
 </style>

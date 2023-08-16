@@ -131,10 +131,7 @@
 			on:clicked={handleReprocessClicked}
 			showLoader={sendingReprocessRequest}
 		>
-			<span slot="content" class="auto-align auto-align__a-center">
-				<span class="icon"><IoMdRefresh /></span>
-				Re-process File
-			</span>
+			<span slot="content" class="auto-align auto-align__a-center"> Re-process File </span>
 		</LoadingButton>
 	</div>
 	<br />

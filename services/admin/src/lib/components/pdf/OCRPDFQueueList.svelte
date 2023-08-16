@@ -70,7 +70,7 @@
         "message": "Item not found: 69429/m0599z033520\n"
       }
   -->
-	<table>
+	<table class="table">
 		<thead>
 			<tr>
 				<th>Slug</th>
