@@ -20,7 +20,8 @@ None
 ```
 -->
 
-<li class="nav-item side-menu-page-list-button">
+<!--li class="nav-item side-menu-page-list-button"-->
+<li class="side-menu-page-list-button list-group-item list-group-item-action">
 	<slot />
 </li>
 
@@ -36,8 +37,5 @@ None
 		margin-bottom: var(--margin-sm);
 		border-radius: var(--border-radius);
 		cursor: pointer;
-	}
-	:global(.side-menu-page-list-button.active) {
-		color: var(--primary);
 	}
 </style>

@@ -1792,3 +1792,20 @@ span.flatpickr-day.nextMonthDay.selected {
   box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
     rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
 }
+.list-group-item.active {
+  background-color: var(--primary) !important;
+  border-color: var(--primary) !important;
+  border-radius: var(--border-radius) !important;
+}
+.list-group li {
+  margin-bottom: 0 !important;
+}
+.list-group {
+  border-radius: var(--border-radius) !important;
+}
+.btn-group{
+  border-radius: var(--border-radius);
+}
+.btn-group .active {
+  background-color: var(--primary) !important;
+}

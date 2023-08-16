@@ -79,7 +79,7 @@
 			</button>
 		</div>
 
-		<label>
+		<label style="width: 100%;">
 			<h6>Enter an Identifiable Batch Name</h6>
 			{#if !validSlug}
 				<NotificationBar
