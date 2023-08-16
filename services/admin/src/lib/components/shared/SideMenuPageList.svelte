@@ -20,23 +20,23 @@ None
 ```
 -->
 <nav class="sidemenu">
-  <ul>
-    <slot />
-  </ul>
+	<ul class="nav flex-column">
+		<slot />
+	</ul>
 </nav>
 
 <style>
-  .sidemenu {
-    background: var(--sidemenu-bg);
-    /*filter: brightness(0.95);*/
-    min-height: 100%;
-    flex: 1.5;
-    padding: var(--margin-sm) var(--perfect-fourth-6);
-    width: fit-content;
-  }
-  .sidemenu ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-  }
+	.sidemenu {
+		background: var(--sidemenu-bg);
+		/*filter: brightness(0.95);*/
+		min-height: 100%;
+		flex: 1.5;
+		padding: var(--margin-sm) var(--perfect-fourth-6);
+		width: fit-content;
+	}
+	.sidemenu ul {
+		list-style-type: none;
+		padding: 0;
+		margin: 0;
+	}
 </style>

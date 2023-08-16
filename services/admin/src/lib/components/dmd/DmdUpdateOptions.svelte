@@ -280,7 +280,7 @@ This component allows the user to update the dmd tasks items in an access platfo
 				<ScrollStepperStep title="Lookup Items">
 					<div slot="icon">2</div>
 					<div class="auto-align auto-align__column">
-						<button class="secondary" on:click={handleRemoveExistingPrefixPressed}>
+						<button class="btn secondary" on:click={handleRemoveExistingPrefixPressed}>
 							Clear Prefix
 						</button>
 						<br />
@@ -304,7 +304,7 @@ This component allows the user to update the dmd tasks items in an access platfo
 									expandable={true}
 									detail={notFoundIds.map((id) => `${id}<br/>`).join('')}
 								/>
-								<button class="primary" on:click={() => (activeStepIndex = 2)}> Ok </button>
+								<button class="btn primary" on:click={() => (activeStepIndex = 2)}> Ok </button>
 							{/if}
 							<br />
 
@@ -331,7 +331,7 @@ This component allows the user to update the dmd tasks items in an access platfo
 								</span>
 							{/if}
 							<button
-								class="primary"
+								class="btn primary"
 								on:click={() => {
 									showCreateWarningModal = true;
 								}}
@@ -344,7 +344,7 @@ This component allows the user to update the dmd tasks items in an access platfo
 				<ScrollStepperStep title="Review Selection">
 					<div slot="icon">{createOption ? 4 : 3}</div>
 					<div class="auto-align auto-align__column">
-						<button class="primary" on:click={() => (activeStepIndex = createOption ? 4 : 3)}>
+						<button class="btn primary" on:click={() => (activeStepIndex = createOption ? 4 : 3)}>
 							Looks Good!
 						</button>
 					</div>
@@ -400,9 +400,9 @@ This component allows the user to update the dmd tasks items in an access platfo
 		{/each}
 	</div>
 	<div slot="footer">
-		<button class="secondary" on:click={handleCreateOption}> No, I want to continue </button>
+		<button class="btn secondary" on:click={handleCreateOption}> No, I want to continue </button>
 		<button
-			class="primary"
+			class="btn primary"
 			on:click={() => {
 				showCreateWarningModal = false;
 			}}

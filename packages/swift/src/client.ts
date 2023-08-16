@@ -48,7 +48,7 @@ export class Client implements ClientInterface {
     this.server = options.server;
     this.authHeaders = {
       "X-Auth-User": options.user,
-      "X-Auth-Key": "MOOOOO",//options.password,
+      "X-Auth-Key": options.password,
     };
     this.accountName = options.account ?? `AUTH_${options.user}`;
   }

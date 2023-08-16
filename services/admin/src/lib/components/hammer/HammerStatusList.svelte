@@ -6,7 +6,6 @@
 	import Loading from '$lib/components/shared/Loading.svelte';
 	import LoadingButton from '$lib/components/shared/LoadingButton.svelte';
 	import NotificationBar from '$lib/components/shared/NotificationBar.svelte';
-	import ExpansionTile from '../shared/ExpansionTile.svelte';
 
 	/**
 	 * @type {Session} The session store that contains the module for sending requests to lapin.
@@ -125,7 +124,7 @@
 	{/if}
 </div>
 <div class="">
-	<table>
+	<table class="table">
 		<thead>
 			<tr>
 				<th>
@@ -142,7 +141,7 @@
 		<tbody>
 			{#if results && !lookingup}
 				{#if results.length}
-					{#each results as result}
+					{#each results as result, i}
 						<tr>
 							<td>
 								<input
@@ -169,12 +168,31 @@
 							<td colspan="4">
 								<div class="message-wrap">
 									{#if result['updateInternalmeta']?.['message']}
-										<ExpansionTile>
-											<span slot="top">View Message</span>
-											<div slot="bottom">
-												<pre>{result['updateInternalmeta']?.['message']}</pre>
+										<div class="accordion" id="">
+											<div class="accordion-item">
+												<h2 class="accordion-header" id="">
+													<button
+														class="btn accordion-button"
+														type="button"
+														data-bs-toggle="collapse"
+														data-bs-target={`#view-message-${i}`}
+														aria-expanded="false"
+														aria-controls={`view-message-${i}`}
+													>
+														View Message
+													</button>
+												</h2>
+												<div
+													id={`view-message-${i}`}
+													class="accordion-collapse collapse show"
+													aria-labelledby="panelsStayOpen-headingOne"
+												>
+													<div class="accordion-body">
+														<pre>{result['updateInternalmeta']?.['message']}</pre>
+													</div>
+												</div>
 											</div>
-										</ExpansionTile>
+										</div>
 									{:else}
 										No message
 									{/if}

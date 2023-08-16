@@ -64,24 +64,24 @@
 		{:else}
 			{#if status === 'waiting'}
 				<a href={`/dmd/${task.id}`}>
-					<button class="action secondary"> Track </button>
+					<button class="btn action secondary"> Track </button>
 				</a>
 			{:else if status === 'paused'}
 				<a href={`/dmd/${task.id}`}>
-					<button class="action save"> Resume Store</button>
+					<button class="btn action save"> Resume Store</button>
 				</a>
 			{:else if status === 'failed'}
 				<a href={`/dmd/${task.id}`}>
-					<button class="action secondary"> Review </button>
+					<button class="btn action secondary"> Review </button>
 				</a>
 			{:else if status === 'succeeded'}
 				{#if stage === 'parse'}
 					<a href={`/dmd/${task.id}`}>
-						<button class="action save"> Store Metadata </button>
+						<button class="btn action save"> Store Metadata </button>
 					</a>
 				{:else}
 					<a href={`/dmd/${task.id}`}>
-						<button class="action secondary"> Review </button>
+						<button class="btn action secondary"> Review </button>
 					</a>
 				{/if}
 			{:else if status === 'N/A'}
@@ -89,7 +89,7 @@
 					href={`https://github.com/crkn-rcdr/Access-Platform/issues/new?title=DMD+Task+file+not+uploading+correctly&body=DMD+task+id:+${task.id}&labels[]=bug`}
 					target="_blank"
 				>
-					<button class="action danger"> Open Issue </button>
+					<button class="btn action danger"> Open Issue </button>
 				</a>
 			{/if}
 

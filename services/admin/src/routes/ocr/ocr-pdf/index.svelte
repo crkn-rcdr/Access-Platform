@@ -60,12 +60,12 @@
 
 <div class="dipstaging-wrap">
 	<br />
-	<a class="back auto-align auto-align__a-center" href="/object/edit">
+	<a class="back auto-align auto-align__a-center" href="/ocr">
 		<div class="icon">
 			<TiArrowBack />
 		</div>
 
-		<span> Back to search </span>
+		<span> Back to OCR Batches</span>
 	</a>
 	<br />
 	<br />

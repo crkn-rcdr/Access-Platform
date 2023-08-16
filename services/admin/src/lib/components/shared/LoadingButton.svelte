@@ -24,64 +24,56 @@ This component is a button that shows a loading indicator when its property, sho
 ```
 -->
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
-  import Loading from "$lib/components/shared/Loading.svelte";
+	import { createEventDispatcher } from 'svelte';
+	import Loading from '$lib/components/shared/Loading.svelte';
 
-  /**
-   * @type { string } The html class attribute for the button
-   */
-  export let buttonClass: string = "primary";
+	/**
+	 * @type { string } The html class attribute for the button
+	 */
+	export let buttonClass: string = 'primary';
 
-  /**
-   * @type { boolean } The state of the button, either to show the loading indicator or not.
-   */
-  export let showLoader: boolean = false;
-  /**
-   * @type { boolean } If the user should be able to use the button or not
-   */
-  export let disabled: boolean = false;
+	/**
+	 * @type { boolean } The state of the button, either to show the loading indicator or not.
+	 */
+	export let showLoader: boolean = false;
+	/**
+	 * @type { boolean } If the user should be able to use the button or not
+	 */
+	export let disabled: boolean = false;
 
-  /**
-   * The background for the loader
-   */
-  export let backgroundType:
-    | "light"
-    | "dark"
-    | "primary"
-    | "secondary"
-    | "gradient" = "light";
+	/**
+	 * The background for the loader
+	 */
+	export let backgroundType: 'light' | 'dark' | 'primary' | 'secondary' | 'gradient' = 'light';
 
-  /**
-   * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.
-   */
-  const dispatch = createEventDispatcher();
+	/**
+	 * @type {<EventKey extends string>(type: EventKey, detail?: any)} Triggers events that parent components can hook into.
+	 */
+	const dispatch = createEventDispatcher();
 
-  /**
-   * Sends the clicked event of the button to the parent components using @var dispatcher.
-   * @param event
-   * @returns void
-   */
-  function handleClicked(event) {
-    dispatch("clicked", event);
-  }
+	/**
+	 * Sends the clicked event of the button to the parent components using @var dispatcher.
+	 * @param event
+	 * @returns void
+	 */
+	function handleClicked(event) {
+		dispatch('clicked', event);
+	}
 </script>
 
-<button class={buttonClass} on:click={handleClicked} {disabled}>
-  <span
-    class="auto-align auto-align__a-center"
-    class:loading-button={showLoader}
-  >
-    {#if showLoader}
-      <Loading size="sm" {backgroundType} />
-    {/if}
-    <span class="content">
-      <slot name="content" />
-    </span>
-  </span>
+<button class={'btn ' + buttonClass} on:click={handleClicked} {disabled}>
+	<span class="auto-align auto-align__a-center" class:loading-button={showLoader}>
+		{#if showLoader}
+			<Loading size="sm" {backgroundType} />
+		{/if}
+		<span class="content">
+			<slot name="content" />
+		</span>
+	</span>
 </button>
 
 <style>
-  .content {
-    margin-left: var(--margin-sm);
-  }
+	.content {
+		margin-left: var(--margin-sm);
+	}
 </style>

@@ -161,7 +161,7 @@
 			</div>
 
 			<button
-				class="refine-button primary"
+				class="btn refine-button primary"
 				on:click={filter}
 				disabled={!(dates[0]?.length && dates[1]?.length && (view !== 'status' || status !== null))}
 			>
@@ -169,7 +169,7 @@
 			</button>
 			{#if dates[0]?.length && dates[1]?.length && (view !== 'status' || status !== null)}
 				<button
-					class="refine-button secondary"
+					class="btn refine-button secondary"
 					on:click={reset}
 					disabled={!(
 						dates[0]?.length &&

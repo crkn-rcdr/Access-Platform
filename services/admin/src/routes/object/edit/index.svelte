@@ -4,6 +4,7 @@
 	 * @description This is the main page for the app
 	 */
 	import TypeAhead from '$lib/components/access-objects/TypeAhead.svelte';
+	import DropdownMenu from '$lib/components/shared/DropdownMenu.svelte';
 	import PrefetchLoader from '$lib/components/shared/PrefetchLoader.svelte';
 	import { Noid } from '@crkn-rcdr/access-data';
 
@@ -29,8 +30,23 @@
 
 <PrefetchLoader bind:href={objectHref}>
 	<div class="updates">
+		<div class="dropdown create-dd">
+			<button
+				class="btn btn-secondary dropdown-toggle create"
+				type="button"
+				id="dropdownMenuButton1"
+				data-bs-toggle="dropdown"
+				aria-expanded="false"
+			>
+				Create New
+			</button>
+			<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+				<li><a class="dropdown-item" href="/object/new/collection">Collection</a></li>
+				<li><a class="dropdown-item" href="/object/new/manifest">Manifest</a></li>
+			</ul>
+		</div>
+
 		<a href="/object/edit/data-transfer"> Bulk Data Transfer </a>
-		<a href="/ocr/ocr-pdf"> Bulk Create OCR PDF </a>
 	</div>
 	<br />
 	<div class="search">
@@ -42,6 +58,10 @@
 </PrefetchLoader>
 
 <style>
+	.create-dd {
+		display: inline-block;
+		margin-right: 1rem;
+	}
 	.search {
 		max-width: 50rem;
 		margin: auto;

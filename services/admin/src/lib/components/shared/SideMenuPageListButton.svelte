@@ -19,24 +19,25 @@ None
 </SideMenuContainer>
 ```
 -->
-<li class="side-menu-page-list-button clickable">
-  <slot />
+
+<li class="nav-item side-menu-page-list-button">
+	<slot />
 </li>
 
+<!--li class="nav-item">
+  <a class="nav-link" href="#">Link</a>
+</li-->
+
 <style>
-  li {
-    padding: var(--perfect-fourth-8) var(--perfect-fourth-4);
-    font-weight: 500;
-    color: var(--sidemenu-font);
-    margin-bottom: var(--margin-sm);
-    border-radius: var(--border-radius);
-  }
-  li:not(.active):hover {
-    background: rgba(255, 255, 255, 0.85);
-    transition: background 0.5s ease;
-  }
-  :global(.side-menu-page-list-button.active) {
-    background: var(--secondary-light);
-    color: var(--primary);
-  }
+	li {
+		padding: var(--perfect-fourth-8) var(--perfect-fourth-4);
+		font-weight: 500;
+		color: var(--sidemenu-font);
+		margin-bottom: var(--margin-sm);
+		border-radius: var(--border-radius);
+		cursor: pointer;
+	}
+	:global(.side-menu-page-list-button.active) {
+		color: var(--primary);
+	}
 </style>

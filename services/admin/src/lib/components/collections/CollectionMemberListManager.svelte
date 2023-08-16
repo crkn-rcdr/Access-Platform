@@ -243,7 +243,9 @@
 	{/if}-->
 
 	{#if !opened && !isCollectionEmpty}
-		<button class="primary lg" on:click={() => (opened = true)}> Manage Member List </button>
+		<button class="btn primary btn-lg" on:click={() => (opened = true)}>
+			Manage Member List
+		</button>
 	{/if}
 
 	{#if opened}
@@ -339,9 +341,10 @@
 
 			<div>
 				{#if !isCollectionEmpty}
-					<button class="secondary" on:click={handleCancelPressed}> Cancel </button>
+					<button class="btn secondary" on:click={handleCancelPressed}> Cancel </button>
 				{/if}
 				<button
+					class="btn"
 					disabled={loading || validating || error.length !== 0 || slugArray.length === 0}
 					class:save={action === 1}
 					class:danger={action !== 1}

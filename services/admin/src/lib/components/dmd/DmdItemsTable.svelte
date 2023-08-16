@@ -13,7 +13,6 @@
 	import { showConfirmation } from '$lib/utils/confirmation';
 	import { onMount } from 'svelte';
 	import NotificationBar from '../shared/NotificationBar.svelte';
-	import { includes } from 'lodash-es';
 
 	/**
 	 * @type { DMDTask } The dmd task being displayed
@@ -228,7 +227,7 @@
 		</div>
 		<br />
 	{/if}
-	<table>
+	<table class="table">
 		<thead>
 			<tr>
 				{#if showSelection}
@@ -305,7 +304,7 @@
 					{/if}
 					<td>
 						<button
-							class="button ghost dark sm"
+							class="btn button ghost dark sm"
 							class:danger={!item.stored && !item.parsed}
 							class:warn={!item.stored && item.parsed && item.message?.length !== 0}
 							on:click={() => handlePreviewItemPressed(i, item)}>Preview Metadata</button
@@ -315,7 +314,7 @@
 				{#if 'stored' in item && item['shouldStore'] && item.message.length}
 					<tr class="row-details">
 						<td class="result-cell" colspan="5">
-							<table>
+							<table class="table">
 								<tbody>
 									<tr
 										class:warning={'stored' in item &&
