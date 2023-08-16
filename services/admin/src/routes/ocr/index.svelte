@@ -336,13 +336,16 @@
 												<span>
 													<OcrBatchActions
 														{batch}
-														stage="import"
-														status={'waiting'}
-														on:cancel={async () => {
-															await handleStatusButtonPressed(importWaiting, exportDone, batch);
+														stage="export"
+														status={batch.exportProcess['succeeded'] ? 'succeeded' : 'failed'}
+														on:export={async () => {
+															await handleStatusButtonPressed(exportDone, exportWaiting, batch);
+														}}
+														on:import={async () => {
+															await handleStatusButtonPressed(exportDone, importWaiting, batch);
 														}}
 														on:delete={async () => {
-															await handleDeletePressed(importWaiting, batch);
+															await handleDeletePressed(exportDone, batch);
 														}}
 													/>
 												</span>
