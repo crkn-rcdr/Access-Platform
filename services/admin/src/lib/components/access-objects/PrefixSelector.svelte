@@ -42,7 +42,9 @@ Allows the user to select one of many pre-defined depositors.
 		oop: 'Library of Parliament',
 		osmsdga: 'South Mountain',
 		qmma: 'McGill University Archives',
-		sru: 'University of Regina Archives'
+		sru: 'University of Regina Archives',
+		mw: 'Musicworks Society of Ontario Inc.',
+		sfu: 'Simon Fraser University'
 	};
 </script>
 
