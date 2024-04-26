@@ -31,6 +31,7 @@ Allows the user to select one of many pre-defined depositors.
 	 */
 	const depositors = {
 		none: 'No Prefix',
+		aeu: 'University of Alberta, Rutherford Library',
 		ams: 'Shortgrass Public Library System',
 		carl: 'Canadian Association of Research Libraries',
 		mw: 'Musicworks Society of Ontario Inc.',
@@ -43,7 +44,7 @@ Allows the user to select one of many pre-defined depositors.
 		osmsdga: 'South Mountain',
 		qmma: 'McGill University Archives',
 		sru: 'University of Regina Archives',
-		mw: 'Musicworks Society of Ontario Inc.',
+		sfu: 'Simon Fraser University',
 		sfu: 'Simon Fraser University'
 	};
 </script>
