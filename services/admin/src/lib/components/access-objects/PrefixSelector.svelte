@@ -44,7 +44,6 @@ Allows the user to select one of many pre-defined depositors.
 		osmsdga: 'South Mountain',
 		qmma: 'McGill University Archives',
 		sru: 'University of Regina Archives',
-		sfu: 'Simon Fraser University',
 		sfu: 'Simon Fraser University'
 	};
 </script>
