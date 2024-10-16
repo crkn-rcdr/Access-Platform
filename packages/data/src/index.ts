@@ -28,7 +28,7 @@ export {
   Ancestry,
 } from "./access/index.js";
 
-export { Canvas, EditableCanvas } from "./canvas/index.js";
+export { Canvas } from "./canvas/index.js";
 
 export {
   OcrBatch,

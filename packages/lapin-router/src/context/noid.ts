@@ -9,11 +9,11 @@ type MinterReturn = {
 export function initializeNoid() {
   const { noid } = Env.parse(process.env);
 
-  const mint = async (number: number): Promise<Noid[]> => {
+  const mint = async (number: number, type="generic"): Promise<Noid[]> => {
     if (!Number.isInteger(number) || number < 1)
       throw new Error(`Cannot mint ${number} noids.`);
 
-    const url = `${noid.url}/mint/${number}/generic`;
+    const url = `${noid.url}/mint/${number}/${type}`;
     const response = await fetch(url, { method: "POST" });
     const minterReturn: MinterReturn = await response.json();
 
@@ -24,8 +24,14 @@ export function initializeNoid() {
     return (await mint(1))[0] as Noid;
   };
 
+  const mintOneOfType = async (type:string): Promise<Noid> => {
+    return (await mint(1,type))[0] as Noid;
+  };
+  
+
   return {
     mint,
     mintOne,
+    mintOneOfType
   };
 }

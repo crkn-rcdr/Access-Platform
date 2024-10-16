@@ -192,6 +192,7 @@
 										>
 											<div class="accordion-body">
 												<div class="detail-body">
+													<span>{batch.name}</span>
 													<span>{batch.canvases.length} canvases</span>
 													<span>
 														<OcrBatchActions
@@ -257,6 +258,8 @@
 									>
 										<div class="accordion-body">
 											<div class="detail-body">
+												<span>{batch.name}</span>
+												<span>{Math.floor(batch.priority)}% completed</span>
 												<span
 													>{new Date(batch.staff.date)
 														.toLocaleString()
@@ -327,6 +330,7 @@
 									>
 										<div class="accordion-body">
 											<div class="detail-body">
+												<span>{batch.name}</span>
 												<span
 													>{new Date(batch.staff.date)
 														.toLocaleString()
@@ -397,7 +401,29 @@
 										aria-labelledby="panelsStayOpen-headingOne"
 									>
 										<div class="accordion-body">
-											<span>waiting...</span>
+											<div class="detail-body">
+												<span>{batch.name}</span>
+												<span>{Math.floor(batch.priority)}% completed</span>
+												<span
+													>{new Date(batch.staff.date)
+														.toLocaleString()
+														.replace(/:[0-9][0-9]$/, '')}</span
+												>
+												<span>{batch.canvases.length} canvases</span>
+												<span>
+													<OcrBatchActions
+														{batch}
+														stage="import"
+														status="waiting"
+														on:cancel={async () => {
+															await handleStatusButtonPressed(importWaiting, base, batch);
+														}}
+														on:delete={async () => {
+															await handleDeletePressed(importWaiting, batch);
+														}}
+													/>
+												</span>
+											</div>
 										</div>
 									</div>
 								</div>
@@ -448,6 +474,7 @@
 									>
 										<div class="accordion-body">
 											<div class="detail-body">
+												<span>{batch.name}</span>
 												<span
 													>{new Date(batch.staff.date)
 														.toLocaleString()

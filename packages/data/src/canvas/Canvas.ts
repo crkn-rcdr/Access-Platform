@@ -4,12 +4,17 @@ import { Identified } from "../util/Identified.js";
 import { FileRef } from "../util/FileRef.js";
 import { ImageRef } from "../util/ImageRef.js";
 import { MD5 } from "../util/MD5.js";
+import { Noid } from "../util/Noid.js";
 
 /**
  * The virtual representation of the space taken up by a page of a Manifest.
  */
 export const Canvas = z
   .object({
+    /**
+   * This is the Noid. It's a unique, opaque identifier.
+   */
+    id: Noid,
     /**
      * Source information for this Canvas.
      */
@@ -53,6 +58,18 @@ export const Canvas = z
          */
         objId: z.string(),
       }),
+
+      /**
+       * The canvas is sourced directly from IIIF.
+       */
+      z.object({
+        from: z.enum(["IIIF"]),
+
+        /**
+         * IIIF image id.
+         */
+        url: z.string(),
+      }),
     ]),
 
     /**
@@ -75,7 +92,7 @@ export const Canvas = z
     /**
      * OCR XML type. One of `alto` or `txtmap`.
      */
-    ocrType: z.enum(["alto", "txtmap"]),
+    ocrType: z.enum(["alto", "txtmap"]).optional(),
 
     /**
      * As time goes on or errors take place, some canvases may no longer be
@@ -87,10 +104,3 @@ export const Canvas = z
   .merge(Identified);
 
 export type Canvas = z.infer<typeof Canvas>;
-
-/**
- * The staff-editable properties of a Canvas.
- */
-export const EditableCanvas = Canvas.pick({ takedown: true });
-
-export type EditableCanvas = z.infer<typeof EditableCanvas>;

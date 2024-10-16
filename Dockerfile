@@ -8,8 +8,9 @@ ENV ADMIN_PORT=4747 \
     LAPIN_PORT=5858 \
     HARE_PORT=5959
 
-RUN apk add --no-cache curl
-RUN curl -sL https://unpkg.com/@pnpm/self-installer | node
+#RUN apk add --no-cache curl
+#RUN curl -sL https://unpkg.com/@pnpm/self-installer | node
+RUN npm i -g pnpm@6.32.11
 
 WORKDIR /repo
 

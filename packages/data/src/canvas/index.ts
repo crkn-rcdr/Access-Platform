@@ -1,1 +1,1 @@
-export { Canvas, EditableCanvas } from "./Canvas.js";
+export { Canvas } from "./Canvas.js";

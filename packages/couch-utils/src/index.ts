@@ -5,6 +5,7 @@ import { Agent as HttpsAgent } from "https";
 import { Env } from "@crkn-rcdr/access-env";
 
 import { AccessHandler } from "./handlers/access.js";
+import { CanvasHandler } from "./handlers/canvas.js";
 import { DMDTaskHandler } from "./handlers/dmdtask.js";
 import { LegacyPackageHandler } from "./handlers/dipstaging.js";
 import { WipmetaHandler } from "./handlers/wipmeta.js";
@@ -39,6 +40,7 @@ export function connect() {
 
   return {
     access: new AccessHandler(c),
+    canvas: new CanvasHandler(c),
     dipstaging: new LegacyPackageHandler(c),
     dmdtask: new DMDTaskHandler(c),
     wipmeta: new WipmetaHandler(c),
