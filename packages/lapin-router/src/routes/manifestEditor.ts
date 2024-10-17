@@ -10,7 +10,7 @@ const fileStream = fs.createReadStream('/path/to/large/file.wav);
 fetch('https://example.com/api', {
 method: 'POST',
 body: {
-  slug, // manifest slug
+  slug, // manifest slug -> britt2
   summary: z.any(), // manifest summary
   label: z.any(), // manifest label
   sequenceNum: 1, // canvas sequence
@@ -32,46 +32,78 @@ const PutInput = z.object({
   summary: z.any(),
   label: z.any(),
   data: z.any()
-});
+})
+
+// Temporary - we will move this out into a permanent solution
 export const manifestEditorRouter = createRouter()
   .mutation("uploadCanvas", {
     input: PutInput,
     async resolve({ input: { slug, sequenceNum, data, label }, ctx }) { // user: User
-      try {
-        console.log(slug)
-        const noid: Noid = await ctx.noid.mintOneOfType("canvas")
+        try {
+          console.log(slug)
+          var noid: Noid = await ctx.noid.mintOneOfType("canvas")
+        } catch (e: any) {
+          console.log(e?.message)
+          throw httpErrorToTRPC(e)
+        }
         const encodedNoid = encodeURIComponent(noid)
         console.log("created noid", noid)
-        const swiftRes = await ctx.swiftClient.accessFiles.create(
-          noid,
-          data.fileStream
-        )
+
+        try {
+          var swiftRes = await ctx.swiftClient.accessFiles.create(
+            noid,
+            data.fileStream
+          )
+        } catch (e: any) {
+          console.log(e?.message)
+          throw httpErrorToTRPC(e)
+        }
+      
         console.log("uploaded", swiftRes)
-        const canvasRes = await ctx.couch.canvas.createCanvas(
-          {
-            "id": noid,
-            "source": {
-              "from": "IIIF",
-              "url": `https://image-tor.canadiana.ca/iiif/2/${encodedNoid}/info.json`
-            },
-            "master": {
-              "extension": "jp2",
-              "size": data.size,
-              "width": data.width,
-              "md5": data.md5,
-              "mime": "image/jpeg",
-              "height": data.height
+        try {
+          var canvasRes = await ctx.couch.canvas.createCanvas(
+            {
+              "id": noid,
+              "source": {
+                "from": "IIIF",
+                "url": `https://image-tor.canadiana.ca/iiif/2/${encodedNoid}/info.json`
+              },
+              "master": {
+                "extension": "jp2",
+                "size": data.size,
+                "width": data.width,
+                "md5": data.md5,
+                "mime": "image/jpeg",
+                "height": data.height
+              }
             }
-          }
-        )
+          )
+        } catch (e: any) {
+          console.log(e?.message)
+          //delete swift file
+          var deleteSwiftRes = await ctx.swiftClient.accessFiles.delete(noid)
+          console.log(deleteSwiftRes)
+          throw httpErrorToTRPC(e)
+        }
         console.log("created canvas in db", canvasRes)
-        let manifest: any = await ctx.couch.access.findUnique(
+        var manifest: any = await ctx.couch.access.findUnique(
           "slug",
           slug,
           ["id", "slug"] as const
         )
         if (!manifest) {
-          const manifestNoid: Noid = await ctx.noid.mintOneOfType("manifest")
+          try {
+            var manifestNoid: Noid = await ctx.noid.mintOneOfType("manifest")
+          } catch (e: any) {
+            console.log(e?.message)
+            //delete swift file
+            var deleteSwiftRes = await ctx.swiftClient.accessFiles.delete(noid)
+            console.log(deleteSwiftRes)
+            //delete canvas
+            var deleteCanvasRes = await ctx.couch.canvas.delete({document:noid})
+            console.log(deleteCanvasRes)
+            throw httpErrorToTRPC(e)
+          }
           manifest = {
             id: manifestNoid,
             slug,
@@ -85,10 +117,22 @@ export const manifestEditorRouter = createRouter()
                 }
             }]
           }
-          const manifestRes = await ctx.couch.access.createManifest(manifest)
+
+          try {
+            var manifestRes = await ctx.couch.access.createManifest(manifest)
+          } catch (e: any) {
+            console.log(e?.message)
+            //delete swift file
+            var deleteSwiftRes = await ctx.swiftClient.accessFiles.delete(noid)
+            console.log(deleteSwiftRes)
+            //delete canvas
+            var deleteCanvasRes = await ctx.couch.canvas.delete({document:noid})
+            console.log(deleteCanvasRes)
+            throw httpErrorToTRPC(e)
+          }
           console.log("create manifest in db", manifestRes)
         } 
-        const canvas = {
+        var canvas = {
           "id" : `https://heritage.canadiana.ca/iiif/${slug}/canvas/p${sequenceNum}`,
           "width" : data.width,
           "height" : data.height,
@@ -135,9 +179,6 @@ export const manifestEditorRouter = createRouter()
           "type" : "Canvas"
         }
         return { canvas, manifest }
-      } catch (e: any) {
-        console.log(e?.message)
-        throw httpErrorToTRPC(e)
-      }
+      
     },
   });
