@@ -36,7 +36,7 @@ const PutInput = z.object({
 
 // Temporary - we will move this out into a permanent solution
 export const manifestEditorRouter = createRouter()
-  .mutation("uploadCanvas", {
+  .mutation("uploadAndAddNewCanvas", {
     input: PutInput,
     async resolve({ input: { slug, sequenceNum, data, label }, ctx }) { // user: User
         try {
@@ -91,7 +91,7 @@ export const manifestEditorRouter = createRouter()
           slug,
           ["id", "slug"] as const
         )
-        if (!manifest) {
+        if (!manifest) { // This is the first canvas
           try {
             var manifestNoid: Noid = await ctx.noid.mintOneOfType("manifest")
           } catch (e: any) {
@@ -111,10 +111,10 @@ export const manifestEditorRouter = createRouter()
             type: "manifest",
             label,
             canvases: [{
-                id: noid,
-                label: {
-                  "none": `Image ${sequenceNum}`
-                }
+              id: noid,
+              label: {
+                "none": `Image ${sequenceNum}`
+              }
             }]
           }
 
@@ -131,6 +131,26 @@ export const manifestEditorRouter = createRouter()
             throw httpErrorToTRPC(e)
           }
           console.log("create manifest in db", manifestRes)
+        } else { // This is not the first canvas
+          try {
+            await ctx.couch.access.processList({
+              id: manifest.id,
+              command: ["add", [noid]],
+              user : {
+                name : "Manifest Editor",
+                email : "blapierre@crkn.ca"
+              },
+            })
+          } catch(e: any) {
+            console.log(e?.message)
+            //delete swift file
+            var deleteSwiftRes = await ctx.swiftClient.accessFiles.delete(noid)
+            console.log(deleteSwiftRes)
+            //delete canvas
+            var deleteCanvasRes = await ctx.couch.canvas.delete({document:noid})
+            console.log(deleteCanvasRes)
+            throw httpErrorToTRPC(e)
+          }
         } 
         var canvas = {
           "id" : `https://heritage.canadiana.ca/iiif/${slug}/canvas/p${sequenceNum}`,
